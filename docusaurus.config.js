@@ -45,11 +45,11 @@ const config = {
         },
         items: [
           {
-            type: 'doc',
-            docId: 'docs/readme',
+            href: '/',
+            //docId: 'docs',
             position: 'right',
             label: 'Documentation',
-            to: '/docs/'
+            //to: '/docs/'
           },
           {
             type: 'doc',
