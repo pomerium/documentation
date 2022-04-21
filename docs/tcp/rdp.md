@@ -8,12 +8,12 @@ description: Tunnel RDP connections through Pomerium
 Remote Desktop Protocol (**RDP**) is a standard for using a desktop computer remotely. It was released by Microsoft and is most commonly used to access Windows systems, but can be used for macOS and Linux systems as well.
 
 ::: tip
-This example assumes you've already [created a TCP route](/docs/tcp/readme.md#configure-routes) for this service.
+This example assumes you've already [created a TCP route](/tcp/readme.md#configure-routes) for this service.
 :::
 
 ## Basic Connection
 
-1. Create a TCP tunnel, using either [`pomerium-cli`](/docs/releases.md#pomerium-cli) or the Pomerium Desktop client:
+1. Create a TCP tunnel, using either [`pomerium-cli`](/releases.md#pomerium-cli) or the Pomerium Desktop client:
 
     ::::: tabs
     :::: tab pomerium-cli

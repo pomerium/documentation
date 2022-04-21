@@ -38,7 +38,7 @@ This value is only visible in the Console UI.
 
 `From` is the externally accessible URL for the proxied request.
 
-Specifying `tcp+https` for the scheme enables [TCP proxying](/docs/tcp/readme.md) support for the route. You may map more than one port through the same hostname by specifying a different `:port` in the URL.
+Specifying `tcp+https` for the scheme enables [TCP proxying](/tcp/readme.md) support for the route. You may map more than one port through the same hostname by specifying a different `:port` in the URL.
 
 :::warning
 
@@ -62,7 +62,7 @@ Once a Route is created, the Metric Name field will populate. You can use this n
   - https://b.example.com
 ```
 
-A load balancing weight may be associated with a particular upstream by appending `,[weight]` to the URL.  The exact behavior depends on your [`lb_policy`](/reference/readme.md#load-balancing-policy) setting.  See [Load Balancing](/docs/topics/load-balancing) for example [configurations](/docs/topics/load-balancing.md#load-balancing-weight).
+A load balancing weight may be associated with a particular upstream by appending `,[weight]` to the URL.  The exact behavior depends on your [`lb_policy`](/reference/readme.md#load-balancing-policy) setting.  See [Load Balancing](/topics/load-balancing) for example [configurations](/topics/load-balancing.md#load-balancing-weight).
 
 Must be `tcp` if `from` is `tcp+https`.
 
@@ -414,7 +414,7 @@ Introduced in v0.16.0, the **Manage Devices** page lets administrators manage us
 ### Manage Devices
 
 From this page, administrators can manage new and existing device enrollments.
-Device enrollment let's you create [policies](/docs/topics/ppl.md#device-matcher) that use [device identity](/docs/topics/device-identity.md).
+Device enrollment let's you create [policies](/topics/ppl.md#device-matcher) that use [device identity](/topics/device-identity.md).
 - Users can [self-enroll](/guides/enroll-device.md) devices, which must then be approved in the **Devices List** for policies requiring approved devices.
 - Administrators can use the **New Enrollment** button to create a link for the user to enroll a device as pre-approved. See our [Pre-Approved Device Enrollment](/guides/admin-enroll-device.md) guide for more information.
 
@@ -445,7 +445,7 @@ New Enrollment URLs are only valid for the specified user.
 
 #### Enrollment Type
 
-Specify if the user can enroll any device identity, or restrict it to a [secure enclave](/docs/topics/device-identity.md#secure-enclaves).
+Specify if the user can enroll any device identity, or restrict it to a [secure enclave](/topics/device-identity.md#secure-enclaves).
 
 [route-concept]: /enterprise/concepts.md#routes
 [route-reference]: /enterprise/reference/manage.md#routes

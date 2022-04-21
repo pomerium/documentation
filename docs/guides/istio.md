@@ -23,7 +23,7 @@ In this guide, we'll demonstrate how to configure Pomerium and Istio in a Kubern
 
 ## How it Works
 
-In our [Mutual Authentication section on Sidecars](/docs/topics/mutual-auth.md#mutual-authentication-with-a-sidecar), we detail how a single service can offload authN and authz to a sidecar service. In a service mesh, each service in an internal network is deployed with a sidecar, and the controller configures them to provide mutual authentication with each other:
+In our [Mutual Authentication section on Sidecars](/topics/mutual-auth.md#mutual-authentication-with-a-sidecar), we detail how a single service can offload authN and authz to a sidecar service. In a service mesh, each service in an internal network is deployed with a sidecar, and the controller configures them to provide mutual authentication with each other:
 
 ```mermaid
 flowchart LR
@@ -57,7 +57,7 @@ end
 ::: tip
 This is a simplified model that doesn't describe the additional traffic for authorization and authentication.
 
-See the [Legend](/docs/topics/mutual-auth.md#legend) on our Mutual Authentication page for details on our graphing style.
+See the [Legend](/topics/mutual-auth.md#legend) on our Mutual Authentication page for details on our graphing style.
 :::
 
 ## Configure Pomerium for Istio
@@ -108,7 +108,7 @@ Follow [Install Pomerium using Helm] to set up the Pomerium Ingress Controller a
         headless: false # send traffic to the Pomerium Databroker through the Istio service rather than to individual pods
     ```
 
-1. When [defining a test service](/docs/k8s/helm.md#define-a-test-service), you should now see two containers for the service pod:
+1. When [defining a test service](/k8s/helm.md#define-a-test-service), you should now see two containers for the service pod:
 
     ```bash
     kubectl get pods

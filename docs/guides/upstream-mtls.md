@@ -19,9 +19,9 @@ Generally, every organization has a preferred method of managing internal certif
 
 ## Before You Begin
 
-- To simplify this proof-of-concept, we assume that Pomerium is running in [all-in-one mode](#before-you-begin) as a system service with the configuration file in the [standard location](/docs/install/binary.md#configuration-file), configured to communicate with an identity provider (**IdP**), and all command are run on the same host. You may have to move files and/or adjust paths and commands to match a different configuration.
+- To simplify this proof-of-concept, we assume that Pomerium is running in [all-in-one mode](#before-you-begin) as a system service with the configuration file in the [standard location](/install/binary.md#configuration-file), configured to communicate with an identity provider (**IdP**), and all command are run on the same host. You may have to move files and/or adjust paths and commands to match a different configuration.
 
-    See [Install - Binaries](/docs/install/binary.md) for more information on initial setup.
+    See [Install - Binaries](/install/binary.md) for more information on initial setup.
 
 - This guide uses [mkcert] to provide certificates. mkcert is a development tool, and not designed for production environments. In this guide, mkcert takes the place of your trusted certificate tooling solution.
 
@@ -155,7 +155,7 @@ Obviously, the OpenSSL server is a trivial upstream service, and is purpose-buil
 
 ## More Resources
 
- - [Mutual Authentication: A Component of Zero Trust](/docs/topics/mutual-auth.md)
+ - [Mutual Authentication: A Component of Zero Trust](/topics/mutual-auth.md)
  - [Client-Side mTLS With Pomerium](/guides/mtls.md)
  - [JWT Verification](/guides/jwt-verification.md)
 

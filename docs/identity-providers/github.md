@@ -9,7 +9,7 @@ meta:
 
 # GitHub
 
-This document describes the use of GitHub as an identity provider for Pomerium. It assumes you have already [installed Pomerium](/docs/install/readme.md)
+This document describes the use of GitHub as an identity provider for Pomerium. It assumes you have already [installed Pomerium](/install/readme.md)
 
 ::: warning
 The [GitHub API] does not support [OpenID Connect], just [OAuth 2.0].

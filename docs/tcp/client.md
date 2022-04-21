@@ -38,7 +38,7 @@ The example below demonstrates a route to the SSH service on the host running th
 ::::
 :::::
 
-See the "Configure Routes" section of [TCP Support](/docs/tcp/readme.md#configure-routes) for more detailed information on TCP routes.
+See the "Configure Routes" section of [TCP Support](/tcp/readme.md#configure-routes) for more detailed information on TCP routes.
 
 ## TCP Client Software
 
@@ -84,7 +84,7 @@ Download the latest release from [GitHub](https://github.com/pomerium/desktop-cl
 
 ### Install
 
-See [Release](/docs/releases.md#pomerium-cli) to learn how to install pomerium-cli in your environment.
+See [Release](/releases.md#pomerium-cli) to learn how to install pomerium-cli in your environment.
 
 ### Connect to a TCP Route
 
@@ -120,7 +120,7 @@ See [Release](/docs/releases.md#pomerium-cli) to learn how to install pomerium-c
 ::::
 :::::
 
-For more examples and detailed usage information, see [TCP Support](/docs/tcp/readme.md)
+For more examples and detailed usage information, see [TCP Support](/tcp/readme.md)
 
 ## Advanced Configuration
 

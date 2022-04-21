@@ -9,7 +9,7 @@ meta:
 
 # GitLab
 
-This document details how to use GitLab as an identity provider with Pomerium. It assumes you have already [installed Pomerium](docs/install/readme.md)
+This document details how to use GitLab as an identity provider with Pomerium. It assumes you have already [installed Pomerium](/install/readme.md)
 
 ::: warning
 While we do our best to keep our documentation up to date, changes to third-party systems are outside our control. Refer to [GitLab as an OAuth 2.0 authentication service provider](https://docs.gitlab.com/ee/integration/oauth_provider.html) from GitLab's docs as needed, or [let us know](https://github.com/pomerium/pomerium/issues/new?assignees=&labels=&template=bug_report.md) if we need to re-visit this page.

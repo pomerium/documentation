@@ -28,7 +28,7 @@ Pomerium can hot-reload route configuration details, authorization policy, certi
 
 When running Pomerium as a single system service or container, all the options on this page can be set in a single `config.yaml` file, or passed to the single instance as environment variables.
 
-When running Pomerium in a distributed environment where there are multiple processes, each handling separate [components](/docs/architecture.md#component-level), all services can still share a single config file or set of environment variables.
+When running Pomerium in a distributed environment where there are multiple processes, each handling separate [components](/architecture.md#component-level), all services can still share a single config file or set of environment variables.
 
 Alternately, you can create individual config files or sets of environment variables for each service. When doing so, each file or set must have matching [shared settings](#shared-settings), as well as settings relevant to that [service mode](#service-mode). The list below is sorted to better differentiate which config options correlate to which service mode.
 
@@ -968,7 +968,7 @@ Set Response Headers specifies a mapping of [HTTP Header](https://developer.mozi
 
 By default, conservative [secure HTTP headers](https://www.owasp.org/index.php/OWASP_Secure_Headers_Project) are set:
 
-  - `max-age=31536000` instructs the browser to pin the certificate for a domain for a year. This helps prevent man-in-the-middle attacks, but can create issues when developing new environments with temporary certificates. See [Troubleshooting - HSTS](/docs/troubleshooting.md#http-strict-transport-security-hsts) for more information.
+  - `max-age=31536000` instructs the browser to pin the certificate for a domain for a year. This helps prevent man-in-the-middle attacks, but can create issues when developing new environments with temporary certificates. See [Troubleshooting - HSTS](/troubleshooting.md#http-strict-transport-security-hsts) for more information.
   - `includeSubDomains` applies these rules to subdomains, which is how individual routes are defined.
   - `preload` instructs the browser to preload the certificate from an HSTS preload service if available. This means that the certificate can be loaded from an already-trusted secure connection, and the user never needs to connect to your domain without TLS.
 
@@ -1330,7 +1330,7 @@ Requires setting [Google Cloud Serverless Authentication Service Account](#googl
 
 `From` is the externally accessible URL for the proxied request.
 
-Specifying `tcp+https` for the scheme enables [TCP proxying](/docs/tcp/readme.md) support for the route. You may map more than one port through the same hostname by specifying a different `:port` in the URL.
+Specifying `tcp+https` for the scheme enables [TCP proxying](/tcp/readme.md) support for the route. You may map more than one port through the same hostname by specifying a different `:port` in the URL.
 
 :::warning
 
@@ -1356,7 +1356,7 @@ Only one of `http_health_check`, `tcp_health_check`, or `grpc_health_check` may 
 - [HTTP](https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/core/v3/health_check.proto#envoy-v3-api-msg-config-core-v3-healthcheck-httphealthcheck)
 - [GRPC](https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/core/v3/health_check.proto#envoy-v3-api-msg-config-core-v3-healthcheck-grpchealthcheck)
 
-See [Load Balancing](/docs/topics/load-balancing) for example [configurations](/docs/topics/load-balancing.md#active-health-checks).
+See [Load Balancing](/topics/load-balancing) for example [configurations](/topics/load-balancing.md#active-health-checks).
 
 
 ### Host Rewrite
@@ -1453,7 +1453,7 @@ When [`lb_policy`](#load-balancing-policy) is configured, you may further custom
 - [`ring_hash_lb_config`](https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/cluster/v3/cluster.proto#config-cluster-v3-cluster-ringhashlbconfig)
 - [`maglev_lb_config`](https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/cluster/v3/cluster.proto#envoy-v3-api-msg-config-cluster-v3-cluster-maglevlbconfig)
 
-See [Load Balancing](/docs/topics/load-balancing) for example [configurations](/docs/topics/load-balancing.md#load-balancing-method)
+See [Load Balancing](/topics/load-balancing) for example [configurations](/topics/load-balancing.md#load-balancing-method)
 
 
 ### Outlier Detection
@@ -1760,7 +1760,7 @@ TLS Downstream Server Name overrides the hostname specified in the `from` field.
   - https://b.example.com
 ```
 
-A load balancing weight may be associated with a particular upstream by appending `,[weight]` to the URL.  The exact behavior depends on your [`lb_policy`](#load-balancing-policy) setting.  See [Load Balancing](/docs/topics/load-balancing) for example [configurations](/docs/topics/load-balancing.md#load-balancing-weight).
+A load balancing weight may be associated with a particular upstream by appending `,[weight]` to the URL.  The exact behavior depends on your [`lb_policy`](#load-balancing-policy) setting.  See [Load Balancing](/topics/load-balancing) for example [configurations](/topics/load-balancing.md#load-balancing-weight).
 
 Must be `tcp` if `from` is `tcp+https`.
 

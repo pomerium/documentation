@@ -33,7 +33,7 @@ Only one Ingress Controller instance is supported per Pomerium cluster.
 
 ### Helm
 
-Our instructions for [Installing Pomerium Using Helm](/docs/k8s/helm.md) includes the Ingress Controller as part of the documented configuration. You can confirm by looking for this line in `pomerium-values.yaml`:
+Our instructions for [Installing Pomerium Using Helm](/k8s/helm.md) includes the Ingress Controller as part of the documented configuration. You can confirm by looking for this line in `pomerium-values.yaml`:
 
 
 ```yaml
@@ -66,7 +66,7 @@ The helm chart exposes a subset of these flags for appropriate customization.
 
 ### Defining Routes
 
-If you've tested Pomerium using the [all-in-one binary](/docs/install/binary.md), you're probably familiar with configuring routes in Pomerium's [`config.yaml`](/docs/install/binary.md#configuration-file). When using the Pomerium Ingress Controller, each route is defined as an Ingress resource in the Kubernetes API.
+If you've tested Pomerium using the [all-in-one binary](/install/binary.md), you're probably familiar with configuring routes in Pomerium's [`config.yaml`](/install/binary.md#configuration-file). When using the Pomerium Ingress Controller, each route is defined as an Ingress resource in the Kubernetes API.
 
 The Ingress Controller will monitor Ingress resources in the cluster, creating a Pomerium route definition for each one. Policy and other configuration options for the route are set by using annotations starting with `ingress.pomerium.io/`.
 
