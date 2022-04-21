@@ -16,13 +16,13 @@ description: >-
 
 ## Before You Begin
 
-This guide assumes you already have Pomerium installed and connected to your [IdP](/docs/glossary.md#identity-provider). If not, follow the instructions in the following articles before continuing:
+This guide assumes you already have Pomerium installed and connected to your [IdP](/glossary.md#identity-provider). If not, follow the instructions in the following articles before continuing:
 
 - Install Pomerium
-   - [Binaries](/docs/install/binary.md) if installing Pomerium as a system-level service.
-   - [Pomerium using Docker](/docs/install/readme.md) if installing Pomerium as a Docker container
-   - [Install Pomerium using Helm](/docs/k8s/helm.md) for Kubernetes environments.
-- Connect to an IdP - See [Identity Provider Configuration](/docs/identity-providers/readme.md) and find the article for your identity provider.
+   - [Binaries](/install/binary.md) if installing Pomerium as a system-level service.
+   - [Pomerium using Docker](/install/readme.md) if installing Pomerium as a Docker container
+   - [Install Pomerium using Helm](/k8s/helm.md) for Kubernetes environments.
+- Connect to an IdP - See [Identity Provider Configuration](/identity-providers/readme.md) and find the article for your identity provider.
 
 
 ## Install & Configure Cockpit

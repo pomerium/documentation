@@ -32,11 +32,11 @@ Pomerium policy now supports group members from outside of your organization.
 
 This release of Pomerium adds the ability to set policy based on system registration via [WebAuthN](https://en.wikipedia.org/wiki/WebAuthn).
 
-See [Device Identity](docs/topics/device-identity.md) for more details.
+See [Device Identity](/topics/device-identity.md) for more details.
 
 ### HTTP PPL Criteria
 
-`http_path` and `http_method` are now supported for matching HTTP requests in policies. See [Pomerium Policy Language](/docs/topics/ppl.md#criteria) for more details.
+`http_path` and `http_method` are now supported for matching HTTP requests in policies. See [Pomerium Policy Language](/topics/ppl.md#criteria) for more details.
 
 ## Breaking
 
@@ -61,9 +61,9 @@ The `signing_key_algorithm` option has been removed and will now be inferred fro
 To improve performance, IdP directory synchronization for GitHub now uses the GraphQL API. This API returns the same information as the REST API, except that the GraphQL node IDs are different. Where we previously used the team integer ID from the REST API, we now use the team slug instead. Most policies should already use the team slug for group based rules, which should continue to work. However, if the integer ID is used it will no longer work. Update those policies to use the team slug instead.
 
 ### CLI Source and Packaging Update
-`pomerium-cli` has been factored out of the core repository and now resides at <https://github.com/pomerium/cli>. If you currently install the CLI tool from [Packages](/docs/releases.md#packages-2) or [Homebrew](/docs/releases.md#homebrew), no changes should be required to your process. However, users of docker images or direct github release downloads will need to update their references.
+`pomerium-cli` has been factored out of the core repository and now resides at <https://github.com/pomerium/cli>. If you currently install the CLI tool from [Packages](/releases.md#packages-2) or [Homebrew](/releases.md#homebrew), no changes should be required to your process. However, users of docker images or direct github release downloads will need to update their references.
 
-Please see the [updated install instructions](docs/releases.md#pomerium-cli) for additional details.
+Please see the [updated install instructions](/releases.md#pomerium-cli) for additional details.
 
 # Since 0.14.0
 
@@ -134,7 +134,7 @@ With the v0.13 release, routes may contain [multiple `to` URLs](reference/readme
 - Configurable [load balancing policies](reference/readme.md#load-balancing-policy)
 - Configurable [load balancing weight](reference/readme.md#to)
 
-See [Load Balancing](docs/topics/load-balancing) for more information on using this feature set.
+See [Load Balancing](/topics/load-balancing) for more information on using this feature set.
 
 ### Dynamic certificate updates
 
@@ -169,7 +169,7 @@ The `administrators` configuration option has been removed.
 
 ### TCP Proxying
 
-Pomerium can now be used for non-HTTP services.  See [documentation](docs/tcp/readme.md) for more details.
+Pomerium can now be used for non-HTTP services.  See [documentation](/tcp/readme.md) for more details.
 
 ### Datadog Tracing
 
@@ -209,7 +209,7 @@ If no [Identity Provider Service Account] is supplied, policies using groups (e.
 
 ### Cache service builds stateful context
 
-With the v0.10 release, Pomerium now asynchronously fetches associated authorization context (e.g. identity provider directory context, groups, user-data, session data, etc) in the `cache` service. In previous versions, Pomerium used session cookies to associated identity state which authorization policy was evaluated against. While using session tokens had the advantage of making Pomerium a relatively stateless application, that approach has many shortcomings which is more extensively covered in the [data storage docs](docs/topics/data-storage.md).
+With the v0.10 release, Pomerium now asynchronously fetches associated authorization context (e.g. identity provider directory context, groups, user-data, session data, etc) in the `cache` service. In previous versions, Pomerium used session cookies to associated identity state which authorization policy was evaluated against. While using session tokens had the advantage of making Pomerium a relatively stateless application, that approach has many shortcomings which is more extensively covered in the [data storage docs](/topics/data-storage.md).
 
 There are two [storage backend types] available: `memory` or `redis`. You can see the existing [storage backend configuration settings in the docs][cache service docs].
 
@@ -407,7 +407,7 @@ Force refresh has been removed from the dashboard. Logging out and back in again
 
 ### Programmatic Access API changed
 
-Previous programmatic authentication endpoints (`/api/v1/token`) has been removed and has been replaced by a per-route, oauth2 based auth flow. Please see updated [programmatic documentation](/docs/topics/programmatic-access.md) how to use the new programmatic access api.
+Previous programmatic authentication endpoints (`/api/v1/token`) has been removed and has been replaced by a per-route, oauth2 based auth flow. Please see updated [programmatic documentation](/topics/programmatic-access.md) how to use the new programmatic access api.
 
 ### Forward-auth route change
 

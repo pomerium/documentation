@@ -23,7 +23,7 @@ In this guide, we'll demonstrate how to configure Pomerium and Istio in a Kubern
 
 ## How it Works
 
-In our [Mutual Authentication section on Sidecars](/docs/topics/mutual-auth.md#mutual-authentication-with-a-sidecar), we detail how a single service can offload authN and authz to a sidecar service. In a service mesh, each service in an internal network is deployed with a sidecar, and the controller configures them to provide mutual authentication with each other:
+In our [Mutual Authentication section on Sidecars](/topics/mutual-auth.md#mutual-authentication-with-a-sidecar), we detail how a single service can offload authN and authz to a sidecar service. In a service mesh, each service in an internal network is deployed with a sidecar, and the controller configures them to provide mutual authentication with each other:
 
 ```mermaid
 flowchart LR
@@ -57,7 +57,7 @@ end
 ::: tip
 This is a simplified model that doesn't describe the additional traffic for authorization and authentication.
 
-See the [Legend](/docs/topics/mutual-auth.md#legend) on our Mutual Authentication page for details on our graphing style.
+See the [Legend](/topics/mutual-auth.md#legend) on our Mutual Authentication page for details on our graphing style.
 :::
 
 ## Configure Pomerium for Istio
@@ -108,7 +108,7 @@ Follow [Install Pomerium using Helm] to set up the Pomerium Ingress Controller a
         headless: false # send traffic to the Pomerium Databroker through the Istio service rather than to individual pods
     ```
 
-1. When [defining a test service](/docs/k8s/helm.md#define-a-test-service), you should now see two containers for the service pod:
+1. When [defining a test service](/k8s/helm.md#define-a-test-service), you should now see two containers for the service pod:
 
     ```bash
     kubectl get pods
@@ -313,15 +313,15 @@ To demonstrate complete authorization validation through to the upstream service
 
     Apply the policies with `kubectl apply -f` to complete the configuration.
 
-[authN]: /docs/glossary.md#authentication
-[authZ]:/docs/glossary.md#authorization
+[authN]: glossary.md#authentication
+[authZ]: glossary.md#authorization
 [Istio]: https://istio.io/latest/
 [istio]: https://github.com/istio/istio
 [certmanager]: https://github.com/jetstack/cert-manager
 [grafana]: https://github.com/grafana/grafana
 [grafana-guide]: /guides/grafana.md
-[east-west traffic]: /docs/glossary.md#east-west-traffic
-[north-south traffic]: /docs/glossary.md#north-south-traffic
-[Pomerium Ingress Controller]: /docs/k8s/ingress.md
-[zero trust]: /docs/background.md#zero-trust
-[Install Pomerium using Helm]: /docs/k8s/helm.md
+[east-west traffic]: glossary.md#east-west-traffic
+[north-south traffic]: glossary.md#north-south-traffic
+[Pomerium Ingress Controller]: k8s/ingress.md
+[zero trust]: background.md#zero-trust
+[Install Pomerium using Helm]: k8s/helm.md

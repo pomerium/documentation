@@ -10,7 +10,7 @@ description: >-
 
 # Local OIDC Provider
 
-You can use the same below configs for other supported [identity providers](/docs/identity-providers/readme.md).
+You can use the same below configs for other supported [identity providers](/identity-providers/readme.md).
 
 ## Configure
 ### Docker-compose
@@ -54,7 +54,7 @@ services:
       - 9000:9000
 ```
 
-You can generate certificates for `*.localhost.pomerium.io` using [this instruction](/docs/topics/certificates.md#certificates-2)
+You can generate certificates for `*.localhost.pomerium.io` using [this instruction](/topics/certificates.md#certificates-2)
 
 ### Pomerium config
 
@@ -156,5 +156,5 @@ $ docker-compose up -d
 
 Now upon accessing `https://verify.localhost.pomerium.io` you will be redirected to OIDC server for authentication.
 
-[identity provider]: .docs/identity-providers/readme.md
+[identity provider]: identity-providers/readme.md
 [qlik/simple-oidc-provider]: https://hub.docker.com/r/qlik/simple-oidc-provider/

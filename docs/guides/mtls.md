@@ -153,5 +153,5 @@ You can now visit **<https://verify.localhost.pomerium.io>** (or another route y
 
 ![choose client certificate](img/mtls/05-select-client-certificate.png)
 
-[Quick-Start]: /docs/install/readme.md
-[Identity Provider]: /docs/identity-providers/readme.md
+[Quick-Start]: install/readme.md
+[Identity Provider]: identity-providers/readme.md

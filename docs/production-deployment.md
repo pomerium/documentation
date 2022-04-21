@@ -14,7 +14,7 @@ This page covers the topic of running Pomerium in a production configuration.
 
 Before deploying Pomerium to Production, you should have already tested Pomerium in one or more demo environments and confirmed:
 
- - A working connection to your [IdP](/docs/glossary.md#identity-provider).
+ - A working connection to your [IdP](/glossary.md#identity-provider).
  - Working test routes to your upstream services, including [JWT verification] where applicable.
  - For Pomerium Enterprise, a working demo of the Pomerium Enterprise Console, with confirmed access for your [Admins and Managers][rbac].
 
@@ -25,7 +25,7 @@ Pomerium is designed to be run in two modes: All-In-One or Split Service. These 
 
 Each instance of Pomerium runs in all-in-one mode unless specified to run as a specific component by the `services` key. See [All-In-One vs Split Service mode](/reference/readme.md#all-in-one-vs-split-service-mode) for more details.
 
-It's important to note that any production deployment with more than one instance of Pomerium (in any combination of modes) should be configured to use Redis as the [`databroker_storage_type`](/reference/readme.md#data-broker-storage-type). See [Data Storage - Backends](/docs/topics/data-storage.md#backends) for more details.
+It's important to note that any production deployment with more than one instance of Pomerium (in any combination of modes) should be configured to use Redis as the [`databroker_storage_type`](/reference/readme.md#data-broker-storage-type). See [Data Storage - Backends](/topics/data-storage.md#backends) for more details.
 
 ### All-in-One
 
@@ -35,20 +35,20 @@ It may be desirable to run in "all-in-one" mode in smaller deployments or while 
 
 In larger footprints, it is recommended to run Pomerium as a collection of discrete service clusters. This limits blast radius in the event of vulnerabilities and allows for per-service [scaling](#scaling) and monitoring.
 
-Please also see [Architecture](/docs/architecture.md) for information on component interactions.
+Please also see [Architecture](/architecture.md) for information on component interactions.
 
 ## Scaling
 
 In split service mode, you have the opportunity to scale the components of Pomerium independently.
 
-All of Pomerium's components are designed to be [stateless](/docs/glossary.md#stateless), and may all be scaled horizontally or vertically. In general, horizontal scaling is recommended. Vertical scaling will lead to diminished returns after ~8 vCPUs.
+All of Pomerium's components are designed to be [stateless](/glossary.md#stateless), and may all be scaled horizontally or vertically. In general, horizontal scaling is recommended. Vertical scaling will lead to diminished returns after ~8 vCPUs.
 
-The Databroker service, which is responsible for session and identity related data, must be [configured for external persistence](/docs/topics/data-storage.md) to be fully stateless.
+The Databroker service, which is responsible for session and identity related data, must be [configured for external persistence](/topics/data-storage.md) to be fully stateless.
 
 Pomerium's individual components can be divided into two categories; the data plane and control plane. Regardless of which mode you run Pomerium in, we strongly recommend multiple instances of each service for fault tolerance.
 
 ::: tip
-Our [Helm deployment](/docs/k8s/helm.md) supports [Horizontal Pod Autoscaling](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/).
+Our [Helm deployment](/k8s/helm.md) supports [Horizontal Pod Autoscaling](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/).
 :::
 
 ### Data Plane
@@ -92,7 +92,7 @@ The eBook Redis in Action has a chapter on [Scaling Redis](https://redis.com/ebo
 In many deployments, 2 replicas of Databroker is enough to provide resilient service.
 
 ::: warning
-In a production configuration, Databroker CPU/IO utilization also translates to IO load on the [underlying storage system](/docs/topics/data-storage.md). Ensure it is scaled accordingly!
+In a production configuration, Databroker CPU/IO utilization also translates to IO load on the [underlying storage system](/topics/data-storage.md). Ensure it is scaled accordingly!
 :::
 
 ## Load Balancing
@@ -103,7 +103,7 @@ In any production deployment, running multiple replicas of each Pomerium service
 
 You should deploy Layer 4 load balancing between end users and Pomerium Proxy services to provide high availability and horizontal scaling. Do not use L7 load balancers, since the Proxy service handles redirects, sticky sessions, etc.
 
-Note that deployments on Kubernetes can utilize The [Pomerium Ingress Controller](/docs/k8s/ingress.md) to simplify configuration.
+Note that deployments on Kubernetes can utilize The [Pomerium Ingress Controller](/k8s/ingress.md) to simplify configuration.
 
 ### Authenticate
 
@@ -129,7 +129,7 @@ Regardless of the service mode, it is recommended you run at least 2 instances o
 Ensure that you have enough spare capacity to handle the scope of your failure domains.
 
 ::: warning
-Multiple replicas of Databroker or all-in-one service are only supported with [external storage](/docs/topics/data-storage.md) configured
+Multiple replicas of Databroker or all-in-one service are only supported with [external storage](/topics/data-storage.md) configured
 :::
 
 ## SSL/TLS Certificates
@@ -157,5 +157,5 @@ If you have TLS enabled applications behind the proxy:
 - the Proxy may be configured to verify the name and certificate authority of downstream services with either the standard Root CA bundle or a custom CA
 
 
-[JWT verification]: /docs/topics/mutual-auth.md#jwt-verification-application-based-mutual-authentication
+[JWT verification]: topics/mutual-auth.md#jwt-verification-application-based-mutual-authentication
 [rbac]: /enterprise/concepts.md#rbac-for-enterprise-console-users

@@ -54,7 +54,7 @@ Now you can experiment with adding services to Docker and defining routes and po
 If you followed all the steps in this doc your Pomerium environment is not using trusted certificates. Remember to use a valid certificate solution before moving this configuration to a production environment. See [Certificates][tls certificates] for more information.
 :::
 
-[configuration file]: ../../reference/readme.md
+[configuration file]: reference/readme.md
 [container images]: https://hub.docker.com/r/pomerium/pomerium
 [docker]: https://docs.docker.com/install/
 [docker-compose]: https://docs.docker.com/compose/install/
@@ -63,4 +63,4 @@ If you followed all the steps in this doc your Pomerium environment is not using
 [tls certificates]: ../topics/certificates.md
 [fqdn]: https://en.wikipedia.org/wiki/Fully_qualified_domain_name
 [mkcert]: https://github.com/FiloSottile/mkcert
-[Self-signed wildcard certificate]: /docs/topics/certificates.md#self-signed-wildcard-certificate
+[Self-signed wildcard certificate]: topics/certificates.md#self-signed-wildcard-certificate

@@ -11,12 +11,12 @@ This is a template to standardize how we document connections to popular service
 Replace the paragraph above with a brief description of the service, and/or why you would want to tunnel traffic to it.
 
 ::: tip
-This example assumes you've already [created a TCP route](/docs/tcp/readme.md#configure-routes) for this service.
+This example assumes you've already [created a TCP route](/tcp/readme.md#configure-routes) for this service.
 :::
 
  ## Basic Connection
 
- 1. Create a TCP tunnel, using either [`pomerium-cli`](/docs/releases.md#pomerium-cli) or the Pomerium Desktop client:
+ 1. Create a TCP tunnel, using either [`pomerium-cli`](/releases.md#pomerium-cli) or the Pomerium Desktop client:
 
     ::::: tabs
     :::: tab pomerium-cli

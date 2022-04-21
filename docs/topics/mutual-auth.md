@@ -381,14 +381,14 @@ end
 Yellow blocks represent different networks like the internet, an internal network, or a virtual network like Docker provides. Dashed borders represent network perimeters allowing general access. Solid borders represent secured perimeters only permitting the traffic represented in the diagram.
 :::
 
-[binaries]: /docs/install/binary.md
-[device identity verification]: /docs/topics/device-identity.md
+[binaries]: install/binary.md
+[device identity verification]: topics/device-identity.md
 [Grafana]: /guides/grafana.md
 [JWT Verification]: /guides/jwt-verification.md
 [jwt-rfc]: https://datatracker.ietf.org/doc/html/rfc7519
-[Kubernetes]: /docs/k8s/helm.md
+[Kubernetes]: k8s/helm.md
 [`pass_identity_headers`]: /reference/readme.md#pass-identity-headers
-[Quick Start]: /docs/install/readme.md
+[Quick Start]: install/readme.md
 [Transport Layer Security]: https://en.wikipedia.org/wiki/Transport_Layer_Security
 [zero trust]: https://www.pomerium.com/docs/background.html
 

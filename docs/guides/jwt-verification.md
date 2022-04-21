@@ -18,7 +18,7 @@ This guide is a practical demonstration of some of the topics discussed in [Mutu
 - [Docker Compose](https://docs.docker.com/compose/)
 - [mkcert](https://github.com/FiloSottile/mkcert)
 
-This guide assumes you already have a working IdP connection to provide user data. See our [Identity Provider](/docs/identity-providers/readme.md) docs for more information.
+This guide assumes you already have a working IdP connection to provide user data. See our [Identity Provider](/identity-providers/readme.md) docs for more information.
 
 ## Overview
 Three services are configured in a `docker-compose.yaml` file:
@@ -239,6 +239,6 @@ You should now be able to run the example with:
 [httpbin.localhost.pomerium.io]: https://verify.localhost.pomerium.io
 [Local Development with Wildcard DNS on Linux]: https://sixfeetup.com/blog/local-development-with-wildcard-dns-on-linux
 [Local Development with Wildcard DNS]: https://blog.thesparktree.com/local-development-with-wildcard-dns
-[Mutual Authentication: A Component of Zero Trust]: /docs/topics/mutual-auth.md
-[Mutual Authentication With a Sidecar]: /docs/topics/mutual-auth.md#mutual-authentication-with-a-sidecar
+[Mutual Authentication: A Component of Zero Trust]: topics/mutual-auth.md
+[Mutual Authentication With a Sidecar]: topics/mutual-auth.md#mutual-authentication-with-a-sidecar
 [verify.localhost.pomerium.io]: https://verify.localhost.pomerium.io
