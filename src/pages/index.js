@@ -11,9 +11,18 @@ function HomepageHeader() {
   return (
     <header className={clsx('hero hero--primary', styles.heroBanner)}>
       <div className="container">
-        <h1 className="hero__title">{siteConfig.title}</h1>
-        <p className="hero__subtitle">{siteConfig.tagline}</p>
-        <iframe width="608" height="342" src="https://www.youtube.com/embed/WGwC9ULDnAY?rel=0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        <h1 className="hero__title">{siteConfig.title} Documentation</h1>
+        <div className={styles.buttons}>
+          <Link
+            className="button button--secondary button--lg"
+            to="/docs/overview">
+            What is Pomerium?
+          </Link>
+        </div>
+        <br/>
+        <div>
+          <iframe width="608" height="342" src="https://www.youtube.com/embed/WGwC9ULDnAY?rel=0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        </div>
       </div>
     </header>
   );
