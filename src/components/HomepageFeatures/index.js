@@ -1,12 +1,13 @@
 import React from 'react';
 import clsx from 'clsx';
 import styles from './styles.module.css';
+import Icon from "@material-ui/core/Icon";
 
 const FeatureList = [
   {
     title: 'Pomerium Core',
     path: '/docs/overview',
-    Svg: require('@site/static/img/undraw_docusaurus_mountain.svg').default,
+    icon: 'terminal',
     description: (
       <>
         Documentation for open-source Pomerium.
@@ -16,7 +17,7 @@ const FeatureList = [
   {
     title: 'Pomerium Enterprise',
     path: '/docs/enterprise',
-    Svg: require('@site/static/img/undraw_docusaurus_tree.svg').default,
+    icon: 'space_dashboard',
     description: (
       <>
         Install and configure Pomerium Enterprise
@@ -26,7 +27,7 @@ const FeatureList = [
   {
     title: 'Desktop and CLI Clients',
     path: '/docs/tcp/',
-    Svg: require('@site/static/img/undraw_docusaurus_react.svg').default,
+    icon: 'enhanced_encryption',
     description: (
       <>
         Extend Pomerium to protect any and every TCP connection.
@@ -35,12 +36,12 @@ const FeatureList = [
   },
 ];
 
-function Feature({Svg, title, description, path}) {
+function Feature({title, description, path, icon}) {
   return (
     <div className={clsx('col col--4')}>
       <div className="text--center">
         <a href={path}>
-          <Svg className={styles.featureSvg} role="img" />
+          <Icon>{icon}</Icon>
         </a>
       </div>
       <div className="text--center padding-horiz--md">

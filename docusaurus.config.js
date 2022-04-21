@@ -7,7 +7,7 @@ const darkCodeTheme = require('prism-react-renderer/themes/dracula');
 /** @type {import('@docusaurus/types').Config} */
 const config = {
   title: 'Pomerium',
-  tagline: 'What is Pomerium?',
+  tagline: 'Documentation',
   url: 'https://pomerium.com',
   baseUrl: '/docs/',
   onBrokenLinks: 'throw',
@@ -129,6 +129,9 @@ const config = {
         darkTheme: darkCodeTheme,
       },
     }),
+  stylesheets: [
+    "https://fonts.googleapis.com/icon?family=Material+Icons",
+  ],
 };
 
 module.exports = config;
