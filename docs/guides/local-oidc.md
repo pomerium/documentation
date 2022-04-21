@@ -156,5 +156,5 @@ $ docker-compose up -d
 
 Now upon accessing `https://verify.localhost.pomerium.io` you will be redirected to OIDC server for authentication.
 
-[identity provider]: .docs/identity-providers/readme.md
+[identity provider]: identity-providers/readme.md
 [qlik/simple-oidc-provider]: https://hub.docker.com/r/qlik/simple-oidc-provider/

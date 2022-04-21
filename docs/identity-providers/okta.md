@@ -94,10 +94,10 @@ IDP_SERVICE_ACCOUNT="REPLACE_ME" # base64 encoded JSON object
 :::
 ::::
 
-[client id]: ../../reference/readme.md#identity-provider-client-id
-[client secret]: ../../reference/readme.md#identity-provider-client-secret
+[client id]: reference/readme.md#identity-provider-client-id
+[client secret]: reference/readme.md#identity-provider-client-secret
 [environmental variables]: https://en.wikipedia.org/wiki/Environment_variable
 [oauth2]: https://oauth.net/2/
 [openid connect]: https://en.wikipedia.org/wiki/OpenID_Connect
-[pomerium-install]: /docs/install/readme.md
+[pomerium-install]: install/readme.md
 [Group ID]: https://developer.okta.com/docs/reference/api/groups/

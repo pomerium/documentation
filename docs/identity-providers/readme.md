@@ -20,11 +20,11 @@ The steps for integrating Pomerium with an IdP are specific to each provider, bu
 
 The subsequent pages in this section provide specific instructions for the IdPs Pomerium supports.
 
-[client id]: ../../reference/readme.md#identity-provider-client-id
-[client secret]: ../../reference/readme.md#identity-provider-client-secret
+[client id]: reference/readme.md#identity-provider-client-id
+[client secret]: reference/readme.md#identity-provider-client-secret
 [environmental variables]: https://en.wikipedia.org/wiki/Environment_variable
 [oauth2]: https://oauth.net/2/
 [openid connect]: https://en.wikipedia.org/wiki/OpenID_Connect
-[service account]: ../../reference/readme.md#identity-provider-service-account
+[service account]: reference/readme.md#identity-provider-service-account
 
 

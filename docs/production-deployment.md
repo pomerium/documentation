@@ -157,5 +157,5 @@ If you have TLS enabled applications behind the proxy:
 - the Proxy may be configured to verify the name and certificate authority of downstream services with either the standard Root CA bundle or a custom CA
 
 
-[JWT verification]: /docs/topics/mutual-auth.md#jwt-verification-application-based-mutual-authentication
+[JWT verification]: topics/mutual-auth.md#jwt-verification-application-based-mutual-authentication
 [rbac]: /enterprise/concepts.md#rbac-for-enterprise-console-users

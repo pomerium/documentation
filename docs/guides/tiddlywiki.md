@@ -23,7 +23,7 @@ We are using the Node.js application in this guide.
 
 ## Where Pomerium fits
 
-TiddlyWiki allows a simple form of authentication by using authenticated-user-header parameter of [listen command](https://tiddlywiki.com/static/ListenCommand.html). Pomerium provides the ability to login with well-known [identity providers](.docs/identity-providers/readme.md#identity-provider-configuration).
+TiddlyWiki allows a simple form of authentication by using authenticated-user-header parameter of [listen command](https://tiddlywiki.com/static/ListenCommand.html). Pomerium provides the ability to login with well-known [identity providers](identity-providers/readme.md#identity-provider-configuration).
 
 ## Pre-requisites
 
@@ -60,4 +60,4 @@ Navigate to your TiddlyWiki instance (e.g. `https://wiki.example.local`) and log
 
 * as another email: pomerium displays a permission denied error.
 
-[quick start]: /docs/install/readme.md
+[quick start]: install/readme.md

@@ -72,8 +72,8 @@ Browse to `external-verify.your.domain.example`. Connections between you and [ve
 [configuration variables]: /reference/readme.md
 [download]: https://github.com/pomerium/pomerium/releases
 [verify]: https://verify.pomerium.com/
-[identity provider]: /docs/identity-providers/readme.md
-[tls certificates]: /docs/topics/certificates.md
+[identity provider]: identity-providers/readme.md
+[tls certificates]: topics/certificates.md
 [Cloudsmith]: https://cloudsmith.io
 [cloudsmith-repo]: https://cloudsmith.io/~pomerium/repos/pomerium/groups/
 [Reference]: /reference/readme.md

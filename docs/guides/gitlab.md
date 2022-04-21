@@ -254,15 +254,15 @@ Integrations that use unique subdomains will require their own certificates and 
 
 1.  Run `docker-compose up -d` to recreate the containers with the adjusted settings.
 
-[Background]: /docs/background.md
+[Background]: background.md
 [Docker Compose]: https://docs.docker.com/compose/
 [FQDN]: https://en.wikipedia.org/wiki/Fully_qualified_domain_name
 [GitLab]: https://gitlab.com/
-[gitlab-idp]: /docs/identity-providers/gitlab
+[gitlab-idp]: identity-providers/gitlab
 [GitLab Docker Images]: https://docs.gitlab.com/ee/install/docker.html
 [JWT OmniAuth provider]: https://docs.gitlab.com/ee/administration/auth/jwt.html
 [mkcert]: https://github.com/FiloSottile/mkcert
-[mTLS]: /docs/topics/mutual-auth.md#mtls-protocol-based-mutual-authentication
-[pomerium-cli]: /docs/releases.md#pomerium-cli
+[mTLS]: topics/mutual-auth.md#mtls-protocol-based-mutual-authentication
+[pomerium-cli]: releases.md#pomerium-cli
 [Pomerium Desktop]: https://github.com/pomerium/desktop-client/releases
-[Quick-Start]: /docs/install/readme.md
+[Quick-Start]: install/readme.md

@@ -245,5 +245,5 @@ cache_ttl = 60m
 [`authenticate_service_url`]: /reference/readme.md#authenticate-service-url
 [expired DST R3 root]: https://letsencrypt.org/docs/dst-root-ca-x3-expiration-september-2021/
 [Global Users]: https://grafana.com/docs/grafana/latest/http_api/admin/#global-users
-[ingress-cert-manager]: /docs/k8s/ingress.md#cert-manager-integration
+[ingress-cert-manager]: k8s/ingress.md#cert-manager-integration
 [JWT authentication]: https://grafana.com/docs/grafana/latest/auth/jwt/

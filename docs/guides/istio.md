@@ -313,15 +313,15 @@ To demonstrate complete authorization validation through to the upstream service
 
     Apply the policies with `kubectl apply -f` to complete the configuration.
 
-[authN]: /docs/glossary.md#authentication
-[authZ]:/docs/glossary.md#authorization
+[authN]: glossary.md#authentication
+[authZ]: glossary.md#authorization
 [Istio]: https://istio.io/latest/
 [istio]: https://github.com/istio/istio
 [certmanager]: https://github.com/jetstack/cert-manager
 [grafana]: https://github.com/grafana/grafana
 [grafana-guide]: /guides/grafana.md
-[east-west traffic]: /docs/glossary.md#east-west-traffic
-[north-south traffic]: /docs/glossary.md#north-south-traffic
-[Pomerium Ingress Controller]: /docs/k8s/ingress.md
-[zero trust]: /docs/background.md#zero-trust
-[Install Pomerium using Helm]: /docs/k8s/helm.md
+[east-west traffic]: glossary.md#east-west-traffic
+[north-south traffic]: glossary.md#north-south-traffic
+[Pomerium Ingress Controller]: k8s/ingress.md
+[zero trust]: background.md#zero-trust
+[Install Pomerium using Helm]: k8s/helm.md

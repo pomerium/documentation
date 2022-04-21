@@ -73,6 +73,6 @@ Browse to `verify.localhost.pomerium.io`. Connections between you and [verify] w
 
 [configuration variables]: /reference/readme.md
 [verify]: https://verify.pomerium.com/
-[identity provider]: /docs/identity-providers/readme.md
+[identity provider]: identity-providers/readme.md
 [make]: https://en.wikipedia.org/wiki/Make_(software)
-[tls certificates]: /docs/topics/certificates.md
+[tls certificates]: topics/certificates.md

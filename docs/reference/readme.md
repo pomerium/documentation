@@ -1876,12 +1876,12 @@ If no certificate is specified, one will be generated and the base64'd public ke
 [base64 encoded]: https://en.wikipedia.org/wiki/Base64
 [elliptic curve]: https://wiki.openssl.org/index.php/Command_Line_Elliptic_Curve_Operations#Generating_EC_Keys_and_Parameters
 [environmental variables]: https://en.wikipedia.org/wiki/Environment_variable
-[identity provider]: /docs/identity-providers/readme.md
+[identity provider]: identity-providers/readme.md
 [json]: https://en.wikipedia.org/wiki/JSON
 [letsencrypt]: https://letsencrypt.org/
 [oidc rfc]: https://openid.net/specs/openid-connect-core-1_0.html#AuthRequest
-[okta]: /docs/identity-providers/okta.md
+[okta]: identity-providers/okta.md
 [script]: https://github.com/pomerium/pomerium/blob/main/scripts/generate_wildcard_cert.sh
-[signed headers]: /docs/topics/getting-users-identity.md
+[signed headers]: topics/getting-users-identity.md
 [toml]: https://en.wikipedia.org/wiki/TOML
 [yaml]: https://en.wikipedia.org/wiki/YAML

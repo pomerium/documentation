@@ -110,4 +110,4 @@ After reloading Pomerium, you should be able to see any login events from your O
 [oauth2]: https://oauth.net/2/
 [openid connect]: https://en.wikipedia.org/wiki/OpenID_Connect
 [OneLogin]: https://www.onelogin.com/
-[installed Pomerium]: /docs/install/readme.md
+[installed Pomerium]: install/readme.md

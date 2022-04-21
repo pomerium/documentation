@@ -112,4 +112,4 @@ You should now be able to authenticate and access your Transmission daemon remot
 In addition to the lock symbol in your browser's address bar, you can go to `<transmission.mydomain.com>/.pomerium` to view and confirm your session details.
 
 [Transmission]: https://transmissionbt.com/
-[quick start]: /docs/install/readme.md
+[quick start]: install/readme.md

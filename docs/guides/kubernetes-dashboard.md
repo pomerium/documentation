@@ -106,7 +106,7 @@ Your browser does not support the video tag.
 [cert-manager]: https://cert-manager.io/docs/
 [helm chart]: https://github.com/pomerium/pomerium-helm
 [Helm]: https://helm.sh
-[Install Pomerium using Helm]: /docs/k8s/helm.md
+[Install Pomerium using Helm]: k8s/helm.md
 [Kubernetes Dashboard]: https://kubernetes.io/docs/tasks/access-application-cluster/web-ui-dashboard/
 [Securing Kubernetes]: /guides/kubernetes.md
 [User Permissions]: /guides/kubernetes.md#user-permissions
