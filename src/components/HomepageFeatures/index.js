@@ -4,45 +4,49 @@ import styles from './styles.module.css';
 
 const FeatureList = [
   {
-    title: 'Easy to Use',
+    title: 'Pomerium Core',
+    path: '/docs/overview',
     Svg: require('@site/static/img/undraw_docusaurus_mountain.svg').default,
     description: (
       <>
-        Docusaurus was designed from the ground up to be easily installed and
-        used to get your website up and running quickly.
+        Documentation for open-source Pomerium.
       </>
     ),
   },
   {
-    title: 'Focus on What Matters',
+    title: 'Pomerium Enterprise',
+    path: '/docs/enterprise',
     Svg: require('@site/static/img/undraw_docusaurus_tree.svg').default,
     description: (
       <>
-        Docusaurus lets you focus on your docs, and we&apos;ll do the chores. Go
-        ahead and move your docs into the <code>docs</code> directory.
+        Install and configure Pomerium Enterprise
       </>
     ),
   },
   {
-    title: 'Powered by React',
+    title: 'Desktop and CLI Clients',
+    path: '/docs/tcp/',
     Svg: require('@site/static/img/undraw_docusaurus_react.svg').default,
     description: (
       <>
-        Extend or customize your website layout by reusing React. Docusaurus can
-        be extended while reusing the same header and footer.
+        Extend Pomerium to protect any and every TCP connection.
       </>
     ),
   },
 ];
 
-function Feature({Svg, title, description}) {
+function Feature({Svg, title, description, path}) {
   return (
     <div className={clsx('col col--4')}>
       <div className="text--center">
-        <Svg className={styles.featureSvg} role="img" />
+        <a href={path}>
+          <Svg className={styles.featureSvg} role="img" />
+        </a>
       </div>
       <div className="text--center padding-horiz--md">
-        <h3>{title}</h3>
+        <a href={path}>
+          <h3>{title}</h3>
+        </a>
         <p>{description}</p>
       </div>
     </div>
