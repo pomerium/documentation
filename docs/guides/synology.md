@@ -161,7 +161,7 @@ Go to **Links** tab.
 
 Add an entry where the **Container Name** is `httpbin` and the **alias** is `httpbin`.
 
-::: warning
+:::caution
 
 The alias value must match the `to` DNS name from your policy.yaml configuration.
 

@@ -7,7 +7,7 @@ description: Tunnel RDP connections through Pomerium
 
 Remote Desktop Protocol (**RDP**) is a standard for using a desktop computer remotely. It was released by Microsoft and is most commonly used to access Windows systems, but can be used for macOS and Linux systems as well.
 
-::: tip
+:::tip
 This example assumes you've already [created a TCP route](/tcp/readme.md#configure-routes) for this service.
 :::
 
@@ -40,7 +40,7 @@ This example assumes you've already [created a TCP route](/tcp/readme.md#configu
 
     ![A new connection profile in Remmina](img/remmina-connection-profile.png)
 
-    ::: warning
+    :::caution
     The first connection attempt will initiate a redirect to authenticate you in the browser. Once you're signed in, subsequent connections will succeed. If your client isn't configured to retry the connection, you may have to reconnect manually.
     :::
 
@@ -63,7 +63,7 @@ Some clients, like Remmina, support running commands before and after connection
 
     ![A connection profile in Remmina invoking a custom script](img/remmina-connection-scripted.png)
 
-::: warning
+:::caution
 Flatpak versions of client software may not be able to read external scripts or programs.
 :::
 

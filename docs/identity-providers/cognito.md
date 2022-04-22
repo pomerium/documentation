@@ -37,7 +37,7 @@ This document describes the use of AWS Cognito as an identity provider with Pome
 
    You can enable Multi-Factor Authentication (MFA), change your Password requirements, Tag the pool, among many other settings.
 
-   ::: tip
+   :::tip
    If you need to make changes after creating your pool, be aware that some settings will recreate the pool rather than update the existing pool. This will also generate new **Client IDs** and **Client Secrets**. An example would be changing _How do you want your end users to sign in?_ in **Attributes** from **Username** to **Email address or phone number**.
    :::
 

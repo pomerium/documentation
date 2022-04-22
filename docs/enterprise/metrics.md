@@ -8,7 +8,7 @@ description: Use Prometheus as a metrics data store.
 
 Pomerium Enterprise uses Prometheus as a metrics collection back-end. You can configure Pomerium and the Console to talk to an existing Prometheus server, or configure the embedded Prometheus backend.
 
-::: tip
+:::tip
 For production deployments, we suggest using a dedicated Prometheus instance.
 :::
 

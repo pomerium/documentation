@@ -75,6 +75,6 @@ This guide assumes you already have Pomerium installed and connected to your [Id
 
 Cockpit uses PAM authentication by default. The project documentation includes a [Single Sign On](https://cockpit-project.org/guide/latest/sso.html) page that covers authentication to the software using Kerberos. As of this page's last update, there's no known way to provide user authentication from Pomerium using JWT or HTTP Headers.
 
-::: tip Prove Us Wrong!
+:::tip Prove Us Wrong!
 Have you configured Cockpit to accept authentication from Pomerium? Let us know on [GitHub](https://github.com/pomerium/pomerium), or post in the [Community Showcase](https://discuss.pomerium.com/c/community-showcase/14) on our forums.
 :::

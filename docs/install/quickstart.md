@@ -51,7 +51,7 @@ You can also navigate to the special pomerium endpoint `verify.localhost.pomeriu
 
 Now you can experiment with adding services to Docker and defining routes and policies for them in Pomerium. See [Guides](/guides/readme.md) for help or inspiration.
 
-::: warning This is a test environment!
+:::caution This is a test environment!
 If you followed all the steps in this doc your Pomerium environment is not using trusted certificates. Remember to use a valid certificate solution before moving this configuration to a production environment. See [Certificates][tls certificates] for more information.
 :::
 

@@ -109,7 +109,7 @@ See the [README](https://github.com/pomerium/pomerium-helm/blob/main/charts/pome
 
 ### Source
 
-::: tip
+:::tip
 
 Officially supported build platforms are limited by [envoy proxy](https://www.envoyproxy.io/).
 

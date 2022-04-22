@@ -62,13 +62,13 @@ Further down in this guide we'll go over Grafana's `auto_sign_up` option to crea
 
     ![The users option under the server admin menu](img/grafana-server-admin-users.png)
 
-    ::: warning
+    :::caution
     This is distinct from the **Users** option under the cog wheel (**Configuration**), which will only finalize a new user when they accept an invite via email or link.
     :::
 
 1. Click the **New user** button to create a new user. Make sure that the email address matches the one provided by Pomerium via your IdP.
 
-    ::: tip
+    :::tip
     You can access the special endpoint `/.pomerium` from any Pomerium route to view the data provided by Pomerium in the JWT.
     :::
 
@@ -100,7 +100,7 @@ routes:
 
 ```
 
-::: tip Note
+:::tip Note
 Docker-based installations may need to be restarted to pick up the new route.
 :::
 
@@ -143,7 +143,7 @@ Once the new route is applied, users can access Grafana from `https://grafana.lo
 
 ### Manage Access at Scale
 
-::: tip Note
+:::tip Note
 Ensure that Grafana is up to date to take advantage of `auto_sign_up`, as it is only available for JWT as of version 8.4.0.
 :::
 
@@ -190,7 +190,7 @@ extraEnv:
 
 This configuration will allow seamless authentication and authorization without any additional toil for your team.
 
-::: tip Tip for Google Users
+:::tip Tip for Google Users
 When using Google as an IdP, the user field is populated by a numeric value that you can not configure. Note that Grafana can accept the `name` field as a username, including spaces:
 
 ```abnf

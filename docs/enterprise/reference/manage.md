@@ -368,7 +368,7 @@ Some criteria also support a sub-path as part of the criterion name:
 
 For those using [OPA](https://www.openpolicyagent.org/), the **REGO** tab will accept policies written in Rego.
 
-::: tip
+:::tip
 A policy can only support PPL or Rego. Once one is set, the other tab is disabled.
 :::
 

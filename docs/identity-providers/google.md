@@ -11,7 +11,7 @@ meta:
 
 This guide covers the basics of setting up Pomerium to use GCP and Google Workspace / G Suite as your identity provider.
 
-::: warning
+:::caution
 
 Google changes their configuration screens frequently. Please refer to Google's documentation for authoritative instructions.
 
@@ -33,7 +33,7 @@ Log in to your Google account and go to the [APIs & services](https://console.de
 
 ![Create New Credentials](./img/google/google-credentials.png)
 
-::: warning
+:::caution
 
 If you don't currently have an OAuth consent page configured, Google will not allow you to create credentials until this is completed. Please follow Google's [instructions](https://developers.google.com/identity/protocols/oauth2/openid-connect#consentpageexperience) for doing so.
 
@@ -84,7 +84,7 @@ Next, we need to enable enable G Suite domain-wide delegation, follow these step
 
 Then, you'll need to manually open an editor and add an `impersonate_user` field to the downloaded public/private key file. In this case, we'd be impersonating the admin account `user@pomerium.io`.
 
-::: warning
+:::caution
 
 [Google requires](https://stackoverflow.com/questions/48585700/is-it-possible-to-call-apis-from-service-account-without-acting-on-behalf-of-a-u/48601364#48601364) that service accounts act on behalf of another user. You MUST add the `impersonate_user` field to your json key file.
 

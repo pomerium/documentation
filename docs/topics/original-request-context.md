@@ -6,7 +6,7 @@ sidebarDepth: 0
 
 # Original User Context
 
-::: tip
+:::tip
 This article describes a use case available to [Pomerium Enterprise](/enterprise/about.md) customers.
 :::
 

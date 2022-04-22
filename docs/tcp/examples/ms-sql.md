@@ -7,7 +7,7 @@ description: Tunnel Microsoft SQL connections through Pomerium
 
 This document explains how to connect to a Microsoft SQL database through an encrypted TCP tunnel. We use the `sqlcmd` command line utility, but the same tunnel can be used by GUI tools.
 
-::: tip
+:::tip
 This example assumes you've already [created a TCP route](/tcp/readme.md#configure-routes) for this service.
 :::
 

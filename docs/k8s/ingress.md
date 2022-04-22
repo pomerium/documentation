@@ -23,7 +23,7 @@ Use Pomerium as a first-class secure-by-default Ingress Controller. The Pomerium
 
 ### Limitations
 
-::: warning
+:::caution
 
 Only one Ingress Controller instance is supported per Pomerium cluster.
 
@@ -124,7 +124,7 @@ metadata:
 
 :::
 
-::: tip
+:::tip
 Routes are sorted and applied in the following order.
 
 1. Ascending by `from`.
@@ -181,7 +181,7 @@ The remaining annotations are specific to or behave differently than they do whe
 | `ingress.pomerium.io/tls_custom_ca_secret`            | Name of Kubernetes `tls` Secret containing a custom [CA certificate][`tls_custom_ca_secret`] for the upstream.                                                                                |
 | `ingress.pomerium.io/tls_downstream_client_ca_secret` | Name of Kubernetes `tls` Secret containing a [Client CA][client-certificate-authority] for validating downstream clients.                                                                     |
 
-::: tip
+:::tip
 
 Every value for the annotations above must be in `string` format.
 
@@ -315,7 +315,7 @@ You can use a [re2 regular expression] To create an Ingress that matches multipl
 1. Set `pathType` to `ImplementationSpecific`
 1. Set `path` to an re2 expression matching the full path. It must include the `^/` prefix and `$` suffix. Any query strings should be removed.
 
-::: tip
+:::tip
 Check out [this example expression](https://regex101.com/r/IBVUKT/1/) at [regex101.com] for a more detailed explanation and example paths, both matching and not.
 :::
 

@@ -11,7 +11,7 @@ meta:
 
 This page will help you configure Pomerium to use your Azure Active Directory as an IdP. It assumes you have already [installed Pomerium](/install/)
 
-::: warning
+:::caution
 While we do our best to keep our documentation up to date, changes to third-party systems are outside our control. Refer to [Quickstart: Register an application with the Microsoft identity platform](https://docs.microsoft.com/en-us/azure/active-directory/develop/quickstart-register-app) from Microsoft's documentation as needed, or [let us know](https://github.com/pomerium/pomerium/issues/new?assignees=&labels=&template=bug_report.md) if we need to re-visit this page.
 :::
 
@@ -19,7 +19,7 @@ If you plan on allowing users to log in using a Microsoft Azure Active Directory
 
 You can access the Azure management portal from your Microsoft service, or visit <https://portal.azure.com> and sign in to Azure using the global administrator account used to create the Office 365 organization.
 
-::: tip
+:::tip
 There is no way to create an application that integrates with Microsoft Azure AD without having **your own** Microsoft Azure AD instance.
 :::
 
@@ -56,7 +56,7 @@ This will bring you to the admin center of the Azure AD instance backing your Of
 
    ![Creating a Key](./img/azure/azure-create-key.png)
 
-   ::: tip
+   :::tip
    If you choose an expiring key, make sure to record the expiration date in your calendar, as you will need to renew the key (get a new one) before that day to ensure users don't experience a service interruption.
    :::
 
@@ -98,7 +98,7 @@ https://login.microsoftonline.com/0303f438-3c5c-4190-9854-08d3eb31bd9f/v2.0
 
 ## Service Account (Optional)
 
-::: tip
+:::tip
 
 By default, this information will be inferred from your provider URL, and you should not need to set this key. If you are using a different [OAuth2] credential set, you may need to set these values separately.
 :::

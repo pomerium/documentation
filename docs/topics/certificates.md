@@ -102,7 +102,7 @@ Your end users will see a valid certificate for all domains delegated by Pomeriu
 
 ![pomerium certificates A+ ssl labs rating](./img/certificates-ssl-report.png)
 
-::: warning
+:::caution
 
 LetsEncrypt certificates must be renewed [every 90 days](https://letsencrypt.org/2015/11/09/why-90-days.html).
 

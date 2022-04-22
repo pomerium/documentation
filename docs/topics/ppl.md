@@ -158,7 +158,7 @@ Compare to a policy that only allows a set of specific devices:
           is: "GAtL...doqu"
 ```
 
-::: tip
+:::tip
 Users can [find their device IDs](/guides/enroll-device.md#find-device-id) at the `/.pomerium` endpoint from any route.
 :::
 

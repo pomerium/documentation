@@ -23,7 +23,7 @@ Pomerium supports requiring signed client certificates with the `client_ca`/`cli
 
 - We will use the `mkcert` application to create the certificates. To install `mkcert` follow the instructions on [Github](https://github.com/FiloSottile/mkcert#installation).
 
-    ::: warning
+    :::caution
     The `mkcert` tool is designed for testing. It creates a locally-trusted root certificate for development purposes. We're using mkcert for this proof-of-concept example, but consider using a different certificate solution for production environments.
     :::
 
@@ -43,7 +43,7 @@ Pomerium supports requiring signed client certificates with the `client_ca`/`cli
     mkcert '*.localhost.pomerium.io'
     ```
 
-    ::: tip Note
+    :::tip Note
     If you already have a certificate solution for route ingress, you can skip this step. Client certificates can be validated from a certificate authority independent of the route CA.
     :::
 
@@ -72,7 +72,7 @@ Pomerium can be configured to require a client certificate for all routes signed
 
 Update the `config.yaml` file or environment variables with the following aditions. Replace `/YOUR/MKCERT/CAROOT` in this example with the value of `mkcert -CAROOT`:
 
-::: tip
+:::tip
 This configuration will require client certificates for _all_ routes. See [rquire mTLS per Route](#require-mtls-per-route) to enable mTLS on for specific routes.
 :::
 

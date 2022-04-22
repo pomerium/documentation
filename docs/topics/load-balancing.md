@@ -20,7 +20,7 @@ routes:
       - http://myapp-srv-2:8080
 ```
 
-::: tip
+:::tip
 
 In the presence of multiple upstreams, make sure to specify either an active or passive health check, or both, to avoid requests being served to an unhealthy backend.
 

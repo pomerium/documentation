@@ -11,7 +11,7 @@ meta:
 
 This page documents configuring an [Auth0] Web Application and Machine to Machine Application for Pomerium to read user data. It assumes you have already [installed Pomerium](/install/).
 
-::: warning
+:::caution
 While we do our best to keep our documentation up to date, changes to third-party systems are outside our control. Refer to [Applications in Auth0](https://auth0.com/docs/applications) from Auth0's docs as needed, or [let us know](https://github.com/pomerium/pomerium/issues/new?assignees=&labels=&template=bug_report.md) if we need to re-visit this page.
 :::
 
@@ -43,7 +43,7 @@ While we do our best to keep our documentation up to date, changes to third-part
 
 Next, we'll create an application to handle machine-to-machine communication from Pomerium to Auth0 in order to retrieve and establish group membership.
 
-::: tip
+:::tip
 
 Auth0 refers to groups as roles.
 

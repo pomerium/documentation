@@ -28,7 +28,7 @@ The concept of mutual authentication is deceptively simple. It means that both s
 
 Let's look at a basic installation of Pomerium on a local network, with a single upstream service. This service contains sensitive data that we want to ensure is confidential and cannot be tampered with.
 
-::: tip Note
+:::tip Note
 Throughout this guide we will diagram Pomerium as a single service, as it is in all-in-one mode. This is the version provided by our [binaries] and in our Docker-based [Quick Start] page.
 :::
 

@@ -22,7 +22,7 @@ This guide demonstrates how to configure a self-hosted GitLab server (a.k.a. git
 
 - This guide assumes a running instance of Pomerium, already configured with an identity Provider (**IdP**) and running as a docker container on the same host/swarm. See our [Quick-Start] page for more information on installing Pomerium with Docker Compose.
 
-  ::: warning
+  :::caution
   While Pomerium can be configured to use self-hosted GitLab [as an IdP][gitlab-idp], we do not recommend doing so while also running it behind Pomerium. In addition to the potential to lock out access to the IdP (breaking access to all routes), we consider it best practice to separate your identity provider and protected services, especially those housing sensitive data like source code.
   :::
 
@@ -30,7 +30,7 @@ This guide demonstrates how to configure a self-hosted GitLab server (a.k.a. git
 
 ## Install GitLab
 
-::: tip
+:::tip
 While we do our best to keep our documentation up to date, changes to third-party systems are outside our control. Refer to [GitLab Docker Images] from GitLab's docs as needed, or [let us know](https://github.com/pomerium/pomerium/issues/new?assignees=&labels=&template=bug_report.md) if we need to re-visit this section.
 :::
 
@@ -81,7 +81,7 @@ While we do our best to keep our documentation up to date, changes to third-part
     - Adjust `external_url` and `registry_external_url` to match the external path, which we will define in Pomerium later in the process.
     - Adjust the paths under `volumes` to match the directories created in [the previous section](#prepare-the-environment).
 
-    ::: tip
+    :::tip
     Additional integrations like [Mattermost](https://docs.gitlab.com/ee/integration/mattermost/) and [Pages](https://docs.gitlab.com/ee/user/project/pages/) will require additional configuration (i.e. `mattermost_nginx[*]`).
     :::
 
@@ -185,7 +185,7 @@ Create this certificate using your infrastructure's preferred internal certifica
 
 If you have an internal certificate solution, generate a certificate for `gitlab.pomerium.localhost.io` and note the path to the certificate authority (**CA**) root before proceeding.
 
-::: tip
+:::tip
 Integrations that use unique subdomains will require their own certificates and Pomerium routes.
 :::
 

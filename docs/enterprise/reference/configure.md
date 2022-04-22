@@ -180,7 +180,7 @@ Set Response Headers allows you to set static values for the given response head
 
 [Service accounts](/enterprise/concepts.md#service-accounts) offer a protected and standardized method of authenticating machine-to-machine communication between services protected by Pomerium.
 
-::: tip
+:::tip
 Before you begin, confirm you are in the correct Namespace. A service account can only be used in the Namespace it was created in, including its children Namespaces.
 :::
 
@@ -219,7 +219,7 @@ A [Namespace][namespace-concept] is a collection of users, groups, routes, and p
    - Enforced policies are also enforced on child Namespaces, and optional policies are available to them as well.
 - Users or groups can be granted permission to edit access to routes within a Namespace, allowing them self-serve access to the routes critical to their work.
 
-::: tip
+:::tip
 When using an IdP without directory sync or when working with non-domain users, they will not show up in the look-ahead search. See [Non-Domain Users](/enterprise/concepts.md#non-domain-users) for more information.
 :::
 

@@ -24,7 +24,7 @@ This quick-start will show you how to deploy Pomerium with [Helm] on [Kubernetes
 - A domain space. The steps below use `*.localhost.pomerium.io` as a placeholder value. We have set DNS records for this domain space to point to `127.0.0.1` (localhost), so you can use this domain space when testing Pomerium locally.
 - [TLS certificates]. If you don't yet have a production environment with trusted certificates, this page will cover using [mkcert] to create locally trusted certificates, and [cert-manager] to manage them in the cluster.
 
-::: tip
+:::tip
 This configuration installs Redis as the data broker service. While this isn't strictly required when running Pomerium by itself, it is necessary for Pomerium Enterprise, and still highly recommended if not.
 :::
 
@@ -116,7 +116,7 @@ If you haven't already, install cert-manager and create a CA issuer. You can fol
 
    <<< @/examples/kubernetes/pomerium-certificates.yaml
 
-   ::: tip
+   :::tip
    If you already have a domain space for Pomerium with a certificate solution, use it in place of `.localhost.pomerium.io`.
    :::
 
@@ -137,7 +137,7 @@ If you haven't already, install cert-manager and create a CA issuer. You can fol
 
    <<< @/examples/kubernetes/pomerium-values.yaml
 
-   ::: tip
+   :::tip
    The options required in the `authenticate.idp` block will vary depending on your [identity provider].
 
    If you changed the `*.localhost.pomerium.io` value in `pomerium-certificates.yaml` update `config.rootDomain` to match, omitting the `*`.

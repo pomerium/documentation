@@ -87,7 +87,7 @@ Middleware:
 
 <<< @/examples/traefik-ingress/crds/middleware.yaml
 
-::: warning
+:::caution
 Please note `trustForwardHeader: true` must be set for the middleware to work correctly.  See [docs](https://docs.traefik.io/middlewares/forwardauth/#trustforwardheader) for more information.
 :::
 

@@ -1180,7 +1180,7 @@ If set, the TLS connection to the storage backend will not be verified.
 - **Deprecated**: This key has been replaced with `route`.
 
 
-::: warning
+:::caution
 The `policy` field as a top-level configuration key has been replaced with [`routes`](/reference/readme.md#routes). Moving forward, define policies within each defined route.
 
 Existing policy definitions will currently behave as expected, but are deprecated and will be removed in a future version of Pomerium.

@@ -54,7 +54,7 @@ subgraph cluster[Kubernetes Cluster]
 end
 ```
 
-::: tip
+:::tip
 This is a simplified model that doesn't describe the additional traffic for authorization and authentication.
 
 See the [Legend](/topics/mutual-auth.md#legend) on our Mutual Authentication page for details on our graphing style.
@@ -245,7 +245,7 @@ To demonstrate complete authorization validation through to the upstream service
         - kubernetes.io/pvc-protection
     ```
 
-    ::: tip
+    :::tip
     Persistence is required to retain user data. Review the [Grafana Helm chart configuration](https://github.com/grafana/helm-charts/tree/main/charts/grafana#configuration) options to set the values for your environment.
     :::
 

@@ -47,7 +47,7 @@ Also known as cross-platform or roaming authenticators, these are authentication
 
 - FIDO U2F: This [open standard][fido-spec] is used by many products like Yubico's [Yubikey][yubikey-products] and Google's [Titan Security Key](https://support.google.com/titansecuritykey/answer/9115487?hl=en). They usually secure a private key used to decrypt information signed by an accessible public key.
 
-::: tip Note
+:::tip Note
 The nature of cross-platform keys mean they are not associated with a single end-user device. Pomerium policies can be written to allow these keys, or specified to only accept secure enclaves.
 :::
 

@@ -49,7 +49,7 @@ The Databroker service, which is responsible for session and identity related da
 
 Pomerium's individual components can be divided into two categories; the data plane and control plane. Regardless of which mode you run Pomerium in, we strongly recommend multiple instances of each service for fault tolerance.
 
-::: tip
+:::tip
 Our [Helm deployment](/k8s/helm.md) supports [Horizontal Pod Autoscaling](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/).
 :::
 
@@ -93,7 +93,7 @@ The eBook Redis in Action has a chapter on [Scaling Redis](https://redis.com/ebo
 
 In many deployments, 2 replicas of Databroker is enough to provide resilient service.
 
-::: warning
+:::caution
 In a production configuration, Databroker CPU/IO utilization also translates to IO load on the [underlying storage system](/topics/data-storage.md). Ensure it is scaled accordingly!
 :::
 
@@ -130,7 +130,7 @@ Regardless of the service mode, it is recommended you run at least 2 instances o
 
 Ensure that you have enough spare capacity to handle the scope of your failure domains.
 
-::: warning
+:::caution
 Multiple replicas of Databroker or all-in-one service are only supported with [external storage](/topics/data-storage.md) configured
 :::
 
