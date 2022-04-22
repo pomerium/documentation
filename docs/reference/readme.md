@@ -969,7 +969,7 @@ Set Response Headers specifies a mapping of [HTTP Header](https://developer.mozi
 
 By default, conservative [secure HTTP headers](https://www.owasp.org/index.php/OWASP_Secure_Headers_Project) are set:
 
-  - `max-age=31536000` instructs the browser to pin the certificate for a domain for a year. This helps prevent man-in-the-middle attacks, but can create issues when developing new environments with temporary certificates. See [Troubleshooting - HSTS](/troubleshooting.md#http-strict-transport-security-hsts) for more information.
+  - `max-age=31536000` instructs the browser to pin the certificate for a domain for a year. This helps prevent man-in-the-middle attacks, but can create issues when developing new environments with temporary certificates. See [Troubleshooting - HSTS](/troubleshooting#http-strict-transport-security-hsts) for more information.
   - `includeSubDomains` applies these rules to subdomains, which is how individual routes are defined.
   - `preload` instructs the browser to preload the certificate from an HSTS preload service if available. This means that the certificate can be loaded from an already-trusted secure connection, and the user never needs to connect to your domain without TLS.
 
@@ -1881,7 +1881,7 @@ If no certificate is specified, one will be generated and the base64'd public ke
 [json]: https://en.wikipedia.org/wiki/JSON
 [letsencrypt]: https://letsencrypt.org/
 [oidc rfc]: https://openid.net/specs/openid-connect-core-1_0.html#AuthRequest
-[okta]: identity-providers/okta.md
+[okta]: identity-providers/okta
 [script]: https://github.com/pomerium/pomerium/blob/main/scripts/generate_wildcard_cert.sh
 [signed headers]: topics/getting-users-identity.md
 [toml]: https://en.wikipedia.org/wiki/TOML

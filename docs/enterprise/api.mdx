@@ -6,6 +6,9 @@ meta:
     content: pomerium, identity access proxy, oidc, reverse proxy, enterprise, console, api, python, go
 ---
 
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
 # Enterprise Console API
 
 The Pomerium Enterprise Console supports programmatic interaction through an API. This page covers enabling and authenticating to the API.
@@ -51,25 +54,30 @@ Service accounts created in any Namespace other than **Global** will include a r
 
 ## Install The Library
 
-:::: tabs
-::: tab Python
+<Tabs>
+<TabItem value="Python" label="Python">
+
 ```bash
 pip3 install git+ssh://git@github.com/pomerium/enterprise-client-python.git
 ```
-:::
-::: tab Go
+
+</TabItem>
+<TabItem value="Go" label="Go">
+
 ```bash
 go get github.com/pomerium/enterprise-client-go
 ```
-:::
-::::
+
+</TabItem>
+</Tabs>
 
 ## Test the API Connection
 
 The repositories for our [Python][client-py] and [Go][client-go] implementations include example scripts:
 
-:::: tabs
-::: tab Python
+<Tabs>
+<TabItem value="Python" label="Python">
+
 ```python
 #!/usr/bin/env python
 
@@ -109,8 +117,10 @@ route = Route(**{
 resp = client.RouteService.SetRoute(SetRouteRequest(route=route))
 print(resp)
 ```
-:::
-::: tab Go
+
+</TabItem>
+<TabItem value="Go" label="Go">
+
 ```go
 package main
 
@@ -193,8 +203,8 @@ func run() error {
 	return nil
 }
 ```
-:::
-::::
+</TabItem>
+</Tabs>
 
 Modify the example script to match your console API path, Namespace(s) and Policy names.
 

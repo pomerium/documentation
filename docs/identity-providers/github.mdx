@@ -7,6 +7,9 @@ meta:
     content: github, oauth2, provider, identity provider, idp
 ---
 
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
 # GitHub
 
 This document describes the use of GitHub as an identity provider for Pomerium. It assumes you have already [installed Pomerium](/install/)
@@ -66,24 +69,28 @@ To use `allowed_groups` in a policy, an `idp_service_account` needs to be set in
 
 After creating your GitHub OAuth application, update the **Pomerium** configuration:
 
-:::: tabs
-::: tab config.yaml
+<Tabs>
+<TabItem value="config.yaml" label="config.yaml">
+
 ```bash
 idp_provider: "github"
 idp_client_id: "REDACTED"       // github application ID
 idp_client_secret: "REDACTED"   // github application secret
 idp_service_account: "REDACTED" // github service account (personal access token)
 ```
-:::
-::: tab Environment Variables
+
+</TabItem>
+<TabItem value="Environment Variables" label="Environment Variables">
+
 ```bash
 IDP_PROVIDER="github"
 IDP_CLIENT_ID="REDACTED"       // github application ID
 IDP_CLIENT_SECRET="REDACTED"   // github application secret
 IDP_SERVICE_ACCOUNT="REDACTED" // github service account (personal access token)
 ```
-:::
-::::
+
+</TabItem>
+</Tabs>
 
 Whenever a user tries to access your application integrated with Pomerium, they will be presented with a sign-on page as below:
 

@@ -3,6 +3,9 @@ title: Microsoft SQL
 description: Tunnel Microsoft SQL connections through Pomerium
 ---
 
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
 # Tunneled Microsoft SQL Connections
 
 This document explains how to connect to a Microsoft SQL database through an encrypted TCP tunnel. We use the `sqlcmd` command line utility, but the same tunnel can be used by GUI tools.
@@ -16,8 +19,9 @@ This example assumes you've already [created a TCP route](/tcp/readme.md#configu
 
  1. Create a TCP tunnel, using either [`pomerium-cli`]overview/releases.md#pomerium-cli) or the Pomerium Desktop client:
 
-    ::::: tabs
-    :::: tab pomerium-cli
+    <Tabs>
+    <TabItem value="pomerium-cli" label="pomerium-cli">
+
     ```bash
     pomerium-cli tcp mssql.corp.example.com:1433 --listen :1433
     ```
@@ -26,16 +30,17 @@ This example assumes you've already [created a TCP route](/tcp/readme.md#configu
     The `--listen` flag is optional. It lets you define what port the tunnel listens on locally. If not specified, the client will choose a random available port.
     :::
 
-    ::::
-    :::: tab Pomerium Desktop
+    </TabItem>
+    <TabItem value="Pomerium Desktop" label="Pomerium Desktop">
+
     ![An example connection to a $SERVICE service from Pomerium Desktop](./img/desktop/example-mssql-connection.png)
 
     :::tip Local Address
     The **Local Address** field is optional. Using it defines what port the tunnel listens on locally. If not specified, Pomerium Desktop will choose a random available port.
     :::
 
-    ::::
-    :::::
+    </TabItem>
+    </Tabs>
 
 1. Initiate your $SERVICE connection, pointing to `localhost`:
 

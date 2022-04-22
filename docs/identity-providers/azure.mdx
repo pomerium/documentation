@@ -7,6 +7,9 @@ meta:
     content: azure, active directory, ad, microsoft, identity provider, idp
 ---
 
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
 # Azure Active Directory
 
 This page will help you configure Pomerium to use your Azure Active Directory as an IdP. It assumes you have already [installed Pomerium](/install/)
@@ -122,8 +125,9 @@ The format of the `idp_service_account` for Azure AD is a base64-encoded JSON do
 
 Configure Pomerium with the identity provider settings retrieved in the previous steps.
 
-:::: tabs
-::: tab config.yaml
+<Tabs>
+<TabItem value="config.yaml" label="config.yaml">
+
 ```bash
 idp_provider: "azure"
 idp_provider_url: "https://login.microsoftonline.com/{REPLACE-ME-SEE-ABOVE}/v2.0"
@@ -133,8 +137,10 @@ idp_client_secret: "REPLACE-ME"
 # or cannot be inferred from the above credential set.
 # idp_service_account: "REPLACE-ME-SEE-ABOVE"
 ```
-:::
-::: tab Environment Variables
+
+</TabItem>
+<TabItem value="Environment Variables" label="Environment Variables">
+
 ```bash
 IDP_PROVIDER="azure"
 IDP_PROVIDER_URL="https://login.microsoftonline.com/{REPLACE-ME-SEE-ABOVE}/v2.0"
@@ -144,8 +150,9 @@ IDP_CLIENT_SECRET="REPLACE-ME"
 # or cannot be inferred from the above credential set.
 # IDP_SERVICE_ACCOUNT="REPLACE-ME-SEE-ABOVE"
 ```
-:::
-::::
+
+</TabItem>
+</Tabs>
 
 ## Troubleshooting
 

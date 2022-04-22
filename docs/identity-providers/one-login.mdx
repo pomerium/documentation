@@ -1,4 +1,10 @@
-# OneLogin
+---
+title: OneLogin
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
 
 This doc describes how to create an OIDC app in [OneLogin] for Pomerium and connect to it. It assumes you have already [installed Pomerium].
 
@@ -78,8 +84,9 @@ A [Group's ID](https://developers.onelogin.com/openid-connect/api/user-info) wil
 
 Update your Pomerium configuration:
 
-:::: tabs
-::: tab config.yaml
+<Tabs>
+<TabItem value="config.yaml" label="config.yaml">
+
 ```yaml
 idp_provider: "onelogin"
 idp_provider_url: "https://awesomecompany.onelogin.com/oidc/2"
@@ -87,8 +94,10 @@ idp_client_id: "REDACTED" # Your OneLogin application ID
 idp_client_secret: "REDACTED" # Your OneLogin application secret
 idp_service_account: "REDACTED" # API credentials, base64-encoded
 ```
-:::
-::: tab Environment Variables
+
+</TabItem>
+<TabItem value="Environment Variables" label="Environment Variables">
+
 ```bash
 IDP_PROVIDER="onelogin"
 IDP_PROVIDER_URL="https://awesomecompany.onelogin.com/oidc/2"
@@ -96,8 +105,9 @@ IDP_CLIENT_ID="REDACTED" # Your OneLogin application ID
 IDP_CLIENT_SECRET="REDACTED" # Your OneLogin application secret
 IDP_SERVICE_ACCOUNT="REDACTED" # API credentials, base64-encoded
 ```
-:::
-::::
+
+</TabItem>
+</Tabs>
 
 After reloading Pomerium, you should be able to see any login events from your OneLogin events dashboard.
 

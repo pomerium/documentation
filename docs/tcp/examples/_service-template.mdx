@@ -4,6 +4,9 @@ description: Tunnel $SERVICE connections through Pomerium
 layout: Draft
 ---
 
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
 # Tunneled $SERVICE Connections
 
 This is a template to standardize how we document connections to popular services through a Pomerium TCP tunnel. It's not listed in the site map, so if you're not a Pomerium employee and you're reading this, you're either looking at our open-source code base, or... ¯\_(ツ)_/¯
@@ -18,8 +21,9 @@ This example assumes you've already [created a TCP route](/tcp/readme.md#configu
 
  1. Create a TCP tunnel, using either [`pomerium-cli`]overview/releases.md#pomerium-cli) or the Pomerium Desktop client:
 
-    ::::: tabs
-    :::: tab pomerium-cli
+    <Tabs>
+    <TabItem value="pomerium-cli" label="pomerium-cli">
+
     ```bash
     pomerium-cli tcp aService.corp.example.com:$COMMON-PORT --listen :$ANOTHER-PORT
     ```
@@ -28,16 +32,17 @@ This example assumes you've already [created a TCP route](/tcp/readme.md#configu
     The `--listen` flag is optional. It lets you define what port the tunnel listens on locally. If not specified, the client will choose a random available port.
     :::
 
-    ::::
-    :::: tab Pomerium Desktop
+    </TabItem>
+    <TabItem value="Pomerium Desktop" label="Pomerium Desktop">
+
     \![An example connection to a $SERVICE service from Pomerium Desktop](./img/desktop/example-$SERVICE-connection.png) <!-- Remove the escape \ -->
 
     :::tip Local Address
     The **Local Address** field is optional. Using it defines what port the tunnel listens on locally. If not specified, Pomerium Desktop will choose a random available port.
     :::
 
-    ::::
-    :::::
+    </TabItem>
+    </Tabs>
 
 1. Initiate your $SERVICE connection, pointing to `localhost`:
 

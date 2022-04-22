@@ -3,6 +3,9 @@ title: SSH
 description: Tunnel SSH connections through Pomerium
 ---
 
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
 # Tunneled SSH Connections
 
 Bad actors are constantly scanning the internet for exposed SSH services. Changing the default port obfuscates, but doesn't protect the service, and implementing and updating advanced SSH authentication can be cumbersome.
@@ -21,8 +24,9 @@ This example assumes you've already [created a TCP route](/tcp/readme.md#configu
 
  1. Create a TCP tunnel, using either [`pomerium-cli`]overview/releases.md#pomerium-cli) or the Pomerium Desktop client:
 
-    ::::: tabs
-    :::: tab pomerium-cli
+    <Tabs>
+    <TabItem value="pomerium-cli" label="pomerium-cli">
+
     ```bash
     pomerium-cli tcp aService.corp.example.com:22 --listen :2202
     ```
@@ -31,16 +35,17 @@ This example assumes you've already [created a TCP route](/tcp/readme.md#configu
     The `--listen` flag is optional. It lets you define what port the tunnel listens on locally. If not specified, the client will choose a random available port.
     :::
 
-    ::::
-    :::: tab Pomerium Desktop
+    </TabItem>
+    <TabItem value="Pomerium Desktop" label="Pomerium Desktop">
+
     ![An example connection to an SSH service from Pomerium Desktop](img/desktop/example-ssh-connection.png)
 
     :::tip Local Address
     The **Local Address** field is optional. Using it defines what port the tunnel listens on locally. If not specified, Pomerium Desktop will choose a random available port.
     :::
 
-    ::::
-    :::::
+    </TabItem>
+    </Tabs>
 
 1. Initiate your SSH connection, pointing to `localhost`:
 

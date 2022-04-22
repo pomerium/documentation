@@ -7,6 +7,9 @@ meta:
     content: gitlab, oidc, openid connect, identity provider, idp
 ---
 
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
 # GitLab
 
 This document details how to use GitLab as an identity provider with Pomerium. It assumes you have already [installed Pomerium](/install/)
@@ -65,31 +68,36 @@ Edit your Pomerium configuration to provide the Client ID, secret, service crede
 
 ### GitLab.com
 
-:::: tabs
-::: tab config.yaml
+<Tabs>
+<TabItem value="config.yaml-" label="config.yaml">
+
 ```yaml
 idp_provider: "gitlab"
 idp_client_id: "REDACTED"   # gitlab application ID
 idp_client_secret: "REDACTED"   # gitlab application secret
 idp_service_account: "REDACTED"   # gitlab service account, base64-encoded json
 ```
-:::
-::: tab Environment Variables
+
+</TabItem>
+<TabItem value="Environment Variables" label="Environment Variables">
+
 ```bash
 IDP_PROVIDER="gitlab"
 IDP_CLIENT_ID="REDACTED" # gitlab application ID
 IDP_CLIENT_SECRET="REDACTED" # gitlab application secret
 IDP_SERVICE_ACCOUNT="REDACTED" # gitlab service account, base64-encoded json
 ```
-:::
-::::
+
+</TabItem>
+</Tabs>
 
 ### Self-Hosted GitLab
 
 Self-hosted CE/EE instances should be configured as a generic OpenID Connect provider:
 
-:::: tabs
-::: tab config.yaml
+<Tabs>
+<TabItem value="config.yaml" label="config.yaml">
+
 ```yaml
 idp_provider: oidc
 idp_client_id: "REDACTED"
@@ -98,8 +106,10 @@ idp_scopes: openid,profile,email
 idp_provider_url: https://gitlab.example.com # Base URL of GitLab instance
 idp_service_account: "REDACTED"   # gitlab service account, base64-encoded json
 ```
-:::
-::: tab Environment Variables
+
+</TabItem>
+<TabItem value="Environment Variables" label="Environment Variables">
+
 ```bash
 IDP_PROVIDER="oidc"
 IDP_CLIENT_ID="REDACTED"
@@ -108,8 +118,9 @@ IDP_SCOPES="openid,profile,email"
 IDP_PROVIDER_URL="https://gitlab.example.com" # Base URL of GitLab instance
 IDP_SERVICE_ACCOUNT="REDACTED"   # gitlab service account, base64-encoded json
 ```
-:::
-::::
+
+</TabItem>
+</Tabs>
 
 ---
 

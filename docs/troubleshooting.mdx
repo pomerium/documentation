@@ -10,6 +10,9 @@ meta:
     content: pomerium, troubleshooting, faq, frequently asked questions
 ---
 
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
 # Troubleshooting
 
 This article provides troubleshooting information for various tools and features in Pomerium.
@@ -28,7 +31,7 @@ See [this article](https://www.ssl2buy.com/wiki/how-to-clear-hsts-settings-on-ch
 
 ### JWT Authentication
 
-When securing the Pomerium Authenticate service with a certificate signed by Let's Encrypt, your upstream applications may reject the certificate when attempting to access the JWT signing key. Here's an example log line from [Grafana](/guides/grafana.md):
+When securing the Pomerium Authenticate service with a certificate signed by Let's Encrypt, your upstream applications may reject the certificate when attempting to access the JWT signing key. Here's an example log line from [Grafana](/guides/grafana):
 
 ```log
 logger=context error=Get "https://authenticate.localhost.pomerium.io/.well-known/pomerium/jwks.json": x509: certificate signed by unknown authority
@@ -42,20 +45,22 @@ For upstream applications that can use a local signing key file, you can circumv
 
 1. Download the `jwks.json` file from the authenticate server:
 
-    ::::: tabs
-    :::: tab curl
+    <Tabs>
+    <TabItem value="curl" label="curl">
 
     ```bash
     curl https://authenticate.localhost.pomerium.io/.well-known/pomerium/jwks.json > /etc/grafana/jwks.json
     ```
-    ::::
-    :::: tab wget
+
+    </TabItem>
+    <TabItem value="wget" label="wget">
 
     ```bash
     wget -O /etc/grafana/jwks.json https://authenticate.localhost.pomerium.io/.well-known/pomerium/jwks.json
     ```
-    ::::
-    :::::
+
+    </TabItem>
+    </Tabs>
 
 1. Edit the upstream service configuration to use the local key to verify tokens:
 

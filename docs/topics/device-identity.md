@@ -58,7 +58,7 @@ Pomerium supports policies that use device identity since version [0.16.0](/over
 To get started, review the following pages:
 
 - [Pomerium Policy Language](/topics/ppl.md) to learn how to build policies that use device ID.
-- **End Users** should review [Enroll a Device](/guides/enroll-device.md) to learn how to enroll devices on Pomerium. In Enterprise environments, self-enrollments must be approved by an admin in the Enterprise Console.
+- **End Users** should review [Enroll a Device](/guides/enroll-device) to learn how to enroll devices on Pomerium. In Enterprise environments, self-enrollments must be approved by an admin in the Enterprise Console.
 - **Enterprise Administrators** can review the [Devices](/enterprise/reference/manage.md#devices) reference material to create pre-approved enrollment links for users.
 - [pomerium/webauthn](https://github.com/pomerium/webauthn) on GitHub, our implementation of the WebAuthn specification.
 

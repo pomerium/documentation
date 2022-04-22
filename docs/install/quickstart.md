@@ -61,7 +61,7 @@ If you followed all the steps in this doc your Pomerium environment is not using
 [docker-compose]: https://docs.docker.com/compose/install/
 [verify]: https://verify.pomerium.com/
 [identity provider]: ../identity-providers/readme.md
-[tls certificates]: ../topics/certificates.md
+[tls certificates]: ../topics/certificates
 [fqdn]: https://en.wikipedia.org/wiki/Fully_qualified_domain_name
 [mkcert]: https://github.com/FiloSottile/mkcert
-[Self-signed wildcard certificate]: topics/certificates.md#self-signed-wildcard-certificate
+[Self-signed wildcard certificate]: topics/certificates#self-signed-wildcard-certificate

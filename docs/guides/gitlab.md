@@ -134,7 +134,7 @@ sudo docker exec -it gitlab grep 'Password:' /etc/gitlab/initial_root_password
 
 1.  Once this route is applied, users can create an encrypted connection using [pomerium-cli] or the [Pomerium Desktop] app:
 
-    ::::: tabs
+    <Tabs>
     :::: tab Pomerium-CLI
     ```bash
     pomerium-cli tcp gitlab.pomerium.localhost.io:22 --listen :2202
@@ -145,8 +145,7 @@ sudo docker exec -it gitlab grep 'Password:' /etc/gitlab/initial_root_password
     :::: tab Pomerium Desktop
     ![An encrypted tunnel for git connections using Pomerium Desktop](img/gitlab/gitlab-desktop-connection.png)
     ::::
-    :::::
-
+    </Tabs>
 1.  Add the tunneled connection as a remote:
 
     ```bash

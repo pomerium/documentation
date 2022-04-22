@@ -75,4 +75,4 @@ Browse to `verify.localhost.pomerium.io`. Connections between you and [verify] w
 [verify]: https://verify.pomerium.com/
 [identity provider]: identity-providers/readme.md
 [make]: https://en.wikipedia.org/wiki/Make_(software)
-[tls certificates]: topics/certificates.md
+[tls certificates]: topics/certificates

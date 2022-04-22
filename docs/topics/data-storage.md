@@ -84,4 +84,4 @@ the second `s` in `rediss` is intentional and turns on TLS support
 
 ## Troubleshooting
 
-Most issues with the Databroker service are caused by a [`shared_secret`](/reference/readme.md#shared-secret) mismatch between services. See [Troubleshooting - Shared Secret Mismatch](/troubleshooting.md#shared-secret-mismatch) for details.
+Most issues with the Databroker service are caused by a [`shared_secret`](/reference/readme.md#shared-secret) mismatch between services. See [Troubleshooting - Shared Secret Mismatch](/troubleshooting#shared-secret-mismatch) for details.

@@ -16,7 +16,7 @@ This section contains applications, and scenario specific guides for Pomerium.
 - See [Device Admin-Enrollment](admin-enroll-device.md) to create pre-approved device enrollment links in the Pomerium Enterprise Console.
 - See [Device User-Enrollment](enroll-device.md) to learn how to register a security device (TPM, Yubikey, etc) to access routes requiring a device ID.
 - The [GitLab](gitlab.md) guide covers securing a self-hosted instance of GitLab using Pomerium.
-- Our [Grafana](grafana.md) guide explains how to secure Grafana with Pomerium and integrate user sign-in using our JWT.
+- Our [Grafana](grafana) guide explains how to secure Grafana with Pomerium and integrate user sign-in using our JWT.
 - The [JWT Verification](jwt-verification.md) guide demonstrates how to verify the Pomerium JWT assertion header using Envoy.
 - The [Kubernetes Dashboard](kubernetes-dashboard.md) guide covers how to secure Kubernetes dashboard using Pomerium.
 - The [kubernetes](kubernetes.md) guide covers how to add authentication and authorization to kubernetes dashboard using helm, and letsencrypt certificates. This guide also shows how third party reverse-proxies like nginx/traefik can be used in conjunction with Pomerium using forward-auth.

@@ -7,6 +7,9 @@ meta:
     content: amazon, aws, cognito, openid, oidc, identity provider, idp
 ---
 
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
 # Cognito
 
 This document describes the use of AWS Cognito as an identity provider with Pomerium. It assumes you have already [installed Pomerium](/install/)
@@ -74,8 +77,9 @@ You can choose whether to use your own **Domain Name**, or use an AWS-provided o
 
 Once you have configured AWS Cognito, configure Pomerium to connext to it:
 
-:::: tabs
-::: tab config.yaml
+<Tabs>
+<TabItem value="config.yaml" label="config.yaml">
+
 ```yaml
 idp_provider: "oidc"
 idp_provider_url: "https://cognito-idp.${AWS-REGION}.amazonaws.com/${USER-POOL-ID}"
@@ -83,8 +87,10 @@ idp_client_id: "304a12ktcc5djt9d7enj6dsjkg"
 idp_client_secret: "1re5ukkv3dab6up5aefv7rru65lu60oblf04t6cv8u9s0itjbci7"
 idp_scopes: "openid,profile,email"
 ```
-:::
-::: tab Environment Variables
+
+</TabItem>
+<TabItem value="Environment Variables" label="Environment Variables">
+
 ```bash
 IDP_PROVIDER="oidc"
 IDP_PROVIDER_URL="https://cognito-idp.${AWS-REGION}.amazonaws.com/${USER-POOL-ID}"
@@ -92,8 +98,10 @@ IDP_CLIENT_ID="304a12ktcc5djt9d7enj6dsjkg"
 IDP_CLIENT_SECRET="1re5ukkv3dab6up5aefv7rru65lu60oblf04t6cv8u9s0itjbci7"
 IDP_SCOPES="openid,profile,email"
 ```
-:::
-::: tab Kubernetes ConfigMap
+
+</TabItem>
+<TabItem value="Kubernetes ConfigMap" label="Kubernetes ConfigMap">
+
 ```yaml
 apiVersion: v1
 data:
@@ -111,7 +119,8 @@ kind: ConfigMap
 metadata:
   name: pomerium-config
 ```
-:::
-::::
+
+</TabItem>
+</Tabs>
 
 To retrieve the **User Pool ID**, go to **General Settings** in the Cognito Side menu within your pool. The **Pool ID** is just above the **Pool ARN**.

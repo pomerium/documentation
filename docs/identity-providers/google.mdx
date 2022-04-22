@@ -7,6 +7,9 @@ meta:
     content: google, gsuite, gmail, oidc, openid connect, workspaces, identity provider, idp
 ---
 
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
 # Google Workspace (formerly known as G Suite)
 
 This guide covers the basics of setting up Pomerium to use GCP and Google Workspace / G Suite as your identity provider.
@@ -125,8 +128,8 @@ Next, we need to give that service account permissionson the GSuite / Workspace 
 
 Your `config.yaml` values or [environment variables] should look something like this:
 
-::::: tabs
-:::: tab config.yaml
+<Tabs>
+<TabItem value="config.yaml" label="config.yaml">
 
 ```yaml
 idp-provider: "google"
@@ -135,8 +138,8 @@ idp-client-secret: "xxxxxx"
 idp-service-account: "zzzz" # output of `base64 -i service-account-key.json`, with impersonate_user set.
 ```
 
-::::
-:::: tab Environment Variables
+</TabItem>
+<TabItem value="Environment Variables" label="Environment Variables">
 
 ```bash
 IDP_PROVIDER="google"
@@ -145,15 +148,14 @@ IDP_CLIENT_SECRET="xxxxxx"
 IDP_SERVICE_ACCOUNT="zzzz" # output of `base64 -i service-account-key.json`, with impersonate_user set.
 ```
 
-::::
-:::::
+</TabItem>
+</Tabs>
 
 ## Troubleshooting
 
 ### `invalid service account for Google directory provider`
 
 This error message in Pomerium log output coincides with an empty **Groups** field in the `/.pomerium` endpoint. It indicates that your [service account](#create-a-service-account) is missing or incorrectly configured. Revisit the linked section above to adjust your service account settings as needed.
-
 
 [client id]: reference/readme.md#identity-provider-client-id
 [client secret]: reference/readme.md#identity-provider-client-secret

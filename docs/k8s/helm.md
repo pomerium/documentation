@@ -237,4 +237,4 @@ Congratulations on installing Pomerium to your Kubernetes cluster! If you're ins
 [Kubernetes]: https://kubernetes.io
 [mkcert]: https://github.com/FiloSottile/mkcert
 [Organizing Cluster Access Using kubeconfig Files]: https://kubernetes.io/docs/concepts/configuration/organize-cluster-access-kubeconfig/
-[tls certificates]: ../topics/certificates.md
+[tls certificates]: ../topics/certificates

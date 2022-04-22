@@ -381,7 +381,7 @@ Yellow blocks represent different networks like the internet, an internal networ
 
 [binaries]: install/binary.md
 [device identity verification]: topics/device-identity.md
-[Grafana]: /guides/grafana.md
+[Grafana]: /guides/grafana
 [JWT Verification]: /guides/jwt-verification.md
 [jwt-rfc]: https://datatracker.ietf.org/doc/html/rfc7519
 [Kubernetes]: k8s/helm.md

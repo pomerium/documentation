@@ -3,6 +3,9 @@ title: Redis
 description: Tunnel Redis connections through Pomerium
 ---
 
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
 # Tunneled Redis Connections
 
 Redis is a popular in-memory data structure store. It can be run locally or configured as a single or distributed standalone service.
@@ -15,8 +18,9 @@ This example assumes you've already [created a TCP route](/tcp/readme.md#configu
 
  1. Create a TCP tunnel, using either [`pomerium-cli`]overview/releases.md#pomerium-cli) or the Pomerium Desktop client:
 
-    ::::: tabs
-    :::: tab pomerium-cli
+    <Tabs>
+    <TabItem value="pomerium-cli" label="pomerium-cli">
+
     ```bash
     pomerium-cli tcp redis.corp.example.com:6379 --listen :6379
     ```
@@ -25,16 +29,16 @@ This example assumes you've already [created a TCP route](/tcp/readme.md#configu
     The `--listen` flag is optional. It lets you define what port the tunnel listens on locally. If not specified, the client will choose a random available port.
     :::
 
-    ::::
+    </TabItem>
+    <TabItem value="Pomerium Desktop" label="Pomerium Desktop">
 
-    :::: tab Pomerium Desktop
     ![An example connection to a Redis service from Pomerium Desktop](img/desktop/example-redis-connection.png)
     :::tip Local Address
     The **Local Address** field is optional. Using it defines what port the tunnel listens on locally. If not specified, Pomerium Desktop will choose a random available port.
     :::
 
-    ::::
-    :::::
+    </TabItem>
+    </Tabs>
 
 1. Initiate your Redis connection, pointing to `localhost`:
 

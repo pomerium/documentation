@@ -9,6 +9,9 @@ description: >-
   (mTLS) for end-users, using client certificates with a custom certificate authority.
 ---
 
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
 # Client-Side mTLS With Pomerium
 
 Secure communication on the web typically refers to using signed server certificates with the TLS protocol. TLS connections are both private and authenticated, preventing eavesdropping and impersonation of the server.
@@ -76,8 +79,9 @@ Update the `config.yaml` file or environment variables with the following aditio
 This configuration will require client certificates for _all_ routes. See [rquire mTLS per Route](#require-mtls-per-route) to enable mTLS on for specific routes.
 :::
 
-::::: tabs
-:::: tab config.yaml
+<Tabs>
+<TabItem value="config.yaml" label="config.yaml">
+
 
 ```yaml
 # If you're using a separate certificate for server-side TLS, leave these keys unchanged.
@@ -90,8 +94,9 @@ client_ca_file: "/YOUR/MKCERT/CAROOT/rootCA.pem"
 
 Alternately, you can encode the client certificate authority as a base64-encoded string (`cat $(mkcert -CAROOT)/rootCA.pem | base64 -w 0`) and provide the value to `client_ca`.
 
-::::
-:::: tab Environment Variables
+</TabItem>
+<TabItem value="Environment Variables" label="Environment Variables">
+
 ```bash
 # If you're using a separate certificate for server-side TLS, leave these variables unchanged.
 CERTIFICATE_FILE="_wildcard.localhost.pomerium.io.pem"
@@ -103,8 +108,8 @@ CLIENT_CA_FILE="/YOUR/MKCERT/CAROOT/rootCA.pem"
 
 Alternately, you can encode the client certificate authority as a base64-encoded string (`cat $(mkcert -CAROOT)/rootCA.pem | base64 -w 0`) and provide the value as `CLIENT_CA`.
 
-::::
-:::::
+</TabItem>
+</Tabs>
 
 Start Pomerium.
 

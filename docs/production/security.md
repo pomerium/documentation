@@ -23,7 +23,7 @@ If you're just getting started, we suggest reviewing the following pages:
 
 The long-time standard for server identity verification, the use of TLS certificates has exploded ever since [Let's Encrypt](https://letsencrypt.org/) made it possible for anyone to get a trusted certificate for free.
 
-- The [Certificates](/topics/certificates.md) topic page covers several basic methods for generating trusted or testing certificates.
+- The [Certificates](/topics/certificates) topic page covers several basic methods for generating trusted or testing certificates.
 - Our article on [Installing Pomerium Using Helm](/k8s/helm.md) touches [briefly](/k8s/helm.md#install-and-configure-cert-manager) on using [cert-manager](https://cert-manager.io/docs/) to manage certificates in Kubernetes environments. We also wrote a guide for their docs site covering integration of the [Pomerium Ingress](https://cert-manager.io/docs/tutorials/acme/pomerium-ingress/) Controller with cert-manager.
 - The [Upstream mTLS With Pomerium](/guides/upstream-mtls.md) guide demonstrates mTLS between Pomerium and upstream services.
 - Depending on your environment's needs, you may choose to verify some of all of your end users with [Client-Side mTLS](/guides/mtls.md).
@@ -34,7 +34,7 @@ Part of Pomerium's strength comes from the ability to pass user identity and con
 
 - [Getting the user's identity](/topics/getting-users-identity.md) details the JWT Pomerium creates to identify the user in any given request.
 - [Original User Context](/topics/original-request-context.md) explains how to pass along the user context when upstream services communicate with each other to complete a request.
-- Many applications support native JWT verification. See [Enable jWT Authentication in Grafana](/guides/grafana.md#enable-jwt-authentication-in-grafana) for an example. For those that don't, you can perform [JWT Verification](/guides/jwt-verification.md) with a sidecar.
+- Many applications support native JWT verification. See [Enable jWT Authentication in Grafana](/guides/grafana#enable-jwt-authentication-in-grafana) for an example. For those that don't, you can perform [JWT Verification](/guides/jwt-verification.md) with a sidecar.
 
 
 ## Device Identity

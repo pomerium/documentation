@@ -255,7 +255,7 @@ To demonstrate complete authorization validation through to the upstream service
     helm upgrade --install grafana grafana/grafana --values grafana-values.yaml
     ```
 
-1. Follow the instructions in the terminal output to log in as the admin user. Follow the [Add Users to Grafana](/guides/grafana.md#add-users-to-grafana) section of our Grafana guide to add a user that can be identified by the Pomerium JWT.
+1. Follow the instructions in the terminal output to log in as the admin user. Follow the [Add Users to Grafana](/guides/grafana#add-users-to-grafana) section of our Grafana guide to add a user that can be identified by the Pomerium JWT.
 
 
 1. To the same file, add the following values to the `grafana.ini` section.
@@ -319,7 +319,7 @@ To demonstrate complete authorization validation through to the upstream service
 [istio]: https://github.com/istio/istio
 [certmanager]: https://github.com/jetstack/cert-manager
 [grafana]: https://github.com/grafana/grafana
-[grafana-guide]: /guides/grafana.md
+[grafana-guide]: /guides/grafana
 [east-west traffic]: overview/glossary.md#east-west-traffic
 [north-south traffic]: overview/glossary.md#north-south-traffic
 [Pomerium Ingress Controller]: k8s/ingress.md

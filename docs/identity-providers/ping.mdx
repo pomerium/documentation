@@ -7,6 +7,9 @@ meta:
     content: ping, oidc, identity provider, idp
 ---
 
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
 # Ping Identity
 
 This document covers configuring Ping Identity as an IdP for your Pomerium gateway. It assumes you have already [installed Pomerium](/install/).
@@ -82,8 +85,9 @@ To use `allowed_groups` in a policy, an `idp_service_account` needs to be set in
 
 Update your Pomerium configuration to use Ping as the IdP:
 
-:::: tabs
-::: tab config.yaml
+<Tabs>
+<TabItem value="config.yaml" label="config.yaml">
+
 ```yaml
 idp_provider: "ping"
 idp_provider_url: "https://auth.pingone.com/720dbe8a-83ed-48e1-9988-9928301ae668/as"
@@ -91,8 +95,10 @@ idp_client_id: "CLIENT_ID"
 idp_client_secret: "CLIENT_SECRET"
 idp_service_account: "XXXXXXX" # Base64-encoded JSON
 ```
-:::
-::: tab Environment Variables
+
+</TabItem>
+<TabItem value="Environment Variables" label="Environment Variables">
+
 ```bash
 IDP_PROVIDER="ping"
 IDP_PROVIDER_URL="https://auth.pingone.com/720dbe8a-83ed-48e1-9988-9928301ae668/as"
@@ -100,5 +106,6 @@ IDP_CLIENT_ID="CLIENT_ID"
 IDP_CLIENT_SECRET="CLIENT_SECRET"
 IDP_SERVICE_ACCOUNT="XXXXXXX" # Base64-encoded JSON
 ```
-:::
-::::
+
+</TabItem>
+</Tabs>

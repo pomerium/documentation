@@ -4,6 +4,9 @@ description: Learn how to create secured TCP connections to services behind Pome
 sidebar_position: 1
 ---
 
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
 # Pomerium Desktop and CLI Clients
 
 Pomerium is capable of creating secure connections to services like SSH, Redis, and more by creating a TCP tunnel to the service with a local client. This article describes configuring a route to accept TCP connections, and using either the CLI or GUI client to connect to it.
@@ -20,8 +23,8 @@ Pomerium is capable of creating secure connections to services like SSH, Redis, 
 
 The example below demonstrates a route to the SSH service on the host running the Pomerium Core or Pomerium Enterprise service:
 
-::::: tabs
-:::: tab Pomerium Core
+<Tabs>
+<TabItem value="Pomerium Core" label="Pomerium Core">
 
 ```yaml
   - from: tcp+https://ssh.localhost.pomerium.io:22
@@ -32,12 +35,14 @@ The example below demonstrates a route to the SSH service on the host running th
           - email:
               is: user@companydomain.com
 ```
-::::
-:::: tab Pomerium Enterprise
+
+</TabItem>
+<TabItem value="Pomerium Enterprise" label="Pomerium Enterprise">
+
 ![Example TCP route for SSH](./img/tcp-ssh-route.png)
 
-::::
-:::::
+</TabItem>
+</Tabs>
 
 See the "Configure Routes" section of [TCP Support](/tcp/readme.md#configure-routes) for more detailed information on TCP routes.
 
@@ -45,9 +50,10 @@ See the "Configure Routes" section of [TCP Support](/tcp/readme.md#configure-rou
 
 You can connect to this route with either the Pomerium CLI or Pomerium Desktop client.
 
-::::: tabs
+<Tabs>
 
-:::: tab Pomerium Desktop
+<TabItem value="Pomerium Desktop" label="Pomerium Desktop">
+
 ### Install
 
 Download the latest release from [GitHub](https://github.com/pomerium/desktop-client/releases).
@@ -80,12 +86,12 @@ Download the latest release from [GitHub](https://github.com/pomerium/desktop-cl
 
 **Client Certificate & Certificate Key File or Text**: For routes that require client certificates for [mTLS](/guides/mtls.md), you can provide the certificate and key file to the Pomerium Desktop client.
 
-::::
-:::: tab Pomerium CLI
+</TabItem>
+<TabItem value="Pomerium CLI" label="Pomerium CLI">
 
 ### Install
 
-See [Release]overview/releases.md#pomerium-cli) to learn how to install pomerium-cli in your environment.
+See [Release](overview/releases.md#pomerium-cli) to learn how to install pomerium-cli in your environment.
 
 ### Connect to a TCP Route
 
@@ -118,8 +124,8 @@ See [Release]overview/releases.md#pomerium-cli) to learn how to install pomerium
    ssh -o ProxyCommand='pomerium-cli tcp --listen - %h:%p' ssh.localhost.pomerium.io
    ```
 
-::::
-:::::
+</TabItem>
+</Tabs>
 
 For more examples and detailed usage information, see [TCP Support](/tcp/readme.md)
 

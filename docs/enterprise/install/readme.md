@@ -14,5 +14,5 @@ There are several ways to install Pomerium Enterprise, to suite your organizatio
 
 Our docs are updated frequently, so check back if you don't see your preferred installation method here.
 
-- [Quickstart](/enterprise/install/quickstart.md) (using deb or rpm packages)
+- [Quickstart](/enterprise/install/quickstart) (using deb or rpm packages)
 - [Kubernetes with Helm](/enterprise/install/helm.md)
