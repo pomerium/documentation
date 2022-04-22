@@ -123,5 +123,5 @@ Certificates, TLS, and Public Key Cryptography is a vast subject we cannot adequ
 [certificate_authority]: reference/readme.md#certificate-authority
 [certificate_key]: reference/readme.md#certificates
 [override_certificate_name]: reference/readme.md#override-certificate-name
-[principles]: background.md#history
-[zero trust]: background.md#zero-trust
+[principles]: overview/background.md#history
+[zero trust]: overview/background.md#zero-trust

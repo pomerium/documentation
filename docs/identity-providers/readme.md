@@ -1,5 +1,6 @@
 ---
 title: Identity Providers
+sidebar_position: 4
 description: >-
   This article describes how to connect Pomerium to third-party identity
   providers / single-sign-on services. You will need to generate keys, copy

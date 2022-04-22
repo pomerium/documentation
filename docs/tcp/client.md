@@ -84,7 +84,7 @@ Download the latest release from [GitHub](https://github.com/pomerium/desktop-cl
 
 ### Install
 
-See [Release](/releases.md#pomerium-cli) to learn how to install pomerium-cli in your environment.
+See [Release]overview/releases.md#pomerium-cli) to learn how to install pomerium-cli in your environment.
 
 ### Connect to a TCP Route
 

@@ -1,7 +1,7 @@
 ---
 title: Architecture
 lang: en-US
-sidebar_position: 4
+sidebar_position: 2
 meta:
   - name: keywords
     content: pomerium, architecture

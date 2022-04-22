@@ -79,4 +79,4 @@ Simply navigate to your new adguard instance (e.g. `https://adguard.domain.examp
 
 ![adguard dashboard](img/adguard-dashboard.png)
 
-[quick start]: install/readme.md
+[quick start]: install/quickstart

@@ -35,7 +35,7 @@ This guide instructs Pomerium Enterprise admins on how to create user-specific e
 
     - search for and select the user this URL will be valid for,
     - optionally provide a URL for the user to be redirected to after a successful enrollment,
-    - define if the user can enroll any [trusted execution environment](/glossary.md#trusted-execution-environment), or restrict the user to [secure envlaves](/glossary.md#secure-enclave):
+    - define if the user can enroll any [trusted execution environment](/overview/glossary.md#trusted-execution-environment), or restrict the user to [secure envlaves](/overview/glossary.md#secure-enclave):
     ![Screenshot of the New Enrollment Modal](img/new-enrollment.png)
 
 1. Click **Submit** to get the URL:

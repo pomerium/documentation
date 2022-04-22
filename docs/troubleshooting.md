@@ -1,6 +1,6 @@
 ---
 title: Troubleshooting
-sidebar_position: 7
+sidebar_position: 13
 description: >-
   Learn how to troubleshoot common configuration issues or work around any outstanding bugs.
 sidebarDepth: 0
@@ -13,8 +13,6 @@ meta:
 # Troubleshooting
 
 This article provides troubleshooting information for various tools and features in Pomerium.
-
-[[toc]]
 
 ## Pomerium Core
 

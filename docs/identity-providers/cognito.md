@@ -9,7 +9,7 @@ meta:
 
 # Cognito
 
-This document describes the use of AWS Cognito as an identity provider with Pomerium. It assumes you have already [installed Pomerium](/install/readme.md)
+This document describes the use of AWS Cognito as an identity provider with Pomerium. It assumes you have already [installed Pomerium](/install/)
 
 ## Setting up AWS Cognito
 

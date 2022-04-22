@@ -60,4 +60,4 @@ Navigate to your TiddlyWiki instance (e.g. `https://wiki.example.local`) and log
 
 * as another email: pomerium displays a permission denied error.
 
-[quick start]: install/readme.md
+[quick start]: install/quickstart

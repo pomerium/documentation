@@ -135,7 +135,7 @@ When the code-server container is rebuilt, any files outside of `/home/coder/pro
 
 [integrated terminal]: https://code.visualstudio.com/docs/editor/integrated-terminal
 [path]: https://en.wikipedia.org/wiki/PATH_(variable)
-[install]: install/readme.md
+[install]: install/
 [synology nas]: /guides/synology.md
 [visual studio code]: https://code.visualstudio.com/
 [code-server]: https://github.com/cdr/code-server

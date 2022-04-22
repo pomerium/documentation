@@ -9,7 +9,7 @@ meta:
 
 # Auth0
 
-This page documents configuring an [Auth0] Web Application and Machine to Machine Application for Pomerium to read user data. It assumes you have already [installed Pomerium](/install/readme.md).
+This page documents configuring an [Auth0] Web Application and Machine to Machine Application for Pomerium to read user data. It assumes you have already [installed Pomerium](/install/).
 
 ::: warning
 While we do our best to keep our documentation up to date, changes to third-party systems are outside our control. Refer to [Applications in Auth0](https://auth0.com/docs/applications) from Auth0's docs as needed, or [let us know](https://github.com/pomerium/pomerium/issues/new?assignees=&labels=&template=bug_report.md) if we need to re-visit this page.

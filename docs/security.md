@@ -6,7 +6,7 @@ description: >-
 
 # Securing Pomerium
 
-Pomerium is a tool for securing your infrastructure while adhering to the principles of [Zero Trust](/background.md#zero-trust). But that doesn't mean that your stack is "secure" right out of the box. Additionally, security is a battle of give and take; more security often comes at the cost of more complexity, both for the administrator and the end-user. What layers of security you choose to apply (and how you configure them) is highly dependent on your use case.
+Pomerium is a tool for securing your infrastructure while adhering to the principles of [Zero Trust](/overview/background.md#zero-trust). But that doesn't mean that your stack is "secure" right out of the box. Additionally, security is a battle of give and take; more security often comes at the cost of more complexity, both for the administrator and the end-user. What layers of security you choose to apply (and how you configure them) is highly dependent on your use case.
 
 While we can't tell you what tools and technologies are right for you, we've compiled a list of all the security-related documentation we have, organized to help you discover what path to take.
 
@@ -14,10 +14,10 @@ While we can't tell you what tools and technologies are right for you, we've com
 
 If you're just getting started, we suggest reviewing the following pages:
 
-- [Background](/background.md) - A quick primer on the failures of legacy models of "perimeter security" and an introduction to the concept of Zero Trust.
-- [Architecture](/architecture.md) - Learn how Pomerium is broken down into component services. How you choose to deploy Pomerium will set the stage for the kind of security practices that apply to your stack.
+- [Background](/overview/background.md) - A quick primer on the failures of legacy models of "perimeter security" and an introduction to the concept of Zero Trust.
+- [Architecture](/overview/architecture.md) - Learn how Pomerium is broken down into component services. How you choose to deploy Pomerium will set the stage for the kind of security practices that apply to your stack.
 - [Mutual Authentication: A Component of Zero Trust](/topics/mutual-auth.md) - Zero Trust's core principle could be said as "trust nothing without first (and continuously) verifying it". Mutual authentication is a big part of bringing that principle to bear. This page explains the concept and how it's achieved across several different layers of the network stack.
-- [Glossary](/glossary.md) - Keep this page handy for when you run into new or unfamiliar terminology.
+- [Glossary](/overview/glossary.md) - Keep this page handy for when you run into new or unfamiliar terminology.
 
 ## TLS Certificates
 

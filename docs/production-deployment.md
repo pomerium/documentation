@@ -5,6 +5,7 @@ description: >-
 meta:
   - name: keywords
     content: pomerium, identity access proxy, production, deployment, scale, scaling, horizontal,
+sidebar_position: 5
 ---
 
 
@@ -14,7 +15,7 @@ This page covers the topic of running Pomerium in a production configuration.
 
 Before deploying Pomerium to Production, you should have already tested Pomerium in one or more demo environments and confirmed:
 
- - A working connection to your [IdP](/glossary.md#identity-provider).
+ - A working connection to your [IdP](/overview/glossary.md#identity-provider).
  - Working test routes to your upstream services, including [JWT verification] where applicable.
  - For Pomerium Enterprise, a working demo of the Pomerium Enterprise Console, with confirmed access for your [Admins and Managers][rbac].
 
@@ -35,13 +36,13 @@ It may be desirable to run in "all-in-one" mode in smaller deployments or while 
 
 In larger footprints, it is recommended to run Pomerium as a collection of discrete service clusters. This limits blast radius in the event of vulnerabilities and allows for per-service [scaling](#scaling) and monitoring.
 
-Please also see [Architecture](/architecture.md) for information on component interactions.
+Please also see [Architecture](/overview/architecture.md) for information on component interactions.
 
 ## Scaling
 
 In split service mode, you have the opportunity to scale the components of Pomerium independently.
 
-All of Pomerium's components are designed to be [stateless](/glossary.md#stateless), and may all be scaled horizontally or vertically. In general, horizontal scaling is recommended. Vertical scaling will lead to diminished returns after ~8 vCPUs.
+All of Pomerium's components are designed to be [stateless](/overview/glossary.md#stateless), and may all be scaled horizontally or vertically. In general, horizontal scaling is recommended. Vertical scaling will lead to diminished returns after ~8 vCPUs.
 
 The Databroker service, which is responsible for session and identity related data, must be [configured for external persistence](/topics/data-storage.md) to be fully stateless.
 

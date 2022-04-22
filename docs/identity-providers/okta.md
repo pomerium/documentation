@@ -11,7 +11,7 @@ meta:
 
 Okta is a popular identity provider used by businesses of all sizes. Integrating Pomerium with Okta allows you to use the identity Okta provides to apply context-driven policies from Pomerium to your infrastructure.
 
-This page covers configuring Okta to communicate with Pomerium as an [IdP](/glossary.md#identity-provider). It assumes you have already [installed Pomerium][pomerium-install] before you begin.
+This page covers configuring Okta to communicate with Pomerium as an [IdP](/overview/glossary.md#identity-provider). It assumes you have already [installed Pomerium][pomerium-install] before you begin.
 
 ::: warning
 While we do our best to keep our documentation up to date, changes to third-party systems are outside our control. Refer to [Create an Okta app Integration](https://developer.okta.com/docs/guides/sign-into-web-app/aspnet/create-okta-application/) from Okta's developer docs as needed, or [let us know](https://github.com/pomerium/pomerium/issues/new?assignees=&labels=&template=bug_report.md) if we need to re-visit this page.
@@ -99,5 +99,5 @@ IDP_SERVICE_ACCOUNT="REPLACE_ME" # base64 encoded JSON object
 [environmental variables]: https://en.wikipedia.org/wiki/Environment_variable
 [oauth2]: https://oauth.net/2/
 [openid connect]: https://en.wikipedia.org/wiki/OpenID_Connect
-[pomerium-install]: install/readme.md
+[pomerium-install]: install/
 [Group ID]: https://developer.okta.com/docs/reference/api/groups/

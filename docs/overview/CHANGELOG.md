@@ -1,5 +1,8 @@
-# Changelog
-
+---
+title: Changelog
+lang: en-US
+sidebar_position: 6
+---
 
 ## [v0.17.0](https://github.com/pomerium/pomerium/tree/v0.17.0) (2022-03-04)
 
@@ -241,7 +244,7 @@
 - Docs: Reference gRPC API Docs [\#2717](https://github.com/pomerium/pomerium/pull/2717) (@alexfornuto)
 - Minor fix in routes documentation [\#2714](https://github.com/pomerium/pomerium/pull/2714) (@Kerwood)
 - Docs: Update Community Page [\#2713](https://github.com/pomerium/pomerium/pull/2713) (@cmo-pomerium)
-- Update architecture.md [\#2701](https://github.com/pomerium/pomerium/pull/2701) (@cmo-pomerium)
+- Update overview/architecture.md [\#2701](https://github.com/pomerium/pomerium/pull/2701) (@cmo-pomerium)
 - Update create TLS command to quote strings. [\#2694](https://github.com/pomerium/pomerium/pull/2694) (@FutureMatt)
 - Docs: Correct Claim Example [\#2689](https://github.com/pomerium/pomerium/pull/2689) (@alexfornuto)
 - Fix typo in docs [\#2683](https://github.com/pomerium/pomerium/pull/2683) (@nihaals)
@@ -440,7 +443,7 @@
 - Docs: Update Community Page [\#2731](https://github.com/pomerium/pomerium/pull/2731) (@backport-actions-token[bot])
 - Minor fix in routes documentation [\#2721](https://github.com/pomerium/pomerium/pull/2721) (@backport-actions-token[bot])
 - Docs: Reference gRPC API Docs [\#2720](https://github.com/pomerium/pomerium/pull/2720) (@backport-actions-token[bot])
-- Update architecture.md [\#2707](https://github.com/pomerium/pomerium/pull/2707) (@backport-actions-token[bot])
+- Update overview/architecture.md [\#2707](https://github.com/pomerium/pomerium/pull/2707) (@backport-actions-token[bot])
 
 ## [v0.15.6](https://github.com/pomerium/pomerium/tree/v0.15.6) (2021-11-04)
 
@@ -520,7 +523,7 @@
 - Docs: Reference gRPC API Docs [\#2717](https://github.com/pomerium/pomerium/pull/2717) (@alexfornuto)
 - Minor fix in routes documentation [\#2714](https://github.com/pomerium/pomerium/pull/2714) (@Kerwood)
 - Docs: Update Community Page [\#2713](https://github.com/pomerium/pomerium/pull/2713) (@cmo-pomerium)
-- Update architecture.md [\#2701](https://github.com/pomerium/pomerium/pull/2701) (@cmo-pomerium)
+- Update overview/architecture.md [\#2701](https://github.com/pomerium/pomerium/pull/2701) (@cmo-pomerium)
 - Update create TLS command to quote strings. [\#2694](https://github.com/pomerium/pomerium/pull/2694) (@FutureMatt)
 - Docs: Correct Claim Example [\#2689](https://github.com/pomerium/pomerium/pull/2689) (@alexfornuto)
 - Fix typo in docs [\#2683](https://github.com/pomerium/pomerium/pull/2683) (@nihaals)

@@ -15,8 +15,6 @@ Pomerium provides a good layer of security out of the box, but it's not (and can
 
 This is a nuanced topic that dives into several specific security practices that provide mutual authentication. You can use the table of contents below to narrow down to the specific tools you're interested in or read the entire doc for a deeper understanding of how these tools work together to support strong infrastructure security.
 
-[[toc]]
-
 ## What Is Mutual Authentication?
 
 The concept of mutual authentication is deceptively simple. It means that both sides of a connection can validate the identity of the other. The application of this concept, however, can be varied and complex. Pomerium provides the features and capability to provide mutual authentication between itself and end users, as well as between itself and upstream services, but configuring those external endpoints can vary depending on each service's features.
@@ -388,7 +386,7 @@ Yellow blocks represent different networks like the internet, an internal networ
 [jwt-rfc]: https://datatracker.ietf.org/doc/html/rfc7519
 [Kubernetes]: k8s/helm.md
 [`pass_identity_headers`]: /reference/readme.md#pass-identity-headers
-[Quick Start]: install/readme.md
+[Quick Start]: install/quickstart
 [Transport Layer Security]: https://en.wikipedia.org/wiki/Transport_Layer_Security
 [zero trust]: https://www.pomerium.com/docs/background.html
 

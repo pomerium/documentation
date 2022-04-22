@@ -1,7 +1,7 @@
 ---
 title: Background
 lang: en-US
-sidebar_position: 5
+sidebar_position: 1
 meta:
   - name: keywords
     content: pomerium, identity access proxy, beyondcorp, zero trust, reverse proxy, ztn, zta

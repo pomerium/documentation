@@ -5,32 +5,62 @@ import styles from './styles.module.css';
 
 const FeatureList = [
   {
-    title: 'Pomerium Core',
+    title: 'Getting Started',
     path: '/docs/overview',
+    icon: 'help_outline',
+    description: (
+      <>
+        Learn about Pomerium
+      </>
+    ),
+  },
+  {
+    title: 'Install',
+    path: '/docs/install',
     icon: 'terminal',
     description: (
       <>
-        Documentation for open-source Pomerium.
+        Install Pomerium into your infrastructure
       </>
     ),
   },
   {
-    title: 'Pomerium Enterprise',
-    path: '/docs/enterprise',
+    title: 'Connect',
+    path: '/docs/identity-providers/',
+    icon: 'link',
+    description: (
+      <>
+        Connect Pomerium to your Identity Provider
+      </>
+    ),
+  },
+  {
+    title: 'Integrate',
+    path: '/docs/guides/',
+    icon: 'account_tree',
+    description: (
+      <>
+        Use our guides to integrate and secure your services
+      </>
+    ),
+  },
+  {
+    title: 'Deploy',
+    path: '/docs/guides/',
+    icon: 'account_tree',
+    description: (
+      <>
+        Deploy and scale seamlessly to production 
+      </>
+    ),
+  },
+  {
+    title: 'Enterprise',
+    path: '/docs/enterprise/about',
     icon: 'space_dashboard',
     description: (
       <>
-        Install and configure Pomerium Enterprise
-      </>
-    ),
-  },
-  {
-    title: 'Desktop and CLI Clients',
-    path: '/docs/tcp/',
-    icon: 'enhanced_encryption',
-    description: (
-      <>
-        Extend Pomerium to protect any and every TCP connection.
+        Scale your access management to match your business
       </>
     ),
   },

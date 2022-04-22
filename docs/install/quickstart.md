@@ -1,6 +1,7 @@
 ---
 title: Quick-Start
 lang: en-US
+sidebar_position: 1
 description: Get Pomerium up and running quickly with Docker.
 meta:
   - name: keywords

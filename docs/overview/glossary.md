@@ -1,7 +1,7 @@
 ---
 title: Glossary
 lang: en-US
-sidebar_position: 2
+sidebar_position: 5
 meta:
   - name: keywords
     content: pomerium, identity access proxy, beyondcorp, zero-trust, reverse proxy, ztn, zta, zero trust, glossary, terms, definitions
@@ -11,8 +11,6 @@ description: A quick reference of commonly used terms.
 # Glossary
 
 Pomerium's documentation uses a lot of terminology specific to the networking and security space. This glossary defines common terms readers may be unfamiliar with. If you come across an unfamiliar term not listed in this page, please let us know in our [Discuss support forum][support] and we'll add it.
-
-[[toc]]
 
 ## General
 
@@ -40,7 +38,7 @@ Often referred to as **JWTs**, a JSON web token is a [JSON]-formatted string pro
 "Namespaces" is an over-saturated term, having different meanings in different contexts. [Pomerium Enterprise][pom-namespace] uses Namespaces to provide separation of access and control to [routes]. Kubernetes uses their [namespaces][k8s-namespace] to isolate groups of resources within a cluster.
 
 ### Perimeter
-The term "Perimeter" in the context of Pomerium and general networking usually refers to your internal network, and common tools like firewalls used to restrict access to it. [Historically](/background.md#history), most security models used the perimeter as the main layer of protection to a network system. The principles of [zero trust] assume that the perimeter can be (and likely is) compromised, and require security between each connection, including those between internal services.
+The term "Perimeter" in the context of Pomerium and general networking usually refers to your internal network, and common tools like firewalls used to restrict access to it. [Historically](/overview/background.md#history), most security models used the perimeter as the main layer of protection to a network system. The principles of [zero trust] assume that the perimeter can be (and likely is) compromised, and require security between each connection, including those between internal services.
 
 ### Policy
 Pomerium allows administrators to define authorization policies dictating what combination of users, groups, devices, etc, have access to protected services. Open-source Pomerium defines a unique policy to every [route], while Pomerium Enterprise can define reusable policies at the global and [namespace] level.
@@ -52,7 +50,7 @@ Specific to Pomerium, a route is a defined path from outside the network (via a 
 Single Sign-On (**SSO**) is the most frequently asked for requirement by enterprise organizations looking to adopt new SaaS applications. SSO enables authentication via an organization’s [identity provider], such as [Google Workspace](/identity-providers/google.md) or [Okta](/identity-providers/okta.md), as opposed to users or IT admins managing hundreds, if not thousands, of usernames and passwords.
 
 ### Stateless
-Another overloaded term in the tech space, we use the term stateless when talking about Pomerium's Proxy, Authenticate, and Authorize [components](/architecture.md#component-level). They are stateless because they rely on the Databroker component to provide persistent data. This means that the other services can be destroyed, recreated, and scaled horizontally without any data loss.
+Another overloaded term in the tech space, we use the term stateless when talking about Pomerium's Proxy, Authenticate, and Authorize [components](/overview/architecture.md#component-level). They are stateless because they rely on the Databroker component to provide persistent data. This means that the other services can be destroyed, recreated, and scaled horizontally without any data loss.
 
 ## Networking
 
@@ -95,7 +93,7 @@ Security keys are often used to provide a physical resource to perform multi-fac
 A **TEE** is a physical method of executing cryptographic functions using data that cannot be accessed by the rest of the physical device. This is a core part of [device identity](/topics/device-identity.md) validation.
 
 ### Zero Trust
-Zero trust is a philosophy and/or framework for security models that includes several facets. We go into detail in our [Background](/background.md#zero-trust) page, but briefly: zero-trust assumes that any one method of security is fallible, and defines a set of security principles that work in concert to provide the highest security without over-burdening administrators, end users, or network devices with extraneous overhead.
+Zero trust is a philosophy and/or framework for security models that includes several facets. We go into detail in our [Background](/overview/background.md#zero-trust) page, but briefly: zero-trust assumes that any one method of security is fallible, and defines a set of security principles that work in concert to provide the highest security without over-burdening administrators, end users, or network devices with extraneous overhead.
 
 [authenticate]: #authentication
 [authenticated]: #authentication

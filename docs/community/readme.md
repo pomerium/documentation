@@ -1,6 +1,7 @@
 ---
 title: Community
 lang: en-US
+sidebar_position: 14
 sidebarDepth: 0
 meta:
   - name: keywords

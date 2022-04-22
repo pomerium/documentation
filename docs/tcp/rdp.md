@@ -13,7 +13,7 @@ This example assumes you've already [created a TCP route](/tcp/readme.md#configu
 
 ## Basic Connection
 
-1. Create a TCP tunnel, using either [`pomerium-cli`](/releases.md#pomerium-cli) or the Pomerium Desktop client:
+1. Create a TCP tunnel, using either [`pomerium-cli`]overview/releases.md#pomerium-cli) or the Pomerium Desktop client:
 
     ::::: tabs
     :::: tab pomerium-cli

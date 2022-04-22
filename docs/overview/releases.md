@@ -13,8 +13,6 @@ Pomerium is shipped in multiple formats and architectures to suit a variety of d
 - `pomerium-cli` (optional) is a command-line client for working with Pomerium. Functions include acting as an authentication helper for tools like [kubectl](/k8s/readme.md).
 
 
-[[toc]]
-
 
 ## pomerium
 
