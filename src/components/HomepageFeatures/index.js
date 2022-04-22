@@ -1,7 +1,7 @@
 import React from 'react';
 import clsx from 'clsx';
 import styles from './styles.module.css';
-import Icon from "@material-ui/core/Icon";
+
 
 const FeatureList = [
   {
@@ -41,7 +41,7 @@ function Feature({title, description, path, icon}) {
     <div className={clsx('col col--4')}>
       <div className="text--center">
         <a href={path}>
-          <Icon>{icon}</Icon>
+        <span class="material-icons">{icon}</span>
         </a>
       </div>
       <div className="text--center padding-horiz--md">
