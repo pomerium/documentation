@@ -64,7 +64,7 @@ Because Git uses the SSH protocol, we can define a `Host` block in our local SSH
     ```
 
 ::: tip
-If you've already defined an SSH configuration for all domains managed by Pomerium as described in our [SSH Example](/tcp/ssh.md#always-tunnel-through-pomerium), you can skip the first step above and define your new remote with the Git server's domain name.
+If you've already defined an SSH configuration for all domains managed by Pomerium as described in our [SSH Example](/tcp/examples/ssh.md#always-tunnel-through-pomerium), you can skip the first step above and define your new remote with the Git server's domain name.
 :::
 
 ## More Resources

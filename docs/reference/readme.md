@@ -1,5 +1,6 @@
 ---
 title: Settings
+sidebar_label: Reference
 lang: en-US
 sidebarDepth: 2
 meta:

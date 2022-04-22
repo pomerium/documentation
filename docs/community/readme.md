@@ -1,8 +1,7 @@
 ---
 title: Community
 lang: en-US
-sidebar_position: 14
-sidebarDepth: 0
+sidebar_position: 10
 meta:
   - name: keywords
     content: pomerium, community, help, bugs, updates, features

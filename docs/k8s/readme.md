@@ -1,6 +1,8 @@
 ---
 title: Kubernetes Integration
-sidebarDepth: 2
+sidebar_label: Kubernetes
+sidebar_position: 7
+pagination_prev: null
 description: >-
   This article describes Pomerium's integration with the Kubernetes API Server
 ---

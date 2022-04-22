@@ -27,7 +27,7 @@ This example assumes you've already [created a TCP route](/tcp/readme.md#configu
 
     ::::
     :::: tab Pomerium Desktop
-    ![An example connection to a MySQL service from Pomerium Desktop](./img/desktop/example-mysql-connection.png)
+    ![An example connection to a MySQL service from Pomerium Desktop](img/desktop/example-mysql-connection.png)
 
     :::tip Local Address
     The **Local Address** field is optional. Using it defines what port the tunnel listens on locally. If not specified, Pomerium Desktop will choose a random available port.

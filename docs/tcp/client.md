@@ -1,6 +1,7 @@
 ---
 title: Pomerium TCP Clients
 description: Learn how to create secured TCP connections to services behind Pomerium.
+sidebar_position: 1
 ---
 
 # Pomerium Desktop and CLI Clients
@@ -57,7 +58,7 @@ Download the latest release from [GitHub](https://github.com/pomerium/desktop-cl
 
 ### Add a Connection
 
-![A new connection to an SSH gateway](./img/desktop/demo-new-connection.png)
+![A new connection to an SSH gateway](examples/img/desktop/demo-new-connection.png)
 
 **Name**: A local name for the route.
 

@@ -1,9 +1,9 @@
 ---
 title: Troubleshooting
-sidebar_position: 13
+sidebar_position: 9
 description: >-
   Learn how to troubleshoot common configuration issues or work around any outstanding bugs.
-sidebarDepth: 0
+pagination_prev: null
 lang: en-US
 meta:
   - name: keywords
