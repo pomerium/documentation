@@ -18,5 +18,5 @@ When [`lb_policy`](#load-balancing-policy) is configured, you may further custom
 - [`ring_hash_lb_config`](https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/cluster/v3/cluster.proto#config-cluster-v3-cluster-ringhashlbconfig)
 - [`maglev_lb_config`](https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/cluster/v3/cluster.proto#envoy-v3-api-msg-config-cluster-v3-cluster-maglevlbconfig)
 
-See [Load Balancing](/docs/topics/load-balancing) for example [configurations](/docs/topics/load-balancing.md#load-balancing-method)
+See [Load Balancing](/docs/topics/load-balancing) for example [configurations](/docs/topics/load-balancing#load-balancing-method)
 

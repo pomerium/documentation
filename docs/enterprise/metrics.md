@@ -14,7 +14,7 @@ For production deployments, we suggest using a dedicated Prometheus instance.
 
 ## Prepare Pomerium
 
-1. In the Pomerium `config.yaml`, define the [`metrics_address`](/reference/readme.md#metrics-address) key to a network interface and/or port. For example:
+1. In the Pomerium `config.yaml`, define the [`metrics_address`](/reference/readme#metrics-address) key to a network interface and/or port. For example:
 
    ```yaml
    metrics_address: 192.0.2.31:9999

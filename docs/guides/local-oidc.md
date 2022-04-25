@@ -10,7 +10,7 @@ description: >-
 
 # Local OIDC Provider
 
-You can use the same below configs for other supported [identity providers](/identity-providers/readme.md).
+You can use the same below configs for other supported [identity providers](/identity-providers/readme).
 
 ## Configure
 ### Docker-compose

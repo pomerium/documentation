@@ -1,5 +1,6 @@
 ---
 id: shared-settings
+sidebar_position: 1
 title: Shared Settings
 keywords:
 - reference

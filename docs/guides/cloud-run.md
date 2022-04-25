@@ -114,4 +114,4 @@ You should see your identity header set:
 
 ![Hello](img/cloud-run/headers.png)
 
-See [getting user's identity](topics/getting-users-identity.md) for more details on using this header.
+See [getting user's identity](topics/getting-users-identity) for more details on using this header.

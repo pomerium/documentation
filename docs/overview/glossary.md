@@ -38,19 +38,19 @@ Often referred to as **JWTs**, a JSON web token is a [JSON]-formatted string pro
 "Namespaces" is an over-saturated term, having different meanings in different contexts. [Pomerium Enterprise][pom-namespace] uses Namespaces to provide separation of access and control to [routes]. Kubernetes uses their [namespaces][k8s-namespace] to isolate groups of resources within a cluster.
 
 ### Perimeter
-The term "Perimeter" in the context of Pomerium and general networking usually refers to your internal network, and common tools like firewalls used to restrict access to it. [Historically](/overview/background.md#history), most security models used the perimeter as the main layer of protection to a network system. The principles of [zero trust] assume that the perimeter can be (and likely is) compromised, and require security between each connection, including those between internal services.
+The term "Perimeter" in the context of Pomerium and general networking usually refers to your internal network, and common tools like firewalls used to restrict access to it. [Historically](/overview/background#history), most security models used the perimeter as the main layer of protection to a network system. The principles of [zero trust] assume that the perimeter can be (and likely is) compromised, and require security between each connection, including those between internal services.
 
 ### Policy
 Pomerium allows administrators to define authorization policies dictating what combination of users, groups, devices, etc, have access to protected services. Open-source Pomerium defines a unique policy to every [route], while Pomerium Enterprise can define reusable policies at the global and [namespace] level.
 
 ### Route
-Specific to Pomerium, a route is a defined path from outside the network (via a public domain) to an internal service. Routes can be defined in the [configuration](/reference/readme.md#routes) for open-source Pomerium or the [Pomerium Enterprise Console][pom-routes].
+Specific to Pomerium, a route is a defined path from outside the network (via a public domain) to an internal service. Routes can be defined in the [configuration](/reference/readme#routes) for open-source Pomerium or the [Pomerium Enterprise Console][pom-routes].
 
 ### Single Sign-On
 Single Sign-On (**SSO**) is the most frequently asked for requirement by enterprise organizations looking to adopt new SaaS applications. SSO enables authentication via an organization’s [identity provider], such as [Google Workspace](/identity-providers/google) or [Okta](/identity-providers/okta), as opposed to users or IT admins managing hundreds, if not thousands, of usernames and passwords.
 
 ### Stateless
-Another overloaded term in the tech space, we use the term stateless when talking about Pomerium's Proxy, Authenticate, and Authorize [components](/overview/architecture.md#component-level). They are stateless because they rely on the Databroker component to provide persistent data. This means that the other services can be destroyed, recreated, and scaled horizontally without any data loss.
+Another overloaded term in the tech space, we use the term stateless when talking about Pomerium's Proxy, Authenticate, and Authorize [components](/overview/architecture#component-level). They are stateless because they rely on the Databroker component to provide persistent data. This means that the other services can be destroyed, recreated, and scaled horizontally without any data loss.
 
 ## Networking
 
@@ -72,7 +72,7 @@ When discussing traffic between end users and services, we use "upstream" to ref
 ## Security
 
 ### Authentication
-Abbreviated as **AuthN**, this refers to the validation of a user's identity. It can also refer to validation of an user's [device](/topics/device-identity.md). Access to a protected resource is usually granted only after a client's authentication and [authorization] are validated. This is usually done by verifying the [JWT] provided by the client.
+Abbreviated as **AuthN**, this refers to the validation of a user's identity. It can also refer to validation of an user's [device](/topics/device-identity). Access to a protected resource is usually granted only after a client's authentication and [authorization] are validated. This is usually done by verifying the [JWT] provided by the client.
 
 ### Authorization
 Abbreviated as **AuthZ**, authorization is the process of validating a client's access to a protected resource. This is usually done after a client as been [authenticated], and is determined by comparing the contents of the clients [JWT] against the [policies] present for the [route].
@@ -81,19 +81,19 @@ Abbreviated as **AuthZ**, authorization is the process of validating a client's 
 "Least user privilege" is a core concept of the [zero trust] model. It's the practice of only providing a user as much access to protected systems as is required for them to operate in their job's function. This is a risk-mitigation strategy; since compromised user credentials can only be used to access services they are granted access to, users that do not need access to highly sensitive services should not have them.
 
 ### Mutual Authentication
-Mutual authentication is the security strategy of having both sides of a connection validate the identity of the other. This reduces the possibility of bad actors to impersonate valid communication endpoints. This topic is discussed in detail in [Mutual Authentication: A Component of Zero Trust](/topics/mutual-auth.md).
+Mutual authentication is the security strategy of having both sides of a connection validate the identity of the other. This reduces the possibility of bad actors to impersonate valid communication endpoints. This topic is discussed in detail in [Mutual Authentication: A Component of Zero Trust](/topics/mutual-auth).
 
 ### Secure Enclave
-A Secure Enclave is a sub-component or device physically bound to a specific device that can safely store sensitive data used to validate [device identity](/topics/device-identity.md).
+A Secure Enclave is a sub-component or device physically bound to a specific device that can safely store sensitive data used to validate [device identity](/topics/device-identity).
 
 ### Security Keys
 Security keys are often used to provide a physical resource to perform multi-factor authentication (**MFA**). Common examples include Yubico's Yubikey and Google's Titan Security Key.
 
 ### Trusted Execution Environment
-A **TEE** is a physical method of executing cryptographic functions using data that cannot be accessed by the rest of the physical device. This is a core part of [device identity](/topics/device-identity.md) validation.
+A **TEE** is a physical method of executing cryptographic functions using data that cannot be accessed by the rest of the physical device. This is a core part of [device identity](/topics/device-identity) validation.
 
 ### Zero Trust
-Zero trust is a philosophy and/or framework for security models that includes several facets. We go into detail in our [Background](/overview/background.md#zero-trust) page, but briefly: zero-trust assumes that any one method of security is fallible, and defines a set of security principles that work in concert to provide the highest security without over-burdening administrators, end users, or network devices with extraneous overhead.
+Zero trust is a philosophy and/or framework for security models that includes several facets. We go into detail in our [Background](/overview/background#zero-trust) page, but briefly: zero-trust assumes that any one method of security is fallible, and defines a set of security principles that work in concert to provide the highest security without over-burdening administrators, end users, or network devices with extraneous overhead.
 
 [authenticate]: #authentication
 [authenticated]: #authentication

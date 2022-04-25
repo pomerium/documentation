@@ -76,9 +76,9 @@ A user with the Viewer role can:
 In addition to the access provided by the Viewer role, a Manager can create, read, update, and delete routes, policies, and certificates in a Namespace (as well as its children). A Manager may also reference policies and certificates in the parent Namespace.
 
 :::caution
-Managers in any Namespace should note: while creating a route for an [upstream](/overview/glossary.md#upstream-downstream) path prevents additional routes to that path *in the same namespace*, Managers in other namespaces can create alternate routes to the same path.
+Managers in any Namespace should note: while creating a route for an [upstream](/overview/glossary#upstream-downstream) path prevents additional routes to that path *in the same namespace*, Managers in other namespaces can create alternate routes to the same path.
 
-If you need to ensure that access to a service is only accessible from a single route, consider implementing [Mutual Authentication](/topics/mutual-auth.md) between Pomerium and the upstream service. This can be achieved using one of several methods, including [mTLS](/guides/upstream-mtls) and [JWT verification](/guides/jwt-verification.md). You can also utilize a service mesh like [Istio](/guides/istio.html)
+If you need to ensure that access to a service is only accessible from a single route, consider implementing [Mutual Authentication](/topics/mutual-auth) between Pomerium and the upstream service. This can be achieved using one of several methods, including [mTLS](/guides/upstream-mtls) and [JWT verification](/guides/jwt-verification). You can also utilize a service mesh like [Istio](/guides/istio.html)
 :::
 
 #### Admin
@@ -94,7 +94,7 @@ Pomerium populates users and groups from your IdP. This data is cached to preven
 You may encounter a situation where you may want to add users that are not directly associated with your corporate identity provider service. For example, if you have a corporate GSuite account and want to add a contractor with a gmail account. In this case, there are two workarounds:
 
 - Create a group within your identity provider directly with the non-domain users in it. This group can be found and added to Namespaces and Policies.
-- Manually add the user's unique ID. Identify the ID from a user's Session Details page, or the [Sessions](/enterprise/reference/reports.md#sessions) page in Pomerium Enterprise.
+- Manually add the user's unique ID. Identify the ID from a user's Session Details page, or the [Sessions](/enterprise/reference/reports#sessions) page in Pomerium Enterprise.
 
    A user can see their session ID by navigating to the special `/.pomerium` URL endpoint from any Pomerium managed route. The unique ID is listed as "Sub" under User Details:
 
@@ -140,11 +140,11 @@ Pomerium provides a standardized interface to add access control, regardless if 
 
 ### Authentication
 
-Pomerium provides authentication via your existing identity provider (Pomerium supports all major [single sign-on](/identity-providers/readme.md) providers (Okta, G Suite, Azure, AD, Ping, Github and so on).
+Pomerium provides authentication via your existing identity provider (Pomerium supports all major [single sign-on](/identity-providers/readme) providers (Okta, G Suite, Azure, AD, Ping, Github and so on).
 
 ### Authorization
 
-Authorization policy can be expressed in a high-level, [declarative language](/enterprise/reference/manage.md#pomerium-policy-language) or [as code](/enterprise/reference/manage.md#rego) that can be used to enforce ABAC, RBAC, or any other governance policy controls. Pomerium can make holistic policy and authorization decisions using external data and request context factors such as user groups, roles, time, day, location and vulnerability status.
+Authorization policy can be expressed in a high-level, [declarative language](/enterprise/reference/manage#pomerium-policy-language) or [as code](/enterprise/reference/manage#rego) that can be used to enforce ABAC, RBAC, or any other governance policy controls. Pomerium can make holistic policy and authorization decisions using external data and request context factors such as user groups, roles, time, day, location and vulnerability status.
 
 Pomerium enables zero trust based access in which trust flows from identity, device-state, and context, not network location. Every device, user, and application's communication should be authenticated, authorized, and encrypted.
 

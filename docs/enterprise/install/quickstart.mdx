@@ -15,7 +15,7 @@ This document assumes:
 
 - A non-containerized environment, either your local computer or a virtual machine (**vm**). While Pomerium is designed to scale with your production environment, we'll leave containerization and infrastructure as code (**IaC**) out for now, to focus on learning how Pomerium Enterprise works.
    - `root` or `sudo` privileges on the host.
-- You already have the open-source Pomerium base installed. If not, follow [this doc](/install/binary.md) before you continue.
+- You already have the open-source Pomerium base installed. If not, follow [this doc](/install/binary) before you continue.
    - While an existing route is not required, we suggest implementing one test route to validate your identity provider (**IdP**) configuration.
 - Pomerium Enterprise requires a relational database. PostgreSQL 9+ is supported.
    - Securing the database connection with TLS may not be required, especially for a local installation, but is strongly recommended for production deployments. Therefor, this guide will assume a TLS-secured database connection.
@@ -136,13 +136,13 @@ Open your Pomerium config file, `/etc/pomerium/config.yaml`.
 
    The example value for `to:` assumes Pomerium and Pomerium Enterprise are running on the same test environment.
 
-1. If you haven't already, set `signing_key`. See the [reference page](/reference/readme.md#signing-key) for more information. The same signing key must be used in both Pomerium Core and Enterprise.
+1. If you haven't already, set `signing_key`. See the [reference page](/reference/readme#signing-key) for more information. The same signing key must be used in both Pomerium Core and Enterprise.
 
    ```yaml
    signing_key: "ZZZZZZZZZZZZZZ"
    ```
 
-1. Define the [databroker](/reference/readme.md#data-broker-service) storage type and connection string. The example below assumes a local Redis server:
+1. Define the [databroker](/reference/readme#data-broker-service) storage type and connection string. The example below assumes a local Redis server:
 
    ```yaml
    databroker_storage_type: redis
@@ -184,7 +184,7 @@ Once you have set permissions in the console UI, you should remove this configur
 
    For proof-of-concept installations in the same local system, this is not required.
 
-1. Set the [`signing_key`](/enterprise/reference/config.md#signing-key) to match Pomerium's.
+1. Set the [`signing_key`](/enterprise/reference/config#signing-key) to match Pomerium's.
 
 1. Set the `audience` key to match the `from` domain value from your [Pomerium configuration](#update-pomerium), excluding protocol:
 
@@ -192,7 +192,7 @@ Once you have set permissions in the console UI, you should remove this configur
    audience: console.localhost.pomerium.com
    ```
 
-   This sets the expected "audience" key in the [JWT header](/reference/readme.md#jwt-claim-headers) to match what's provided by open-source Pomerium as it proxies traffic to the Enterprise Console UI.
+   This sets the expected "audience" key in the [JWT header](/reference/readme#jwt-claim-headers) to match what's provided by open-source Pomerium as it proxies traffic to the Enterprise Console UI.
 
 Once complete, your `/etc/pomerium-console/config.yaml` file should look something like this:
 
@@ -216,7 +216,7 @@ audience: console.localhost.pomerium.com
 
 ## Next Steps
 
-Pomerium Enterprise assumes access to a [Prometheus](https://prometheus.io/) data store for metrics. See [Configure Metrics](/enterprise/metrics.md) to learn how to configure access.
+Pomerium Enterprise assumes access to a [Prometheus](https://prometheus.io/) data store for metrics. See [Configure Metrics](/enterprise/metrics) to learn how to configure access.
 
 ## Troubleshooting
 

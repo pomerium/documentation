@@ -16,7 +16,7 @@ This page covers the topic of running Pomerium in a production configuration.
 
 Before deploying Pomerium to Production, you should have already tested Pomerium in one or more demo environments and confirmed:
 
- - A working connection to your [IdP](/overview/glossary.md#identity-provider).
+ - A working connection to your [IdP](/overview/glossary#identity-provider).
  - Working test routes to your upstream services, including [JWT verification] where applicable.
  - For Pomerium Enterprise, a working demo of the Pomerium Enterprise Console, with confirmed access for your [Admins and Managers][rbac].
 
@@ -25,9 +25,9 @@ Before deploying Pomerium to Production, you should have already tested Pomerium
 
 Pomerium is designed to be run in two modes: All-In-One or Split Service. These modes are not mutually exclusive, meaning you can run one or multiple instances of Pomerium in all-in-one mode, and spin up additional instances for specific components as needed.
 
-Each instance of Pomerium runs in all-in-one mode unless specified to run as a specific component by the `services` key. See [All-In-One vs Split Service mode](/reference/readme.md#all-in-one-vs-split-service-mode) for more details.
+Each instance of Pomerium runs in all-in-one mode unless specified to run as a specific component by the `services` key. See [All-In-One vs Split Service mode](/reference/readme#all-in-one-vs-split-service-mode) for more details.
 
-It's important to note that any production deployment with more than one instance of Pomerium (in any combination of modes) should be configured to use Redis as the [`databroker_storage_type`](/reference/readme.md#data-broker-storage-type). See [Data Storage - Backends](/topics/data-storage.md#backends) for more details.
+It's important to note that any production deployment with more than one instance of Pomerium (in any combination of modes) should be configured to use Redis as the [`databroker_storage_type`](/reference/readme#data-broker-storage-type). See [Data Storage - Backends](/topics/data-storage#backends) for more details.
 
 ### All-in-One
 
@@ -37,20 +37,20 @@ It may be desirable to run in "all-in-one" mode in smaller deployments or while 
 
 In larger footprints, it is recommended to run Pomerium as a collection of discrete service clusters. This limits blast radius in the event of vulnerabilities and allows for per-service [scaling](#scaling) and monitoring.
 
-Please also see [Architecture](/overview/architecture.md) for information on component interactions.
+Please also see [Architecture](/overview/architecture) for information on component interactions.
 
 ## Scaling
 
 In split service mode, you have the opportunity to scale the components of Pomerium independently.
 
-All of Pomerium's components are designed to be [stateless](/overview/glossary.md#stateless), and may all be scaled horizontally or vertically. In general, horizontal scaling is recommended. Vertical scaling will lead to diminished returns after ~8 vCPUs.
+All of Pomerium's components are designed to be [stateless](/overview/glossary#stateless), and may all be scaled horizontally or vertically. In general, horizontal scaling is recommended. Vertical scaling will lead to diminished returns after ~8 vCPUs.
 
-The Databroker service, which is responsible for session and identity related data, must be [configured for external persistence](/topics/data-storage.md) to be fully stateless.
+The Databroker service, which is responsible for session and identity related data, must be [configured for external persistence](/topics/data-storage) to be fully stateless.
 
 Pomerium's individual components can be divided into two categories; the data plane and control plane. Regardless of which mode you run Pomerium in, we strongly recommend multiple instances of each service for fault tolerance.
 
 :::tip
-Our [Helm deployment](/k8s/helm.md) supports [Horizontal Pod Autoscaling](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/).
+Our [Helm deployment](/k8s/helm) supports [Horizontal Pod Autoscaling](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/).
 :::
 
 ### Data Plane
@@ -94,7 +94,7 @@ The eBook Redis in Action has a chapter on [Scaling Redis](https://redis.com/ebo
 In many deployments, 2 replicas of Databroker is enough to provide resilient service.
 
 :::caution
-In a production configuration, Databroker CPU/IO utilization also translates to IO load on the [underlying storage system](/topics/data-storage.md). Ensure it is scaled accordingly!
+In a production configuration, Databroker CPU/IO utilization also translates to IO load on the [underlying storage system](/topics/data-storage). Ensure it is scaled accordingly!
 :::
 
 ## Load Balancing
@@ -105,7 +105,7 @@ In any production deployment, running multiple replicas of each Pomerium service
 
 You should deploy Layer 4 load balancing between end users and Pomerium Proxy services to provide high availability and horizontal scaling. Do not use L7 load balancers, since the Proxy service handles redirects, sticky sessions, etc.
 
-Note that deployments on Kubernetes can utilize The [Pomerium Ingress Controller](/k8s/ingress.md) to simplify configuration.
+Note that deployments on Kubernetes can utilize The [Pomerium Ingress Controller](/k8s/ingress) to simplify configuration.
 
 ### Authenticate
 
@@ -118,7 +118,7 @@ You do **not** need to provide a load balancer in front of Authorize and Databro
 
 By default, Pomerium gRPC clients will automatically connect to all IPs returned by a DNS query for the name of an upstream service. They will then regularly re-query DNS for changes to the Authorize or Databroker service cluster. Health checks and failover are automatic.
 
-You can also define multiple domain names for Databroker or Authorize services with the [`databroker_service_url`](/reference/readme.md#data-broker-service-url) and [`authorize_service_urls`](/reference/readme.md#authorize-service-url) shared config keys.
+You can also define multiple domain names for Databroker or Authorize services with the [`databroker_service_url`](/reference/readme#data-broker-service-url) and [`authorize_service_urls`](/reference/readme#authorize-service-url) shared config keys.
 
 ## High Availability
 
@@ -131,7 +131,7 @@ Regardless of the service mode, it is recommended you run at least 2 instances o
 Ensure that you have enough spare capacity to handle the scope of your failure domains.
 
 :::caution
-Multiple replicas of Databroker or all-in-one service are only supported with [external storage](/topics/data-storage.md) configured
+Multiple replicas of Databroker or all-in-one service are only supported with [external storage](/topics/data-storage) configured
 :::
 
 ## SSL/TLS Certificates

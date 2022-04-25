@@ -11,7 +11,7 @@ meta:
 
 ## Routes
 
-A [Route](/enterprise/concepts.md#routes) defines how to access a service running behind Pomerium. This includes authentication (both for Pomerium and passed through to the service), rewrites, header management, load balancing, etc.
+A [Route](/enterprise/concepts#routes) defines how to access a service running behind Pomerium. This includes authentication (both for Pomerium and passed through to the service), rewrites, header management, load balancing, etc.
 
 When first installing Pomerium Enterprise, users may want to import existing routes from the open-source Pomerium core. The **Import Routes** button accepts the open-source `config.yaml` file and imports routes from it to Pomerium Enterprise.
 
@@ -62,7 +62,7 @@ Once a Route is created, the Metric Name field will populate. You can use this n
   - https://b.example.com
 ```
 
-A load balancing weight may be associated with a particular upstream by appending `,[weight]` to the URL.  The exact behavior depends on your [`lb_policy`](/reference/readme.md#load-balancing-policy) setting.  See [Load Balancing](/topics/load-balancing) for example [configurations](/topics/load-balancing.md#load-balancing-weight).
+A load balancing weight may be associated with a particular upstream by appending `,[weight]` to the URL.  The exact behavior depends on your [`lb_policy`](/reference/readme#load-balancing-policy) setting.  See [Load Balancing](/topics/load-balancing) for example [configurations](/topics/load-balancing#load-balancing-weight).
 
 Must be `tcp` if `from` is `tcp+https`.
 
@@ -123,7 +123,7 @@ Add or remove Policies to be applied to the Route. Note that Policies enforced i
 
 Enable sending a signed [Authorization Header](https://cloud.google.com/run/docs/authenticating/service-to-service) to upstream GCP services.
 
-Requires setting [Google Cloud Serverless Authentication Service Account](/reference/readme.md#google-cloud-serverless-authentication-service-account) or running Pomerium in an environment with a GCP service account present in default locations.
+Requires setting [Google Cloud Serverless Authentication Service Account](/reference/readme#google-cloud-serverless-authentication-service-account) or running Pomerium in an environment with a GCP service account present in default locations.
 
 ### Matchers
 
@@ -176,7 +176,7 @@ If set, enables proxying of websocket connections.
 
 :::warning
 
-**Use with caution:** websockets are long-lived connections, so [global timeouts](/reference/readme.md#global-timeouts) are not enforced (though the policy-specific `timeout` is enforced). Allowing websocket connections to the proxy could result in abuse via [DOS attacks](https://www.cloudflare.com/learning/ddos/ddos-attack-tools/slowloris/).
+**Use with caution:** websockets are long-lived connections, so [global timeouts](/reference/readme#global-timeouts) are not enforced (though the policy-specific `timeout` is enforced). Allowing websocket connections to the proxy could result in abuse via [DOS attacks](https://www.cloudflare.com/learning/ddos/ddos-attack-tools/slowloris/).
 
 :::
 
@@ -294,11 +294,11 @@ See [Envoy documentation](https://www.envoyproxy.io/docs/envoy/latest/api-v3/con
 - [`RANDOM`](https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/upstream/load_balancing/load_balancers#random)
 - [`MAGLEV`](https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/upstream/load_balancing/load_balancers#maglev) and may be further configured using [`maglev_lb_config`](https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/cluster/v3/cluster.proto#envoy-v3-api-msg-config-cluster-v3-cluster-maglevlbconfig) option
 
-Some policy types support additional [configuration](/reference/readme.md#load-balancing-policy-config).
+Some policy types support additional [configuration](/reference/readme#load-balancing-policy-config).
 
 ## Policies
 
-A [Policy](/enterprise/concepts.md#policies) defines what permissions a set of users or groups has. Policies are applied to Namespaces or Routes to associate the set of permissions with a service or set of service, completing the authentication model.
+A [Policy](/enterprise/concepts#policies) defines what permissions a set of users or groups has. Policies are applied to Namespaces or Routes to associate the set of permissions with a service or set of service, completing the authentication model.
 
 Policies can be constructed three ways:
 
@@ -414,7 +414,7 @@ Introduced in v0.16.0, the **Manage Devices** page lets administrators manage us
 ### Manage Devices
 
 From this page, administrators can manage new and existing device enrollments.
-Device enrollment let's you create [policies](/topics/ppl.md#device-matcher) that use [device identity](/topics/device-identity.md).
+Device enrollment let's you create [policies](/topics/ppl#device-matcher) that use [device identity](/topics/device-identity).
 - Users can [self-enroll](/guides/enroll-device) devices, which must then be approved in the **Devices List** for policies requiring approved devices.
 - Administrators can use the **New Enrollment** button to create a link for the user to enroll a device as pre-approved. See our [Pre-Approved Device Enrollment](/guides/admin-enroll-device) guide for more information.
 
@@ -445,7 +445,7 @@ New Enrollment URLs are only valid for the specified user.
 
 #### Enrollment Type
 
-Specify if the user can enroll any device identity, or restrict it to a [secure enclave](/topics/device-identity.md#secure-enclaves).
+Specify if the user can enroll any device identity, or restrict it to a [secure enclave](/topics/device-identity#secure-enclaves).
 
 [route-concept]: /enterprise/concepts.md#routes
 [route-reference]: /enterprise/reference/manage.md#routes

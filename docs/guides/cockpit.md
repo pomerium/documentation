@@ -16,13 +16,13 @@ description: >-
 
 ## Before You Begin
 
-This guide assumes you already have Pomerium installed and connected to your [IdP](/overview/glossary.md#identity-provider). If not, follow the instructions in the following articles before continuing:
+This guide assumes you already have Pomerium installed and connected to your [IdP](/overview/glossary#identity-provider). If not, follow the instructions in the following articles before continuing:
 
 - Install Pomerium
-   - [Binaries](/install/binary.md) if installing Pomerium as a system-level service.
+   - [Binaries](/install/binary) if installing Pomerium as a system-level service.
    - [Pomerium using Docker](/install/quickstart) if installing Pomerium as a Docker container
-   - [Install Pomerium using Helm](/k8s/helm.md) for Kubernetes environments.
-- Connect to an IdP - See [Identity Provider Configuration](/identity-providers/readme.md) and find the article for your identity provider.
+   - [Install Pomerium using Helm](/k8s/helm) for Kubernetes environments.
+- Connect to an IdP - See [Identity Provider Configuration](/identity-providers/readme) and find the article for your identity provider.
 
 
 ## Install & Configure Cockpit
@@ -47,7 +47,7 @@ This guide assumes you already have Pomerium installed and connected to your [Id
 
 ## Pomerium Route
 
-1. A Pomerium route for Cockpit can follow the basic [route examples](/reference/readme.md#routes), but requires websockets to load the dashboard after initial login:
+1. A Pomerium route for Cockpit can follow the basic [route examples](/reference/readme#routes), but requires websockets to load the dashboard after initial login:
 
     ```yaml
       - from: https://cockpit.localhost.pomerium.io

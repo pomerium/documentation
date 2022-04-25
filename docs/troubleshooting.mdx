@@ -25,7 +25,7 @@ By default, Pomerium sends the [`Strict-Transport-Security`](https://en.wikipedi
 
 When you visit an endpoint while Pomerium is using an untrusted certificate (like the self-signed bootstrap certificate or a Let's Encrypt staging certificate), that certificate may be pinned in your browser. Once Pomerium is switched to a trusted production certificate, the untrusted cert must reset in the browser.
 
-While developing your Pomerium environment, consider adjusting the [`SET_RESPONSE_HEADERS`](/reference/readme.md#set-response-headers) key to remove `Strict-Transport-Security` or reduce the `max-age` value until your production certificates are in place.
+While developing your Pomerium environment, consider adjusting the [`SET_RESPONSE_HEADERS`](/reference/readme#set-response-headers) key to remove `Strict-Transport-Security` or reduce the `max-age` value until your production certificates are in place.
 
 See [this article](https://www.ssl2buy.com/wiki/how-to-clear-hsts-settings-on-chrome-firefox-and-ie-browsers) for more information on clearing HSTS for specific endpoints across common browsers.
 
@@ -102,7 +102,7 @@ Events:
 
 ### Shared Secret Mismatch
 
-Pomerium's independent services communicate securely using a [shared secret](/reference/readme.md#shared-secret). When services or the databroker have mismatched secrets, Pomerium will fail.
+Pomerium's independent services communicate securely using a [shared secret](/reference/readme#shared-secret). When services or the databroker have mismatched secrets, Pomerium will fail.
 
 Pomerium Core will log a shared secret mismatch with:
 
@@ -136,11 +136,11 @@ And Pomerium Enterprise will log the error with:
 }
 ```
 
-Update the [shared secret](/reference/readme.md#shared-secret) across all Pomerium services to match the one set for the Databroker.
+Update the [shared secret](/reference/readme#shared-secret) across all Pomerium services to match the one set for the Databroker.
 
 #### Redis Secret Mismatch
 
-When using Redis, the [shared secret](/reference/readme.md#shared-secret) is used to encrypt data in Redis itself. If you change the configured shared secret, data from Redis can no longer be decrypted. This results in errant behavior, including redirect loops when a user session cannot be retrieved from the databroker.
+When using Redis, the [shared secret](/reference/readme#shared-secret) is used to encrypt data in Redis itself. If you change the configured shared secret, data from Redis can no longer be decrypted. This results in errant behavior, including redirect loops when a user session cannot be retrieved from the databroker.
 
 ```json
 {
@@ -189,7 +189,7 @@ This error means that the proxy is rejecting the Authorize service's supplied ce
 
 Ensure that the Proxy service knows about and trusts the certificate authority that signed the Authorize service's certificate.
 
-- Add the certificate authority directly into Pomerium using the [certificate authority](/reference/readme.md#certificate-authority) config setting.
+- Add the certificate authority directly into Pomerium using the [certificate authority](/reference/readme#certificate-authority) config setting.
 - Add the certificate authority to the system's underlying trust store.
 - Replace your system / docker image certificate bundle.
 

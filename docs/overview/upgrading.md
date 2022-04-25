@@ -14,7 +14,7 @@ sidebar_position: 4
 
 This release of Pomerium adds the ability to bind a route to unique OIDC credentials.  This allows Identity Provider administrators to view Pomerium protected applications individually rather than as a single shared application.
 
-See [idp_client_id](reference/readme.md#identity-provider-client-id-per-route) and [idp_client_secret](/reference/readme.md#identity-provider-client-secret-per-route) for configuration details.
+See [idp_client_id](reference/readme#identity-provider-client-id-per-route) and [idp_client_secret](/reference/readme#identity-provider-client-secret-per-route) for configuration details.
 
 ### Updated User Info Page
 
@@ -32,11 +32,11 @@ Pomerium policy now supports group members from outside of your organization.
 
 This release of Pomerium adds the ability to set policy based on system registration via [WebAuthN](https://en.wikipedia.org/wiki/WebAuthn).
 
-See [Device Identity](/topics/device-identity.md) for more details.
+See [Device Identity](/topics/device-identity) for more details.
 
 ### HTTP PPL Criteria
 
-`http_path` and `http_method` are now supported for matching HTTP requests in policies. See [Pomerium Policy Language](/topics/ppl.md#criteria) for more details.
+`http_path` and `http_method` are now supported for matching HTTP requests in policies. See [Pomerium Policy Language](/topics/ppl#criteria) for more details.
 
 ## Breaking
 
@@ -46,14 +46,14 @@ When selecting a TLS certificate for a listener, Pomerium attempts to locate one
 
 Previously, when no match was found, Pomerium would select the "first" certificate in the list. However, the definition of "first" might change based on runtime configuration, so the certificate selection was non-deterministic.
 
-Starting in v0.16, Pomerium will instead generate a self-signed certificate if it cannot locate an appropriate certificate from the provided configuration or system key/trust store. If you discover that you are receiving a self-signed certificate rather than a certificate from [`certificate`/`certificates`/`certificate_file`](/reference/readme.md#certificates) or the trust store, you have a mismatch between your service URL and the names covered in your certificates.
+Starting in v0.16, Pomerium will instead generate a self-signed certificate if it cannot locate an appropriate certificate from the provided configuration or system key/trust store. If you discover that you are receiving a self-signed certificate rather than a certificate from [`certificate`/`certificates`/`certificate_file`](/reference/readme#certificates) or the trust store, you have a mismatch between your service URL and the names covered in your certificates.
 
 ### OIDC flow no longer sets default uri params
 
 Previously, Pomerium would default to setting the uri param `access_type` to `offline` for all OpenID Connect based identity providers. However, using uri params to ensure offline access (e.g. `refresh_tokens` used to keep user's sessions alive) [is unique to Google](https://developers.google.com/identity/protocols/oauth2/web-server#offline). Those query params will now only be set for Google. Other OIDC based IdP's should continue to work using [OIDC's](https://openid.net/specs/openid-connect-core-1_0.html#OfflineAccess) `offline_access` scope.
 
 ### Removed options
-The deprecated `headers` option has been removed. Use [`set_response_headers`](reference/readme.md#set-response-headers) instead.
+The deprecated `headers` option has been removed. Use [`set_response_headers`](reference/readme#set-response-headers) instead.
 
 The `signing_key_algorithm` option has been removed and will now be inferred from `signing_key`.
 
@@ -128,11 +128,11 @@ To update your policies for v0.14, please remove any identity provider prefix.  
 
 ### Upstream load balancing
 
-With the v0.13 release, routes may contain [multiple `to` URLs](reference/readme.md#to), and Pomerium will load balance between the endpoints. This allows Pomerium to fill the role of an edge proxy without the need for additional HTTP load balancers.
+With the v0.13 release, routes may contain [multiple `to` URLs](reference/readme#to), and Pomerium will load balance between the endpoints. This allows Pomerium to fill the role of an edge proxy without the need for additional HTTP load balancers.
 
-- Active [health checks](reference/readme.md#health-checks) and passive [outlier detection](/reference/readme.md#outlier-detection)
-- Configurable [load balancing policies](reference/readme.md#load-balancing-policy)
-- Configurable [load balancing weight](reference/readme.md#to)
+- Active [health checks](reference/readme#health-checks) and passive [outlier detection](/reference/readme#outlier-detection)
+- Configurable [load balancing policies](reference/readme#load-balancing-policy)
+- Configurable [load balancing weight](reference/readme#to)
 
 See [Load Balancing](/topics/load-balancing) for more information on using this feature set.
 
@@ -142,7 +142,7 @@ With the v0.13 release, all TLS files referenced from Pomerium's configuration a
 
 ### Proxy Protocol support
 
-The Pomerium HTTP listener now [supports](reference/readme.md#use-proxy-protocol) HAPROXY's [proxy protocol](https://www.haproxy.org/download/1.9/doc/proxy-protocol.txt) to update `X-Forwarded-For` accurately when behind another proxy service.
+The Pomerium HTTP listener now [supports](reference/readme#use-proxy-protocol) HAPROXY's [proxy protocol](https://www.haproxy.org/download/1.9/doc/proxy-protocol.txt) to update `X-Forwarded-For` accurately when behind another proxy service.
 
 ## Breaking
 
@@ -173,7 +173,7 @@ Pomerium can now be used for non-HTTP services.  See [documentation](/tcp/readme
 
 ### Datadog Tracing
 
-Datadog has been added as a natively supported [tracing backend](reference/readme.md#datadog)
+Datadog has been added as a natively supported [tracing backend](reference/readme#datadog)
 
 # Since 0.10.0
 
@@ -209,7 +209,7 @@ If no [Identity Provider Service Account] is supplied, policies using groups (e.
 
 ### Cache service builds stateful context
 
-With the v0.10 release, Pomerium now asynchronously fetches associated authorization context (e.g. identity provider directory context, groups, user-data, session data, etc) in the `cache` service. In previous versions, Pomerium used session cookies to associated identity state which authorization policy was evaluated against. While using session tokens had the advantage of making Pomerium a relatively stateless application, that approach has many shortcomings which is more extensively covered in the [data storage docs](/topics/data-storage.md).
+With the v0.10 release, Pomerium now asynchronously fetches associated authorization context (e.g. identity provider directory context, groups, user-data, session data, etc) in the `cache` service. In previous versions, Pomerium used session cookies to associated identity state which authorization policy was evaluated against. While using session tokens had the advantage of making Pomerium a relatively stateless application, that approach has many shortcomings which is more extensively covered in the [data storage docs](/topics/data-storage).
 
 There are two [storage backend types] available: `memory` or `redis`. You can see the existing [storage backend configuration settings in the docs][cache service docs].
 
@@ -335,7 +335,7 @@ policy:
 
 :::warning
 
-This changed was partially reverted in v0.7.2\. Session details like `user`, `email`, and `groups` can still be explicitly extracted by setting the [jwt_claims_header](reference/readme.md#jwt-claim-headers) configuration option.
+This changed was partially reverted in v0.7.2\. Session details like `user`, `email`, and `groups` can still be explicitly extracted by setting the [jwt_claims_header](reference/readme#jwt-claim-headers) configuration option.
 
 :::
 
@@ -395,7 +395,7 @@ Please see the updated examples, and [cache service docs] as a reference and for
 
 - Okta no longer uses tokens to retrieve group membership. [Group membership](https://developer.okta.com/docs/reference/api/groups/) is now fetched using Okta's API.
 - Okta's group membership is now determined by the globally unique and immutable ID field. Please update your policies to use group `ID` instead of group name.
-- Okta now requires an additional set of credentials to be used to query for group membership set as a [service account](/reference/readme.md#identity-provider-service-account).
+- Okta now requires an additional set of credentials to be used to query for group membership set as a [service account](/reference/readme#identity-provider-service-account).
 
 ### OneLogin
 
@@ -407,7 +407,7 @@ Force refresh has been removed from the dashboard. Logging out and back in again
 
 ### Programmatic Access API changed
 
-Previous programmatic authentication endpoints (`/api/v1/token`) has been removed and has been replaced by a per-route, oauth2 based auth flow. Please see updated [programmatic documentation](/topics/programmatic-access.md) how to use the new programmatic access api.
+Previous programmatic authentication endpoints (`/api/v1/token`) has been removed and has been replaced by a per-route, oauth2 based auth flow. Please see updated [programmatic documentation](/topics/programmatic-access) how to use the new programmatic access api.
 
 ### Forward-auth route change
 

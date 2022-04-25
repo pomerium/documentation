@@ -15,7 +15,7 @@ Pomerium provides single-sign-on authentication and user identity details by int
 The steps for integrating Pomerium with an IdP are specific to each provider, but they generally share the same base requirements:
 
 - A **[Redirect URL](https://www.oauth.com/oauth2-servers/redirect-uris/)** pointing back to Pomerium. For example, `https://${authenticate_service_url}/oauth2/callback`.
-  - The redirect URL will always be your [Authenticate Service URL](/reference/readme.md#authenticate-service-url), plus `/oauth2/callback`.
+  - The redirect URL will always be your [Authenticate Service URL](/reference/readme#authenticate-service-url), plus `/oauth2/callback`.
 - A **[Client ID]** and **[Client Secret]**.
 - An optional **[Service Account]** for additional IdP Data. This enables Pomerium administrators to write policies around groups.
    - Depending on the IdP, a service account may have its own client id and secret, or require an API token. Pomerium handles this by accepting values for `idp_service_account` as a base64-encoded json object with the correct key/value pairs for each IdP supported.

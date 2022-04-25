@@ -76,7 +76,7 @@ This setup assumes an existing certificate solution using cert-manager, as descr
          pass_identity_headers: true
    ```
 
-1. If you haven't already, set `generateSigningKey` as false, and set a static `signingKey` value to be shared with the Enterprise Console. See [Reference: Signing Key](/reference/readme.md#signing-key) for information on generating a key:
+1. If you haven't already, set `generateSigningKey` as false, and set a static `signingKey` value to be shared with the Enterprise Console. See [Reference: Signing Key](/reference/readme#signing-key) for information on generating a key:
 
    ```yaml
    config:

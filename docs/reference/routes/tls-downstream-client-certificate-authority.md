@@ -15,5 +15,5 @@ keywords:
 If specified, downstream clients (eg a user's browser) will be required to provide a valid client TLS
 certificate. This overrides the global `client_ca` option for this route.
 
-See [Client-Side mTLS With Pomerium](/guides/mtls.md) for more information.
+See [Client-Side mTLS With Pomerium](/guides/mtls) for more information.
 

@@ -66,7 +66,7 @@ The helm chart exposes a subset of these flags for appropriate customization.
 
 ### Defining Routes
 
-If you've tested Pomerium using the [all-in-one binary](/install/binary), you're probably familiar with configuring routes in Pomerium's [`config.yaml`](/install/binary.md#configuration-file). When using the Pomerium Ingress Controller, each route is defined as an Ingress resource in the Kubernetes API.
+If you've tested Pomerium using the [all-in-one binary](/install/binary), you're probably familiar with configuring routes in Pomerium's [`config.yaml`](/install/binary#configuration-file). When using the Pomerium Ingress Controller, each route is defined as an Ingress resource in the Kubernetes API.
 
 The Ingress Controller will monitor Ingress resources in the cluster, creating a Pomerium route definition for each one. Policy and other configuration options for the route are set by using annotations starting with `ingress.pomerium.io/`.
 
@@ -250,8 +250,8 @@ ingress.pomerium.io/secure_upstream: true
 
 Additional TLS certificates may be supplied by creating a Kubernetes secret(s) in the same namespaces as the `Ingress` resource. Please note that we do not support file paths or embedded secret references.
 
-- [`ingress.pomerium.io/tls_client_secret`](https://pomerium.io/reference/readme.md#tls-client-certificate)
-- [`ingress.pomerium.io/tls_custom_ca_secret`](https://pomerium.io/reference/readme.md#tls-custom-certificate-authority)
+- [`ingress.pomerium.io/tls_client_secret`](/reference/readme#tls-client-certificate)
+- [`ingress.pomerium.io/tls_custom_ca_secret`](/reference/readme#tls-custom-certificate-authority)
 - [`ingress.pomerium.io/tls_downstream_client_ca_secret`](#supported-annotations)
 
 Please note that the referenced `tls_client_secret` must be a [TLS Kubernetes secret](https://kubernetes.io/docs/concepts/configuration/secret/#tls-secrets). `tls_custom_ca_secret` and `tls_downstream_client_ca_secret` must contain `ca.crt` containing a .PEM encoded (base64-encoded DER format) public certificate.

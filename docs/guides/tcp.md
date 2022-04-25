@@ -25,7 +25,7 @@ Important notes:
 
 ## How it works
 
-* Create a standard Pomerium configuration for your [identity provider (IdP)](/identity-providers/readme.md)
+* Create a standard Pomerium configuration for your [identity provider (IdP)](/identity-providers/readme)
 * `pomerium-cli` runs on your workstation, listening on loopback for TCP connections
 * When an inbound connection is made, `pomerium-cli` proxies the connection through `pomerium`, authenticating the user if needed
 * Pomerium authorizes the connection and forwards it to the upstream service

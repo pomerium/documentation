@@ -29,7 +29,7 @@ Pomerium can hot-reload route configuration details, authorization policy, certi
 
 When running Pomerium as a single system service or container, all the options on this page can be set in a single `config.yaml` file, or passed to the single instance as environment variables.
 
-When running Pomerium in a distributed environment where there are multiple processes, each handling separate [components](/overview/architecture.md#component-level), all services can still share a single config file or set of environment variables.
+When running Pomerium in a distributed environment where there are multiple processes, each handling separate [components](/overview/architecture#component-level), all services can still share a single config file or set of environment variables.
 
 Alternately, you can create individual config files or sets of environment variables for each service. When doing so, each file or set must have matching [shared settings](#shared-settings), as well as settings relevant to that [service mode](#service-mode). The list below is sorted to better differentiate which config options correlate to which service mode.
 
@@ -363,7 +363,7 @@ Forward authentication creates an endpoint that can be used with third-party pro
 
 #### Request flow
 
-![pomerium forward auth request flow](./img/auth-flow-diagram.svg)
+![pomerium forward auth request flow](shared-settings/img/auth-flow-diagram.svg)
 
 #### Examples
 
@@ -725,7 +725,7 @@ tracing_zipkin_endpoint | Url to the Zipkin HTTP endpoint. | ✅
 
 #### Example
 
-![jaeger example trace](./img/jaeger.png)
+![jaeger example trace](shared-settings/img/jaeger.png)
 
 
 ### Use Proxy Protocol
@@ -973,7 +973,7 @@ By default, conservative [secure HTTP headers](https://www.owasp.org/index.php/O
   - `includeSubDomains` applies these rules to subdomains, which is how individual routes are defined.
   - `preload` instructs the browser to preload the certificate from an HSTS preload service if available. This means that the certificate can be loaded from an already-trusted secure connection, and the user never needs to connect to your domain without TLS.
 
-![pomerium security headers](./img/security-headers.png)
+![pomerium security headers](proxy-service/img/security-headers.png)
 
 See [MDN Web Docs - Strict-Transport-Security](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security) for more information.
 
@@ -1181,7 +1181,7 @@ If set, the TLS connection to the storage backend will not be verified.
 
 
 :::caution
-The `policy` field as a top-level configuration key has been replaced with [`routes`](/reference/readme.md#routes). Moving forward, define policies within each defined route.
+The `policy` field as a top-level configuration key has been replaced with [`routes`](/reference/readme#routes). Moving forward, define policies within each defined route.
 
 Existing policy definitions will currently behave as expected, but are deprecated and will be removed in a future version of Pomerium.
 :::
@@ -1205,7 +1205,7 @@ policy:
 
 In this example, an incoming request with a path prefix of `/admin` would be handled by the first route (which is restricted to superusers). All other requests for `from.example.com` would be handled by the second route (which is open to the public).
 
-A list of configuration variables specific to `policy` follows Note that this also shares all configuration variables listed under [routes](/reference/readme.md#routes), excluding `policy` and its child variables.
+A list of configuration variables specific to `policy` follows Note that this also shares all configuration variables listed under [routes](/reference/readme#routes), excluding `policy` and its child variables.
 
 
 ### Allowed Domains
@@ -1278,7 +1278,7 @@ Allowed users is a collection of whitelisted users to authorize for a given rout
 
 A route contains specific access and control definitions for a back-end service. Each route is a list item under the `routes` key.
 
-Each route defines at minimum a `from` and `to` field, and a `policy` key defining authorization logic. Policies are defined using [Pomerium Policy Language](/enterprise/reference/manage.md#pomerium-policy-language) (**PPL**). Additional options are listed below.
+Each route defines at minimum a `from` and `to` field, and a `policy` key defining authorization logic. Policies are defined using [Pomerium Policy Language](/enterprise/reference/manage#pomerium-policy-language) (**PPL**). Additional options are listed below.
 
 <<< @/examples/config/route.example.yaml
 
@@ -1357,7 +1357,7 @@ Only one of `http_health_check`, `tcp_health_check`, or `grpc_health_check` may 
 - [HTTP](https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/core/v3/health_check.proto#envoy-v3-api-msg-config-core-v3-healthcheck-httphealthcheck)
 - [GRPC](https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/core/v3/health_check.proto#envoy-v3-api-msg-config-core-v3-healthcheck-grpchealthcheck)
 
-See [Load Balancing](/topics/load-balancing) for example [configurations](/topics/load-balancing.md#active-health-checks).
+See [Load Balancing](/topics/load-balancing) for example [configurations](/topics/load-balancing#active-health-checks).
 
 
 ### Host Rewrite
@@ -1454,7 +1454,7 @@ When [`lb_policy`](#load-balancing-policy) is configured, you may further custom
 - [`ring_hash_lb_config`](https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/cluster/v3/cluster.proto#config-cluster-v3-cluster-ringhashlbconfig)
 - [`maglev_lb_config`](https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/cluster/v3/cluster.proto#envoy-v3-api-msg-config-cluster-v3-cluster-maglevlbconfig)
 
-See [Load Balancing](/topics/load-balancing) for example [configurations](/topics/load-balancing.md#load-balancing-method)
+See [Load Balancing](/topics/load-balancing) for example [configurations](/topics/load-balancing#load-balancing-method)
 
 
 ### Outlier Detection
@@ -1761,7 +1761,7 @@ TLS Downstream Server Name overrides the hostname specified in the `from` field.
   - https://b.example.com
 ```
 
-A load balancing weight may be associated with a particular upstream by appending `,[weight]` to the URL.  The exact behavior depends on your [`lb_policy`](#load-balancing-policy) setting.  See [Load Balancing](/topics/load-balancing) for example [configurations](/topics/load-balancing.md#load-balancing-weight).
+A load balancing weight may be associated with a particular upstream by appending `,[weight]` to the URL.  The exact behavior depends on your [`lb_policy`](#load-balancing-policy) setting.  See [Load Balancing](/topics/load-balancing) for example [configurations](/topics/load-balancing#load-balancing-weight).
 
 Must be `tcp` if `from` is `tcp+https`.
 

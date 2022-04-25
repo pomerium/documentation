@@ -23,7 +23,7 @@ In this guide, we'll demonstrate how to configure Pomerium and Istio in a Kubern
 
 ## How it Works
 
-In our [Mutual Authentication section on Sidecars](/topics/mutual-auth.md#mutual-authentication-with-a-sidecar), we detail how a single service can offload authN and authz to a sidecar service. In a service mesh, each service in an internal network is deployed with a sidecar, and the controller configures them to provide mutual authentication with each other:
+In our [Mutual Authentication section on Sidecars](/topics/mutual-auth#mutual-authentication-with-a-sidecar), we detail how a single service can offload authN and authz to a sidecar service. In a service mesh, each service in an internal network is deployed with a sidecar, and the controller configures them to provide mutual authentication with each other:
 
 ```mermaid
 flowchart LR
@@ -57,7 +57,7 @@ end
 :::tip
 This is a simplified model that doesn't describe the additional traffic for authorization and authentication.
 
-See the [Legend](/topics/mutual-auth.md#legend) on our Mutual Authentication page for details on our graphing style.
+See the [Legend](/topics/mutual-auth#legend) on our Mutual Authentication page for details on our graphing style.
 :::
 
 ## Configure Pomerium for Istio
@@ -108,7 +108,7 @@ Follow [Install Pomerium using Helm] to set up the Pomerium Ingress Controller a
         headless: false # send traffic to the Pomerium Databroker through the Istio service rather than to individual pods
     ```
 
-1. When [defining a test service](/k8s/helm.md#define-a-test-service), you should now see two containers for the service pod:
+1. When [defining a test service](/k8s/helm#define-a-test-service), you should now see two containers for the service pod:
 
     ```bash
     kubectl get pods
@@ -177,7 +177,7 @@ Now that Pomerium is installed in the cluster, we can define authentication and 
       - **if** the request includes a JWT (already validated by `RequestAuthentication`) with the audience key `aud`,
       - **and** the value of the `aud` key matches our known route, `hello.localhost.pomerium.io`.
 
-    In other words, `RequestAuthentication` confirms that the incoming traffic to the sidecar has a signed and valid JWT, which confirms that the user has been authenticated and is authorized to access this service. The `AuthorizationPolicy` confirms that the traffic originated from a valid Pomerium route. The latter is especially important in Pomerium Enterprise, where a manager of a separate [Namespace](/enterprise/concepts.md#namespaces) could create a second route to a service normally routed and managed in your namespace.
+    In other words, `RequestAuthentication` confirms that the incoming traffic to the sidecar has a signed and valid JWT, which confirms that the user has been authenticated and is authorized to access this service. The `AuthorizationPolicy` confirms that the traffic originated from a valid Pomerium route. The latter is especially important in Pomerium Enterprise, where a manager of a separate [Namespace](/enterprise/concepts#namespaces) could create a second route to a service normally routed and managed in your namespace.
 
 1. Apply the new resources with `kubectl`:
 

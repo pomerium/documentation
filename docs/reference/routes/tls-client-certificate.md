@@ -14,5 +14,5 @@ keywords:
 
 If specified, Pomerium will present this client certificate to upstream services when requested to enforce [mutual authentication](https://en.wikipedia.org/wiki/Mutual_authentication) (mTLS).
 
-For more details, see our [mTLS example repository](https://github.com/pomerium/pomerium/tree/main/examples/mutual-tls) and the [Upstream mTLS With Pomerium](/guides/upstream-mtls.md) guide.
+For more details, see our [mTLS example repository](https://github.com/pomerium/pomerium/tree/main/examples/mutual-tls) and the [Upstream mTLS With Pomerium](/guides/upstream-mtls) guide.
 
