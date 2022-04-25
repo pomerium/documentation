@@ -1331,7 +1331,7 @@ Requires setting [Google Cloud Serverless Authentication Service Account](#googl
 
 `From` is the externally accessible URL for the proxied request.
 
-Specifying `tcp+https` for the scheme enables [TCP proxying](/tcp/readme.md) support for the route. You may map more than one port through the same hostname by specifying a different `:port` in the URL.
+Specifying `tcp+https` for the scheme enables [TCP proxying](/tcp/readme) support for the route. You may map more than one port through the same hostname by specifying a different `:port` in the URL.
 
 :::warning
 
@@ -1689,7 +1689,7 @@ to the `/.pomerium/signout/` endpoint.
 
 If specified, Pomerium will present this client certificate to upstream services when requested to enforce [mutual authentication](https://en.wikipedia.org/wiki/Mutual_authentication) (mTLS).
 
-For more details, see our [mTLS example repository](https://github.com/pomerium/pomerium/tree/main/examples/mutual-tls) and the [Upstream mTLS With Pomerium](/guides/upstream-mtls.md) guide.
+For more details, see our [mTLS example repository](https://github.com/pomerium/pomerium/tree/main/examples/mutual-tls) and the [Upstream mTLS With Pomerium](/guides/upstream-mtls) guide.
 
 
 ### TLS Custom Certificate Authority
@@ -1710,7 +1710,7 @@ TLS Custom Certificate Authority defines a set of root certificate authorities t
 If specified, downstream clients (eg a user's browser) will be required to provide a valid client TLS
 certificate. This overrides the global `client_ca` option for this route.
 
-See [Client-Side mTLS With Pomerium](/guides/mtls.md) for more information.
+See [Client-Side mTLS With Pomerium](/guides/mtls) for more information.
 
 
 ### TLS Skip Verification

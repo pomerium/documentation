@@ -156,7 +156,7 @@ Obviously, the OpenSSL server is a trivial upstream service, and is purpose-buil
 ## More Resources
 
  - [Mutual Authentication: A Component of Zero Trust](/topics/mutual-auth.md)
- - [Client-Side mTLS With Pomerium](/guides/mtls.md)
+ - [Client-Side mTLS With Pomerium](/guides/mtls)
  - [JWT Verification](/guides/jwt-verification.md)
 
 [mkcert]: https://github.com/FiloSottile/mkcert

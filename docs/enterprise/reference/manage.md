@@ -38,7 +38,7 @@ This value is only visible in the Console UI.
 
 `From` is the externally accessible URL for the proxied request.
 
-Specifying `tcp+https` for the scheme enables [TCP proxying](/tcp/readme.md) support for the route. You may map more than one port through the same hostname by specifying a different `:port` in the URL.
+Specifying `tcp+https` for the scheme enables [TCP proxying](/tcp/readme) support for the route. You may map more than one port through the same hostname by specifying a different `:port` in the URL.
 
 :::warning
 
@@ -416,7 +416,7 @@ Introduced in v0.16.0, the **Manage Devices** page lets administrators manage us
 From this page, administrators can manage new and existing device enrollments.
 Device enrollment let's you create [policies](/topics/ppl.md#device-matcher) that use [device identity](/topics/device-identity.md).
 - Users can [self-enroll](/guides/enroll-device) devices, which must then be approved in the **Devices List** for policies requiring approved devices.
-- Administrators can use the **New Enrollment** button to create a link for the user to enroll a device as pre-approved. See our [Pre-Approved Device Enrollment](/guides/admin-enroll-device.md) guide for more information.
+- Administrators can use the **New Enrollment** button to create a link for the user to enroll a device as pre-approved. See our [Pre-Approved Device Enrollment](/guides/admin-enroll-device) guide for more information.
 
 
 ### Devices List

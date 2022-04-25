@@ -169,7 +169,7 @@ The `administrators` configuration option has been removed.
 
 ### TCP Proxying
 
-Pomerium can now be used for non-HTTP services.  See [documentation](/tcp/readme.md) for more details.
+Pomerium can now be used for non-HTTP services.  See [documentation](/tcp/readme) for more details.
 
 ### Datadog Tracing
 

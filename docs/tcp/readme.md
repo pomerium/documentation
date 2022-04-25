@@ -78,7 +78,7 @@ localhost:52046>
 
 You may specify an optional address and port for the `tcp` command to listen on.
 
-`-` specifies that STDIN and STDOUT should be directly attached to the remote TCP connection.  This is useful for [SSH](examples/ssh.md#tunnel-and-connect-simultaneously) or for sending data through a shell pipe.
+`-` specifies that STDIN and STDOUT should be directly attached to the remote TCP connection.  This is useful for [SSH](examples/ssh#tunnel-and-connect-simultaneously) or for sending data through a shell pipe.
 
 ### Custom URL
 
@@ -94,7 +94,7 @@ The command above connects to `https://pomerium.corp.example.com:8443` and then 
 
 We've outlined how to use a TCP tunnel through Pomerium for several popular services that use TCP connections:
 
-- [MySQL and MariaDB](examples/mysql.md)
-- [RDP](examples/rdp.md)
-- [Redis](examples/redis.md)
-- [SSH](examples/ssh.md)
+- [MySQL and MariaDB](examples/mysql)
+- [RDP](examples/rdp)
+- [Redis](examples/redis)
+- [SSH](examples/ssh)
