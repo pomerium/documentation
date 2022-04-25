@@ -10,6 +10,9 @@ description: >-
   This guide covers how to secure self-hosted GitLab behind Pomerium, providing authentication and authorization through your IdP.
 ---
 
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
 # GitLab
 
 [GitLab] is a highly customizable, highly configurable tool to manage source code, project management, and many other aspects of project development. In addition to the SaaS product, its self-hosted solution and easy free-to-enterprise upgrade path make it a popular choice for those managing sensitive code bases.
@@ -135,17 +138,22 @@ sudo docker exec -it gitlab grep 'Password:' /etc/gitlab/initial_root_password
 1.  Once this route is applied, users can create an encrypted connection using [pomerium-cli] or the [Pomerium Desktop] app:
 
     <Tabs>
-    :::: tab Pomerium-CLI
+    <TabItem value="Pomerium-CLI" label="Pomerium-CLI">
+
     ```bash
     pomerium-cli tcp gitlab.pomerium.localhost.io:22 --listen :2202
     ```
 
     The `--listen` key defines what port the tunnel listens at locally.
-    ::::
-    :::: tab Pomerium Desktop
+
+    </TabItem>
+    <TabItem value="Pomerium Desktop" label="Pomerium Desktop">
+
     ![An encrypted tunnel for git connections using Pomerium Desktop](img/gitlab/gitlab-desktop-connection.png)
-    ::::
+
+    </TabItem>
     </Tabs>
+
 1.  Add the tunneled connection as a remote:
 
     ```bash
