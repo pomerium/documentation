@@ -21,7 +21,7 @@ Forward authentication creates an endpoint that can be used with third-party pro
 
 #### Request flow
 
-![pomerium forward auth request flow](./img/auth-flow-diagram.svg)
+![pomerium forward auth request flow](img/auth-flow-diagram.svg)
 
 #### Examples
 
