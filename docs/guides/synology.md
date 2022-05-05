@@ -219,7 +219,7 @@ And just to be safe, try logging in from another google account to see what happ
 ![Synology done](img/synology-step-4-unauthorized.png)
 
 [certificate documentation]: topics/certificates
-[configuration variable docs]: /reference/readme.md
+[configuration variable docs]: /reference/readme
 [diskstation manager]: https://www.synology.com/en-us/dsm
 [docker-capable]: https://www.synology.com/en-us/dsm/packages/Docker
 [httpbin]: https://httpbin.org

@@ -558,9 +558,9 @@ Usage of the POLICY_FILE envvar is no longer supported. Support for file based p
 
 The configuration variable [Authenticate Internal Service URL] must now be a valid [URL](https://golang.org/pkg/net/url/#URL) type and contain both a hostname and valid `https` schema.
 
-[authenticate internal service url]: reference/readme.md#authenticate-service-url
-[cache service docs]: reference/readme.md#data-broker-service
-[identity provider service account]: reference/readme.md#identity-provider-service-account
-[policy]: reference/readme.md#policy
-[storage backend configuration here]: reference/readme.md#data-broker-service
-[storage backend types]: reference/readme.md#data-broker-storage-type
+[authenticate internal service url]: reference/readme#authenticate-service-url
+[cache service docs]: reference/readme#data-broker-service
+[identity provider service account]: reference/readme#identity-provider-service-account
+[policy]: reference/readme#policy
+[storage backend configuration here]: reference/readme#data-broker-service
+[storage backend types]: reference/readme#data-broker-storage-type

@@ -201,10 +201,10 @@ allow:
         before: 4:30PM
 ```
 
-[`allow_public_unauthenticated_access`]: /reference/readme.md#public-access
-[`allow_any_authenticated_user`]: /reference/readme.md#allow-any-authenticated-user
+[`allow_public_unauthenticated_access`]: /reference/readme#public-access
+[`allow_any_authenticated_user`]: /reference/readme#allow-any-authenticated-user
 [CORS pre-flight requests]: https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS#preflighted_requests
-[client certificate authority]: /reference/readme.md#client-certificate-authority
+[client certificate authority]: /reference/readme#client-certificate-authority
 [Pomerium Enterprise]: /enterprise/about.md
 [yaml]: https://en.wikipedia.org/wiki/YAML
 [String Matcher]: #string-matcher

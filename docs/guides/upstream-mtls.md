@@ -161,5 +161,5 @@ Obviously, the OpenSSL server is a trivial upstream service, and is purpose-buil
 
 [mkcert]: https://github.com/FiloSottile/mkcert
 [OpenSSL]: https://www.openssl.org/
-[`tls_custom_ca_file`]: /reference/readme.md#tls-custom-certificate-authority
-[`tls_server_name`]: /reference/readme.md#tls-server-name
+[`tls_custom_ca_file`]: /reference/readme#tls-custom-certificate-authority
+[`tls_server_name`]: /reference/readme#tls-server-name
