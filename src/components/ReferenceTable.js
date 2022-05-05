@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import data from "../../docs/reference/reference.json";
 import { DataGridPro } from "@mui/x-data-grid-pro/DataGridPro/DataGridPro";
 import { renderCellExpand } from "./RenderCellExpand";
+import { GridToolbar } from "@mui/x-data-grid";
 
 export default function ReferenceTable() {
   const [pageSize, setPageSize] = useState(10);
@@ -43,15 +44,15 @@ export default function ReferenceTable() {
       renderCell: renderCellExpand,
     },
     {
-      headerName: "Categories",
-      field: "categories",
+      headerName: "Services",
+      field: "services",
       sortable: false,
       flex: 1,
-      renderCell: function CategoryCell(params) {
+      renderCell: function ServicesCell(params) {
         return (
           <div>
-            {params.row.categories.map(function (cat) {
-              return <div>{cat}</div>;
+            {params.row.services.map(function (serv) {
+              return <div>{serv}</div>;
             })}
           </div>
         );
@@ -81,6 +82,9 @@ export default function ReferenceTable() {
         }}
         columns={columns}
         rows={references}
+        components={{
+          Toolbar: GridToolbar,
+        }}
       />
     </div>
   );
