@@ -2,7 +2,65 @@ import React, { useState } from "react";
 import data from "../../docs/reference/reference.json";
 import { DataGridPro } from "@mui/x-data-grid-pro/DataGridPro/DataGridPro";
 import { renderCellExpand } from "./RenderCellExpand";
-import { GridToolbar } from "@mui/x-data-grid";
+import { getGridStringOperators, GridToolbar } from "@mui/x-data-grid";
+import { FormControl, InputLabel, NativeSelect } from "@mui/material";
+
+/**
+@Alex //todo update the options of this select when you add the real services to the JSON
+ */
+function ServiceSelector(props) {
+  const { item, applyValue } = props;
+
+  return (
+    <FormControl>
+      <InputLabel shrink id="serviceSelector">
+        Service
+      </InputLabel>
+      <NativeSelect
+        id="serviceSelector"
+        value={item?.value || ""}
+        onChange={(evt) => {
+          applyValue({ ...item, value: evt.target.value });
+        }}
+      >
+        <option key="none" value="none">
+          &nbsp;
+        </option>
+        <option key="todo" value="todo">
+          todo
+        </option>
+        <option key="todo2" value="todo2">
+          todo2
+        </option>
+        <option key="test" value="test">
+          test
+        </option>
+      </NativeSelect>
+    </FormControl>
+  );
+}
+
+const serviceOperator = [
+  {
+    label: "is",
+    value: "is",
+    getApplyFilterFn: (filterItem) => {
+      if (
+        !filterItem.columnField ||
+        !filterItem.value ||
+        !filterItem.operatorValue ||
+        filterItem.value === "none"
+      ) {
+        return null;
+      }
+
+      return (params) => {
+        return params.value.indexOf(filterItem.value) > -1;
+      };
+    },
+    InputComponent: ServiceSelector,
+  },
+];
 
 export default function ReferenceTable() {
   const [pageSize, setPageSize] = useState(10);
@@ -42,6 +100,7 @@ export default function ReferenceTable() {
       field: "services",
       sortable: false,
       flex: 1,
+      filterOperators: serviceOperator,
       renderCell: function ServicesCell(params) {
         return (
           <div>
