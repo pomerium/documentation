@@ -71,12 +71,18 @@ export default function ReferenceTable() {
   const references = Object.values(data);
   const columns = [
     {
+      headerName: "Id",
+      field: "id",
+      flex: 1,
+      hide: true,
+    },
+    {
       headerName: "Name",
       field: "title",
       flex: 1,
       renderCell: function NameCell(params) {
         return (
-          <a href={`/docs/reference/${params.row.path}`}>{params.row.title}</a>
+          <a href={`/docs/reference/${params.row.id}`}>{params.row.title}</a>
         );
       },
     },
@@ -123,7 +129,7 @@ export default function ReferenceTable() {
         }}
         disableSelectionOnClick
         autoHeight
-        rowsPerPageOptions={[5, 10, 25, 50, 100, 250]}
+        rowsPerPageOptions={[5, 10, 25, 50]}
         pagination
         pageSize={pageSize}
         onPageSizeChange={changePageSize}
