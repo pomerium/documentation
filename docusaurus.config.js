@@ -83,11 +83,19 @@ const config = {
         style: 'dark',
         links: [
           {
-            title: 'Docs',
+            title: 'Pomerium',
             items: [
               {
-                label: 'Tutorial',
-                to: '/docs/intro',
+                label: 'Home',
+                href: 'https://pomerium.com',
+              },
+              {
+                label: 'Customer Stories',
+                href: 'https://www.pomerium.com/customer-stories/',
+              },
+              {
+                label: 'Pricing',
+                href: 'https://www.pomerium.com/pricing/',
               },
             ],
           },
@@ -95,16 +103,12 @@ const config = {
             title: 'Community',
             items: [
               {
-                label: 'Stack Overflow',
-                href: 'https://stackoverflow.com/questions/tagged/docusaurus',
-              },
-              {
-                label: 'Discord',
-                href: 'https://discordapp.com/invite/docusaurus',
+                label: 'Discuss',
+                href: 'https://discuss.pomerium.com/',
               },
               {
                 label: 'Twitter',
-                href: 'https://twitter.com/docusaurus',
+                href: 'https://twitter.com/pomerium_io',
               },
             ],
           },
@@ -113,16 +117,16 @@ const config = {
             items: [
               {
                 label: 'Blog',
-                to: '/blog',
+                href: 'https://www.pomerium.com/blog/',
               },
               {
                 label: 'GitHub',
-                href: 'https://github.com/facebook/docusaurus',
+                href: 'https://github.com/pomerium/',
               },
             ],
           },
         ],
-        copyright: `Copyright © ${new Date().getFullYear()} My Project, Inc. Built with Docusaurus.`,
+        copyright: `Copyright © ${new Date().getFullYear()} Pomerium, Inc.`,
       },
       prism: {
         theme: lightCodeTheme,
