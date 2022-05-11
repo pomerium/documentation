@@ -224,14 +224,14 @@ You can also navigate to the special pomerium endpoint `hello.localhost.pomerium
 
 ## Next Steps
 
-Congratulations on installing Pomerium to your Kubernetes cluster! If you're installing Pomerium Enterprise next, see [Install Pomerium Enterprise in Helm]. If not, check our our [guides](/guides/readme) to install common services behind Pomerium.
+Congratulations on installing Pomerium to your Kubernetes cluster! If you're installing Pomerium Enterprise next, see [Install Pomerium Enterprise in Helm]. If not, check our our [guides](/guides/) to install common services behind Pomerium.
 
 [cert-manager]: https://cert-manager.io/docs/
 [cert-manager: CA]: https://cert-manager.io/docs/configuration/ca/
 [cert-manager: Installing with Helm]: https://cert-manager.io/docs/installation/kubernetes/#installing-with-helm
 [Helm]: https://helm.sh
 [Install helm]: https://helm.sh/docs/using_helm/
-[identity provider]: ../identity-providers/readme.md
+[identity provider]: /identity-providers
 [Install Pomerium Enterprise in Helm]: /enterprise/install/helm.md
 [Install kubectl]: https://kubernetes.io/docs/tasks/tools/install-kubectl/
 [Kubernetes]: https://kubernetes.io

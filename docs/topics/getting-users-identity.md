@@ -127,4 +127,4 @@ In the future, we will add implementations for:
 [key management service]: https://en.wikipedia.org/wiki/Key_management
 [nist p-256]: https://csrc.nist.gov/csrc/media/events/workshop-on-elliptic-curve-cryptography-standards/documents/papers/session6-adalier-mehmet.pdf
 [secp256r1]: https://wiki.openssl.org/index.php/Command_Line_Elliptic_Curve_Operations
-[signing key]: ./reference/readme#signing-key
+[signing key]: /reference/signing-key

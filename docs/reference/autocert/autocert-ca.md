@@ -8,8 +8,6 @@ keywords:
 - Autocert CA
 ---
 
-
-# Autocert CA
 - Environmental Variable: `AUTOCERT_CA`
 - Config File Key: `autocert_ca`
 - Type: `string` containing the directory URL of an ACME CA (e.g. `https://acme.zerossl.com/v2/DV90` for ZeroSSL)
@@ -22,4 +20,3 @@ Autocert CA is the directory URL of the ACME CA to use when requesting certifica
 This will overrule the "Autocert Use Staging" setting if set.
 
 :::
-

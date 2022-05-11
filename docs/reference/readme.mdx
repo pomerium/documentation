@@ -1,9 +1,38 @@
 ---
 id: readme
-title: Settings
+title: Configuration Settings
 ---
 
 import ReferenceTable from "../../src/components/ReferenceTable";
+
+Pomerium can be configured using a configuration file ([YAML]/[JSON]/[TOML]) or [environmental variables]. In general, environmental variable keys are identical to config file keys but are uppercase. If you are coming from a kubernetes or docker background this should feel familiar. If not, check out the following primers.
+
+- [Store config in the environment](https://12factor.net/config)
+- [Kubernetes: Environment variables](https://kubernetes.io/docs/tasks/inject-data-application/define-environment-variable-container/)
+- [Kubernetes: Config Maps](https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/)
+- [Docker: Environment variables](https://docs.docker.com/compose/environment-variables/)
+
+Using both [environmental variables] and config file keys is allowed and encouraged (for instance, secret keys are probably best set as environmental variables). However, if duplicate configuration keys are found, environment variables take precedence.
+
+:::tip
+Pomerium can hot-reload route configuration details, authorization policy, certificates, and other proxy settings.
+:::
+
+## All-In-One vs Split Service mode
+When running Pomerium as a single system service or container, all the options on this page can be set in a single `config.yaml` file, or passed to the single instance as environment variables.
+
+When running Pomerium in a distributed environment where there are multiple processes, each handling separate [components](/overview/architecture#component-level), all services can still share a single config file or set of environment variables.
+
+Alternately, you can create individual config files or sets of environment variables for each service. When doing so, each file or set must have matching values for the following settings (if used):
+
+- list
+- of 
+- actual
+- shared
+- settings
+
+As well as settings relevant to that [service mode](reference/service-mode). The list below is sorted to better differentiate which config options correlate to which service mode.
+
 
 
 <ReferenceTable />

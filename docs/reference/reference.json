@@ -9,8 +9,7 @@
       "Address"
     ],
     "services": [
-      "todo",
-      "todo2"
+      "proxy"
     ],
     "attributes": {
       "Environmental Variable": "ADDRESS",
@@ -28,8 +27,9 @@
       "Authenticate Service URL"
     ],
     "services": [
-      "todo",
-      "todo2"
+      "proxy",
+      "authenticate",
+      "authorize"
     ],
     "attributes": {
       "Environmental Variable": "AUTHENTICATE_SERVICE_URL",
@@ -39,7 +39,7 @@
   },
   "autocert": {
     "title": "Autocert",
-    "id": "autocert",
+    "id": "autocert/autocert",
     "filename": "autocert.md",
     "description": "Turning on autocert allows Pomerium to automatically retrieve, manage, and renew public facing TLS certificates from Lets Encrypt.",
     "keywords": [
@@ -47,8 +47,8 @@
       "Autocert"
     ],
     "services": [
-      "todo",
-      "todo2"
+      "authenticate",
+      "proxy"
     ],
     "attributes": {
       "Environmental Variable": "AUTOCERT",
@@ -58,7 +58,7 @@
   },
   "autocert-ca": {
     "title": "Autocert CA",
-    "id": "autocert-ca",
+    "id": "autocert/autocert-ca",
     "filename": "autocert-ca.md",
     "description": "Autocert CA is the directory URL of the ACME CA to use when requesting certificates.",
     "keywords": [
@@ -66,8 +66,8 @@
       "Autocert CA"
     ],
     "services": [
-      "todo",
-      "todo2"
+      "authenticate",
+      "proxy"
     ],
     "attributes": {
       "Environmental Variable": "AUTOCERT_CA",
@@ -76,7 +76,7 @@
   },
   "autocert-email": {
     "title": "Autocert Email",
-    "id": "autocert-email",
+    "id": "autocert/autocert-email",
     "filename": "autocert-email.md",
     "description": "Autocert Email is the email address to use when requesting certificates from an ACME CA.",
     "keywords": [
@@ -84,8 +84,8 @@
       "Autocert Email"
     ],
     "services": [
-      "todo",
-      "todo2"
+      "authenticate",
+      "proxy"
     ],
     "attributes": {
       "Environmental Variable": "AUTOCERT_EMAIL",
@@ -95,15 +95,15 @@
   },
   "autocert-must-staple": {
     "title": "Autocert Must-Staple",
-    "id": "autocert-must-staple",
+    "id": "autocert/autocert-must-staple",
     "filename": "autocert-must-staple.md",
     "keywords": [
       "reference",
       "Autocert Must-Staple"
     ],
     "services": [
-      "todo",
-      "todo2"
+      "authenticate",
+      "proxy"
     ],
     "attributes": {
       "Environmental Variable": "AUTOCERT_MUST_STAPLE",
@@ -113,7 +113,7 @@
   },
   "autocert-directory": {
     "title": "Autocert Directory",
-    "id": "autocert-directory",
+    "id": "autocert/autocert-directory",
     "filename": "autocert-directory.md",
     "description": "Autocert directory is the path which autocert will store x509 certificate data.",
     "keywords": [
@@ -121,8 +121,8 @@
       "Autocert Directory"
     ],
     "services": [
-      "todo",
-      "todo2"
+      "authenticate",
+      "proxy"
     ],
     "attributes": {
       "Environmental Variable": "either AUTOCERT_DIR",
@@ -134,7 +134,7 @@
   },
   "autocert-use-staging": {
     "title": "Autocert Use Staging",
-    "id": "autocert-use-staging",
+    "id": "autocert/autocert-use-staging",
     "filename": "autocert-use-staging.md",
     "description": "Let's Encrypt has strict usage limits. Enabling this setting allows you to use Let's Encrypt's staging environment which has much more lax usage limits.",
     "keywords": [
@@ -142,8 +142,8 @@
       "Autocert Use Staging"
     ],
     "services": [
-      "todo",
-      "todo2"
+      "authenticate",
+      "proxy"
     ],
     "attributes": {
       "Environmental Variable": "AUTOCERT_USE_STAGING",
@@ -153,7 +153,7 @@
   },
   "autocert-eab-key-id": {
     "title": "Autocert EAB Key ID",
-    "id": "autocert-eab-key-id",
+    "id": "autocert/autocert-eab-key-id",
     "filename": "autocert-eab-key-id.md",
     "description": "Autocert EAB Key ID is the key identifier when requesting a certificate from a CA with External Account Binding enabled.",
     "keywords": [
@@ -161,8 +161,8 @@
       "Autocert EAB Key ID"
     ],
     "services": [
-      "todo",
-      "todo2"
+      "authenticate",
+      "proxy"
     ],
     "attributes": {
       "Environmental Variable": "AUTOCERT_EAB_KEY_ID",
@@ -172,7 +172,7 @@
   },
   "autocert-eab-mac-key": {
     "title": "Autocert EAB MAC Key",
-    "id": "autocert-eab-mac-key",
+    "id": "autocert/autocert-eab-mac-key",
     "filename": "autocert-eab-mac-key.md",
     "description": "Autocert EAB MAC Key is the base64url-encoded secret key corresponding to the Autocert EAB Key ID.",
     "keywords": [
@@ -180,8 +180,8 @@
       "Autocert EAB MAC Key"
     ],
     "services": [
-      "todo",
-      "todo2"
+      "authenticate",
+      "proxy"
     ],
     "attributes": {
       "Environmental Variable": "AUTOCERT_EAB_MAC_KEY",
@@ -191,15 +191,15 @@
   },
   "autocert-trusted-certificate-authority": {
     "title": "Autocert Trusted Certificate Authority",
-    "id": "autocert-trusted-certificate-authority",
+    "id": "autocert/autocert-trusted-certificate-authority",
     "filename": "autocert-trusted-certificate-authority.md",
     "keywords": [
       "reference",
       "Autocert Trusted Certificate Authority"
     ],
     "services": [
-      "todo",
-      "todo2"
+      "authenticate",
+      "proxy"
     ],
     "attributes": {
       "Environment Variable": "AUTOCERT_TRUSTED_CA / AUTOCERT_TRUSTED_CA_FILE",
@@ -378,6 +378,18 @@
       "Config File Key": "cookie_expire",
       "Default": "14h"
     }
+  },
+  "data-broker-service": {
+    "title": "Data Broker Service",
+    "id": "data-broker-service",
+    "filename": "data-broker-service.md",
+    "keywords": [
+      "reference",
+      "data broker service"
+    ],
+    "services": [
+      "databroker"
+    ]
   },
   "data-broker-service-url": {
     "title": "Data Broker Service URL",
@@ -1079,6 +1091,23 @@
       "Type": "map of strings key value pairs"
     }
   },
+  "set-response-headers-route": {
+    "title": "Set Response Headers (Per Route)",
+    "id": "routes/set-response-headers",
+    "filename": "set-response-headers.md",
+    "keywords": [
+      "reference",
+      "Set Response Headers"
+    ],
+    "services": [
+      "todo",
+      "todo2"
+    ],
+    "attributes": {
+      "Config File Key": "set_response_headers",
+      "Type": "map of strings key value pairs"
+    }
+  },
   "jwt-claim-headers": {
     "title": "JWT Claim Headers",
     "id": "jwt-claim-headers",
@@ -1326,7 +1355,7 @@
   },
   "allowed-domains": {
     "title": "Allowed Domains",
-    "id": "allowed-domains",
+    "id": "policy/allowed-domains",
     "filename": "allowed-domains.md",
     "keywords": [
       "reference",
@@ -1344,7 +1373,7 @@
   },
   "allowed-groups": {
     "title": "Allowed Groups",
-    "id": "allowed-groups",
+    "id": "policy/allowed-groups",
     "filename": "allowed-groups.md",
     "keywords": [
       "reference",
@@ -1362,7 +1391,7 @@
   },
   "allowed-idp-claims": {
     "title": "Allowed IdP Claims",
-    "id": "allowed-idp-claims",
+    "id": "policy/allowed-idp-claims",
     "filename": "allowed-idp-claims.md",
     "description": "Authorize users by matching claims attached to a user's identity token by their identity provider",
     "keywords": [
@@ -1380,7 +1409,7 @@
   },
   "allowed-users": {
     "title": "Allowed Users",
-    "id": "allowed-users",
+    "id": "policy/allowed-users",
     "filename": "allowed-users.md",
     "keywords": [
       "reference",
@@ -1398,15 +1427,14 @@
   },
   "allow-any-authenticated-user": {
     "title": "Allow Any Authenticated User",
-    "id": "allow-any-authenticated-user",
+    "id": "routes/allow-any-authenticated-user",
     "filename": "allow-any-authenticated-user.md",
     "keywords": [
       "reference",
       "Allow Any Authenticated User"
     ],
     "services": [
-      "todo",
-      "todo2"
+      "proxy"
     ],
     "attributes": {
       "`yaml`/`json` setting": "allow_any_authenticated_user",
@@ -1416,15 +1444,14 @@
   },
   "cluster-name": {
     "title": "Cluster Name",
-    "id": "cluster-name",
+    "id": "routes/cluster-name",
     "filename": "cluster-name.md",
     "keywords": [
       "reference",
       "Cluster Name"
     ],
     "services": [
-      "todo",
-      "todo2"
+      "proxy"
     ],
     "attributes": {
       "Config File Key": "name",
@@ -1433,11 +1460,10 @@
   },
   "cors-preflight": {
     "title": "CORS Preflight",
-    "id": "cors-preflight",
+    "id": "routes/cors-preflight",
     "filename": "cors-preflight.md",
     "keywords": [
-      "reference",
-      "CORS Preflight"
+      "proxy"
     ],
     "services": [
       "todo",
@@ -1451,15 +1477,14 @@
   },
   "enable-google-cloud-serverless-authentication": {
     "title": "Enable Google Cloud Serverless Authentication",
-    "id": "enable-google-cloud-serverless-authentication",
+    "id": "routes/enable-google-cloud-serverless-authentication",
     "filename": "enable-google-cloud-serverless-authentication.md",
     "keywords": [
       "reference",
       "Enable Google Cloud Serverless Authentication"
     ],
     "services": [
-      "todo",
-      "todo2"
+      "proxy"
     ],
     "attributes": {
       "Environmental Variable": "ENABLE_GOOGLE_CLOUD_SERVERLESS_AUTHENTICATION",
@@ -1470,15 +1495,14 @@
   },
   "from": {
     "title": "From",
-    "id": "from",
+    "id": "routes/from",
     "filename": "from.md",
     "keywords": [
       "reference",
       "From"
     ],
     "services": [
-      "todo",
-      "todo2"
+      "proxy"
     ],
     "attributes": {
       "`yaml`/`json` setting": "from",
@@ -1488,15 +1512,14 @@
   },
   "health-checks": {
     "title": "Health Checks",
-    "id": "health-checks",
+    "id": "routes/health-checks",
     "filename": "health-checks.md",
     "keywords": [
       "reference",
       "Health Checks"
     ],
     "services": [
-      "todo",
-      "todo2"
+      "proxy"
     ],
     "attributes": {
       "Config File Key": "health_checks",
@@ -1505,15 +1528,14 @@
   },
   "host-rewrite": {
     "title": "Host Rewrite",
-    "id": "host-rewrite",
+    "id": "routes/host-rewrite",
     "filename": "host-rewrite.md",
     "keywords": [
       "reference",
       "Host Rewrite"
     ],
     "services": [
-      "todo",
-      "todo2"
+      "proxy"
     ],
     "attributes": {
       "`yaml`/`json` settings": "host_rewrite, host_rewrite_header, host_path_regex_rewrite_pattern, host_path_regex_rewrite_substitution",
@@ -1522,15 +1544,14 @@
   },
   "idle-timeout": {
     "title": "Idle Timeout",
-    "id": "idle-timeout",
+    "id": "routes/idle-timeout",
     "filename": "idle-timeout.md",
     "keywords": [
       "reference",
       "Idle Timeout"
     ],
     "services": [
-      "todo",
-      "todo2"
+      "proxy"
     ],
     "attributes": {
       "`yaml`/`json` setting": "idle_timeout",
@@ -1539,15 +1560,14 @@
   },
   "identity-provider-client-id-per-route": {
     "title": "Identity Provider Client ID (per route)",
-    "id": "identity-provider-client-id-per-route",
+    "id": "routes/identity-provider-client-id-per-route",
     "filename": "identity-provider-client-id-per-route.md",
     "keywords": [
       "reference",
       "Identity Provider Client ID (per route)"
     ],
     "services": [
-      "todo",
-      "todo2"
+      "proxy"
     ],
     "attributes": {
       "`yaml`/`json` setting": "idp_client_id",
@@ -1556,15 +1576,14 @@
   },
   "identity-provider-client-secret-per-route": {
     "title": "Identity Provider Client Secret (per route)",
-    "id": "identity-provider-client-secret-per-route",
+    "id": "routes/identity-provider-client-secret-per-route",
     "filename": "identity-provider-client-secret-per-route.md",
     "keywords": [
       "reference",
       "Identity Provider Client Secret (per route)"
     ],
     "services": [
-      "todo",
-      "todo2"
+      "proxy"
     ],
     "attributes": {
       "`yaml`/`json` setting": "idp_client_secret",
@@ -1573,15 +1592,14 @@
   },
   "kubernetes-service-account-token": {
     "title": "Kubernetes Service Account Token",
-    "id": "kubernetes-service-account-token",
+    "id": "routes/kubernetes-service-account-token",
     "filename": "kubernetes-service-account-token.md",
     "keywords": [
       "reference",
       "Kubernetes Service Account Token"
     ],
     "services": [
-      "todo",
-      "todo2"
+      "proxy"
     ],
     "attributes": {
       "`yaml`/`json` setting": "kubernetes_service_account_token / kubernetes_service_account_token_file",
@@ -1591,15 +1609,14 @@
   },
   "load-balancing-policy": {
     "title": "Load Balancing Policy",
-    "id": "load-balancing-policy",
+    "id": "routes/load-balancing-policy",
     "filename": "load-balancing-policy.md",
     "keywords": [
       "reference",
       "Load Balancing Policy"
     ],
     "services": [
-      "todo",
-      "todo2"
+      "proxy"
     ],
     "attributes": {
       "Config File Key": "lb_policy",
@@ -1608,15 +1625,14 @@
   },
   "load-balancing-policy-config": {
     "title": "Load Balancing Policy Config",
-    "id": "load-balancing-policy-config",
+    "id": "routes/load-balancing-policy-config",
     "filename": "load-balancing-policy-config.md",
     "keywords": [
       "reference",
       "Load Balancing Policy Config"
     ],
     "services": [
-      "todo",
-      "todo2"
+      "proxy"
     ],
     "attributes": {
       "Config File Key": "least_request_lb_config, ring_hash_lb_config, maglev_lb_config",
@@ -1625,15 +1641,14 @@
   },
   "outlier-detection": {
     "title": "Outlier Detection",
-    "id": "outlier-detection",
+    "id": "routes/outlier-detection",
     "filename": "outlier-detection.md",
     "keywords": [
       "reference",
       "Outlier Detection"
     ],
     "services": [
-      "todo",
-      "todo2"
+      "proxy"
     ],
     "attributes": {
       "`yaml`/`json` setting": "outlier_detection",
@@ -1642,15 +1657,14 @@
   },
   "pass-identity-headers": {
     "title": "Pass Identity Headers",
-    "id": "pass-identity-headers",
+    "id": "routes/pass-identity-headers",
     "filename": "pass-identity-headers.md",
     "keywords": [
       "reference",
       "Pass Identity Headers"
     ],
     "services": [
-      "todo",
-      "todo2"
+      "proxy"
     ],
     "attributes": {
       "`yaml`/`json` setting": "pass_identity_headers",
@@ -1660,15 +1674,14 @@
   },
   "path": {
     "title": "Path",
-    "id": "path",
+    "id": "routes/path",
     "filename": "path.md",
     "keywords": [
       "reference",
       "Path"
     ],
     "services": [
-      "todo",
-      "todo2"
+      "proxy"
     ],
     "attributes": {
       "`yaml`/`json` setting": "path",
@@ -1678,15 +1691,14 @@
   },
   "prefix": {
     "title": "Prefix",
-    "id": "prefix",
+    "id": "routes/prefix",
     "filename": "prefix.md",
     "keywords": [
       "reference",
       "Prefix"
     ],
     "services": [
-      "todo",
-      "todo2"
+      "proxy"
     ],
     "attributes": {
       "`yaml`/`json` setting": "prefix",
@@ -1696,15 +1708,14 @@
   },
   "prefix-rewrite": {
     "title": "Prefix Rewrite",
-    "id": "prefix-rewrite",
+    "id": "routes/prefix-rewrite",
     "filename": "prefix-rewrite.md",
     "keywords": [
       "reference",
       "Prefix Rewrite"
     ],
     "services": [
-      "todo",
-      "todo2"
+      "proxy"
     ],
     "attributes": {
       "`yaml`/`json` setting": "prefix_rewrite",
@@ -1714,15 +1725,14 @@
   },
   "public-access": {
     "title": "Public Access",
-    "id": "public-access",
+    "id": "routes/public-access",
     "filename": "public-access.md",
     "keywords": [
       "reference",
       "Public Access"
     ],
     "services": [
-      "todo",
-      "todo2"
+      "proxy"
     ],
     "attributes": {
       "`yaml`/`json` setting": "allow_public_unauthenticated_access",
@@ -1732,15 +1742,14 @@
   },
   "redirect": {
     "title": "Redirect",
-    "id": "redirect",
+    "id": "routes/redirect",
     "filename": "redirect.md",
     "keywords": [
       "reference",
       "Redirect"
     ],
     "services": [
-      "todo",
-      "todo2"
+      "proxy"
     ],
     "attributes": {
       "`yaml`/`json` setting": "'redirect'",
@@ -1749,15 +1758,14 @@
   },
   "regex": {
     "title": "Regex",
-    "id": "regex",
+    "id": "routes/regex",
     "filename": "regex.md",
     "keywords": [
       "reference",
       "Regex"
     ],
     "services": [
-      "todo",
-      "todo2"
+      "proxy"
     ],
     "attributes": {
       "`yaml`/`json` setting": "regex",
@@ -1767,15 +1775,14 @@
   },
   "regex-rewrite": {
     "title": "Regex Rewrite",
-    "id": "regex-rewrite",
+    "id": "routes/regex-rewrite",
     "filename": "regex-rewrite.md",
     "keywords": [
       "reference",
       "Regex Rewrite"
     ],
     "services": [
-      "todo",
-      "todo2"
+      "proxy"
     ],
     "attributes": {
       "`yaml`/`json` setting": "regex_rewrite_pattern, regex_rewrite_substitution",
@@ -1784,15 +1791,14 @@
   },
   "remove-request-headers": {
     "title": "Remove Request Headers",
-    "id": "remove-request-headers",
+    "id": "routes/remove-request-headers",
     "filename": "remove-request-headers.md",
     "keywords": [
       "reference",
       "Remove Request Headers"
     ],
     "services": [
-      "todo",
-      "todo2"
+      "proxy"
     ],
     "attributes": {
       "Config File Key": "remove_request_headers",
@@ -1801,15 +1807,14 @@
   },
   "rewrite-response-headers": {
     "title": "Rewrite Response Headers",
-    "id": "rewrite-response-headers",
+    "id": "routes/rewrite-response-headers",
     "filename": "rewrite-response-headers.md",
     "keywords": [
       "reference",
       "Rewrite Response Headers"
     ],
     "services": [
-      "todo",
-      "todo2"
+      "proxy"
     ],
     "attributes": {
       "Config File Key": "rewrite_response_headers",
@@ -1818,15 +1823,14 @@
   },
   "route-timeout": {
     "title": "Route Timeout",
-    "id": "route-timeout",
+    "id": "routes/route-timeout",
     "filename": "route-timeout.md",
     "keywords": [
       "reference",
       "Route Timeout"
     ],
     "services": [
-      "todo",
-      "todo2"
+      "proxy"
     ],
     "attributes": {
       "`yaml`/`json` setting": "timeout",
@@ -1835,15 +1839,14 @@
   },
   "set-authorization-header": {
     "title": "Set Authorization Header",
-    "id": "set-authorization-header",
+    "id": "routes/set-authorization-header",
     "filename": "set-authorization-header.md",
     "keywords": [
       "reference",
       "Set Authorization Header"
     ],
     "services": [
-      "todo",
-      "todo2"
+      "proxy"
     ],
     "attributes": {
       "`yaml`/`json` setting": "set_authorization_header",
@@ -1853,15 +1856,14 @@
   },
   "set-request-headers": {
     "title": "Set Request Headers",
-    "id": "set-request-headers",
+    "id": "routes/set-request-headers",
     "filename": "set-request-headers.md",
     "keywords": [
       "reference",
       "Set Request Headers"
     ],
     "services": [
-      "todo",
-      "todo2"
+      "proxy"
     ],
     "attributes": {
       "Config File Key": "set_request_headers",
@@ -1870,15 +1872,14 @@
   },
   "signout-redirect-url": {
     "title": "Signout Redirect URL",
-    "id": "signout-redirect-url",
+    "id": "routes/signout-redirect-url",
     "filename": "signout-redirect-url.md",
     "keywords": [
       "reference",
       "Signout Redirect URL"
     ],
     "services": [
-      "todo",
-      "todo2"
+      "proxy"
     ],
     "attributes": {
       "Environmental Variable": "SIGNOUT_REDIRECT_URL",
@@ -1888,15 +1889,14 @@
   },
   "tls-client-certificate": {
     "title": "TLS Client Certificate",
-    "id": "tls-client-certificate",
+    "id": "routes/tls-client-certificate",
     "filename": "tls-client-certificate.md",
     "keywords": [
       "reference",
       "TLS Client Certificate"
     ],
     "services": [
-      "todo",
-      "todo2"
+      "proxy"
     ],
     "attributes": {
       "Config File Key": "tls_client_cert and tls_client_key or tls_client_cert_file and tls_client_key_file",
@@ -1905,15 +1905,14 @@
   },
   "tls-custom-certificate-authority": {
     "title": "TLS Custom Certificate Authority",
-    "id": "tls-custom-certificate-authority",
+    "id": "routes/tls-custom-certificate-authority",
     "filename": "tls-custom-certificate-authority.md",
     "keywords": [
       "reference",
       "TLS Custom Certificate Authority"
     ],
     "services": [
-      "todo",
-      "todo2"
+      "proxy"
     ],
     "attributes": {
       "Config File Key": "tls_custom_ca or tls_custom_ca_file",
@@ -1922,15 +1921,14 @@
   },
   "tls-downstream-client-certificate-authority": {
     "title": "TLS Downstream Client Certificate Authority",
-    "id": "tls-downstream-client-certificate-authority",
+    "id": "routes/tls-downstream-client-certificate-authority",
     "filename": "tls-downstream-client-certificate-authority.md",
     "keywords": [
       "reference",
       "TLS Downstream Client Certificate Authority"
     ],
     "services": [
-      "todo",
-      "todo2"
+      "proxy"
     ],
     "attributes": {
       "Config File Key": "tls_downstream_client_ca or tls_downstream_client_ca_file",
@@ -1939,15 +1937,14 @@
   },
   "tls-skip-verification": {
     "title": "TLS Skip Verification",
-    "id": "tls-skip-verification",
+    "id": "routes/tls-skip-verification",
     "filename": "tls-skip-verification.md",
     "keywords": [
       "reference",
       "TLS Skip Verification"
     ],
     "services": [
-      "todo",
-      "todo2"
+      "proxy"
     ],
     "attributes": {
       "Config File Key": "tls_skip_verify",
@@ -1957,15 +1954,14 @@
   },
   "tls-server-name": {
     "title": "TLS Server Name",
-    "id": "tls-server-name",
+    "id": "routes/tls-server-name",
     "filename": "tls-server-name.md",
     "keywords": [
       "reference",
       "TLS Server Name"
     ],
     "services": [
-      "todo",
-      "todo2"
+      "proxy"
     ],
     "attributes": {
       "Config File Key": "tls_server_name",
@@ -2008,15 +2004,14 @@
   },
   "to": {
     "title": "To",
-    "id": "to",
+    "id": "routes/to",
     "filename": "to.md",
     "keywords": [
       "reference",
       "To"
     ],
     "services": [
-      "todo",
-      "todo2"
+      "proxy"
     ],
     "attributes": {
       "`yaml`/`json` setting": "to",
@@ -2026,15 +2021,14 @@
   },
   "spdy": {
     "title": "SPDY",
-    "id": "spdy",
+    "id": "routes/spdy",
     "filename": "spdy.md",
     "keywords": [
       "reference",
       "SPDY"
     ],
     "services": [
-      "todo",
-      "todo2"
+      "proxy"
     ],
     "attributes": {
       "Config File Key": "allow_spdy",
@@ -2044,14 +2038,14 @@
   },
   "websocket-connections": {
     "title": "Websocket Connections",
-    "id": "websocket-connections",
+    "id": "routes/websocket-connections",
     "filename": "websocket-connections.md",
     "keywords": [
       "reference",
       "Websocket Connections"
     ],
     "services": [
-      "todo"
+      "proxy"
     ],
     "attributes": {
       "Config File Key": "allow_websockets",
@@ -2068,7 +2062,7 @@
       "Google Cloud Serverless Authentication Service Account"
     ],
     "services": [
-      "test"
+      "authorize"
     ],
     "attributes": {
       "Environmental Variable": "GOOGLE_CLOUD_SERVERLESS_AUTHENTICATION_SERVICE_ACCOUNT",

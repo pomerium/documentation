@@ -26,14 +26,20 @@ function ServiceSelector(props) {
         <option key="none" value="none">
           &nbsp;
         </option>
-        <option key="todo" value="todo">
-          todo
+        <option key="all" value="all">
+          All Services
         </option>
-        <option key="todo2" value="todo2">
-          todo2
+        <option key="proxy" value="proxy">
+          Proxy
         </option>
-        <option key="test" value="test">
-          test
+        <option key="authenticate" value="authenticate">
+          Authenticate
+        </option>
+        <option key="authorize" value="authorize">
+          Authorize
+        </option>
+        <option key="databroker" value="databroker">
+          Databroker
         </option>
       </NativeSelect>
     </FormControl>
@@ -63,7 +69,7 @@ const serviceOperator = [
 ];
 
 export default function ReferenceTable() {
-  const [pageSize, setPageSize] = useState(10);
+  const [pageSize, setPageSize] = useState(25);
   const changePageSize = (pageSize) => {
     setPageSize(pageSize);
   };

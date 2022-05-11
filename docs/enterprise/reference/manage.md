@@ -38,7 +38,7 @@ This value is only visible in the Console UI.
 
 `From` is the externally accessible URL for the proxied request.
 
-Specifying `tcp+https` for the scheme enables [TCP proxying](/tcp/readme) support for the route. You may map more than one port through the same hostname by specifying a different `:port` in the URL.
+Specifying `tcp+https` for the scheme enables [TCP proxying](/tcp) support for the route. You may map more than one port through the same hostname by specifying a different `:port` in the URL.
 
 :::warning
 
@@ -62,7 +62,7 @@ Once a Route is created, the Metric Name field will populate. You can use this n
   - https://b.example.com
 ```
 
-A load balancing weight may be associated with a particular upstream by appending `,[weight]` to the URL.  The exact behavior depends on your [`lb_policy`](/reference/readme#load-balancing-policy) setting.  See [Load Balancing](/topics/load-balancing) for example [configurations](/topics/load-balancing#load-balancing-weight).
+A load balancing weight may be associated with a particular upstream by appending `,[weight]` to the URL.  The exact behavior depends on your [`lb_policy`](/reference/routes/load-balancing-policy) setting.  See [Load Balancing](/topics/load-balancing) for example [configurations](/topics/load-balancing#load-balancing-weight).
 
 Must be `tcp` if `from` is `tcp+https`.
 
@@ -123,7 +123,7 @@ Add or remove Policies to be applied to the Route. Note that Policies enforced i
 
 Enable sending a signed [Authorization Header](https://cloud.google.com/run/docs/authenticating/service-to-service) to upstream GCP services.
 
-Requires setting [Google Cloud Serverless Authentication Service Account](/reference/readme#google-cloud-serverless-authentication-service-account) or running Pomerium in an environment with a GCP service account present in default locations.
+Requires setting [Google Cloud Serverless Authentication Service Account](/reference/google-cloud-serverless-authentication-service-account) or running Pomerium in an environment with a GCP service account present in default locations.
 
 ### Matchers
 
@@ -176,7 +176,7 @@ If set, enables proxying of websocket connections.
 
 :::warning
 
-**Use with caution:** websockets are long-lived connections, so [global timeouts](/reference/readme#global-timeouts) are not enforced (though the policy-specific `timeout` is enforced). Allowing websocket connections to the proxy could result in abuse via [DOS attacks](https://www.cloudflare.com/learning/ddos/ddos-attack-tools/slowloris/).
+**Use with caution:** websockets are long-lived connections, so [global timeouts](/reference/global-timeouts) are not enforced (though the policy-specific `timeout` is enforced). Allowing websocket connections to the proxy could result in abuse via [DOS attacks](https://www.cloudflare.com/learning/ddos/ddos-attack-tools/slowloris/).
 
 :::
 
@@ -294,7 +294,7 @@ See [Envoy documentation](https://www.envoyproxy.io/docs/envoy/latest/api-v3/con
 - [`RANDOM`](https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/upstream/load_balancing/load_balancers#random)
 - [`MAGLEV`](https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/upstream/load_balancing/load_balancers#maglev) and may be further configured using [`maglev_lb_config`](https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/cluster/v3/cluster.proto#envoy-v3-api-msg-config-cluster-v3-cluster-maglevlbconfig) option
 
-Some policy types support additional [configuration](/reference/readme#load-balancing-policy-config).
+Some policy types support additional [configuration](/reference/routes/load-balancing-policy-config).
 
 ## Policies
 

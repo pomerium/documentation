@@ -14,7 +14,7 @@ sidebar_position: 4
 
 This release of Pomerium adds the ability to bind a route to unique OIDC credentials.  This allows Identity Provider administrators to view Pomerium protected applications individually rather than as a single shared application.
 
-See [idp_client_id](reference/readme#identity-provider-client-id-per-route) and [idp_client_secret](/reference/readme#identity-provider-client-secret-per-route) for configuration details.
+See [idp_client_id](/reference/routes/identity-provider-client-id-per-route) and [idp_client_secret](/reference/routes/identity-provider-client-secret-per-route) for configuration details.
 
 ### Updated User Info Page
 
@@ -46,14 +46,14 @@ When selecting a TLS certificate for a listener, Pomerium attempts to locate one
 
 Previously, when no match was found, Pomerium would select the "first" certificate in the list. However, the definition of "first" might change based on runtime configuration, so the certificate selection was non-deterministic.
 
-Starting in v0.16, Pomerium will instead generate a self-signed certificate if it cannot locate an appropriate certificate from the provided configuration or system key/trust store. If you discover that you are receiving a self-signed certificate rather than a certificate from [`certificate`/`certificates`/`certificate_file`](/reference/readme#certificates) or the trust store, you have a mismatch between your service URL and the names covered in your certificates.
+Starting in v0.16, Pomerium will instead generate a self-signed certificate if it cannot locate an appropriate certificate from the provided configuration or system key/trust store. If you discover that you are receiving a self-signed certificate rather than a certificate from [`certificate`/`certificates`/`certificate_file`](/reference/certificates) or the trust store, you have a mismatch between your service URL and the names covered in your certificates.
 
 ### OIDC flow no longer sets default uri params
 
 Previously, Pomerium would default to setting the uri param `access_type` to `offline` for all OpenID Connect based identity providers. However, using uri params to ensure offline access (e.g. `refresh_tokens` used to keep user's sessions alive) [is unique to Google](https://developers.google.com/identity/protocols/oauth2/web-server#offline). Those query params will now only be set for Google. Other OIDC based IdP's should continue to work using [OIDC's](https://openid.net/specs/openid-connect-core-1_0.html#OfflineAccess) `offline_access` scope.
 
 ### Removed options
-The deprecated `headers` option has been removed. Use [`set_response_headers`](reference/readme#set-response-headers) instead.
+The deprecated `headers` option has been removed. Use [`set_response_headers`](/reference/set-response-headers) instead.
 
 The `signing_key_algorithm` option has been removed and will now be inferred from `signing_key`.
 
@@ -128,11 +128,11 @@ To update your policies for v0.14, please remove any identity provider prefix.  
 
 ### Upstream load balancing
 
-With the v0.13 release, routes may contain [multiple `to` URLs](reference/readme#to), and Pomerium will load balance between the endpoints. This allows Pomerium to fill the role of an edge proxy without the need for additional HTTP load balancers.
+With the v0.13 release, routes may contain [multiple `to` URLs](/reference/routes/to), and Pomerium will load balance between the endpoints. This allows Pomerium to fill the role of an edge proxy without the need for additional HTTP load balancers.
 
-- Active [health checks](reference/readme#health-checks) and passive [outlier detection](/reference/readme#outlier-detection)
-- Configurable [load balancing policies](reference/readme#load-balancing-policy)
-- Configurable [load balancing weight](reference/readme#to)
+- Active [health checks](/reference/routes/health-checks) and passive [outlier detection](/reference/routes/outlier-detection)
+- Configurable [load balancing policies](/reference/routes/load-balancing-policy)
+- Configurable [load balancing weight](/reference/routes/to)
 
 See [Load Balancing](/topics/load-balancing) for more information on using this feature set.
 
@@ -142,7 +142,7 @@ With the v0.13 release, all TLS files referenced from Pomerium's configuration a
 
 ### Proxy Protocol support
 
-The Pomerium HTTP listener now [supports](reference/readme#use-proxy-protocol) HAPROXY's [proxy protocol](https://www.haproxy.org/download/1.9/doc/proxy-protocol.txt) to update `X-Forwarded-For` accurately when behind another proxy service.
+The Pomerium HTTP listener now [supports](/reference/use-proxy-protocol) HAPROXY's [proxy protocol](https://www.haproxy.org/download/1.9/doc/proxy-protocol.txt) to update `X-Forwarded-For` accurately when behind another proxy service.
 
 ## Breaking
 
@@ -169,11 +169,11 @@ The `administrators` configuration option has been removed.
 
 ### TCP Proxying
 
-Pomerium can now be used for non-HTTP services.  See [documentation](/tcp/readme) for more details.
+Pomerium can now be used for non-HTTP services.  See [documentation](/tcp) for more details.
 
 ### Datadog Tracing
 
-Datadog has been added as a natively supported [tracing backend](reference/readme#datadog)
+Datadog has been added as a natively supported [tracing backend](/reference/tracing#datadog)
 
 # Since 0.10.0
 
@@ -279,7 +279,7 @@ To preserve 0.8.x behavior, you can use the `set_request_headers` option to expl
 #### Tracing
 
 - Jaeger tracing support is no longer end-to-end in the Proxy service. We recommend updating to the Zipkin provider for proper tracing support. Jaeger will continue to work but will not have coverage in the data plane.
-- Option `tracing_debug` is no longer supported. Use `tracing_sampling_rate` instead. [Details](https://www.pomerium.io/configuration/#shared-tracing-settings).
+- Option `tracing_debug` is no longer supported. Use `tracing_sampling_rate` instead. [Details](/reference/tracing#shared-tracing-settings).
 
 #### Metrics
 
@@ -335,7 +335,7 @@ policy:
 
 :::warning
 
-This changed was partially reverted in v0.7.2\. Session details like `user`, `email`, and `groups` can still be explicitly extracted by setting the [jwt_claims_header](reference/readme#jwt-claim-headers) configuration option.
+This changed was partially reverted in v0.7.2\. Session details like `user`, `email`, and `groups` can still be explicitly extracted by setting the [jwt_claims_header](/reference/jwt-claim-headers) configuration option.
 
 :::
 
@@ -395,7 +395,7 @@ Please see the updated examples, and [cache service docs] as a reference and for
 
 - Okta no longer uses tokens to retrieve group membership. [Group membership](https://developer.okta.com/docs/reference/api/groups/) is now fetched using Okta's API.
 - Okta's group membership is now determined by the globally unique and immutable ID field. Please update your policies to use group `ID` instead of group name.
-- Okta now requires an additional set of credentials to be used to query for group membership set as a [service account](/reference/readme#identity-provider-service-account).
+- Okta now requires an additional set of credentials to be used to query for group membership set as a [service account](/reference/identity-provider-service-account).
 
 ### OneLogin
 
@@ -558,9 +558,9 @@ Usage of the POLICY_FILE envvar is no longer supported. Support for file based p
 
 The configuration variable [Authenticate Internal Service URL] must now be a valid [URL](https://golang.org/pkg/net/url/#URL) type and contain both a hostname and valid `https` schema.
 
-[authenticate internal service url]: reference/readme#authenticate-service-url
-[cache service docs]: reference/readme#data-broker-service
-[identity provider service account]: reference/readme#identity-provider-service-account
-[policy]: reference/readme#policy
-[storage backend configuration here]: reference/readme#data-broker-service
-[storage backend types]: reference/readme#data-broker-storage-type
+[authenticate internal service url]: /reference/authenticate-service-url
+[cache service docs]: /reference/data-broker-service
+[identity provider service account]: /reference/identity-provider-service-account
+[policy]: /reference/policy/policy
+[storage backend configuration here]: /reference/data-broker-service
+[storage backend types]: /reference/data-broker-storage-type

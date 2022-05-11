@@ -250,8 +250,8 @@ ingress.pomerium.io/secure_upstream: true
 
 Additional TLS certificates may be supplied by creating a Kubernetes secret(s) in the same namespaces as the `Ingress` resource. Please note that we do not support file paths or embedded secret references.
 
-- [`ingress.pomerium.io/tls_client_secret`](https://pomerium.io/reference/readme#tls-client-certificate)
-- [`ingress.pomerium.io/tls_custom_ca_secret`](https://pomerium.io/reference/readme#tls-custom-certificate-authority)
+- [`ingress.pomerium.io/tls_client_secret`](/reference/routes/tls-client-certificate)
+- [`ingress.pomerium.io/tls_custom_ca_secret`](/reference/routes/tls-custom-certificate-authority)
 - [`ingress.pomerium.io/tls_downstream_client_ca_secret`](#supported-annotations)
 
 Please note that the referenced `tls_client_secret` must be a [TLS Kubernetes secret](https://kubernetes.io/docs/concepts/configuration/secret/#tls-secrets). `tls_custom_ca_secret` and `tls_downstream_client_ca_secret` must contain `ca.crt` containing a .PEM encoded (base64-encoded DER format) public certificate.
@@ -386,36 +386,36 @@ For more information on the Pomerium Ingress Controller or the Kubernetes concep
 - [Pomerium Helm Chart README: Pomerium Ingress Controller](https://github.com/pomerium/pomerium-helm/tree/main/charts/pomerium#pomerium-ingress-controller)
 - [Pomerium Kubernetes Ingress Controller (code repository)](https://github.com/pomerium/ingress-controller)
 
-[`ingress.pomerium.io/allow_any_authenticated_user`]: /reference/readme#allow-any-authenticated-user
-[`ingress.pomerium.io/allow_public_unauthenticated_access`]: /reference/readme#public-access
-[`ingress.pomerium.io/allow_spdy`]: /reference/readme#spdy
-[`ingress.pomerium.io/allow_websockets`]: /reference/readme#websocket-connections
-[`ingress.pomerium.io/allowed_domains`]: /reference/readme#allowed-domains
-[`ingress.pomerium.io/allowed_groups`]: /reference/readme#allowed-groups
-[`ingress.pomerium.io/allowed_idp_claims`]: /reference/readme#allowed-idp-claims
-[`ingress.pomerium.io/allowed_users`]: /reference/readme#allowed-users
-[`ingress.pomerium.io/cors_allow_preflight`]: /reference/readme#cors-preflight
-[`ingress.pomerium.io/health_checks`]: /reference/readme#health-checks
-[`ingress.pomerium.io/host_path_regex_rewrite_pattern`]: /reference/readme#host-rewrite
-[`ingress.pomerium.io/host_path_regex_rewrite_substitution`]: /reference/readme#host-rewrite
-[`ingress.pomerium.io/host_rewrite`]: /reference/readme#host-rewrite
-[`ingress.pomerium.io/host_rewrite_header`]: /reference/readme#host-rewrite
-[`ingress.pomerium.io/idle_timeout`]: /reference/readme#idle-timeout
-[`ingress.pomerium.io/lb_config`]: /reference/readme#load-balancing-policy-config
-[`ingress.pomerium.io/outlier_detection`]: /reference/readme#outlier-detection
-[`ingress.pomerium.io/pass_identity_headers`]: /reference/readme#pass-identity-headers
-[`ingress.pomerium.io/policy`]: /reference/readme#policy
-[`ingress.pomerium.io/preserve_host_header`]: /reference/readme#host-rewrite
-[`ingress.pomerium.io/remove_request_headers`]: /reference/readme#remove-request-headers
-[`ingress.pomerium.io/rewrite_response_headers`]: /reference/readme#rewrite-response-headers
-[`ingress.pomerium.io/set_request_headers`]: /reference/readme#set-request-headers
-[`ingress.pomerium.io/set_response_headers`]: /reference/readme#set-response-headers
-[`ingress.pomerium.io/timeout`]: /reference/readme#route-timeout
-[tls_client_certificate]: /reference/readme#tls-client-certificate
-[`tls_custom_ca_secret`]: /reference/readme#tls-custom-certificate-authority
-[client-certificate-authority]: /reference/readme#client-certificate-authority
-[`ingress.pomerium.io/tls_server_name`]: /reference/readme#tls-server-name
-[`ingress.pomerium.io/tls_skip_verify`]: /reference/readme#tls-skip-verification
+[`ingress.pomerium.io/allow_any_authenticated_user`]: /reference/routes/allow-any-authenticated-user
+[`ingress.pomerium.io/allow_public_unauthenticated_access`]: /reference/routes/public-access
+[`ingress.pomerium.io/allow_spdy`]: /reference/routes/spdy
+[`ingress.pomerium.io/allow_websockets`]: /reference/routes/websocket-connections
+[`ingress.pomerium.io/allowed_domains`]: /reference/policy/allowed-domains
+[`ingress.pomerium.io/allowed_groups`]: /reference/policy/allowed-groups
+[`ingress.pomerium.io/allowed_idp_claims`]: /reference/policy/allowed-idp-claims
+[`ingress.pomerium.io/allowed_users`]: /reference/policy/allowed-users
+[`ingress.pomerium.io/cors_allow_preflight`]: /reference/routes/cors-preflight
+[`ingress.pomerium.io/health_checks`]: /reference/health-checks
+[`ingress.pomerium.io/host_path_regex_rewrite_pattern`]: /reference/routes/host-rewrite
+[`ingress.pomerium.io/host_path_regex_rewrite_substitution`]: /reference/routes/host-rewrite
+[`ingress.pomerium.io/host_rewrite`]: /reference/routes/host-rewrite
+[`ingress.pomerium.io/host_rewrite_header`]: /reference/routes/host-rewrite
+[`ingress.pomerium.io/idle_timeout`]: /reference/routes/idle-timeout
+[`ingress.pomerium.io/lb_config`]: /reference/load-balancing-policy-config
+[`ingress.pomerium.io/outlier_detection`]: /reference/routes/outlier-detection
+[`ingress.pomerium.io/pass_identity_headers`]: /reference/routes/pass-identity-headers
+[`ingress.pomerium.io/policy`]: /reference/policy/policy
+[`ingress.pomerium.io/preserve_host_header`]: /reference/routes/host-rewrite
+[`ingress.pomerium.io/remove_request_headers`]: /reference/routes/remove-request-headers
+[`ingress.pomerium.io/rewrite_response_headers`]: /reference/routes/rewrite-response-headers
+[`ingress.pomerium.io/set_request_headers`]: /reference/routes/set-request-headers
+[`ingress.pomerium.io/set_response_headers`]: /reference/set-response-headers
+[`ingress.pomerium.io/timeout`]: /reference/routes/route-timeout
+[tls_client_certificate]: /reference/routes/tls-client-certificate
+[`tls_custom_ca_secret`]: /reference/routes/tls-custom-certificate-authority
+[client-certificate-authority]: /reference/client-certificate-authority
+[`ingress.pomerium.io/tls_server_name`]: /reference/routes/tls-server-name
+[`ingress.pomerium.io/tls_skip_verify`]: /reference/routes/tls-skip-verification
 [HSTS]: https://en.wikipedia.org/wiki/HTTP_Strict_Transport_Security
 [re2 regular expression]: https://github.com/google/re2/wiki/Syntax
 [regex101.com]: https://regex101.com

@@ -18,7 +18,7 @@ This guide is a practical demonstration of some of the topics discussed in [Mutu
 - [Docker Compose](https://docs.docker.com/compose/)
 - [mkcert](https://github.com/FiloSottile/mkcert)
 
-This guide assumes you already have a working IdP connection to provide user data. See our [Identity Provider](/identity-providers/readme) docs for more information.
+This guide assumes you already have a working IdP connection to provide user data. See our [Identity Provider](/identity-providers) docs for more information.
 
 ## Overview
 Three services are configured in a `docker-compose.yaml` file:

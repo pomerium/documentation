@@ -44,7 +44,7 @@ The term "Perimeter" in the context of Pomerium and general networking usually r
 Pomerium allows administrators to define authorization policies dictating what combination of users, groups, devices, etc, have access to protected services. Open-source Pomerium defines a unique policy to every [route], while Pomerium Enterprise can define reusable policies at the global and [namespace] level.
 
 ### Route
-Specific to Pomerium, a route is a defined path from outside the network (via a public domain) to an internal service. Routes can be defined in the [configuration](/reference/readme#routes) for open-source Pomerium or the [Pomerium Enterprise Console][pom-routes].
+Specific to Pomerium, a route is a defined path from outside the network (via a public domain) to an internal service. Routes can be defined in the [configuration](/reference/routes) for open-source Pomerium or the [Pomerium Enterprise Console][pom-routes].
 
 ### Single Sign-On
 Single Sign-On (**SSO**) is the most frequently asked for requirement by enterprise organizations looking to adopt new SaaS applications. SSO enables authentication via an organization’s [identity provider], such as [Google Workspace](/identity-providers/google) or [Okta](/identity-providers/okta), as opposed to users or IT admins managing hundreds, if not thousands, of usernames and passwords.

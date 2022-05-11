@@ -49,18 +49,18 @@ You can also navigate to the special pomerium endpoint `verify.localhost.pomeriu
 
 ## Next Steps
 
-Now you can experiment with adding services to Docker and defining routes and policies for them in Pomerium. See [Guides](/guides/readme) for help or inspiration.
+Now you can experiment with adding services to Docker and defining routes and policies for them in Pomerium. See [Guides](/guides) for help or inspiration.
 
 :::caution This is a test environment!
 If you followed all the steps in this doc your Pomerium environment is not using trusted certificates. Remember to use a valid certificate solution before moving this configuration to a production environment. See [Certificates][tls certificates] for more information.
 :::
 
-[configuration file]: reference/readme
+[configuration file]: /reference
 [container images]: https://hub.docker.com/r/pomerium/pomerium
 [docker]: https://docs.docker.com/install/
 [docker-compose]: https://docs.docker.com/compose/install/
 [verify]: https://verify.pomerium.com/
-[identity provider]: ../identity-providers/readme.md
+[identity provider]: /identity-providers
 [tls certificates]: ../topics/certificates
 [fqdn]: https://en.wikipedia.org/wiki/Fully_qualified_domain_name
 [mkcert]: https://github.com/FiloSottile/mkcert

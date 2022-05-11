@@ -86,10 +86,10 @@ To add a new document to the side or top-bar navigation, see `docs/.vuepress/con
 
 We use [Netlify](https://www.netlify.com) to build and host our docs. One of nice features of Netlify, is that a preview of the docs are automatically created for each new pull request that is made, which lets you be sure that the version of your docs that you see locally match what will ultimately be deployed in production.
 
-[configuration variables]: reference/readme
+[configuration variables]: /reference
 [download]: https://github.com/pomerium/pomerium/releases
 [environmental configuration variables]: https://12factor.net/config
 [verify]: https://verify.pomerium.com/
-[identity provider]: ../identity-providers/readme.md
+[identity provider]: /identity-providers
 [make]: https://en.wikipedia.org/wiki/Make_(software)
 [tls certificates]: topics/certificates

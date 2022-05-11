@@ -10,7 +10,7 @@ description: >-
 
 # Securing TCP based services
 
-The following guide demonstrates how to use Pomerium's [TCP Proxying](/tcp/readme) support with various TCP services such as databases and other non-HTTP protocols.  It also covers integration points with them when possible.
+The following guide demonstrates how to use Pomerium's [TCP Proxying](/tcp) support with various TCP services such as databases and other non-HTTP protocols.  It also covers integration points with them when possible.
 
 The source files from this guide can be found on [GitHub](https://github.com/pomerium/pomerium/tree/main/examples/tcp/).
 
@@ -25,7 +25,7 @@ Important notes:
 
 ## How it works
 
-* Create a standard Pomerium configuration for your [identity provider (IdP)](/identity-providers/readme)
+* Create a standard Pomerium configuration for your [identity provider (IdP)](/identity-providers)
 * `pomerium-cli` runs on your workstation, listening on loopback for TCP connections
 * When an inbound connection is made, `pomerium-cli` proxies the connection through `pomerium`, authenticating the user if needed
 * Pomerium authorizes the connection and forwards it to the upstream service

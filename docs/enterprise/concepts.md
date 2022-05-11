@@ -78,7 +78,7 @@ In addition to the access provided by the Viewer role, a Manager can create, rea
 :::caution
 Managers in any Namespace should note: while creating a route for an [upstream](/overview/glossary#upstream-downstream) path prevents additional routes to that path *in the same namespace*, Managers in other namespaces can create alternate routes to the same path.
 
-If you need to ensure that access to a service is only accessible from a single route, consider implementing [Mutual Authentication](/topics/mutual-auth) between Pomerium and the upstream service. This can be achieved using one of several methods, including [mTLS](/guides/upstream-mtls) and [JWT verification](/guides/jwt-verification). You can also utilize a service mesh like [Istio](/guides/istio.html)
+If you need to ensure that access to a service is only accessible from a single route, consider implementing [Mutual Authentication](/topics/mutual-auth) between Pomerium and the upstream service. This can be achieved using one of several methods, including [mTLS](/guides/upstream-mtls) and [JWT verification](/guides/jwt-verification). You can also utilize a service mesh like [Istio](/guides/istio)
 :::
 
 #### Admin
@@ -140,7 +140,7 @@ Pomerium provides a standardized interface to add access control, regardless if 
 
 ### Authentication
 
-Pomerium provides authentication via your existing identity provider (Pomerium supports all major [single sign-on](/identity-providers/readme) providers (Okta, G Suite, Azure, AD, Ping, Github and so on).
+Pomerium provides authentication via your existing identity provider (Pomerium supports all major [single sign-on](/identity-providers) providers (Okta, G Suite, Azure, AD, Ping, Github and so on).
 
 ### Authorization
 

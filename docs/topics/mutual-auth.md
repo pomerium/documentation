@@ -385,7 +385,7 @@ Yellow blocks represent different networks like the internet, an internal networ
 [JWT Verification]: /guides/jwt-verification.md
 [jwt-rfc]: https://datatracker.ietf.org/doc/html/rfc7519
 [Kubernetes]: k8s/helm.md
-[`pass_identity_headers`]: /reference/readme#pass-identity-headers
+[`pass_identity_headers`]: /reference/routes/pass-identity-headers
 [Quick Start]: install/quickstart
 [Transport Layer Security]: https://en.wikipedia.org/wiki/Transport_Layer_Security
 [zero trust]: https://www.pomerium.com/docs/background.html

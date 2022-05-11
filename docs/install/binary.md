@@ -69,12 +69,12 @@ Source the configuration `env` file, if present, and run pomerium specifying the
 
 Browse to `external-verify.your.domain.example`. Connections between you and [verify] will now be proxied and managed by Pomerium.
 
-[configuration variables]: /reference/readme
+[configuration variables]: /reference
 [download]: https://github.com/pomerium/pomerium/releases
 [verify]: https://verify.pomerium.com/
-[identity provider]: identity-providers/readme.md
+[identity provider]: /identity-providers
 [tls certificates]: topics/certificates
 [Cloudsmith]: https://cloudsmith.io
 [cloudsmith-repo]: https://cloudsmith.io/~pomerium/repos/pomerium/groups/
-[Reference]: /reference/readme
+[Reference]: /reference
 [privileged port]: https://www.w3.org/Daemon/User/Installation/PrivilegedPorts.html

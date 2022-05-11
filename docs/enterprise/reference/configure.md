@@ -122,7 +122,7 @@ Each unit of work is called a Span in a trace. Spans include metadata about the 
 
 Percentage of requests to sample. Default is .01%.
 
-Unlike the decimal value notion used for the `tracing_sample_rate` [key](/reference/readme#shared-tracing-settings) in open-source Pomerium, this value is a percentage, e.g. a value of `1` equates to 1%
+Unlike the decimal value notion used for the `tracing_sample_rate` [key](/reference/tracing#shared-tracing-settings) in open-source Pomerium, this value is a percentage, e.g. a value of `1` equates to 1%
 
 
 ### Authenticate
@@ -151,7 +151,7 @@ Default Upstream Timeout is the default timeout applied to a proxied route when 
 
 The JWT Claim Headers setting allows you to pass specific user session data to upstream applications as HTTP request headers. Note, unlike the header `x-pomerium-jwt-assertion` these values are not signed by the authorization service.
 
-Additionally, this will add the claim to the `X-Pomerium-Jwt-Assertion` header provided by [`pass_identity_headers`](/reference/readme#pass-identity-headers), if not already present.
+Additionally, this will add the claim to the `X-Pomerium-Jwt-Assertion` header provided by [`pass_identity_headers`](/reference/routes/pass-identity-headers), if not already present.
 
 Any claim in the pomerium session JWT can be placed into a corresponding header and the JWT payload for upstream consumption. This claim information is sourced from your Identity Provider (IdP) and Pomerium's own session metadata. The header will have the following format:
 

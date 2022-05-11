@@ -25,9 +25,9 @@ Before deploying Pomerium to Production, you should have already tested Pomerium
 
 Pomerium is designed to be run in two modes: All-In-One or Split Service. These modes are not mutually exclusive, meaning you can run one or multiple instances of Pomerium in all-in-one mode, and spin up additional instances for specific components as needed.
 
-Each instance of Pomerium runs in all-in-one mode unless specified to run as a specific component by the `services` key. See [All-In-One vs Split Service mode](/reference/readme#all-in-one-vs-split-service-mode) for more details.
+Each instance of Pomerium runs in all-in-one mode unless specified to run as a specific component by the `services` key. See [All-In-One vs Split Service mode](/reference#all-in-one-vs-split-service-mode) for more details.
 
-It's important to note that any production deployment with more than one instance of Pomerium (in any combination of modes) should be configured to use Redis as the [`databroker_storage_type`](/reference/readme#data-broker-storage-type). See [Data Storage - Backends](/topics/data-storage#backends) for more details.
+It's important to note that any production deployment with more than one instance of Pomerium (in any combination of modes) should be configured to use Redis as the [`databroker_storage_type`](/reference/data-broker-storage-type). See [Data Storage - Backends](/topics/data-storage#backends) for more details.
 
 ### All-in-One
 
@@ -118,7 +118,7 @@ You do **not** need to provide a load balancer in front of Authorize and Databro
 
 By default, Pomerium gRPC clients will automatically connect to all IPs returned by a DNS query for the name of an upstream service. They will then regularly re-query DNS for changes to the Authorize or Databroker service cluster. Health checks and failover are automatic.
 
-You can also define multiple domain names for Databroker or Authorize services with the [`databroker_service_url`](/reference/readme#data-broker-service-url) and [`authorize_service_urls`](/reference/readme#authorize-service-url) shared config keys.
+You can also define multiple domain names for Databroker or Authorize services with the [`databroker_service_url`](/reference/data-broker-service-url) and [`authorize_service_urls`](/reference/authorize-service-url) shared config keys.
 
 ## High Availability
 

@@ -1,6 +1,7 @@
 ---
 id: autocert
 title: Autocert
+slug: /reference/autocert/autocert
 description: |
   Turning on autocert allows Pomerium to automatically retrieve, manage, and renew public facing TLS certificates from Lets Encrypt.
 keywords:
@@ -8,8 +9,6 @@ keywords:
 - Autocert
 ---
 
-
-# Autocert
 - Environmental Variable: `AUTOCERT`
 - Config File Key: `autocert`
 - Type: `bool`
@@ -30,4 +29,3 @@ By using autocert, you agree to the [Let's Encrypt Subscriber Agreement](https:/
 Autocert requires that ports `80`/`443` be accessible from the internet in order to complete a [TLS-ALPN-01 challenge](https://letsencrypt.org/docs/challenge-types/#tls-alpn-01).
 
 :::
-

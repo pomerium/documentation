@@ -114,5 +114,5 @@ python3 scripts/programmatic_access.py \
 <<< @/scripts/programmatic_access.py
 
 [authorization bearer token]: https://developers.google.com/gmail/markup/actions/verifying-bearer-tokens
-[identity provider]: ../identity-providers/readme.md
+[identity provider]: /identity-providers
 [proof key for code exchange]: https://tools.ietf.org/html/rfc7636
