@@ -6,6 +6,8 @@ description: |
 keywords:
 - reference
 - Autocert CA
+pagination_prev: null
+pagination_next: null
 ---
 
 - Environmental Variable: `AUTOCERT_CA`

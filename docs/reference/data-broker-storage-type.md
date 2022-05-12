@@ -4,6 +4,8 @@ title: Data Broker Storage Type
 keywords:
 - reference
 - Data Broker Storage Type
+pagination_prev: null
+pagination_next: null
 ---
 
 

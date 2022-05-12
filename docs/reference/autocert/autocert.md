@@ -7,6 +7,8 @@ description: |
 keywords:
 - reference
 - Autocert
+pagination_prev: null
+pagination_next: null
 ---
 
 - Environmental Variable: `AUTOCERT`

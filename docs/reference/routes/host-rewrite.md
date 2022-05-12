@@ -4,6 +4,8 @@ title: Host Rewrite
 keywords:
 - reference
 - Host Rewrite
+pagination_prev: null
+pagination_next: null
 ---
 
 

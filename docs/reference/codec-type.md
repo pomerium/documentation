@@ -4,6 +4,8 @@ title: Codec Type
 keywords:
 - reference
 - Codec Type
+pagination_prev: null
+pagination_next: null
 ---
 
 

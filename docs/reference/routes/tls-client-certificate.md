@@ -4,6 +4,8 @@ title: TLS Client Certificate
 keywords:
 - reference
 - TLS Client Certificate
+pagination_prev: null
+pagination_next: null
 ---
 
 

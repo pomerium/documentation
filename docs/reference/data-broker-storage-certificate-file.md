@@ -4,6 +4,8 @@ title: Data Broker Storage Certificate File
 keywords:
 - reference
 - Data Broker Storage Certificate File
+pagination_prev: null
+pagination_next: null
 ---
 
 

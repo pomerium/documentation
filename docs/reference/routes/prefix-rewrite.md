@@ -4,6 +4,8 @@ title: Prefix Rewrite
 keywords:
 - reference
 - Prefix Rewrite
+pagination_prev: null
+pagination_next: null
 ---
 
 

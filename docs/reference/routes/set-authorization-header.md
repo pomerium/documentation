@@ -4,6 +4,8 @@ title: Set Authorization Header
 keywords:
 - reference
 - Set Authorization Header
+pagination_prev: null
+pagination_next: null
 ---
 
 

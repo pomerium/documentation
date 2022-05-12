@@ -4,6 +4,8 @@ title: Metrics Basic Authentication
 keywords:
 - reference
 - Metrics Basic Authentication
+pagination_prev: null
+pagination_next: null
 ---
 
 

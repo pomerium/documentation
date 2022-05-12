@@ -4,6 +4,8 @@ title: Policy (Deprecated)
 description: |
   DEPRECATED: Replaced with Routes
 slug: /reference/policy/policy
+pagination_prev: null
+pagination_next: null
 ---
 
 :::warning

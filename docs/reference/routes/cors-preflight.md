@@ -4,6 +4,8 @@ title: CORS Preflight
 keywords:
 - reference
 - CORS Preflight
+pagination_prev: null
+pagination_next: null
 ---
 
 
