@@ -2,8 +2,7 @@ import React from "react";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import App from "../../src/components/App";
 import { LicenseInfo } from "@mui/x-data-grid-pro";
-import { xgrid_key } from "../secret/xgrid-key";
-LicenseInfo.setLicenseKey(xgrid_key);
+import useDocusaurusContext from "@docusaurus/core/lib/client/exports/useDocusaurusContext";
 
 const theme = createTheme({
   palette: {
@@ -50,6 +49,10 @@ const theme = createTheme({
 });
 
 export default function Root({ children }) {
+  const {
+    siteConfig: { customFields },
+  } = useDocusaurusContext();
+  LicenseInfo.setLicenseKey(customFields?.xgridKey?.toString());
   return (
     <>
       <ThemeProvider theme={theme}>
