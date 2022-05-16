@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import data from "../../docs/reference/reference.json";
+import data from "../../content/docs/reference/reference.json";
 import { DataGridPro } from "@mui/x-data-grid-pro/DataGridPro/DataGridPro";
 import { renderCellExpand } from "./RenderCellExpand";
 import { getGridStringOperators, GridToolbar } from "@mui/x-data-grid";

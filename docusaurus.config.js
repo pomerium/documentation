@@ -9,7 +9,7 @@ const config = {
   title: 'Pomerium',
   tagline: 'Documentation',
   url: 'https://pomerium.com',
-  baseUrl: '/docs/',
+  baseUrl: '/',
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'throw',
   favicon: 'img/favicon.ico',
@@ -22,6 +22,7 @@ const config = {
       /** @type {import('@docusaurus/preset-classic').Options} */
       ({
         docs: {
+          path: 'content',
           routeBasePath: '/',
           sidebarPath: require.resolve('./sidebars.js'),
           editUrl: 'https://github.com/pomerium/documentation',
@@ -45,32 +46,32 @@ const config = {
         },
         items: [
           {
-            href: '/',
-            //docId: 'docs',
+            //href: '/',
+            docId: 'docs',
             position: 'right',
             label: 'Documentation',
-            //to: '/docs/'
+            to: '/docs/'
           },
           {
             type: 'doc',
-            docId: 'reference/readme',
+            docId: 'docs/reference/readme',
             position: 'right',
             label: 'Reference',
-            to: '/reference/'
+            to: '/docs/reference/'
           },
           {
             type: 'doc',
-            docId: 'guides/readme',
+            docId: 'docs/guides/readme',
             position: 'right',
             label: 'Guides',
-            to: '/guides/'
+            to: '/docs/guides/'
           },
           {
             type: 'doc',
-            docId: 'enterprise/about',
+            docId: 'docs/enterprise/about',
             position: 'right',
             label: 'Enterprise',
-            to: '/enterprise/'
+            to: '/docs/enterprise/'
           },
           {
             href: 'https://github.com/pomerium/documentation',
