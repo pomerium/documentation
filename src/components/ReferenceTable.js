@@ -68,6 +68,10 @@ const serviceOperator = [
   },
 ];
 
+function filterHidden(item) {
+  return !item.enterpriseOnly
+}
+
 export default function ReferenceTable() {
   const [pageSize, setPageSize] = useState(25);
   const changePageSize = (pageSize) => {
@@ -146,7 +150,7 @@ export default function ReferenceTable() {
             },
         }}
         columns={columns}
-        rows={references}
+        rows={references.filter(filterHidden)}
         components={{
           Toolbar: GridToolbar,
         }}
