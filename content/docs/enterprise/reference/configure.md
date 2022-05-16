@@ -225,8 +225,8 @@ When using an IdP without directory sync or when working with non-domain users, 
 
 
 [route-concept]: /docs/enterprise/concepts.md#routes
-[route-reference]: /docs/enterprise/reference/manage.md#routes
+[route-reference]: /docs/enterprise/reference/manage#routes
 [namespace-concept]: /docs/enterprise/concepts.md#namespaces
 [namespace-reference]: /docs/enterprise/reference/configure.md#namespaces
 [service-accounts-concept]: /docs/enterprise/concepts.md#service-accounts
-[policy-reference]: /docs/enterprise/reference/manage.md#policies-2
+[policy-reference]: /docs/enterprise/reference/manage#policies-2

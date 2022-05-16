@@ -1,13 +1,11 @@
 ---
 title: Reports
 lang: en-US
-sidebarDepth: 2
+sidebar_position: 2
 meta:
     - name: keywords
       content: configuration, options, settings, pomerium, enterprise, reference
 ---
-
-# Reports
 
 ## Traffic
 
@@ -15,20 +13,17 @@ View the traffic running through Pomerium. Filter by [Route][route-concept] name
 
 ![The Traffic page in Pomerium Enterprise](./img/traffic-fullpage.png)
 
-
 ## Runtime
 
 Monitor how many system resources Pomerium is consuming. Filter by date range, service, and instance.
 
 ![The Runtime Info page in Pomerium Enterprise](./img/runtime-fullpage.png)
 
-
 ## Sessions
 
 View active Sessions. From here you can revoke sessions, filter by session or user information, or revoke one or multiple sessions. You can also export the data.
 
 ![The Sessions page in Pomerium Enterprise](./img/sessions-fullpage.png)
-
 
 ## Events
 
@@ -40,7 +35,6 @@ The most common updates are to Pomerium Proxy services, which are updated every 
 
 The value under **Resource ID** will usually match the resource ID of a [Policy][policy-reference], visible in the Policy under **Change History** or in the URL. A value of "Pomerium Restarted" refers to when services are reloaded, usually due to a system update.
 
-
 ## Deployments
 
 From the **Deployment History** page administrators can review changes made to their Pomerium configuration.
@@ -49,10 +43,9 @@ The default view shows all changes made through Pomerium Enterprise. Use the **C
 
 ![A screenshot showing the diff of a change to a route, adding a policy](./img/deployment-diff.png)
 
-
-[route-concept]: /docs/enterprise/concepts.md#routes
-[route-reference]: /docs/enterprise/reference/manage.md#routes
-[namespace-concept]: /docs/enterprise/concepts.md#namespaces
-[namespace-reference]: /docs/enterprise/reference/configure.md#namespaces
-[service-accounts-concept]: /docs/enterprise/concepts.md#service-accounts
-[policy-reference]: /docs/enterprise/reference/manage.md#policies-2
+[route-concept]: /docs/enterprise/concepts#routes
+[route-reference]: /docs/enterprise/reference/manage#routes
+[namespace-concept]: /docs/enterprise/concepts#namespaces
+[namespace-reference]: /docs/enterprise/reference/configure#namespaces
+[service-accounts-concept]: /docs/enterprise/concepts#service-accounts
+[policy-reference]: /docs/enterprise/reference/manage#policies-2

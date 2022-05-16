@@ -1,13 +1,14 @@
 ---
 title: Manage
 lang: en-US
-sidebarDepth: 2
+sidebar_position: 3
 meta:
     - name: keywords
       content: configuration, options, settings, pomerium, enterprise, reference
 ---
 
-# Manage
+import ManageDevices from "../../reference/_manage-devices.md"
+import NewEnrollment from "../../reference/_new-enrollment.md"
 
 ## Routes
 
@@ -24,11 +25,9 @@ From the main Routes page you can view and manage existing routes. From the tabl
 
 The sections below cover the options available when creating or editing a route.
 
-
 ### General
 
 The **General** tab defines the route path, both from the internet and to the internal service, and the policies attached. Note that policies enforced on a [Namespace][namespace-reference] the route resides in will also be applied.
-
 
 #### Name
 
@@ -49,7 +48,6 @@ Only secure schemes (`https` and `tcp+https`) are supported.
 #### Metrics Name
 
 Once a Route is created, the Metric Name field will populate. You can use this name to scrape the Prometheus service for metrics on this Route when making custom dashboards.
-
 
 #### To
 
@@ -410,14 +408,9 @@ certificate_key:  "$HOME/.acme.sh/*.example.com/*.example.com.key"
 
 Introduced in v0.16.0, the **Manage Devices** page lets administrators manage user devices for policy-based authorization.
 
-
 ### Manage Devices
 
-From this page, administrators can manage new and existing device enrollments.
-Device enrollment let's you create [policies](/docs/topics/ppl#device-matcher) that use [device identity](/docs/topics/device-identity).
-- Users can [self-enroll](/docs/guides/enroll-device) devices, which must then be approved in the **Devices List** for policies requiring approved devices.
-- Administrators can use the **New Enrollment** button to create a link for the user to enroll a device as pre-approved. See our [Pre-Approved Device Enrollment](/docs/guides/admin-enroll-device) guide for more information.
-
+<ManageDevices/>
 
 ### Devices List
 
@@ -426,14 +419,9 @@ Administrators can inspect, approve, or delete registered devices from this tabl
 
 ![List of user devices](./img/console-devices.png)
 
-
 ### New Enrollment
 
-The **New Enrollment** button allows administrators to create a custom link for a specific user to use to register a new device, which will automatically be approved.
-This scheme is known as [Trust on First Use (TOFU)](https://en.wikipedia.org/wiki/Trust_on_first_use).
-
-![Example device enrollment](./img/new-enrollment.png)
-
+<NewEnrollment/>
 
 #### Search Users
 
@@ -448,8 +436,8 @@ New Enrollment URLs are only valid for the specified user.
 Specify if the user can enroll any device identity, or restrict it to a [secure enclave](/docs/topics/device-identity#secure-enclaves).
 
 [route-concept]: /docs/enterprise/concepts.md#routes
-[route-reference]: /docs/enterprise/reference/manage.md#routes
+[route-reference]: /docs/enterprise/reference/manage#routes
 [namespace-concept]: /docs/enterprise/concepts.md#namespaces
 [namespace-reference]: /docs/enterprise/reference/configure.md#namespaces
 [service-accounts-concept]: /docs/enterprise/concepts.md#service-accounts
-[policy-reference]: /docs/enterprise/reference/manage.md#policies-2
+[policy-reference]: /docs/enterprise/reference/manage#policies-2

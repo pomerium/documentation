@@ -155,6 +155,6 @@ With Pomerium:
 - trust flows from user and device identity, not network location. Every device, user, and application's communication should be authenticated, authorized, and encrypted.
 - Pomerium provides detailed audit logs for all activity in your environment. Quickly detect anomalies to mitigate bad actors and revoke access with a click of a button. Simplify life-cycle management and access reviews.
 
-[Reference: Policies]: /docs/enterprise/reference/manage.md#policies-2
+[Reference: Policies]: /docs/enterprise/reference/manage#policies-2
 [Reference: Namespace]: /docs/enterprise/reference/configure.md#namespaces
-[Reference: Routes]: /docs/enterprise/reference/manage.md#routes
+[Reference: Routes]: /docs/enterprise/reference/manage#routes

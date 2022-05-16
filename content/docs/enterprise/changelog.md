@@ -83,8 +83,8 @@ sidebarDepth: 0
 
 [`signing key`]: /docs/reference/signing-key
 [google cloud serverless]: /docs/reference/routes/enable-google-cloud-serverless-authentication
-[policies]: /docs/enterprise/reference/manage.md#policies-2
-[policy language]: /docs/enterprise/reference/manage.md#pomerium-policy-language
+[policies]: /docs/enterprise/reference/manage#policies-2
+[policy language]: /docs/enterprise/reference/manage#pomerium-policy-language
 [runtime]: /docs/enterprise/reference/reports.md#runtime
 [service accounts]: /docs/enterprise/concepts.md#service-accounts
 [spdy]: /docs/reference/routes/spdy
