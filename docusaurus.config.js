@@ -93,53 +93,83 @@ const config = {
         ],
       },
       footer: {
-        style: "dark",
         links: [
           {
-            title: "Pomerium",
+            title: "Resources",
             items: [
               {
-                label: "Home",
-                href: "https://pomerium.com",
+                label: "Documentation",
+                to: "https://www.pomerium.com/docs/",
               },
               {
-                label: "Customer Stories",
-                href: "https://www.pomerium.com/customer-stories/",
+                label: "Community",
+                to: "https://discuss.pomerium.com/",
               },
               {
-                label: "Pricing",
-                href: "https://www.pomerium.com/pricing/",
+                label: "Guides",
+                to: "https://www.pomerium.com/docs/guides/",
+              },
+              {
+                label: "Comparisons",
+                to: "https://www.pomerium.com/comparisons/",
+              },
+              {
+                label: "Integrations",
+                to: "https://www.pomerium.com/integrations/",
               },
             ],
           },
           {
-            title: "Community",
-            items: [
-              {
-                label: "Discuss",
-                href: "https://discuss.pomerium.com/",
-              },
-              {
-                label: "Twitter",
-                href: "https://twitter.com/pomerium_io",
-              },
-            ],
-          },
-          {
-            title: "More",
+            title: "Company",
             items: [
               {
                 label: "Blog",
-                href: "https://www.pomerium.com/blog/",
+                to: "https://www.pomerium.com/blog/",
               },
               {
-                label: "GitHub",
-                href: "https://github.com/pomerium/",
+                label: "About",
+                to: "https://www.pomerium.com/about/",
+              },
+              {
+                label: "Press Kit",
+                to: "https://www.pomerium.com/press/",
+              },
+              {
+                label: "Careers",
+                to: "https://www.pomerium.com/careers/",
+              },
+            ],
+          },
+          {
+            title: "Social",
+            items: [
+              {
+                label: "LinkedIn",
+                to: "https://www.linkedin.com/company/pomerium-inc",
+              },
+              {
+                label: "Twitter",
+                to: "https://twitter.com/pomerium_io",
+              },
+              {
+                label: "Github",
+                to: "https://github.com/pomerium",
+              },
+              {
+                label: "Slack",
+                to: "https://slack.pomerium.io/",
               },
             ],
           },
         ],
-        copyright: `Copyright © ${new Date().getFullYear()} Pomerium, Inc.`,
+        logo: {
+          alt: "Pomerium Logo",
+          src: "img/logo.svg",
+          href: "https://www.pomerium.com",
+          width: 161,
+          height: 28,
+        },
+        copyright: `Copyright © ${new Date().getFullYear()} Pomerium. All Rights Reserved.`,
       },
       prism: {
         theme: lightCodeTheme,
