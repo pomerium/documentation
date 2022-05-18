@@ -212,5 +212,5 @@ You should be prompted to login and see the resulting cluster info.
 
 
 [kubernetes]: https://kubernetes.io
-[pomerium-cli]: /docs/overview/releases.md#pomerium-cli
+[pomerium-cli]: /docs/overview/releases.mdx#pomerium-cli
 [Pomerium using Helm]: /docs/k8s/helm.md

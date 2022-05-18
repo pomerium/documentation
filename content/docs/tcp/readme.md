@@ -14,7 +14,7 @@ meta:
 
 Operations and engineering teams frequently require access to lower level administrative and data protocols such as SSH, RDP, Postgres, MySQL, Redis, etc.
 
-In addition to managing HTTP based applications, Pomerium can be used to protect non-HTTP systems with the same consistent authorization policy. This is achieved by tunneling TCP over HTTP with the help of a client side command built into [`pomerium-cli`]overview/releases.md#pomerium-cli).
+In addition to managing HTTP based applications, Pomerium can be used to protect non-HTTP systems with the same consistent authorization policy. This is achieved by tunneling TCP over HTTP with the help of a client side command built into [`pomerium-cli`]overview/releases.mdx#pomerium-cli).
 
 
 Internally, Pomerium uses the [`CONNECT` method](https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/CONNECT) to establish the TCP tunnel.
@@ -52,7 +52,7 @@ When creating TCP routes, note the following:
 
 ## Connect to TCP Routes
 
-While HTTP routes can be consumed with just a normal browser, `pomerium-cli` must serve as a proxy for TCP routes.  It is [available]overview/releases.md#pomerium-cli) for a variety of platforms in various formats.
+While HTTP routes can be consumed with just a normal browser, `pomerium-cli` must serve as a proxy for TCP routes.  It is [available]overview/releases.mdx#pomerium-cli) for a variety of platforms in various formats.
 
 To connect, you normally need just the external hostname and port of your TCP route:
 
