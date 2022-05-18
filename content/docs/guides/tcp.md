@@ -39,7 +39,7 @@ This recipe is designed to run on a local docker-compose instance. The included 
 * docker-compose
 * A copy of the [example repo](https://github.com/pomerium/pomerium/tree/main/examples/tcp/) checked out
 * Valid credentials for your OIDC provider
-* The [Pomerium Client]overview/releases.mdx#pomerium-cli) installed
+* The [Pomerium Client]overview/releases#pomerium-cli) installed
 * (Optional) `mkcert` to generate locally trusted certificates
 
 ## Certificates (optional)
@@ -82,7 +82,7 @@ Included in our compose file:
 
 ## Connect
 
-To connect to your service, ensure [`pomerium-cli`]overview/releases.mdx#pomerium-cli) is in your `$PATH` and run the `tcp` command, specifying the service you wish to reach.
+To connect to your service, ensure [`pomerium-cli`]overview/releases#pomerium-cli) is in your `$PATH` and run the `tcp` command, specifying the service you wish to reach.
 
 ```bash
 pomerium-cli tcp [hostname]:[port]
