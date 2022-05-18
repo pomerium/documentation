@@ -1,20 +1,19 @@
 ---
-title: Download
+title: Releases
 sidebar_label: Download
 sidebar_position: 3
 description: This article describes various ways to install pomerium
 ---
 
-# Releases
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
 
 Pomerium is shipped in multiple formats and architectures to suit a variety of deployment patterns. There are two binaries:
 
 - `pomerium` is the primary server component. It is a monolithic binary that can perform the function of any [services mode](/docs/reference/service-mode).
 - `pomerium-cli` (optional) is a command-line client for working with Pomerium. Functions include acting as an authentication helper for tools like [kubectl](/docs/k8s).
 
-
-
-## pomerium
+## Pomerium
 
 - Supported Operating Systems: `linux`, `darwin`
 - Supported Architectures: `amd64`, `arm64`
@@ -41,9 +40,11 @@ Official packages can be found on our [GitHub Releases](https://github.com/pomer
 - [RPM Instructions](https://cloudsmith.io/~pomerium/repos/pomerium/setup/#formats-rpm)
 - [Deb Instructions](https://cloudsmith.io/~pomerium/repos/pomerium/setup/#formats-deb)
 
-#### Example yum repo
+<Tabs>
 
-```
+<TabItem value="yum" label="Yum">
+
+```abnf title="/etc/yum.repos.d/pomerium-pomerium.repo"
 [pomerium-pomerium]
 name=pomerium-pomerium
 baseurl=https://dl.cloudsmith.io/public/pomerium/pomerium/rpm/el/$releasever/$basearch
@@ -54,12 +55,17 @@ gpgcheck=1
 sslverify=1
 pkg_gpgcheck=1
 ```
-#### Example deb setup
+
+</TabItem>
+<TabItem value="deb" label="Deb">
 
 ```bash
 curl -1sLf 'https://dl.cloudsmith.io/public/pomerium/pomerium/gpg.6E388440B94E1407.key' | apt-key add -
 echo "deb https://dl.cloudsmith.io/public/pomerium/pomerium/deb/debian buster main" > /etc/apt/sources.list.d/pomerium-pomerium.list
 ```
+
+</TabItem>
+</Tabs>
 
 ### Docker Image
 
@@ -115,7 +121,7 @@ Officially supported build platforms are limited by [envoy proxy](https://www.en
 
 :::
 
-```bash
+```shell
 git clone git@github.com:pomerium/pomerium.git
 cd pomerium
 make
@@ -148,9 +154,12 @@ Official packages can be found on our [GitHub Releases](https://github.com/pomer
 - [RPM Instructions](https://cloudsmith.io/~pomerium/repos/pomerium/setup/#formats-rpm)
 - [Deb Instructions](https://cloudsmith.io/~pomerium/repos/pomerium/setup/#formats-deb)
 
-#### Example yum repo
 
-```
+<Tabs>
+
+<TabItem value="yum" label="Yum">
+
+```abnf title="/etc/yum.repos.d/pomerium-cli.repo"
 [pomerium-pomerium]
 name=pomerium-pomerium
 baseurl=https://dl.cloudsmith.io/public/pomerium/pomerium/rpm/el/$releasever/$basearch
@@ -161,12 +170,18 @@ gpgcheck=1
 sslverify=1
 pkg_gpgcheck=1
 ```
-#### Example deb setup
+
+</TabItem>
+<TabItem value="deb" label="Deb">
 
 ```bash
 curl -1sLf 'https://dl.cloudsmith.io/public/pomerium/pomerium/gpg.6E388440B94E1407.key' | apt-key add -
 echo "deb https://dl.cloudsmith.io/public/pomerium/pomerium/deb/debian buster main" > /etc/apt/sources.list.d/pomerium-pomerium.list
 ```
+
+</TabItem>
+</Tabs>
+
 ### Homebrew
 
 ```shell
@@ -179,15 +194,15 @@ The CLI utilizes a [minimal](https://github.com/GoogleContainerTools/distroless)
 
 - `:vX.Y.Z`: which will pull the a [specific tagged release](https://github.com/pomerium/cli/tags).
 
-  ```bash
-  $ docker run pomerium/cli:v0.1.0 --version
+  ```bash {2}
+  docker run pomerium/cli:v0.1.0 --version
   v0.1.0+53bfa4e
   ```
 
 - `:latest`: which will pull the [most recent tagged release](https://github.com/pomerium/cli/releases).
 
-  ```bash
-  $ docker run pomerium/cli:latest --version
+  ```bash {2}
+  docker run pomerium/cli:latest --version
   v0.2.0+87e214b
   ```
 
