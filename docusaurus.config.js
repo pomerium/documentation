@@ -3,6 +3,9 @@
 
 const lightCodeTheme = require("prism-react-renderer/themes/github");
 const darkCodeTheme = require("prism-react-renderer/themes/dracula");
+const dotenv = require("dotenv");
+
+dotenv.config()
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
@@ -42,6 +45,11 @@ const config = {
   themeConfig:
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
+      algolia: {
+        appId: process.env.ALGOALIA_APPID,
+        apiKey: process.env.ALGOLIA_APIKEY,
+        indexName: process.env.INDEX_NAME,
+      },
       navbar: {
         title: "",
         logo: {
