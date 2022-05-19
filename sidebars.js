@@ -20,9 +20,25 @@ const sidebars = {
         'docs/overview/background',
         'docs/overview/architecture',
         'docs/overview/releases',
-        'docs/overview/upgrading',
+        {
+          type: 'category',
+          label: "Upgrading",
+          link: {
+            type: 'doc',
+            id: 'docs/overview/upgrading/index'
+          },
+          items: ['docs/overview/upgrading/archive']
+        },
         'docs/overview/glossary',
-        'docs/overview/CHANGELOG',
+        {
+          type: 'category',
+          label: "Changelog",
+          link: {
+            type: 'doc',
+            id: 'docs/overview/changelog/index'
+          },
+          items: ['docs/overview/changelog/archive']
+        },
       ]
     },
     {
