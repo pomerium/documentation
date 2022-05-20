@@ -6,6 +6,7 @@
  */
 import React from "react";
 import LinkItem from "@theme/Footer/LinkItem";
+import {FooterNewsletterForm} from '../../../../components/Newsletter';
 
 function ColumnLinkItem({ item }) {
   return item.html ? (
@@ -26,7 +27,7 @@ function ColumnLinkItem({ item }) {
 function Column({ column }) {
   return (
     <div className="col footer__col">
-      <div className="footer__title text--center">{column.title}</div>
+      <div className="footer__title text--left">{column.title}</div>
       <ul className="footer__items">
         {column.items.map((item, i) => (
           <ColumnLinkItem key={i} item={item} />
@@ -42,6 +43,7 @@ export default function FooterLinksMultiColumn({ columns }) {
       {columns.map((column, i) => (
         <Column key={i} column={column} />
       ))}
+      <FooterNewsletterForm/>
     </div>
   );
 }
