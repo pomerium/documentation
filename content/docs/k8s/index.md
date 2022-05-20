@@ -1,13 +1,9 @@
 ---
 title: Kubernetes Integration
 sidebar_label: Kubernetes
-sidebar_position: 7
 pagination_prev: null
-description: >-
-  This article describes Pomerium's integration with the Kubernetes API Server
+description: This article describes Pomerium's integration with the Kubernetes API Server
 ---
-
-# Kubernetes Integration
 
 ## Background
 
@@ -38,9 +34,7 @@ Pomerium can be leveraged as a proxy for user requests to the API Server.
 
 ## How it works
 
-<br/><br/>
-<img alt="kubernetes integration" src="img/kubernetes-integration.svg" width="85%"/>
-<br/><br/>
+![Kubernetes Integration](img/kubernetes-integration.svg)
 
 Building on top of a standard Kubernetes and Pomerium deployment:
 

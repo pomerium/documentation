@@ -19,6 +19,7 @@ const sidebars = {
       items: [
         'docs/overview/background',
         'docs/overview/architecture',
+        'docs/overview/glossary',
         'docs/overview/releases',
         {
           type: 'category',
@@ -29,7 +30,6 @@ const sidebars = {
           },
           items: ['docs/overview/upgrading/archive']
         },
-        'docs/overview/glossary',
         {
           type: 'category',
           label: "Changelog",
@@ -65,7 +65,7 @@ const sidebars = {
         'docs/identity-providers/auth0',
         'docs/identity-providers/azure',
         'docs/identity-providers/cognito',
-        'docs/identity-providers/dex-freeipa',
+        //'docs/identity-providers/dex-freeipa',
         'docs/identity-providers/github',
         'docs/identity-providers/gitlab',
         'docs/identity-providers/google',

@@ -1,10 +1,8 @@
 ---
 title: Securing Pomerium
-description: >-
-  This page is an index for security-related pages throughout Pomerium's documentation.
+description: This page is an index for security-related pages throughout Pomerium's documentation.
+pagination_next: null
 ---
-
-# Securing Pomerium
 
 Pomerium is a tool for securing your infrastructure while adhering to the principles of [Zero Trust](/docs/overview/background#zero-trust). But that doesn't mean that your stack is "secure" right out of the box. Additionally, security is a battle of give and take; more security often comes at the cost of more complexity, both for the administrator and the end-user. What layers of security you choose to apply (and how you configure them) is highly dependent on your use case.
 
@@ -35,7 +33,6 @@ Part of Pomerium's strength comes from the ability to pass user identity and con
 - [Getting the user's identity](/docs/topics/getting-users-identity) details the JWT Pomerium creates to identify the user in any given request.
 - [Original User Context](/docs/topics/original-request-context) explains how to pass along the user context when upstream services communicate with each other to complete a request.
 - Many applications support native JWT verification. See [Enable jWT Authentication in Grafana](/docs/guides/grafana#enable-jwt-authentication-in-grafana) for an example. For those that don't, you can perform [JWT Verification](/docs/guides/jwt-verification) with a sidecar.
-
 
 ## Device Identity
 

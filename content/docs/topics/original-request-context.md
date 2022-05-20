@@ -1,7 +1,6 @@
 ---
 title: Original User Context
 description: This article describes how the original user context is passed secondary requests.
-sidebarDepth: 0
 ---
 
 # Original User Context

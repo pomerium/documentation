@@ -1,16 +1,9 @@
 ---
 title: Production Deployment
-description: >-
- This article covers production deployment requirements and concerns
-meta:
-  - name: keywords
-    content: pomerium, identity access proxy, production, deployment, scale, scaling, horizontal,
-sidebar_position: 5
+description: This article covers production deployment requirements and concerns
+keywords: [pomerium, identity access proxy, production, deployment, scale, scaling, horizontal,]
 pagination_prev: null
 ---
-
-
-# Production Deployment
 
 This page covers the topic of running Pomerium in a production configuration.
 

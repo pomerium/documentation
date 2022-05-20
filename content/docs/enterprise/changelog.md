@@ -1,9 +1,6 @@
 ---
 title: Changelog
-sidebarDepth: 0
 ---
-
-# Changelog
 
 ## 0.17.0
 

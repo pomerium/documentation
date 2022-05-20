@@ -1,11 +1,8 @@
 ---
 title: Local OIDC Provider
 lang: en-US
-meta:
-  - name: keywords
-    content: pomerium, identity access proxy, oidc, identity provider, idp
-description: >-
-  This guide covers how to use Pomerium with a local OIDC provider using [qlik/simple-oidc-provider].
+keywords: [pomerium, identity access proxy, oidc, identity provider, idp]
+description: This guide covers how to use Pomerium with a local OIDC provider using [qlik/simple-oidc-provider].
 ---
 
 # Local OIDC Provider

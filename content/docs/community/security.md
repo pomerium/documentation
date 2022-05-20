@@ -1,13 +1,9 @@
 ---
-title: Security
+title: Security Policy
+sidebar_label: Security
 lang: en-US
-sidebarDepth: 0
-meta:
-  - name: keywords
-    content: pomerium, security, disclosure, vulnerabilities
+keywords: [pomerium, security, disclosure, vulnerabilities]
 ---
-
-# Security Policy
 
 ## Security & Threat model
 

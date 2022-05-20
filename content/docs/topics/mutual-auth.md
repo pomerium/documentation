@@ -1,12 +1,8 @@
 ---
 title: Mutual Authentication
 lang: en-US
-sidebarDepth: 1
-meta:
-  - name: keywords
-    content: pomerium, identity access proxy, mutual authentication, jwt, jwks, mtls
-description: >-
-  This page describes the concept of mutual authentication and why it's important.
+keywords: [pomerium, identity access proxy, mutual authentication, jwt, jwks, mtls]
+description: This page describes the concept of mutual authentication and why it's important.
 ---
 
 # Mutual Authentication: A Component of Zero Trust
@@ -304,89 +300,93 @@ flowchart LR
 
 The expandable legend below describes how different elements are used in the graphs above.
 
-::: details Legend
-The graphs in this guide use a consistent format to indicate certain aspects of the data flow.
+<details>
+  <summary>Legend</summary>
+  <div>
 
----
+  The graphs in this guide use a consistent format to indicate certain aspects of the data flow.
 
-```mermaid
-flowchart LR
-A --HTTP--- B
-```
+  ---
 
-Thin lines represent un-encrypted traffic over HTTP.
+  ```mermaid
+  flowchart LR
+  A --HTTP--- B
+  ```
 
----
+  Thin lines represent un-encrypted traffic over HTTP.
 
-```mermaid
-flowchart LR
-A[Client]==tls==o B[Server]
-```
+  ---
 
-Thick lines represent encrypted traffic using TLS. the circle represents which end of the connection is providing a certificate to establish trust.
+  ```mermaid
+  flowchart LR
+  A[Client]==tls==o B[Server]
+  ```
 
----
+  Thick lines represent encrypted traffic using TLS. the circle represents which end of the connection is providing a certificate to establish trust.
 
-```mermaid
-flowchart LR
-A<==mTLS==>B
-```
+  ---
 
-Thick lines with arrows on both ends represent a connection secured by mTLS, where each side provides a TLS certificate and the other can verify its identity.
+  ```mermaid
+  flowchart LR
+  A<==mTLS==>B
+  ```
 
----
+  Thick lines with arrows on both ends represent a connection secured by mTLS, where each side provides a TLS certificate and the other can verify its identity.
 
-```mermaid
-flowchart LR
-A-.out-of-band.-B
-```
+  ---
 
-Dashed lines represent out-of-band connections. These occur when, for example, various services talk to each other to validate connections made by the user.
+  ```mermaid
+  flowchart LR
+  A-.out-of-band.-B
+  ```
 
----
+  Dashed lines represent out-of-band connections. These occur when, for example, various services talk to each other to validate connections made by the user.
 
-```mermaid
-flowchart LR
-A[/Hacker/]--broken--x B[Server]
-```
+  ---
 
-Lines with an **X** represent a failed attempt to gain access to a system.
+  ```mermaid
+  flowchart LR
+  A[/Hacker/]--broken--x B[Server]
+  ```
 
----
+  Lines with an **X** represent a failed attempt to gain access to a system.
 
-```mermaid
-flowchart LR
-subgraph Internet
-style Internet stroke-dasharray: 5 5
-D[Client]
-end
-subgraph lan [Internal Network]
-  direction TB
-  style lan stroke-dasharray: 5 5
-  A[Pomerium]
-  D--oA
-  A<==>E
-  E[Service Mesh]
-  E<==>C
-  subgraph docker [Docker Network]
-    style docker margin-top: 10
-    direction TB
-    C[Service]
+  ---
+
+  ```mermaid
+  flowchart LR
+  subgraph Internet
+  style Internet stroke-dasharray: 5 5
+  D[Client]
   end
-end
-```
+  subgraph lan [Internal Network]
+    direction TB
+    style lan stroke-dasharray: 5 5
+    A[Pomerium]
+    D--oA
+    A<==>E
+    E[Service Mesh]
+    E<==>C
+    subgraph docker [Docker Network]
+      style docker margin-top: 10
+      direction TB
+      C[Service]
+    end
+  end
+  ```
 
-Yellow blocks represent different networks like the internet, an internal network, or a virtual network like Docker provides. Dashed borders represent network perimeters allowing general access. Solid borders represent secured perimeters only permitting the traffic represented in the diagram.
-:::
+  Yellow blocks represent different networks like the internet, an internal network, or a virtual network like Docker provides. Dashed borders represent network perimeters allowing general access. Solid borders represent secured perimeters only permitting the traffic represented in the diagram.
 
-[binaries]: /docs/install/binary.md
+  </div>
+</details>
+
+[binaries]: /docs/install/binary
 [device identity verification]: /docs/topics/device-identity.md
 [Grafana]: /docs/guides/grafana
 [JWT Verification]: /docs/guides/jwt-verification.md
 [jwt-rfc]: https://datatracker.ietf.org/doc/html/rfc7519
-[Kubernetes]: /docs/k8s/helm.md
+[Kubernetes]: /docs/k8s/helm
 [`pass_identity_headers`]: /docs/reference/routes/pass-identity-headers
 [Quick Start]: /docs/install/quickstart
 [Transport Layer Security]: https://en.wikipedia.org/wiki/Transport_Layer_Security
 [zero trust]: https://www.pomerium.com/docs/background.html
-

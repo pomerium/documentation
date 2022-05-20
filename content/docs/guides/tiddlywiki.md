@@ -1,11 +1,8 @@
 ---
 title: TiddlyWiki
 lang: en-US
-meta:
-  - name: keywords
-    content: pomerium, identity access proxy, wiki, tiddlywiki
-description: >-
-  This guide covers how to add authentication and authorization to a hosted, fully, online instance of TiddlyWiki.
+keywords: [pomerium, identity access proxy, wiki, tiddlywiki]
+description: This guide covers how to add authentication and authorization to a hosted, fully, online instance of TiddlyWiki.
 ---
 
 # Securing TiddlyWiki on Node.js

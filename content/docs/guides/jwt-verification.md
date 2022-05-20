@@ -1,11 +1,8 @@
 ---
 title: JWT Verification
 lang: en-US
-meta:
-  - name: keywords
-    content: pomerium, identity access proxy, envoy, jwt,
-description: >-
-  This example demonstrates how to verify the Pomerium JWT assertion header using Envoy.
+keywords: [pomerium, identity access proxy, envoy, jwt,]
+description: This example demonstrates how to verify the Pomerium JWT assertion header using Envoy.
 ---
 
 # JWT Verification
@@ -105,7 +102,7 @@ Mac and Linux users can use DNSMasq to map the `*.localhost.pomerium.io` domain 
 
 1. Create a `cfg` directory containing the following `envoy.yaml` file. Envoy configuration can be quite verbose, but the crucial bit is the HTTP filter (highlighted below):
 
-    ```yaml{30-49}
+    ```yaml {30-49}
     admin:
       access_log_path: /dev/null
       address:

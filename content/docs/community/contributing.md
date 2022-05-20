@@ -1,16 +1,9 @@
 ---
 title: Contributing
 lang: en-US
-sidebarDepth: 0
-meta:
-  - name: keywords
-    content: pomerium, community, contributing, pr, code
-description: >-
-  This document describes how you can find issues to work on, fix/add
-  documentation, and how setup Pomerium for local development.
+keywords: [pomerium, community, contributing, pr, code]
+description: This document describes how you can find issues to work on, fix/add documentation, and how setup Pomerium for local development.
 ---
-
-# Contributing
 
 First of all, thank you for considering contributing to Pomerium! You can have a direct impact on Pomerium by helping with its code or documentation. To contribute to Pomerium, open a [pull request](https://github.com/pomerium/pomerium/pulls) (PR). If you're new to our community, that's okay: **we gladly welcome pull requests from anyone, regardless of your native language or coding experience.**
 

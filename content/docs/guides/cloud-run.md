@@ -1,12 +1,8 @@
 ---
 title: Cloud Run
 lang: en-US
-meta:
-  - name: keywords
-    content: pomerium, identity access proxy, gcp, google, iap, serverless, cloudrun
-description: >-
-  This guide covers how to deploy Pomerium to Cloud Run and use it to protect
-  other endpoints via Authorization Headers.
+keywords: [pomerium, identity access proxy, gcp, google, iap, serverless, cloudrun]
+description: This guide covers how to deploy Pomerium to Cloud Run and use it to protect other endpoints via Authorization Headers.
 ---
 
 # Securing Cloud Run endpoints

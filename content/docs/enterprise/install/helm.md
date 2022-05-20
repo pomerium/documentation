@@ -1,6 +1,5 @@
 ---
 title: Helm
-sidebarDepth: 1
 description: Install Pomerium Enterprise in Kubernetes with Helm
 ---
 
@@ -161,7 +160,7 @@ If, while updating the open-source Pomerium values, you change any block's `serv
 kubectl delete svc pomerium-proxy
 ```
 
-[Pomerium using Helm]: /docs/k8s/helm.md
+[Pomerium using Helm]: /docs/k8s/helm
 [cert-manager]: https://cert-manager.io/docs/
 
 ### Generate Recovery Token

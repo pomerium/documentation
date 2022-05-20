@@ -1,13 +1,8 @@
 ---
 title: Configure
 lang: en-US
-sidebarDepth: 2
-meta:
-    - name: keywords
-      content: configuration, options, settings, pomerium, enterprise, reference
+keywords: [configuration, options, settings, pomerium, enterprise, reference]
 ---
-
-# Configure
 
 The **Configure** section of the Pomerium Enterprise Console houses settings that affect the entirety of the Console environment, i.e. across all Namespaces. Adjust these settings with care.
 
@@ -15,13 +10,11 @@ The **Configure** section of the Pomerium Enterprise Console houses settings tha
 
 The **Settings** section holds global settings that affect how the Pomerium Enterprise Console runs, logs, and communicates. Values set here are applied globally, except for settings documented to override global options.
 
-
 ### Global
-
 
 #### Debug
 
-::: danger
+:::danger
 
 Enabling the debug flag could result in sensitive information being logged!!!
 
@@ -31,7 +24,7 @@ By default, JSON encoded logs are produced. Debug enables colored, human-readabl
 
 For example, if `true`
 
-```
+```log
 10:37AM INF cmd/pomerium version=v0.0.1-dirty+ede4124
 10:37AM INF proxy: new route from=verify.localhost.pomerium.io to=https://verify.pomerium.com
 10:37AM INF proxy: new route from=ssl.localhost.pomerium.io to=http://neverssl.com
@@ -40,7 +33,7 @@ For example, if `true`
 
 If `false`
 
-```
+```json
 {"level":"info","version":"v0.0.1-dirty+ede4124","time":"2019-02-18T10:41:03-08:00","message":"cmd/pomerium"}
 {"level":"info","from":"verify.localhost.pomerium.io","to":"https://verify.pomerium.com","time":"2019-02-18T10:41:03-08:00","message":"proxy: new route"}
 {"level":"info","from":"ssl.localhost.pomerium.io","to":"http://neverssl.com","time":"2019-02-18T10:41:03-08:00","message":"proxy: new route"}

@@ -1,13 +1,8 @@
 ---
 title: Istio
 lang: en-US
-meta:
-  - name: keywords
-    content: >-
-      pomerium, identity access proxy, istio, traffic management, policy,
-      mutual authentication, authorization, kubernetes
-description: >-
-  Integrate the Pomerium Ingress controller with an Istio service mesh for full mutual authentication in your cluster.
+keywords: [pomerium, identity access proxy, istio, traffic management, policy, mutual authentication, authorization, kubernetes]
+description: Integrate the Pomerium Ingress controller with an Istio service mesh for full mutual authentication in your cluster.
 ---
 
 # Istio with Pomerium
@@ -187,7 +182,7 @@ Now that Pomerium is installed in the cluster, we can define authentication and 
 
 1. Now when you go to `hello.localhost.pomerium.io` in the browser, you should see `RBAC: access denied`. This confirms that the policy is in place and denying our request. To allow the traffic, add the `pass_identity_headers` annotation to `example-ingress.yaml`:
 
-    ```yaml{7}
+    ```yaml {7}
     apiVersion: networking.k8s.io/v1
     kind: Ingress
     metadata:
@@ -272,7 +267,7 @@ To demonstrate complete authorization validation through to the upstream service
 
 1. Now when you visit the Grafana route, you should be signed in as the user matching your Pomerium claim. To finalize the installation, create a new `grafana-istio-policy.yaml` file. Adjust the matchers and host values for Grafana, and enable `forwardOriginalToken`:
 
-    ```yaml{15}
+    ```yaml {15}
     apiVersion: security.istio.io/v1beta1
     kind: RequestAuthentication
     metadata:
@@ -324,4 +319,4 @@ To demonstrate complete authorization validation through to the upstream service
 [north-south traffic]: /docs/overview/glossary.md#north-south-traffic
 [Pomerium Ingress Controller]: /docs/k8s/ingress.md
 [zero trust]: /docs/overview/background.md#zero-trust
-[Install Pomerium using Helm]: /docs/k8s/helm.md
+[Install Pomerium using Helm]: /docs/k8s/helm

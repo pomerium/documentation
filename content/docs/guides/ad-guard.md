@@ -1,12 +1,8 @@
 ---
 title: AdGuard
 lang: en-US
-meta:
-  - name: keywords
-    content: pomerium, identity access proxy, adguard, ad guard, pi hole, piehole
-description: >-
-  This guide covers how to add authentication and authorization to a hosted,
-  fully, online instance of Adguard.
+keywords: [pomerium, identity access proxy, adguard, ad guard, pi hole, piehole]
+description: This guide covers how to add authentication and authorization to a hosted, fully online instance of Adguard.
 ---
 
 # Securing AdGuard Home

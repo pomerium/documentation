@@ -1,9 +1,8 @@
 ---
 title: FreeIPA with Dex
-description: >-
-  This article describes how to connect Pomerium to third-party identity
-  providers / single-sign-on services. You will need to generate keys, copy
-  these into your Pomerium settings, and enable the connection.
+description: This article describes how to connect Pomerium to third-party identity providers / single-sign-on services. You will need to generate keys, copy these into your Pomerium settings, and enable the connection.
+pagination_prev: null
+pagination_next: null
 ---
 
 

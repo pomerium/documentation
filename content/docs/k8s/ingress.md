@@ -1,13 +1,10 @@
 ---
-title: Ingress Controller
+title: Kubernetes Ingress Controller
+sidebar_label: Ingress Controller
 lang: en-US
-sidebarDepth: 1
-meta:
-  - name: keywords
-    content: pomerium, identity access proxy, oidc, kubernetes, ingress, ingress controller, reverse proxy
+keywords: [pomerium, identity access proxy, oidc, kubernetes, ingress, ingress controller, reverse proxy]
+pagination_next: null
 ---
-
-# Kubernetes Ingress Controller
 
 Use Pomerium as a first-class secure-by-default Ingress Controller. The Pomerium Ingress Controller enables workflows more native to Kubernetes environments, such as Git-Ops style actions based on pull requests. Dynamically provision routes from Ingress resources and set policy based on annotations. By defining routes as Ingress resources you can independently create and remove them from Pomerium's configuration.
 
@@ -66,7 +63,7 @@ The helm chart exposes a subset of these flags for appropriate customization.
 
 ### Defining Routes
 
-If you've tested Pomerium using the [all-in-one binary](/docs/install/binary), you're probably familiar with configuring routes in Pomerium's [`config.yaml`](/docs/install/binary.md#configuration-file). When using the Pomerium Ingress Controller, each route is defined as an Ingress resource in the Kubernetes API.
+If you've tested Pomerium using the [all-in-one binary](/docs/install/binary), you're probably familiar with configuring routes in Pomerium's [`config.yaml`](/docs/install/binary#configuration-file). When using the Pomerium Ingress Controller, each route is defined as an Ingress resource in the Kubernetes API.
 
 The Ingress Controller will monitor Ingress resources in the cluster, creating a Pomerium route definition for each one. Policy and other configuration options for the route are set by using annotations starting with `ingress.pomerium.io/`.
 
@@ -105,24 +102,26 @@ routes:
               is: user@yourdomain.com
 ```
 
-::: details Write Policies in YAML
+<details>
+  <summary>Write Policies in YAML</summary>
+  <div>
+  You can also define a route's policies using YAML:
 
-You can also define a route's policies using YAML:
+  ```yaml
+  apiVersion: networking.k8s.io/v1
+  kind: Ingress
+  metadata:
+    name: name
+    annotations:
+      ingress.pomerium.io/policy: |
+        - allow:
+            or:
+              - domain:
+                  is: pomerium.com
+  ```
 
-```yaml
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: name
-  annotations:
-    ingress.pomerium.io/policy: |
-      - allow:
-          or:
-            - domain:
-                is: pomerium.com
-```
-
-:::
+  </div>
+</details>
 
 :::tip
 Routes are sorted and applied in the following order.
@@ -140,7 +139,9 @@ This sorting order helps ensure that more restrictive routes for specific paths 
 
 Most configuration keys in non-Kubernetes deployments can be specified as annotation in an Ingress Resource definition. The format is `ingress.pomerium.io/${OPTION_NAME}`. The expandable list below contains the annotations available, which behave as described in our reference documentation (with links to the appropriate reference documentation).
 
-::: details Pomerium-Standard Annotations
+<details>
+<summary>Pomerium-Standard Annotations</summary>
+<div>
 
 - [`ingress.pomerium.io/allow_any_authenticated_user`]
 - [`ingress.pomerium.io/allow_public_unauthenticated_access`]
@@ -168,7 +169,8 @@ Most configuration keys in non-Kubernetes deployments can be specified as annota
 - [`ingress.pomerium.io/tls_server_name`]
 - [`ingress.pomerium.io/tls_skip_verify`]
 
-:::
+</div>
+</details>
 
 The remaining annotations are specific to or behave differently than they do when using Pomerium without the Ingress Controller:
 

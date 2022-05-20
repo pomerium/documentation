@@ -1,10 +1,7 @@
 ---
 title: Glossary
 lang: en-US
-sidebar_position: 5
-meta:
-  - name: keywords
-    content: pomerium, identity access proxy, beyondcorp, zero-trust, reverse proxy, ztn, zta, zero trust, glossary, terms, definitions
+keywords: [pomerium, identity access proxy, beyondcorp, zero-trust, reverse proxy, ztn, zta, zero trust, glossary, terms, definitions]
 description: A quick reference of commonly used terms.
 ---
 

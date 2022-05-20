@@ -1,20 +1,14 @@
 ---
 title: TCP Support
 sidebar_label: TCP Connections
-sidebar_position: 6
 pagination_prev: null
-description: >-
-  This article describes how to leverage pomerium for TCP proxying
-meta:
-  - name: keywords
-    content: pomerium, pomerium-cli, proxy, identity access proxy, ssh, tcp, postgres, database, redis, mysql, application, non http, tunnel
+description: This article describes how to leverage pomerium for TCP proxying.
+keywords: [pomerium, pomerium-cli, proxy, identity access proxy, ssh, tcp, postgres, database, redis, mysql, application, non http, tunnel]
 ---
-
-# TCP Support
 
 Operations and engineering teams frequently require access to lower level administrative and data protocols such as SSH, RDP, Postgres, MySQL, Redis, etc.
 
-In addition to managing HTTP based applications, Pomerium can be used to protect non-HTTP systems with the same consistent authorization policy. This is achieved by tunneling TCP over HTTP with the help of a client side command built into [`pomerium-cli`]overview/releases#pomerium-cli).
+In addition to managing HTTP based applications, Pomerium can be used to protect non-HTTP systems with the same consistent authorization policy. This is achieved by tunneling TCP over HTTP with the help of a client side command built into [`pomerium-cli`](/docs//releases#pomerium-cli).
 
 
 Internally, Pomerium uses the [`CONNECT` method](https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/CONNECT) to establish the TCP tunnel.
@@ -30,6 +24,7 @@ Otherwise, the HTTP proxy in front of Pomerium must know how to properly handle 
 TCP configuration is simple. Just specify the correct scheme and ports in your route [`to`](/docs/reference/routes/to) and [`from`](/docs/reference/routes/from) fields.
 
 Example:
+
 ```yaml
 routes:
   - from: tcp+https://redis.corp.example.com:6379
@@ -52,11 +47,11 @@ When creating TCP routes, note the following:
 
 ## Connect to TCP Routes
 
-While HTTP routes can be consumed with just a normal browser, `pomerium-cli` must serve as a proxy for TCP routes.  It is [available]overview/releases#pomerium-cli) for a variety of platforms in various formats.
+While HTTP routes can be consumed with just a normal browser, `pomerium-cli` or Pomerium Desktop must serve as a proxy for TCP routes. See [Pomerium Desktop and CLI Clients](./client) for more information.
 
 To connect, you normally need just the external hostname and port of your TCP route:
 
-```bash{1}
+```bash  {1}
 pomerium-cli tcp redis.corp.example.com:6379
 5:57PM INF tcptunnel: listening on 127.0.0.1:52046
 ```
@@ -65,7 +60,7 @@ By default, `pomerium-cli` will start a listener on loopback on a random port.
 
 On first connection, you will be sent through a standard Pomerium HTTP authentication flow.  After completing this, your TCP connection should be established!
 
-```bash{1}
+```bash  {1}
 % redis-cli -h localhost -p 52046
 localhost:52046> keys *
 (empty array)
@@ -94,6 +89,8 @@ The command above connects to `https://pomerium.corp.example.com:8443` and then 
 
 We've outlined how to use a TCP tunnel through Pomerium for several popular services that use TCP connections:
 
+- [Git](examples/git)
+- [Microsoft SQL](examples/ms-sql)
 - [MySQL and MariaDB](examples/mysql)
 - [RDP](examples/rdp)
 - [Redis](examples/redis)

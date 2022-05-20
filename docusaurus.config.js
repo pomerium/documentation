@@ -32,7 +32,7 @@ const config = {
           path: "content",
           routeBasePath: "/",
           sidebarPath: require.resolve("./sidebars.js"),
-          editUrl: "https://github.com/pomerium/documentation",
+          editUrl: "https://github.com/pomerium/documentation/tree/main",
           remarkPlugins: [require("mdx-mermaid")],
         },
         theme: {
@@ -174,6 +174,7 @@ const config = {
       prism: {
         theme: lightCodeTheme,
         darkTheme: darkCodeTheme,
+        additionalLanguages: ['actionscript', 'log', 'ini'],
       },
     }),
   stylesheets: ["https://fonts.googleapis.com/icon?family=Material+Icons"],

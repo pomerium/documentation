@@ -1,6 +1,8 @@
 ---
 title: Changelog
 lang: en-US
+pagination_prev: null
+pagination_next: null
 ---
 
 ## [v0.17.0](https://github.com/pomerium/pomerium/tree/v0.17.0) (2022-03-04)

@@ -1,14 +1,10 @@
 ---
-title: Identity Providers
-sidebar_position: 4
+title: Identity Provider Configuration
+sidebar_label: Identity Providers
+description: This article describes how to connect Pomerium to third-party identity providers / single-sign-on services.
 pagination_prev: null
-description: >-
-  This article describes how to connect Pomerium to third-party identity
-  providers / single-sign-on services. You will need to generate keys, copy
-  these into your Pomerium settings, and enable the connection.
+pagination_next: null
 ---
-
-# Identity Provider Configuration
 
 Pomerium provides single-sign-on authentication and user identity details by integrating with your downstream Identity Provider (**IdP**) of choice. That authentication integration is achieved using OAuth2, and [OpenID Connect][openid connect] (**OIDC**). Where available, Pomerium also supports pulling additional data (like groups) using directory synchronization. An additional API token is required for directory sync.
 

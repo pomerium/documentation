@@ -1,10 +1,7 @@
 ---
 title: Pomerium Policy Language
-description: >-
-  This article covers Pomerium Policy Language, used to define secure access policies for routes.
+description: This article covers Pomerium Policy Language, used to define secure access policies for routes.
 ---
-
-# Pomerium Policy Language
 
 Pomerium Policy Language (**PPL**) is a [yaml]-based notation for creating easy and flexible authorization policies. This document covers the usage of PPL and provides several example policies.
 
@@ -41,26 +38,31 @@ Only two actions are supported: `allow` and `deny`. `deny` takes precedence over
 
 A logical operator combines multiple criteria together for the evaluation of a rule. There are 4 logical operators: `and`, `or`, `not` and `nor`.
 
-::: details More on Logical Operators
-Given the following example with `OPERATOR` replaced:
+<details>
+  <summary>More on Logical Operators</summary>
+  <div>
 
-```yaml
-allow:
-  OPERATOR:
-  - domain:
-      is: example.com
-  - groups:
-      has: admin
-```
+  Given the following example with `OPERATOR` replaced:
 
-If `and` is used, the user will have access if their email address ends in `example.com` **and** they are a member of the admin group. **(A ∧ B)**
+  ```yaml
+  allow:
+    OPERATOR:
+    - domain:
+        is: example.com
+    - groups:
+        has: admin
+  ```
 
-If `or` is used, the user will have access if their email address ends in `example.com` **or** they are a member of the admin group. **(A ∨ B)**
+  If `and` is used, the user will have access if their email address ends in `example.com` **and** they are a member of the admin group. **(A ∧ B)**
 
-If `not` is used, the user will have access if their email address does not end in `example.com` **and** they are not a member of the `admin` group. **(¬A ∧ ¬B)**
+  If `or` is used, the user will have access if their email address ends in `example.com` **or** they are a member of the admin group. **(A ∨ B)**
 
-If `nor` is used, the user will have access if their email address does not end in `example.com` **or** they are not a member of the admin group. **(¬A ∨ ¬B)**
-:::
+  If `not` is used, the user will have access if their email address does not end in `example.com` **and** they are not a member of the `admin` group. **(¬A ∧ ¬B)**
+
+  If `nor` is used, the user will have access if their email address does not end in `example.com` **or** they are not a member of the admin group. **(¬A ∨ ¬B)**
+
+  </div>
+</details>
 
 ## Criteria
 
@@ -101,13 +103,13 @@ PPL supports many different criteria:
 
 ## Matchers
 
-## Day of Week Matcher
+### Day of Week Matcher
 
 The day of week matcher is a **string**. The string can either be `*`, a comma-separated list of days, or a dash-separated list of days.
 
-  - `*` matches all days.
-  - `,` matches either day (e.g. `mon,wed,fri`).
-  - `-` matches a range of days. (e.g. `mon-fri`). Days can be specified as English full day names, or as 3 character abbreviations. For example:
+- `*` matches all days.
+- `,` matches either day (e.g. `mon,wed,fri`).
+- `-` matches a range of days. (e.g. `mon-fri`). Days can be specified as English full day names, or as 3 character abbreviations. For example:
 
     ```yaml
     allow:
@@ -115,7 +117,7 @@ The day of week matcher is a **string**. The string can either be `*`, a comma-s
         - day_of_week: tue-fri
     ```
 
-## Date Matcher
+### Date Matcher
 
 The date matcher is an object with operators as keys. It supports the following operators: `after` and `before`. The values are [ISO-8601](https://en.wikipedia.org/wiki/ISO_8601) date strings. `after` means that the time of the request must be after the supplied date and `before` means that the time of the request must be before the supplied date. For example:
 
@@ -127,15 +129,15 @@ allow:
       before: 2150-01-02T16:20:00
 ```
 
-## Device Matcher
+### Device Matcher
 
 A device matcher is an object with operators as keys. It supports the following operators:
 
 - `is` - an exact match of the device ID.
 - `approved` - true if the device has been approved. This is an enterprise-only feature.
 - `type` - Specifies the type of device to match on. The available types are `enclave_only` and `any`.
-    - `enclave_only` will only match [platform authenticators](/docs/topics/device-identity#secure-enclaves). These include TPM modules and hardware-backed keystores built into mobile devices.
-    - `any` will also match [hardware security keys](/docs/topics/device-identity#hardware-security-keys).
+  - `enclave_only` will only match [platform authenticators](/docs/topics/device-identity#secure-enclaves). These include TPM modules and hardware-backed keystores built into mobile devices.
+  - `any` will also match [hardware security keys](/docs/topics/device-identity#hardware-security-keys).
 
 For example, a policy to allow any user with a registered device:
 
@@ -158,7 +160,7 @@ Compare to a policy that only allows a set of specific devices:
           is: "GAtL...doqu"
 ```
 
-::: tip
+:::tip
 Users can [find their device IDs](/docs/guides/enroll-device#find-device-id) at the `/.pomerium` endpoint from any route.
 :::
 
@@ -184,7 +186,7 @@ allow:
       starts_with: 'admin@'
 ```
 
-## Time of Day Matcher
+### Time of Day Matcher
 
 The time of day matcher is an object with operators as keys. It supports the following operators: `timezone`, `after`, and `before`.
 

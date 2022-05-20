@@ -1,6 +1,5 @@
 ---
 title: Metrics
-sidebarDepth: 1
 description: Use Prometheus as a metrics data store.
 ---
 

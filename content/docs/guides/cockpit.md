@@ -1,13 +1,8 @@
 ---
 title: Cockpit
 lang: en-US
-meta:
-  - name: keywords
-    content: >-
-      pomerium, identity access proxy, cockpit,
-      authentication, remote, management, gui, linux
-description: >-
-  Learn how to secure Cockpit, a web GUI for Linux servers, behind Pomerium
+keywords: [pomerium, identity access proxy, cockpit, authentication, remote, management, gui, linux]
+description: Learn how to secure Cockpit, a web GUI for Linux servers, behind Pomerium
 ---
 
 # Secure Cockpit

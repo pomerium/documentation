@@ -1,11 +1,8 @@
 ---
 title: Traefik Ingress
 lang: en-US
-meta:
-  - name: keywords
-    content: pomerium, identity access proxy, traefik, kubernetes, forwardauth, forward auth, external, helm, k8s, ingress
-description: >-
-  This guide covers how to use Pomerium to secure Traefik when used as a Kubernetes Ingress Controller
+keywords: [pomerium, identity access proxy, traefik, kubernetes, forwardauth, forward auth, external, helm, k8s, ingress]
+description: This guide covers how to use Pomerium to secure Traefik when used as a Kubernetes Ingress Controller
 ---
 
 # Securing Traefik Ingress

@@ -1,11 +1,8 @@
 ---
 title: Kubernetes Dashboard
 lang: en-US
-meta:
-  - name: keywords
-    content: pomerium, identity access proxy, kubernetes, helm, k8s, oauth, dashboard,
-description: >-
-  This guide covers how to add authentication and authorization to kubernetes dashboard using single-sing-on, pomerium, helm, and letsencrypt certificates.
+keywords: [pomerium, identity access proxy, kubernetes, helm, k8s, oauth, dashboard,]
+description: This guide covers how to add authentication and authorization to kubernetes dashboard using single-sing-on, pomerium, helm, and letsencrypt certificates.
 ---
 
 # Securing Kubernetes Dashboard
@@ -106,7 +103,7 @@ Your browser does not support the video tag.
 [cert-manager]: https://cert-manager.io/docs/
 [helm chart]: https://github.com/pomerium/pomerium-helm
 [Helm]: https://helm.sh
-[Install Pomerium using Helm]: /docs/k8s/helm.md
+[Install Pomerium using Helm]: /docs/k8s/helm
 [Kubernetes Dashboard]: https://kubernetes.io/docs/tasks/access-application-cluster/web-ui-dashboard/
 [Securing Kubernetes]: /docs/guides/kubernetes.md
 [User Permissions]: /docs/guides/kubernetes.md#user-permissions

@@ -1,10 +1,7 @@
 ---
 title: Upstream Load Balancing
-description: >-
-  This article covers Pomerium built-in load balancing capabilities in presence of multiple upstreams.
+description: This article covers Pomerium built-in load balancing capabilities in presence of multiple upstreams.
 ---
-
-# Upstream Load Balancing
 
 This article covers Pomerium built-in load balancing capabilities in presence of multiple upstreams.
 

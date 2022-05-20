@@ -1,11 +1,8 @@
 ---
 title: Pomerium Console Environment Variables
 lang: en-US
-sidebar_position: 1
 sidebar_label: Environment Variables
-meta:
-    - name: keywords
-      content: configuration, options, settings, pomerium, enterprise, reference
+keywords: [configuration, options, settings, pomerium, enterprise, reference]
 ---
 
 The keys listed below can be applied in Pomerium Console's `config.yaml` file, or applied as environment variables (in uppercase, replacing `-` with `_`).

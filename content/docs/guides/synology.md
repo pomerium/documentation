@@ -1,12 +1,8 @@
 ---
 title: Synology
 lang: en-US
-meta:
-  - name: keywords
-    content: pomerium, identity access proxy, synology, docker, dsm, nas
+keywords: [pomerium, identity access proxy, synology, docker, dsm, nas]
 ---
-
-# Synology
 
 Pomerium can be used to enable secure access to services on your Synology home server or network attached storage (NAS) device. Pomerium acting as an identity aware access proxy is particularly useful as many [self-hosted apps] lack or have insufficient built-in authentication mechanisms.
 

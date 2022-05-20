@@ -1,13 +1,8 @@
 ---
 title:  Admin Device Enrollment
 lang: en-US
-meta:
-  - name: keywords
-    content: >-
-      pomerium, identity access proxy, webauthn, device id, enroll, enrollment,
-      authentication, authorization, enterprise
-description: >-
-  This guide covers how Pomerium Enterprise admins can create pre-approved device registration links.
+keywords: [pomerium, identity access proxy, webauthn, device id, enroll, enrollment, authentication, authorization, enterprise]
+description: This guide covers how Pomerium Enterprise admins can create pre-approved device registration links.
 ---
 
 # Pre-Approved Device Enrollment

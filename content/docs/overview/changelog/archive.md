@@ -1,6 +1,8 @@
 ---
 title: Older Versions
 lang: en-US
+pagination_prev: null
+pagination_next: null
 ---
 
 ## [v0.13.6](https://github.com/pomerium/pomerium/tree/v0.13.6) (2021-04-17)

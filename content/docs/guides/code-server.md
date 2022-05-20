@@ -1,14 +1,8 @@
 ---
 title: code-server
 lang: en-US
-meta:
-  - name: keywords
-    content: >-
-      pomerium, identity access proxy, visual studio code,
-      authentication, authorization, code server, vscode, coder, codercom
-description: >-
-  This guide covers how to add authentication and authorization to a hosted,
-  fully, online instance of visual studio code.
+keywords: [pomerium, identity access proxy, visual studio code, authentication, authorization, code server, vscode, coder, codercom]
+description: This guide covers how to add authentication and authorization to a hosted, fully, online instance of visual studio code.
 ---
 
 # Securing Visual Studio Code Server

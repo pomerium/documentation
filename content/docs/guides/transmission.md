@@ -1,12 +1,8 @@
 ---
 title: Transmission
 lang: en-US
-meta:
-  - name: keywords
-    content: >-
-      pomerium, bittorrent, torrent, identity access proxy, transmission-daemon, transmission, authentication, authorization
-description: >-
-  Learn how to use Pomerium as an authentication and authorization proxy for a Transmission torrent daemon.
+keywords: [pomerium, bittorrent, torrent, identity access proxy, transmission-daemon, transmission, authentication, authorization]
+description: Learn how to use Pomerium as an authentication and authorization proxy for a Transmission torrent daemon.
 ---
 
 # Securing Transmission's RPC interface.

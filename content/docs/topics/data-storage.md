@@ -1,16 +1,11 @@
 ---
 title: Data Storage
-sidebarDepth: 1
-description: >-
-  This article describes Pomerium's data storage requirements
-  and backends
+description: This article describes Pomerium's data storage requirements and backends
 ---
-
-# Data Storage
 
 ## About
 
-#### Background
+### Background
 Pomerium keeps persistent state out of most components, but an identity-aware access proxy must maintain some data about every user's session.  Historically, all user/session related data was stored in cookies, but this quickly became challenging.
 
 - Cookie and header limits would impact large organizations and some IdPs
@@ -21,10 +16,9 @@ Pomerium keeps persistent state out of most components, but an identity-aware ac
 
 To address these limitations, the Pomerium `databroker` service runs a number of internal services responsible for maintaining data and state.
 
-#### Design
+### Design
 
 The `databroker` is responsible for providing a stateful storage layer.  Services which require high performance maintain a streaming local cache of the contents of the `databroker`, while others may call `databroker` in real time.  Only the `databroker` is expected to maintain authoritative state.
-
 
 ## Persistence
 At this time, most data stored by Pomerium is externally sourced and recoverable at startup (eg, group membership).  The notable exception is user sessions.  If the data hosted by the `databroker` is lost, users will need to log in through their IdP again at next session expiration.
@@ -40,6 +34,7 @@ In all backends, Pomerium encrypts record values.  This ensures security of all 
 Please see Pomerium backend and upstream storage system documentation for best practices.
 
 ### In-Memory
+
 - Data Broker Service HA: `no`
 - Data Store HA: `no`
 - Data Persistence: `no`
@@ -56,13 +51,14 @@ easy deployment semantics but is not persistent or highly available.  Running mo
 The Redis based backend supports multiple `databroker` instances and persistence across restarts.  We recommend a dedicated redis instance for Pomerium to provide the strongest security and performance guarantees.
 
 #### High Availability
+
 Redis should be configured to provide high availability via [replication](https://redis.io/topics/replication) and failover.
 
-
 #### Security
+
 Pomerium supports and strongly encourages [ACL](https://redis.io/topics/acl) based authentication.  To set up an ACL for pomerium, use the following template:
 
-```
+```actionscript
 ACL setuser pomerium on >[MYPASSWORD] ~* +@all -@scripting -@dangerous -@admin -@connection
 ```
 

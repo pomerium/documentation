@@ -1,9 +1,6 @@
 ---
 title: Upgrading
-sidebarDepth: 0
-description: >-
-  This page contains the list of deprecations and important or breaking changes
-  for Pomerium Enterprise. Please read it carefully.
+description: This page contains the list of deprecations and important or breaking changes for Pomerium Enterprise. Please read it carefully.
 ---
 
 #  Upgrading Pomerium Enterprise

@@ -1,10 +1,7 @@
 ---
 title: Reports
 lang: en-US
-sidebar_position: 2
-meta:
-    - name: keywords
-      content: configuration, options, settings, pomerium, enterprise, reference
+keywords: [configuration, options, settings, pomerium, enterprise, reference]
 ---
 
 ## Traffic

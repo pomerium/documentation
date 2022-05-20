@@ -1,13 +1,9 @@
 ---
-title: Code of Conduct
+title: Contributor Covenant Code of Conduct
+sidebar_label: Code of Conduct
 lang: en-US
-sidebarDepth: 0
-meta:
-  - name: keywords
-    content: pomerium, community, contributing, code of conduct
+keywords: [pomerium, community, contributing, code of conduct]
 ---
-
-# Contributor Covenant Code of Conduct
 
 ## Our Pledge
 

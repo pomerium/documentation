@@ -1,12 +1,8 @@
 ---
 title: Upstream mTLS
 lang: en-US
-meta:
-  - name: keywords
-    content: pomerium, identity access proxy, mtls, client certificate, mutual authentication
-description: >-
-  This guide covers how to configure Pomerium to provide mutual authentication
-  (mTLS) to an upstream service, using client certificates with a custom certificate authority.
+keywords: [pomerium, identity access proxy, mtls, client certificate, mutual authentication]
+description: This guide covers how to configure Pomerium to provide mutual authentication (mTLS) to an upstream service, using client certificates with a custom certificate authority.
 ---
 
 # Upstream mTLS With Pomerium
@@ -34,7 +30,7 @@ Generally, every organization has a preferred method of managing internal certif
 
 1. Create a certificate and key for our example upstream service, OpenSSL:
 
-    ```bash{1}
+    ```bash {1}
     mkcert openssl.localhost
 
     Created a new certificate valid for the following names 📜
@@ -47,7 +43,7 @@ Generally, every organization has a preferred method of managing internal certif
 
 1. Create a client certificate and key for Pomerium to use:
 
-    ```bash{1}
+    ```bash {1}
     mkcert -client 'pomerium@localhost'
 
     Created a new certificate valid for the following names 📜

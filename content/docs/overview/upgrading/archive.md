@@ -1,8 +1,8 @@
 ---
 title: Older Versions
-description: >-
-  This page contains the list of deprecations and important or breaking changes
-  for older versions of Pomerium.
+description: This page contains the list of deprecations and important or breaking changes for older versions of Pomerium.
+pagination_prev: null
+pagination_next: null
 ---
 
 ## Since 0.14.0
