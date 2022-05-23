@@ -8,7 +8,7 @@ keywords: [pomerium, pomerium-cli, proxy, identity access proxy, ssh, tcp, postg
 
 Operations and engineering teams frequently require access to lower level administrative and data protocols such as SSH, RDP, Postgres, MySQL, Redis, etc.
 
-In addition to managing HTTP based applications, Pomerium can be used to protect non-HTTP systems with the same consistent authorization policy. This is achieved by tunneling TCP over HTTP with the help of a client side command built into [`pomerium-cli`](/docs//releases#pomerium-cli).
+In addition to managing HTTP based applications, Pomerium can be used to protect non-HTTP systems with the same consistent authorization policy. This is achieved by tunneling TCP over HTTP with the help of a client side command built into [`pomerium-cli`](/docs/overview/releases#pomerium-cli).
 
 
 Internally, Pomerium uses the [`CONNECT` method](https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/CONNECT) to establish the TCP tunnel.
