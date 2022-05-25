@@ -1,5 +1,6 @@
 ---
-title: Grafana
+title: Securing Grafana with Pomerium
+sidebar_label: Grafana
 lang: en-US
 keywords: [pomerium, identity access proxy, data, logging, graphing, grafana, authentication, authorization]
 description: This guide covers how to use Pomerium to authenticate and authorize users of Grafana.
@@ -7,8 +8,6 @@ description: This guide covers how to use Pomerium to authenticate and authorize
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
-
-# Securing Grafana with Pomerium
 
 [Grafana](https://grafana.com/) is an open-source analytics visualization and monitoring tool. It provides many user-contributed [Dashboards](https://grafana.com/grafana/dashboards/) that make it popular for enthusiasts as well as professionals.
 
@@ -31,7 +30,7 @@ This guide uses the following temporary values in commands and configuration exa
 
 Edit `grafana.ini` to configure [JWT authentication]. Replace `auth.localhost.pomerium.io` with the value of [`authenticate_service_url`] in your Pomerium configuration:
 
-```abnf
+```ini title="grafana.ini"
 [auth]
 signout_redirect_url = https://grafana.localhost.pomerium.io/.pomerium/sign_out ; signs users out of Pomerium when they sign out from Grafana
 [auth.jwt]
@@ -86,7 +85,8 @@ Add a route for Grafana to your Pomerium config. Change the following variables 
 <TabItem value="config.yaml" label="config.yaml">
 
 For all-in-one or split service configurations using `config.yaml`, add the route to your `config.yaml` file:
-```yaml
+
+```yaml title="config.yaml"
 routes:
   - from: https://grafana.localhost.pomerium.io
     to: http://grafana:3000
@@ -150,7 +150,7 @@ Ensure that Grafana is up to date to take advantage of `auto_sign_up`, as it is 
 
 The steps outlined above work to confirm the configuration for small teams, but adding users individually and manually does not scale for larger organizations. To add users to Grafana at scale, you can use the Grafana's `auto_sign_up`configuration to auto-signup users as they log in:
 
-```abnf
+```ini
 [auth]
 signout_redirect_url = https://grafana.localhost.pomerium.io/.pomerium/sign_out
 [auth.jwt]

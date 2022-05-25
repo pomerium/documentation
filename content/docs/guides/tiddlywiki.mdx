@@ -1,11 +1,12 @@
 ---
-title: TiddlyWiki
+title: Securing TiddlyWiki on Node.js
+sidebar_label: TiddlyWiki
 lang: en-US
 keywords: [pomerium, identity access proxy, wiki, tiddlywiki]
 description: This guide covers how to add authentication and authorization to a hosted, fully, online instance of TiddlyWiki.
 ---
 
-# Securing TiddlyWiki on Node.js
+import DockerCompose from '../../examples/tiddlywiki/docker-compose.yaml.md'
 
 This guide covers using Pomerium to add authentication and authorization to an instance of [TiddlyWiki on NodeJS](https://tiddlywiki.com/static/TiddlyWiki%2520on%2520Node.js.html).
 
@@ -30,22 +31,23 @@ This guide assumes you have already completed one of the [quick start] guides, a
 
 ### Pomerium Config
 
-```yaml
+```yaml title="config.yaml"
 jwt_claims_headers: email
-policy:
-- from: https://wiki.example.local
-  to: http://tiddlywiki:8080
-  policy:
-    - allow:
-        or:
-          - email:
-              is: reader1@example.com
-          - email:
-              is: writer1@example.com
+routes:
+  - from: https://wiki.example.local
+    to: http://tiddlywiki:8080
+    policy:
+      - allow:
+          or:
+            - email:
+                is: reader1@example.com
+            - email:
+                is: writer1@example.com
 ```
+
 ### Docker-compose
 
-<<< @/examples/tiddlywiki/docker-compose.yaml
+<DockerCompose/>
 
 ### That's it
 

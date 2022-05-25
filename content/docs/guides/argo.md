@@ -1,11 +1,10 @@
 ---
-title: Argo
+title: Securing Argo
+sidebar_label: Argo
 lang: en-US
 keywords: [pomerium, identity access proxy, argo, cd, continuous deployment]
 description: This guide covers how to add authentication and authorization to an instance of argo.
 ---
-
-# Securing Argo
 
 [Argo](https://argoproj.github.io/workflows) is an open-source container-native workflow engine for orchestrating parallel jobs on Kubernetes. This guide covers how to add authentication and authorization to Argo using Pomerium.
 

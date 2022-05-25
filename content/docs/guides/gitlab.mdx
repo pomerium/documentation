@@ -9,8 +9,6 @@ import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 import InstallMkcert from '@site/content/_install-mkcert.md'
 
-# GitLab
-
 [GitLab] is a highly customizable, highly configurable tool to manage source code, project management, and many other aspects of project development. In addition to the SaaS product, its self-hosted solution and easy free-to-enterprise upgrade path make it a popular choice for those managing sensitive code bases.
 
 This guide demonstrates how to configure a self-hosted GitLab server (a.k.a. gitlab-ee) behind Pomerium for identity-aware access.
@@ -51,7 +49,7 @@ While we do our best to keep our documentation up to date, changes to third-part
 
 1.  Edit your `docker-compose.yml` file to define a new service for GitLab:
 
-    ```yaml
+    ```yaml title="docker-compose.yml"
     services:
 
     ...
@@ -98,7 +96,7 @@ While we do our best to keep our documentation up to date, changes to third-part
 
 Edit `config.yaml` and add a route for GitLab:
 
-```yaml
+```yaml title="config.yaml"
   - from: https://gitlab.localhost.pomerium.io
     to: http://gitlab
     preserve_host_header: true
@@ -121,7 +119,7 @@ sudo docker exec -it gitlab grep 'Password:' /etc/gitlab/initial_root_password
 
 1.  An additional route will provide an encrypted TCP tunnel through which users can securely access code using Git:
 
-    ```yaml
+    ```yaml title="config.yaml"
       - from: tcp+https://gitlab.localhost.pomerium.io
         to: tcp://gitlab:22
         policy:
@@ -162,7 +160,7 @@ Now when you first initiate a `pull`, `push`, or `fetch` command your web browse
 
 While GitLab has a [JWT OmniAuth provider], it only accepts a JSON web token (**JWT**) as a callback url parameter and not as an HTTP header [provided by Pomerium](/docs/reference/routes/pass-identity-headers). If your IdP is a [supported OmniAuth provider](https://docs.gitlab.com/ee/integration/omniauth.html#supported-providers), you can integrate it directly to GitLab to re-use your current session, but it will require signing in twice; once with Pomerium and again with GitLab:
 
-<video controls  muted="true" playsinline="" width="100%" control=""><source src="./img/gitlab/gitlab-login.webm" type="video/webm"/>
+<video controls  muted={true} width="100%"><source src="/gitlab-login.webm" type="video/webm"/>
 Your browser does not support the video tag.
 </video>
 
@@ -209,7 +207,7 @@ Integrations that use unique subdomains will require their own certificates and 
 
 1.  Adjust the `docker-compose.yml` entry for Pomerium to mount the internal certificate authority, and the entry for GitLab to specify the certificate and key files:
 
-    ```yaml
+    ```yaml title="docker-compose.yml"
     services:
 
     ...
@@ -250,7 +248,7 @@ Integrations that use unique subdomains will require their own certificates and 
 
 1.  Adjust the route in Pomerium's `config.yaml` to connect to GitLab using HTTPS:
 
-    ```yaml
+    ```yaml title="config.yaml"
       - from: https://gitlab.localhost.pomerium.io
         to: https://gitlab-ee
         preserve_host_header: true

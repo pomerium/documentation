@@ -1,11 +1,10 @@
 ---
-title: Cockpit
+title: Secure Cockpit
+sidebar_label: Cockpit
 lang: en-US
 keywords: [pomerium, identity access proxy, cockpit, authentication, remote, management, gui, linux]
 description: Learn how to secure Cockpit, a web GUI for Linux servers, behind Pomerium
 ---
-
-# Secure Cockpit
 
 [Cockpit](https://cockpit-project.org/) is "a web-based graphical interface for servers, intended for everyone". It provides a method of managing many administrative server tasks that would normally require command line access.
 

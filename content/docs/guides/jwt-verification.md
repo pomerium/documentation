@@ -5,12 +5,12 @@ keywords: [pomerium, identity access proxy, envoy, jwt,]
 description: This example demonstrates how to verify the Pomerium JWT assertion header using Envoy.
 ---
 
-# JWT Verification
 This example demonstrates how to verify the [Pomerium JWT assertion header](https://www.pomerium.io/reference/#pass-identity-headers) using [Envoy](https://www.envoyproxy.io/). This is useful for legacy or 3rd party applications which can't be modified to perform verification themselves.
 
 This guide is a practical demonstration of some of the topics discussed in [Mutual Authentication: A Component of Zero Trust].
 
 ## Requirements
+
 - [Docker](https://www.docker.com/)
 - [Docker Compose](https://docs.docker.com/compose/)
 - [mkcert](https://github.com/FiloSottile/mkcert)
@@ -18,6 +18,7 @@ This guide is a practical demonstration of some of the topics discussed in [Mutu
 This guide assumes you already have a working IdP connection to provide user data. See our [Identity Provider](/docs/identity-providers) docs for more information.
 
 ## Overview
+
 Three services are configured in a `docker-compose.yaml` file:
 
 - `pomerium` running an all-in-one deployment of Pomerium on `*.localhost.pomerium.io`
@@ -45,7 +46,7 @@ Mac and Linux users can use DNSMasq to map the `*.localhost.pomerium.io` domain 
 
 1. Create a `docker-compose.yaml` file containing:
 
-    ```yaml
+    ```yaml title="docker-compose.yaml"
     version: "3.9"
     networks:
       frontend:
@@ -102,7 +103,7 @@ Mac and Linux users can use DNSMasq to map the `*.localhost.pomerium.io` domain 
 
 1. Create a `cfg` directory containing the following `envoy.yaml` file. Envoy configuration can be quite verbose, but the crucial bit is the HTTP filter (highlighted below):
 
-    ```yaml {30-49}
+    ```yaml title="envoy.yaml" {30-49}
     admin:
       access_log_path: /dev/null
       address:
@@ -191,7 +192,7 @@ Mac and Linux users can use DNSMasq to map the `*.localhost.pomerium.io` domain 
 
 1. Create a `pomerium.yaml` file in the `cfg` directory containing:
 
-    ```yaml
+    ```yaml title="pomerium.yaml"
     authenticate_service_url: https://authenticate.localhost.pomerium.io
 
     certificate_file: "/pomerium/_wildcard.localhost.pomerium.io.pem"

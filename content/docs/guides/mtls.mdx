@@ -1,5 +1,6 @@
 ---
-title: Client-Side mTLS
+title: Client-Side mTLS With Pomerium
+sidebar_label: Client-Side mTLS
 lang: en-US
 keywords: [pomerium, identity access proxy, mtls, client certificate, mutual authentication]
 description: This guide covers how to use Pomerium to implement mutual authentication (mTLS) for end-users, using client certificates with a custom certificate authority.
@@ -7,8 +8,6 @@ description: This guide covers how to use Pomerium to implement mutual authentic
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
-
-# Client-Side mTLS With Pomerium
 
 Secure communication on the web typically refers to using signed server certificates with the TLS protocol. TLS connections are both private and authenticated, preventing eavesdropping and impersonation of the server.
 
@@ -22,9 +21,9 @@ Pomerium supports requiring signed client certificates with the `client_ca`/`cli
 
 - We will use the `mkcert` application to create the certificates. To install `mkcert` follow the instructions on [Github](https://github.com/FiloSottile/mkcert#installation).
 
-    :::caution
-    The `mkcert` tool is designed for testing. It creates a locally-trusted root certificate for development purposes. We're using mkcert for this proof-of-concept example, but consider using a different certificate solution for production environments.
-    :::
+  :::caution
+  The `mkcert` tool is designed for testing. It creates a locally-trusted root certificate for development purposes. We're using mkcert for this proof-of-concept example, but consider using a different certificate solution for production environments.
+  :::
 
 - For this guide the `localhost.pomerium.io` domain will be our root domain (all subdomains on `localhost.pomerium.io` point to `localhost`).
 

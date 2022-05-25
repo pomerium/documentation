@@ -1,16 +1,14 @@
 ---
-title: Kubernetes Dashboard
+title: Securing Kubernetes Dashboard
+sidebar_label: Kubernetes Dashboard
 lang: en-US
 keywords: [pomerium, identity access proxy, kubernetes, helm, k8s, oauth, dashboard,]
 description: This guide covers how to add authentication and authorization to kubernetes dashboard using single-sing-on, pomerium, helm, and letsencrypt certificates.
 ---
 
-# Securing Kubernetes Dashboard
-
 The following guide covers how to secure [Kubernetes Dashboard] using Pomerium. Kubernetes Dashboard is a powerful, web-based UI for managing Kubernetes clusters. Pomerium can act as an independent **identity-aware access proxy** improving and adding single-sign-on to Kubernetes Dashboard's default access control. This is in contrast to most deployments, which use static tokens for access.
 
 ![fresh kubernetes dashboard install](img/k8s-fresh-dashboard.png)
-
 
 This tutorial covers:
 
@@ -50,7 +48,7 @@ Following the configuration defined in [Install Pomerium using Helm], add a rout
 
 1. Modify `pomerium-values.yaml` with the following route:
 
-    ```yaml
+    ```yaml title="pomerium-values.yaml"
         - from: https://dashboard.localhost.pomerium.io
           to: https://kubernetes-dashboard.default.svc.cluster.local
           allow_spdy: true
@@ -65,9 +63,9 @@ Following the configuration defined in [Install Pomerium using Helm], add a rout
 
     The service account token used for `kubernetes_service_account_token_file` is defined by our [helm chart]. Modify the policy to match your configuration.
 
-1. Access to the dashboard for a user is authorized by the cluster role binding defined in role-based access control (**RBAC**) permissions. Following the [User Permissions] section of [Securing Kubernetes], you should already have permissions for your user, or you can create a new RBAC definition following this example (`rbac-someuser.yaml`):
+1. Access to the dashboard for a user is authorized by the cluster role binding defined in role-based access control (**RBAC**) permissions. Following the [User Permissions] section of [Securing Kubernetes], you should already have permissions for your user, or you can create a new RBAC definition following this example:
 
-    ```yaml
+    ```yaml title="rbac-someuser.yaml"
     apiVersion: rbac.authorization.k8s.io/v1
     kind: ClusterRoleBinding
     metadata:
@@ -94,7 +92,7 @@ Following the configuration defined in [Install Pomerium using Helm], add a rout
 
 Because we've defined RBAC for our users, they can authenticate with Pomerium and Kubernetes will recognize that user in the Dashboard:
 
-<video controls  muted="" playsinline="" width="100%" height="600" control=""><source src="./img/k8s-dashboard-user.mp4" type="video/mp4"/>
+<video controls  muted={true}width="100%" height="600" control=""><source src="/k8s-dashboard-user.mp4" type="video/mp4"/>
 Your browser does not support the video tag.
 </video>
 

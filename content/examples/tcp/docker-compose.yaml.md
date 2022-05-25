@@ -1,3 +1,4 @@
+```yaml title="docker-compose.md"
 version: "3"
 services:
   pomerium:
@@ -30,3 +31,4 @@ services:
       POSTGRES_PASSWORD: supersecret
     expose:
       - 5432
+```

@@ -1,11 +1,10 @@
 ---
-title:  Admin Device Enrollment
+title: Pre-Approved Device Enrollment
+sidebar_label:  Admin Device Enrollment
 lang: en-US
 keywords: [pomerium, identity access proxy, webauthn, device id, enroll, enrollment, authentication, authorization, enterprise]
 description: This guide covers how Pomerium Enterprise admins can create pre-approved device registration links.
 ---
-
-# Pre-Approved Device Enrollment
 
 If a Pomerium route is configured to [require device authentication](/docs/topics/ppl#device-matcher), then the user must register a [trusted execution environment](/docs/topics/device-identity#authenticated-device-types) (**TEE**) device before accessing the route. In Enterprise environments, policies can require that devices be approved in the Pomerium Enterprise Console.
 

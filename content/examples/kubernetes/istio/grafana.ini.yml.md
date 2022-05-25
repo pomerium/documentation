@@ -1,3 +1,4 @@
+```yaml title="grafana.ini.yaml"
 grafana.ini:
   auth:
     disable_login_form: true
@@ -6,3 +7,4 @@ grafana.ini:
     header_name: X-Pomerium-Jwt-Assertion
     email_claim: email
     jwk_set_url: https://authenticate.localhost.pomerium.io/.well-known/pomerium/jwks.json
+```

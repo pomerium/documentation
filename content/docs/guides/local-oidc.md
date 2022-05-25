@@ -5,150 +5,146 @@ keywords: [pomerium, identity access proxy, oidc, identity provider, idp]
 description: This guide covers how to use Pomerium with a local OIDC provider using [qlik/simple-oidc-provider].
 ---
 
-# Local OIDC Provider
-
-You can use the same below configs for other supported [identity providers](/docs/identity-providers).
+You can use the same configuration examples below for other supported [identity providers](/docs/identity-providers).
 
 ## Configure
-### Docker-compose
 
-```yaml
-version: "3"
-services:
-  pomerium:
-    image: pomerium/pomerium:latest
-    environment:
-      # Generate new secret keys. e.g. `head -c32 /dev/urandom | base64`
-      - COOKIE_SECRET=<redacted>
-    volumes:
-      # Mount your domain's certificates : https://www.pomerium.com/docs/reference/certificates
-      - ./_wildcard.localhost.pomerium.io-key.pem:/pomerium/privkey.pem:ro
-      - ./_wildcard.localhost.pomerium.io.pem:/pomerium/cert.pem:ro
-      # Mount your config file : https://www.pomerium.com/docs/reference/
+1. When using Docker-compose:
 
-      - ./config.yaml:/pomerium/config.yaml
-    ports:
-      - 443:443
-      - 5443:5443
-      - 17946:7946
-    depends_on:
-      - identityprovider
+  ```yaml title="docker-compose.yaml"
+  version: "3"
+  services:
+    pomerium:
+      image: pomerium/pomerium:latest
+      environment:
+        # Generate new secret keys. e.g. `head -c32 /dev/urandom | base64`
+        - COOKIE_SECRET=<redacted>
+      volumes:
+        # Mount your domain's certificates : https://www.pomerium.com/docs/reference/certificates
+        - ./_wildcard.localhost.pomerium.io-key.pem:/pomerium/privkey.pem:ro
+        - ./_wildcard.localhost.pomerium.io.pem:/pomerium/cert.pem:ro
+        # Mount your config file : https://www.pomerium.com/docs/reference/
 
-  verify:
-    image: pomerium/verify
-    expose:
-      - 8000
+        - ./config.yaml:/pomerium/config.yaml
+      ports:
+        - 443:443
+        - 5443:5443
+        - 17946:7946
+      depends_on:
+        - identityprovider
 
-  identityprovider:
-    image: qlik/simple-oidc-provider
-    environment:
-      - CONFIG_FILE=/etc/identityprovider.json
-      - USERS_FILE=/etc/identityprovider-users.json
-    volumes:
-      - ./identityprovider.json:/etc/identityprovider.json:ro
-      - ./identityprovider-users.json:/etc/identityprovider-users.json:ro
-    ports:
-      - 9000:9000
-```
+    verify:
+      image: pomerium/verify
+      expose:
+        - 8000
 
-You can generate certificates for `*.localhost.pomerium.io` using [this instruction](/docs/topics/certificates#certificates-2)
+    identityprovider:
+      image: qlik/simple-oidc-provider
+      environment:
+        - CONFIG_FILE=/etc/identityprovider.json
+        - USERS_FILE=/etc/identityprovider-users.json
+      volumes:
+        - ./identityprovider.json:/etc/identityprovider.json:ro
+        - ./identityprovider-users.json:/etc/identityprovider-users.json:ro
+      ports:
+        - 9000:9000
+  ```
 
-### Pomerium config
+  You can generate certificates for `*.localhost.pomerium.io` using [this instruction](/docs/topics/certificates#certificates-2)
 
-```yaml
-# config.yaml
-# See detailed configuration settings : https://www.pomerium.com/docs/reference/
+1. Adjust the Pomerium configuration file:
 
-authenticate_service_url: https://authenticate.localhost.pomerium.io
+  ```yaml title="config.yaml"
+  # See detailed configuration settings : https://www.pomerium.com/docs/reference/
 
-autocert: false
+  authenticate_service_url: https://authenticate.localhost.pomerium.io
 
-certificate_file: /pomerium/cert.pem
-certificate_key_file: /pomerium/privkey.pem
+  autocert: false
 
-idp_provider_url: http://identityprovider:9000
-idp_provider: oidc
-idp_client_id: foo
-idp_client_secret: bar
+  certificate_file: /pomerium/cert.pem
+  certificate_key_file: /pomerium/privkey.pem
 
-# Generate 256 bit random keys  e.g. `head -c32 /dev/urandom | base64`
-cookie_secret: <redacted>
+  idp_provider_url: http://identityprovider:9000
+  idp_provider: oidc
+  idp_client_id: foo
+  idp_client_secret: bar
 
-# https://pomerium.io/reference/#routes
-routes:
-  - from: https://verify.localhost.pomerium.io
-    to: http://verify:8000
-    policy:
-      - allow:
-          or:
-            - domain:
-                is: example.org
-```
+  # Generate 256 bit random keys  e.g. `head -c32 /dev/urandom | base64`
+  cookie_secret: <redacted>
 
-### identityprovider.json
+  # https://pomerium.io/reference/#routes
+  routes:
+    - from: https://verify.localhost.pomerium.io
+      to: http://verify:8000
+      policy:
+        - allow:
+            or:
+              - domain:
+                  is: example.org
+  ```
 
-```json
-{
-  "idp_name": "http://identityprovider:9000",
-  "port": 9000,
-  "client_config": [
-    {
-      "client_id": "foo",
-      "client_secret": "bar",
-      "redirect_uris": [
-        "https://authenticate.localhost.pomerium.io/oauth2/callback"
-      ]
+1. Create `identityprovider.json`:
+
+  ```json title="identityprovider.json"
+  {
+    "idp_name": "http://identityprovider:9000",
+    "port": 9000,
+    "client_config": [
+      {
+        "client_id": "foo",
+        "client_secret": "bar",
+        "redirect_uris": [
+          "https://authenticate.localhost.pomerium.io/oauth2/callback"
+        ]
+      }
+    ],
+    "claim_mapping": {
+      "openid": [ "sub" ],
+      "email": [ "email", "email_verified" ],
+      "profile": [ "name", "nickname" ]
     }
-  ],
-  "claim_mapping": {
-    "openid": [ "sub" ],
-    "email": [ "email", "email_verified" ],
-    "profile": [ "name", "nickname" ]
   }
-}
-```
+  ```
 
-### identityprovider-users.json
+1. Create `identityprovider-users.json`
 
-```json
-[
-  {
-    "id": "SIMPLE_OIDC_USER_ALICE",
-    "email": "alice@example.org",
-    "email_verified": true,
-    "name": "Alice Smith",
-    "nickname": "al",
-    "password": "abc",
-    "groups": ["Everyone", "Engineering"]
-  },
-  {
-    "id": "SIMPLE_OIDC_USER_BOB",
-    "email": "bob@example.org",
-    "email_verified": true,
-    "name": "Bob Smith",
-    "nickname": "bobby",
-    "password": "abc",
-    "groups": ["Everyone", "Sales"]
-  }
-]
-```
+  ```json title="identityprovider-users.json"
+  [
+    {
+      "id": "SIMPLE_OIDC_USER_ALICE",
+      "email": "alice@example.org",
+      "email_verified": true,
+      "name": "Alice Smith",
+      "nickname": "al",
+      "password": "abc",
+      "groups": ["Everyone", "Engineering"]
+    },
+    {
+      "id": "SIMPLE_OIDC_USER_BOB",
+      "email": "bob@example.org",
+      "email_verified": true,
+      "name": "Bob Smith",
+      "nickname": "bobby",
+      "password": "abc",
+      "groups": ["Everyone", "Sales"]
+    }
+  ]
+  ```
 
 ## Run
 
-### Edit hosts file
+1. Add following entry to `/etc/hosts`:
 
-Add following entry to `/etc/hosts`:
-
-```
+``` title="/etc/hosts"
 127.0.0.1 identityprovider
 ```
 
-### Start services
+1. Start the services:
 
-```shell script
-$ docker-compose up -d identityprovider
-$ : wait identityprovider up
-$ docker-compose up -d
+```shell
+docker-compose up -d identityprovider
+: wait identityprovider up
+docker-compose up -d
 ```
 
 Now upon accessing `https://verify.localhost.pomerium.io` you will be redirected to OIDC server for authentication.

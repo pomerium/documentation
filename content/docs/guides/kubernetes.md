@@ -1,5 +1,5 @@
 ---
-title: Kubernetes API / Kubectl
+sidebar_label: Kubernetes API / Kubectl
 lang: en-US
 keywords: [pomerium, identity access proxy, kubernetes, helm, k8s, oauth]
 description: This guide covers how to add authentication and authorization to kubernetes api server using single-sign-on and Pomerium.
@@ -25,10 +25,9 @@ Pomerium uses a single service account and user impersonation headers to authent
 <details>
   <summary>Manually create service account</summary>
   <div>
-  To create the Pomerium service account use the following configuration file: (`pomerium-k8s.yaml`)
+  To create the Pomerium service account use the following configuration file:
 
-  ```yaml
-  # pomerium-k8s.yaml
+  ```yaml title="pomerium-k8s.yaml"
   ---
   apiVersion: v1
   kind: ServiceAccount
@@ -81,9 +80,9 @@ Pomerium uses a single service account and user impersonation headers to authent
 
 ### User Permissions
 
-1. To grant access to users within Kubernetes, you will need to configure role-based access control (**RBAC**) permissions. For example, consider the example below, `rbac-someuser.yaml`:
+1. To grant access to users within Kubernetes, you will need to configure role-based access control (**RBAC**) permissions. For example, consider the example below:
 
-    ```yaml
+    ```yaml title="rbac-someuser.yaml"
     apiVersion: rbac.authorization.k8s.io/v1
     kind: ClusterRoleBinding
     metadata:
@@ -112,7 +111,7 @@ This new route requires a kubernetes service account token. Our Helm chart creat
 
 1. Update your `pomerium-values.yaml` file with the following route:
 
-    ```yaml
+    ```yaml title="pomerium-values.yaml"
       routes:
         - from: https://k8s.localhost.pomerium.io
           to: https://kubernetes.default.svc.cluster.local
@@ -140,10 +139,9 @@ This new route requires a kubernetes service account token. Our Helm chart creat
 
 The [pomerium-cli] tool can be used by kubectl as a credential plugin. Once configured, connections to the cluster will open a browser window to the Pomerium authenticate service and generate an authentication token that will be used for Kubernetes API calls.
 
-
 To use `pomerium-cli` as an exec-credential provider, update your kubectl config:
 
-```shell
+```bash
 # Add Cluster
 kubectl config set-cluster via-pomerium --server=https://k8s.localhost.pomerium.io
 # Add Context
@@ -160,7 +158,7 @@ kubectl config set-credentials via-pomerium --exec-command=pomerium-cli \
 
   If you're using untrusted certificates or need to debug a certificate issue, configure the credential provider without TLS verification:
 
-  ```shell
+  ```bash
   kubectl config set-cluster via-pomerium --server=https://k8s.localhost.pomerium.io \
     --insecure-skip-tls-verify=true
   kubectl config set-credentials via-pomerium --exec-command=pomerium-cli \

@@ -1,15 +1,17 @@
 ---
-title: Nginx
+title: Securing Nginx
+sidebar_label: Nginx
 lang: en-US
 keywords: [pomerium, identity access proxy, nginx]
 description: This guide covers how to use Pomerium to protect services behind an nginx proxy.
 ---
 
-# Securing Nginx
+import NginxConf from '../../examples/nginx/pomerium.conf.md'
+import PomeriumConf from '../../examples/nginx/config.yaml.md'
+import VerifyConf from '../../examples/nginx/verify.conf.md'
+import DockerCompose from '../../examples/nginx/docker-compose.yaml.md'
 
-This recipe's sources can be found [on github](https://github.com/pomerium/pomerium/tree/main/examples/nginx)
-
-At the end, you will have a locally running install of [verify](https://verify.pomerium.com/) behind nginx with policy enforced by Pomerium.
+By the end of this guide, you will have a locally running installation of [verify](https://verify.pomerium.com/) behind nginx with policy enforced by Pomerium.
 
 ## Background
 
@@ -60,23 +62,23 @@ To provide your own certificates through another mechanism, please overwrite the
 
 Update `config.yaml` with your IdP settings and desired policy
 
-<<< @/examples/nginx/config.yaml
+<PomeriumConf/>
 
 ### Nginx - pomerium
 
 Nginx configuration for Pomerium endpoints
 
-<<< @/examples/nginx/pomerium.conf
+<NginxConf/>
 
 ### Nginx - verify
 
 Nginx configuration for the protected endpoint
 
-<<< @/examples/nginx/verify.conf
+<VerifyConf/>
 
 ### Docker Compose
 
-<<< @/examples/nginx/docker-compose.yaml
+<DockerCompose/>
 
 Run `docker-compose up`. After a few seconds, browse to [verify.localhost.pomerium.io](https://verify.localhost.pomerium.io).
 

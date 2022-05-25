@@ -1,11 +1,13 @@
 ---
-title: TCP Services
+title: Securing TCP based services
+sidebar_label: TCP Services
 lang: en-US
 keywords: [pomerium, identity access proxy, ssh, tcp, postgres, database, redis, mysql]
 description: This guide covers how to use Pomerium to protect TCP services such as SSH, Postgres and Redis.
 ---
 
-# Securing TCP based services
+import PomeriumConfig from '../../examples/tcp/config.yaml.md'
+import DockerCompose from '../../examples/tcp/docker-compose.yaml.md'
 
 The following guide demonstrates how to use Pomerium's [TCP Proxying](/docs/tcp) support with various TCP services such as databases and other non-HTTP protocols.  It also covers integration points with them when possible.
 
@@ -22,22 +24,22 @@ Important notes:
 
 ## How it works
 
-* Create a standard Pomerium configuration for your [identity provider (IdP)](/docs/identity-providers)
-* `pomerium-cli` runs on your workstation, listening on loopback for TCP connections
-* When an inbound connection is made, `pomerium-cli` proxies the connection through `pomerium`, authenticating the user if needed
-* Pomerium authorizes the connection and forwards it to the upstream service
-* The connecting application functions as normal
+- Create a standard Pomerium configuration for your [identity provider (IdP)](/docs/identity-providers)
+- `pomerium-cli` runs on your workstation, listening on loopback for TCP connections
+- When an inbound connection is made, `pomerium-cli` proxies the connection through `pomerium`, authenticating the user if needed
+- Pomerium authorizes the connection and forwards it to the upstream service
+- The connecting application functions as normal
 
 ## Pre-requisites
 
 This recipe is designed to run on a local docker-compose instance. The included configuration can be adopted for any TCP service, however.
 
-* docker
-* docker-compose
-* A copy of the [example repo](https://github.com/pomerium/pomerium/tree/main/examples/tcp/) checked out
-* Valid credentials for your OIDC provider
-* The [Pomerium Client](/docs/overview/releases#pomerium-cli) installed
-* (Optional) `mkcert` to generate locally trusted certificates
+- docker
+- docker-compose
+- A copy of the [example repo](https://github.com/pomerium/pomerium/tree/main/examples/tcp/) checked out
+- Valid credentials for your OIDC provider
+- The [Pomerium Client](/docs/overview/releases#pomerium-cli) installed
+- (Optional) `mkcert` to generate locally trusted certificates
 
 ## Certificates (optional)
 
@@ -63,7 +65,7 @@ To provide your own certificates through another mechanism, please overwrite the
 
 Update `config.yaml` with your IdP settings and desired policy if adopting for your environment
 
-<<< @/examples/tcp/config.yaml
+<PomeriumConfig/>
 
 ### Docker Compose
 
@@ -75,7 +77,7 @@ Included in our compose file:
 - Postgres
 - Redis
 
-<<< @/examples/tcp/docker-compose.yaml
+<DockerCompose/>
 
 ## Connect
 
@@ -89,13 +91,13 @@ pomerium-cli tcp [hostname]:[port]
 
 ## Redis
 
-```bash
+```bash {2,6}
 # Start a proxy to redis in the background
-% pomerium-cli tcp redis.localhost.pomerium.io:6379 --listen localhost:6379 &
+pomerium-cli tcp redis.localhost.pomerium.io:6379 --listen localhost:6379 &
 3:01PM INF tcptunnel: listening on 127.0.0.1:6379
 
 # Start the redis client
-% redis-cli
+redis-cli
 3:01PM INF tcptunnel: opening connection dst=redis.localhost.pomerium.io:6379 proxy=redis.localhost.pomerium.io:443 secure=true
 3:01PM INF tcptunnel: opening connection dst=redis.localhost.pomerium.io:6379 proxy=redis.localhost.pomerium.io:443 secure=true
 3:01PM INF tcptunnel: connection established
@@ -116,13 +118,13 @@ pomerium-cli tcp [hostname]:[port]
 
 In our example docker-compose, we have configured `supersecret` as the password for the `postgres` user.
 
-```bash
+```bash {2,6}
 # Start a proxy to postgres in the background
-% pomerium-cli tcp pgsql.localhost.pomerium.io:5432 --listen localhost:5432 &
+pomerium-cli tcp pgsql.localhost.pomerium.io:5432 --listen localhost:5432 &
 3:07PM INF tcptunnel: listening on 127.0.0.1:5432
 
 # Connect and list the schemas after password authentication
-% psql -h localhost -W -U postgres -c '\dn'
+psql -h localhost -W -U postgres -c '\dn'
 Password:
 3:06PM INF tcptunnel: opening connection dst=pgsql.localhost.pomerium.io:5432 proxy=pgsql.localhost.pomerium.io:443 secure=true
 3:06PM INF tcptunnel: connection established
@@ -160,8 +162,8 @@ That's it!  A Pomerium proxy will be started *automatically* whenever you ssh to
 
 In our example docker-compose, we have an SSH server configured with `supersecret` as the password for `myuser`.
 
-```bash
-% ssh myuser@ssh.localhost.pomerium.io
+```bash {1}
+ssh myuser@ssh.localhost.pomerium.io
 3:19PM INF tcptunnel: opening connection dst=ssh.localhost.pomerium.io:22 proxy=ssh.localhost.pomerium.io:443 secure=true
 3:19PM INF tcptunnel: connection established
 myuser@ssh.localhost.pomerium.io's password:

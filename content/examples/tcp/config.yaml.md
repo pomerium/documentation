@@ -1,3 +1,4 @@
+```yaml title="config.yaml"
 authenticate_service_url: https://authenticate.localhost.pomerium.io
 certificates:
   - cert: /pomerium/cert.pem
@@ -34,3 +35,4 @@ routes:
 
 databroker_storage_type: redis
 databroker_storage_connection_string: redis://redis:6379
+```

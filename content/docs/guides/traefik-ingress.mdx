@@ -1,15 +1,17 @@
 ---
-title: Traefik Ingress
+title: Securing Traefik Ingress
+sidebar_label: Traefik Ingress
 lang: en-US
 keywords: [pomerium, identity access proxy, traefik, kubernetes, forwardauth, forward auth, external, helm, k8s, ingress]
 description: This guide covers how to use Pomerium to secure Traefik when used as a Kubernetes Ingress Controller
 ---
 
-# Securing Traefik Ingress
+import PomeriumValues from '../../examples/traefik-ingress/values/pomerium.yaml.md'
+import TraefikValues from '../../examples/traefik-ingress/values/traefik.yaml.md'
+import Middleware from '../../examples/traefik-ingress/crds/middleware.yaml.md'
+import HelloValues from '../../examples/traefik-ingress/values/hello.yaml.md'
 
-This guide's sources can be found [on github](https://github.com/pomerium/pomerium/tree/main/examples/traefik-ingress).
-
-At the end, you will have an install of a hello-world app proxied by [Traefik](https://containo.us/traefik/) with authorization policy enforced by Pomerium.
+At the end of this guide, you will have an install of a hello-world app proxied by [Traefik](https://containo.us/traefik/) with authorization policy enforced by Pomerium.
 
 This guide specifically demonstrates using Traefik and Pomerium in the context of a [Kubernetes Ingress](https://docs.traefik.io/providers/kubernetes-ingress/) controller, but the patterns can be utilized anywhere [Traefik is deployed](https://docs.traefik.io/providers/overview/).
 
@@ -68,13 +70,13 @@ To provide your own [certificates](https://www.pomerium.com/reference/#certifica
 
 Update `values/pomerium.yaml` with your Identity Provider settings, domain names and policy
 
-<<< @/examples/traefik-ingress/values/pomerium.yaml
+<PomeriumValues/>
 
 ### Traefik
 
 Helm chart values:
 
-<<< @/examples/traefik-ingress/values/traefik.yaml
+<TraefikValues/>
 
 :::tip
 Please note `forwardedHeaders.insecure` must be set on the entrypoint in front of Pomerium proxy if you are routing forward auth requests through Traefik.  See [docs](https://docs.traefik.io/routing/entrypoints/#forwarded-headers) for more information.
@@ -82,7 +84,7 @@ Please note `forwardedHeaders.insecure` must be set on the entrypoint in front o
 
 Middleware:
 
-<<< @/examples/traefik-ingress/crds/middleware.yaml
+<Middleware/>
 
 :::caution
 Please note `trustForwardHeader: true` must be set for the middleware to work correctly.  See [docs](https://docs.traefik.io/middlewares/forwardauth/#trustforwardheader) for more information.
@@ -92,7 +94,7 @@ Please note `trustForwardHeader: true` must be set for the middleware to work co
 
 Helm chart values:
 
-<<< @/examples/traefik-ingress/values/hello.yaml
+<HelloValues/>
 
 ## Install
 
