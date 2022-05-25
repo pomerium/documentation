@@ -63,6 +63,7 @@ const config = {
             position: "right",
             label: "Documentation",
             to: "/docs/",
+            activeBaseRegex: 'docs/(?!guides|reference|enterprise)'
           },
           {
             type: "doc",
@@ -72,8 +73,8 @@ const config = {
             to: "/docs/reference/",
           },
           {
-            type: "doc",
-            docId: "docs/guides/readme",
+            type: "docSidebar",
+            sidebarId: 'guides',
             position: "right",
             label: "Guides",
             to: "/docs/guides/",
@@ -107,7 +108,7 @@ const config = {
               },
               {
                 label: "Guides",
-                to: "https://www.pomerium.com/docs/guides/",
+                to: "https://www.pomerium.com/docs/guides",
               },
               {
                 label: "Comparisons",
@@ -174,7 +175,7 @@ const config = {
       prism: {
         theme: lightCodeTheme,
         darkTheme: darkCodeTheme,
-        additionalLanguages: ['actionscript', 'log', 'ini'],
+        additionalLanguages: ['actionscript', 'log', 'ini', 'nginx'],
       },
     }),
   stylesheets: ["https://fonts.googleapis.com/icon?family=Material+Icons"],
