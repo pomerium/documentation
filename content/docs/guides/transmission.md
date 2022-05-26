@@ -1,11 +1,10 @@
 ---
-title: Transmission
+title: Securing Transmission's RPC interface
+sidebar_label: Transmission
 lang: en-US
 keywords: [pomerium, bittorrent, torrent, identity access proxy, transmission-daemon, transmission, authentication, authorization]
 description: Learn how to use Pomerium as an authentication and authorization proxy for a Transmission torrent daemon.
 ---
-
-# Securing Transmission's RPC interface.
 
 This guide demonstrates how Pomerium can secure a [Transmission] daemon. Pomerium is an identity-aware access proxy that can add single-sign-on / access control to any service.
 
@@ -35,7 +34,7 @@ In addition to a working instance of Pomerium, have ready the [private IP addres
 
 Edit your `config.yaml` file to add the following policy. Note that `<>` denotes placeholder values that must be replaced if copying this config directly:
 
-```yml
+```yml title="config.yaml"
 routes:
   - from: https://<transmission.mydomain.com> # Replace with the domain you want to use to access Transmission
     to: http://<private.ip.address>:9091 # Replace with the private network address of the Transmission host, or `localhost` if running on the same host.
@@ -47,6 +46,7 @@ routes:
             - groups:
                 has: "<transmission-users>" # Replace with authorized user group(s), or remove if using user permissions only.
 ```
+
 Remember to restart the Pomerium instance after saving your changes.
 
 ### Transmission Config
