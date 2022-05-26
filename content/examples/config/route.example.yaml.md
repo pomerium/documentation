@@ -1,3 +1,4 @@
+```yaml
 # This file contains only route and policy configuration details. Other
 # configuration settings required by pomerium are excluded for clarity.
 # See: https://www.pomerium.io/docs/reference/
@@ -41,3 +42,4 @@ routes:
           or:
             - groups:
                 has: "admins@pomerium.io"
+```

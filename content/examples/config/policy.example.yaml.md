@@ -1,3 +1,4 @@
+```yaml
 # This file contains only policy and route configuration details. Other
 # configuration settings required by pomerium are excluded for clarity.
 # See: https://www.pomerium.com/docs/reference/
@@ -30,3 +31,4 @@
   to: http://localhost:8080
   allowed_groups:
     - admins@pomerium.io
+```

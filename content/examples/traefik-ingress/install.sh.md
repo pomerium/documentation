@@ -1,5 +1,4 @@
-#!/bin/bash -x
-
+```bash {4,10,16,22,25}
 kubectl create namespace pomerium
 
 # Create shared TLS secret
@@ -29,3 +28,4 @@ helm upgrade --install --wait \
     --version 6.2.1 \
     hello bitnami/nginx \
     --values values/hello.yaml
+```
