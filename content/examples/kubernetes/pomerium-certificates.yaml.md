@@ -1,4 +1,4 @@
-```yaml
+```yaml title="pomerium-console-certificate.yaml"
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:

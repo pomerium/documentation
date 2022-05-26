@@ -1,9 +1,8 @@
 ---
-title: Metrics
+title: Configure Metrics
+sidebar_label: Metrics
 description: Use Prometheus as a metrics data store.
 ---
-
-# Configure Metrics
 
 Pomerium Enterprise uses Prometheus as a metrics collection back-end. You can configure Pomerium and the Console to talk to an existing Prometheus server, or configure the embedded Prometheus backend.
 
@@ -15,7 +14,7 @@ For production deployments, we suggest using a dedicated Prometheus instance.
 
 1. In the Pomerium `config.yaml`, define the [`metrics_address`](/docs/reference/metrics-address) key to a network interface and/or port. For example:
 
-   ```yaml
+   ```yaml title="config.yaml"
    metrics_address: 192.0.2.31:9999
    ```
 
@@ -54,9 +53,9 @@ For production deployments, we suggest using a dedicated Prometheus instance.
 
 ## Embedded Prometheus
 
-To take advantage of Prometheus embedded in Pomerium Enterprise, edit `/etc/pomerium-console/config.yaml`:
+To take advantage of Prometheus embedded in Pomerium Enterprise, edit Pomerium Console's config file:
 
-```yaml
+```yaml title="config.yaml"
 prometheus_data_dir: /var/lib/pomerium-console/tsdb
 ```
 

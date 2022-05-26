@@ -58,7 +58,6 @@ Proxy log level sets the logging level for the Pomerium Proxy service access log
 
 ### Cookies
 
-
 #### HTTPS Only
 
 If true, instructs browsers to only send user session cookies over HTTPS.
@@ -89,13 +88,11 @@ Timeouts set the global server timeouts. Timeouts can also be set for individual
 
 ### GRPC
 
-
 #### GRPC Server Max Connection Age
 
 Set max connection age for GRPC servers. After this interval, servers ask clients to reconnect and perform any rediscovery for new/updated endpoints from DNS.
 
 See <https://godoc.org/google.golang.org/grpc/keepalive#ServerParameters> (opens new window) for details
-
 
 #### GRPC Server Max Connection Age Grace
 
@@ -103,13 +100,11 @@ Additive period with grpc_server_max_connection_age, after which servers will fo
 
 See <https://godoc.org/google.golang.org/grpc/keepalive#ServerParameters> (opens new window) for details
 
-
 ### Tracing
 
 Tracing tracks the progression of a single user request as it is handled by Pomerium.
 
 Each unit of work is called a Span in a trace. Spans include metadata about the work, including the time spent in the step (latency), status, time events, attributes, links. You can use tracing to debug errors and latency issues in your applications, including in downstream connections.
-
 
 #### Tracing Sample Rate
 
@@ -117,12 +112,9 @@ Percentage of requests to sample. Default is .01%.
 
 Unlike the decimal value notion used for the `tracing_sample_rate` [key](/docs/reference/tracing#shared-tracing-settings) in open-source Pomerium, this value is a percentage, e.g. a value of `1` equates to 1%
 
-
 ### Authenticate
 
-
 ### Proxy
-
 
 #### Certificate Authority
 
@@ -203,19 +195,17 @@ Before you begin, confirm you are in the correct Namespace. A service account ca
 
   ![An example policy for a service account](./img/create-policy-2.png)
 
-
 ## Namespaces
 
 A [Namespace][namespace-concept] is a collection of users, groups, routes, and policies that allows system administrators to organize, manage, and delegate permissions across their infrastructure.
 
 - Policies can be optional or enforced on a Namespace.
-   - Enforced policies are also enforced on child Namespaces, and optional policies are available to them as well.
+  - Enforced policies are also enforced on child Namespaces, and optional policies are available to them as well.
 - Users or groups can be granted permission to edit access to routes within a Namespace, allowing them self-serve access to the routes critical to their work.
 
 :::tip
 When using an IdP without directory sync or when working with non-domain users, they will not show up in the look-ahead search. See [Non-Domain Users](/docs/enterprise/concepts#non-domain-users) for more information.
 :::
-
 
 [route-concept]: /docs/enterprise/concepts.md#routes
 [route-reference]: /docs/enterprise/reference/manage#routes

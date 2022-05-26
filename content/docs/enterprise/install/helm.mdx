@@ -3,6 +3,9 @@ title: Helm
 description: Install Pomerium Enterprise in Kubernetes with Helm
 ---
 
+import PomeriumConsoleCertificate from '../../../examples/kubernetes/pomerium-certificates.yaml.md'
+import InstallMkcert from '@site/content/_generate-recovery-token.md'
+
 # Install Pomerium Enterprise in Helm
 
 This document covers installing Pomerium Enterprise into your existing helm-managed Kubernetes cluster. It's designed to work with an existing cluster running Pomerium, as described im [Pomerium using Helm]. Follow that document before continuing here.
@@ -37,7 +40,7 @@ This setup assumes an existing certificate solution using cert-manager, as descr
 
 1. Create a certificate configuration file for Pomerium Enterprise Our example is named `pomerium-console-certificate.yaml`:
 
-   <<< @/examples/kubernetes/pomerium-console-certificate.yaml
+   <PomeriumConsoleCertificate/>
 
 1. Apply the required certificate configurations, and confirm:
 
@@ -102,7 +105,7 @@ This setup assumes an existing certificate solution using cert-manager, as descr
 
 1. Create `pomerium-console-values.yaml` as shown below, replacing placeholder values:
 
-   ```yaml
+   ```yaml title="pomerium-console-values.yaml"
    database:
      type: pg
      username: pomeriumDbUser
@@ -165,4 +168,4 @@ kubectl delete svc pomerium-proxy
 
 ### Generate Recovery Token
 
-!!!include(generate-recovery-token.md)!!!
+<InstallMkcert/>
