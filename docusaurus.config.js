@@ -170,7 +170,7 @@ const config = {
           width: 161,
           height: 28,
         },
-        copyright: `Copyright © ${new Date().getFullYear()} Pomerium. All Rights Reserved.`,
+        copyright: `Copyright © ${new Date().getFullYear()} Pomerium.`,
       },
       prism: {
         theme: lightCodeTheme,
