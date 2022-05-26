@@ -78,12 +78,6 @@ export default function ReferenceTable() {
   const references = Object.values(data);
   const columns = [
     {
-      headerName: "Id",
-      field: "id",
-      flex: 1,
-      hide: true,
-    },
-    {
       headerName: "Name",
       field: "title",
       flex: 1,
