@@ -2,12 +2,9 @@ import React, { useState } from "react";
 import data from "../../content/docs/reference/reference.json";
 import { DataGridPro } from "@mui/x-data-grid-pro/DataGridPro/DataGridPro";
 import { renderCellExpand } from "./RenderCellExpand";
-import { getGridStringOperators, GridToolbar } from "@mui/x-data-grid";
+import { GridToolbar } from "@mui/x-data-grid";
 import { FormControl, InputLabel, NativeSelect } from "@mui/material";
 
-/**
-@Alex //todo update the options of this select when you add the real services to the JSON
- */
 function ServiceSelector(props) {
   const { item, applyValue } = props;
 
@@ -69,7 +66,7 @@ const serviceOperator = [
 ];
 
 function filterHidden(item) {
-  return !item.enterpriseOnly
+  return !item.enterpriseOnly;
 }
 
 export default function ReferenceTable() {
@@ -92,7 +89,7 @@ export default function ReferenceTable() {
       flex: 1,
       renderCell: function NameCell(params) {
         return (
-          <a href={`/docs/reference/${params.row.id}`}>{params.row.title}</a>
+          <a href={`/docs/reference${params.row.path}`}>{params.row.title}</a>
         );
       },
     },
@@ -104,11 +101,8 @@ export default function ReferenceTable() {
     },
     {
       headerName: "Type",
-      field: "_type",
+      field: "type",
       flex: 1,
-      valueGetter: function getType(params) {
-        return params.row?.attributes?.Type || "";
-      },
       renderCell: renderCellExpand,
     },
     {
