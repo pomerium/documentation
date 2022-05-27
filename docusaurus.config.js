@@ -181,4 +181,8 @@ const config = {
   stylesheets: ["https://fonts.googleapis.com/icon?family=Material+Icons"],
 };
 
+if (!process.env.ALGOALIA_APPID) {
+  delete config.themeConfig.algolia;
+}
+
 module.exports = config;
