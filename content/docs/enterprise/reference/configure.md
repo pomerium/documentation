@@ -10,6 +10,8 @@ The **Configure** section of the Pomerium Enterprise Console houses settings tha
 
 The **Settings** section holds global settings that affect how the Pomerium Enterprise Console runs, logs, and communicates. Values set here are applied globally, except for settings documented to override global options.
 
+Some options may be unset by default. These settings use the values set in Pomerium Core, unless overridden in the console.
+
 ### Global
 
 #### Debug
