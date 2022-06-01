@@ -179,7 +179,7 @@ The remaining annotations are specific to or behave differently than they do whe
 
 | Annotation                                             | Description                                                                                                                                                                                   |
 | ------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `ingress.pomerium.io/kubernetes_service_account_token` | Name of a Kubernetes `token` Secret containing a [Kubernetes Service Account Token](/docs/reference/kubernetes-service-account-token).                                                   |
+| `ingress.pomerium.io/kubernetes_service_account_token` | Name of a Kubernetes `token` Secret containing a [Kubernetes Service Account Token](/docs/reference/routes/kubernetes-service-account-token).                                                   |
 | `ingress.pomerium.io/path_regex`                       | When set to `"true"` enables path regex matching. See the [Regular Expressions Path Matching](#regular-expressions-path-matching) section for more information.                               |
 | `ingress.pomerium.io/secure_upstream`                  | When set to `"true"`, use `https` when connecting to the upstream endpoint.                                                                                                                   |
 | `ingress.pomerium.io/set_request_headers_secret`       | Name of Kubernetes Secret containing the contents of the request header to send upstream. When used, `ingress.pomerium.io/set_request_headers` should not contain overlapping keys.           |
@@ -448,10 +448,10 @@ For more information on the Pomerium Ingress Controller or the Kubernetes concep
 [`ingress.pomerium.io/outlier_detection`]: /docs/reference/routes/outlier-detection
 [`ingress.pomerium.io/pass_identity_headers`]: /docs/reference/routes/pass-identity-headers
 [`ingress.pomerium.io/policy`]: /docs/reference/policy/policy
-[`ingress.pomerium.io/prefix_rewrite`]: /docs/reference/prefix-rewrite
+[`ingress.pomerium.io/prefix_rewrite`]: /docs/reference/routes/prefix-rewrite
 [`ingress.pomerium.io/preserve_host_header`]: /docs/reference/routes/host-rewrite
-[`ingress.pomerium.io/regex_rewrite_pattern`]: /docs/reference/regex-rewrite
-[`ingress.pomerium.io/regex_rewrite_substitution`]: /docs/reference/regex-rewrite
+[`ingress.pomerium.io/regex_rewrite_pattern`]: /docs/reference/routes/regex-rewrite
+[`ingress.pomerium.io/regex_rewrite_substitution`]: /docs/reference/routes/regex-rewrite
 [`ingress.pomerium.io/remove_request_headers`]: /docs/reference/routes/remove-request-headers
 [`ingress.pomerium.io/rewrite_response_headers`]: /docs/reference/routes/rewrite-response-headers
 [`ingress.pomerium.io/set_request_headers`]: /docs/reference/routes/set-request-headers
