@@ -151,7 +151,7 @@ const config = {
     prism: {
       theme: lightCodeTheme,
       darkTheme: darkCodeTheme,
-      additionalLanguages: ["actionscript", "log", "ini", "nginx"],
+      additionalLanguages: ["actionscript", "log", "ini", "nginx", "rego"],
     },
   },
   stylesheets: [
