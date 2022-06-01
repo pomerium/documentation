@@ -6,8 +6,9 @@
  */
 import React from "react";
 import LinkItem from "@theme/Footer/LinkItem";
-import {FooterNewsletterForm} from '../../../../components/Newsletter';
-import Logo from "@site/static/img/logo.svg"
+import { FooterNewsletterForm } from "../../../../components/Newsletter";
+import Logo from "@site/static/img/logo.svg";
+import { IconButton } from "@mui/material";
 
 function ColumnLinkItem({ item }) {
   return item.html ? (
@@ -28,8 +29,10 @@ function ColumnLinkItem({ item }) {
 function Column({ column }) {
   return (
     <div className="col footer__col">
-      <ul className="footer__items" style={{listStyleType: "none"}}>
-        <li><span className="footer__title text--left">{column.title}</span></li>
+      <ul className="footer__items" style={{ listStyleType: "none" }}>
+        <li>
+          <span className="footer__title text--left">{column.title}</span>
+        </li>
         {column.items.map((item, i) => (
           <ColumnLinkItem key={i} item={item} />
         ))}
@@ -42,18 +45,50 @@ export default function FooterLinksMultiColumn({ columns }) {
   return (
     <div className="row footer__links text--left">
       <div className="col footer__col">
-        <ul className="footer__items" style={{listStyleType: "none"}}>
-          <li><Logo/></li>
-          <li style={{display: "inline-block"}}>LinkedIn</li>
-          <li style={{display: "inline-block"}}>Twitter</li>
-          <li style={{display: "inline-block"}}>GitHub</li>
-          <li style={{display: "inline-block"}}>Slack</li>
+        <ul className="footer__items" style={{ listStyleType: "none" }}>
+          <li>
+            <Logo />
+          </li>
+          <li style={{ display: "inline-block" }}>
+            <IconButton
+              onClick={() =>
+                window.open("https://www.linkedin.com/company/pomerium-inc")
+              }
+              color="primary"
+            >
+              <i className="fa-brands fa-linkedin-in" />
+            </IconButton>
+          </li>
+          <li style={{ display: "inline-block" }}>
+            <IconButton
+              color="primary"
+              onClick={() => window.open("https://twitter.com/pomerium_io")}
+            >
+              <i className="fa-brands fa-twitter" />
+            </IconButton>
+          </li>
+          <li style={{ display: "inline-block" }}>
+            <IconButton
+              color="primary"
+              onClick={() => window.open("https://github.com/pomerium")}
+            >
+              <i className="fa-brands fa-github" />
+            </IconButton>
+          </li>
+          <li style={{ display: "inline-block" }}>
+            <IconButton
+              color="primary"
+              onClick={() => window.open("https://slack.pomerium.io/")}
+            >
+              <i className="fa-brands fa-slack" />
+            </IconButton>
+          </li>
         </ul>
       </div>
       {columns.map((column, i) => (
         <Column key={i} column={column} />
       ))}
-      <FooterNewsletterForm/>
+      <FooterNewsletterForm />
     </div>
   );
 }
