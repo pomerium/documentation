@@ -7,18 +7,19 @@
 import React from "react";
 import LinkItem from "@theme/Footer/LinkItem";
 import {FooterNewsletterForm} from '../../../../components/Newsletter';
+import Logo from "@site/static/img/logo.svg"
 
 function ColumnLinkItem({ item }) {
   return item.html ? (
     <li
-      className="footer__item text--center" // Developer provided the HTML, so assume it's safe.
+      className="footer__item text--left" // Developer provided the HTML, so assume it's safe.
       // eslint-disable-next-line react/no-danger
       dangerouslySetInnerHTML={{
         __html: item.html,
       }}
     />
   ) : (
-    <li key={item.href || item.to} className="footer__item text--center">
+    <li key={item.href || item.to} className="footer__item text--left">
       <LinkItem item={item} />
     </li>
   );
@@ -27,8 +28,8 @@ function ColumnLinkItem({ item }) {
 function Column({ column }) {
   return (
     <div className="col footer__col">
-      <div className="footer__title text--left">{column.title}</div>
-      <ul className="footer__items">
+      <ul className="footer__items" style={{listStyleType: "none"}}>
+        <li><span className="footer__title text--left">{column.title}</span></li>
         {column.items.map((item, i) => (
           <ColumnLinkItem key={i} item={item} />
         ))}
@@ -39,7 +40,16 @@ function Column({ column }) {
 
 export default function FooterLinksMultiColumn({ columns }) {
   return (
-    <div className="row footer__links text--center">
+    <div className="row footer__links text--left">
+      <div className="col footer__col">
+        <ul className="footer__items" style={{listStyleType: "none"}}>
+          <li><Logo/></li>
+          <li style={{display: "inline-block"}}>LinkedIn</li>
+          <li style={{display: "inline-block"}}>Twitter</li>
+          <li style={{display: "inline-block"}}>GitHub</li>
+          <li style={{display: "inline-block"}}>Slack</li>
+        </ul>
+      </div>
       {columns.map((column, i) => (
         <Column key={i} column={column} />
       ))}

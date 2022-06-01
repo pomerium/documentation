@@ -5,7 +5,12 @@ keywords: [pomerium, community, contributing, pr, code]
 description: This document describes how you can find issues to work on, fix/add documentation, and how setup Pomerium for local development.
 ---
 
-First of all, thank you for considering contributing to Pomerium! You can have a direct impact on Pomerium by helping with its code or documentation. To contribute to Pomerium, open a [pull request](https://github.com/pomerium/pomerium/pulls) (PR). If you're new to our community, that's okay: **we gladly welcome pull requests from anyone, regardless of your native language or coding experience.**
+First of all, thank you for considering contributing to Pomerium! You can have a direct impact on Pomerium by helping with its code or documentation.
+
+- To contribute to Pomerium, open a [pull request](https://github.com/pomerium/pomerium/pulls) (PR) to the Pomerium repository.
+- To contribute to the documentation, open a [pull request](https://github.com/pomerium/documentation/pulls) (PR) to the documentation repository.
+
+If you're new to our community, that's okay: **we gladly welcome pull requests from anyone, regardless of your native language or coding experience.**
 
 ## General
 

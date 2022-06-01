@@ -141,27 +141,6 @@ const config = {
               },
             ],
           },
-          {
-            title: "Social",
-            items: [
-              {
-                label: "LinkedIn",
-                to: "https://www.linkedin.com/company/pomerium-inc",
-              },
-              {
-                label: "Twitter",
-                to: "https://twitter.com/pomerium_io",
-              },
-              {
-                label: "Github",
-                to: "https://github.com/pomerium",
-              },
-              {
-                label: "Slack",
-                to: "https://slack.pomerium.io/",
-              },
-            ],
-          },
         ],
         logo: {
           alt: "Pomerium Logo",
