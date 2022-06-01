@@ -56,7 +56,7 @@ export default function FooterLinksMultiColumn({ columns }) {
               }
               color="primary"
             >
-              <i className="fa-brands fa-linkedin-in" />
+              <span className="fa-brands fa-linkedin-in" />
             </IconButton>
           </li>
           <li style={{ display: "inline-block" }}>
@@ -64,7 +64,7 @@ export default function FooterLinksMultiColumn({ columns }) {
               color="primary"
               onClick={() => window.open("https://twitter.com/pomerium_io")}
             >
-              <i className="fa-brands fa-twitter" />
+              <span className="fa-brands fa-twitter" />
             </IconButton>
           </li>
           <li style={{ display: "inline-block" }}>
@@ -72,7 +72,7 @@ export default function FooterLinksMultiColumn({ columns }) {
               color="primary"
               onClick={() => window.open("https://github.com/pomerium")}
             >
-              <i className="fa-brands fa-github" />
+              <span className="fa-brands fa-github" />
             </IconButton>
           </li>
           <li style={{ display: "inline-block" }}>
@@ -80,7 +80,7 @@ export default function FooterLinksMultiColumn({ columns }) {
               color="primary"
               onClick={() => window.open("https://slack.pomerium.io/")}
             >
-              <i className="fa-brands fa-slack" />
+              <span className="fa-brands fa-slack" />
             </IconButton>
           </li>
         </ul>
