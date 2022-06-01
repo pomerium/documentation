@@ -41,6 +41,7 @@ const config = {
   ],
 
   themeConfig: {
+    image: 'docs/img/logo.svg',
     algolia: {
       appId: process.env.ALGOALIA_APPID,
       apiKey: process.env.ALGOLIA_APIKEY,
