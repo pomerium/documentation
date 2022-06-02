@@ -36,6 +36,9 @@ const config = {
         theme: {
           customCss: require.resolve("./src/css/custom.css"),
         },
+        googleAnalytics: {
+          trackingID: process.env.GA
+        },
       },
     ],
   ],
@@ -162,6 +165,10 @@ const config = {
 
 if (!process.env.ALGOALIA_APPID) {
   delete config.themeConfig.algolia;
+}
+
+if (!process.env.GA) {
+  delete config.presets[0][1].googleAnalytics
 }
 
 module.exports = config;
