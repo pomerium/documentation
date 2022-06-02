@@ -122,7 +122,7 @@ Open your Pomerium config file, `/etc/pomerium/config.yaml`.
 
 1. Add a list item in the `routes` block for the Enterprise Console:
 
-   ```yaml
+   ```yaml title="/etc/pomerium/config.yaml"
      routes:
        - from: https://console.localhost.pomerium.com
          to: https://localhost:8701
@@ -138,22 +138,24 @@ Open your Pomerium config file, `/etc/pomerium/config.yaml`.
 
 1. If you haven't already, set `signing_key`. See the [reference page](/docs/reference/signing-key) for more information. The same signing key must be used in both Pomerium Core and Enterprise.
 
-   ```yaml
+   ```yaml title="/etc/pomerium/config.yaml"
    signing_key: "ZZZZZZZZZZZZZZ"
    ```
 
 1. Define the [databroker](/docs/reference/data-broker-service) storage type and connection string. The example below assumes a local Redis server:
 
-   ```yaml
+   ```yaml title="/etc/pomerium/config.yaml"
    databroker_storage_type: redis
    databroker_storage_connection_string: redis://127.0.0.1:6379/0
    ```
+
+With these changes made to Pomerium Core, we can begin editing the Pomerium Console configuration.
 
 ### External Services
 
 First configure the Console to communicate with the database and databroker service:
 
-```yaml
+```yaml title="/etc/pomerium-console/config.yaml"
 database_url: pg://user:pass@dbhost.internal.mydomain.com/pomerium?sslmode=require
 databroker_service_url: https://pomerium-cache.internal.mydomain.com
 shared_secret: XXXXXXXXXXXXXXXXXXX
@@ -166,7 +168,7 @@ For database uri options (especially TLS settings) see the [PostgreSQL SSL Suppo
 
 As a first-time setup step, you must also configure at least one administrator for console access. This user (or users) can then configure additional administrators in the console UI.
 
-```yaml
+```yaml title="/etc/pomerium-console/config.yaml"
 administrators: you@mydomain.com
 ```
 
@@ -176,7 +178,7 @@ Once you have set permissions in the console UI, you should remove this configur
 
 1. If your open-source Pomerium installation is already configured to use TLS to secure back-end communication, you can do the same for Pomerium Enterprise by providing it a certificate, key, and optional custom CA file to validate the `databroker_service_url` connection:
 
-   ```yaml
+   ```yaml title="/etc/pomerium-console/config.yaml"
    tls_ca_file: /etc/pomerium-console/ca.pem
    tls_cert_file: /etc/pomerium-console/cert.pem
    tls_key_file: /etc/pomerium-console/key.pem
@@ -188,15 +190,25 @@ Once you have set permissions in the console UI, you should remove this configur
 
 1. Set the `audience` key to match the `from` domain value from your [Pomerium configuration](#update-pomerium), excluding protocol:
 
-   ```yaml
+   ```yaml title="/etc/pomerium-console/config.yaml"
    audience: console.localhost.pomerium.com
    ```
 
    This sets the expected "audience" key in the [JWT header](/docs/reference/jwt-claim-headers) to match what's provided by open-source Pomerium as it proxies traffic to the Enterprise Console UI.
 
+### License Key
+
+Finally, add your license key to the configuration file:
+
+```yaml title="/etc/pomerium-console/config.yaml"
+license-key: YOURLICENSEKEY
+```
+
+---
+
 Once complete, your `/etc/pomerium-console/config.yaml` file should look something like this:
 
-```yaml
+```yaml title="/etc/pomerium-console/config.yaml"
 database_url: pg://user:pass@dbhost.internal.mydomain.com/pomerium?sslmode=require
 databroker_service_url: https://pomerium-cache.internal.mydomain.com
 shared_secret: "XXXXXXXXXXXXXXXXXXX"
@@ -212,6 +224,8 @@ tls_key_file: /etc/pomerium-console/key.pem
 signing_key: "ZZZZZZZZZZZZZZ"
 
 audience: console.localhost.pomerium.com
+
+license-key: YOURLICENSEKEY
 ```
 
 ## Next Steps
