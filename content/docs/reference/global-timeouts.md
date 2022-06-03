@@ -18,7 +18,7 @@ pagination_next: null
 - Example: `TIMEOUT_READ=30s`
 - Defaults: `TIMEOUT_READ=30s` `TIMEOUT_WRITE=0` `TIMEOUT_IDLE=5m`
 
-Timeouts set the global server timeouts. Timeouts can also be set for individual [routes](#routes).
+Timeouts set the global server timeouts. Timeouts can also be set for individual [routes](/docs/reference/routes).
 
 - `idle_timeout`: The idle timeout is the time at which a downstream or upstream connection will be terminated if there are no active streams.
 - `write_timeout`: The max stream duration is the maximum time that a stream’s lifetime will span. An HTTP request/response exchange fully consumes a single stream.

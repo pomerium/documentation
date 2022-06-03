@@ -14,7 +14,7 @@ pagination_next: null
 # Signing Key
 - Environmental Variable: `SIGNING_KEY`
 - Config File Key: `signing_key`
-- Type: [base64 encoded] `string`
+- Type: [base64 encoded](https://en.wikipedia.org/wiki/Base64) `string`
 - Optional
 
 Signing Key is the private key used to sign a user's attestation JWT which can be consumed by upstream applications to pass along identifying user information like username, id, and groups.

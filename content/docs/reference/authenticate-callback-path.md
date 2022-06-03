@@ -28,3 +28,4 @@ See also:
 - [OIDC Spec][oidc rfc]
 - [Google - Setting Redirect URI](https://developers.google.com/identity/protocols/OpenIDConnect#setredirecturi)
 
+[oidc rfc]: https://openid.net/specs/openid-connect-core-1_0.html#AuthRequest

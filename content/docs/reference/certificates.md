@@ -16,7 +16,7 @@ pagination_next: null
 - Environmental Variable: `CERTIFICATE` / `CERTIFICATE_KEY`
 - Environmental Variable: `CERTIFICATE_FILE` / `CERTIFICATE_KEY_FILE`
 - Type: array of relative file locations `string`
-- Type: [base64 encoded] `string`
+- Type: [base64 encoded](https://en.wikipedia.org/wiki/Base64) `string`
 - Type: certificate relative file location `string`
 - Required (if insecure not set)
 

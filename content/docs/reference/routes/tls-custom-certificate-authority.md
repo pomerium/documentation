@@ -11,7 +11,7 @@ pagination_next: null
 
 # TLS Custom Certificate Authority
 - Config File Key: `tls_custom_ca` or `tls_custom_ca_file`
-- Type: [base64 encoded] `string` or relative file location
+- Type: [base64 encoded](https://en.wikipedia.org/wiki/Base64) `string` or relative file location
 - Optional
 
 TLS Custom Certificate Authority defines a set of root certificate authorities that the Pomerium Proxy Service uses when verifying upstream server certificates.

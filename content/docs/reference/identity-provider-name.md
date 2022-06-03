@@ -20,5 +20,5 @@ pagination_next: null
 
 Provider is the short-hand name of a built-in OpenID Connect (oidc) identity provider to be used for authentication. To use a generic provider,set to `oidc`.
 
-See [identity provider] for details.
+See [identity provider](/docs/identity-providers/) for details.
 

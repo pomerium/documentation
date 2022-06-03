@@ -69,7 +69,7 @@ const config = {
         },
         {
           type: "doc",
-          docId: "docs/reference/readme",
+          docId: "docs/reference",
           position: "right",
           label: "Reference",
           to: "/docs/reference/",
