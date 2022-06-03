@@ -46,6 +46,7 @@ const config = {
       appId: process.env.ALGOALIA_APPID,
       apiKey: process.env.ALGOLIA_APIKEY,
       indexName: process.env.INDEX_NAME,
+      contextualSearch: false
     },
     navbar: {
       title: "",
