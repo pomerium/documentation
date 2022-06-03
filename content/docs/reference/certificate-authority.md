@@ -14,7 +14,7 @@ pagination_next: null
 # Certificate Authority
 - Environmental Variable: `CERTIFICATE_AUTHORITY` or `CERTIFICATE_AUTHORITY_FILE`
 - Config File Key: `certificate_authority` or `certificate_authority_file`
-- Type: [base64 encoded] `string` or relative file location
+- Type: [base64 encoded](https://en.wikipedia.org/wiki/Base64) `string` or relative file location
 - Optional
 
 This defines a set of root certificate authorities that Pomerium uses when communicating with other TLS-protected services.

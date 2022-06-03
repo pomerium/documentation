@@ -15,7 +15,7 @@ pagination_next: null
 - Environmental Variable: either `AUTOCERT_DIR`
 - Config File Key: `autocert_dir`
 - Type: `string` pointing to the path of the directory
-- Required if using [Autocert](#autocert) setting
+- Required if using [Autocert](/docs/reference/autocert) setting
 - Default:
 
   - `/data/autocert` in published Pomerium docker images
