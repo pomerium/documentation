@@ -93,6 +93,22 @@ const config = {
           label: "GitHub",
           position: "right",
         },
+        {
+          type: "dropdown",
+          label: "v17",
+          position: "right",
+          items: [
+            {
+              label: "v16",
+              href: "https://0-16-0.docs.pomerium.io/docs"
+            },
+            {
+              type: 'doc',
+              label: 'Archived Versions',
+              docId: 'docs/versions'
+            }
+          ]
+        },
       ],
     },
     footer: {
