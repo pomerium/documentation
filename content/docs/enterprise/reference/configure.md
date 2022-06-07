@@ -209,6 +209,59 @@ A [Namespace][namespace-concept] is a collection of users, groups, routes, and p
 When using an IdP without directory sync or when working with non-domain users, they will not show up in the look-ahead search. See [Non-Domain Users](/docs/enterprise/concepts#non-domain-users) for more information.
 :::
 
+## External Data
+
+This section lets $USER_ROLEs add and manage external data sources. Information from external data sources can be used to extend [policies](/docs/enterprise/reference/manage#policies-1).
+
+### Add or Edit External Data Source
+
+#### URL
+
+The path to the external data. The supported formats are:
+
+- JSON file containing an array of objects. each object **must** contain an `id` field.
+- CSV file, where the first row indicates the field names and subsequent rows are records. One of the fields **must** be an `id`.
+- A tar file containing files of one of the formats above. The file path within the tar file specifies the record type, if not defined in the configuration. For example, in an arhive containing the following structure:
+
+  ```bash
+  example.com/geoio.csv
+  devices/jamf.json
+  devices/tanium.json
+  ```
+
+  The Pomerium Databroker would be updated with types `example.com/geoip`, `devices/jamf`, and `devices/tanium`.
+
+  - Compressed versions are supported using `gz` and `zip` formats.
+
+#### Record Type
+
+Unless defined by the directory structure of a supplied archive file, the Record Type field defines how the records will be stored and accessed in the Databroker.
+
+#### Foreign Key
+
+This value is used to map an authorization evaluation to the corresponding record. The supported values are:
+
+- `user.id` (Also the default if no value is provided),
+- `user.email`,
+- `request.ip`,
+- `device.id`.
+
+#### Headers
+
+Headers defined here will be used when connecting to the external data source.
+
+#### Allow Insecure TLS
+
+If set, allows the import of external data from sources using untrusted TLS certificates.
+
+#### Poling Min/Max Delay
+
+Defines the minimum and maximum delay times between requests to the external data source.
+
+#### Client TLS Key
+
+For data sources using mTLS, you can select a [client certificate](/docs/enterprise/reference/manage#certificates) (added under **Manage** → **Certificates**) to provide to the data source.
+
 [route-concept]: /docs/enterprise/concepts.md#routes
 [route-reference]: /docs/enterprise/reference/manage#routes
 [namespace-concept]: /docs/enterprise/concepts.md#namespaces
