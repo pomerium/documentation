@@ -139,6 +139,16 @@ export default function ReferenceTable() {
         }}
         columns={columns}
         rows={references.filter(filterHidden)}
+        componentsProps={{
+          toolbar: {
+            printOptions: {
+              disableToolbarButton: true
+            },
+            csvOptions: {
+              disableToolbarButton: true
+            }
+          }
+        }}
         components={{
           Toolbar: GridToolbar,
         }}
