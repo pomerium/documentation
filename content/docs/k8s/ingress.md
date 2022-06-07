@@ -11,7 +11,7 @@ Use Pomerium as a first-class secure-by-default Ingress Controller. The Pomerium
 ## Prerequisites
 
 - A certificate management solution. If you do not already have one in place, this article covers using [cert-manager](https://cert-manager.io/).
-- A [Redis](https://redis.io/) backend with high [persistence](https://redis.io/topics/persistence) is highly recommended.
+- A Postgres backend with high availability is highly recommended.
 
 ### System Requirements
 
@@ -31,7 +31,6 @@ Only one Ingress Controller instance is supported per Pomerium cluster.
 ### Helm
 
 Our instructions for [Installing Pomerium Using Helm](/docs/k8s/helm) includes the Ingress Controller as part of the documented configuration. You can confirm by looking for this line in `pomerium-values.yaml`:
-
 
 ```yaml
 ingressController:

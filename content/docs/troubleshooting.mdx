@@ -135,36 +135,9 @@ Update the [shared secret](/docs/reference/shared-secret) across all Pomerium se
 
 #### Redis Secret Mismatch
 
-When using Redis, the [shared secret](/docs/reference/shared-secret) is used to encrypt data in Redis itself. If you change the configured shared secret, data from Redis can no longer be decrypted. This results in errant behavior, including redirect loops when a user session cannot be retrieved from the databroker.
-
-```json
-{
-  "level": "error",
-  "syncer_id": "authorize",
-  "syncer_type": "",
-  "error": "rpc error: code = Unknown desc = cryptutil: decryption failed (mismatched keys?): chacha20poly1305: message authentication failed",
-  "time": "2022-03-22T07:18:12-04:00",
-  "message": "error during initial sync"
-}
-{
-  "level": "error",
-  "syncer_id": "authorize",
-  "syncer_type": "",
-  "error": "rpc error: code = Unknown desc = cryptutil: decryption failed (mismatched keys?): chacha20poly1305: message authentication failed",
-  "time": "2022-03-22T07:18:12-04:00",
-  "message": "sync"
-}
-```
-
-The resolution is to flush the Redis database with [`FLUSHDB`](https://redis.io/commands/flushdb) or [`FLUSHALL`](https://redis.io/commands/FLUSHALL).
-
-An example of how to do this on Kubernetes with TLS enabled is to use `kubectl` to execute a command on the master pod:
-
-```bash
-kubectl exec -it pomerium-redis-master-0 -- redis-cli --tls --cert /opt/bitnami/redis/certs/tls.crt --key /opt/bitnami/redis/certs/tls.key --cacert /opt/bitnami/redis/certs/ca.crt FLUSHALL ASYNC
-```
-
-Adjust `pomerium-redis-master-0` to match your pod name. If TLS is not enabled, you may omit the TLS options.
+:::caution
+The use of Redis as the databroker storage type has been deprecated in favor of Postgres. See [Previous Versions](https://0-17-0.docs.pomerium.com/docs/troubleshooting#redis-secret-mismatch) of this page for information regarding Redis.
+:::
 
 ### RPC Errors
 
