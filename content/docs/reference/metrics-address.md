@@ -10,8 +10,6 @@ pagination_prev: null
 pagination_next: null
 ---
 
-
-# Metrics Address
 - Environmental Variable: `METRICS_ADDRESS`
 - Config File Key: `metrics_address`
 - Type: `string`
@@ -27,7 +25,7 @@ Expose a prometheus endpoint on the specified port.
 
 :::
 
-#### Pomerium Metrics Tracked
+## Pomerium Metrics Tracked
 
 Each metric exposed by Pomerium has a `pomerium` prefix, which is omitted in the table below for brevity.
 
@@ -53,13 +51,9 @@ http_server_request_duration_ms               | Histogram | HTTP server request 
 http_server_request_size_bytes                | Histogram | HTTP server request size by service
 http_server_requests_total                    | Counter   | Total HTTP server requests handled by service
 http_server_response_size_bytes               | Histogram | HTTP server response size by service
-redis_conns                                   | Gauge     | Number of total connections in the pool
-redis_idle_conns                              | Gauge     | Total number of times free connection was found in the pool
-redis_wait_count_total                        | Counter   | Total number of connections waited for
-redis_wait_duration_ms_total                  | Counter   | Total time spent waiting for connections
 storage_operation_duration_ms                 | Histogram | Storage operation duration by operation, result, backend and service
 
-#### Identity Manager
+## Identity Manager
 
 Identity manager metrics have `pomerium_identity_manager` prefix.
 
@@ -79,9 +73,8 @@ user_refresh_errors                           | Counter   | User refresh error c
 user_refresh_success                          | Counter   | User refresh success counter.
 user_refresh_success_timestamp                | Gauge     | Timestamp of last successful user refresh.
 
-#### Envoy Proxy Metrics
+## Envoy Proxy Metrics
 
 As of `v0.9`, Pomerium uses [envoy](https://www.envoyproxy.io/) for the data plane. As such, proxy related metrics are sourced from envoy, and use envoy's internal [stats data model](https://www.envoyproxy.io/docs/envoy/latest/operations/stats_overview). Please see Envoy's documentation for information about specific metrics.
 
 All metrics coming from envoy will be labeled with `service="pomerium"` or `service="pomerium-proxy"`, depending if you're running all-in-one or distributed service mode and have `pomerium` prefix added to the standard envoy metric name.
-

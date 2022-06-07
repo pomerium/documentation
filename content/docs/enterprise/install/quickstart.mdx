@@ -18,9 +18,7 @@ This document assumes:
 - You already have the open-source Pomerium base installed. If not, follow [this doc](/docs/install/binary) before you continue.
    - While an existing route is not required, we suggest implementing one test route to validate your identity provider (**IdP**) configuration.
 - Pomerium Enterprise requires a relational database. PostgreSQL 9+ is supported.
-   - Securing the database connection with TLS may not be required, especially for a local installation, but is strongly recommended for production deployments. Therefor, this guide will assume a TLS-secured database connection.
-- A supported data broker backend. Currently we support Redis.
-   - As with the database, TLS encryption is strongly recommended for production deployments.
+   - Securing the database connection with TLS may not be required, especially for a local installation, but is strongly recommended for production deployments. Therefore, this guide will assume a TLS-secured database connection.
 
 ## Requirements
 
@@ -32,10 +30,6 @@ This document assumes:
 - Each Postgres instance should have at least:
     - 4 vCPUs
     - 8G RAM
-    - 20G for data files
-- Each Redis instance should have at least:
-    - 2 vCPUs
-    - 4G RAM
     - 20G for data files
 
 ## Install Pomerium Enterprise
@@ -142,11 +136,11 @@ Open your Pomerium config file, `/etc/pomerium/config.yaml`.
    signing_key: "ZZZZZZZZZZZZZZ"
    ```
 
-1. Define the [databroker](/docs/reference/data-broker-service) storage type and connection string. The example below assumes a local Redis server:
+1. Define the [databroker](/docs/reference/data-broker-service) storage type and connection string. The example below assumes a local Postgres server:
 
    ```yaml title="/etc/pomerium/config.yaml"
-   databroker_storage_type: redis
-   databroker_storage_connection_string: redis://127.0.0.1:6379/0
+   databroker_storage_type: postgres
+   databroker_storage_connection_string: pg://127.0.0.1:5432/0
    ```
 
 With these changes made to Pomerium Core, we can begin editing the Pomerium Console configuration.
