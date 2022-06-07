@@ -99,7 +99,7 @@ export default function ReferenceTable() {
       flex: 1,
       renderCell: renderCellExpand,
     },
-    {
+    /*{
       headerName: "Services",
       field: "services",
       sortable: false,
@@ -114,7 +114,7 @@ export default function ReferenceTable() {
           </div>
         );
       },
-    },
+    },*/
   ];
 
   return (
@@ -139,6 +139,16 @@ export default function ReferenceTable() {
         }}
         columns={columns}
         rows={references.filter(filterHidden)}
+        componentsProps={{
+          toolbar: {
+            printOptions: {
+              disableToolbarButton: true
+            },
+            csvOptions: {
+              disableToolbarButton: true
+            }
+          }
+        }}
         components={{
           Toolbar: GridToolbar,
         }}
