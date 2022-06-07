@@ -616,6 +616,7 @@
   "enable-google-cloud-serverless-authentication": {
     "id": "enable-google-cloud-serverless-authentication",
     "title": "Enable Google Cloud Serverless Authentication",
+    "short_description": "Enables sending a signed Authorization Header to upstream GCP services",
     "path": "/routes/enable-google-cloud-serverless-authentication",
     "services": ["proxy"],
     "type": "bool"
@@ -625,6 +626,7 @@
     "title": "From",
     "path": "/routes/from",
     "services": ["proxy"],
+    "short_description": "The externally accessible URL for the proxied request",
     "type": "URL",
     "short description": "URL (must contain a scheme and hostname, must not contain a path)"
   },
@@ -695,6 +697,7 @@
   "pass-identity-headers": {
     "id": "pass-identity-headers",
     "title": "Pass Identity Headers",
+    "short_description": "Pass identity headers to upstream applications",
     "path": "/routes/pass-identity-headers",
     "services": ["proxy"],
     "type": "bool"
@@ -704,6 +707,7 @@
     "title": "Path",
     "path": "/routes/path",
     "services": ["proxy"],
+    "short_description": "Only match requests with an exact match for this path",
     "type": "string"
   },
   "prefix": {
@@ -711,6 +715,7 @@
     "title": "Prefix",
     "path": "/routes/prefix",
     "services": ["proxy"],
+    "short_description": "Only match requests with paths starting with this prefix",
     "type": "string"
   },
   "prefix-rewrite": {
@@ -718,6 +723,7 @@
     "title": "Prefix Rewrite",
     "path": "/routes/prefix-rewrite",
     "services": ["proxy"],
+    "short_description": "Swaps the matched prefix (previous section) with this value",
     "type": "string"
   },
   "public-access": {
@@ -746,7 +752,15 @@
     "title": "Regex Rewrite",
     "path": "/routes/regex-rewrite",
     "services": ["proxy"],
+    "short_description": "Rewrites the URL path according to this pattern",
     "type": "string"
+  },
+  "regex-rewrite-substitution": {
+    "id": "regex-rewrite-substitution",
+    "title": "Regex Rewrite Substitution",
+    "path": "/routes/regex-rewrite",
+    "short_description": "Paths matching the pattern above will be replaced with this",
+    "enterpriseOnly": true
   },
   "remove-request-headers": {
     "id": "remove-request-headers",
@@ -846,8 +860,9 @@
     "title": "To",
     "path": "/routes/to",
     "services": ["proxy"],
+    "descripion": "The destination(s) of a proxied request",
     "type": "URL(s)",
-    "short_description": "URL or list of URLs (must contain a scheme and hostname) with an optional weight"
+    "short_description": "URL(s) must contain a scheme and hostname, with an optional weight"
   },
   "spdy": {
     "id": "spdy",
@@ -896,7 +911,6 @@
   "new-enrollment": {
     "id": "new-enrollment",
     "title": "New Enrollment",
-    "description": "Introduced in v0.16.0, the Manage Devices page lets administrators manage user devices for policy-based authorization.",
     "path": "/docs/guides/admin-enroll-device",
     "enterpriseOnly": true
   },
