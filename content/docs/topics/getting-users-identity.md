@@ -10,7 +10,7 @@ This article describes how to retrieve a user's identity from a pomerium managed
 To secure your app with signed headers, you'll need the following:
 
 - An application you want users to connect to.
-- A [JWT] library. We require `ES256`based algorithms.
+- A [JWT] library. Only the `ES256` signing algorithm is supported.
 
 ## Verification
 
