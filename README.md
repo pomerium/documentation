@@ -1,6 +1,6 @@
 # Pomerium Documentation
 
-[![Netlify Status](https://api.netlify.com/api/v1/badges/37046516-2e94-423f-bc17-453163570fad/deploy-status)](https://app.netlify.com/sites/pomerium-docusaurus/deploys) [![License: CC BY-NC 4.0](https://img.shields.io/badge/License-CC_BY--NC_4.0-lightgrey.svg)](https://creativecommons.org/licenses/by-nc/4.0/)
+[![Netlify Status](https://api.netlify.com/api/v1/badges/37046516-2e94-423f-bc17-453163570fad/deploy-status)](https://app.netlify.com/sites/pomerium-docusaurus/deploys) [![License: CC BY-NC 4.0](https://img.shields.io/badge/License-CC_BY--NC_4.0-lightgrey.svg)](https://creativecommons.org/licenses/by-nc/4.0/) [![Discourse topics](https://img.shields.io/discourse/topics?label=Discuss&server=https%3A%2F%2Fdiscuss.pomerium.com%2F&style=flat-square)](https://discuss.pomerium.com/)
 
 Pomerium's documentation is built using [Docusaurus 2](https://docusaurus.io/). It's published at <https://pomerium.com/docs>
 
