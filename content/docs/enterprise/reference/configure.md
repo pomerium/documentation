@@ -220,8 +220,25 @@ This section lets $USER_ROLEs add and manage external data sources. Information 
 The path to the external data. The supported formats are:
 
 - JSON file containing an array of objects. each object **must** contain an `id` field.
+
+  ```json title="example JSON"
+  [
+    { "id": "id4", "user_id": "user4" },
+    { "id": "id5", "user_id": "user5" },
+    { "id": "id6", "user_id": "user6" }
+  ]
+  ```
+
 - CSV file, where the first row indicates the field names and subsequent rows are records. One of the fields **must** be an `id`.
-- A tar file containing files of one of the formats above. The file path within the tar file specifies the record type, if not defined in the configuration. For example, in an arhive containing the following structure:
+
+  ```json title="example CSV"
+  id,user_id
+  id1,user1
+  id2,user2
+  id3,user3
+  ```
+
+- A tar or zip file containing files of one of the formats above. The file path within the tar file specifies the record type, if not defined in the configuration. For example, in an arhive containing the following structure:
 
   ```bash
   example.com/geoio.csv
@@ -231,7 +248,7 @@ The path to the external data. The supported formats are:
 
   The Pomerium Databroker would be updated with types `example.com/geoip`, `devices/jamf`, and `devices/tanium`.
 
-  - Compressed versions are supported using `gz` and `zip` formats.
+  - Compressed versions are supported using `gz` format.
 
 #### Record Type
 
