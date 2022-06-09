@@ -52,6 +52,9 @@ const config = {
       contextualSearch: false,
       searchPagePath: false
     },
+    sitemap: {
+      filename: 'docs/sitemap.xml'
+    },
     navbar: {
       title: "",
       logo: {
