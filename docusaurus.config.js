@@ -39,6 +39,9 @@ const config = {
         googleAnalytics: {
           trackingID: process.env.GA
         },
+        sitemap: {
+          filename: 'docs/sitemap.xml'
+        },
       },
     ],
   ],
@@ -51,9 +54,6 @@ const config = {
       indexName: process.env.INDEX_NAME,
       contextualSearch: false,
       searchPagePath: false
-    },
-    sitemap: {
-      filename: 'docs/sitemap.xml'
     },
     navbar: {
       title: "",
