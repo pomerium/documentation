@@ -10,7 +10,7 @@ dotenv.config();
 const config = {
   title: "Pomerium",
   tagline: "Documentation",
-  url: "https://pomerium.com",
+  url: "https://www.pomerium.com",
   baseUrl: "/",
   onBrokenLinks: "throw",
   onBrokenMarkdownLinks: "throw",
