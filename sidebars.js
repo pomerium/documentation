@@ -185,7 +185,14 @@ const sidebars = {
             {type: 'doc', id: 'docs/enterprise/reference/config'},
             {type: 'doc', id: 'docs/enterprise/reference/reports'},
             {type: 'doc', id: 'docs/enterprise/reference/manage'},
-            {type: 'doc', id: 'docs/enterprise/reference/configure'},
+            {
+              type: 'category',
+              label: 'Configure',
+              link: {type: 'doc', id: 'docs/enterprise/reference/configure'},
+              items: [
+                {type: 'doc', id: 'docs/enterprise/reference/external-data'},
+              ]
+            },
           ]
         },
         {type: 'doc', id: 'docs/enterprise/api'},
