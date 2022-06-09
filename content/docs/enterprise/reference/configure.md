@@ -211,7 +211,7 @@ When using an IdP without directory sync or when working with non-domain users, 
 
 ## External Data
 
-This section lets $USER_ROLEs add and manage external data sources. Information from external data sources can be used to extend [policies](/docs/enterprise/reference/manage#policies-1).
+This section lets [administrators](/docs/enterprise/concepts#admin) add and manage external data sources. Information from external data sources can be used to extend [policies](/docs/enterprise/reference/manage#policies-1).
 
 ### Add or Edit External Data Source
 
@@ -223,25 +223,25 @@ The path to the external data. The supported formats are:
 
   ```json title="example JSON"
   [
-    { "id": "id4", "user_id": "user4" },
-    { "id": "id5", "user_id": "user5" },
-    { "id": "id6", "user_id": "user6" }
+    { "id": "id4@example.com", "user.id": "user4" },
+    { "id": "id5@example.com", "user.id": "user5" },
+    { "id": "id6@example.com", "user.id": "user6" }
   ]
   ```
 
 - CSV file, where the first row indicates the field names and subsequent rows are records. One of the fields **must** be an `id`.
 
   ```json title="example CSV"
-  id,user_id
-  id1,user1
-  id2,user2
-  id3,user3
+  id,user.id
+  id1@example.com,user1
+  id2@example.com,user2
+  id3@example.com,user3
   ```
 
 - A tar or zip file containing files of one of the formats above. The file path within the tar file specifies the record type, if not defined in the configuration. For example, in an arhive containing the following structure:
 
   ```bash
-  example.com/geoio.csv
+  example.com/geoip.csv
   devices/jamf.json
   devices/tanium.json
   ```
@@ -278,6 +278,8 @@ Defines the minimum and maximum delay times between requests to the external dat
 #### Client TLS Key
 
 For data sources using mTLS, you can select a [client certificate](/docs/enterprise/reference/manage#certificates) (added under **Manage** → **Certificates**) to provide to the data source.
+
+See [External Data Sources](./external-data) for more information on this feature.
 
 [route-concept]: /docs/enterprise/concepts.md#routes
 [route-reference]: /docs/enterprise/reference/manage#routes
