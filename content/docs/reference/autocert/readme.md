@@ -1,7 +1,6 @@
 ---
 id: autocert
 title: Autocert
-slug: /docs/reference/autocert/autocert
 description: |
   Turning on autocert allows Pomerium to automatically retrieve, manage, and renew public facing TLS certificates from Lets Encrypt.
 keywords:
