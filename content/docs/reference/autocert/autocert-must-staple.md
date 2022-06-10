@@ -15,7 +15,7 @@ pagination_next: null
 - Type: `bool`
 - Optional
 
-If true, force autocert to request a certificate with the `status_request` extension (commonly called `Must-Staple`). This allows the TLS client (_id est_ the browser) to fail immediately if the TLS handshake doesn't include OCSP stapling information. This setting is only used when [Autocert](/docs/reference/autocert/autocert) is true.
+If true, force autocert to request a certificate with the `status_request` extension (commonly called `Must-Staple`). This allows the TLS client (_id est_ the browser) to fail immediately if the TLS handshake doesn't include OCSP stapling information. This setting is only used when [Autocert](/docs/reference/autocert) is true.
 
 :::tip
 
