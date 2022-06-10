@@ -47,7 +47,7 @@ When creating TCP routes, note the following:
 
 ## Connect to TCP Routes
 
-While HTTP routes can be consumed with just a normal browser, `pomerium-cli` or Pomerium Desktop must serve as a proxy for TCP routes. See [Pomerium Desktop and CLI Clients](./client) for more information.
+While HTTP routes can be consumed with just a normal browser, `pomerium-cli` or Pomerium Desktop must serve as a proxy for TCP routes. See [Pomerium Desktop and CLI Clients](tcp/client) for more information.
 
 To connect, you normally need just the external hostname and port of your TCP route:
 
@@ -73,7 +73,7 @@ localhost:52046>
 
 You may specify an optional address and port for the `tcp` command to listen on.
 
-`-` specifies that STDIN and STDOUT should be directly attached to the remote TCP connection.  This is useful for [SSH](examples/ssh#tunnel-and-connect-simultaneously) or for sending data through a shell pipe.
+`-` specifies that STDIN and STDOUT should be directly attached to the remote TCP connection.  This is useful for [SSH](tcp/examples/ssh#tunnel-and-connect-simultaneously) or for sending data through a shell pipe.
 
 ### Custom URL
 
@@ -89,9 +89,9 @@ The command above connects to `https://pomerium.corp.example.com:8443` and then 
 
 We've outlined how to use a TCP tunnel through Pomerium for several popular services that use TCP connections:
 
-- [Git](examples/git)
-- [Microsoft SQL](examples/ms-sql)
-- [MySQL and MariaDB](examples/mysql)
-- [RDP](examples/rdp)
-- [Redis](examples/redis)
-- [SSH](examples/ssh)
+- [Git](tcp/examples/git)
+- [Microsoft SQL](tcp/examples/ms-sql)
+- [MySQL and MariaDB](tcp/examples/mysql)
+- [RDP](tcp/examples/rdp)
+- [Redis](tcp/examples/redis)
+- [SSH](tcp/examples/ssh)
