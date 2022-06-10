@@ -17,6 +17,7 @@ const config = {
   favicon: "img/favicon.ico",
   organizationName: "pomerium",
   projectName: "documentation",
+  trailingSlash: false,
 
   customFields: {
     xgridKey: process.env.XGRID_KEY,
