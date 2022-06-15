@@ -17,5 +17,5 @@ services:
   verify:
     image: pomerium/verify:latest
     expose:
-      - 80
+      - 8000
 ```
