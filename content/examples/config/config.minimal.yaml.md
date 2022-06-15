@@ -1,15 +1,18 @@
 ```yaml
 # See detailed configuration settings : https://www.pomerium.com/docs/reference/
 
-
 # this is the domain the identity provider will callback after a user authenticates
 authenticate_service_url: https://authenticate.localhost.pomerium.io
 
 # certificate settings:  https://www.pomerium.com/docs/reference/certificates.html
 autocert: true
-
 # REMOVE FOR PRODUCTION
 autocert_use_staging: true
+
+# If you're using mkcert to test Pomerium locally, comment the autocert keys and uncomment
+# the keys below, adjusting for your mkcert path:
+# certificate_file: /home/user/.local/share/mkcert/rootCA.pem
+# certificate_key_file: /user/alex/.local/share/mkcert/rootCA-key.pem
 
 # identity provider settings : https://www.pomerium.com/docs/identity-providers.html
 idp_provider: google
