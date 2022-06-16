@@ -47,7 +47,7 @@ export default function FooterLinksMultiColumn({ columns }) {
       <div className="col footer__col">
         <ul className="footer__items" style={{ listStyleType: "none" }}>
           <li>
-            <a href="https://pomerium.com"><Logo /></a>
+            <a href="https://www.pomerium.com"><Logo /></a>
           </li>
           <li style={{ display: "inline-block" }}>
             <IconButton
