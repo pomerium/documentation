@@ -6,12 +6,11 @@ description: |
 keywords:
 - reference
 - JWT Claim Headers
+- jwt_claim_headers
 pagination_prev: null
 pagination_next: null
 ---
 
-
-# JWT Claim Headers
 - Environmental Variable: `JWT_CLAIMS_HEADERS`
 - Config File Key: `jwt_claims_headers`
 - Type: slice of `string`
@@ -37,3 +36,4 @@ Will add an `X-Email` header with a value of the `email` claim.
 
 Use this option if you previously relied on `x-pomerium-authenticated-user-{email|user-id|groups}`.
 
+To pass static values as request headers to the upstream service, see [Set Request Headers](./routes/set-request-headers).
