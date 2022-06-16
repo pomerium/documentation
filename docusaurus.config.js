@@ -61,7 +61,7 @@ const config = {
       logo: {
         alt: "Pomerium Logo",
         src: "img/logo.svg",
-        href: "https://pomerium.com",
+        href: "https://www.pomerium.com",
         target: "_self"
       },
       items: [
