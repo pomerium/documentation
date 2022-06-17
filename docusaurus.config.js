@@ -41,7 +41,8 @@ const config = {
           trackingID: process.env.GA
         },
         sitemap: {
-          filename: 'docs/sitemap.xml'
+          filename: 'docs/sitemap.xml',
+          ignorePatterns: ['/docs/examples/**']
         },
       },
     ],
