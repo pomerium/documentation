@@ -102,7 +102,7 @@ kubectl logs -f deploy/pomerium-authorize | grep '"service":"authorize"' | jq
 }
 ```
 
-## Reading Authorization Logs (Table)
+## Authorization Log Keys
 
 The keys described below usually contain the relevant information when debugging an authorization issue:
 
@@ -113,4 +113,9 @@ The keys described below usually contain the relevant information when debugging
 | <a className="entRef-anchor" id="deny">#</a><a href='#deny'>`deny`</a>                                                                | If true it means that at least one deny rule passed, and the request will be denied.                                                                                                                                                                                                                                                               |
 | <a className="entRef-anchor" id="deny-why-false">#</a><a href='#deny-why-false'>`deny-why-false` & `deny-why-true`</a>                | The short reason strings why access was denied (or not denied). <br/><br/>In the example above, `valid-client-certificate-or-none-required` means that either a valid client certificate was provided, or the policy didn't require one. By default pomerium policies have this PPL rule added to them. It's how we implement client certificates. |
 | <a className="entRef-anchor" id="databroker">#</a><a href='#databroker'>`databroker_server_version` & `databroker_record_version`</a> | These values are used for auditing. With these version numbers and a complete history of all changes in the databroker, you can determine what data was used for policy evaluation.                                                                                                                                                                |
-|                                                                                                                                       |                                                                                                                                                                                                                                                                                                                                                    |
+
+## Understanding Authorization Logs
+
+The most confusing keys for new users to understand are likely `allow-why-false` and `deny-why-false`. To better understand them, we should first discuss how Pomerium Policy Language (**PPL**) works.
+
+PPL allows a request to a route if the claim matches at least one **allow** policy rule, and matches zero **deny** policy rules. With that in mind, `allow-why-false` and `allow-why-true` will describe a situation where the request either does or not not meet the requirements of an **allow** block a policy applied to that route. Conversely, `deny-why-true` and `deny-why-false` will describe why a request did or did not match a **deny** block for a policy assigned to the route.
