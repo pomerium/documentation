@@ -102,75 +102,15 @@ kubectl logs -f deploy/pomerium-authorize | grep '"service":"authorize"' | jq
 }
 ```
 
-## Reading Authorization Logs (list)
-
-The keys described below usually contain the relevant information when debugging an authorization issue:
-
-- `request-id`: An id generated for every request that can be used to correlate logs.
-
-- `allow`: If true, at least one allow rule passed. As long as `deny` is false, the request will be allowed.
-
-- `allow-why-false` | `allow-why-true`: The short reason strings why access was allowed (or not allowed).
-  
-  In The example output above, `claim-unauthorized` means that there was a policy rule on a claim that didn't pass.
-  
-  `non-pomerium-route` means that it was not a request to `/.pomerium/`, which is  allowed for any authenticated user.
-
-- `deny`: If true it means that at least one deny rule passed, and the request will be denied.
-
-- `deny-why-false` | `deny-why-true`: The short reason strings why access was denied (or not denied).
-
-  In the example above, `valid-client-certificate-or-none-required` means that either a valid client certificate was provided, or the policy didn't require one. By default pomerium policies have this PPL rule added to them. It's how we implement client certificates.
-
-- `databroker_server_version` and `databroker_record_version`: These values are used for auditing. With these version numbers and a complete history of all changes in the databroker, you can determine what data was used for policy evaluation.
-
------
-
-## Reading Authorization Logs (Headers)
-
-The keys described below usually contain the relevant information when debugging an authorization issue:
-
-### `request-id`
-
-An id generated for every request that can be used to correlate logs.
-
-### `allow`
-
-If true, at least one allow rule passed. As long as `deny` is false, the request will be allowed.
-
-### `allow-why-false` | `allow-why-true`
-
-The short reason strings why access was allowed (or not allowed).
-  
-In The example output above, `claim-unauthorized` means that there was a policy rule on a claim that didn't pass.
-  
-`non-pomerium-route` means that it was not a request to `/.pomerium/`, which is  allowed for any authenticated user.
-
-### `deny`
-
-If true it means that at least one deny rule passed, and the request will be denied.
-
-### `deny-why-false` | `deny-why-true`
-
-The short reason strings why access was denied (or not denied).
-
-  In the example above, `valid-client-certificate-or-none-required` means that either a valid client certificate was provided, or the policy didn't require one. By default pomerium policies have this PPL rule added to them. It's how we implement client certificates.
-
-### `databroker_server_version` | `databroker_record_version`
-
-These values are used for auditing. With these version numbers and a complete history of all changes in the databroker, you can determine what data was used for policy evaluation.
-
------
-
 ## Reading Authorization Logs (Table)
 
 The keys described below usually contain the relevant information when debugging an authorization issue:
 
-| Key                                                       | Description                                                                                                                                                                                                                                                                                                                                        |
-| --------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `allow`                                                   | If true, at least one allow rule passed. As long as `deny` is false, the request will be allowed.                                                                                                                                                                                                                                                  |
-| `allow-why-false` & `allow-why-true`                      | The short reason strings why access was allowed (or not allowed). <br/> <br/> In The example output above, `claim-unauthorized` means that there was a policy rule on a claim that didn't pass.<br/><br/>`non-pomerium-route` means that it was not a request to `/.pomerium/`, which is  allowed for any authenticated user.                      |
-| `deny`                                                    | If true it means that at least one deny rule passed, and the request will be denied.                                                                                                                                                                                                                                                               |
-| `deny-why-false` & `deny-why-true`                        | The short reason strings why access was denied (or not denied). <br/><br/>In the example above, `valid-client-certificate-or-none-required` means that either a valid client certificate was provided, or the policy didn't require one. By default pomerium policies have this PPL rule added to them. It's how we implement client certificates. |
-| `databroker_server_version` & `databroker_record_version` | These values are used for auditing. With these version numbers and a complete history of all changes in the databroker, you can determine what data was used for policy evaluation.                                                                                                                                                                |
-|                                                           |                                                                                                                                                                                                                                                                                                                                                    |
+| Key                                                                                                                                   | Description                                                                                                                                                                                                                                                                                                                                        |
+| ------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| <a className="entRef-anchor" id="allow">#</a><a href='#allow'>`allow`</a>                                                             | If true, at least one allow rule passed. As long as `deny` is false, the request will be allowed.                                                                                                                                                                                                                                                  |
+| <a className="entRef-anchor" id="allow-why-false">#</a><a href='#allow-why-false'>`allow-why-false` & `allow-why-true`</a>            | The short reason strings why access was allowed (or not allowed). <br/> <br/> In The example output above, `claim-unauthorized` means that there was a policy rule on a claim that didn't pass.<br/><br/>`non-pomerium-route` means that it was not a request to `/.pomerium/`, which is  allowed for any authenticated user.                      |
+| <a className="entRef-anchor" id="deny">#</a><a href='#deny'>`deny`</a>                                                                | If true it means that at least one deny rule passed, and the request will be denied.                                                                                                                                                                                                                                                               |
+| <a className="entRef-anchor" id="deny-why-false">#</a><a href='#deny-why-false'>`deny-why-false` & `deny-why-true`</a>                | The short reason strings why access was denied (or not denied). <br/><br/>In the example above, `valid-client-certificate-or-none-required` means that either a valid client certificate was provided, or the policy didn't require one. By default pomerium policies have this PPL rule added to them. It's how we implement client certificates. |
+| <a className="entRef-anchor" id="databroker">#</a><a href='#databroker'>`databroker_server_version` & `databroker_record_version`</a> | These values are used for auditing. With these version numbers and a complete history of all changes in the databroker, you can determine what data was used for policy evaluation.                                                                                                                                                                |
+|                                                                                                                                       |                                                                                                                                                                                                                                                                                                                                                    |
