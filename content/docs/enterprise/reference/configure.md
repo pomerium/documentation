@@ -238,7 +238,7 @@ The path to the external data. The supported formats are:
   id3@example.com,user3
   ```
 
-- A tar or zip file containing files of one of the formats above. The file path within the tar file specifies the record type, if not defined in the configuration. For example, in an arhive containing the following structure:
+- A tar or zip file containing files of one of the formats above. The file path within the tar file specifies the record type, if not defined in the configuration. For example, in an archive containing the following structure:
 
   ```bash
   example.com/geoip.csv
@@ -271,7 +271,7 @@ Headers defined here will be used when connecting to the external data source.
 
 If set, allows the import of external data from sources using untrusted TLS certificates.
 
-#### Poling Min/Max Delay
+#### Polling Min/Max Delay
 
 Defines the minimum and maximum delay times between requests to the external data source.
 
