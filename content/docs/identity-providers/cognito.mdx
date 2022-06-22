@@ -2,6 +2,7 @@
 title: Cognito
 lang: en-US
 # keywords: [amazon, aws, cognito, openid, oidc, identity provider, idp]pagination_prev: null
+pagination_prev: null
 pagination_next: null
 ---
 
@@ -120,3 +121,26 @@ metadata:
 </Tabs>
 
 To retrieve the **User Pool ID**, go to **General Settings** in the Cognito Side menu within your pool. The **Pool ID** is just above the **Pool ARN**.
+
+## Group Based Policies
+
+Cognito embeds group membership into the access token. To create policies based on group membership, use the `allowed_idp_claims` key. Replace `admins` in the examples below with your group:
+
+<Tabs>
+<TabItem value="core" label="Pomerium Core">
+
+```yaml
+- from: http://from.example.com
+  to: http://to.example.com
+  allowed_idp_claims:
+    cognito:groups:
+      - admins
+```
+
+</TabItem>
+<TabItem value="enterprise" label="Pomerium Enterprise Console">
+
+![Example policy using Cognito groups in Pomerium Enterprise Console](./img/cognito/cognito-group-claim.png)
+
+</TabItem>
+</Tabs>
