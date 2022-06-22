@@ -34,7 +34,7 @@ This will bring you to the admin center of the Azure AD instance backing your Of
 
 ## Create a New Application
 
-1. Login to Microsoft Azure and choose **Azure Active Directory**.
+1. Login to Microsoft Azure and choose **Azure Active Directory**. You may need to click on **More Services** first:
 
    ![Select Active Directory](./img/azure/azure-dashboard.png)
 
@@ -44,7 +44,7 @@ This will bring you to the admin center of the Azure AD instance backing your Of
 
    Then click on the **+ New registration** button to add a new application.
 
-1. Enter a name for the application, and set the redirect URI as `https://${authenticate_service_url}/oauth2/callback`. You can confirm your authenticate service URL from your Pomerium configuration.
+1. Enter a name for the application. Under **Redirect URI** select **Web** and set the value to `https://${authenticate_service_url}/oauth2/callback`. You can confirm your authenticate service URL from your Pomerium configuration.
 
    ![Create application form](./img/azure/azure-create-application.png)
 
@@ -62,13 +62,21 @@ This will bring you to the admin center of the Azure AD instance backing your Of
 
    Click on **Add** and the key will be displayed. **Make sure to copy the value of this key before leaving this screen**, otherwise you may need to create a new key.
 
+   :::info
+   Confirm you are copying the **Value**, and not the **ID**.
+   :::
+
 ### API Permissions
 
 In order to retrieve group information from Active Directory, we need to enable the necessary permissions for the [Microsoft Graph API](https://docs.microsoft.com/en-us/graph/auth-v2-service#azure-ad-endpoint-considerations).
 
 Please note, [Group ID](https://docs.microsoft.com/en-us/graph/api/group-get?view=graph-rest-1.0&tabs=http) not group name will be used to affirm group membership.
 
-1. From the application page, click **API permissions**. Click the **+ Add a permission** button and select **Microsoft Graph API**. Select **Application permissions**. Use the filter to select the checkboxes for **Directory.Read.All**, **Group.Read.All** and **User.Read.All**, then click **Add permissions**.
+1. From the application page, click **API permissions**.
+
+   - Click the **+ Add a permission** button and select **Microsoft Graph API**.
+   - Select **Application permissions**.
+   - Use the filter to select the checkboxes for **Directory.Read.All**, **Group.Read.All** and **User.Read.All**, then click **Add permissions**.
 
    ![Azure add group membership claims](./img/azure/azure-api-permissions.png)
 
