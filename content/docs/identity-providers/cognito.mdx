@@ -11,9 +11,17 @@ import TabItem from '@theme/TabItem';
 
 This document describes the use of AWS Cognito as an identity provider with Pomerium. It assumes you have already [installed Pomerium](/docs/install/)
 
+:::caution
+While we do our best to keep our documentation up to date, changes to third-party systems are outside our control. Refer to [Amazon Cognito Documentation](https://docs.aws.amazon.com/cognito/index.html) as needed, or [let us know](https://github.com/pomerium/pomerium/issues/new?assignees=&labels=&template=bug_report.md) if we need to re-visit this page.
+:::
+
+
 ## Setting up AWS Cognito
 
-### Create a User Pool
+If you're following this doc you likely already have a Cognito user pool. If not, expand the section below to learn how to create a user pool.
+
+<details>
+<summary>Create a User Pool</summary>
 
 1. Log in to the [AWS Console](https://console.aws.amazon.com) account. Go to **Services** on the top menu, and search for **Cognito**:
 
@@ -41,9 +49,11 @@ This document describes the use of AWS Cognito as an identity provider with Pome
    If you need to make changes after creating your pool, be aware that some settings will recreate the pool rather than update the existing pool. This will also generate new **Client IDs** and **Client Secrets**. An example would be changing _How do you want your end users to sign in?_ in **Attributes** from **Username** to **Email address or phone number**.
    :::
 
+</details>
+
 ### Create an App Client
 
-1. Once the pool is created, create an **App Client** under **General settings**. This is where you configure the Pomerium application settings. Choose **Add an App Client**:
+1. From the user pool, create an **App Client** under **General settings**. This is where you configure the Pomerium application settings. Choose **Add an App Client**. You can configure the values to match your needs, or use the default settings:
 
    ![AWS Cognito Create App Client](./img/cognito/cognito-app-client-create.png)
 
