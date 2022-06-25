@@ -2,6 +2,7 @@
 title: GitHub
 lang: en-US
 # keywords: [github, oauth2, provider, identity provider, idp]pagination_prev: null
+pagination_prev: null
 pagination_next: null
 ---
 
@@ -35,12 +36,11 @@ In addition, the teams of the organization(s) a user belongs to, will be used as
    | Homepage URL                | The homepage URL of the application to be integrated with Pomerium. |
    | Authorization callback URL  | `https://${authenticate_service_url}/oauth2/callback`, `authenticate_service_url` from your Pomerium configuration. |
 
-
 1. After creating the application, select **Generate a new client secret** and save **Client Secret** along with the **Client ID**.
 
 ## Create a Service Account
 
-To use `allowed_groups` in a policy, an `idp_service_account` needs to be set in the Pomerium configuration. The Service Account for GitHub should be a personal access token with `read:org` permissions
+To use `allowed_groups` in a policy, an `idp_service_account` needs to be set in the Pomerium configuration. The Service Account for GitHub should be a personal access token with `read:org` and `user:email` permissions.
 
 1. Create a new token at [github.com/settings/tokens/new](https://github.com/settings/tokens/new).
 
@@ -48,7 +48,7 @@ To use `allowed_groups` in a policy, an `idp_service_account` needs to be set in
 
 1. The format of the `idp_service_account` for GitHub is a base64-encoded JSON document:
 
-   ```json
+   ```json title=tmp.json
    {
    "username": "YOUR_GITHUB_USERNAME",
    "personal_access_token": "GENERATED_GITHUB_ACCESS_TOKEN"
