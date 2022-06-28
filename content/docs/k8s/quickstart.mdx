@@ -8,9 +8,7 @@ keywords: [pomerium, identity access proxy, oidc, kubernetes, kustomize, reverse
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 import InstallMkcert from '@site/content/_install-mkcert.md'
-import PomeriumCerts from '@site/content/examples/kubernetes/pomerium-certificates.yaml.md'
-import PomeriumValues from '@site/content/examples/kubernetes/pomerium-values.yaml.md'
-import ExampleIngress from '@site/content/examples/kubernetes/example-ingress.yaml.md'
+import GlobalExample from "@site/content/examples/kubernetes/pomerium-global-settings.md"
 
 This quick-start will show you how to deploy Pomerium with [Kubernetes].
 
@@ -109,23 +107,7 @@ This setup uses [mkcert] to generate certificates that are trusted by your local
 
 1. Define the global Pomerium settings:
 
-  By default, Pomerium expects the configuration document `global`, which may be customized via command line arguments to the container, if necessary. 
-
-  ```yaml title=pomerium.yaml
-  apiVersion: ingress.pomerium.io/v1
-  kind: Pomerium
-  metadata:
-    name: global
-  spec:
-    secrets: pomerium/bootstrap
-    authenticate:
-      url: https://authenticate.localhost.pomerium.io
-    identityProvider:
-      provider: ${YOUR_IdP}
-      secret: pomerium/idp
-    certificates:
-      - pomerium/pomerium-wildcard-tls
-  ```
+  <GlobalExample/>
 
 1. Apply the global settings:
 
