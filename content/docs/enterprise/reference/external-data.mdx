@@ -2,8 +2,8 @@
 title: External Data Sources
 ---
 
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
 
 By adding an external data source, Pomerium administrators can extend access policies by comparing data from an incoming request against any properly formatted data set. To explain how this works, let's look at the external datasets Pomerium provides.
 
@@ -33,13 +33,12 @@ allow:
         field: country
         is: US
         type: pomerium.io/IP2Location
-
 ```
 
 </TabItem>
 </Tabs>
 
-This policy looks at the `country` 
+This policy looks at the `country`
 
 ## Tor Exit Nodes
 
@@ -67,7 +66,36 @@ deny:
         contains: .
         field: id
         type: pomerium.io/TorExitNode
+```
 
+</TabItem>
+</Tabs>
+
+## VPN Providers
+
+This dataset provides VPN node IP addresses.
+
+```json title="Example"
+[{ "id": "1.116.0.0/15" }, { "id": "1.12.32.0/23" }, { "id": "1.14.0.0/15" }]
+```
+
+A policy excluding VPN nodes would look something like this:
+
+<Tabs>
+<TabItem value="builder" label="Builder">
+
+![VPNNode Policy in the Builder view](./img/vpn-node-policy.png)
+
+</TabItem>
+<TabItem value="editor" label="Editor">
+
+```yaml showLineNumbers
+deny:
+  or:
+    - record:
+        contains: .
+        field: id
+        type: pomerium.io/VPNNode
 ```
 
 </TabItem>
