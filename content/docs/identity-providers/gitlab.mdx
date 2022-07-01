@@ -24,11 +24,11 @@ While we do our best to keep our documentation up to date, changes to third-part
 
 1. Add a new application by setting the following parameters:
 
-   | Field        | Description|
---------------|   ------------ | ---------------------------------------------------------------------------------|
-   | Name         | The name of your web app|
-   | Redirect URI | `https://${authenticate_service_url}/oauth2/callback`|
-   | Scopes       | `openid`, `profile`, `email`|
+   | Field        | Description                                           |
+   | ------------ | ----------------------------------------------------- |
+   | Name         | The name of your web app                              |
+   | Redirect URI | `https://${authenticate_service_url}/oauth2/callback` |
+   | Scopes       | `openid`, `profile`, `email`                          |
 
    Click **Save application**.
 
@@ -46,7 +46,7 @@ To use `allowed_groups` in a policy, an `idp_service_account` needs to be set in
 
 The format of the `idp_service_account` for Gitlab is a base64-encoded JSON document:
 
-```json
+```json title=tmp.json
 {
   "private_token": "..."
 }
@@ -55,7 +55,7 @@ The format of the `idp_service_account` for Gitlab is a base64-encoded JSON docu
 If you save this JSON document as a temporary file, you can encode it like this:
 
 ```bash
-cat json.tmp | base64 -w 0
+cat tmp.json | base64 -w 0
 ```
 
 ## Pomerium Configuration
