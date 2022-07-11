@@ -10,8 +10,6 @@ pagination_prev: null
 pagination_next: null
 ---
 
-
-# Signing Key
 - Environmental Variable: `SIGNING_KEY`
 - Config File Key: `signing_key`
 - Type: [base64 encoded](https://en.wikipedia.org/wiki/Base64) `string`
@@ -33,7 +31,7 @@ cat ec_private.pem | base64
 That signing key can be accessed via the well-known jwks endpoint.
 
 ```bash
-$ curl https://authenticate.int.example.com/.well-known/pomerium/jwks.json | jq
+curl https://authenticate.int.example.com/.well-known/pomerium/jwks.json | jq
 ```
 
 ```json
@@ -53,4 +51,3 @@ $ curl https://authenticate.int.example.com/.well-known/pomerium/jwks.json | jq
 ```
 
 If no certificate is specified, one will be generated and the base64'd public key will be added to the logs. Note, however, that this key be unique to each service, ephemeral, and will not be accessible via the authenticate service's `jwks_uri` endpoint.
-
