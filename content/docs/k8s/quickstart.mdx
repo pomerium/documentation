@@ -49,7 +49,7 @@ This setup uses [mkcert] to generate certificates that are trusted by your local
 
 ## Install Pomerium
 
-1. Install the Pomerium deployment definition to your cluster:
+1. Install Pomerium to your cluster:
 
   ```sh
   kubectl apply -f https://raw.githubusercontent.com/pomerium/ingress-controller/main/deployment.yaml
@@ -105,10 +105,11 @@ This setup uses [mkcert] to generate certificates that are trusted by your local
   idp                                Opaque                                2      5s
   pomerium-controller-token-cckv5    kubernetes.io/service-account-token   3      99m
   pomerium-gen-secrets-token-4pdkd   kubernetes.io/service-account-token   3      99m
-  pomerium-tls-ca                    kubernetes.io/tls                     2      148m
   ```
 
 1. Define the global Pomerium settings:
+
+  By default, Pomerium expects the configuration document `global`, which may be customized via command line arguments to the container, if necessary. 
 
   ```yaml title=pomerium.yaml
   apiVersion: ingress.pomerium.io/v1
