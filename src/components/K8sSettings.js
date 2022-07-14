@@ -57,7 +57,7 @@ function recurseProps(header, properties, required) {
     </>)
 }
 
-const SettingsTable = () => {
+const SettingsList = () => {
     return Object.entries(settings).map((entry, values) => {
         //console.log("Entry: " + JSON.stringify(entry))
 
@@ -88,5 +88,5 @@ const SettingsTable = () => {
     })
 }
 
-export default SettingsTable
+export default SettingsList
 
