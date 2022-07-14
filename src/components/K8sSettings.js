@@ -23,22 +23,32 @@ function returnType(prop) {
     return thisType
 }
 
-function recurseProps(properties) {
+function recurseProps(header, properties, required) {
     return (
     <>
+    {required ? <>
+        <br/>Required Properties:
+        <ul>
+        {required.map((prop) => {
+            return(
+            <li>
+            <code>{header}.{prop}</code><br/>
+            </li>
+            )
+        })}
+        </ul><br/>
+    </>: ""}
     Properties:
     <ul>
     {Object.entries(properties || "").map((prop) => {
-        console.log("Properties: ", prop)
+        //console.log("Properties: ", prop)
         return (
             <>
             <li key={prop}>
                 <strong>{prop[0]}</strong>
                 &nbsp;({returnType(prop)}) {prop[1].format ? <> - Format: {prop[1].format}</> : null} <br/>
-                {prop[1].description || null}
-                <ul>
-                {prop[1].properties ? <><li>{recurseProps(prop[1].properties)}</li></> : null}
-                </ul>
+                {prop[1].description? <>{prop[1].description}</> : null}
+                {prop[1].properties ? <><br/>{recurseProps(header, prop[1].properties, prop[1].required)}</> : null}
             </li>
             </>
         )
@@ -70,9 +80,8 @@ const SettingsTable = () => {
                 </a>
                 &nbsp;({returnType(entry)})
             </h3>
-                {description ? <>{description}<br/></>: null}
-                {entry[1].required ? <><br/>Required Properties: <code> {header}.{entry[1].required}</code><br/></>: ""}
-                { properties ? <><br/>{recurseProps(properties)}</> : null}
+                {description ? <>{description}</>: null}
+                { properties ? <><br/>{recurseProps(header, properties, entry[1].required)}</> : null}
             </ul>
             </>
         )
