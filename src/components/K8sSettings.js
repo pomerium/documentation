@@ -9,15 +9,15 @@ function capitalizeFirstLetter(string) {
 
 const isURL = new RegExp('/(https:\/\/[^\s]+)/g')
 
-function returnType(type) {
+function returnType(prop) {
     var thisType = ""
-    type === "string" ?
+    prop[1].type === "string" ?
     thisType = <code>"string"</code>
-    : type === "object" ?
+    : prop[1].type === "object" ?
     thisType = <code>&#123;object&#125;</code>
-    : type === "array" ?
-    thisType = <code>&#91;array&#93;</code>
-    : type === "boolean" ?
+    : prop[1].type === "array" ?
+    thisType = <code>&#91;&#93;{prop[1].items.type}</code>
+    : prop[1].type === "boolean" ?
     thisType = <code>boolean</code>
     : thisType = null
     return thisType
@@ -26,7 +26,6 @@ function returnType(type) {
 function recurseProps(properties) {
     return (
     <>
-    <br/>
     Properties:
     <ul>
     {Object.entries(properties || "").map((prop) => {
@@ -35,11 +34,10 @@ function recurseProps(properties) {
             <>
             <li key={prop}>
                 <strong>{prop[0]}</strong>
-                &nbsp;({returnType(prop[1].type)})<br/>
+                &nbsp;({returnType(prop)}) {prop[1].format ? <> - Format: {prop[1].format}</> : null} <br/>
                 {prop[1].description || null}
                 <ul>
-                {prop[1].format ? <><li>Format: {JSON.stringify(prop[1].format)}</li></> : null}
-                {prop[1].properties ? <><li>{recurseProps(prop[1].properties)}</li></> : null}<br/>
+                {prop[1].properties ? <><li>{recurseProps(prop[1].properties)}</li></> : null}
                 </ul>
             </li>
             </>
@@ -59,8 +57,6 @@ const SettingsTable = () => {
         //console.log("Entry Description: " + JSON.stringify(entry[1].description))
         const properties = entry[1]?.properties || ""
         //console.log("properties: " + JSON.stringify(properties))
-        const type = entry[1].type || ""
-        //console.log("Entry type: " + type)
 
         return (
             <>
@@ -72,11 +68,11 @@ const SettingsTable = () => {
                 <a href={"#"+header}>
                     {capitalizeFirstLetter(header)}
                 </a>
-                &nbsp;({returnType(type)})
+                &nbsp;({returnType(entry)})
             </h3>
                 {description ? <>{description}<br/></>: null}
-                {entry[1].required ? <><br/>Required Values: <code> {header}.{entry[1].required}</code><br/></>: ""}
-                { properties ? recurseProps(properties) : null}
+                {entry[1].required ? <><br/>Required Properties: <code> {header}.{entry[1].required}</code><br/></>: ""}
+                { properties ? <><br/>{recurseProps(properties)}</> : null}
             </ul>
             </>
         )
