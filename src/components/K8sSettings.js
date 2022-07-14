@@ -9,6 +9,41 @@ function capitalizeFirstLetter(string) {
 
 const isURL = new RegExp('/(https:\/\/[^\s]+)/g')
 
+function recurseProps(properties) {
+    return (
+    <>
+    <br/>
+    Properties:
+    <ul>
+    {Object.entries(properties || "").map((prop) => {
+        console.log("Properties: ", prop)
+        return (
+            <>
+            <li key={prop}>
+                <strong>{prop[0]}</strong>
+                &nbsp;({
+                    prop[1].type === "string" ?
+                    <code>"string"</code>
+                    : prop[1].type === "object" ?
+                    <code>&#123;object&#125;</code>
+                    : prop[1].type === "array" ?
+                    <code>&#91;array&#93;</code>
+                    : null
+                })
+            </li>
+
+            {prop[1].description || ""}<br/>
+
+            {prop[1].format || ""}<br/>
+
+            {prop[1].properties ? recurseProps(prop[1].properties) : null}
+            </>
+        )
+    })}
+    </ul>
+    </>)
+}
+
 const SettingsTable = () => {
     return Object.entries(settings).map((entry, values) => {
         //console.log("Entry: " + JSON.stringify(entry))
@@ -20,7 +55,7 @@ const SettingsTable = () => {
         const properties = entry[1]?.properties || ""
         //console.log("properties: " + JSON.stringify(properties))
         const type = entry[1].type || ""
-        console.log("Entry type: " + type)
+        //console.log("Entry type: " + type)
 
         return (
             <>
@@ -45,42 +80,7 @@ const SettingsTable = () => {
                 {description}<br/>
                 {entry[1].required ? <><strong>Required Values: </strong> + <code> {header}.{entry[1].required}</code> </>: ""}
                 <br/>
-                { properties ?
-                    <>
-                    <br/>
-                    Properties:
-                    <ul>
-                    {Object.entries(properties || "").map((prop) => {
-                        console.log
-                        return (
-                            <>
-                            <li>
-                                <strong>{prop[0]}</strong>
-                                &nbsp;({
-                                    prop[1].type === "string" ?
-                                    <code>"string"</code>
-                                    : prop[1].type === "object" ?
-                                    <code>&#123;object&#125;</code>
-                                    : prop[1].type === "array" ?
-                                    <code>&#91;array&#93;</code>
-                                    : null
-                                })
-                            </li>
-
-                            {prop[1].description.replace(isURL, function(url) {
-                                return '<' + url + '>'
-                            }) || ""}<br/>
-
-                            {prop[1].format || ""}<br/>
-
-                            
-                            </>
-                        )
-                    })}
-                    </ul>
-                    </>
-                    : null
-                }
+                { properties ? recurseProps(properties) : null}
             </ul>
             </>
         )
