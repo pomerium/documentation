@@ -186,6 +186,14 @@ const config = {
     "https://fonts.googleapis.com/icon?family=Material+Icons",
     "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/brands.min.css",
   ],
+  plugins: [
+    [
+      require.resolve('docusaurus-gtm-plugin'),
+      {
+        id: process.env.GTM
+      }
+    ]
+  ]
 };
 
 if (!process.env.ALGOALIA_APPID) {
