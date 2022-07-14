@@ -43,7 +43,7 @@ const SettingsTable = () => {
                 })
             </h3>
                 {description}<br/>
-                {entry[1].required ? <><strong>Required Values: </strong> + <code> {header}.{entry[1].required}</code> </>: "None"}
+                {entry[1].required ? <><strong>Required Values: </strong> + <code> {header}.{entry[1].required}</code> </>: ""}
                 <br/>
                 { properties ?
                     <>
