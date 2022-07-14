@@ -35,14 +35,13 @@ function recurseProps(properties) {
             <>
             <li key={prop}>
                 <strong>{prop[0]}</strong>
-                &nbsp;({returnType(prop[1].type)})
+                &nbsp;({returnType(prop[1].type)})<br/>
+                {prop[1].description || null}
+                <ul>
+                {prop[1].format ? <><li>Format: {JSON.stringify(prop[1].format)}</li></> : null}
+                {prop[1].properties ? <><li>{recurseProps(prop[1].properties)}</li></> : null}<br/>
+                </ul>
             </li>
-
-            {prop[1].description || null}<br/>
-
-            {prop[1].format || null}<br/>
-
-            {prop[1].properties ? recurseProps(prop[1].properties) : null}
             </>
         )
     })}
@@ -76,7 +75,7 @@ const SettingsTable = () => {
                 &nbsp;({returnType(type)})
             </h3>
                 {description ? <>{description}<br/></>: null}
-                {entry[1].required ? <><br/><strong>Required Values: </strong> + <code> {header}.{entry[1].required}</code><br/></>: ""}
+                {entry[1].required ? <><br/>Required Values: <code> {header}.{entry[1].required}</code><br/></>: ""}
                 { properties ? recurseProps(properties) : null}
             </ul>
             </>
