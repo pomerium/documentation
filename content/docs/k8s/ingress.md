@@ -40,6 +40,11 @@ Only one Ingress Controller instance is supported per Pomerium cluster.
 
 Our instructions for [Installing Pomerium on Kubernetes](/docs/k8s/quickstart) includes the Ingress Controller as part of the deployment:
 
+```yaml
+ingressController:
+  enabled: true
+```
+
 ### Docker Image
 
 You may deploy the Ingress controller from your own manifests by using the `pomerium/ingress-controller` docker image.
