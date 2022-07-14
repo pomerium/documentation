@@ -9,6 +9,20 @@ function capitalizeFirstLetter(string) {
 
 const isURL = new RegExp('/(https:\/\/[^\s]+)/g')
 
+function returnType(type) {
+    var thisType = ""
+    type === "string" ?
+    thisType = <code>"string"</code>
+    : type === "object" ?
+    thisType = <code>&#123;object&#125;</code>
+    : type === "array" ?
+    thisType = <code>&#91;array&#93;</code>
+    : type === "boolean" ?
+    <code>boolean</code>
+    : thisType = null
+    return thisType
+}
+
 function recurseProps(properties) {
     return (
     <>
@@ -21,17 +35,7 @@ function recurseProps(properties) {
             <>
             <li key={prop}>
                 <strong>{prop[0]}</strong>
-                &nbsp;({
-                    prop[1].type === "string" ?
-                    <code>"string"</code>
-                    : prop[1].type === "object" ?
-                    <code>&#123;object&#125;</code>
-                    : prop[1].type === "array" ?
-                    <code>&#91;array&#93;</code>
-                    : prop[1].type === "boolean" ?
-                    <code>boolean</code>
-                    : null
-                })
+                &nbsp;({returnType(prop[1].type)})
             </li>
 
             {prop[1].description || null}<br/>
@@ -69,17 +73,7 @@ const SettingsTable = () => {
                 <a href={"#"+header}>
                     {capitalizeFirstLetter(header)}
                 </a>
-                &nbsp;({
-                    type === "string" ?
-                    <code>"string"</code>
-                    : type === "object" ?
-                    <code>&#123;object&#125;</code>
-                    : type === "array" ?
-                    <code>&#91;array&#93;</code>
-                    : type === "boolean" ?
-                    <code>boolean</code>
-                    : null
-                })
+                &nbsp;({returnType(type)})
             </h3>
                 {description ? <>{description}<br/></>: null}
                 {entry[1].required ? <><br/><strong>Required Values: </strong> + <code> {header}.{entry[1].required}</code><br/></>: ""}
