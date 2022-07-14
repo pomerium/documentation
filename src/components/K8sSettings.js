@@ -18,7 +18,7 @@ function returnType(type) {
     : type === "array" ?
     thisType = <code>&#91;array&#93;</code>
     : type === "boolean" ?
-    <code>boolean</code>
+    thisType = <code>boolean</code>
     : thisType = null
     return thisType
 }
