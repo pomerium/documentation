@@ -28,13 +28,15 @@ function recurseProps(properties) {
                     <code>&#123;object&#125;</code>
                     : prop[1].type === "array" ?
                     <code>&#91;array&#93;</code>
+                    : prop[1].type === "boolean" ?
+                    <code>boolean</code>
                     : null
                 })
             </li>
 
-            {prop[1].description || ""}<br/>
+            {prop[1].description || null}<br/>
 
-            {prop[1].format || ""}<br/>
+            {prop[1].format || null}<br/>
 
             {prop[1].properties ? recurseProps(prop[1].properties) : null}
             </>
@@ -74,12 +76,13 @@ const SettingsTable = () => {
                     <code>&#123;object&#125;</code>
                     : type === "array" ?
                     <code>&#91;array&#93;</code>
+                    : type === "boolean" ?
+                    <code>boolean</code>
                     : null
                 })
             </h3>
-                {description}<br/>
-                {entry[1].required ? <><strong>Required Values: </strong> + <code> {header}.{entry[1].required}</code> </>: ""}
-                <br/>
+                {description ? <>{description}<br/></>: null}
+                {entry[1].required ? <><br/><strong>Required Values: </strong> + <code> {header}.{entry[1].required}</code><br/></>: ""}
                 { properties ? recurseProps(properties) : null}
             </ul>
             </>
