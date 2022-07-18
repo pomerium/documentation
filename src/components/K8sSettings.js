@@ -2,6 +2,7 @@ import React from 'react';
 import data from '../k8sSettings.json'
 
 const settings = data.spec.versions[0].schema.openAPIV3Schema.properties.spec.properties
+const statuses = data.spec.versions[0].schema.openAPIV3Schema.properties.status
 
 function capitalizeFirstLetter(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
@@ -88,5 +89,37 @@ const SettingsList = () => {
     })
 }
 
-export default SettingsList
+const Status = () => {
+    const mainDescription = statuses.description
+    const theseStatuses = Object.entries(statuses.properties)
+    return (
+        <>
+        <p>{mainDescription}</p>
+        {theseStatuses.map((thing) => {
+            const name = thing[0]
+            const props = thing[1].additionalProperties
+            const messages = Object.entries(props.properties)
+            return (
+                <>
+                <h3>{capitalizeFirstLetter(name)}</h3>
+                <p>
+                    {props.description}
+                    <ul>
+                    {messages.map((msg) => {
+                        return (
+                        <li>
+                            {msg[1].description}
+                        </li>
+                        )
+                    })}
+                    </ul>
+                </p>
+                </>
+            )
+        })}
+        </>
+    )
+}
+
+export {SettingsList, Status}
 
