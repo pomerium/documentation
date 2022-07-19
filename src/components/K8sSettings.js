@@ -32,7 +32,7 @@ function recurseProps(header, properties, required) {
         <ul>
         {required.map((prop) => {
             return(
-            <li>
+            <li key={prop}>
             <code>{header}.{prop}</code><br/>
             </li>
             )
@@ -66,7 +66,7 @@ const SettingsList = () => {
         return (
             <>
             <ul>
-            <h3 key={header} style={{}}>
+            <h3 key={header}>
                 <a id={header} className="k8s-settings-anchor" >
                     #
                 </a>
@@ -96,7 +96,10 @@ const Status = () => {
             const messages = Object.entries( props) || "no properties"
             return (
                 <>
-                <h3 key={name}>{capitalizeFirstLetter(name)}</h3>
+                <h3 key={name}>
+                    <a id={name} className="k8s-settings-anchor" >#</a>
+                    <a href={"#"+name}>{capitalizeFirstLetter(name)}</a>
+                </h3>
                 {props.description}
                 <ul key={`${name}-list`}>
                 {messages.map((msg) => {
