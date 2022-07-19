@@ -48,6 +48,17 @@ function recurseProps(header, properties, required) {
                 <strong>{prop[0]}</strong>
                 &nbsp;({returnType(prop)}) {prop[1].format ? <> - Format: {prop[1].format}</> : null} <br/>
                 {prop[1].description? <>{prop[1].description}</> : null}
+                {prop[1].enum ? prop[1].enum.map((thisEnum) => {
+                    return (
+                    <>
+                    <ul>
+                        <li key={thisEnum}><code>{thisEnum}</code></li>
+                    </ul>
+                    </>
+                    
+                    )
+                }):null
+                }
                 {prop[1].properties ? <><br/>{recurseProps(header, prop[1].properties, prop[1].required)}</> : null}
             </li>
             </>
