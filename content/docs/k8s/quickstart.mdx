@@ -44,7 +44,7 @@ This setup uses [mkcert] to generate certificates that are trusted by your local
 
   ```sh
   kubectl create secret tls pomerium-wildcard-tls --namespace=pomerium \
-    --cert="./_wilcard.localhost.pomerium.io.pem" --key="./_wilcard.localhost.pomerium.io-key.pem"
+    --cert="./_wildcard.localhost.pomerium.io.pem" --key="./_wildcard.localhost.pomerium.io-key.pem"
   ```
 
 ## Install Pomerium
@@ -227,11 +227,11 @@ This setup uses [mkcert] to generate certificates that are trusted by your local
 
 ## Next steps
 
-Once Pomerium is configured, you should configure [persistence](/docs/topics/data-storage#persistence). This prevents the loss of user sessions if the deployment is restarted, and supports replication for high availability. See our Kubernetes [Reference](/docs/k8s/reference#storage) page for more information on configuring Databroker storage.
+Once Pomerium is configured, you should configure [persistence](/docs/topics/data-storage#persistence). This prevents the loss of user sessions if containers are restarted, and supports deployments with multiple replicas. See our Kubernetes [Reference](/docs/k8s/reference#storage) page for more information on configuring Databroker storage.
 
 ## Troubleshooting
 
-We've configured the Pomerium Deployment to provide all the information needed to manage and troubleshoot a deployment from the `describe` command:
+Pomerium posts events to the `Ingress` and `Pomerium` objects, which may be inspected with the `kubectl describe` command:
 
 ```sh
 kubectl describe pomerium
