@@ -42,7 +42,6 @@ function recurseProps(header, properties, required) {
     Properties:
     <ul>
     {Object.entries(properties || "").map((prop) => {
-        //console.log("Properties: ", prop)
         return (
             <>
             <li key={prop}>
@@ -60,14 +59,9 @@ function recurseProps(header, properties, required) {
 
 const SettingsList = () => {
     return Object.entries(settings).map((entry, values) => {
-        //console.log("Entry: " + JSON.stringify(entry))
-
         const header = entry[0]
-        //console.log("header: ", header)
         const description = entry[1].description
-        //console.log("Entry Description: " + JSON.stringify(entry[1].description))
         const properties = entry[1]?.properties || ""
-        //console.log("properties: " + JSON.stringify(properties))
 
         return (
             <>
@@ -92,28 +86,28 @@ const SettingsList = () => {
 const Status = () => {
     const mainDescription = statuses.description
     const theseStatuses = Object.entries(statuses.properties)
+
     return (
         <>
         <p>{mainDescription}</p>
         {theseStatuses.map((thing) => {
             const name = thing[0]
-            const props = thing[1].additionalProperties
-            const messages = Object.entries(props.properties)
+            const props = thing[1].additionalProperties ? thing[1].additionalProperties.properties : thing[1].properties
+            const messages = Object.entries( props) || "no properties"
             return (
                 <>
-                <h3>{capitalizeFirstLetter(name)}</h3>
-                <p>
-                    {props.description}
-                    <ul>
-                    {messages.map((msg) => {
-                        return (
-                        <li>
-                            {msg[1].description}
-                        </li>
-                        )
-                    })}
-                    </ul>
-                </p>
+                <h3 key={name}>{capitalizeFirstLetter(name)}</h3>
+                {props.description}
+                <ul key={`${name}-list`}>
+                {messages.map((msg) => {
+                    return (
+                    <li key={msg[0]}>
+                        {msg[0]}<br/>
+                        {msg[1].description}
+                    </li>
+                    )
+                })}
+                </ul>
                 </>
             )
         })}
