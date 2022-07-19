@@ -131,10 +131,16 @@ This setup uses [mkcert] to generate certificates that are trusted by your local
 
   The Pomerium Proxy service should now be running in your cluster:
 
-  ```sh {3}
-  kubectl get service pomerium-proxy
-  NAME             TYPE           CLUSTER-IP   EXTERNAL-IP     PORT(S)                      AGE
-  pomerium-proxy   LoadBalancer   10.24.7.1    198.51.100.228   443:31498/TCP,80:31437/TCP   10s
+  ```sh {1}
+  kubectl describe pomerium
+  Name:         global
+  Namespace:    
+  Labels:       <none>
+  Annotations:  <none>
+  API Version:  ingress.pomerium.io/v1
+  Kind:         Pomerium
+  Metadata:
+    ...
   ```
 
   You should now be able to access `https://authenticate.localhost.pomerium.io/` which, after signing in with your IdP, should redirect you to the `.pomerium` endpoint.
