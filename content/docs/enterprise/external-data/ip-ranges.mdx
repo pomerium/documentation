@@ -10,6 +10,34 @@ import TabItem from '@theme/TabItem';
 
 The $EXT_DATA_PROVIDER integration provides {{Fill me in with content specific to this data provider}}.
 
+This dataset provides Well Known IP address ranges.
+
+```json title="Example"
+[
+  {
+    "index": { "cidr": "1.0.0.0/24" },
+    "id": "1.0.0.0/24",
+    "as_number": "13335",
+    "country_code": "US",
+    "as_name": "CLOUDFLARENET"
+  },
+  {
+    "index": { "cidr": "1.0.4.0/23" },
+    "id": "1.0.4.0/23",
+    "as_number": "38803",
+    "country_code": "AU",
+    "as_name": "WPL-AS-AP"
+  },
+  {
+    "index": { "cidr": "1.0.6.0/23" },
+    "id": "1.0.6.0/23",
+    "as_number": "38803",
+    "country_code": "AU",
+    "as_name": "WPL-AS-AP"
+  }
+]
+```
+
 ## Install
 
 These instructions assume a local testing environment using [Docker Compose]. Adjust as needed for your deployment environment.
@@ -38,6 +66,29 @@ $COMMAND
 
 ## Configure Pomerium Enterprise Console
 
+
+
+A policy requiring a well known IP address would look something like this:
+
+<Tabs>
+<TabItem value="builder" label="Builder">
+
+![WellKnownIPRange Policy in the Builder view](./img/well-known-ip-range-policy.png)
+
+</TabItem>
+<TabItem value="editor" label="Editor">
+
+```yaml showLineNumbers
+deny:
+  or:
+    - record:
+        is: "36459"
+        field: as_number
+        type: pomerium.io/WellKnownIPRange
+```
+
+</TabItem>
+</Tabs>
 
 ## Reference
 
