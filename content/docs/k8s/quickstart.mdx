@@ -19,9 +19,6 @@ This quick-start will show you how to deploy Pomerium with [Kubernetes].
 - [Install kubectl].
 - A Kubernetes provider.
   - A cluster, with your local `kubectl` authorized to interact with it.
-
-    See [Organizing Cluster Access Using kubeconfig Files] for more information.
-  - A namespace in the cluster for Pomerium. This document assumes the namespace `pomerium`, which you can create with `kubectl create namespace pomerium`.
 - A configured [identity provider].
 - A domain space. The steps below use `*.localhost.pomerium.io` as a placeholder value. We have set DNS records for this domain space to point to `127.0.0.1` (localhost), so you can use this domain space when testing Pomerium locally.
 - [TLS certificates]. If you don't yet have a production environment with trusted certificates, this page will cover using [mkcert] to create locally trusted certificates.
@@ -40,13 +37,6 @@ This setup uses [mkcert] to generate certificates that are trusted by your local
   mkcert "*.localhost.pomerium.io"
   ```
 
-1. Add the certificate and key to the cluster as a Secret:
-
-  ```sh
-  kubectl create secret tls pomerium-wildcard-tls --namespace=pomerium \
-    --cert="./_wildcard.localhost.pomerium.io.pem" --key="./_wildcard.localhost.pomerium.io-key.pem"
-  ```
-
 ## Install Pomerium
 
 1. Install Pomerium to your cluster:
@@ -57,9 +47,8 @@ This setup uses [mkcert] to generate certificates that are trusted by your local
 
   This will create all the components of Pomerium in the `pomerium` namespace, as well as a bootstrap secret:
 
-  ```sh {3-14}
-  Warning: resource namespaces/pomerium is missing the kubectl.kubernetes.io/last-applied-configuration annotation which is required by kubectl apply. kubectl apply should only be used on resources created declaratively by either kubectl create --save-config or kubectl apply. The missing annotation will be patched automatically.
-  namespace/pomerium configured
+  ```sh
+  namespace/pomerium created
   customresourcedefinition.apiextensions.k8s.io/pomerium.ingress.pomerium.io created
   serviceaccount/pomerium-controller created
   serviceaccount/pomerium-gen-secrets created
@@ -72,6 +61,13 @@ This setup uses [mkcert] to generate certificates that are trusted by your local
   deployment.apps/pomerium created
   job.batch/pomerium-gen-secrets created
   ingressclass.networking.k8s.io/pomerium created
+  ```
+
+1. Add the certificate [created earlier](#certificates) and key to the cluster as a Secret:
+
+  ```sh
+  kubectl create secret tls pomerium-wildcard-tls --namespace=pomerium \
+    --cert=./_wildcard.localhost.pomerium.io.pem --key=./_wildcard.localhost.pomerium.io-key.pem
   ```
 
 1. Define a Kubernetes secret to hold identity provider (**IdP**) credentials:
@@ -98,7 +94,7 @@ This setup uses [mkcert] to generate certificates that are trusted by your local
 
   You can confirm with `kubectl get secrets --namespace pomerium`:
 
-  ```sh title=settings.yaml {4}
+  ```sh {4}
   NAME                               TYPE                                  DATA   AGE
   bootstrap                          Opaque                                3      99m
   default-token-whpnw                kubernetes.io/service-account-token   3      149m
@@ -267,7 +263,9 @@ And the **Events** section will provide useful debug information about recent up
 Events:
   Type    Reason   Age               From      Message
   ----    ------   ----              ----      -------
-  Normal  Updated  2s (x3 over 68m)  pomerium  pomerium/verify: Pomerium configuration updated
+  Normal  Updated  3m28s  pomerium  Pomerium configuration updated
+  Normal  Updated  42s    pomerium  pomerium/verify: Pomerium configuration updated
+
 ```
 
 [cert-manager]: https://cert-manager.io/docs/
