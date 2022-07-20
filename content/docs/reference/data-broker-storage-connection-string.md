@@ -18,4 +18,4 @@ The connection string that the databroker service will use to connect to storage
 
 For `postgres`, the following URL types are supported:
 
-- simple: `pg://[username:password@]host:port/[db]`
+- simple: `postgres://[username:password@]host:port/[db]`
