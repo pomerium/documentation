@@ -1,47 +1,62 @@
 ---
-title: GeoIP Ranges
-draft: true
-description: Configure the $EXT_DATA_PROVIDER external data provider to extend your access policies.
+title: GeoIP
+description: Configure the GeoIP external data provider to extend your access policies.
 ---
 
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
 
-The $EXT_DATA_PROVIDER integration provides {{Fill me in with content specific to this data provider}}.
-
-This dataset provides a list of IP address ranges and their country of origin, according to ARIN:
+The GeoIP integration provides provides a list of IP address ranges and their country of origin:
 
 ```json tittle="Example"
-{"$index":{"cidr":"1.0.0.0/24"},"id":"1.0.0.0/24","country":"US","state":"","city":"","zip":"","timezone":""},
-{"$index":{"cidr":"1.0.1.0/24"},"id":"1.0.1.0/24","country":"CN","state":"","city":"","zip":"","timezone":""},
+[
+  {
+    "$index": { "cidr": "1.0.0.0/24" },
+    "id": "1.0.0.0/24",
+    "country": "US",
+    "state": "",
+    "city": "",
+    "zip": "",
+    "timezone": ""
+  },
+  {
+    "$index": { "cidr": "1.0.1.0/24" },
+    "id": "1.0.1.0/24",
+    "country": "CN",
+    "state": "",
+    "city": "",
+    "zip": "",
+    "timezone": ""
+  }
+]
 ```
-
 
 ## Install
 
 These instructions assume a local testing environment using [Docker Compose]. Adjust as needed for your deployment environment.
 
+First download the IP2Location CSV GeoIP database from [ip2location.com].
 
+Next start the datasource docker image:
 
-<Tabs>
-<TabItem value="cloudsmith" label="Cloudsmith">
-
-
-
-</TabItem>
-<TabItem value="dockerhub" label="DockerHub">
-
-
-
-</TabItem>
-</Tabs>
-
-
-To invoke the $EXT_DATA_PROVIDER integration from the datasource, run:
-
+```yaml title="docker-compose.yaml"
+services:
+  ip2location:
+    image: docker.cloudsmith.io/pomerium/datasource/datasource:main
+    command:
+      - ip2location
+      - /var/ip2location.csv.zip
+    ports:
+      - 8080:8080
+    volumes:
+      - ${PWD}/IP2LOCATION-LITE-DB1.CSV.ZIP:/var/ip2location.csv.zip
 ```
-$COMMAND
-```
+
+## Configure External Data Source
+
+Create an external data source:
+
+![GeoIP External Data Source](../img/geoip-external-data-source.png)
 
 ## Configure Pomerium Enterprise Console
 
@@ -61,7 +76,7 @@ allow:
     - record:
         field: country
         is: US
-        type: pomerium.io/IP2Location
+        type: pomerium.io/GeoIP
 ```
 
 </TabItem>
@@ -72,3 +87,4 @@ This policy looks at the `country`
 ## Reference
 
 [Docker Compose]: https://docs.docker.com/compose/
+[ip2location.com]: https://www.ip2location.com/
