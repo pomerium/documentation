@@ -1,43 +1,89 @@
 ---
 title: BambooHR
-draft: true
-description: Configure the $EXT_DATA_PROVIDER external data provider to extend your access policies.
+description: Configure the BambooHR external data provider to extend your access policies.
 ---
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-The $EXT_DATA_PROVIDER integration provides {{Fill me in with content specific to this data provider}}.
+The BambooHR integration provides integration with HR data such as group memberships, employment status, out of the office, location, etc.
 
 ## Install
 
+### BambooHR API Key
+
+Create new BambooHR API key by navigating to *Your profile > API Keys*, and adding a new API Key. 
+
+### BambooHR Time Zone
+
+In order to correctly parse dates returned by BambooHR API you need provide a time zone - either an `UTC` or [IANA Time Zone] database name, i.e. `America/New_York`. 
+
 These instructions assume a local testing environment using [Docker Compose]. Adjust as needed for your deployment environment.
-
-
 
 <Tabs>
 <TabItem value="cloudsmith" label="Cloudsmith">
 
-
-
-</TabItem>
-<TabItem value="dockerhub" label="DockerHub">
-
-
+```yaml showLineNumbers
+version: "3"
+services:
+  bamboohr:
+    image: docker.cloudsmith.io/pomerium/datasource/datasource:main
+    command:
+      - bamboohr
+      - --bamboohr-api-key=$YOUR_API_KEY
+      - --bamboohr-subdomain=$YOUR_BAMBOOHR_SUBDOMAIN
+      - --bamboohr-time-zone=America/New_York
+      - --address=:8080
+    container_name: zenefits
+    restart: always
+    expose:
+      - 8080
+```
 
 </TabItem>
 </Tabs>
 
-
-To invoke the $EXT_DATA_PROVIDER integration from the datasource, run:
-
-```
-$COMMAND
-```
-
 ## Configure Pomerium Enterprise Console
 
+BambooHR data connector exposes two API endpoints: 
 
-## Reference
+- `/employees/all` returns all employees 
+- `/employees/available` returns employees that are not currently out of the office due to vacation or other leave reasons. 
 
+Create new external data record.
+
+- *URL*: `http://bamboohr:8080/employees/available`
+- *Record Type*: `pomerium.io/BambooHRAvailable`
+- *Foreign Key*: `user.email`
+
+The reference BambooHR data source provides the following record details; see [BambooHR Field Reference] for details.
+
+- `department`
+- `division`
+- `status`
+- `first_name`
+- `last_name`
+- `country`
+- `state`
+
+Define a new policy, that would only allow access to the persons in *Marketing* department and only when they are not on vacation.
+
+<Tabs>
+<TabItem value="editor" label="Editor">
+
+```yaml showLineNumbers
+allow:
+  and:
+    - record:
+        field: department
+        is: Marketing
+        type: pomerium.io/BambooHRAvailable
+```
+
+</TabItem>
+</Tabs>
+
+[datasource]: https://github.com/pomerium/pomerium
 [Docker Compose]: https://docs.docker.com/compose/
+[IANA Time Zone]: https://www.iana.org/time-zones
+[BambooHR Field Reference]: https://documentation.bamboohr.com/docs/list-of-field-names

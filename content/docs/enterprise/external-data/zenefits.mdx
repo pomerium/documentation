@@ -1,44 +1,85 @@
 ---
-title: TEMPLATE
-sidebar_label: $EXT_DATA_PROVIDER
+title: Zenefits HR systems
+sidebar_label: Zenefits
 draft: true
-description: Configure the $EXT_DATA_PROVIDER external data provider to extend your access policies.
+description: Configure the Zenefits external data provider to extend your access policies.
 ---
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-The $EXT_DATA_PROVIDER integration provides {{Fill me in with content specific to this data provider}}.
+The Zenefits integration provides integration with HR data from Zenefits, 
+such as group memberships, employment status, out of the office, etc.
 
 ## Install
 
-These instructions assume a local testing environment using [Docker Compose]. Adjust as needed for your deployment environment.
+### Zenefits API Key
 
+Get Zenefits API key by navigating to *Admin Apps > Company Profile > Custom Integrations*, and adding a new API Token in the *REST API ACCESS* box. 
+Make sure to only select scopes that you need. As a minimum, `People`, `Status` and `Work email` scopes are required. 
 
+### Zenefits Time Zone
+
+In order to correctly parse dates returned by Zenefits API you need provide a time zone - either an `UTC` or [IANA Time Zone] database name, i.e. `America/New_York`. 
+
+These instructions assume a local pomerium and pomerium-console testing environment using [Docker Compose]. 
+Adjust as needed for your deployment environment.
 
 <Tabs>
-<TabItem value="cloudsmith" label="Cloudsmith">
-
-
-
+<TabItem value="cloudsmith" label="Docker Compose">
+```yaml showLineNumbers
+version: "3"
+services:
+  zenefits:
+    image: docker.cloudsmith.io/pomerium/datasource/datasource:main
+    command:
+      - zenefits
+      - --zenefits-api-key=YOUR_API_KEY
+      - --time-zone=America/New_York
+      - --address=:8080
+    container_name: zenefits
+    restart: always
+    expose:
+      - 8080
+```
 </TabItem>
-<TabItem value="dockerhub" label="DockerHub">
+</Tabs>
 
+## Configure Pomerium Enterprise Console
 
+Create new external data record.
+
+- *URL*: `http://zenefits:8080/employees`
+- *Record Type*: `pomerium.io/Zenefits`
+- *Foreign Key*: `user.email`
+
+The reference Zenefits data source provides the following record details:
+
+- Zenefits `workEmail` field becomes an `id` of each record, intended to be matched with Pomerium `user.email` foreign key.
+- Zenefits `status` and `type` are exposed as example, and you may build policies around the values of those two fields. See [Zenefits People API] for details. 
+- All persons currently on leave or vacation will not be present in the dataset output.
+
+Define a new policy, that would only allow persons in the list (i.e. not out of office or on vacation) and in `active` status (i.e. not `terminated` or `onboarding`) to pass. 
+You may add a similar policy around `type` field to i.e. differentiate between employees and contractors. 
+
+<Tabs>
+<TabItem value="editor" label="Editor">
+
+```yaml showLineNumbers
+allow:
+  and:
+    - record:
+        field: status
+        is: active
+        type: pomerium.io/Zenefits
+```
 
 </TabItem>
 </Tabs>
 
-
-To invoke the $EXT_DATA_PROVIDER integration from the datasource, run:
-
-```
-$COMMAND
-```
-
-## Configure Pomerium Enterprise Console
-
-
 ## Reference
 
+[datasource]: https://github.com/pomerium/pomerium
 [Docker Compose]: https://docs.docker.com/compose/
+[IANA Time Zone]: https://www.iana.org/time-zones
+[Zenefits People API]: https://developers.zenefits.com/docs/people
