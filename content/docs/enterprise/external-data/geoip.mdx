@@ -56,7 +56,17 @@ services:
 
 Create an external data source:
 
-![GeoIP External Data Source](../img/geoip-external-data-source.png)
+1. In the Pomerium Enterprise Console, navigate to **CONFIGURE** → **External Data** and click **+ ADD EXTERNAL DATA SOURCE**.
+
+1. Fill out the following fields:
+
+  | Field       | Content               | Notes                                                                                                |
+  | :---------- | :-------------------- | :--------------------------------------------------------------------------------------------------- |
+  | URL         | http://localhost:8080 | If you configured the service in Docker Compose with a set container name, you can use that instead. |
+  | Record type | pomerium.io/GeoIP     |                                                                                                      |
+  | Foreign Key | request.ip            |                                                                                                      |
+
+1. Click **SAVE EXTERNAL DATA SOURCE**.
 
 ## Configure Pomerium Enterprise Console
 
@@ -82,7 +92,7 @@ allow:
 </TabItem>
 </Tabs>
 
-This policy looks at the `country`
+This policy looks at the `country`, and allows access only from IP addresses purportedly in the US.
 
 ## Reference
 
