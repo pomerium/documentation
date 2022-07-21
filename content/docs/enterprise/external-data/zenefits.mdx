@@ -1,5 +1,6 @@
 ---
 title: Zenefits HR systems
+sidebar_label: Zenefits
 description: Configure the Zenefits external data provider to extend your access policies.
 ---
 
@@ -45,6 +46,7 @@ services:
       - 8080
 ```
 </TabItem>
+
 <TabItem value="binary" label="Binary">
 
 These instructions assume a local testing environment. Adjust as needed for your deployment environment.
@@ -60,7 +62,7 @@ These instructions assume a local testing environment. Adjust as needed for your
 
   The output should resemble:
 
-  ```sh
+  ```json
   {"level":"info","address":"localhost:8080","message":"ready"}
   ```
 
@@ -110,7 +112,6 @@ The reference Zenefits data source provides the following record details:
 - The Zenefits `workEmail` field becomes an `id` of each record, intended to be matched with Pomerium's `user.email` foreign key.
 - We've only talked about `status` and `type` but there are many other fields you can build policies around. See [Zenefits People API] for details. 
 - All persons currently on leave or vacation will not be present in the dataset output.
-
 
 [datasource]: https://github.com/pomerium/pomerium
 [Docker Compose]: https://docs.docker.com/compose/
