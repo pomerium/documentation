@@ -28,9 +28,9 @@ Only one Ingress Controller instance is supported per Pomerium cluster.
 
 ## Installation
 
-### Helm
+### Deployment
 
-Our instructions for [Installing Pomerium Using Helm](/docs/k8s/helm) includes the Ingress Controller as part of the documented configuration. You can confirm by looking for this line in `pomerium-values.yaml`:
+Our instructions for [Installing Pomeriumon Kubernetes](/docs/k8s/quickstart) includes the Ingress Controller as part of the deployment:
 
 ```yaml
 ingressController:

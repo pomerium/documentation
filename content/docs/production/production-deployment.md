@@ -42,7 +42,7 @@ The Databroker service, which is responsible for session and identity related da
 Pomerium's individual components can be divided into two categories; the data plane and control plane. Regardless of which mode you run Pomerium in, we strongly recommend multiple instances of each service for fault tolerance.
 
 :::tip
-Our [Helm deployment](/docs/k8s/helm) supports [Horizontal Pod Autoscaling](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/).
+Our [Kubernetes](/docs/k8s/quickstart) supports [Horizontal Pod Autoscaling](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/).
 :::
 
 ### Data Plane
