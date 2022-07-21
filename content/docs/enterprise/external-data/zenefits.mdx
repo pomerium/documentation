@@ -9,11 +9,13 @@ import TabItem from '@theme/TabItem';
 
 The Zenefits integration provides integration with HR data from Zenefits, such as group memberships, employment status, out of the office, etc.
 
+
 :::caution
 The external data sources we provide are meant to be examples and inspiration for users to create their own data sources. We won't maintain these integrations in perpituity, and changes to the APIs they interact with may break them in the future.
 
 The [datasource](https://github.com/pomerium/datasource) project is open-source, and if the community wishes to provide contributions to keep it working in the future, we will shepherd those updates.
 :::
+
 
 ## Install
 
@@ -56,13 +58,13 @@ These instructions assume a local testing environment. Adjust as needed for your
 1. Change directory and run the binary:
 
   ```sh
-  cd pomerium-datasource-*
-  ./pomerium-datasource zenefits --zenefits-api-key=$YOUR_API_KEY --time-zone=America/New_York
+  cd datasource-v*
+  ./datasource zenefits --zenefits-api-key=$YOUR_API_KEY --time-zone=America/New_York
   ```
 
   The output should resemble:
 
-  ```json
+  ```sh
   {"level":"info","address":"localhost:8080","message":"ready"}
   ```
 
@@ -113,6 +115,8 @@ The reference Zenefits data source provides the following record details:
 - We've only talked about `status` and `type` but there are many other fields you can build policies around. See [Zenefits People API] for details. 
 - All persons currently on leave or vacation will not be present in the dataset output.
 
+[Pomerium datasource]: https://github.com/pomerium/pomerium
+[release]: https://github.com/pomerium/datasource/releases
 [datasource]: https://github.com/pomerium/pomerium
 [Docker Compose]: https://docs.docker.com/compose/
 [IANA Time Zone]: https://www.iana.org/time-zones
