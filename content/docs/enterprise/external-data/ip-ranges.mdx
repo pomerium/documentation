@@ -1,15 +1,13 @@
 ---
 title: Well Known IP Ranges
 draft: true
-description: Configure the $EXT_DATA_PROVIDER external data provider to extend your access policies.
+description: Configure the Well Known IP Ranges external data provider to extend your access policies.
 ---
 
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
 
-The $EXT_DATA_PROVIDER integration provides {{Fill me in with content specific to this data provider}}.
-
-This dataset provides Well Known IP address ranges.
+The Well Known IP Ranges integration provides a list of IP address ranges for various service providers.
 
 ```json title="Example"
 [
@@ -39,33 +37,62 @@ This dataset provides Well Known IP address ranges.
 
 ## Install
 
+<Tabs>
+<TabItem value="compose" label="Docker Compose">
+
 These instructions assume a local testing environment using [Docker Compose]. Adjust as needed for your deployment environment.
 
+1. Add the datasource docker image to Docker Compose:
 
+   ```yaml
+   services:
+     wellknownipranges:
+       image: pomerium/datasource:latest
+       command:
+         - well-known-ips
+       ports:
+         - 8080:8080
+   ```
 
-<Tabs>
-<TabItem value="cloudsmith" label="Cloudsmith">
-
-
+1. Bring up the new container.
 
 </TabItem>
-<TabItem value="dockerhub" label="DockerHub">
 
+<TabItem value="binary" label="Local Binary">
 
+1. Download the latest [release] of the [Pomerium datasource] project and extract it.
+1. Change directory and run the binary:
+
+   ```sh
+   cd datasource-v*
+   ./datasource well-known-ips
+   ```
+
+   The output should resemble:
+
+   ```sh
+   <nil> INF starting well-known-ips http server address=:8080 ip2asn-url=https://iptoasn.com/data/ip2asn-v4.tsv.gz
+   ```
 
 </TabItem>
+
 </Tabs>
 
+## Configure External Data Source
 
-To invoke the $EXT_DATA_PROVIDER integration from the datasource, run:
+Create an external data source:
 
-```
-$COMMAND
-```
+1. In the Pomerium Enterprise Console, navigate to **CONFIGURE** → **External Data** and click **+ ADD EXTERNAL DATA SOURCE**.
+
+1. Fill out the following fields:
+
+| Field       | Content                      | Notes                                                                                                |
+| :---------- | :--------------------------- | :--------------------------------------------------------------------------------------------------- |
+| URL         | http://localhost:8080        | If you configured the service in Docker Compose with a set container name, you can use that instead. |
+| Record type | pomerium.io/WellKnownIPRange |                                                                                                      |
+| Foreign Key | request.ip                   |                                                                                                      |
 
 ## Configure Pomerium Enterprise Console
-
-
 
 A policy requiring a well known IP address would look something like this:
 
@@ -91,4 +118,8 @@ deny:
 
 ## Reference
 
-[Docker Compose]: https://docs.docker.com/compose/
+- It has an optional flag `--address`, to change the listening port from the default `:8080`.
+
+[docker compose]: https://docs.docker.com/compose/
+[pomerium datasource]: https://github.com/pomerium/datasource
+[release]: https://github.com/pomerium/datasource/releases
