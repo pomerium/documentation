@@ -8,7 +8,7 @@ import TabItem from "@theme/TabItem";
 
 The GeoIP integration provides provides a list of IP address ranges and their country of origin. This data provider could allow an administrator to restrict, or allow access based on a users' known GeoIP fingerprint.
 
-````json title="Example"
+```json title="Example"
 [
   {
     "$index": { "cidr": "1.0.0.0/24" },
@@ -48,17 +48,17 @@ These instructions assume a local testing environment using [Docker Compose]. Ad
 2. Add the datasource docker image to Docker Compose:
 
    ```yaml title="docker-compose.yaml"
-    services:
-      ip2location:
-        image: docker.cloudsmith.io/pomerium/datasource/datasource:main
-        container_name: ip2location
-        command:
-          - ip2location
-          - /var/ip2location.csv.zip
-        ports:
-          - 8080:8080
-        volumes:
-          - ${PWD}/IP2LOCATION-LITE-DB1.CSV.ZIP:/var/ip2location.csv.zip
+   services:
+     ip2location:
+       image: docker.cloudsmith.io/pomerium/datasource/datasource:main
+       container_name: ip2location
+       command:
+         - ip2location
+         - /var/ip2location.csv.zip
+       ports:
+         - 8080:8080
+       volumes:
+         - ${PWD}/IP2LOCATION-LITE-DB1.CSV.ZIP:/var/ip2location.csv.zip
    ```
 
 3. Bring up the new container.
@@ -132,4 +132,7 @@ This policy looks at the `country`, and allows access only from IP addresses pur
 [ip2location.com]: https://www.ip2location.com/
 [pomerium datasource]: https://github.com/pomerium/datasource
 [release]: https://github.com/pomerium/datasource/releases
-````
+
+```
+
+```
