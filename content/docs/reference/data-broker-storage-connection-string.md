@@ -12,7 +12,7 @@ pagination_next: null
 - Config File Key: `databroker_storage_connection_string`
 - Type: `string`
 - **Required** when storage type is `postgres`
-- Example: `"pg://localhost:5432/pomerium"`
+- Example: `"postgres://localhost:5432/pomerium"`
 
 The connection string that the databroker service will use to connect to storage backend.
 
