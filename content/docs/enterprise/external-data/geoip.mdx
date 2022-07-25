@@ -8,7 +8,7 @@ import TabItem from "@theme/TabItem";
 
 The GeoIP integration provides provides a list of IP address ranges and their country of origin. This data provider could allow an administrator to restrict, or allow access based on a users' known GeoIP fingerprint.
 
-```json tittle="Example"
+````json title="Example"
 [
   {
     "$index": { "cidr": "1.0.0.0/24" },
@@ -45,62 +45,57 @@ The [datasource](https://github.com/pomerium/datasource) project is open-source,
 These instructions assume a local testing environment using [Docker Compose]. Adjust as needed for your deployment environment.
 
 1. Download the IP2Location CSV GeoIP database from [ip2location.com].
+2. Add the datasource docker image to Docker Compose:
 
-1. Add the datasource docker image to Docker Compose:
+  ```yaml title="docker-compose.yaml"
+  services:
+    ip2location:
+      image: docker.cloudsmith.io/pomerium/datasource/datasource:main
+      container_name: ip2location
+      command:
+        - ip2location
+        - /var/ip2location.csv.zip
+      ports:
+        - 8080:8080
+      volumes:
+        - ${PWD}/IP2LOCATION-LITE-DB1.CSV.ZIP:/var/ip2location.csv.zip
+````
 
-```yaml title="docker-compose.yaml"
-services:
-  ip2location:
-    image: docker.cloudsmith.io/pomerium/datasource/datasource:main
-    container_name: ip2location
-    command:
-      - ip2location
-      - /var/ip2location.csv.zip
-    ports:
-      - 8080:8080
-    volumes:
-      - ${PWD}/IP2LOCATION-LITE-DB1.CSV.ZIP:/var/ip2location.csv.zip
-```
-
-1. Bring up the new container.
+3. Bring up the new container.
 
 </TabItem>
 <TabItem value="binary" label="Local Binary">
 
 1. Download the latest [release] of the [Pomerium datasource] project and extract it.
+2. Change directory and run the binary:
 
-1. Change directory and run the binary:
+   ```sh
+   cd pomerium-datasource-*
+   ./pomerium-datasource ip2location ../IP2LOCATION-LITE-DB1.CSV.ZIP
+   ```
 
-  ```sh
-  cd pomerium-datasource-*
-  ./pomerium-datasource ip2location ../IP2LOCATION-LITE-DB1.CSV.ZIP
-  ```
+   The output should resemble:
 
-  The output should resemble:
-
-  ```sh
-  <nil> INF starting ip2location http server address=:8080 file=../IP2LOCATION-LITE-DB1.CSV.ZIP
-  ```
+   ```sh
+   <nil> INF starting ip2location http server address=:8080 file=../IP2LOCATION-LITE-DB1.CSV.ZIP
+   ```
 
 </TabItem>
 </Tabs>
-
 
 ## Configure External Data Source
 
 Create an external data source:
 
 1. In the Pomerium Enterprise Console, navigate to **CONFIGURE** → **External Data** and click **+ ADD EXTERNAL DATA SOURCE**.
+2. Fill out the following fields:
+   | Field | Content | Notes |
+   | :---------- | :-------------------- | :--------------------------------------------------------------------------------------------------- |
+   | URL | http://localhost:8080 | If you configured the service in Docker Compose with a set container name, you can use that instead. |
+   | Record type | pomerium.io/GeoIP | |
+   | Foreign Key | request.ip | |
 
-1. Fill out the following fields:
-
-  | Field       | Content               | Notes                                                                                                |
-  | :---------- | :-------------------- | :--------------------------------------------------------------------------------------------------- |
-  | URL         | http://localhost:8080 | If you configured the service in Docker Compose with a set container name, you can use that instead. |
-  | Record type | pomerium.io/GeoIP     |                                                                                                      |
-  | Foreign Key | request.ip            |                                                                                                      |
-
-1. Click **SAVE EXTERNAL DATA SOURCE**.
+3. Click **SAVE EXTERNAL DATA SOURCE**.
 
 ## Configure Pomerium Enterprise Console
 
@@ -133,7 +128,7 @@ This policy looks at the `country`, and allows access only from IP addresses pur
 - The ip2location datasource expects one argument when running the binary, the path to the GeoIP database.
 - It has an optional flag `--address`, to change the listening port from the default `:8080`.
 
-[Docker Compose]: https://docs.docker.com/compose/
+[docker compose]: https://docs.docker.com/compose/
 [ip2location.com]: https://www.ip2location.com/
-[Pomerium datasource]: https://github.com/pomerium/datasource
+[pomerium datasource]: https://github.com/pomerium/datasource
 [release]: https://github.com/pomerium/datasource/releases
