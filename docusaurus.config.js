@@ -38,24 +38,24 @@ const config = {
           customCss: require.resolve("./src/css/custom.css"),
         },
         googleAnalytics: {
-          trackingID: process.env.GA
+          trackingID: process.env.GA,
         },
         sitemap: {
-          filename: 'docs/sitemap.xml',
-          ignorePatterns: ['/docs/examples/**']
+          filename: "docs/sitemap.xml",
+          ignorePatterns: ["/docs/examples/**"],
         },
       },
     ],
   ],
 
   themeConfig: {
-    image: 'docs/img/logo.svg',
+    image: "docs/img/logo.svg",
     algolia: {
       appId: process.env.ALGOALIA_APPID,
       apiKey: process.env.ALGOLIA_APIKEY,
       indexName: process.env.INDEX_NAME,
       contextualSearch: false,
-      searchPagePath: false
+      searchPagePath: false,
     },
     navbar: {
       title: "",
@@ -63,7 +63,7 @@ const config = {
         alt: "Pomerium Logo",
         src: "img/logo.svg",
         href: "https://www.pomerium.com",
-        target: "_self"
+        target: "_self",
       },
       items: [
         {
@@ -107,14 +107,14 @@ const config = {
           items: [
             {
               label: "v17",
-              href: "https://0-17-0.docs.pomerium.io/docs"
+              href: "https://v17.docs.pomerium.com/docs",
             },
             {
-              type: 'doc',
-              label: 'Archived Versions',
-              docId: 'docs/versions'
-            }
-          ]
+              type: "doc",
+              label: "Archived Versions",
+              docId: "docs/versions",
+            },
+          ],
         },
       ],
     },
@@ -188,12 +188,12 @@ const config = {
   ],
   plugins: [
     [
-      require.resolve('docusaurus-gtm-plugin'),
+      require.resolve("docusaurus-gtm-plugin"),
       {
-        id: process.env.GTM
-      }
-    ]
-  ]
+        id: process.env.GTM,
+      },
+    ],
+  ],
 };
 
 if (!process.env.ALGOALIA_APPID) {
@@ -201,7 +201,7 @@ if (!process.env.ALGOALIA_APPID) {
 }
 
 if (!process.env.GA) {
-  delete config.presets[0][1].googleAnalytics
+  delete config.presets[0][1].googleAnalytics;
 }
 
 module.exports = config;
