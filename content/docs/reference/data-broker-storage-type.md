@@ -8,11 +8,14 @@ pagination_prev: null
 pagination_next: null
 ---
 
+
+# Data Broker Storage Type
 - Environmental Variable: `DATABROKER_STORAGE_TYPE`
 - Config File Key: `databroker_storage_type`
 - Type: `string`
 - Optional
-- Example: `postgres`,`memory`
+- Example: `redis`,`memory`
 - Default: `memory`
 
 The backend storage that databroker server will use.
+

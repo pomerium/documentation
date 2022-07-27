@@ -33,6 +33,6 @@ routes:
             - domain:
                 is: gmail.com
 
-databroker_storage_type: postgres
-databroker_storage_connection_string: postgres://postgres:5432
+databroker_storage_type: redis
+databroker_storage_connection_string: redis://redis:6379
 ```

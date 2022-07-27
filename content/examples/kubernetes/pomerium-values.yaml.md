@@ -17,14 +17,23 @@ proxy:
 databroker:
   existingTLSSecret: pomerium-tls
   storage:
-    connectionString: postgres://://postgres.pomerium.svc.cluster.local #Replace with the path to your DB solution.
-    type: postgres
+    connectionString: rediss://pomerium-redis-master.pomerium.svc.cluster.local
+    type: redis
     clientTLS:
       existingSecretName: pomerium-tls
       existingCASecretKey: ca.crt
 
 authorize:
   existingTLSSecret: pomerium-tls
+
+redis:
+  enabled: true
+  auth:
+    enabled: false
+  usePassword: false
+  generateTLS: false
+  tls:
+    certificateSecret: pomerium-redis-tls
 
 ingressController:
   enabled: true

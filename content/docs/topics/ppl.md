@@ -95,12 +95,11 @@ PPL supports many different criteria:
 
 [Pomerium Enterprise] supports all the open source criteria, but also supports these additional criteria:
 
-| Criterion Name | Data Format           | Description                                                                                                                |
-| -------------- | --------------------- | -------------------------------------------------------------------------------------------------------------------------- |
-| `date`         | [Date Matcher]        | Returns true if the time of the request matches the constraints.                                                           |
-| `day_of_week`  | [Day of Week Matcher] | Returns true if the day of the request matches the constraints.                                                            |
-| `time_of_day`  | [Time of Day Matcher] | Returns true if the time of the request (for the current day) matches the constraints.                                     |
-| `record`       | variable              | Allows policies to be extended using data from [external data sources](/docs/enterprise/reference/configure#external-data) |
+| Criterion Name | Data Format         | Description                                                                            |
+| -------------- | ------------------- | -------------------------------------------------------------------------------------- |
+| `date`         | [Date Matcher]        | Returns true if the time of the request matches the constraints.                       |
+| `day_of_week`  | [Day of Week Matcher] | Returns true if the day of the request matches the constraints.                        |
+| `time_of_day`  | [Time of Day Matcher] | Returns true if the time of the request (for the current day) matches the constraints. |
 
 ## Matchers
 

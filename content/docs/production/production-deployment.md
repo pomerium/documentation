@@ -9,9 +9,10 @@ This page covers the topic of running Pomerium in a production configuration.
 
 Before deploying Pomerium to Production, you should have already tested Pomerium in one or more demo environments and confirmed:
 
-- A working connection to your [IdP](/docs/overview/glossary#identity-provider).
-- Working test routes to your upstream services, including [JWT verification] where applicable.
-- For Pomerium Enterprise, a working demo of the Pomerium Enterprise Console, with confirmed access for your [Admins and Managers][rbac].
+ - A working connection to your [IdP](/docs/overview/glossary#identity-provider).
+ - Working test routes to your upstream services, including [JWT verification] where applicable.
+ - For Pomerium Enterprise, a working demo of the Pomerium Enterprise Console, with confirmed access for your [Admins and Managers][rbac].
+
 
 ## Service Mode
 
@@ -19,7 +20,7 @@ Pomerium is designed to be run in two modes: All-In-One or Split Service. These 
 
 Each instance of Pomerium runs in all-in-one mode unless specified to run as a specific component by the `services` key. See [All-In-One vs Split Service mode](/docs/reference#all-in-one-vs-split-service-mode) for more details.
 
-It's important to note that any production deployment with more than one instance of Pomerium (in any combination of modes) should be configured to use Postgres as the [`databroker_storage_type`](/docs/reference/data-broker-storage-type). See [Data Storage - Backends](/docs/topics/data-storage#backends) for more details.
+It's important to note that any production deployment with more than one instance of Pomerium (in any combination of modes) should be configured to use Redis as the [`databroker_storage_type`](/docs/reference/data-broker-storage-type). See [Data Storage - Backends](/docs/topics/data-storage#backends) for more details.
 
 ### All-in-One
 
@@ -79,7 +80,9 @@ The Databroker service is responsible for background identity data retrieval and
 
 The Databroker service does not require significant resources, as it provides streaming updates of state changes to the other services. There will be utilization spikes when Authorize services are restarted and perform an initial synchronization.
 
-Databroker resource requirements scale with the number of replicated services in the [data plane](#data-plane). That is to say, additional instances of the Proxy and Authorize services will increase demand on Databroker. Additionally, the size of the user directory contributes to the resource requirements for data storage.
+Databroker resource requirements scale with the number of replicated services in the [data plane](#data-plane). That is to say, additional instances of the Proxy and Authorize services will increase demand on Databroker. Additionally, the size of the user directory contributes to the resource requirements for the data storage, Redis.
+
+The eBook Redis in Action has a chapter on [Scaling Redis](https://redis.com/ebook/part-3-next-steps/chapter-10-scaling-redis/). Pomerium is compatible with both Redis HA and Redis cluster scaling.
 
 In many deployments, 2 replicas of Databroker is enough to provide resilient service.
 
@@ -100,6 +103,7 @@ Note that deployments on Kubernetes can utilize The [Pomerium Ingress Controller
 ### Authenticate
 
 The suggested practice is to use the Pomerium Proxy service to load-balance Authenticate. Alternately, you could use an independent Layer 4 or Layer 7 load balancer, but this increases complexity.
+
 
 ### Authorize and Databroker
 
