@@ -25,9 +25,10 @@ This quick-start will show you how to deploy Pomerium with [Helm] on [Kubernetes
 - A configured [identity provider].
 - A domain space. The steps below use `*.localhost.pomerium.io` as a placeholder value. We have set DNS records for this domain space to point to `127.0.0.1` (localhost), so you can use this domain space when testing Pomerium locally.
 - [TLS certificates]. If you don't yet have a production environment with trusted certificates, this page will cover using [mkcert] to create locally trusted certificates, and [cert-manager] to manage them in the cluster.
+- A Postgres database.
 
 :::tip
-This configuration installs Redis as the data broker service. While this isn't strictly required when running Pomerium by itself, it is necessary for Pomerium Enterprise, and still highly recommended if not.
+This configuration installs Postgres as the data broker service. While this isn't strictly required when running Pomerium by itself, it is necessary for Pomerium Enterprise, and still highly recommended if not.
 
 The configuration detailed below uses the Pomerium Ingress Controller. See our [Ingress Controller] doc for more detailed information and configuration options.
 :::
@@ -134,7 +135,6 @@ If you haven't already, install cert-manager and create a CA issuer. You can fol
    kubectl get certificate
    NAME                    READY   SECRET                 AGE
    pomerium-cert           True    pomerium-tls           10s
-   pomerium-redis-cert     True    pomerium-redis-tls     10s
    ```
 
 1. Create a values file for Helm to use when installing Pomerium. Our example is named `pomerium-values.yaml`.
