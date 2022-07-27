@@ -6,9 +6,9 @@ lang: en-US
 keywords: [pomerium, troubleshooting, faq, frequently asked questions]
 ---
 
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
-import GenerateRecoveryToken from '@site/content/_generate-recovery-token.md'
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+import GenerateRecoveryToken from "@site/content/_generate-recovery-token.md";
 
 This article provides troubleshooting information for various tools and features in Pomerium.
 
@@ -40,33 +40,33 @@ For upstream applications that can use a local signing key file, you can circumv
 
 1. Download the `jwks.json` file from the authenticate server:
 
-    <Tabs>
-    <TabItem value="curl" label="curl">
+   <Tabs>
+<TabItem value="curl" label="curl">
 
-    ```bash
-    curl https://authenticate.localhost.pomerium.io/.well-known/pomerium/jwks.json > /etc/grafana/jwks.json
-    ```
+   ```bash
+   curl https://authenticate.localhost.pomerium.io/.well-known/pomerium/jwks.json > /etc/grafana/jwks.json
+   ```
 
-    </TabItem>
-    <TabItem value="wget" label="wget">
+   </TabItem>
+<TabItem value="wget" label="wget">
 
-    ```bash
-    wget -O /etc/grafana/jwks.json https://authenticate.localhost.pomerium.io/.well-known/pomerium/jwks.json
-    ```
+   ```bash
+   wget -O /etc/grafana/jwks.json https://authenticate.localhost.pomerium.io/.well-known/pomerium/jwks.json
+   ```
 
-    </TabItem>
-    </Tabs>
+   </TabItem>
+</Tabs>
 
 1. Edit the upstream service configuration to use the local key to verify tokens:
 
-    ```ini
-    [auth.jwt]
-    enabled = true
-    header_name = X-Pomerium-Jwt-Assertion
-    email_claim = email
-    jwk_set_file = /etc/grafana/jwks.json
-    cache_ttl = 60m
-    ```
+   ```ini
+   [auth.jwt]
+   enabled = true
+   header_name = X-Pomerium-Jwt-Assertion
+   email_claim = email
+   jwk_set_file = /etc/grafana/jwks.json
+   cache_ttl = 60m
+   ```
 
 ### Kubernetes Ingress Controller
 
@@ -135,36 +135,9 @@ Update the [shared secret](/docs/reference/shared-secret) across all Pomerium se
 
 #### Redis Secret Mismatch
 
-When using Redis, the [shared secret](/docs/reference/shared-secret) is used to encrypt data in Redis itself. If you change the configured shared secret, data from Redis can no longer be decrypted. This results in errant behavior, including redirect loops when a user session cannot be retrieved from the databroker.
-
-```json
-{
-  "level": "error",
-  "syncer_id": "authorize",
-  "syncer_type": "",
-  "error": "rpc error: code = Unknown desc = cryptutil: decryption failed (mismatched keys?): chacha20poly1305: message authentication failed",
-  "time": "2022-03-22T07:18:12-04:00",
-  "message": "error during initial sync"
-}
-{
-  "level": "error",
-  "syncer_id": "authorize",
-  "syncer_type": "",
-  "error": "rpc error: code = Unknown desc = cryptutil: decryption failed (mismatched keys?): chacha20poly1305: message authentication failed",
-  "time": "2022-03-22T07:18:12-04:00",
-  "message": "sync"
-}
-```
-
-The resolution is to flush the Redis database with [`FLUSHDB`](https://redis.io/commands/flushdb) or [`FLUSHALL`](https://redis.io/commands/FLUSHALL).
-
-An example of how to do this on Kubernetes with TLS enabled is to use `kubectl` to execute a command on the master pod:
-
-```bash
-kubectl exec -it pomerium-redis-master-0 -- redis-cli --tls --cert /opt/bitnami/redis/certs/tls.crt --key /opt/bitnami/redis/certs/tls.key --cacert /opt/bitnami/redis/certs/ca.crt FLUSHALL ASYNC
-```
-
-Adjust `pomerium-redis-master-0` to match your pod name. If TLS is not enabled, you may omit the TLS options.
+:::caution
+The use of Redis as the databroker storage type has been deprecated in favor of Postgres. See [Previous Versions](https://v17.docs.pomerium.com/docs/troubleshooting#redis-secret-mismatch) of this page for information regarding Redis.
+:::
 
 ### RPC Errors
 
@@ -188,17 +161,18 @@ Ensure that the Proxy service knows about and trusts the certificate authority t
 - Add the certificate authority to the system's underlying trust store.
 - Replace your system / docker image certificate bundle.
 
-    For Docker:
+  For Docker:
 
-    ```docker
-    COPY --from=builder /etc/ssl/certs/your-cert-bundle.crt /etc/ssl/certs/ca-certificates.crt
-    ```
+  ```docker
+  COPY --from=builder /etc/ssl/certs/your-cert-bundle.crt /etc/ssl/certs/ca-certificates.crt
+  ```
+
 - Finally, ensure that you aren't being man-in-the-middle'd or that some eager router isn't injecting its own certificate along the way. Use openssl to verify that your Proxy service is getting the certificate you think its getting.
 
-    ```bash
-    openssl s_client -servername pomerium.io -connect pomerium.io:443 </dev/null \
-    | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p'
-    ```
+  ```bash
+  openssl s_client -servername pomerium.io -connect pomerium.io:443 </dev/null \
+  | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p'
+  ```
 
 #### rpc error: code = DeadlineExceeded
 
@@ -220,7 +194,7 @@ Usually, this is the result of either a routing issue or a configuration error. 
 
 ### Generate Recovery Token
 
-<GenerateRecoveryToken/>
+<GenerateRecoveryToken />
 
 ## Miscellaneous
 
