@@ -122,25 +122,21 @@ Requires setting [Google Cloud Serverless Authentication Service Account](/docs/
 
 ### Matchers
 
+
 #### Path
 
 If set, the route will only match incoming requests with a path that is an exact match for the specified path.
+
+#### Prefix
+
+If set, the route will only match incoming requests with a path that begins with the specified prefix.
 
 #### Regex
 
 If set, the route will only match incoming requests with a path that matches the specified regular expression. The supported syntax is the same as the Go [regexp package](https://golang.org/pkg/regexp/) which is based on [re2](https://github.com/google/re2/wiki/Syntax).
 
-#### Regex Rewrite Pattern
+### Rewrite
 
-The pattern to match before rewriting, ex: `^/service/([^/]+)(/.*)$`.
-
-#### Regex Rewrite Substitution
-
-The substitution for your regex pattern, ex: `\\2/instance/\\1`.
-
-#### Prefix
-
-If set, the route will only match incoming requests with a path that begins with the specified prefix.
 
 #### Prefix Rewrite
 
@@ -155,6 +151,15 @@ prefix_rewrite: /
 ```
 
 A request to `https://from.example.com/admin` would be forwarded to `https://to.example.com/`.
+
+#### Regex Rewrite Pattern
+
+The pattern to match before rewriting, ex: `^/service/([^/]+)(/.*)$`.
+
+
+#### Regex Rewrite Substitution
+
+The substitution for your regex pattern, ex: `\\2/instance/\\1`.
 
 
 ### Timeouts
@@ -342,7 +347,6 @@ The available criteria types are:
 - `groups`
 - `http_method`
 - `http_path`
-- `record`
 - `reject`
 - `time_of_day`
 - `user`
@@ -354,8 +358,6 @@ Some criteria also support a sub-path as part of the criterion name:
     or:
       - claim/family_name: Smith
 ```
-
-See [Pomerium Policy Language](/docs/topics/ppl) for more details.
 
 ### Rego
 

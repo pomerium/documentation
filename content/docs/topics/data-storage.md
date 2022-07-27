@@ -6,7 +6,6 @@ description: This article describes Pomerium's data storage requirements and bac
 ## About
 
 ### Background
-
 Pomerium keeps persistent state out of most components, but an identity-aware access proxy must maintain some data about every user's session.  Historically, all user/session related data was stored in cookies, but this quickly became challenging.
 
 - Cookie and header limits would impact large organizations and some IdPs
@@ -22,7 +21,6 @@ To address these limitations, the Pomerium `databroker` service runs a number of
 The `databroker` is responsible for providing a stateful storage layer.  Services which require high performance maintain a streaming local cache of the contents of the `databroker`, while others may call `databroker` in real time.  Only the `databroker` is expected to maintain authoritative state.
 
 ## Persistence
-
 At this time, most data stored by Pomerium is externally sourced and recoverable at startup (eg, group membership).  The notable exception is user sessions.  If the data hosted by the `databroker` is lost, users will need to log in through their IdP again at next session expiration.
 
 To prevent early session loss in production deployments, persistent storage backends are available for configuration in the `databroker`.  Use of these is strongly encouraged, but smaller or non-production deployments can make use of an in-memory storage layer if external dependencies are not practical or justifiable.
@@ -44,17 +42,13 @@ Please see Pomerium backend and upstream storage system documentation for best p
 The default storage backend for `databroker` is memory based.  This backend provides
 easy deployment semantics but is not persistent or highly available.  Running more than one `databroker` instance configured for memory backed storage is not supported and will lead to non-deterministic behavior.
 
-### Postgres
+### Redis
 
 - Data Broker Service HA: `yes`
 - Data Store HA: `yes`
 - Data Persistence: `yes`
 
-The Postgres based backend supports multiple `databroker` instances and persistence across restarts.  We recommend a dedicated Postgres instance for Pomerium to provide the strongest security and performance guarantees.
-
-### Redis
-
-Previous versions of Pomerium suggested Redis as a databroker back-end. This is no longer recommended for version >=18. You can review [Archived Versions](https://www.pomerium.com/docs/versions) of our docs for more information on Redis as a databroker storage solution.
+The Redis based backend supports multiple `databroker` instances and persistence across restarts.  We recommend a dedicated redis instance for Pomerium to provide the strongest security and performance guarantees.
 
 #### High Availability
 

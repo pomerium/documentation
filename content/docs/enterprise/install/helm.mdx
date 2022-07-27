@@ -22,11 +22,15 @@ Pomerium Enterprise requires:
 
 ## System Requirements
 
-One of the advantages of a Kubernetes deployment is automatic scaling, but if your database solution is outside of your k8s configuration, refer to the requirements below:
+One of the advantages of a Kubernetes deployment is automatic scaling, but if your database or redis solution is outside of your k8s configuration, refer to the requirements below:
 
 - Each Postgres instance should have at least:
     - 4 vCPUs
     - 8G RAM
+    - 20G for data files
+- Each Redis instance should have at least:
+    - 2 vCPUs
+    - 4G RAM
     - 20G for data files
 
 ## Issue a Certificate
@@ -49,6 +53,7 @@ This setup assumes an existing certificate solution using cert-manager, as descr
    NAME                    READY   SECRET                 AGE
    pomerium-cert           True    pomerium-tls           92m
    pomerium-console-cert   True    pomerium-console-tls   6s
+   pomerium-redis-cert     True    pomerium-redis-tls     92m
    ```
 
 ## Update Pomerium
