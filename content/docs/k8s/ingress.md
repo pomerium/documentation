@@ -38,7 +38,7 @@ Only one Ingress Controller instance is supported per Pomerium cluster.
 
 ### Deployment
 
-Our instructions for [Installing Pomeriumon Kubernetes](/docs/k8s/quickstart) includes the Ingress Controller as part of the deployment:
+Our instructions for [Installing Pomerium on Kubernetes](/docs/k8s/quickstart) includes the Ingress Controller as part of the deployment:
 
 ### Docker Image
 
@@ -46,20 +46,7 @@ You may deploy the Ingress controller from your own manifests by using the `pome
 
 ## Configuration
 
-| Flag                           | Description                                                             |
-| ------------------------------ | ----------------------------------------------------------------------- |
-| `--databroker-service-url`     | The databroker service url                                              |
-| `--databroker-tls-ca`          | `base64` encoded TLS CA                                                 |
-| `--databroker-tls-ca-file`     | TLS CA file path for the databroker connection connection               |
-| `--health-probe-bind-address`  | The address the probe endpoint binds to. (default ":8081")              |
-| `--metrics-bind-address`       | The address the metric endpoint binds to. (default ":8080")             |
-| `--name`                       | IngressClass controller name (default "pomerium.io/ingress-controller") |
-| `--namespaces`                 | Namespaces to watch, omit to watch all namespaces                       |
-| `--prefix`                     | Ingress annotation prefix (default "ingress.pomerium.io")               |
-| `--shared-secret`              | `base64` encoded shared secret for communicating with databroker        |
-| `--update-status-from-service` | Update ingress status from given service status (pomerium-proxy)        |
-
-The helm chart exposes a subset of these flags for appropriate customization.
+Global configuration parameters are set via [Pomerium CRD](./reference) while individual routes are configured via `Ingress` resources, with additional annotations.
 
 ## Usage
 
@@ -396,7 +383,53 @@ Unlike a standalone Pomerium configuration, you may not create multiple TCP rout
 
 ### View Event History
 
-Pomerium Ingress Controller will add **events** to the Ingress objects as it processes them.
+Pomerium Ingress Controller will add **events** to the Ingress objects as it processes them, and updates the status section of [Pomerium CRD](./reference).
+
+```bash
+kubectl describe pomerium/global
+```
+
+```log
+Name:         global
+Namespace:
+Labels:       <none>
+Annotations:  <none>
+API Version:  ingress.pomerium.io/v1
+Kind:         Pomerium
+Metadata:
+  Creation Timestamp:  2022-07-14T21:43:08Z
+  Generation:          5
+  Resource Version:  1507973
+  UID:               9c7e56ab-e74c-492c-945d-5db1cd6582b0
+Spec:
+  Authenticate:
+    URL:  https://login.localhost.pomerium.io
+  Certificates:
+    pomerium/wildcard-localhost
+  Identity Provider:
+    Provider:  google
+    Secret:    pomerium/idp
+  Secrets:     pomerium/bootstrap
+  Storage:
+    Postgres:
+      Secret:  pomerium/postgres
+Status:
+  Ingress:
+    pomerium/httpbin:
+      Observed At:          2022-07-29T13:01:37Z
+      Observed Generation:  1
+      Reconciled:           true
+  Settings Status:
+    Observed At:          2022-07-27T18:44:43Z
+    Observed Generation:  5
+    Reconciled:           true
+Events:
+  Type    Reason   Age   From              Message
+  ----    ------   ----  ----              -------
+  Normal  Updated  43m   pomerium-ingress  pomerium/httpbin: config updated
+```
+
+Additionally, events are posted to the individual `Ingress` objects.
 
 ```bash
 kubectl describe ingress/my-ingress
