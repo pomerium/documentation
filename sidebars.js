@@ -107,8 +107,9 @@ const sidebars = {
         id: 'docs/k8s/index'
       },
       items: [
-        'docs/k8s/helm',
-        'docs/k8s/ingress'
+        'docs/k8s/quickstart',
+        'docs/k8s/ingress',
+        'docs/k8s/reference'
       ]
     },
     {

@@ -385,7 +385,6 @@ The expandable legend below describes how different elements are used in the gra
 [Grafana]: /docs/guides/grafana
 [JWT Verification]: /docs/guides/jwt-verification.md
 [jwt-rfc]: https://datatracker.ietf.org/doc/html/rfc7519
-[Kubernetes]: /docs/k8s/helm
 [`pass_identity_headers`]: /docs/reference/routes/pass-identity-headers
 [Quick Start]: /docs/install/quickstart
 [Transport Layer Security]: https://en.wikipedia.org/wiki/Transport_Layer_Security
