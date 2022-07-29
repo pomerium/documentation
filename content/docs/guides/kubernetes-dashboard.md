@@ -19,7 +19,7 @@ This tutorial covers:
 
 This guide builds off of existing articles and guides. It assumes you have deployed Pomerium to your cluster using our Helm charts, configured a certificate solution like [cert-manager], and set up secure access to the Kubernetes API. Follow the instructions in these pages before you continue:
 
-- [Install Pomerium using Helm]
+- [Kubernetes Quickstart]
 - [Securing Kubernetes]
 
 ## Background
@@ -101,7 +101,7 @@ Your browser does not support the video tag.
 [cert-manager]: https://cert-manager.io/docs/
 [helm chart]: https://github.com/pomerium/pomerium-helm
 [Helm]: https://helm.sh
-[Install Pomerium using Helm]: /docs/k8s/helm
+[Kubernetes Quickstart]: /docs/k8s/quickstart
 [Kubernetes Dashboard]: https://kubernetes.io/docs/tasks/access-application-cluster/web-ui-dashboard/
 [Securing Kubernetes]: /docs/guides/kubernetes.md
 [User Permissions]: /docs/guides/kubernetes.md#user-permissions

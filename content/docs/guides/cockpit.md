@@ -15,7 +15,7 @@ This guide assumes you already have Pomerium installed and connected to your [Id
 - Install Pomerium
    - [Binaries](/docs/install/binary) if installing Pomerium as a system-level service.
    - [Pomerium using Docker](/docs/install/quickstart) if installing Pomerium as a Docker container
-   - [Install Pomerium using Helm](/docs/k8s/helm) for Kubernetes environments.
+   - [Install Pomerium using Kubernetes](/docs/k8s/quickstart) for Kubernetes environments.
 - Connect to an IdP - See [Identity Provider Configuration](/docs/identity-providers) and find the article for your identity provider.
 
 

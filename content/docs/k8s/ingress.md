@@ -2,7 +2,16 @@
 title: Kubernetes Ingress Controller
 sidebar_label: Ingress Controller
 lang: en-US
-keywords: [pomerium, identity access proxy, oidc, kubernetes, ingress, ingress controller, reverse proxy]
+keywords:
+  [
+    pomerium,
+    identity access proxy,
+    oidc,
+    kubernetes,
+    ingress,
+    ingress controller,
+    reverse proxy,
+  ]
 pagination_next: null
 ---
 
@@ -16,7 +25,6 @@ Use Pomerium as a first-class secure-by-default Ingress Controller. The Pomerium
 ### System Requirements
 
 - Kubernetes v1.19.0+
-- Pomerium [Helm Chart](https://github.com/pomerium/pomerium-helm/tree/main/charts/pomerium) v25.0.0+
 
 ### Limitations
 
@@ -28,14 +36,9 @@ Only one Ingress Controller instance is supported per Pomerium cluster.
 
 ## Installation
 
-### Helm
+### Deployment
 
-Our instructions for [Installing Pomerium Using Helm](/docs/k8s/helm) includes the Ingress Controller as part of the documented configuration. You can confirm by looking for this line in `pomerium-values.yaml`:
-
-```yaml
-ingressController:
-  enabled: true
-```
+Our instructions for [Installing Pomerium on Kubernetes](/docs/k8s/quickstart) includes the Ingress Controller as part of the deployment:
 
 ### Docker Image
 
@@ -43,20 +46,7 @@ You may deploy the Ingress controller from your own manifests by using the `pome
 
 ## Configuration
 
-| Flag                           | Description                                                             |
-| ------------------------------ | ----------------------------------------------------------------------- |
-| `--databroker-service-url`     | The databroker service url                                              |
-| `--databroker-tls-ca`          | `base64` encoded TLS CA                                                 |
-| `--databroker-tls-ca-file`     | TLS CA file path for the databroker connection connection               |
-| `--health-probe-bind-address`  | The address the probe endpoint binds to. (default ":8081")              |
-| `--metrics-bind-address`       | The address the metric endpoint binds to. (default ":8080")             |
-| `--name`                       | IngressClass controller name (default "pomerium.io/ingress-controller") |
-| `--namespaces`                 | Namespaces to watch, omit to watch all namespaces                       |
-| `--prefix`                     | Ingress annotation prefix (default "ingress.pomerium.io")               |
-| `--shared-secret`              | `base64` encoded shared secret for communicating with databroker        |
-| `--update-status-from-service` | Update ingress status from given service status (pomerium-proxy)        |
-
-The helm chart exposes a subset of these flags for appropriate customization.
+Global configuration parameters are set via [Pomerium CRD](/docs/k8s/reference) while individual routes are configured via `Ingress` resources, with additional annotations.
 
 ## Usage
 
@@ -76,16 +66,16 @@ metadata:
     ingress.pomerium.io/policy: '[{"allow":{"and":[{"email":{"is":"user@yourdomain.com"}}]}}]' # This can also be a yaml block quote
 spec:
   rules:
-  - host: hello.localhost.pomerium.io
-    http:
-      paths:
-      - backend:
-          service:
-            name: nginx-hello
-            port:
-              name: http
-        path: /
-        pathType: Prefix
+    - host: hello.localhost.pomerium.io
+      http:
+        paths:
+          - backend:
+              service:
+                name: nginx-hello
+                port:
+                  name: http
+            path: /
+            pathType: Prefix
 ```
 
 Becomes:
@@ -95,10 +85,10 @@ routes:
   - from: https://hello.localhost.pomerium.io
     to: http://nginx-hello.default.svc.cluster.local
     policy:
-    - allow:
-        and:
-          - email:
-              is: user@yourdomain.com
+      - allow:
+          and:
+            - email:
+                is: user@yourdomain.com
 ```
 
 <details>
@@ -106,18 +96,18 @@ routes:
   <div>
   You can also define a route's policies using YAML:
 
-  ```yaml
-  apiVersion: networking.k8s.io/v1
-  kind: Ingress
-  metadata:
-    name: name
-    annotations:
-      ingress.pomerium.io/policy: |
-        - allow:
-            or:
-              - domain:
-                  is: pomerium.com
-  ```
+```yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: name
+  annotations:
+    ingress.pomerium.io/policy: |
+      - allow:
+          or:
+            - domain:
+                is: pomerium.com
+```
 
   </div>
 </details>
@@ -178,7 +168,7 @@ The remaining annotations are specific to or behave differently than they do whe
 
 | Annotation                                             | Description                                                                                                                                                                                   |
 | ------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `ingress.pomerium.io/kubernetes_service_account_token` | Name of a Kubernetes `token` Secret containing a [Kubernetes Service Account Token](/docs/reference/routes/kubernetes-service-account-token).                                                   |
+| `ingress.pomerium.io/kubernetes_service_account_token` | Name of a Kubernetes `token` Secret containing a [Kubernetes Service Account Token](/docs/reference/routes/kubernetes-service-account-token).                                                 |
 | `ingress.pomerium.io/path_regex`                       | When set to `"true"` enables path regex matching. See the [Regular Expressions Path Matching](#regular-expressions-path-matching) section for more information.                               |
 | `ingress.pomerium.io/secure_upstream`                  | When set to `"true"`, use `https` when connecting to the upstream endpoint.                                                                                                                   |
 | `ingress.pomerium.io/set_request_headers_secret`       | Name of Kubernetes Secret containing the contents of the request header to send upstream. When used, `ingress.pomerium.io/set_request_headers` should not contain overlapping keys.           |
@@ -212,9 +202,9 @@ spec:
     privateKeySecretRef:
       name: example-issuer-account-key
     solvers:
-    - http01:
-       ingress:
-         class: pomerium
+      - http01:
+          ingress:
+            class: pomerium
 ```
 
 An example of using the [ingress-shim](https://cert-manager.io/docs/usage/ingress/) with an Ingress resource managed by Pomerium:
@@ -230,20 +220,20 @@ metadata:
 spec:
   ingressClassName: pomerium
   rules:
-  - host: example.localhost.pomerium.io
-    http:
-      paths:
-      - backend:
-          service:
-            name: example
-            port:
-              name: http
-        path: /
-        pathType: Prefix
+    - host: example.localhost.pomerium.io
+      http:
+        paths:
+          - backend:
+              service:
+                name: example
+                port:
+                  name: http
+            path: /
+            pathType: Prefix
   tls:
-  - hosts:
-    - example.localhost.pomerium.io
-    secretName: example-tls
+    - hosts:
+        - example.localhost.pomerium.io
+      secretName: example-tls
 ```
 
 ## HTTPS Endpoints
@@ -338,20 +328,20 @@ metadata:
 spec:
   ingressClassName: pomerium
   rules:
-  - host: example.localhost.pomerium.io
-    http:
-      paths:
-      - backend:
-          service:
-            name: example
-            port:
-              name: http
-        path: ^/(admin|superuser)/.*$
-        pathType: ImplementationSpecific
+    - host: example.localhost.pomerium.io
+      http:
+        paths:
+          - backend:
+              service:
+                name: example
+                port:
+                  name: http
+            path: ^/(admin|superuser)/.*$
+            pathType: ImplementationSpecific
   tls:
-  - hosts:
-    - example.localhost.pomerium.io
-    secretName: example-tls
+    - hosts:
+        - example.localhost.pomerium.io
+      secretName: example-tls
 ```
 
 ## TCP Endpoints
@@ -393,7 +383,53 @@ Unlike a standalone Pomerium configuration, you may not create multiple TCP rout
 
 ### View Event History
 
-Pomerium Ingress Controller will add **events** to the Ingress objects as it processes them.
+Pomerium Ingress Controller will add **events** to the Ingress objects as it processes them, and updates the status section of [Pomerium CRD](/docs/k8s/reference).
+
+```bash
+kubectl describe pomerium/global
+```
+
+```log
+Name:         global
+Namespace:
+Labels:       <none>
+Annotations:  <none>
+API Version:  ingress.pomerium.io/v1
+Kind:         Pomerium
+Metadata:
+  Creation Timestamp:  2022-07-14T21:43:08Z
+  Generation:          5
+  Resource Version:  1507973
+  UID:               9c7e56ab-e74c-492c-945d-5db1cd6582b0
+Spec:
+  Authenticate:
+    URL:  https://login.localhost.pomerium.io
+  Certificates:
+    pomerium/wildcard-localhost
+  Identity Provider:
+    Provider:  google
+    Secret:    pomerium/idp
+  Secrets:     pomerium/bootstrap
+  Storage:
+    Postgres:
+      Secret:  pomerium/postgres
+Status:
+  Ingress:
+    pomerium/httpbin:
+      Observed At:          2022-07-29T13:01:37Z
+      Observed Generation:  1
+      Reconciled:           true
+  Settings Status:
+    Observed At:          2022-07-27T18:44:43Z
+    Observed Generation:  5
+    Reconciled:           true
+Events:
+  Type    Reason   Age   From              Message
+  ----    ------   ----  ----              -------
+  Normal  Updated  43m   pomerium-ingress  pomerium/httpbin: config updated
+```
+
+Additionally, events are posted to the individual `Ingress` objects.
 
 ```bash
 kubectl describe ingress/my-ingress
@@ -460,7 +496,7 @@ For more information on the Pomerium Ingress Controller or the Kubernetes concep
 [`ingress.pomerium.io/tls_skip_verify`]: /docs/reference/routes/tls-skip-verification
 [`tls_custom_ca_secret`]: /docs/reference/routes/tls-custom-certificate-authority
 [client-certificate-authority]: /docs/reference/client-certificate-authority
-[HSTS]: https://en.wikipedia.org/wiki/HTTP_Strict_Transport_Security
+[hsts]: https://en.wikipedia.org/wiki/HTTP_Strict_Transport_Security
 [re2 regular expression]: https://github.com/google/re2/wiki/Syntax
 [regex101.com]: https://regex101.com
 [tls_client_certificate]: /docs/reference/routes/tls-client-certificate
