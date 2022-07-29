@@ -46,7 +46,7 @@ You may deploy the Ingress controller from your own manifests by using the `pome
 
 ## Configuration
 
-Global configuration parameters are set via [Pomerium CRD](./reference) while individual routes are configured via `Ingress` resources, with additional annotations.
+Global configuration parameters are set via [Pomerium CRD](/docs/k8s/reference) while individual routes are configured via `Ingress` resources, with additional annotations.
 
 ## Usage
 
@@ -383,7 +383,7 @@ Unlike a standalone Pomerium configuration, you may not create multiple TCP rout
 
 ### View Event History
 
-Pomerium Ingress Controller will add **events** to the Ingress objects as it processes them, and updates the status section of [Pomerium CRD](./reference).
+Pomerium Ingress Controller will add **events** to the Ingress objects as it processes them, and updates the status section of [Pomerium CRD](/docs/k8s/reference).
 
 ```bash
 kubectl describe pomerium/global
