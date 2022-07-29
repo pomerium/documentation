@@ -10,12 +10,9 @@ pagination_prev: null
 pagination_next: null
 ---
 
-
-# Identity Provider Client Secret
 - Environmental Variable: `IDP_CLIENT_SECRET`
 - Config File Key: `idp_client_secret`
 - Type: `string`
-- Required
+- Required (unless using [identity_provider_client_secret_file](./identity-provider-client-secret-file))
 
 Client Secret is the OAuth 2.0 Secret Identifier retrieved from your identity provider. See your identity provider's documentation, and our [identity provider](/docs/identity-providers/) docs for details.
-
