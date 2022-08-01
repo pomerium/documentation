@@ -4,6 +4,7 @@ import { DataGridPro } from "@mui/x-data-grid-pro/DataGridPro/DataGridPro";
 import { renderCellExpand } from "./RenderCellExpand";
 import { GridToolbar } from "@mui/x-data-grid";
 import { FormControl, InputLabel, NativeSelect } from "@mui/material";
+import { useColorMode } from "@docusaurus/theme-common";
 
 function ServiceSelector(props) {
   const { item, applyValue } = props;
@@ -75,6 +76,8 @@ export default function ReferenceTable() {
     setPageSize(pageSize);
   };
 
+  const { colorMode } = useColorMode();
+
   const references = Object.values(data);
   const columns = [
     {
@@ -132,6 +135,7 @@ export default function ReferenceTable() {
         pageSize={pageSize}
         onPageSizeChange={changePageSize}
         sx={{
+          "color": colorMode === 'dark' ? 'rgba(224,224,224,1);' : 'black',
           "& .MuiDataGrid-columnHeader:last-child .MuiDataGrid-columnSeparator--sideRight":
             {
               display: "none",
