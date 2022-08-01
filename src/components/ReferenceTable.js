@@ -135,11 +135,17 @@ export default function ReferenceTable() {
         pageSize={pageSize}
         onPageSizeChange={changePageSize}
         sx={{
-          "color": colorMode === 'dark' ? 'rgba(224,224,224,1);' : 'black',
+          "color": colorMode === 'dark' ? 'rgba(224,224,224,1);' : 'rgba(0, 0, 0, 0.54);',
           "& .MuiDataGrid-columnHeader:last-child .MuiDataGrid-columnSeparator--sideRight":
             {
               display: "none",
             },
+          "& .MuiDataGrid-sortIcon": {
+            "color": colorMode === 'dark' ? 'rgba(224,224,224,1);' : 'rgba(0, 0, 0, 0.54);',
+          },
+          "& .MuiDataGrid-menuIconButton": {
+            "color": colorMode === 'dark' ? 'rgba(224,224,224,1);' : 'rgba(0, 0, 0, 0.54);',
+          }
         }}
         columns={columns}
         rows={references.filter(filterHidden)}
