@@ -106,8 +106,8 @@ const config = {
           position: "right",
           items: [
             {
-              label: "v16",
-              href: "https://0-16-0.docs.pomerium.io/docs"
+              label: "v18",
+              href: "https://pomerium.io/docs"
             },
             {
               type: 'doc',
