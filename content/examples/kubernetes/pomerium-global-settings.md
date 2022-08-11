@@ -2,7 +2,7 @@
 apiVersion: ingress.pomerium.io/v1
 kind: Pomerium
 metadata:
-name: global
+  name: global
 spec:
   secrets: pomerium/bootstrap
   authenticate:
