@@ -19,7 +19,7 @@ Turning on autocert allows Pomerium to automatically retrieve, manage, and renew
 
 This setting can be useful in situations where you may not have Pomerium behind a TLS terminating ingress or proxy that is already handling your public certificates on your behalf.
 
-Autocert will incorporate certificates available in the system trust store, and they will take precedence over generated certificates when applicable to configured routes.
+Autocert will incorporate certificates available in the system trust store and those set manually in the Pomerium configuration, and they will take precedence over generated certificates when applicable to configured routes.
 
 Autocert will attempt `HTTP01`and `TLS-ALPN-01` challenges. It does not support `DNS-01` challenges, required to generate wildcard certificates.
 
