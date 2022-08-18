@@ -102,12 +102,12 @@ const config = {
         },
         {
           type: "dropdown",
-          label: "v18",
+          label: "v19",
           position: "right",
           items: [
             {
-              label: "v17",
-              href: "https://v17.docs.pomerium.com/docs",
+              label: "v18",
+              href: "https://v18.docs.pomerium.com/docs",
             },
             {
               type: "doc",
