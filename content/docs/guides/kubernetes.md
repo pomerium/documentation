@@ -15,17 +15,14 @@ The following guide covers how to secure [Kubernetes] using Pomerium. This is ac
 
 ## Before You Begin
 
-- This guide assumes you've already installed Pomerium in a Kubernetes cluster using our Helm charts. Follow [Pomerium using Helm] before proceeding.
+- This guide assumes you've already installed Pomerium in a Kubernetes cluster. Follow [Kubernetes Quickstart] before proceeding.
 - This guide assumes you have a certificate solution in place, such as Cert-Manager.
 
 ### Pomerium Service Account
 
-Pomerium uses a single service account and user impersonation headers to authenticate and authorize users in Kubernetes. This service account is automatically created by our Helm chart. If you've installed Pomerium without our charts, expand below to manually create the service account.
+Pomerium uses a single service account and user impersonation headers to authenticate and authorize users in Kubernetes.
 
-<details>
-  <summary>Manually create service account</summary>
-  <div>
-  To create the Pomerium service account use the following configuration file:
+1. To create the Pomerium service account use the following configuration file:
 
   ```yaml title="pomerium-k8s.yaml"
   ---
@@ -69,14 +66,11 @@ Pomerium uses a single service account and user impersonation headers to authent
       namespace: default
   ```
 
-  Apply the configuration with:
+1. Apply the configuration with:
 
   ```bash
   kubectl apply -f ./pomerium-k8s.yaml
   ```
-
-  </div>
-  </details>
 
 ### User Permissions
 
@@ -105,6 +99,8 @@ Pomerium uses a single service account and user impersonation headers to authent
 
 Permissions can also be granted to groups the Pomerium user is a member of. This allows you to set a single ClusterRoleBinding in Kubernetes and modify access from your IdP.
 
+
+<!-- @wasaga I'm not sure if this section is still required? At the very least it needs to be adjusted to be an Ingress definition, but I haven't tried that. -->
 ## Create a Route for the API server
 
 This new route requires a kubernetes service account token. Our Helm chart creates one and makes it available at `/var/run/secrets/kubernetes.io/serviceaccount/token`.
@@ -216,3 +212,4 @@ You should be prompted to login and see the resulting cluster info.
 [kubernetes]: https://kubernetes.io
 [pomerium-cli]: /docs/overview/releases#pomerium-cli
 [Pomerium using Helm]: /docs/guides/helm
+[Kubernetes Quickstart]: /docs/k8s/quickstart

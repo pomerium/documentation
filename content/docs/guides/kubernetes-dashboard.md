@@ -12,12 +12,12 @@ The following guide covers how to secure [Kubernetes Dashboard] using Pomerium. 
 
 This tutorial covers:
 
-- Deploying [Kubernetes Dashboard] using [Helm]
+- Deploying [Kubernetes Dashboard]
 - Establishing secure Kubernetes Dashboard access through Pomerium
 
 ## Before You Begin
 
-This guide builds off of existing articles and guides. It assumes you have deployed Pomerium to your cluster using our Helm charts, configured a certificate solution like [cert-manager], and set up secure access to the Kubernetes API. Follow the instructions in these pages before you continue:
+This guide builds off of existing articles and guides. It assumes you have deployed Pomerium to your cluster (see our [Kubernetes Quickstart] doc), configured a certificate solution like [cert-manager], and set up secure access to the Kubernetes API. Follow the instructions in these pages before you continue:
 
 - [Kubernetes Quickstart]
 - [Securing Kubernetes]
@@ -32,36 +32,50 @@ Though securing [Kubernetes Dashboard] as an example may seem contrived, the dam
 
 [Kubernetes Dashboard] is a general purpose, web-based UI for Kubernetes clusters. It allows users to manage applications running in the cluster and troubleshoot them, as well as manage the cluster itself.
 
-Use [Helm] to install a new instance of [Kubernetes Dashboard] :
+Following the [Deploy and Access the Kubernetes Dashboard](https://kubernetes.io/docs/tasks/access-application-cluster/web-ui-dashboard/) page, we can install the dashboard with a single command:
 
-```bash
-helm repo add kubernetes-dashboard https://kubernetes.github.io/dashboard/
-helm install kubernetes-dashboard kubernetes-dashboard/kubernetes-dashboard\
-  --set ingress.enabled="false"
+```sh
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.5.0/aio/deploy/recommended.yaml
 ```
 
-That's it. We've now configured the Kubernetes Dashboard in our cluster. We've also explicitly told Helm that we are going to deploy our own custom access to the service through Pomerium instead of a standard ingress.
+This will create a `kubernetes-dashboard` namespace and deploy the dashboard within.
 
 ## Add a Route
 
-Following the configuration defined in [Install Pomerium using Helm], add a route for the Kubernetes Dashboard.
+1. Create and apply an ingress for the Kubernetes Dashboard:
 
-1. Modify `pomerium-values.yaml` with the following route:
-
-    ```yaml title="pomerium-values.yaml"
-        - from: https://dashboard.localhost.pomerium.io
-          to: https://kubernetes-dashboard.default.svc.cluster.local
-          allow_spdy: true
-          tls_skip_verify: true
-          kubernetes_service_account_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
-          policy:
-            - allow:
-                or:
-                  - domain:
-                      is: pomerium.com
+    ```yaml title="dashboard-ingress.yaml"
+    apiVersion: networking.k8s.io/v1
+    kind: Ingress
+    metadata:
+      name: dashboard
+      namespace: kubernetes-dashboard
+      annotations:
+        #cert-manager.io/cluster-issuer: letsencrypt-staging #Remove or adjust this based on your certificate management strategy
+        ingress.pomerium.io/secure_upstream: "true"
+        ingress.pomerium.io/tls_skip_verify: "true"
+        ingress.pomerium.io/policy: '[{"allow":{"and":[{"domain":{"is":"example.com"}}]}}]'
+        ingress.pomerium.io/kubernetes_service_account_token_secret: "pomerium-sa-secret"
+    spec:
+      ingressClassName: pomerium
+      rules:
+      - host: dashboard.example.com
+        http:
+          paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: kubernetes-dashboard 
+                port:
+                  number: 443
+      tls:
+        - hosts:
+            - dashboard.example.com
+          secretName: dashboard.example.com-tls
     ```
 
-    The service account token used for `kubernetes_service_account_token_file` is defined by our [helm chart]. Modify the policy to match your configuration.
+    The service account token used for `kubernetes_service_account_token_file` is <!-- @wasaga to update after updating our deployment. -->
 
 1. Access to the dashboard for a user is authorized by the cluster role binding defined in role-based access control (**RBAC**) permissions. Following the [User Permissions] section of [Securing Kubernetes], you should already have permissions for your user, or you can create a new RBAC definition following this example:
 
@@ -78,14 +92,6 @@ Following the configuration defined in [Install Pomerium using Helm], add a rout
       - apiGroup: rbac.authorization.k8s.io
         kind: User
         name: someuser@example.com
-    ```
-
-    Apply the permissions with `kubectl apply -f rbac-someuser.yaml`.
-
-1. Apply the new route to Pomerium with Helm:
-
-    ```bash
-    helm upgrade --install pomerium pomerium/pomerium --values pomerium-values.yaml
     ```
 
 ## Conclusion
