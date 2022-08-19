@@ -693,6 +693,23 @@
     "services": ["proxy"],
     "type": "bool"
   },
+  "error-message-header": {
+    "id": "error-message-first-paragraph",
+    "title": "Error Message Header",
+    "path": "/branding/error-message-first-paragraph",
+    "description": "A paragraph that will appear on all Route Error Pages in the top section.",
+    "short_description": "Can contain plain text or Markdown.",
+    "services": [],
+    "type": "string"
+  },
+  "favicon-url": {
+    "id": "favicon-url",
+    "title": "Favicon Url",
+    "path": "/branding/favicon-url",
+    "description": "A Url pointing to your favicon. Defaults to Pomerium's Favicon.",
+    "services": [],
+    "type": "URL"
+  },
   "from": {
     "id": "from",
     "title": "From",
@@ -759,6 +776,14 @@
     "services": ["proxy"],
     "type": "object"
   },
+  "logo-url": {
+    "id": "logo-url",
+    "title": "Logo Url",
+    "path": "/branding/logo-url",
+    "description": "A Url pointing to your logo. Defaults to Pomerium's Logo.",
+    "services": [],
+    "type": "URL"
+  },
   "outlier-detection": {
     "id": "outlier-detection",
     "title": "Outlier Detection",
@@ -782,6 +807,14 @@
     "short_description": "Only match requests with an exact match for this path",
     "type": "string"
   },
+  "policy-explanation": {
+    "id": "policy-explanation",
+    "title": "Explanation",
+    "description": "Adds an explanation to the user when they hit a 403 Unauthorized Endpoint that has this policy.",
+    "path": "/policy/policy-explanation",
+    "services": [],
+    "type": "string"
+  },
   "prefix": {
     "id": "prefix",
     "title": "Prefix",
@@ -796,6 +829,24 @@
     "path": "/routes/prefix-rewrite",
     "services": ["proxy"],
     "short_description": "Swaps the matched prefix (previous section) with this value",
+    "type": "string"
+  },
+  "primary-color": {
+    "id": "primary-color",
+    "title": "Primary Color",
+    "path": "/branding/primary-color",
+    "description": "A hex code that determines the primary color for the Enterprise Console and Route Error Details pages.",
+    "short_description": "Defaults to #6F43E7",
+    "services": [],
+    "type": "string"
+  },
+  "primary-color-dark-mode": {
+    "id": "darkmode-primary-color",
+    "title": "Primary Color (Dark Mode)",
+    "path": "/branding/darkmode-primary-color",
+    "description": "A hex code that determines the primary color for the Enterprise Console and Route Error Details pages when in Dark Mode.",
+    "short_description": "Defaults to #6F43E7",
+    "services": [],
     "type": "string"
   },
   "public-access": {
@@ -855,6 +906,24 @@
     "services": ["proxy"],
     "type": "duration"
   },
+  "secondary-color": {
+    "id": "secondary-color",
+    "title": "Secondary Color",
+    "description": "A hex code that determines the secondary color for the Enterprise Console and Route Error Details pages.",
+    "path": "/branding/secondary-color",
+    "short_description": "Defaults to #49AAA1",
+    "services": [],
+    "type": "string"
+  },
+  "secondary-color-dark-mode": {
+    "id": "darkmode-secondary-color",
+    "title": "Secondary Color (Dark Mode)",
+    "description": "A hex code that determines the secondary color for the Enterprise Console and Route Error Details pages when in Dark Mode.",
+    "short_description": "Defaults to #49AAA1",
+    "path": "/branding/darkmode-secondary-color",
+    "services": [],
+    "type": "string"
+  },
   "set-authorization-header": {
     "id": "set-authorization-header",
     "title": "Set Authorization Header",
@@ -869,6 +938,14 @@
     "path": "/routes/set-request-headers",
     "services": ["proxy"],
     "type": "map of strings key value pairs"
+  },
+  "show-error-details": {
+    "id": "show-error-details",
+    "title": "Show Error Details",
+    "description": "If set, will show error details including policies explanations and remediations on the 403 unauthorized page.",
+    "path": "/routes/show-error-details",
+    "services": [],
+    "type": "bool"
   },
   "signout-redirect-url": {
     "id": "signout-redirect-url",
@@ -955,15 +1032,6 @@
     "type": "string",
     "short_description": "Base64 encoded string"
   },
-  "signing-key-file": {
-    "id": "signing-key-file",
-    "title": "Signing Key File",
-    "path": "/signing-key-file",
-    "description": "File path to a secret containing the signing key, used to sign a user's attestation JWT which can be consumed by upstream applications to pass along identifying user information like username, id, and groups.",
-    "services": [],
-    "type": "string",
-    "short_description": "File path containing a Base64 encoded string"
-  },
   "signing-key": {
     "id": "signing-key",
     "title": "Signing Key",
@@ -972,6 +1040,15 @@
     "services": [],
     "type": "string",
     "short_description": "Base64 encoded string"
+  },
+  "signing-key-file": {
+    "id": "signing-key-file",
+    "title": "Signing Key File",
+    "path": "/signing-key-file",
+    "description": "File path to a secret containing the signing key, used to sign a user's attestation JWT which can be consumed by upstream applications to pass along identifying user information like username, id, and groups.",
+    "services": [],
+    "type": "string",
+    "short_description": "File path containing a Base64 encoded string"
   },
   "devices": {
     "id": "devices",
@@ -990,6 +1067,12 @@
     "id": "new-enrollment",
     "title": "New Enrollment",
     "path": "/../guides/admin-enroll-device",
+    "enterpriseOnly": true
+  },
+  "migrate-routes": {
+    "id": "migrate-routes",
+    "title": "Migrate Routes",
+    "description": "A way to migrate routes from an existing Open Source Pomerium config file. You probably only want to do this once.",
     "enterpriseOnly": true
   },
   "search-users": {
