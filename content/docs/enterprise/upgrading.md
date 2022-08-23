@@ -7,6 +7,12 @@ description: This page contains the list of deprecations and important or breaki
 
 When new version of Pomerium Enterprise are released, check back to this page before you upgrade.
 
+## 0.18.0
+
+## Before You Upgrade
+
+- When using [`external-data`](/docs/enterprise/external-data) the Databroker backend for Pomerium should be switched from Redis to [Postgres](/docs/topics/data-storage#postgres).
+
 ## 0.17.0
 
 ## Before You Upgrade
