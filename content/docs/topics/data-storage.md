@@ -52,11 +52,11 @@ easy deployment semantics but is not persistent or highly available. Running mor
 
 The Postgres based backend supports multiple `databroker` instances and persistence across restarts. We recommend a dedicated Postgres instance for Pomerium to provide the strongest security and performance guarantees.
 
-Example configuration:;
+Example configuration:
 
 ```yaml
 databroker_storage_type: postgres
-databroker_storage_connection_string: postgres://user:pass@dbhost.internal.mydomain.com/pomerium?sslmode=require
+databroker_storage_connection_string: postgres://user:pass@dbhost.internal.mydomain.com/pomerium?sslmode=disable
 ```
 
 The connection string for postgres follows the same conventions as [libpq](https://www.postgresql.org/docs/current/libpq-connect.html#LIBPQ-CONNSTRING):
