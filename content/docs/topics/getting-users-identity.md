@@ -108,7 +108,7 @@ A single-page javascript application can verify the JWT using a fetch to `/.pome
 
 Though you will very likely be verifying signed-headers programmatically in your application's middleware, and using a third-party JWT library, if you are new to JWT it may be helpful to show what manual verification looks like.
 
-1. Provide pomerium with a base64 encoded Elliptic Curve ([NIST P-256] aka [secp256r1] aka prime256v1) Private Key. In production, you'd likely want to get these from your KMS.
+1. Provide Pomerium with a base64 encoded Elliptic Curve ([NIST P-256] aka [secp256r1] aka prime256v1) Private Key. In production, you'd likely want to get these from your KMS.
 
    ```bash
    openssl ecparam -genkey -name prime256v1 -noout -out ec_private.pem
