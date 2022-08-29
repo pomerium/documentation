@@ -15,7 +15,7 @@ Error Message will appear similar to this example.
 
 Policies without an explanation or remediation field will show the policy ID.
 
-If and explanation or remediation are added to the policy they will show up in the error details.
+If the explanation or remediation fields are added to the policy they will show up in the error details.
 
 ![Policy Settings](img/policy_with_explanation_and_remediation.png)
 
