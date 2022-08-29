@@ -67,7 +67,7 @@ curl https://authenticate.int.example.com/.well-known/pomerium/jwks.json | jq
 
 ### Verification in a Single-Page Application
 
-A single page javascript application can verify the JWT using a fetch to `/.pomerium/jwt` and a JWT library like [`jose`](https://github.com/panva/jose).
+A single-page javascript application can verify the JWT using a fetch to `/.pomerium/jwt` and a JWT library like [`jose`](https://github.com/panva/jose).
 
 ```html
 <!DOCTYPE html>
