@@ -1,10 +1,10 @@
-import React from "react";
-import data from "./docVersions.json";
+import React from 'react';
+import data from './docVersions.json';
 
-const versions = Object.values(data)
+const versions = Object.values(data);
 
 const DocVersions = () => {
-  return(
+  return (
     <>
       <table>
         <thead>
@@ -14,18 +14,20 @@ const DocVersions = () => {
           </tr>
         </thead>
         <tbody>
-       {versions.map((v) => {
-         return(
-          <tr key={v.id}>
-            <td>{v.id}</td><td><a href={v.link}>Documentation</a></td>
-          </tr>
-         )
-        })}
+          {versions.map((v) => {
+            return (
+              <tr key={v.id}>
+                <td>{v.id}</td>
+                <td>
+                  <a href={v.link}>Documentation</a>
+                </td>
+              </tr>
+            );
+          })}
         </tbody>
       </table>
     </>
-    
-  )
-}
+  );
+};
 
-export default DocVersions
+export default DocVersions;
