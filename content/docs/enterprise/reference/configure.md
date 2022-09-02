@@ -22,7 +22,7 @@ Enabling the debug flag could result in sensitive information being logged!!!
 
 :::
 
-By default, JSON encoded logs are produced. Debug enables colored, human-readable logs to be streamed to [standard out](https://en.wikipedia.org/wiki/Standard_streams#Standard_output_(stdout)>>>). In production, it is recommended to be set to `false`.
+By default, JSON encoded logs are produced. Debug enables colored, human-readable logs to be streamed to [standard out](<https://en.wikipedia.org/wiki/Standard_streams#Standard_output_(stdout)>>>>). In production, it is recommended to be set to `false`.
 
 For example, if `true`
 
@@ -66,6 +66,8 @@ If true, instructs browsers to only send user session cookies over HTTPS.
 
 :::warning
 
+
+
 Setting this to false may result in session cookies being sent in cleartext.
 
 :::
@@ -75,6 +77,8 @@ Setting this to false may result in session cookies being sent in cleartext.
 If true, prevents javascript in browsers from reading user session cookies.
 
 :::warning
+
+
 
 Setting this to false enables hostile javascript to steal session cookies and impersonate users.
 
@@ -126,6 +130,8 @@ This defines a set of root certificate authorities that Pomerium uses when commu
 
 :::warning
 
+
+
 Be sure to include the intermediary certificate.
 
 :::
@@ -168,8 +174,11 @@ Set Response Headers allows you to set static values for the given response head
 [Service accounts](/docs/enterprise/concepts#service-accounts) offer a protected and standardized method of authenticating machine-to-machine communication between services protected by Pomerium.
 
 :::tip
-Before you begin, confirm you are in the correct Namespace. A service account can only be used in the Namespace it was created in, including its children Namespaces.
+
+ Before you begin, confirm you are in the correct Namespace. A service account can only be used in the Namespace it was created in, including its children Namespaces.
+
 :::
+
 
 1. From the main menu, select **Service Accounts** under **CONFIGURE**. Click the **+ ADD SERVICE ACCOUNT** button:
 
@@ -191,11 +200,11 @@ Before you begin, confirm you are in the correct Namespace. A service account ca
 
 1. Edit or create policies to give the service account access to the internal service:
 
-  ![An example policy for a service account](./img/create-policy-1.png)
+![An example policy for a service account](./img/create-policy-1.png)
 
-  ---
+---
 
-  ![An example policy for a service account](./img/create-policy-2.png)
+![An example policy for a service account](./img/create-policy-2.png)
 
 ## Namespaces
 
@@ -206,8 +215,11 @@ A [Namespace][namespace-concept] is a collection of users, groups, routes, and p
 - Users or groups can be granted permission to edit access to routes within a Namespace, allowing them self-serve access to the routes critical to their work.
 
 :::tip
-When using an IdP without directory sync or when working with non-domain users, they will not show up in the look-ahead search. See [Non-Domain Users](/docs/enterprise/concepts#non-domain-users) for more information.
+
+ When using an IdP without directory sync or when working with non-domain users, they will not show up in the look-ahead search. See [Non-Domain Users](/docs/enterprise/concepts#non-domain-users) for more information.
+
 :::
+
 
 ## External Data
 
@@ -223,9 +235,9 @@ The path to the external data. The supported formats are:
 
   ```json title="example JSON"
   [
-    { "id": "id4@example.com", "user.id": "user4" },
-    { "id": "id5@example.com", "user.id": "user5" },
-    { "id": "id6@example.com", "user.id": "user6" }
+    {"id": "id4@example.com", "user.id": "user4"},
+    {"id": "id5@example.com", "user.id": "user5"},
+    {"id": "id6@example.com", "user.id": "user6"}
   ]
   ```
 

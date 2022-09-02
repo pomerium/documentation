@@ -42,6 +42,6 @@ Often overlooked or confused with multi-factor authentication (MFA), device iden
 
 ## Service Mesh
 
-If you've read through all the docs linked above, first of all *wow*. That's a lot to absorb, kudos to you. But if you got this far and you're overwhelmed thinking about how to manage mutual authentication, user context verification, etc, between all your various applications, then you're primed and ready for a **service mesh**. A service mesh is a software component that acts as an infrastructure layer to facilitate the communication (and authentication) between services.
+If you've read through all the docs linked above, first of all _wow_. That's a lot to absorb, kudos to you. But if you got this far and you're overwhelmed thinking about how to manage mutual authentication, user context verification, etc, between all your various applications, then you're primed and ready for a **service mesh**. A service mesh is a software component that acts as an infrastructure layer to facilitate the communication (and authentication) between services.
 
 - Our [Istio](/docs/guides/istio) guide covers integration between Pomerium and Istio, the most common service mesh.

@@ -2,7 +2,17 @@
 title: Securing Grafana with Pomerium
 sidebar_label: Grafana
 lang: en-US
-keywords: [pomerium, identity access proxy, data, logging, graphing, grafana, authentication, authorization]
+keywords:
+  [
+    pomerium,
+    identity access proxy,
+    data,
+    logging,
+    graphing,
+    grafana,
+    authentication,
+    authorization,
+  ]
 description: This guide covers how to use Pomerium to authenticate and authorize users of Grafana.
 ---
 
@@ -48,7 +58,7 @@ Once you've saved and exited the file, restart Grafana.
 At this stage Grafana is configured to use the `email` claim in the JWT to associate an incoming connection with a user. Pomerium will be configured to include identity information via the JWT in the next section. But the user must still exist in Grafana to be associated. Otherwise, you will see this error in the browser after authenticating:
 
 ```json
-{"message":"User not found"}
+{"message": "User not found"}
 ```
 
 Further down in this guide we'll go over Grafana's `auto_sign_up` option to create users as needed. But first we should create at least one user with administrator privileges. If you plan on administering Grafana through a direct connection to the service, you can skip this section.
@@ -57,17 +67,21 @@ Further down in this guide we'll go over Grafana's `auto_sign_up` option to crea
 
 1. Under the shield icon in the main menu (**Server Admin**), select **Users**.
 
-    ![The users option under the server admin menu](img/grafana-server-admin-users.png)
+   ![The users option under the server admin menu](img/grafana-server-admin-users.png)
 
-    :::caution
-    This is distinct from the **Users** option under the cog wheel (**Configuration**), which will only finalize a new user when they accept an invite via email or link.
-    :::
+::: caution
+
+This is distinct from the **Users** option under the cog wheel (**Configuration**), which will only finalize a new user when they accept an invite via email or link.
+
+:::
 
 1. Click the **New user** button to create a new user. Make sure that the email address matches the one provided by Pomerium via your IdP.
 
-    :::tip
-    You can access the special endpoint `/.pomerium` from any Pomerium route to view the data provided by Pomerium in the JWT.
-    :::
+::: tip
+
+You can access the special endpoint `/.pomerium` from any Pomerium route to view the data provided by Pomerium in the JWT.
+
+:::
 
 After creating a new user in Grafana, that user should be logged in automatically when they access Grafana from the Pomerium route (after first authenticating with your IdP, of course).
 
@@ -76,7 +90,7 @@ After creating a new user in Grafana, that user should be logged in automaticall
 Add a route for Grafana to your Pomerium config. Change the following variables in the example below to match your setup:
 
 | Variable | Description |
-|:----- | ---- |
+| :-- | --- |
 | `localhost.pomerium.io` | The domain space where Pomerium is configured to set up routes. You can also change `grafana` to a custom subdomain. |
 | `http://grafana:3000` | The hostname or IP address and port from which Grafana is accessible within your local network or container environment. |
 | `example.com` | Your company domain. The example policy allows access to Grafana for anyone with an email address from your company domain. Adjust the policy to match your organization's needs. |
@@ -96,11 +110,12 @@ routes:
           or:
             - domain:
                 is: example.com
-
 ```
 
-:::tip Note
-Docker-based installations may need to be restarted to pick up the new route.
+:::tip
+
+Note Docker-based installations may need to be restarted to pick up the new route.
+
 :::
 
 </TabItem>
@@ -117,24 +132,24 @@ metadata:
     cert-manager.io/issuer: pomerium-issuer
     ingress.pomerium.io/policy: '[{"allow":{"and":[{"domain":{"is":"example.com"}}]}}]'
     #ingress.pomerium.io/secure_upstream: true # Uncomment if Grafana is serving content over HTTPS
-    ingress.pomerium.io/pass_identity_headers: "true"
+    ingress.pomerium.io/pass_identity_headers: 'true'
 spec:
   ingressClassName: pomerium
   rules:
-  - host: grafana.localhost.pomerium.io
-    http:
-      paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: grafana
-            port:
-              number: 3000
+    - host: grafana.localhost.pomerium.io
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: grafana
+                port:
+                  number: 3000
   tls:
-  - hosts:
-    - grafana.localhost.pomerium.io
-    secretName: grafana.localhost.pomerium.io-tls
+    - hosts:
+        - grafana.localhost.pomerium.io
+      secretName: grafana.localhost.pomerium.io-tls
 ```
 
 </TabItem>
@@ -144,8 +159,10 @@ Once the new route is applied, users can access Grafana from `https://grafana.lo
 
 ### Manage Access at Scale
 
-:::tip Note
-Ensure that Grafana is up to date to take advantage of `auto_sign_up`, as it is only available for JWT as of version 8.4.0.
+:::tip
+
+Note Ensure that Grafana is up to date to take advantage of `auto_sign_up`, as it is only available for JWT as of version 8.4.0.
+
 :::
 
 The steps outlined above work to confirm the configuration for small teams, but adding users individually and manually does not scale for larger organizations. To add users to Grafana at scale, you can use the Grafana's `auto_sign_up`configuration to auto-signup users as they log in:
@@ -165,13 +182,13 @@ auto_sign_up = true ;sets the login to automatically create a new user if one do
 auto_assign_org = true ;auto assigns the user to the existing default organization
 auto_assign_org_role = Editor ;auto assigns the user the "Editor" role
 ```
+
 Note that the value of `auto_assign_org_role` could also be "Admin" or "Viewer".
 
-This will automatically create a user with their email and username populated.  To have the "Name" field populated for users, you can set the `jwt_claims_headers` option in Pomerium to include `name` in the JWT payload:
+This will automatically create a user with their email and username populated. To have the "Name" field populated for users, you can set the `jwt_claims_headers` option in Pomerium to include `name` in the JWT payload:
 
 <Tabs>
 <TabItem value="config.yaml" label="config.yaml">
-
 
 ```yaml
 jwt_claims_headers: name
@@ -197,12 +214,14 @@ extraEnv:
 
 This configuration will allow seamless authentication and authorization without any additional toil for your team.
 
-:::tip Tip for Google Users
-When using Google as an IdP, the user field is populated by a numeric value that you can not configure. Note that Grafana can accept the `name` field as a username, including spaces:
+:::tip
+
+Tip for Google Users When using Google as an IdP, the user field is populated by a numeric value that you can not configure. Note that Grafana can accept the `name` field as a username, including spaces:
 
 ```abnf
 username_claim = name
 ```
+
 :::
 
 ## Troubleshooting
@@ -232,6 +251,7 @@ curl https://authenticate.localhost.pomerium.io/.well-known/pomerium/jwks.json >
 <TabItem value="wget" label="wget">
 
 From the Grafana host:
+
 ```bash
 wget -O /etc/grafana/jwks.json https://authenticate.localhost.pomerium.io/.well-known/pomerium/jwks.json
 ```
@@ -250,10 +270,8 @@ jwk_set_file = /etc/grafana/jwks.json
 cache_ttl = 60m
 ```
 
-
-
 [`authenticate_service_url`]: /docs/reference/authenticate-service-url
-[expired DST R3 root]: https://letsencrypt.org/docs/dst-root-ca-x3-expiration-september-2021/
-[Global Users]: https://grafana.com/docs/grafana/latest/http_api/admin/#global-users
+[expired dst r3 root]: https://letsencrypt.org/docs/dst-root-ca-x3-expiration-september-2021/
+[global users]: https://grafana.com/docs/grafana/latest/http_api/admin/#global-users
 [ingress-cert-manager]: /docs/k8s/ingress.md#cert-manager-integration
-[JWT authentication]: https://grafana.com/docs/grafana/latest/auth/jwt/
+[jwt authentication]: https://grafana.com/docs/grafana/latest/auth/jwt/

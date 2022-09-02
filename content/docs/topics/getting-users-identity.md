@@ -18,14 +18,14 @@ If a [signing key] is set, the user's associated identity information will be in
 
 You should verify that the JWT contains at least the following claims:
 
-|  [JWT]   | description                                                                               |
-| :------: | ----------------------------------------------------------------------------------------- |
-|  `exp`   | Expiration time in seconds since the UNIX epoch. Allow 1 minute for skew.                 |
-|  `iat`   | Issued-at time in seconds since the UNIX epoch. Allow 1 minute for skew.                  |
-|  `aud`   | The client's final domain e.g. `httpbin.corp.example.com`.                                |
-|  `iss`   | Issuer must be the URL of your authentication domain e.g. `authenticate.corp.example`.    |
-|  `sub`   | Subject is the user's id. Can be used instead of the `X-Pomerium-Claim-Sub` header.       |
-| `email`  | Email is the user's email. Can be used instead of the `X-Pomerium-Claim-Email` header.    |
+| [JWT] | description |
+| :-: | --- |
+| `exp` | Expiration time in seconds since the UNIX epoch. Allow 1 minute for skew. |
+| `iat` | Issued-at time in seconds since the UNIX epoch. Allow 1 minute for skew. |
+| `aud` | The client's final domain e.g. `httpbin.corp.example.com`. |
+| `iss` | Issuer must be the URL of your authentication domain e.g. `authenticate.corp.example`. |
+| `sub` | Subject is the user's id. Can be used instead of the `X-Pomerium-Claim-Sub` header. |
+| `email` | Email is the user's email. Can be used instead of the `X-Pomerium-Claim-Email` header. |
 | `groups` | Groups is the user's groups. Can be used instead of the `X-Pomerium-Claim-Groups` header. |
 
 The attestation JWT's signature can be verified using the public key which can be retrieved at Pomerium's `/.well-known/pomerium/jwks.json` endpoint which lives on the authenticate service. A `jwks_uri` is useful when integrating with other systems like [istio](https://istio.io/docs/reference/config/security/istio.authentication.v1alpha1/). For example:
@@ -78,23 +78,23 @@ A single-page javascript application can verify the JWT using a fetch to `/.pome
         decodeJwt,
         createRemoteJWKSet,
         jwtVerify,
-      } from "https://cdn.skypack.dev/jose";
+      } from 'https://cdn.skypack.dev/jose';
 
       async function main() {
-        const result1 = await fetch("/.pomerium/jwt");
+        const result1 = await fetch('/.pomerium/jwt');
         const jwt = await result1.text();
         const claims = decodeJwt(jwt);
-        console.log("Unverified Claims:", claims);
+        console.log('Unverified Claims:', claims);
 
         const jwksURL =
-          "https://" + claims.iss + "/.well-known/pomerium/jwks.json";
+          'https://' + claims.iss + '/.well-known/pomerium/jwks.json';
         const jwks = await createRemoteJWKSet(new URL(jwksURL));
 
-        const { payload } = await jwtVerify(jwt, jwks, {
+        const {payload} = await jwtVerify(jwt, jwks, {
           audience: claims.aud,
           issuer: claims.iss,
         });
-        console.log("Verified Claims:", payload);
+        console.log('Verified Claims:', payload);
       }
 
       main();
@@ -140,6 +140,8 @@ Though you will very likely be verifying signed-headers programmatically in your
 **Voila!** Hopefully walking through a manual verification has helped give you a better feel for how signed JWT tokens are used as a secondary validation mechanism in pomerium.
 
 :::caution
+
+
 
 In an actual client, you'll want to ensure that all the other claims values are valid (like expiration, issuer, audience and so on) in the context of your application. You'll also want to make sure you have a safe and reliable mechanism for distributing pomerium-proxy's public signing key to client apps (typically, a [key management service]).
 

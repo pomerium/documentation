@@ -6,7 +6,7 @@ sidebar_position: 1
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
-import GenerateRecoveryToken from '@site/content/_generate-recovery-token.md'
+import GenerateRecoveryToken from '@site/content/_generate-recovery-token.md';
 
 # Pomerium Enterprise Quickstart
 
@@ -15,23 +15,23 @@ import GenerateRecoveryToken from '@site/content/_generate-recovery-token.md'
 This document assumes:
 
 - A non-containerized environment, either your local computer or a virtual machine (**vm**). While Pomerium is designed to scale with your production environment, we'll leave containerization and infrastructure as code (**IaC**) out for now, to focus on learning how Pomerium Enterprise works.
-   - `root` or `sudo` privileges on the host.
+  - `root` or `sudo` privileges on the host.
 - You already have the open-source Pomerium base installed. If not, follow [this doc](/docs/install/binary) before you continue.
-   - While an existing route is not required, we suggest implementing one test route to validate your identity provider (**IdP**) configuration.
+  - While an existing route is not required, we suggest implementing one test route to validate your identity provider (**IdP**) configuration.
 - Pomerium Enterprise requires a relational database. PostgreSQL 9+ is supported.
-   - Securing the database connection with TLS may not be required, especially for a local installation, but is strongly recommended for production deployments. Therefore, this guide will assume a TLS-secured database connection.
+  - Securing the database connection with TLS may not be required, especially for a local installation, but is strongly recommended for production deployments. Therefore, this guide will assume a TLS-secured database connection.
 
 ## Requirements
 
 - Pomerium Enterprise requires Linux amd64/x86_64. It can manage Pomerium instances on other platforms, however.
 - Each Console instance should have at least:
-    - 4 vCPUs
-    - 8G RAM
-    - 100G of disk wherever logs are stored
+  - 4 vCPUs
+  - 8G RAM
+  - 100G of disk wherever logs are stored
 - Each Postgres instance should have at least:
-    - 4 vCPUs
-    - 8G RAM
-    - 20G for data files
+  - 4 vCPUs
+  - 8G RAM
+  - 20G for data files
 
 ## Install Pomerium Enterprise
 
@@ -40,7 +40,6 @@ Pomerium publishes standard OS packages for RPM and DEB based systems. The repos
 <Tabs>
 
 <TabItem value="deb" label="deb">
-
 
 1. To automatically configure the repository for Debian and Ubuntu distributions, run the following command replacing `[access-key]`:
 
@@ -66,9 +65,7 @@ Pomerium publishes standard OS packages for RPM and DEB based systems. The repos
 
 </TabItem>
 
-
 <TabItem value="yum" label="yum">
-
 
 1. To automatically configure the repository for RHEL based distributions, run the following command replacing `[access-key]`:
 
@@ -91,7 +88,7 @@ Pomerium publishes standard OS packages for RPM and DEB based systems. The repos
 1. Update refresh and install:
 
    ```bash
-yum -y install pomerium-console
+   yum -y install pomerium-console
    ```
 
 </TabItem>
@@ -110,7 +107,6 @@ sudo systemctl enable --now pomerium-console
 
 Like the open-source Pomerium base, Pomerium Enterprise is configured through a single config file, located at `/etc/pomerium-console/config.yaml`.
 
-
 ### Update Pomerium
 
 Open your Pomerium config file, `/etc/pomerium/config.yaml`.
@@ -118,15 +114,15 @@ Open your Pomerium config file, `/etc/pomerium/config.yaml`.
 1. Add a list item in the `routes` block for the Enterprise Console:
 
    ```yaml title="/etc/pomerium/config.yaml"
-     routes:
-       - from: https://console.localhost.pomerium.com
-         to: https://localhost:8701
-         policy:
-           - allow:
-               or:
-                 - domain:
-                     is: companydomain.com
-         pass_identity_headers: true
+   routes:
+     - from: https://console.localhost.pomerium.com
+       to: https://localhost:8701
+       policy:
+         - allow:
+             or:
+               - domain:
+                   is: companydomain.com
+       pass_identity_headers: true
    ```
 
    The example value for `to:` assumes Pomerium and Pomerium Enterprise are running on the same test environment.
@@ -134,7 +130,7 @@ Open your Pomerium config file, `/etc/pomerium/config.yaml`.
 1. If you haven't already, set `signing_key`. See the [reference page](/docs/reference/signing-key) for more information. The same signing key must be used in both Pomerium Core and Enterprise.
 
    ```yaml title="/etc/pomerium/config.yaml"
-   signing_key: "ZZZZZZZZZZZZZZ"
+   signing_key: 'ZZZZZZZZZZZZZZ'
    ```
 
 1. Define the [databroker](/docs/reference/data-broker-service) storage type and connection string. The example below assumes a local Postgres server:
@@ -206,8 +202,8 @@ Once complete, your `/etc/pomerium-console/config.yaml` file should look somethi
 ```yaml title="/etc/pomerium-console/config.yaml"
 database_url: postgres://user:pass@dbhost.internal.mydomain.com/pomerium?sslmode=require
 databroker_service_url: https://pomerium-cache.internal.mydomain.com
-shared_secret: "XXXXXXXXXXXXXXXXXXX"
-database_encryption_key: "YYYYYYYYYYYYYYYYYYYYYY"
+shared_secret: 'XXXXXXXXXXXXXXXXXXX'
+database_encryption_key: 'YYYYYYYYYYYYYYYYYYYYYY'
 
 # change / remove this after initial setup
 administrators: you@mydomain.com
@@ -216,7 +212,7 @@ tls_ca_file: /etc/pomerium-console/ca.pem
 tls_cert_file: /etc/pomerium-console/cert.pem
 tls_key_file: /etc/pomerium-console/key.pem
 
-signing_key: "ZZZZZZZZZZZZZZ"
+signing_key: 'ZZZZZZZZZZZZZZ'
 
 audience: console.localhost.pomerium.com
 
@@ -231,4 +227,4 @@ Pomerium Enterprise assumes access to a [Prometheus](https://prometheus.io/) dat
 
 ### Generate Recovery Token
 
-<GenerateRecoveryToken/>
+<GenerateRecoveryToken />

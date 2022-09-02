@@ -2,14 +2,14 @@
 id: remove-request-headers
 title: Remove Request Headers
 keywords:
-- reference
-- Remove Request Headers
+  - reference
+  - Remove Request Headers
 pagination_prev: null
 pagination_next: null
 ---
 
-
 # Remove Request Headers
+
 - Config File Key: `remove_request_headers`
 - Type: array of `strings`
 - Optional
@@ -28,4 +28,3 @@ Remove Request Headers allows you to remove given request headers. This can be u
     - X-Email
     - X-Username
 ```
-

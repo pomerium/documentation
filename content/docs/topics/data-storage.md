@@ -41,8 +41,7 @@ Please see Pomerium backend and upstream storage system documentation for best p
 - Data Store HA: `no`
 - Data Persistence: `no`
 
-The default storage backend for `databroker` is memory based. This backend provides
-easy deployment semantics but is not persistent or highly available. Running more than one `databroker` instance configured for memory backed storage is not supported and will lead to non-deterministic behavior.
+The default storage backend for `databroker` is memory based. This backend provides easy deployment semantics but is not persistent or highly available. Running more than one `databroker` instance configured for memory backed storage is not supported and will lead to non-deterministic behavior.
 
 ### Postgres
 
@@ -106,8 +105,11 @@ databroker_storage_ca_file: /tls/ca.pem
 ```
 
 :::tip
-the second `s` in `rediss` is intentional and turns on TLS support
+
+ the second `s` in `rediss` is intentional and turns on TLS support
+
 :::
+
 
 ## Troubleshooting
 

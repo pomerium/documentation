@@ -1,7 +1,16 @@
 ---
 title: Background
 lang: en-US
-keywords: [pomerium, identity access proxy, beyondcorp, zero trust, reverse proxy, ztn, zta]
+keywords:
+  [
+    pomerium,
+    identity access proxy,
+    beyondcorp,
+    zero trust,
+    reverse proxy,
+    ztn,
+    zta,
+  ]
 ---
 
 ## History

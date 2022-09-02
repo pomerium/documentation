@@ -44,8 +44,8 @@ Consider this scenario: you want to enable your security team to manage high lev
 
 Your security team can enact top level security policies to ensure, everyone:
 
-   - has a `yourcompany.com` email account,
-   - isn't coming from a known bad actor IP address,
+- has a `yourcompany.com` email account,
+- isn't coming from a known bad actor IP address,
 
 From there, the security team delegates management of child [Namespaces](#namespaces) to application teams, providing flexibility to self-manage their own application [Routes](#routes) and [Policies](#policies).
 
@@ -75,10 +75,13 @@ A user with the Viewer role can:
 In addition to the access provided by the Viewer role, a Manager can create, read, update, and delete routes, policies, and certificates in a Namespace (as well as its children). A Manager may also reference policies and certificates in the parent Namespace.
 
 :::caution
-Managers in any Namespace should note: while creating a route for an [upstream](/docs/overview/glossary#upstream-downstream) path prevents additional routes to that path *in the same namespace*, Managers in other namespaces can create alternate routes to the same path.
+
+ Managers in any Namespace should note: while creating a route for an [upstream](/docs/overview/glossary#upstream-downstream) path prevents additional routes to that path _in the same namespace_, Managers in other namespaces can create alternate routes to the same path.
 
 If you need to ensure that access to a service is only accessible from a single route, consider implementing [Mutual Authentication](/docs/topics/mutual-auth) between Pomerium and the upstream service. This can be achieved using one of several methods, including [mTLS](/docs/guides/upstream-mtls) and [JWT verification](/docs/guides/jwt-verification). You can also utilize a service mesh like [Istio](/docs/guides/istio)
+
 :::
+
 
 #### Admin
 
@@ -95,9 +98,9 @@ You may encounter a situation where you may want to add users that are not direc
 - Create a group within your identity provider directly with the non-domain users in it. This group can be found and added to Namespaces and Policies.
 - Manually add the user's unique ID. Identify the ID from a user's Session Details page, or the [Sessions](/docs/enterprise/reference/reports#sessions) page in Pomerium Enterprise.
 
-   A user can see their session ID by navigating to the special `/.pomerium` URL endpoint from any Pomerium managed route. The unique ID is listed as "Sub" under User Details:
+  A user can see their session ID by navigating to the special `/.pomerium` URL endpoint from any Pomerium managed route. The unique ID is listed as "Sub" under User Details:
 
-   ![The User Details page, showing the "sub" data](img/session-details.png)
+  ![The User Details page, showing the "sub" data](img/session-details.png)
 
 ## Service Accounts
 
@@ -154,6 +157,6 @@ With Pomerium:
 - trust flows from user and device identity, not network location. Every device, user, and application's communication should be authenticated, authorized, and encrypted.
 - Pomerium provides detailed audit logs for all activity in your environment. Quickly detect anomalies to mitigate bad actors and revoke access with a click of a button. Simplify life-cycle management and access reviews.
 
-[Reference: Policies]: /docs/enterprise/reference/manage#policies-2
-[Reference: Namespace]: /docs/enterprise/reference/configure.md#namespaces
-[Reference: Routes]: /docs/enterprise/reference/manage#routes
+[reference: policies]: /docs/enterprise/reference/manage#policies-2
+[reference: namespace]: /docs/enterprise/reference/configure.md#namespaces
+[reference: routes]: /docs/enterprise/reference/manage#routes

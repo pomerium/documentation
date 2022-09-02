@@ -11,7 +11,7 @@ pagination_next: null
 
 #### Per Route OIDC Credentials
 
-This release of Pomerium adds the ability to bind a route to unique OIDC credentials.  This allows Identity Provider administrators to view Pomerium protected applications individually rather than as a single shared application.
+This release of Pomerium adds the ability to bind a route to unique OIDC credentials. This allows Identity Provider administrators to view Pomerium protected applications individually rather than as a single shared application.
 
 See [idp_client_id](/docs/reference/routes/identity-provider-client-id-per-route) and [idp_client_secret](/docs/reference/routes/identity-provider-client-secret-per-route) for configuration details.
 
@@ -52,18 +52,20 @@ Starting in v0.16, Pomerium will instead generate a self-signed certificate if i
 Previously, Pomerium would default to setting the uri param `access_type` to `offline` for all OpenID Connect based identity providers. However, using uri params to ensure offline access (e.g. `refresh_tokens` used to keep user's sessions alive) [is unique to Google](https://developers.google.com/identity/protocols/oauth2/web-server#offline). Those query params will now only be set for Google. Other OIDC based IdP's should continue to work using [OIDC's](https://openid.net/specs/openid-connect-core-1_0.html#OfflineAccess) `offline_access` scope.
 
 #### Removed options
+
 The deprecated `headers` option has been removed. Use [`set_response_headers`](/docs/reference/set-response-headers) instead.
 
 The `signing_key_algorithm` option has been removed and will now be inferred from `signing_key`.
 
 #### Changed GitHub Team IDs
+
 To improve performance, IdP directory synchronization for GitHub now uses the GraphQL API. This API returns the same information as the REST API, except that the GraphQL node IDs are different. Where we previously used the team integer ID from the REST API, we now use the team slug instead. Most policies should already use the team slug for group based rules, which should continue to work. However, if the integer ID is used it will no longer work. Update those policies to use the team slug instead.
 
 #### CLI Source and Packaging Update
+
 `pomerium-cli` has been factored out of the core repository and now resides at <https://github.com/pomerium/cli>. If you currently install the CLI tool from [Packages](/docs/overview/releases#packages-2) or [Homebrew](/docs/overview/releases#homebrew), no changes should be required to your process. However, users of docker images or direct github release downloads will need to update their references.
 
 Please see the [updated install instructions](/docs/overview/releases#pomerium-cli) for additional details.
-
 
 [authenticate internal service url]: /docs/reference/authenticate-service-url
 [cache service docs]: /docs/reference/data-broker-service

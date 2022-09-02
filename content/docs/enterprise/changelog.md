@@ -5,6 +5,7 @@ title: Changelog
 ## 0.17.0
 
 ### New
+
 - Pomerium Enterprise now requires a valid license to start.
 
 ### Updated

@@ -2,21 +2,20 @@
 id: redirect
 title: Redirect
 keywords:
-- reference
-- Redirect
+  - reference
+  - Redirect
 pagination_prev: null
 pagination_next: null
 ---
 
-
 # Redirect
+
 - `yaml`/`json` setting: 'redirect'
 - Type: object
 - Optional
 - Example: `{ "host_redirect": "example.com" }`
 
-`Redirect` is used to redirect incoming requests to a new URL. The `redirect` field is an object with several possible
-options:
+`Redirect` is used to redirect incoming requests to a new URL. The `redirect` field is an object with several possible options:
 
 - `https_redirect` (boolean): the incoming scheme will be swapped with "https".
 - `scheme_redirect` (string): the incoming scheme will be swapped with the given value.
@@ -28,4 +27,3 @@ options:
 - `strip_query` (boolean): indicates that during redirection, the query portion of the URL will be removed. Defaults to false.
 
 Either `redirect` or `to` must be set.
-

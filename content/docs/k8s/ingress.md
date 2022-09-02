@@ -30,6 +30,8 @@ Use Pomerium as a first-class secure-by-default Ingress Controller. The Pomerium
 
 :::caution
 
+
+
 Only one Ingress Controller instance is supported per Pomerium cluster.
 
 :::
@@ -118,7 +120,8 @@ metadata:
 </details>
 
 :::tip
-Routes are sorted and applied in the following order.
+
+ Routes are sorted and applied in the following order.
 
 1. Ascending by `from`.
 1. Descending by `path`.
@@ -127,7 +130,9 @@ Routes are sorted and applied in the following order.
 1. Ascending by `id`.
 
 This sorting order helps ensure that more restrictive routes for specific paths and regexes are applied correctly.
+
 :::
+
 
 ### Supported Annotations
 
@@ -171,20 +176,22 @@ Most configuration keys in non-Kubernetes deployments can be specified as annota
 
 The remaining annotations are specific to or behave differently than they do when using Pomerium without the Ingress Controller:
 
-| Annotation                                             | Description                                                                                                                                                                                   |
-| ------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `ingress.pomerium.io/kubernetes_service_account_token` | Name of a Kubernetes `token` Secret containing a [Kubernetes Service Account Token](/docs/reference/routes/kubernetes-service-account-token).                                                 |
-| `ingress.pomerium.io/path_regex`                       | When set to `"true"` enables path regex matching. See the [Regular Expressions Path Matching](#regular-expressions-path-matching) section for more information.                               |
-| `ingress.pomerium.io/secure_upstream`                  | When set to `"true"`, use `https` when connecting to the upstream endpoint.                                                                                                                   |
-| `ingress.pomerium.io/set_request_headers_secret`       | Name of Kubernetes Secret containing the contents of the request header to send upstream. When used, `ingress.pomerium.io/set_request_headers` should not contain overlapping keys.           |
-| `ingress.pomerium.io/set_response_headers_secret`      | Name of Kubernetes Secret containing the contents of the response header to send downstream. When used, `ingress.pomerium.io/set_response_headers` should not contain overlapping keys.       |
-| `ingress.pomerium.io/service_proxy_upstream`           | When set to `"true"` forces Pomerium to connect to upstreams through the k8s service proxy, and not individual endpoints. <br/> This is useful when deploying Pomerium inside a service mesh. |
-| `ingress.pomerium.io/tcp_upstream`                     | When set to `"true"`, defines the route as supporting a TCP tunnel. See the [example below](#tcp-endpoints) for more information.                                                             |
-| `ingress.pomerium.io/tls_client_secret`                | Name of Kubernetes `tls` Secret containing a [client certificate][tls_client_certificate] for connecting to the upstream.                                                                     |
-| `ingress.pomerium.io/tls_custom_ca_secret`             | Name of Kubernetes `tls` Secret containing a custom [CA certificate][`tls_custom_ca_secret`] for the upstream.                                                                                |
-| `ingress.pomerium.io/tls_downstream_client_ca_secret`  | Name of Kubernetes `tls` Secret containing a [Client CA][client-certificate-authority] for validating downstream clients.                                                                     |
+| Annotation | Description |
+| --- | --- |
+| `ingress.pomerium.io/kubernetes_service_account_token` | Name of a Kubernetes `token` Secret containing a [Kubernetes Service Account Token](/docs/reference/routes/kubernetes-service-account-token). |
+| `ingress.pomerium.io/path_regex` | When set to `"true"` enables path regex matching. See the [Regular Expressions Path Matching](#regular-expressions-path-matching) section for more information. |
+| `ingress.pomerium.io/secure_upstream` | When set to `"true"`, use `https` when connecting to the upstream endpoint. |
+| `ingress.pomerium.io/set_request_headers_secret` | Name of Kubernetes Secret containing the contents of the request header to send upstream. When used, `ingress.pomerium.io/set_request_headers` should not contain overlapping keys. |
+| `ingress.pomerium.io/set_response_headers_secret` | Name of Kubernetes Secret containing the contents of the response header to send downstream. When used, `ingress.pomerium.io/set_response_headers` should not contain overlapping keys. |
+| `ingress.pomerium.io/service_proxy_upstream` | When set to `"true"` forces Pomerium to connect to upstreams through the k8s service proxy, and not individual endpoints. <br/> This is useful when deploying Pomerium inside a service mesh. |
+| `ingress.pomerium.io/tcp_upstream` | When set to `"true"`, defines the route as supporting a TCP tunnel. See the [example below](#tcp-endpoints) for more information. |
+| `ingress.pomerium.io/tls_client_secret` | Name of Kubernetes `tls` Secret containing a [client certificate][tls_client_certificate] for connecting to the upstream. |
+| `ingress.pomerium.io/tls_custom_ca_secret` | Name of Kubernetes `tls` Secret containing a custom [CA certificate][`tls_custom_ca_secret`] for the upstream. |
+| `ingress.pomerium.io/tls_downstream_client_ca_secret` | Name of Kubernetes `tls` Secret containing a [Client CA][client-certificate-authority] for validating downstream clients. |
 
 :::tip
+
+
 
 Every value for the annotations above must be in `string` format.
 
@@ -272,7 +279,7 @@ metadata:
   name: external
 spec:
   type: ExternalName
-  externalName: "my-existing-service.corp.com"
+  externalName: 'my-existing-service.corp.com'
   ports:
     - protocol: TCP
       name: https
@@ -284,7 +291,7 @@ metadata:
   name: external
   annotations:
     cert-manager.io/cluster-issuer: letsencrypt-prod-http
-    ingress.pomerium.io/secure_upstream: "true"
+    ingress.pomerium.io/secure_upstream: 'true'
     ingress.pomerium.io/policy: |
       - allow:
           and:
@@ -294,10 +301,10 @@ spec:
   ingressClassName: pomerium
   tls:
     - hosts:
-        - "external.localhost.pomerium.io"
+        - 'external.localhost.pomerium.io'
       secretName: external-localhost-pomerium.io
   rules:
-    - host: "external.localhost.pomerium.io"
+    - host: 'external.localhost.pomerium.io'
       http:
         paths:
           - path: /
@@ -318,8 +325,11 @@ You can use a [re2 regular expression] To create an Ingress that matches multipl
 1. Set `path` to an re2 expression matching the full path. It must include the `^/` prefix and `$` suffix. Any query strings should be removed.
 
 :::tip
-Check out [this example expression](https://regex101.com/r/IBVUKT/1/) at [regex101.com] for a more detailed explanation and example paths, both matching and not.
+
+ Check out [this example expression](https://regex101.com/r/IBVUKT/1/) at [regex101.com] for a more detailed explanation and example paths, both matching and not.
+
 :::
+
 
 ```yaml
 apiVersion: networking.k8s.io/v1
@@ -328,7 +338,7 @@ metadata:
   annotations:
     cert-manager.io/issuer: example-issuer
     ingress.pomerium.io/allowed_domains: '["exampledomain.com"]'
-    ingress.pomerium.io/path_regex: "true"
+    ingress.pomerium.io/path_regex: 'true'
   name: example
 spec:
   ingressClassName: pomerium
@@ -359,11 +369,11 @@ kind: Ingress
 metadata:
   name: tcp-example
   annotations:
-    ingress.pomerium.io/tcp_upstream: "true"
+    ingress.pomerium.io/tcp_upstream: 'true'
 spec:
   ingressClassName: pomerium
   rules:
-    - host: "tcp.localhost.pomerium.io"
+    - host: 'tcp.localhost.pomerium.io'
       http:
         paths:
           - pathType: ImplementationSpecific

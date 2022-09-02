@@ -2,8 +2,8 @@
 id: data-broker-storage-connection-string
 title: Data Broker Storage Connection String
 keywords:
-- reference
-- Data Broker Storage Connection String
+  - reference
+  - Data Broker Storage Connection String
 pagination_prev: null
 pagination_next: null
 ---

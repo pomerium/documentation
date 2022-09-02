@@ -4,9 +4,9 @@ title: JWT Claim Headers
 description: |
   The JWT Claim Headers setting allows you to pass specific user session data to upstream applications as HTTP request headers and additional JWT claims.
 keywords:
-- reference
-- JWT Claim Headers
-- jwt_claim_headers
+  - reference
+  - JWT Claim Headers
+  - jwt_claim_headers
 pagination_prev: null
 pagination_next: null
 ---

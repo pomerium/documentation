@@ -2,14 +2,14 @@
 id: autocert-must-staple
 title: Autocert Must-Staple
 keywords:
-- reference
-- Autocert Must-Staple
+  - reference
+  - Autocert Must-Staple
 pagination_prev: null
 pagination_next: null
 ---
 
-
 # Autocert Must-Staple
+
 - Environmental Variable: `AUTOCERT_MUST_STAPLE`
 - Config File Key: `autocert_must_staple`
 - Type: `bool`
@@ -19,9 +19,10 @@ If true, force autocert to request a certificate with the `status_request` exten
 
 :::tip
 
+
+
 This setting will only take effect when you request or renew your certificates.
 
 :::
 
 For more details, please see [RFC7633](https://tools.ietf.org/html/rfc7633) .
-

@@ -13,7 +13,9 @@ import TabItem from '@theme/TabItem';
 This document covers configuring Ping Identity as an IdP for your Pomerium gateway. It assumes you have already [installed Pomerium](/docs/install/).
 
 :::caution
+
 While we do our best to keep our documentation up to date, changes to third-party systems are outside our control. Refer to [Adding an application - Web application](https://docs.pingidentity.com/bundle/p14c/page/lyd1583255784891.html) from Ping's documentation as needed, or [let us know](https://github.com/pomerium/documentation/issues/new?assignees=&labels=&template=doc-error.md) if we need to re-visit this page.
+
 :::
 
 ## Create OpenID Connect App
@@ -42,9 +44,9 @@ While we do our best to keep our documentation up to date, changes to third-part
 
 1. From the **Configuration** tab of your new application, note the values of the following keys to use in your Pomerium Configuration:
 
-   * **ISSUER**: used as the `idp_provider_url` (e.g. `https://auth.pingone.com/720dbe8a-83ed-48e1-9988-9928301ae668/as`)
-   * **CLIENT ID**: used as the `idp_client_id`
-   * **CLIENT SECRET**: used as the `idp_client_secret`
+   - **ISSUER**: used as the `idp_provider_url` (e.g. `https://auth.pingone.com/720dbe8a-83ed-48e1-9988-9928301ae668/as`)
+   - **CLIENT ID**: used as the `idp_client_id`
+   - **CLIENT SECRET**: used as the `idp_client_secret`
 
    ![Ping Configuration](./img/ping/ping-configuration.png)
 
@@ -52,7 +54,7 @@ While we do our best to keep our documentation up to date, changes to third-part
 
 ## Service Account
 
-To use `allowed_groups` in a policy, an `idp_service_account` needs to be set in the Pomerium configuration. The service account for Ping uses a *different* application, and client ID and client secret from the one configured above.
+To use `allowed_groups` in a policy, an `idp_service_account` needs to be set in the Pomerium configuration. The service account for Ping uses a _different_ application, and client ID and client secret from the one configured above.
 
 1. Click **Add Application**, but this time select **Worker → Worker App**.
 
@@ -68,8 +70,8 @@ To use `allowed_groups` in a policy, an `idp_service_account` needs to be set in
 
    ```json
    {
-      "client_id": "XXXXXXXXXX",
-      "client_secret": "XXXXXXXXXX"
+     "client_id": "XXXXXXXXXX",
+     "client_secret": "XXXXXXXXXX"
    }
    ```
 
@@ -87,11 +89,11 @@ Update your Pomerium configuration to use Ping as the IdP:
 <TabItem value="config.yaml" label="config.yaml">
 
 ```yaml
-idp_provider: "ping"
-idp_provider_url: "https://auth.pingone.com/720dbe8a-83ed-48e1-9988-9928301ae668/as"
-idp_client_id: "CLIENT_ID"
-idp_client_secret: "CLIENT_SECRET"
-idp_service_account: "XXXXXXX" # Base64-encoded JSON
+idp_provider: 'ping'
+idp_provider_url: 'https://auth.pingone.com/720dbe8a-83ed-48e1-9988-9928301ae668/as'
+idp_client_id: 'CLIENT_ID'
+idp_client_secret: 'CLIENT_SECRET'
+idp_service_account: 'XXXXXXX' # Base64-encoded JSON
 ```
 
 </TabItem>

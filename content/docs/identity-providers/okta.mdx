@@ -15,7 +15,9 @@ Okta is a popular identity provider used by businesses of all sizes. Integrating
 This page covers configuring Okta to communicate with Pomerium as an [IdP](/docs/overview/glossary#identity-provider). It assumes you have already [installed Pomerium][pomerium-install] before you begin.
 
 :::caution
+
 While we do our best to keep our documentation up to date, changes to third-party systems are outside our control. Refer to [Create an Okta app Integration](https://developer.okta.com/docs/guides/sign-into-web-app/aspnet/create-okta-application/) from Okta's developer docs as needed, or [let us know](https://github.com/pomerium/documentation/issues/new?assignees=&labels=&template=doc-error.md) if we need to re-visit this page.
+
 :::
 
 ## Create OpenID Connect Application
@@ -32,13 +34,13 @@ While we do our best to keep our documentation up to date, changes to third-part
 
 1. Provide the following information for your application settings:
 
-   | Field                        | Description                                                               |
-   | ---------------------------- | ------------------------------------------------------------------------- |
-   | Name                         | The name of your application.                                             |
-   | Grant type allowed           | **You must enable Refresh Token.**                                        |
-   | Base URIs                    | **Optional**: The domain(s) of your application.                          |
-   | Sign-in redirect URIs        | Redirect URL (e.g.`https://${authenticate_service_url}/oauth2/callback`). |
-   | Controlled Access            | The user groups that can sign in to this application. See [Group ID] for more information. |
+   | Field | Description |
+   | --- | --- |
+   | Name | The name of your application. |
+   | Grant type allowed | **You must enable Refresh Token.** |
+   | Base URIs | **Optional**: The domain(s) of your application. |
+   | Sign-in redirect URIs | Redirect URL (e.g.`https://${authenticate_service_url}/oauth2/callback`). |
+   | Controlled Access | The user groups that can sign in to this application. See [Group ID] for more information. |
 
    ![Okta Create Application Settings](./img/okta/okta-create-app-settings.png)
 
@@ -78,11 +80,11 @@ Finally, configure Pomerium with the identity provider settings retrieved in the
 <TabItem value="config.yaml" label="config.yaml">
 
 ```yaml
-idp_provider: "okta"
-idp_provider_url: "https://awesomecompany.okta.com"
-idp_client_id: "REPLACE ME"
-idp_client_secret: "REPLACE ME"
-idp_service_account: "REPLACE ME" # base64 encoded JSON object
+idp_provider: 'okta'
+idp_provider_url: 'https://awesomecompany.okta.com'
+idp_client_id: 'REPLACE ME'
+idp_client_secret: 'REPLACE ME'
+idp_service_account: 'REPLACE ME' # base64 encoded JSON object
 ```
 
 </TabItem>
@@ -105,4 +107,4 @@ IDP_SERVICE_ACCOUNT="REPLACE_ME" # base64 encoded JSON object
 [oauth2]: https://oauth.net/2/
 [openid connect]: https://en.wikipedia.org/wiki/OpenID_Connect
 [pomerium-install]: /docs/install/
-[Group ID]: https://developer.okta.com/docs/reference/api/groups/
+[group id]: https://developer.okta.com/docs/reference/api/groups/

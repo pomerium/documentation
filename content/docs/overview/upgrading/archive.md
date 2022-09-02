@@ -36,19 +36,19 @@ Routes and policies may now be configured under a new top level key - `routes`
 
 #### Ping Identity
 
-[Ping Identity](https://www.pingidentity.com/) is supported as a directory provider.  See [the documentation](https://www.pomerium.com/docs/identity-providers/ping.html) for details.
+[Ping Identity](https://www.pingidentity.com/) is supported as a directory provider. See [the documentation](https://www.pomerium.com/docs/identity-providers/ping.html) for details.
 
 #### Customized Identity Headers
 
-With the v0.14 release, the names of `X-Pomerium-Claim-{Name}` headers can now be [customized](https://www.pomerium.com/reference/#jwt-claim-headers).  This enables broader 3rd party application support for Pomerium's identity headers.
+With the v0.14 release, the names of `X-Pomerium-Claim-{Name}` headers can now be [customized](https://www.pomerium.com/reference/#jwt-claim-headers). This enables broader 3rd party application support for Pomerium's identity headers.
 
 #### Redis High Availability
 
-Databroker now supports redis [sentinel](https://redis.io/topics/sentinel) and [cluster](https://redis.io/topics/cluster-spec) for increased availability.  See the databroker [documentation](https://www.pomerium.com/reference/#data-broker-storage-connection-string) for details.
+Databroker now supports redis [sentinel](https://redis.io/topics/sentinel) and [cluster](https://redis.io/topics/cluster-spec) for increased availability. See the databroker [documentation](https://www.pomerium.com/reference/#data-broker-storage-connection-string) for details.
 
 #### Rewrite Response Headers
 
-Policies may now [rewrite response headers](https://www.pomerium.com/reference/#rewrite-response-headers) from upstream services.  This can be especially useful when upstreams attempt to redirect users to unreachable internal hostnames.
+Policies may now [rewrite response headers](https://www.pomerium.com/reference/#rewrite-response-headers) from upstream services. This can be especially useful when upstreams attempt to redirect users to unreachable internal hostnames.
 
 ### Breaking
 
@@ -58,9 +58,9 @@ Programmatic login now restricts the allowed redirect URL domains. By default th
 
 #### `allowed_users` ID format
 
-When specifying `allowed_users` by ID, the identity provider is no longer part of the ID format.  This does not impact users specified by e-mail.
+When specifying `allowed_users` by ID, the identity provider is no longer part of the ID format. This does not impact users specified by e-mail.
 
-To update your policies for v0.14, please remove any identity provider prefix.  Example: `okta/00usi7mc8XC8SwFxT4x6` becomes `00usi7mc8XC8SwFxT4x6`.
+To update your policies for v0.14, please remove any identity provider prefix. Example: `okta/00usi7mc8XC8SwFxT4x6` becomes `00usi7mc8XC8SwFxT4x6`.
 
 ## Since 0.12.0
 
@@ -98,7 +98,6 @@ Prior to the v0.13 release, it was possible for an administrative user to tempo
 
 Prior to the v0.13 release, it was possible to create service accounts via Pomerium's CLI tool. These service accounts were signed with Pomerium's shared secret key. As with user impersonation, having session state stored client-side significantly expands the attack surface of Pomerium and complicates policy enforcement. Client side service accounts were removed to shrink that attack surface area, and to simplify policy enforcement.
 
-
 #### Administrators option removed
 
 The `administrators` configuration option has been removed.
@@ -109,7 +108,7 @@ The `administrators` configuration option has been removed.
 
 #### TCP Proxying
 
-Pomerium can now be used for non-HTTP services.  See [documentation](/docs/tcp) for more details.
+Pomerium can now be used for non-HTTP services. See [documentation](/docs/tcp) for more details.
 
 #### Datadog Tracing
 
@@ -131,7 +130,7 @@ The `cache_service_url` parameter has been deprecated since v0.10.0 and is now r
 
 #### Docker Multi-Arch Images
 
-With the v0.11.0 release, Pomerium docker images are multi-arch for `arm64` and `amd64`.  Individual images for each architecture will continue to be published.
+With the v0.11.0 release, Pomerium docker images are multi-arch for `arm64` and `amd64`. Individual images for each architecture will continue to be published.
 
 ## Since 0.9.0
 
@@ -142,6 +141,8 @@ With the v0.11.0 release, Pomerium docker images are multi-arch for `arm64` and 
 With the v0.10.0 release, Pomerium now queries group information asynchronously using a service account. While a service account was already required for a few identity providers like Google's GSuite, an [Identity Provider Service Account] is now required for all other providers as well. The format of this field varies and is specified in each identity provider's documentation.
 
 :::warning
+
+
 
 If no [Identity Provider Service Account] is supplied, policies using groups (e.g. `allowed_groups` will not work).
 
@@ -158,6 +159,8 @@ There are two [storage backend types] available: `memory` or `redis`. You can se
 For `memory` storage, restarting the cache service will result in all users having to re-login. Code for the in-memory database used by the cache service can be found here: [internal/databroker/memory](https://github.com/pomerium/pomerium/tree/main/internal/databroker/memory).
 
 :::warning
+
+
 
 Running more than one instance of the `memory` type cache service is not supported.
 
@@ -176,7 +179,7 @@ Please see the following interfaces for reference to implement your storage back
 
 #### Identity headers
 
-With this release, pomerium will not insert identity headers (X-Pomerium-Jwt-Assertion/X-Pomerium-Claim-*) by default. To get pre 0.9.0 behavior, you can set `pass_identity_headers` to true on a per-policy basis.
+With this release, pomerium will not insert identity headers (X-Pomerium-Jwt-Assertion/X-Pomerium-Claim-\*) by default. To get pre 0.9.0 behavior, you can set `pass_identity_headers` to true on a per-policy basis.
 
 ## Since 0.8.0
 
@@ -237,7 +240,7 @@ Although it's unlikely anyone ever used it, prior to 0.8.0 the policy configurat
 
 ```yaml
 policy:
-  - from: "https://example.com/some/path"
+  - from: 'https://example.com/some/path'
 ```
 
 The proxy and authorization server would simply ignore the path and route/authorize based on the host name.
@@ -256,15 +259,15 @@ In other words, this configuration:
 
 ```yaml
 policy:
-  - from: "http://example.com/some/path"
+  - from: 'http://example.com/some/path'
 ```
 
 Should be written like this:
 
 ```yaml
 policy:
-  - from: "http://example.com"
-    prefix: "/some/path"
+  - from: 'http://example.com'
+    prefix: '/some/path'
 ```
 
 ## Since 0.6.0
@@ -274,6 +277,8 @@ policy:
 #### Getting user's identity
 
 :::warning
+
+
 
 This changed was partially reverted in v0.7.2\. Session details like `user`, `email`, and `groups` can still be explicitly extracted by setting the [jwt_claims_header](/docs/reference/jwt-claim-headers) configuration option.
 
@@ -497,7 +502,6 @@ Usage of the POLICY_FILE envvar is no longer supported. Support for file based p
 ### Authenticate Internal Service Address
 
 The configuration variable [Authenticate Internal Service URL] must now be a valid [URL](https://golang.org/pkg/net/url/#URL) type and contain both a hostname and valid `https` schema.
-
 
 [authenticate internal service url]: /docs/reference/authenticate-service-url
 [cache service docs]: /docs/reference/data-broker-service

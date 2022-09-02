@@ -4,14 +4,14 @@ title: Identity Provider Scopes
 description: |
   Identity provider scopes correspond to access privilege scopes as defined in Section 33 of OAuth 20 RFC6749.
 keywords:
-- reference
-- Identity Provider Scopes
+  - reference
+  - Identity Provider Scopes
 pagination_prev: null
 pagination_next: null
 ---
 
-
 # Identity Provider Scopes
+
 - Environmental Variable: `IDP_SCOPES`
 - Config File Key: `idp_scopes`
 - Type: list of `string`
@@ -22,13 +22,16 @@ Identity provider scopes correspond to access privilege scopes as defined in Sec
 
 :::warning
 
+
+
 If you are using a built-in provider, you probably don't want to set customized scopes.
 
 :::
 
 :::warning
 
+
+
 Some providers, like Amazon Cognito, _do not_ support the `offline_access` scope.
 
 :::
-

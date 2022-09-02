@@ -1,7 +1,18 @@
 ---
 title: API
 lang: en-US
-keywords: [pomerium, identity access proxy, oidc, reverse proxy, enterprise, console, api, python, go]
+keywords:
+  [
+    pomerium,
+    identity access proxy,
+    oidc,
+    reverse proxy,
+    enterprise,
+    console,
+    api,
+    python,
+    go,
+  ]
 ---
 
 import Tabs from '@theme/Tabs';
@@ -14,29 +25,29 @@ The Pomerium Enterprise Console supports programmatic interaction through an API
 ## Before You Begin
 
 This doc assumes:
- - You already have installed Pomerium and Pomerium Enterprise,
- - The enterprise console service is encrypted. Review the [tls-*] keys for more information.
+
+- You already have installed Pomerium and Pomerium Enterprise,
+- The enterprise console service is encrypted. Review the [tls-*] keys for more information.
 
 ## Configure a New Route
 
 1. We suggest configuring the route for API access in the open-source Pomerium. That way changes made through the API that might break access to the console GUI will not break access to the API route.
 
-    ```yaml
-    - from: https://console-api.pomerium.localhost.io
-      to: https://pomerium-console-domain-name:8702
-      pass_identity_headers: true
-      allow_any_authenticated_user: true
-      tls_custom_ca_file: /path/to/rootCA.pem # See https://www.pomerium.com/reference/#tls-custom-certificate-authority
-    ```
+   ```yaml
+   - from: https://console-api.pomerium.localhost.io
+     to: https://pomerium-console-domain-name:8702
+     pass_identity_headers: true
+     allow_any_authenticated_user: true
+     tls_custom_ca_file: /path/to/rootCA.pem # See https://www.pomerium.com/reference/#tls-custom-certificate-authority
+   ```
 
 1. You must also update the `audience` key to include the new route's `from` value:
 
-	```yaml
-	audience: "console.pomerium.localhost.io,console-api.pomerium.localhost.io"
-	```
+   ```yaml
+   audience: 'console.pomerium.localhost.io,console-api.pomerium.localhost.io'
+   ```
 
-	If you're running Pomerium Enterprise as a system service, restart the daemon.
-
+   If you're running Pomerium Enterprise as a system service, restart the daemon.
 
 ## Create a Service Account
 
@@ -47,7 +58,9 @@ This doc assumes:
 1. Grant the service account the appropriate [role](/docs/enterprise/concepts#rbac-for-enterprise-console-users) on the Namespace(s) it will operate against.
 
 :::tip
+
 Service accounts created in any Namespace other than **Global** will include a reference to that Namespace ID. You must specify the entire user ID (i.e. `design-api@bff1bea6-a3d6-232d-812c-b4fd8e26d72e.pomerium`) when using the service account.
+
 :::
 
 ## Install The Library
@@ -201,6 +214,7 @@ func run() error {
 	return nil
 }
 ```
+
 </TabItem>
 </Tabs>
 

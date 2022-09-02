@@ -3,7 +3,7 @@ title: Programmatic access
 description: This article describes how to configure pomerium to be used to enable machine-to-machine programmatic access.
 ---
 
-import ProgrammaticAccess from '@site/content/examples/sh/programmatic_access.py.md'
+import ProgrammaticAccess from '@site/content/examples/sh/programmatic_access.py.md';
 
 This page describes how to obtain Pomerium access credentials programmatically via a web-based oauth2 style authorization flow. If you have ever used Google's `gcloud` commandline app, the mechanism is very similar.
 
@@ -81,7 +81,7 @@ See the python script below for example of how to start a callback server, and s
 
 ## Handling expiration and revocation
 
-Your script or application should anticipate the possibility that your underlying  `refresh_token` may stop working. For example, a refresh token might stop working if the underlying user changes passwords, revokes access, or if the administrator removes rotates or deletes the OAuth Client ID.
+Your script or application should anticipate the possibility that your underlying `refresh_token` may stop working. For example, a refresh token might stop working if the underlying user changes passwords, revokes access, or if the administrator removes rotates or deletes the OAuth Client ID.
 
 ## High level workflow
 
@@ -97,7 +97,9 @@ The application interacting with Pomerium must manage the following workflow. Co
 1. The script or application can now make any requests as normal to the upstream application by setting the `Authorization: Pomerium ${pomerium_jwt}` header.
 
 :::tip
+
 Pomerium supports `Authorization: Bearer Pomerium-${pomerium_jwt}` or `X-Pomerium-Authorization: ${pomerium_jwt}` in addition to `Authorization: Pomerium ${pomerium_jwt}` format.
+
 :::
 
 ## Example Code
@@ -109,7 +111,7 @@ python3 scripts/programmatic_access.py \
 	--dst https://verify.example.com/headers
 ```
 
-<ProgrammaticAccess/>
+<ProgrammaticAccess />
 
 [authorization bearer token]: https://developers.google.com/gmail/markup/actions/verifying-bearer-tokens
 [identity provider]: /docs/identity-providers

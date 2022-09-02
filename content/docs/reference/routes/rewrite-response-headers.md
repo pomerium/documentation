@@ -2,14 +2,14 @@
 id: rewrite-response-headers
 title: Rewrite Response Headers
 keywords:
-- reference
-- Rewrite Response Headers
+  - reference
+  - Rewrite Response Headers
 pagination_prev: null
 pagination_next: null
 ---
 
-
 # Rewrite Response Headers
+
 - Config File Key: `rewrite_response_headers`
 - Type: `object`
 - Optional
@@ -31,4 +31,3 @@ rewrite_response_headers:
 ```
 
 The browser would be redirected to: `http://frontend/one/some/path/`. This is similar to nginx's [`proxy_redirect` option](http://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_redirect), but can be used for any header.
-

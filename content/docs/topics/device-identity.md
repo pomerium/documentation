@@ -12,8 +12,8 @@ The history of IT security has, until recently, mostly focused on user identity 
 Hardware-backed device identity is becoming more widely discussed as more products begin to implement or require it across all tech industries. For example, Windows 11 generated a lot of news by [requiring TPM 2.0][win11-reqs], and Apple is taking steps to [eliminate passwords][apple-passkeys] :
 
 | ![Verge Article Header and Apple Video Page](./img/verge-apple.png) |
-|:--|
-| **Sources:**<br />- <https://www.theverge.com/2021/6/25/22550376/microsoft-windows-11-tpm-chips-requirement-security><br/>-  <https://developer.apple.com/videos/play/wwdc2021/10106/> |
+| :-- |
+| **Sources:**<br />- <https://www.theverge.com/2021/6/25/22550376/microsoft-windows-11-tpm-chips-requirement-security><br/>- <https://developer.apple.com/videos/play/wwdc2021/10106/> |
 
 Device identity protects a trusted user from accessing sensitive data from a potentially unsafe device, like their personal computer or phone. Think of it as similar to multi-factor authentication (**MFA**); where MFA covers "what you know" (password) and "who you are" (biometrics, face recognition, etc), device identity asks "is this device safe?" by confirming that the device you are using to access a system is trusted.
 
@@ -43,9 +43,12 @@ Also known as cross-platform or roaming authenticators, these are authentication
 
 - FIDO U2F: This [open standard][fido-spec] is used by many products like Yubico's [Yubikey][yubikey-products] and Google's [Titan Security Key](https://support.google.com/titansecuritykey/answer/9115487?hl=en). They usually secure a private key used to decrypt information signed by an accessible public key.
 
-:::tip Note
-The nature of cross-platform keys mean they are not associated with a single end-user device. Pomerium policies can be written to allow these keys, or specified to only accept secure enclaves.
+:::tip
+
+ Note The nature of cross-platform keys mean they are not associated with a single end-user device. Pomerium policies can be written to allow these keys, or specified to only accept secure enclaves.
+
 :::
+
 
 ## Implement Device Identity with Pomerium
 
@@ -62,7 +65,7 @@ To get started, review the following pages:
 
 ## Looking Ahead: Device Posture
 
-Even if access is restricted to known devices, what happens when a user is found to have a vulnerable OS or browser version? How can an administrator ensure their network is not exposed, and that the user's system is promptly patched and remediated?  As secure enclave technologies evolve, **device posture** -- which is sometimes referred to as device state -- will play an increasingly important role in not only authorization decisions but also in helping to quickly remediate vulnerable corporate devices. Device posture is a more complex superset of device identity, with more information about the device and software being used to generate the resulting identifier.
+Even if access is restricted to known devices, what happens when a user is found to have a vulnerable OS or browser version? How can an administrator ensure their network is not exposed, and that the user's system is promptly patched and remediated? As secure enclave technologies evolve, **device posture** -- which is sometimes referred to as device state -- will play an increasingly important role in not only authorization decisions but also in helping to quickly remediate vulnerable corporate devices. Device posture is a more complex superset of device identity, with more information about the device and software being used to generate the resulting identifier.
 
 Designing your security model to use device identity also primes your infrastructure to implement advanced security rules based on device posture down the road.
 

@@ -1,7 +1,16 @@
 ---
 title: Production Deployment
 description: This article covers production deployment requirements and concerns
-keywords: [pomerium, identity access proxy, production, deployment, scale, scaling, horizontal,]
+keywords:
+  [
+    pomerium,
+    identity access proxy,
+    production,
+    deployment,
+    scale,
+    scaling,
+    horizontal,
+  ]
 pagination_prev: null
 ---
 
@@ -42,8 +51,11 @@ The Databroker service, which is responsible for session and identity related da
 Pomerium's individual components can be divided into two categories; the data plane and control plane. Regardless of which mode you run Pomerium in, we strongly recommend multiple instances of each service for fault tolerance.
 
 :::tip
-Our [Kubernetes](/docs/k8s/quickstart) supports [Horizontal Pod Autoscaling](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/).
+
+ Our [Kubernetes](/docs/k8s/quickstart) supports [Horizontal Pod Autoscaling](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/).
+
 :::
+
 
 ### Data Plane
 
@@ -69,7 +81,7 @@ The Authenticate service handles session cookie setup, session storage, and auth
 
 Authenticate requires significantly fewer resources than other components due to the only-occasional requirement to establish new sessions. This happens when users first sign in, and when their authentication expires (determined by your IdP).
 
-Add resources to the Authenticate service if you have a high session/user churn rate. The requests should be constant time and complexity, but may vary by Identity Provider implementation. Resources for the Authenticate service should scale *roughly* with your total user count.
+Add resources to the Authenticate service if you have a high session/user churn rate. The requests should be constant time and complexity, but may vary by Identity Provider implementation. Resources for the Authenticate service should scale _roughly_ with your total user count.
 
 Regardless of the low resource utilization, we recommend running no less than 2 instances for resiliency and fault tolerance.
 
@@ -84,8 +96,11 @@ Databroker resource requirements scale with the number of replicated services in
 In many deployments, 2 replicas of Databroker is enough to provide resilient service.
 
 :::caution
-In a production configuration, Databroker CPU/IO utilization also translates to IO load on the [underlying storage system](/docs/topics/data-storage). Ensure it is scaled accordingly!
+
+ In a production configuration, Databroker CPU/IO utilization also translates to IO load on the [underlying storage system](/docs/topics/data-storage). Ensure it is scaled accordingly!
+
 :::
+
 
 ## Load Balancing
 
@@ -120,8 +135,11 @@ Regardless of the service mode, it is recommended you run at least 2 instances o
 Ensure that you have enough spare capacity to handle the scope of your failure domains.
 
 :::caution
-Multiple replicas of Databroker or all-in-one service are only supported with [external storage](/docs/topics/data-storage) configured
+
+ Multiple replicas of Databroker or all-in-one service are only supported with [external storage](/docs/topics/data-storage) configured
+
 :::
+
 
 ## SSL/TLS Certificates
 
@@ -147,6 +165,5 @@ If you have TLS enabled applications behind the proxy:
 - you may provide a client certificate for the Proxy service to connect to downstream services with and verify
 - the Proxy may be configured to verify the name and certificate authority of downstream services with either the standard Root CA bundle or a custom CA
 
-
-[JWT verification]: /docs/topics/mutual-auth.md#jwt-verification-application-based-mutual-authentication
+[jwt verification]: /docs/topics/mutual-auth.md#jwt-verification-application-based-mutual-authentication
 [rbac]: /docs/enterprise/concepts.md#rbac-for-enterprise-console-users

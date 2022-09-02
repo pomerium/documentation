@@ -2,14 +2,14 @@
 id: load-balancing-policy
 title: Load Balancing Policy
 keywords:
-- reference
-- Load Balancing Policy
+  - reference
+  - Load Balancing Policy
 pagination_prev: null
 pagination_next: null
 ---
 
-
 # Load Balancing Policy
+
 - Config File Key: `lb_policy`
 - Type: `enum`
 - Optional
@@ -25,4 +25,3 @@ See [Envoy documentation](https://www.envoyproxy.io/docs/envoy/latest/api-v3/con
 - [`MAGLEV`](https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/upstream/load_balancing/load_balancers#maglev) and may be further configured using [`maglev_lb_config`](https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/cluster/v3/cluster.proto#envoy-v3-api-msg-config-cluster-v3-cluster-maglevlbconfig) option
 
 Some policy types support additional [configuration](/docs/reference/routes/load-balancing-policy-config).
-

@@ -4,8 +4,8 @@ title: Identity Provider Client Secret File
 description: |
   File path containting the Client Secret, the OAuth 2.0 Secret Identifier retrieved from your identity provider.
 keywords:
-- reference
-- Identity Provider Client Secret File
+  - reference
+  - Identity Provider Client Secret File
 pagination_prev: null
 pagination_next: null
 ---
@@ -20,5 +20,5 @@ Client Secret is the OAuth 2.0 Secret Identifier retrieved from your identity pr
 `identity_provider_client_secret_file` points to a file containing the secret. This is useful when deploying in environments that provide secret management like [Docker Swarm](https://docs.docker.com/engine/swarm/secrets/). For example:
 
 ```yaml
-idp_client_secret_file: "/run/secrets/POMERIUM_CLIENT_SECRET"
+idp_client_secret_file: '/run/secrets/POMERIUM_CLIENT_SECRET'
 ```

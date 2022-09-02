@@ -4,8 +4,8 @@ title: Autocert CA
 description: |
   Autocert CA is the directory URL of the ACME CA to use when requesting certificates.
 keywords:
-- reference
-- Autocert CA
+  - reference
+  - Autocert CA
 pagination_prev: null
 pagination_next: null
 ---
@@ -18,6 +18,8 @@ pagination_next: null
 Autocert CA is the directory URL of the ACME CA to use when requesting certificates.
 
 :::tip
+
+
 
 This will overrule the "Autocert Use Staging" setting if set.
 

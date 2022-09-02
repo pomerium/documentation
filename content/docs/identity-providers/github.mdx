@@ -12,8 +12,9 @@ import TabItem from '@theme/TabItem';
 This document describes the use of GitHub as an identity provider for Pomerium. It assumes you have already [installed Pomerium](/docs/install/)
 
 :::caution
-The [GitHub API] does not support [OpenID Connect], just [OAuth 2.0].
-For this reason, it was challenging to implement revocation of a user's **Access Token** (a string representing the granted permissions) when they sign out from Pomerium's user info endpoint.
+
+The [GitHub API] does not support [OpenID Connect], just [OAuth 2.0]. For this reason, it was challenging to implement revocation of a user's **Access Token** (a string representing the granted permissions) when they sign out from Pomerium's user info endpoint.
+
 :::
 
 In addition, the teams of the organization(s) a user belongs to, will be used as groups on Pomerium.
@@ -26,15 +27,15 @@ In addition, the teams of the organization(s) a user belongs to, will be used as
 
 1. Navigate to **Developer settings ➞ OAuth Apps** and select **New OAuth App**.
 
-  ![GitHub OAuth2 Application creation](./img/github/github-oauth-creation.png)
+![GitHub OAuth2 Application creation](./img/github/github-oauth-creation.png)
 
 1. Create a new OAuth2 application by filling the form fields above with the following parameters:
 
-   | Field                       | Description                                                         |
-   | --------------------------- | ------------------------------------------------------------------- |
-   | Application name            | The name of your web app.                                           |
-   | Homepage URL                | The homepage URL of the application to be integrated with Pomerium. |
-   | Authorization callback URL  | `https://${authenticate_service_url}/oauth2/callback`, `authenticate_service_url` from your Pomerium configuration. |
+   | Field | Description |
+   | --- | --- |
+   | Application name | The name of your web app. |
+   | Homepage URL | The homepage URL of the application to be integrated with Pomerium. |
+   | Authorization callback URL | `https://${authenticate_service_url}/oauth2/callback`, `authenticate_service_url` from your Pomerium configuration. |
 
 1. After creating the application, select **Generate a new client secret** and save **Client Secret** along with the **Client ID**.
 
@@ -50,8 +51,8 @@ To use `allowed_groups` in a policy, an `idp_service_account` needs to be set in
 
    ```json title=tmp.json
    {
-   "username": "YOUR_GITHUB_USERNAME",
-   "personal_access_token": "GENERATED_GITHUB_ACCESS_TOKEN"
+     "username": "YOUR_GITHUB_USERNAME",
+     "personal_access_token": "GENERATED_GITHUB_ACCESS_TOKEN"
    }
    ```
 
@@ -92,6 +93,6 @@ Whenever a user tries to access your application integrated with Pomerium, they 
 
 ![GitHub Sign-on Page](./img/github/github-signon-page.png)
 
-[Github API]: https://developer.github.com/v3/#oauth2-token-sent-in-a-header
+[github api]: https://developer.github.com/v3/#oauth2-token-sent-in-a-header
 [openid connect]: https://en.wikipedia.org/wiki/OpenID_Connect
-[OAuth 2.0]: https://auth0.com/docs/protocols/oauth2
+[oauth 2.0]: https://auth0.com/docs/protocols/oauth2

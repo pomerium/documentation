@@ -4,8 +4,8 @@ title: Signing Key
 description: |
   Signing Key is the key used to sign a user's attestation JWT which can be consumed by upstream applications to pass along identifying user information like username, id, and groups.
 keywords:
-- reference
-- Signing Key
+  - reference
+  - Signing Key
 pagination_prev: null
 pagination_next: null
 ---
