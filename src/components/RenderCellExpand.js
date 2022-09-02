@@ -1,5 +1,5 @@
-import React from "react";
-import { Box, Paper, Popper, Typography } from "@mui/material";
+import React from 'react';
+import {Box, Paper, Popper, Typography} from '@mui/material';
 
 function isOverflown(element) {
   return (
@@ -9,7 +9,7 @@ function isOverflown(element) {
 }
 
 export const GridCellExpand = React.memo(function GridCellExpand(props) {
-  const { width, value } = props;
+  const {width, value} = props;
   const wrapper = React.useRef(null);
   const cellDiv = React.useRef(null);
   const cellValue = React.useRef(null);
@@ -35,15 +35,15 @@ export const GridCellExpand = React.memo(function GridCellExpand(props) {
 
     function handleKeyDown(nativeEvent) {
       // IE11, Edge (prior to using Bink?) use 'Esc'
-      if (nativeEvent.key === "Escape" || nativeEvent.key === "Esc") {
+      if (nativeEvent.key === 'Escape' || nativeEvent.key === 'Esc') {
         setShowFullCell(false);
       }
     }
 
-    document.addEventListener("keydown", handleKeyDown);
+    document.addEventListener('keydown', handleKeyDown);
 
     return () => {
-      document.removeEventListener("keydown", handleKeyDown);
+      document.removeEventListener('keydown', handleKeyDown);
     };
   }, [setShowFullCell, showFullCell]);
 
@@ -53,45 +53,41 @@ export const GridCellExpand = React.memo(function GridCellExpand(props) {
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       sx={{
-        alignItems: "center",
-        lineHeight: "24px",
+        alignItems: 'center',
+        lineHeight: '24px',
         width: 1,
         height: 1,
-        position: "relative",
-        display: "flex",
-      }}
-    >
+        position: 'relative',
+        display: 'flex',
+      }}>
       <Box
         ref={cellDiv}
         sx={{
           height: 1,
           width,
-          display: "block",
-          position: "absolute",
+          display: 'block',
+          position: 'absolute',
           top: 0,
         }}
       />
       <Box
         ref={cellValue}
         sx={{
-          whiteSpace: "nowrap",
-          overflow: "hidden",
-          textOverflow: "ellipsis",
-        }}
-      >
+          whiteSpace: 'nowrap',
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+        }}>
         {value}
       </Box>
       {showPopper && (
         <Popper
           open={showFullCell && anchorEl !== null}
           anchorEl={anchorEl}
-          style={{ width, marginLeft: -17 }}
-        >
+          style={{width, marginLeft: -17}}>
           <Paper
             elevation={1}
-            style={{ minHeight: wrapper.current.offsetHeight - 3 }}
-          >
-            <Typography variant="body2" style={{ padding: 8 }}>
+            style={{minHeight: wrapper.current.offsetHeight - 3}}>
+            <Typography variant="body2" style={{padding: 8}}>
               {value}
             </Typography>
           </Paper>
@@ -104,7 +100,7 @@ export const GridCellExpand = React.memo(function GridCellExpand(props) {
 export function renderCellExpand(params) {
   return (
     <GridCellExpand
-      value={params.value || ""}
+      value={params.value || ''}
       width={params.colDef.computedWidth}
     />
   );

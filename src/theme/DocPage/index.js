@@ -2,14 +2,15 @@ import React from 'react';
 import NotFound from '@theme/NotFound';
 import DocPageLayout from '@theme/DocPage/Layout';
 import clsx from 'clsx';
+import {HtmlClassNameProvider, ThemeClassNames} from '@docusaurus/theme-common';
+
 import {
-  HtmlClassNameProvider,
-  ThemeClassNames,
-  docVersionSearchTag,
   DocsSidebarProvider,
+  docVersionSearchTag,
   DocsVersionProvider,
   useDocRouteMetadata,
-} from '@docusaurus/theme-common';
+} from '@docusaurus/theme-common/internal';
+
 import SearchMetadata from '@theme/SearchMetadata';
 export default function DocPage(props) {
   const {versionMetadata} = props;
@@ -38,12 +39,7 @@ export default function DocPage(props) {
         )}>
         <DocsVersionProvider version={versionMetadata}>
           <DocsSidebarProvider name={sidebarName} items={sidebarItems}>
-            <DocPageLayout>
-              {docElement}
-              <div key="license" style={{fontSize: "14px"}}>
-              <br/><center>This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">Creative Commons Attribution-NonCommercial 4.0 International License</a>.</center>
-              </div>
-            </DocPageLayout>
+            <DocPageLayout>{docElement}</DocPageLayout>
           </DocsSidebarProvider>
         </DocsVersionProvider>
       </HtmlClassNameProvider>
