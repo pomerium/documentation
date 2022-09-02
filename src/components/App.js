@@ -1,4 +1,4 @@
 import React from 'react';
 export default function App(props) {
-    return <>{props.children}</>;
+  return <>{props.children}</>;
 }
