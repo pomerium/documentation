@@ -2,6 +2,41 @@
 title: Changelog
 ---
 
+## 0.19.0
+
+### New
+- Additional error details and policy debugging for Enterprise
+- ACME TLS-ALPN support for autocert
+- Branding customization for Enterprise
+
+### Updated
+- Well-Known endpoint handler for Proxy
+- Upgrade to Envoy 1.23.0
+- Add virtual host domains for all certificates
+- Use generic types for sets and atomics
+
+### Fixed
+- Add CORS headers to JWKS endpoint
+- Add authority header to outbound gRPC requests
+- Remove not-null constraint on data column of record changes table
+
+## 0.18.0
+
+### New
+- Support for external data sources
+- Simplified Kubernetes ingress controller
+
+### Updated
+- Postgres databroker backend
+- Upgrade to Envoy 1.21.1
+- Data in the Authorize service is now queried on-demand
+
+
+### Fixed
+- Various issues related to internal service URLs
+- Error pages for forward auth
+- Databroker in-memory backend deadlock
+
 ## 0.17.0
 
 ### New
