@@ -1,7 +1,7 @@
 ---
 title: Cross-Origin Configuration
 lang: en-US
-keywords: [cors, javascript, cross-origin, spa]
+keywords: [cors, javascript, cross-origin, spa, reactjs, single-page-app, nextjs, ajax]
 description: This guide covers how to configure Pomerium for Cross-Origin setups.
 ---
 
