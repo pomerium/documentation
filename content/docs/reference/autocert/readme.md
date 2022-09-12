@@ -23,6 +23,8 @@ Autocert will incorporate certificates available in the system trust store and t
 
 Autocert will attempt `HTTP-01`and `TLS-ALPN-01` challenges. It does not support `DNS-01` challenges, required to generate wildcard certificates.
 
+Kubernetes users should not use autocert. See [cert-manager's guide](https://cert-manager.io/docs/tutorials/acme/pomerium-ingress/) instead.
+
 :::warning
 
 By using autocert, you agree to the [Let's Encrypt Subscriber Agreement](https://letsencrypt.org/documents/LE-SA-v1.2-November-15-2017.pdf). There are [_strict_ usage limits](https://letsencrypt.org/docs/rate-limits/) per domain you should be aware of. Consider testing with `autocert_use_staging` first.
