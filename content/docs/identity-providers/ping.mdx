@@ -76,3 +76,27 @@ IDP_CLIENT_SECRET="CLIENT_SECRET"
 
 </TabItem>
 </Tabs>
+
+## Groups
+
+A `groups` claim can be added to tokens returned from Ping by adding it to the "Attribute Mappings":
+
+![Ping Attribute Mappings](./img/ping/ping-groups.png)
+
+Now when users login they will have a claim named `groups` that contains their groups and the `claim` PPL criterion can be used for authorization:
+
+```yaml
+routes:
+  - from: 'https://verify.localhost.pomerium.io'
+    to: 'https://verify.pomerium.com'
+    policy:
+      - allow:
+          and:
+            - groups: 49dfb9e6-f81f-4a1c-b4a3-d0122ebe4aab
+```
+
+:::tip
+
+The `groups` claim contains group IDs, not group names.
+
+:::
