@@ -25,8 +25,7 @@ In the presence of multiple upstreams, make sure to specify either an active or 
 
 ## Active Health Checks
 
-Active health checks issue periodic requests to each upstream to determine its health.
-See [Health Checking](https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/upstream/health_checking) for a comprehensive overview.
+Active health checks issue periodic requests to each upstream to determine its health. See [Health Checking](https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/upstream/health_checking) for a comprehensive overview.
 
 ### HTTP Example
 
@@ -42,7 +41,7 @@ routes:
         healthy_threshold: 1
         unhealthy_threshold: 2
         http_health_check:
-          path: "/"
+          path: '/'
 ```
 
 ### TCP Example
@@ -60,15 +59,14 @@ routes:
         healthy_threshold: 1
         tcp_health_check:
           send:
-            text: "50494E47" #PING
+            text: '50494E47' #PING
           receive:
-            text: "504F4E47" #PONG
+            text: '504F4E47' #PONG
 ```
 
 ## Passive Health Checks
 
-Passive health check tries to deduce upstream server health based on recent observed responses.
-See [Outlier Detection](https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/upstream/outlier) for comprehensive overview.
+Passive health check tries to deduce upstream server health based on recent observed responses. See [Outlier Detection](https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/upstream/outlier) for comprehensive overview.
 
 ```yaml
 routes:

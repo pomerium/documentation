@@ -75,6 +75,22 @@ IDP_CLIENT_SECRET="REPLACE_ME"
 </TabItem>
 </Tabs>
 
+## Groups
+
+A `groups` claim can be added to tokens returned from Okta by following the [Okta documentation](https://developer.okta.com/docs/guides/customize-tokens-groups-claim/main/).
+
+Now when users login they will have a claim named `groups` that contains their groups and the `claim` PPL criterion can be used for authorization:
+
+```yaml
+routes:
+  - from: 'https://verify.localhost.pomerium.io'
+    to: 'https://verify.pomerium.com'
+    policy:
+      - allow:
+          and:
+            - groups: admin
+```
+
 [client id]: /docs/reference/identity-provider-client-id
 [client secret]: /docs/reference/identity-provider-client-secret
 [environmental variables]: https://en.wikipedia.org/wiki/Environment_variable

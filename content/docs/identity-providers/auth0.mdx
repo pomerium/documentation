@@ -1,7 +1,8 @@
 ---
 title: Auth0
 lang: en-US
-keywords: [auth0, pomerium, identity provider, idp]pagination_prev: null
+keywords: [auth0, pomerium, identity provider, idp]
+pagination_prev: null
 pagination_next: null
 ---
 
@@ -11,7 +12,9 @@ import TabItem from '@theme/TabItem';
 This page documents configuring an [Auth0] Web Application and Machine to Machine Application for Pomerium to read user data. It assumes you have already [installed Pomerium](/docs/install/).
 
 :::caution
+
 While we do our best to keep our documentation up to date, changes to third-party systems are outside our control. Refer to [Applications in Auth0](https://auth0.com/docs/applications) from Auth0's docs as needed, or [let us know](https://github.com/pomerium/documentation/issues/new?assignees=&labels=&template=doc-error.md) if we need to re-visit this page.
+
 :::
 
 [Log in to your Auth0 account](https://manage.auth0.com/) and head to your dashboard. Select **Applications → Applications** on the left menu. On the Applications page, click the **Create Application** button to create a new app.
@@ -28,11 +31,11 @@ While we do our best to keep our documentation up to date, changes to third-part
 
 1. Provide the following information for your application settings:
 
-   | Field                        | Description                                                               |
-   | ---------------------------- | ------------------------------------------------------------------------- |
-   | Name                         | The name of your application.                                             |
-   | Application Login URI        | [Authenticate Service URL] (e.g. `https://${authenticate_service_url}`)   |
-   | Allowed Callback URLs        | Redirect URL (e.g. `https://${authenticate_service_url}/oauth2/callback`).|
+   | Field | Description |
+   | --- | --- |
+   | Name | The name of your application. |
+   | Application Login URI | [Authenticate Service URL] (e.g. `https://${authenticate_service_url}`) |
+   | Allowed Callback URLs | Redirect URL (e.g. `https://${authenticate_service_url}/oauth2/callback`). |
 
 1. Under **Advanced Settings** → **OAuth**, confirm that **JSON Web Token (JWT) Signature Algorithm** is set to "RS256".
 
@@ -46,10 +49,10 @@ You can now configure Pomerium with the identity provider settings retrieved in 
 <TabItem value="config.yaml" label="config.yaml">
 
 ```yaml
-idp_provider: "auth0"
-idp_provider_url: "https://awesome-company.auth0.com"
-idp_client_id: "REPLACE_ME" # from the web application
-idp_client_secret: "REPLACE_ME" # from the web application
+idp_provider: 'auth0'
+idp_provider_url: 'https://awesome-company.auth0.com'
+idp_client_id: 'REPLACE_ME' # from the web application
+idp_client_secret: 'REPLACE_ME' # from the web application
 ```
 
 </TabItem>
@@ -66,9 +69,52 @@ IDP_CLIENT_SECRET="REPLACE_ME" # from the web application
 </Tabs>
 
 :::tip
+
 Remember to prepend the provider URL from Auth0 with `https://`.
+
 :::
 
-[Auth0]: https://auth0.com/
+## Groups
+
+To authorize users based on their group membership (roles in Auth0), a claim can be added to the identity and access tokens with a [login action](https://auth0.com/docs/customize/actions).
+
+1. Create an action named `add groups` with the following code:
+
+   ```javascript
+   exports.onExecutePostLogin = async (event, api) => {
+     if (event.authorization) {
+       api.idToken.setCustomClaim(
+         'pomerium.io/groups',
+         event.authorization.roles,
+       );
+       api.accessToken.setCustomClaim(
+         'pomerium.io/groups',
+         event.authorization.roles,
+       );
+     }
+   };
+   ```
+
+1. Deploy the action:
+
+   ![Auth0 Create Login Action](./img/auth0/action.png)
+
+1. Add it to the login flow:
+
+   ![Auth0 Create Login Flow](./img/auth0/flow.png)
+
+Now when users login they will have a claim named `pomerium.io/groups` that contains their groups (Auth0 roles) and the `claim` PPL criterion can be used for authorization:
+
+```yaml
+routes:
+  - from: 'https://verify.localhost.pomerium.io'
+    to: 'https://verify.pomerium.com'
+    policy:
+      - allow:
+          and:
+            - claim/pomerium.io/groups: admin
+```
+
+[auth0]: https://auth0.com/
 [authenticate service url]: /docs/reference/authenticate-service-url
 [environmental variables]: https://en.wikipedia.org/wiki/Environment_variable
