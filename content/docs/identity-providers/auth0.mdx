@@ -38,43 +38,6 @@ While we do our best to keep our documentation up to date, changes to third-part
 
 1. Click **Save Changes** at the bottom of the page when you're done.
 
-## Service Account
-
-Next, we'll create an application to handle machine-to-machine communication from Pomerium to Auth0 in order to retrieve and establish group membership.
-
-:::tip
-
-Auth0 refers to groups as roles.
-
-:::
-
-1. Repeat the process in step 1 above to create a new application, but this time select **Machine to Machine Application**. A different application is used for grabbing roles to keep things more secure.
-
-   ![Auth Create Application Select Service Account Platform](./img/auth0/create-m2m.png)
-
-   Click **Create**.
-
-1. On the next page select **Auth0 Management API** from the dropdown. Under **Permissions** use the filter on the right to narrow things down to `role`, and choose the `read:roles` and `read:role_members` roles.
-
-   ![Auth0 Management API Scopes](./img/auth0/m2m-scopes.png)
-
-   Then click **Authorize**.
-
-1. Just like the previous step, retrieve the **Client ID** and **Client Secret** from the **Settings** tab. To build the `idp_service_account` value for Pomerium's configuration, you must base64-encode a JSON document containing the **Client ID** and **Client Secret** of the application:
-
-   ```json
-   {
-   "client_id": "...",
-   "secret": "..."
-   }
-   ```
-
-   If you save this JSON document as a temporary file, you can encode it like this:
-
-   ```bash
-   cat json.tmp | base64 -w 0
-   ```
-
 ## Configure Pomerium
 
 You can now configure Pomerium with the identity provider settings retrieved in the previous steps. Your `config.yaml` keys or [environmental variables] should look something like this.
@@ -87,7 +50,6 @@ idp_provider: "auth0"
 idp_provider_url: "https://awesome-company.auth0.com"
 idp_client_id: "REPLACE_ME" # from the web application
 idp_client_secret: "REPLACE_ME" # from the web application
-idp_service_acount: "REPLACE_ME" # built from the machine-to-machine application, base64-encoded
 ```
 
 </TabItem>
@@ -98,7 +60,6 @@ IDP_PROVIDER="auth0"
 IDP_PROVIDER_URL="https://awesome-company.auth0.com"
 IDP_CLIENT_ID="REPLACE_ME" # from the web application
 IDP_CLIENT_SECRET="REPLACE_ME" # from the web application
-IDP_SERVICE_ACCOUNT="REPLACE_ME" # built from the machine-to-machine application, base64-encoded
 ```
 
 </TabItem>

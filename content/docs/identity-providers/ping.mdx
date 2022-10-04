@@ -50,35 +50,6 @@ While we do our best to keep our documentation up to date, changes to third-part
 
 1. Toggle the green slider to enable your new application.
 
-## Service Account
-
-To use `allowed_groups` in a policy, an `idp_service_account` needs to be set in the Pomerium configuration. The service account for Ping uses a *different* application, and client ID and client secret from the one configured above.
-
-1. Click **Add Application**, but this time select **Worker → Worker App**.
-
-   ![Ping Add Worker](./img/ping/ping-add-worker.png)
-
-1. Toggle the green slider to enable your new application.
-
-1. This application's **Client ID** and **Client Secret** will be used as the service account in Pomerium.
-
-   ![Ping Worker Configuration](./img/ping/ping-worker-configuration.png)
-
-   The format of the service account is a JSON encoded object with `client_id` and `client_secret` properties:
-
-   ```json
-   {
-      "client_id": "XXXXXXXXXX",
-      "client_secret": "XXXXXXXXXX"
-   }
-   ```
-
-   You can save the object as a temporary file to encode as a base64 value:
-
-   ```bash
-   cat tmp.json | base64 -w 0
-   ```
-
 ## Pomerium Configuration
 
 Update your Pomerium configuration to use Ping as the IdP:
@@ -91,7 +62,6 @@ idp_provider: "ping"
 idp_provider_url: "https://auth.pingone.com/720dbe8a-83ed-48e1-9988-9928301ae668/as"
 idp_client_id: "CLIENT_ID"
 idp_client_secret: "CLIENT_SECRET"
-idp_service_account: "XXXXXXX" # Base64-encoded JSON
 ```
 
 </TabItem>
@@ -102,7 +72,6 @@ IDP_PROVIDER="ping"
 IDP_PROVIDER_URL="https://auth.pingone.com/720dbe8a-83ed-48e1-9988-9928301ae668/as"
 IDP_CLIENT_ID="CLIENT_ID"
 IDP_CLIENT_SECRET="CLIENT_SECRET"
-IDP_SERVICE_ACCOUNT="XXXXXXX" # Base64-encoded JSON
 ```
 
 </TabItem>

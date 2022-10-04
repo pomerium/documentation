@@ -19,6 +19,4 @@ Manually specify the service account credentials to support GCP's [Authorization
 
 If unspecified:
 
-- If [Identity Provider Name](/docs/reference/identity-provider-name) is set to `google`, will default to [Identity Provider Service Account](/docs/reference/identity-provider-service-account)
-- Otherwise, will default to ambient credentials in the default locations searched by the Google SDK. This includes GCE metadata server tokens.
-
+- Will default to ambient credentials in the default locations searched by the Google SDK. This includes GCE metadata server tokens.

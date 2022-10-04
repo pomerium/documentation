@@ -67,7 +67,6 @@ Please see the [updated install instructions](/docs/overview/releases#pomerium-c
 
 [authenticate internal service url]: /docs/reference/authenticate-service-url
 [cache service docs]: /docs/reference/data-broker-service
-[identity provider service account]: /docs/reference/identity-provider-service-account
 [policy]: /docs/reference/policy/policy
 [storage backend configuration here]: /docs/reference/data-broker-service
 [storage backend types]: /docs/reference/data-broker-storage-type
