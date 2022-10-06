@@ -12,7 +12,9 @@ import TabItem from '@theme/TabItem';
 This page will help you configure Pomerium to use your Azure Active Directory as an IdP. It assumes you have already [installed Pomerium](/docs/install/)
 
 :::caution
+
 While we do our best to keep our documentation up to date, changes to third-party systems are outside our control. Refer to [Quickstart: Register an application with the Microsoft identity platform](https://docs.microsoft.com/en-us/azure/active-directory/develop/quickstart-register-app) from Microsoft's documentation as needed, or [let us know](https://github.com/pomerium/documentation/issues/new?assignees=&labels=&template=doc-error.md) if we need to re-visit this page.
+
 :::
 
 If you plan on allowing users to log in using a Microsoft Azure Active Directory account, either from your company or from external directories, you must register your application through the Microsoft Azure portal. If you don't have a Microsoft Azure account, you can [signup](https://azure.microsoft.com/en-us/free) for free.
@@ -20,7 +22,9 @@ If you plan on allowing users to log in using a Microsoft Azure Active Directory
 You can access the Azure management portal from your Microsoft service, or visit <https://portal.azure.com> and sign in to Azure using the global administrator account used to create the Office 365 organization.
 
 :::tip
+
 There is no way to create an application that integrates with Microsoft Azure AD without having **your own** Microsoft Azure AD instance.
+
 :::
 
 If you have an Office 365 account, you can use the account's Azure AD instance instead of creating a new one. To find your Office 365 account's Azure AD instance:
@@ -56,15 +60,11 @@ This will bring you to the admin center of the Azure AD instance backing your Of
 
    ![Creating a Key](./img/azure/azure-create-key.png)
 
-   :::tip
-   If you choose an expiring key, make sure to record the expiration date in your calendar, as you will need to renew the key (get a new one) before that day to ensure users don't experience a service interruption.
-   :::
+   :::tip If you choose an expiring key, make sure to record the expiration date in your calendar, as you will need to renew the key (get a new one) before that day to ensure users don't experience a service interruption. :::
 
    Click on **Add** and the key will be displayed. **Make sure to copy the value of this key before leaving this screen**, otherwise you may need to create a new key.
 
-   :::note
-   Confirm you are copying the **Value**, and not the **ID**.
-   :::
+   :::note Confirm you are copying the **Value**, and not the **ID**. :::
 
 ### API Permissions
 
@@ -104,28 +104,6 @@ https://login.microsoftonline.com/0303f438-3c5c-4190-9854-08d3eb31bd9f/v2.0/.wel
 https://login.microsoftonline.com/0303f438-3c5c-4190-9854-08d3eb31bd9f/v2.0
 ```
 
-## Service Account (Optional)
-
-:::tip
-
-By default, this information will be inferred from your provider URL, and you should not need to set this key. If you are using a different [OAuth2] credential set, you may need to set these values separately.
-:::
-
-To use `allowed_groups` in a policy an `idp_service_account` needs to be set in the Pomerium configuration. The service account for Azure AD uses the same [client ID] and client secret configured above, as well as the directory (tenant) ID:
-
-![Application dashboard](./img/azure/azure-application-dashboard.png)
-
-
-The format of the `idp_service_account` for Azure AD is a base64-encoded JSON document:
-
-```json
-{
-  "client_id": "...",
-  "client_secret": "...",
-  "directory_id": "..."
-}
-```
-
 ## Pomerium Configuration
 
 Configure Pomerium with the identity provider settings retrieved in the previous steps.
@@ -133,14 +111,11 @@ Configure Pomerium with the identity provider settings retrieved in the previous
 <Tabs>
 <TabItem value="config.yaml" label="config.yaml">
 
-```bash
-idp_provider: "azure"
-idp_provider_url: "https://login.microsoftonline.com/{REPLACE-ME-SEE-ABOVE}/v2.0"
-idp_client_id: "REPLACE-ME"
-idp_client_secret: "REPLACE-ME"
-# Optional, if service account credentials are different
-# or cannot be inferred from the above credential set.
-# idp_service_account: "REPLACE-ME-SEE-ABOVE"
+```yaml
+idp_provider: 'azure'
+idp_provider_url: 'https://login.microsoftonline.com/{REPLACE-ME-SEE-ABOVE}/v2.0'
+idp_client_id: 'REPLACE-ME'
+idp_client_secret: 'REPLACE-ME'
 ```
 
 </TabItem>
@@ -151,13 +126,30 @@ IDP_PROVIDER="azure"
 IDP_PROVIDER_URL="https://login.microsoftonline.com/{REPLACE-ME-SEE-ABOVE}/v2.0"
 IDP_CLIENT_ID="REPLACE-ME"
 IDP_CLIENT_SECRET="REPLACE-ME"
-# Optional, if service account credentials are different
-# or cannot be inferred from the above credential set.
-# IDP_SERVICE_ACCOUNT="REPLACE-ME-SEE-ABOVE"
 ```
 
 </TabItem>
 </Tabs>
+
+## Groups
+
+To authorize users based on their group membership, Azure supports adding a `group` claim to the identity token:
+
+![Add Groups Claim](./img/azure/groups-claim.png)
+
+Now when users login they will have a claim named `groups` that contains their groups and the `claim` PPL criterion can be used for authorization:
+
+```yaml
+routes:
+  - from: 'https://verify.localhost.pomerium.io'
+    to: 'https://verify.pomerium.com'
+    policy:
+      - allow:
+          and:
+            - claim/groups: 'e14f56fd-b956-4009-b06c-dc8a5e9207c8'
+```
+
+:::tip The `groups` claim contains group IDs, not group names. :::
 
 ## Troubleshooting
 

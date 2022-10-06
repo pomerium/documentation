@@ -1445,7 +1445,7 @@ There were no changes in the v0.7.1 release, but we updated the build process sl
 
 - Azure AD identity provider now uses globally unique and immutable `ID` for [group membership](https://docs.microsoft.com/en-us/graph/api/group-get?view=graph-rest-1.0&tabs=http).
 - Okta no longer uses tokens to retrieve group membership. Group membership is now fetched using Okta's HTTP API. [Group membership](https://developer.okta.com/docs/reference/api/groups/) is now determined by the globally unique and immutable `ID` field.
-- Okta now requires an additional set of credentials to be used to query for group membership set as a [service account](/docs/reference/identity-provider-service-account).
+- Okta now requires an additional set of credentials to be used to query for group membership set as a service account.
 - URLs are no longer validated to be on the same domain-tree as the authenticate service. Managed routes can live on any domain.
 - OneLogin no longer uses tokens to retrieve group membership. Group membership is now fetched using OneLogin's HTTP API. [Group membership](https://developers.onelogin.com/openid-connect/api/user-info/) is now determined by the globally unique and immutable `ID` field.
 

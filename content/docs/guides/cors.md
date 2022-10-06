@@ -28,7 +28,6 @@ certificate_key_file: /pomerium/privkey.pem
 idp_provider: REPLACE
 idp_client_id: REPLACE
 idp_client_secret: REPLACE
-idp_service_account: REPLACE
 
 cookie_secret: V2JBZk0zWGtsL29UcFUvWjVDWWQ2UHExNXJ0b2VhcDI=
 

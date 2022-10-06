@@ -8,7 +8,6 @@ authenticate:
     provider: "google"
     clientID: YOUR_CLIENT_ID
     clientSecret: YOUR_SECRET
-    serviceAccount: YOUR_SERVICE_ACCOUNT
   proxied: false
 
 proxy:
