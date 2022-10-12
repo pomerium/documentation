@@ -4,3 +4,23 @@ keywords: [ping, oidc, identity provider, idp]
 ---
 
 ## Setting Up Directory Sync
+
+### Create a Ping Worker Application
+
+In order for Pomerium to validate group membership, we'll also need to configure a [Worker Application](https://docs.pingidentity.com/bundle/pingdirectory-73/page/lfm1564011499001.html) in Ping.
+
+1. Click **Add Application**, and select **Worker → Worker App**.
+
+   ![Ping Add Worker](./img/ping/ping-add-worker.png)
+
+1. Toggle the green slider to enable your new application.
+
+1. This application's **Client ID** and **Client Secret** will be used in the Pomerium Enterprise Console.
+
+   ![Ping Worker Configuration](./img/ping/ping-worker-configuration.png)
+
+### Configure Pomerium Enterprise Console
+
+Under **Settings → Identity Providers**, select "Ping" as the identity provider and set the Client ID, Client Secret and Environment ID. The Environment ID can be found in Ping under **Environment → Properties**.
+
+![Ping Settings](./img/ping/ping-idp.png)
