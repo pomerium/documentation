@@ -161,6 +161,80 @@
     "services": [],
     "type": "bool"
   },
+  "identity-provider": {
+    "id": "identity-provider",
+    "title": "Identity Provider",
+    "description": "Choose from a list of supported IDPs.",
+    "type": "string"
+  },
+  "idp-options-auth0": {
+    "id": "idp-options-auth0",
+    "path": "/../identity-providers/auth0",
+    "title": "Identity Provider Auth0",
+    "description": "Click for information on Auth0",
+    "type": "string"
+  },
+  "idp-options-azure": {
+    "id": "idp-options-azure",
+    "path": "/../identity-providers/azure",
+    "title": "Identity Provider Azure",
+    "description": "Click for information on Azure",
+    "type": "string"
+  },
+  "idp-options-github": {
+    "id": "idp-options-github",
+    "path": "/../identity-providers/github",
+    "title": "Identity Provider Github",
+    "description": "Click for information on Github",
+    "type": "string"
+  },
+  "idp-options-gitlab": {
+    "id": "idp-options-gitlab",
+    "title": "Identity Provider Gitlab",
+    "path": "/../identity-providers/gitlab",
+    "description": "Click for information on Gitlab",
+    "type": "string"
+  },
+  "idp-options-google": {
+    "id": "idp-options-google",
+    "path": "/../identity-providers/google",
+    "title": "Identity Provider Google",
+    "description": "Click for information on getting a service account from Google.",
+    "type": "string"
+  },
+  "idp-options-okta": {
+    "id": "idp-options-okta",
+    "path": "/../identity-providers/okta",
+    "title": "Identity Provider Okta",
+    "description": "Click for information on Okta.",
+    "type": "string"
+  },
+  "idp-options-onelogin": {
+    "id": "idp-options-onelogin",
+    "path": "/../identity-providers/one-login",
+    "title": "Identity Provider Onelogin",
+    "description": "Click for information on Onelogin.",
+    "type": "string"
+  },
+  "idp-options-ping": {
+    "id": "idp-options-ping",
+    "path": "/../identity-providers/ping",
+    "title": "Identity Provider Ping",
+    "description": "Click for information on Ping.",
+    "type": "string"
+  },
+  "idp-refresh-interval": {
+    "id": "identity-provider-refresh-interval",
+    "title": "Identity Provider Refresh Interval",
+    "description": "How often in seconds the data is refreshed.",
+    "type": "string"
+  },
+  "idp-refresh-timeout": {
+    "id": "identity-provider-refresh-timeout",
+    "title": "Identity Provider Refresh Timeout",
+    "description": "How often in seconds to wait before timing out when fetching data.",
+    "type": "string"
+  },
   "javascript-security": {
     "id": "javascript-security",
     "title": "Javascript Security",
@@ -479,13 +553,6 @@
     "services": [],
     "type": "map of strings key value pairs"
   },
-  "identity-provider-refresh-directory-settings": {
-    "id": "identity-provider-refresh-directory-settings",
-    "title": "Identity Provider Refresh Directory Settings",
-    "path": "/identity-provider-refresh-directory-settings",
-    "services": [],
-    "type": ""
-  },
   "authorize-service-url": {
     "id": "authorize-service-url",
     "title": "Authorize Service URL",
@@ -634,13 +701,6 @@
     "services": [],
     "type": "comma separated strings"
   },
-  "allowed-groups": {
-    "id": "allowed-groups",
-    "title": "Allowed Groups",
-    "path": "/policy/allowed-groups",
-    "services": [],
-    "type": "comma separated strings"
-  },
   "allowed-idp-claims": {
     "id": "allowed-idp-claims",
     "title": "Allowed IdP Claims",
@@ -685,6 +745,23 @@
     "services": ["proxy"],
     "type": "bool"
   },
+  "error-message-header": {
+    "id": "error-message-first-paragraph",
+    "title": "Error Message Header",
+    "path": "/branding/error-message-first-paragraph",
+    "description": "A paragraph that will appear on all Route Error Pages in the top section.",
+    "short_description": "Can contain plain text or Markdown.",
+    "services": [],
+    "type": "string"
+  },
+  "favicon-url": {
+    "id": "favicon-url",
+    "title": "Favicon Url",
+    "path": "/branding/favicon-url",
+    "description": "A Url pointing to your favicon. Defaults to Pomerium's Favicon.",
+    "services": [],
+    "type": "URL"
+  },
   "from": {
     "id": "from",
     "title": "From",
@@ -692,7 +769,7 @@
     "services": ["proxy"],
     "short_description": "The externally accessible URL for the proxied request",
     "type": "URL",
-    "short description": "URL (must contain a scheme and hostname, must not contain a path)"
+    "description": "URL (must contain a scheme and hostname, must not contain a path)"
   },
   "health-checks": {
     "id": "health-checks",
@@ -751,6 +828,14 @@
     "services": ["proxy"],
     "type": "object"
   },
+  "logo-url": {
+    "id": "logo-url",
+    "title": "Logo Url",
+    "path": "/branding/logo-url",
+    "description": "A Url pointing to your logo. Defaults to Pomerium's Logo.",
+    "services": [],
+    "type": "URL"
+  },
   "outlier-detection": {
     "id": "outlier-detection",
     "title": "Outlier Detection",
@@ -774,6 +859,14 @@
     "short_description": "Only match requests with an exact match for this path",
     "type": "string"
   },
+  "policy-explanation": {
+    "id": "policy-explanation",
+    "title": "Explanation",
+    "description": "Adds an explanation to the user when they hit a 403 Unauthorized Endpoint that has this policy.",
+    "path": "/policy/policy-explanation",
+    "services": [],
+    "type": "string"
+  },
   "prefix": {
     "id": "prefix",
     "title": "Prefix",
@@ -788,6 +881,24 @@
     "path": "/routes/prefix-rewrite",
     "services": ["proxy"],
     "short_description": "Swaps the matched prefix (previous section) with this value",
+    "type": "string"
+  },
+  "primary-color": {
+    "id": "primary-color",
+    "title": "Primary Color",
+    "path": "/branding/primary-color",
+    "description": "A hex code that determines the primary color for the Enterprise Console and Route Error Details pages.",
+    "short_description": "Defaults to #6F43E7",
+    "services": [],
+    "type": "string"
+  },
+  "primary-color-dark-mode": {
+    "id": "darkmode-primary-color",
+    "title": "Primary Color (Dark Mode)",
+    "path": "/branding/darkmode-primary-color",
+    "description": "A hex code that determines the primary color for the Enterprise Console and Route Error Details pages when in Dark Mode.",
+    "short_description": "Defaults to #6F43E7",
+    "services": [],
     "type": "string"
   },
   "public-access": {
@@ -810,6 +921,14 @@
     "path": "/routes/regex",
     "services": ["proxy"],
     "type": "regular expression"
+  },
+  "regex-priority-order": {
+    "id": "regex-priority-order",
+    "title": "Regex Priority Order",
+    "path": "/routes/regex-priority-order",
+    "services": ["proxy"],
+    "description": "When a regex is used as part of the path then the order a route will be evaluated can be arbitrary. This allows you to put an integer value to prioritize route evaluation.",
+    "type": "uint32"
   },
   "regex-rewrite": {
     "id": "regex-rewrite",
@@ -847,6 +966,24 @@
     "services": ["proxy"],
     "type": "duration"
   },
+  "secondary-color": {
+    "id": "secondary-color",
+    "title": "Secondary Color",
+    "description": "A hex code that determines the secondary color for the Enterprise Console and Route Error Details pages.",
+    "path": "/branding/secondary-color",
+    "short_description": "Defaults to #49AAA1",
+    "services": [],
+    "type": "string"
+  },
+  "secondary-color-dark-mode": {
+    "id": "darkmode-secondary-color",
+    "title": "Secondary Color (Dark Mode)",
+    "description": "A hex code that determines the secondary color for the Enterprise Console and Route Error Details pages when in Dark Mode.",
+    "short_description": "Defaults to #49AAA1",
+    "path": "/branding/darkmode-secondary-color",
+    "services": [],
+    "type": "string"
+  },
   "set-authorization-header": {
     "id": "set-authorization-header",
     "title": "Set Authorization Header",
@@ -861,6 +998,14 @@
     "path": "/routes/set-request-headers",
     "services": ["proxy"],
     "type": "map of strings key value pairs"
+  },
+  "show-error-details": {
+    "id": "show-error-details",
+    "title": "Show Error Details",
+    "description": "If set, will show error details including policies explanations and remediations on the 403 unauthorized page.",
+    "path": "/routes/show-error-details",
+    "services": [],
+    "type": "bool"
   },
   "signout-redirect-url": {
     "id": "signout-redirect-url",
@@ -921,7 +1066,7 @@
     "title": "To",
     "path": "/routes/to",
     "services": ["proxy"],
-    "descripion": "The destination(s) of a proxied request",
+    "description": "The destination(s) of a proxied request",
     "type": "URL(s)",
     "short_description": "URL(s) must contain a scheme and hostname, with an optional weight"
   },
@@ -947,15 +1092,6 @@
     "type": "string",
     "short_description": "Base64 encoded string"
   },
-  "signing-key-file": {
-    "id": "signing-key-file",
-    "title": "Signing Key File",
-    "path": "/signing-key-file",
-    "description": "File path to a secret containing the signing key, used to sign a user's attestation JWT which can be consumed by upstream applications to pass along identifying user information like username, id, and groups.",
-    "services": [],
-    "type": "string",
-    "short_description": "File path containing a Base64 encoded string"
-  },
   "signing-key": {
     "id": "signing-key",
     "title": "Signing Key",
@@ -964,6 +1100,15 @@
     "services": [],
     "type": "string",
     "short_description": "Base64 encoded string"
+  },
+  "signing-key-file": {
+    "id": "signing-key-file",
+    "title": "Signing Key File",
+    "path": "/signing-key-file",
+    "description": "File path to a secret containing the signing key, used to sign a user's attestation JWT which can be consumed by upstream applications to pass along identifying user information like username, id, and groups.",
+    "services": [],
+    "type": "string",
+    "short_description": "File path containing a Base64 encoded string"
   },
   "devices": {
     "id": "devices",
@@ -982,6 +1127,12 @@
     "id": "new-enrollment",
     "title": "New Enrollment",
     "path": "/../guides/admin-enroll-device",
+    "enterpriseOnly": true
+  },
+  "migrate-routes": {
+    "id": "migrate-routes",
+    "title": "Migrate Routes",
+    "description": "A way to migrate routes from an existing Open Source Pomerium config file. You probably only want to do this once.",
     "enterpriseOnly": true
   },
   "search-users": {
