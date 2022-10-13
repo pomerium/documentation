@@ -6,7 +6,7 @@ keywords: [pomerium, architecture]
 
 ## System Level
 
-Pomerium sits between end users and services requiring strong authentication. After verifying identity with your identity provider (IdP), Pomerium uses a configurable policy to decide how to route your user's request and if they are authorized to access the service.
+Pomerium sits between end users and services requiring strong authentication. After verifying identity with your identity provider (IdP), Pomerium uses a configurable policy to decide how to route your user's request and if they are authorized to access the service. ([What's the difference between Authentication and Authorization?](https://www.pomerium.com/blog/authentication-v-authorization/))
 
 ![pomerium architecture diagram](img/pomerium-system-context.svg)
 
@@ -14,7 +14,7 @@ Pomerium sits between end users and services requiring strong authentication. Af
 
 Pomerium is composed of 4 logical components:
 
-- Proxy Service
+- Proxy Service ([What is a proxy?](https://www.pomerium.com/blog/proxy-vs-reverse-proxy/))
 
   - All user traffic flows through the proxy
   - Verifies all requests with Authentication service
