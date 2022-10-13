@@ -19,3 +19,9 @@ The connection string that the databroker service will use to connect to storage
 For `postgres`, the following URL types are supported:
 
 - simple: `postgres://[username:password@]host:port/[db]`
+
+:::tip
+
+When using multiple hosts make sure to specify `target_session_attrs=read-write` so that the Databroker does not attempt to write to a read-only replica.
+
+:::
