@@ -77,6 +77,8 @@ and paramspec is:
 name=value[&...]
 ```
 
+When using multiple hosts make sure to specify `target_session_attrs=read-write` so that the Databroker does not attempt to write to a read-only replica.
+
 ### Redis
 
 Previous versions of Pomerium suggested Redis as a databroker back-end. This is no longer recommended for version >=18. You can review [Archived Versions](https://www.pomerium.com/docs/versions) of our docs for more information on Redis as a databroker storage solution.
