@@ -1,49 +1,49 @@
-import React from "react";
-import clsx from "clsx";
-import styles from "./styles.module.css";
+import React from 'react';
+import clsx from 'clsx';
+import styles from './styles.module.css';
 
 const FeatureList = [
   {
-    title: "Getting Started",
-    path: "/docs/overview",
-    icon: "help_outline",
+    title: 'Getting Started',
+    path: '/docs/overview',
+    icon: 'help_outline',
     description: <>Learn about Pomerium</>,
   },
   {
-    title: "Install",
-    path: "/docs/install",
-    icon: "terminal",
+    title: 'Install',
+    path: '/docs/install',
+    icon: 'terminal',
     description: <>Install Pomerium into your infrastructure</>,
   },
   {
-    title: "Connect",
-    path: "/docs/identity-providers/",
-    icon: "link",
+    title: 'Connect',
+    path: '/docs/identity-providers/',
+    icon: 'link',
     description: <>Connect Pomerium to your Identity Provider</>,
   },
   {
-    title: "Integrate",
-    path: "/docs/guides/",
-    icon: "account_tree",
+    title: 'Integrate',
+    path: '/docs/guides/',
+    icon: 'account_tree',
     description: <>Use our guides to integrate and secure your services</>,
   },
   {
-    title: "Deploy",
-    path: "/docs/guides/",
-    icon: "account_tree",
+    title: 'Deploy',
+    path: '/docs/guides/',
+    icon: 'account_tree',
     description: <>Deploy and scale seamlessly to production</>,
   },
   {
-    title: "Enterprise",
-    path: "/docs/enterprise/about",
-    icon: "space_dashboard",
+    title: 'Enterprise',
+    path: '/docs/enterprise/about',
+    icon: 'space_dashboard',
     description: <>Scale your access management to match your business</>,
   },
 ];
 
-function Feature({ title, description, path, icon }) {
+function Feature({title, description, path, icon}) {
   return (
-    <div className={clsx("col col--4")}>
+    <div className={clsx('col col--4')}>
       <div className="text--center">
         <a href={path}>
           <span className="material-icons">{icon}</span>

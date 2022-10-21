@@ -139,11 +139,11 @@ With the v0.11.0 release, Pomerium docker images are multi-arch for `arm64` and 
 
 #### Service accounts required for groups and directory data
 
-With the v0.10.0 release, Pomerium now queries group information asynchronously using a service account. While a service account was already required for a few identity providers like Google's GSuite, an [Identity Provider Service Account] is now required for all other providers as well. The format of this field varies and is specified in each identity provider's documentation.
+With the v0.10.0 release, Pomerium now queries group information asynchronously using a service account. While a service account was already required for a few identity providers like Google's GSuite, an Identity Provider Service Account is now required for all other providers as well. The format of this field varies and is specified in each identity provider's documentation.
 
 :::warning
 
-If no [Identity Provider Service Account] is supplied, policies using groups (e.g. `allowed_groups` will not work).
+If no Identity Provider Service Account is supplied, policies using groups (e.g. `allowed_groups` will not work).
 
 :::
 
@@ -335,7 +335,7 @@ Please see the updated examples, and [cache service docs] as a reference and for
 
 - Okta no longer uses tokens to retrieve group membership. [Group membership](https://developer.okta.com/docs/reference/api/groups/) is now fetched using Okta's API.
 - Okta's group membership is now determined by the globally unique and immutable ID field. Please update your policies to use group `ID` instead of group name.
-- Okta now requires an additional set of credentials to be used to query for group membership set as a [service account](/docs/reference/identity-provider-service-account).
+- Okta now requires an additional set of credentials to be used to query for group membership set as a service account.
 
 #### OneLogin
 
@@ -501,7 +501,6 @@ The configuration variable [Authenticate Internal Service URL] must now be a val
 
 [authenticate internal service url]: /docs/reference/authenticate-service-url
 [cache service docs]: /docs/reference/data-broker-service
-[identity provider service account]: /docs/reference/identity-provider-service-account
 [policy]: /docs/reference/policy/policy
 [storage backend configuration here]: /docs/reference/data-broker-service
 [storage backend types]: /docs/reference/data-broker-storage-type

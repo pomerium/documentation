@@ -1,13 +1,13 @@
-import React, { useState } from "react";
-import data from "../../content/docs/reference/reference.json";
-import { DataGridPro } from "@mui/x-data-grid-pro/DataGridPro/DataGridPro";
-import { renderCellExpand } from "./RenderCellExpand";
-import { GridToolbar } from "@mui/x-data-grid";
-import { FormControl, InputLabel, NativeSelect } from "@mui/material";
-import { useColorMode } from "@docusaurus/theme-common";
+import React, {useState} from 'react';
+import data from '../../content/docs/reference/reference.json';
+import {DataGridPro} from '@mui/x-data-grid-pro/DataGridPro/DataGridPro';
+import {renderCellExpand} from './RenderCellExpand';
+import {GridToolbar} from '@mui/x-data-grid';
+import {FormControl, InputLabel, NativeSelect} from '@mui/material';
+import {useColorMode} from '@docusaurus/theme-common';
 
 function ServiceSelector(props) {
-  const { item, applyValue } = props;
+  const {item, applyValue} = props;
 
   return (
     <FormControl>
@@ -16,11 +16,10 @@ function ServiceSelector(props) {
       </InputLabel>
       <NativeSelect
         id="serviceSelector"
-        value={item?.value || ""}
+        value={item?.value || ''}
         onChange={(evt) => {
-          applyValue({ ...item, value: evt.target.value });
-        }}
-      >
+          applyValue({...item, value: evt.target.value});
+        }}>
         <option key="none" value="none">
           &nbsp;
         </option>
@@ -46,14 +45,14 @@ function ServiceSelector(props) {
 
 const serviceOperator = [
   {
-    label: "is",
-    value: "is",
+    label: 'is',
+    value: 'is',
     getApplyFilterFn: (filterItem) => {
       if (
         !filterItem.columnField ||
         !filterItem.value ||
         !filterItem.operatorValue ||
-        filterItem.value === "none"
+        filterItem.value === 'none'
       ) {
         return null;
       }
@@ -76,13 +75,13 @@ export default function ReferenceTable() {
     setPageSize(pageSize);
   };
 
-  const { colorMode } = useColorMode();
+  const {colorMode} = useColorMode();
 
   const references = Object.values(data);
   const columns = [
     {
-      headerName: "Name",
-      field: "title",
+      headerName: 'Name',
+      field: 'title',
       flex: 1,
       renderCell: function NameCell(params) {
         return (
@@ -91,14 +90,14 @@ export default function ReferenceTable() {
       },
     },
     {
-      headerName: "Description",
-      field: "description",
+      headerName: 'Description',
+      field: 'description',
       flex: 2,
       renderCell: renderCellExpand,
     },
     {
-      headerName: "Type",
-      field: "type",
+      headerName: 'Type',
+      field: 'type',
       flex: 1,
       renderCell: renderCellExpand,
     },
@@ -121,11 +120,11 @@ export default function ReferenceTable() {
   ];
 
   return (
-    <div style={{ width: "100%" }}>
+    <div style={{width: '100%'}}>
       <DataGridPro
         initialState={{
           sorting: {
-            sortModel: [{ field: "title", sort: "asc" }],
+            sortModel: [{field: 'title', sort: 'asc'}],
           },
         }}
         disableSelectionOnClick
@@ -135,29 +134,38 @@ export default function ReferenceTable() {
         pageSize={pageSize}
         onPageSizeChange={changePageSize}
         sx={{
-          "color": colorMode === 'dark' ? 'rgba(224,224,224,1);' : 'rgba(0, 0, 0, 0.54);',
-          "& .MuiDataGrid-columnHeader:last-child .MuiDataGrid-columnSeparator--sideRight":
+          color:
+            colorMode === 'dark'
+              ? 'rgba(224,224,224,1);'
+              : 'rgba(0, 0, 0, 0.54);',
+          '& .MuiDataGrid-columnHeader:last-child .MuiDataGrid-columnSeparator--sideRight':
             {
-              display: "none",
+              display: 'none',
             },
-          "& .MuiDataGrid-sortIcon": {
-            "color": colorMode === 'dark' ? 'rgba(224,224,224,1);' : 'rgba(0, 0, 0, 0.54);',
+          '& .MuiDataGrid-sortIcon': {
+            color:
+              colorMode === 'dark'
+                ? 'rgba(224,224,224,1);'
+                : 'rgba(0, 0, 0, 0.54);',
           },
-          "& .MuiDataGrid-menuIconButton": {
-            "color": colorMode === 'dark' ? 'rgba(224,224,224,1);' : 'rgba(0, 0, 0, 0.54);',
-          }
+          '& .MuiDataGrid-menuIconButton': {
+            color:
+              colorMode === 'dark'
+                ? 'rgba(224,224,224,1);'
+                : 'rgba(0, 0, 0, 0.54);',
+          },
         }}
         columns={columns}
         rows={references.filter(filterHidden)}
         componentsProps={{
           toolbar: {
             printOptions: {
-              disableToolbarButton: true
+              disableToolbarButton: true,
             },
             csvOptions: {
-              disableToolbarButton: true
-            }
-          }
+              disableToolbarButton: true,
+            },
+          },
         }}
         components={{
           Toolbar: GridToolbar,

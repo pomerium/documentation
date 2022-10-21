@@ -19,5 +19,5 @@ pagination_next: null
 Signout redirect url is the url user will be redirected to after signing out.
 
 You can overwrite this behavior by passing the query param `pomerium_redirect_uri` or post value `pomerium_redirect_uri`
-to the `/.pomerium/signout/` endpoint.
+to the `/.pomerium/sign_out/` endpoint.
 
