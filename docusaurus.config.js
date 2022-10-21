@@ -101,10 +101,14 @@ const config = {
           position: 'right',
         },
         {
-          type: 'dropdown',
-          label: 'v18',
-          position: 'right',
+          type: "dropdown",
+          label: "v19",
+          position: "right",
           items: [
+            {
+              label: "v18",
+              href: "https://v18.docs.pomerium.com/docs",
+            },
             {
               label: 'v17',
               href: 'https://v17.docs.pomerium.com/docs',
