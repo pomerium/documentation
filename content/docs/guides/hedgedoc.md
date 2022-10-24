@@ -73,7 +73,7 @@ docker-compose up
 
 Navigate to `https://authenticate.localhost.pomerium.io`. Your Pomerium proxy will redirect you to your GitHub OAuth app, where you can authorize the OAuth app to access your GitHub account.
 
-![GitHub IdP sign-in prompt](../img/sign-in-gh.png)
+![GitHub IdP sign-in prompt](img/sign-in-gh.png)
 
 Navigate to `https://authenticate.localhost.pomerium.io/.pomerium/` to see your User Details:
 
