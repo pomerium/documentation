@@ -77,7 +77,7 @@ Navigate to `https://authenticate.localhost.pomerium.io`. Your Pomerium proxy wi
 
 Navigate to `https://authenticate.localhost.pomerium.io/.pomerium/` to see your User Details:
 
-![Pomerium User Details](../img/user-details.png)
+![Pomerium User Details](img/user-details.png)
 
 Congratulations! You've successfully configured and run Pomerium.
 
