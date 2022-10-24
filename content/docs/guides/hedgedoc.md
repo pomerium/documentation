@@ -23,7 +23,7 @@ The flow looks like this:
 5. After IdP establishes user's identity, Pomerium proxy checks permissions against the secured app
 6. User can make authorized requests in the secured app
 
-![Pomerium IAP flow](content/docs/guides/img/pom-auth-flow.png)
+![Pomerium IAP flow](../img/pom-auth-flow.png)
 
 ### Set up your environment
 This guide uses Docker containers to create the minimal development environment required to run Pomerium with another service. Visit the [Pomerium using Docker](https://www.pomerium.com/docs/install/quickstart) quickstart for more information.
