@@ -273,7 +273,11 @@ If set, allows the import of external data from sources using untrusted TLS cert
 
 #### Polling Min/Max Delay
 
-Defines the minimum and maximum delay times between requests to the external data source.
+Defines the minimum and maximum delay times between requests to the external data source. 
+The job would be scheduled to run within `min delay` intervals. Note, if a job may not
+complete within the `min delay` period, it would be interrupted and restarted. If a job 
+is interrupted by timeout or due to an error, it would be restarted with increasing 
+intervals up to the `max delay` period. 
 
 #### Client TLS Key
 
