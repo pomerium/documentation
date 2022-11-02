@@ -37,8 +37,9 @@ curl "https://$ANY_POMERIUM_PROXIED_SERVICE/.pomerium/api/v1/login?pomerium_redi
 
 # you can now use the value from `pomerium_jwt` to Authorize to our proxied endpoint (which you could use to proxy `localhost`)
 
+JWT="a.real.jwt"
 # Pomerium header
-curl -H 'Authorization: Pomerium a.real.jwt' "https://$ANY_POMERIUM_PROXIED_SERVICE"
+curl -H "Authorization: Pomerium $JWT" "https://$ANY_POMERIUM_PROXIED_SERVICE"
 # GET parameter
 curl "https://$ANY_POMERIUM_PROXIED_SERVICE/?pomerium_session=$JWT"
 # Cookie
