@@ -1,9 +1,74 @@
 ---
-title: Older Versions
-description: This page contains the list of deprecations and important or breaking changes for older versions of Pomerium.
+title: Upgrading
+description: >-
+  This page contains the list of deprecations and important or breaking changes
+  for Pomerium. Please read it carefully.
 pagination_prev: null
 pagination_next: null
 ---
+
+# Upgrade guide
+## Since 0.16.0
+
+### New
+
+#### Per Route OIDC Credentials
+
+This release of Pomerium adds the ability to bind a route to unique OIDC credentials. This allows Identity Provider administrators to view Pomerium protected applications individually rather than as a single shared application.
+
+See [idp_client_id](/docs/reference/routes/identity-provider-client-id-per-route) and [idp_client_secret](/docs/reference/routes/identity-provider-client-secret-per-route) for configuration details.
+
+#### Updated User Info Page
+
+The `.pomerium` user info page has been redesigned to better structure data around user identity, group, and device information.
+
+#### External Google Groups
+
+Pomerium policy now supports group members from outside of your organization.
+
+## Since 0.15.0
+
+### New
+
+#### Policy for Device Identity
+
+This release of Pomerium adds the ability to set policy based on system registration via [WebAuthN](https://en.wikipedia.org/wiki/WebAuthn).
+
+See [Device Identity](/docs/topics/device-identity) for more details.
+
+#### HTTP PPL Criteria
+
+`http_path` and `http_method` are now supported for matching HTTP requests in policies. See [Pomerium Policy Language](/docs/topics/ppl#criteria) for more details.
+
+### Breaking
+
+#### Self-signed fallback certificates
+
+When selecting a TLS certificate for a listener, Pomerium attempts to locate one by iterating through the provided certs and searching for a SAN match. This applies to all listeners, including internal service URLs like `databroker_service_url` and public endpoints like `authenticate.example.com`.
+
+Previously, when no match was found, Pomerium would select the "first" certificate in the list. However, the definition of "first" might change based on runtime configuration, so the certificate selection was non-deterministic.
+
+Starting in v0.16, Pomerium will instead generate a self-signed certificate if it cannot locate an appropriate certificate from the provided configuration or system key/trust store. If you discover that you are receiving a self-signed certificate rather than a certificate from [`certificate`/`certificates`/`certificate_file`](/docs/reference/certificates) or the trust store, you have a mismatch between your service URL and the names covered in your certificates.
+
+#### OIDC flow no longer sets default uri params
+
+Previously, Pomerium would default to setting the uri param `access_type` to `offline` for all OpenID Connect based identity providers. However, using uri params to ensure offline access (e.g. `refresh_tokens` used to keep user's sessions alive) [is unique to Google](https://developers.google.com/identity/protocols/oauth2/web-server#offline). Those query params will now only be set for Google. Other OIDC based IdP's should continue to work using [OIDC's](https://openid.net/specs/openid-connect-core-1_0.html#OfflineAccess) `offline_access` scope.
+
+#### Removed options
+
+The deprecated `headers` option has been removed. Use [`set_response_headers`](/docs/reference/set-response-headers) instead.
+
+The `signing_key_algorithm` option has been removed and will now be inferred from `signing_key`.
+
+#### Changed GitHub Team IDs
+
+To improve performance, IdP directory synchronization for GitHub now uses the GraphQL API. This API returns the same information as the REST API, except that the GraphQL node IDs are different. Where we previously used the team integer ID from the REST API, we now use the team slug instead. Most policies should already use the team slug for group based rules, which should continue to work. However, if the integer ID is used it will no longer work. Update those policies to use the team slug instead.
+
+#### CLI Source and Packaging Update
+
+`pomerium-cli` has been factored out of the core repository and now resides at <https://github.com/pomerium/cli>. If you currently install the CLI tool from [Packages](/docs/overview/releases#packages-2) or [Homebrew](/docs/overview/releases#homebrew), no changes should be required to your process. However, users of docker images or direct github release downloads will need to update their references.
+
+Please see the [updated install instructions](/docs/overview/releases#pomerium-cli) for additional details.
 
 ## Since 0.14.0
 
@@ -36,19 +101,19 @@ Routes and policies may now be configured under a new top level key - `routes`
 
 #### Ping Identity
 
-[Ping Identity](https://www.pingidentity.com/) is supported as a directory provider.  See [the documentation](https://www.pomerium.com/docs/identity-providers/ping.html) for details.
+[Ping Identity](https://www.pingidentity.com/) is supported as a directory provider. See [the documentation](https://www.pomerium.com/docs/identity-providers/ping.html) for details.
 
 #### Customized Identity Headers
 
-With the v0.14 release, the names of `X-Pomerium-Claim-{Name}` headers can now be [customized](https://www.pomerium.com/reference/#jwt-claim-headers).  This enables broader 3rd party application support for Pomerium's identity headers.
+With the v0.14 release, the names of `X-Pomerium-Claim-{Name}` headers can now be [customized](https://www.pomerium.com/reference/#jwt-claim-headers). This enables broader 3rd party application support for Pomerium's identity headers.
 
 #### Redis High Availability
 
-Databroker now supports redis [sentinel](https://redis.io/topics/sentinel) and [cluster](https://redis.io/topics/cluster-spec) for increased availability.  See the databroker [documentation](https://www.pomerium.com/reference/#data-broker-storage-connection-string) for details.
+Databroker now supports redis [sentinel](https://redis.io/topics/sentinel) and [cluster](https://redis.io/topics/cluster-spec) for increased availability. See the databroker [documentation](https://www.pomerium.com/reference/#data-broker-storage-connection-string) for details.
 
 #### Rewrite Response Headers
 
-Policies may now [rewrite response headers](https://www.pomerium.com/reference/#rewrite-response-headers) from upstream services.  This can be especially useful when upstreams attempt to redirect users to unreachable internal hostnames.
+Policies may now [rewrite response headers](https://www.pomerium.com/reference/#rewrite-response-headers) from upstream services. This can be especially useful when upstreams attempt to redirect users to unreachable internal hostnames.
 
 ### Breaking
 
@@ -58,9 +123,9 @@ Programmatic login now restricts the allowed redirect URL domains. By default th
 
 #### `allowed_users` ID format
 
-When specifying `allowed_users` by ID, the identity provider is no longer part of the ID format.  This does not impact users specified by e-mail.
+When specifying `allowed_users` by ID, the identity provider is no longer part of the ID format. This does not impact users specified by e-mail.
 
-To update your policies for v0.14, please remove any identity provider prefix.  Example: `okta/00usi7mc8XC8SwFxT4x6` becomes `00usi7mc8XC8SwFxT4x6`.
+To update your policies for v0.14, please remove any identity provider prefix. Example: `okta/00usi7mc8XC8SwFxT4x6` becomes `00usi7mc8XC8SwFxT4x6`.
 
 ## Since 0.12.0
 
@@ -92,12 +157,11 @@ The frontchannel-logout endpoint will now require a CSRF token for both `GET` an
 
 #### User impersonation removed
 
-Prior to the v0.13 release, it was possible for an administrative user to temporarily impersonate another user. This was done by adding an additional set of claims to that user's session token. Having additional identity state stored client-side significantly expands the attack surface of Pomerium and complicates policy enforcement by having multiple sources of truth for identity. User impersonation was removed to shrink that attack surface and simplify policy enforcement. Pomerium now stores all identity state server-side and encrypted in the databroker.
+Prior to the v0.13 release, it was possible for an administrative user to temporarily impersonate another user. This was done by adding an additional set of claims to that user's session token. Having additional identity state stored client-side significantly expands the attack surface of Pomerium and complicates policy enforcement by having multiple sources of truth for identity. User impersonation was removed to shrink that attack surface and simplify policy enforcement. Pomerium now stores all identity state server-side and encrypted in the databroker.
 
 #### Client-side service accounts removed
 
 Prior to the v0.13 release, it was possible to create service accounts via Pomerium's CLI tool. These service accounts were signed with Pomerium's shared secret key. As with user impersonation, having session state stored client-side significantly expands the attack surface of Pomerium and complicates policy enforcement. Client side service accounts were removed to shrink that attack surface area, and to simplify policy enforcement.
-
 
 #### Administrators option removed
 
@@ -109,7 +173,7 @@ The `administrators` configuration option has been removed.
 
 #### TCP Proxying
 
-Pomerium can now be used for non-HTTP services.  See [documentation](/docs/tcp) for more details.
+Pomerium can now be used for non-HTTP services. See [documentation](/docs/tcp) for more details.
 
 #### Datadog Tracing
 
@@ -131,7 +195,7 @@ The `cache_service_url` parameter has been deprecated since v0.10.0 and is now r
 
 #### Docker Multi-Arch Images
 
-With the v0.11.0 release, Pomerium docker images are multi-arch for `arm64` and `amd64`.  Individual images for each architecture will continue to be published.
+With the v0.11.0 release, Pomerium docker images are multi-arch for `arm64` and `amd64`. Individual images for each architecture will continue to be published.
 
 ## Since 0.9.0
 
@@ -153,7 +217,7 @@ With the v0.10 release, Pomerium now asynchronously fetches associated authoriza
 
 There are two [storage backend types] available: `memory` or `redis`. You can see the existing [storage backend configuration settings in the docs][cache service docs].
 
-##### Memory Storage Backend
+#### Memory Storage Backend
 
 For `memory` storage, restarting the cache service will result in all users having to re-login. Code for the in-memory database used by the cache service can be found here: [internal/databroker/memory](https://github.com/pomerium/pomerium/tree/main/internal/databroker/memory).
 
@@ -163,18 +227,18 @@ Running more than one instance of the `memory` type cache service is not support
 
 :::
 
-##### Redis Storage Backend
+#### Redis Storage Backend
 
 In production deployments, we recommend using the `redis` storage backend. Unlike the `memory` backend, `redis` can be used for persistent data.
 
-##### Implementing your own storage backend
+#### Implementing your own storage backend
 
 Please see the following interfaces for reference to implement your storage backend interface.
 
 - [databroker gRPC interface](https://github.com/pomerium/pomerium/blob/main/pkg/grpc/databroker/databroker.proto)
 - [storage backend interface](https://github.com/pomerium/pomerium/blob/main/pkg/storage/storage.go)
 
-#### Identity headers
+### Identity headers
 
 With this release, pomerium will not insert identity headers (X-Pomerium-Jwt-Assertion/X-Pomerium-Claim-*) by default. To get pre 0.9.0 behavior, you can set `pass_identity_headers` to true on a per-policy basis.
 
@@ -202,7 +266,7 @@ In `0.9.0`:
 option httpchk GET /ping HTTP/1.1\r\nHost:pomerium
 ```
 
-#### preserve_host_header option
+#### `preserve_host_header` option
 
 With this release, Pomerium uses an embedded envoy proxy instead hand-written one. Thus, we defer the preserve host header functionality to [envoys auto_host_rewrite](https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/route/v3/route_components.proto#envoy-v3-api-field-config-route-v3-routeaction-auto-host-rewrite), which does not affect if the policy routes to a static IP.
 
@@ -216,12 +280,12 @@ To preserve 0.8.x behavior, you can use the `set_request_headers` option to expl
 
 - The `service` label on metrics and tracing no longer reflects the `Services` configuration option directly. `pomerium` will be used for all-in-one mode, and `pomerium-[service]` will be used for distributed services
 
-##### Tracing
+#### Tracing
 
 - Jaeger tracing support is no longer end-to-end in the Proxy service. We recommend updating to the Zipkin provider for proper tracing support. Jaeger will continue to work but will not have coverage in the data plane.
 - Option `tracing_debug` is no longer supported. Use `tracing_sampling_rate` instead. [Details](/docs/reference/tracing#shared-tracing-settings).
 
-##### Metrics
+#### Metrics
 
 With this release we now use an embedded [envoy](https://www.envoyproxy.io/) binary as our proxy server.
 
@@ -497,7 +561,6 @@ Usage of the POLICY_FILE envvar is no longer supported. Support for file based p
 ### Authenticate Internal Service Address
 
 The configuration variable [Authenticate Internal Service URL] must now be a valid [URL](https://golang.org/pkg/net/url/#URL) type and contain both a hostname and valid `https` schema.
-
 
 [authenticate internal service url]: /docs/reference/authenticate-service-url
 [cache service docs]: /docs/reference/data-broker-service
