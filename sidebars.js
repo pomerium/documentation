@@ -9,7 +9,8 @@
  Create as many sidebars as you want.
  */
 
-/** @type {import('@docusaurus/plugin-content-docs').SidebarsConfig} */
+/**
+ * @type {import('@docusaurus/plugin-content-docs').SidebarsConfig} */
 const sidebars = {
   documentation: [
     'docs/index',
@@ -60,10 +61,12 @@ const sidebars = {
     {
       type: 'category',
       label: 'Production',
-      items: [
-        'docs/production/production-deployment',
-        'docs/production/security',
-      ],
+      items: ['docs/production/production-deployment'],
+    },
+    {
+      type: 'category',
+      label: 'Internals',
+      items: ['docs/internals/security'],
     },
     {
       type: 'category',
@@ -103,11 +106,7 @@ const sidebars = {
         type: 'doc',
         id: 'docs/community/index',
       },
-      items: [
-        'docs/community/code-of-conduct',
-        'docs/community/contributing',
-        'docs/community/security',
-      ],
+      items: ['docs/community/code-of-conduct', 'docs/community/contributing'],
     },
   ],
 
