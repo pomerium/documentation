@@ -2,25 +2,26 @@
 title: Securing TCP based services
 sidebar_label: TCP Services
 lang: en-US
-keywords: [pomerium, identity access proxy, ssh, tcp, postgres, database, redis, mysql]
+keywords:
+  [pomerium, identity access proxy, ssh, tcp, postgres, database, redis, mysql]
 description: This guide covers how to use Pomerium to protect TCP services such as SSH, Postgres and Redis.
 ---
 
-import PomeriumConfig from '../../examples/tcp/config.yaml.md'
-import DockerCompose from '../../examples/tcp/docker-compose.yaml.md'
+import PomeriumConfig from '../../examples/tcp/config.yaml.md';
+import DockerCompose from '../../examples/tcp/docker-compose.yaml.md';
 
-The following guide demonstrates how to use Pomerium's [TCP Proxying](/docs/tcp) support with various TCP services such as databases and other non-HTTP protocols.  It also covers integration points with them when possible.
+The following guide demonstrates how to use Pomerium's [TCP Proxying](/docs/tcp) support with various TCP services such as databases and other non-HTTP protocols. It also covers integration points with them when possible.
 
 The source files from this guide can be found on [GitHub](https://github.com/pomerium/pomerium/tree/main/examples/tcp/).
 
 ## Background
 
-When replacing a traditional VPN, there are often non-HTTP based applications which must still be reachable.  Pomerium is able to provide the same type of protection to these services by using a client side application to proxy TCP connections.  Authentication and authorization configuration is shared with standard HTTP routes, and the underlying transport is still encrypted between the end-user and Pomerium.
+When replacing a traditional VPN, there are often non-HTTP based applications which must still be reachable. Pomerium is able to provide the same type of protection to these services by using a client side application to proxy TCP connections. Authentication and authorization configuration is shared with standard HTTP routes, and the underlying transport is still encrypted between the end-user and Pomerium.
 
 Important notes:
 
 - Pomerium authorizes HTTP on a request-by-request basis, but TCP is authorized on a per-connection basis.
-- Pomerium is only authorizing the TCP *connection*. It does not interact with application level authorization systems at this time.
+- Pomerium is only authorizing the TCP _connection_. It does not interact with application level authorization systems at this time.
 
 ## How it works
 
@@ -65,7 +66,7 @@ To provide your own certificates through another mechanism, please overwrite the
 
 Update `config.yaml` with your IdP settings and desired policy if adopting for your environment
 
-<PomeriumConfig/>
+<PomeriumConfig />
 
 ### Docker Compose
 
@@ -77,7 +78,7 @@ Included in our compose file:
 - Postgres
 - Redis
 
-<DockerCompose/>
+<DockerCompose />
 
 ## Connect
 
@@ -87,11 +88,11 @@ To connect to your service, ensure [`pomerium-cli`](/docs/overview/releases#pome
 pomerium-cli tcp [hostname]:[port]
 ```
 
-`pomerium-cli` will select a random port on `localhost` by default, but you can specify a port manually if desired.  Keep reading for some specific application examples using the sample `docker-compose.yaml`.
+`pomerium-cli` will select a random port on `localhost` by default, but you can specify a port manually if desired. Keep reading for some specific application examples using the sample `docker-compose.yaml`.
 
 ## Redis
 
-```bash {2,6}
+````bash {2,6}
 # Start a proxy to redis in the background
 pomerium-cli tcp redis.localhost.pomerium.io:6379 --listen localhost:6379 &
 3:01PM INF tcptunnel: listening on 127.0.0.1:6379
@@ -112,7 +113,7 @@ redis-cli
  8) "server_version_version_set"
  9) "server_version"
 10) "type.googleapis.com/directory.User_last_version"```
-```
+````
 
 ## Postgres
 
@@ -137,7 +138,7 @@ Password:
 
 ## SSH
 
-SSH clients can make use of external programs to establish a connection to a host.  Most frequently, this is for using an SSH jump host to reach a target system.  However, any transport application can be used.  `pomerium-cli`'s `tcp` command can be used in conjunction with this configuration.  Read on to see how.
+SSH clients can make use of external programs to establish a connection to a host. Most frequently, this is for using an SSH jump host to reach a target system. However, any transport application can be used. `pomerium-cli`'s `tcp` command can be used in conjunction with this configuration. Read on to see how.
 
 More Info:
 
@@ -153,12 +154,12 @@ Host *.localhost.pomerium.io
     ProxyCommand pomerium-cli tcp --listen - %h:%p
 ```
 
-* Be sure to substitute your domain for `localhost.pomerium.io`
-* Be sure `pomerium-cli` is in your `$PATH`
+- Be sure to substitute your domain for `localhost.pomerium.io`
+- Be sure `pomerium-cli` is in your `$PATH`
 
 ### Connecting
 
-That's it!  A Pomerium proxy will be started *automatically* whenever you ssh to a host under `localhost.pomerium.io`.
+That's it! A Pomerium proxy will be started _automatically_ whenever you ssh to a host under `localhost.pomerium.io`.
 
 In our example docker-compose, we have an SSH server configured with `supersecret` as the password for `myuser`.
 

@@ -67,7 +67,6 @@ const config = {
       },
       items: [
         {
-          //href: '/',
           docId: 'docs',
           position: 'right',
           label: 'Documentation',
@@ -101,13 +100,13 @@ const config = {
           position: 'right',
         },
         {
-          type: "dropdown",
-          label: "v19",
-          position: "right",
+          type: 'dropdown',
+          label: 'v19',
+          position: 'right',
           items: [
             {
-              label: "v18",
-              href: "https://v18.docs.pomerium.com/docs",
+              label: 'v18',
+              href: 'https://v18.docs.pomerium.com/docs',
             },
             {
               label: 'v17',
