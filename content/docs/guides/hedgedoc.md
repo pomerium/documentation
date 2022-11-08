@@ -1,3 +1,12 @@
+
+---
+title: Securing Hedgedoc with Pomerium
+sidebar_label: Hedgedoc
+lang: en-US
+keywords: [pomerium, identity access proxy, data, logging, graphing, Hedgedoc, authentication, authorization]
+description: This guide covers how to use Pomerium to authenticate and authorize users of Hedgedoc.
+---
+
 # HedgeDoc
 
  Use Pomerium to secure access to HedgeDoc by providing identity and context. 
