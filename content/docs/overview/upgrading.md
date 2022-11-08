@@ -8,6 +8,57 @@ pagination_next: null
 ---
 
 # Upgrade guide
+
+## Since 0.20.0
+
+### Breaking
+
+#### IdP Groups Policy
+
+A deprecated `routes.allowed_groups` and `groups` PPL criteria were removed.
+
+For Open Source, please use IdP Claims passed by your IdP. 
+- Please visit your IdP provider admin console to adjust group membership propagation to Claims.
+  - [Okta](https://developer.okta.com/docs/guides/customize-tokens-groups-claim/main)
+  - [Auth0](https://auth0.com/docs/customize/extensions/authorization-extension/configure-authorization-extension#add-authorization-information-to-the-token-issued)
+  - [Azure](https://learn.microsoft.com/en-us/azure/active-directory/hybrid/how-to-connect-fed-group-claims)
+  - [Cognito](/docs/identity-providers/cognito.html#group-based-policies)
+- You may need adjust requested scopes via `idp_scopes` config option.
+- visit your authenticate endpoint `/.pomerium` route to check the group claims are passed by your IdP.
+- use `claim/` [PPL criteria](/docs/topics/ppl.html#criteria) 
+
+```yaml
+routes:
+  - from: https://httpbin.localhost.pomerium.io
+    to: https://httpbin.org
+    pass_identity_headers: true
+    policy:
+      allow:
+        and:
+          - claim/groups: admins
+```
+
+For Enterprise, use PPL Builder 
+![policy_groups_enterprise](img/policy_groups_enterprise.png)
+
+### IdP Directory Sync
+
+IdP directory sync has been moved to https://github.com/pomerium/datasource and becomes part of the [External Data Sources integration](/docs/enterprise/external-data), in order to provide unification with other external data sources, consolidate job scheduling and monitoring.
+
+Setting the below options in Pomerium config file would now result in an error. 
+In Pomerium Enterprise Console, please navigate to Settings > Identity Provider and configure directory sync there.  
+- `idp_service_account`: use IdP provider specific options in the UI.
+- `idp_refresh_directory_timeout`: use [Polling Min Delay](docs/enterprise/reference/configure#polling-minmax-delay).
+- `idp_refresh_directory_interval`: replaced by [Polling Max Delay](docs/enterprise/reference/configure#polling-minmax-delay).
+- `idp_qps`: not required, IdP providers adjust their qps rate.
+
+Pomerium Core would only perform user authentication and session refresh with the IdP provider, and would not try to synchronize user details and groups, which is now part of [External Data Sources](/docs/enterprise/external-data).
+
+![idp_enterprise](img/idp_enterprise.png)
+
+
+#### 
+
 ## Since 0.16.0
 
 ### New
