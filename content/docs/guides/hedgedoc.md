@@ -19,7 +19,7 @@ You can share a link to your document with other members of your organization so
 
  ## Integrate Pomerium with HedgeDoc
  
- HedgeDoc is open-source, self-hosted software that allows you to configure authentication and authorization with a [reverse proxy](https://docs.hedgedoc.org/guides/reverse-proxy/). 
+ HedgeDoc is an open-source, self-hosted software that allows you to configure authentication and authorization with a [reverse proxy](https://docs.hedgedoc.org/guides/reverse-proxy/). 
  
  You can configure Pomerium so that it authenticates and authorizes users against an Identity Provider (IdP) before users can access HedgeDoc's services.
 
