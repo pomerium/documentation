@@ -131,7 +131,7 @@ volumes:
   database:
   uploads:
 ```
-You must add a session secret. If you don't, HedgeDoc will randomly generate a secret, which will log out all users. 
+>**Note:** You must add a session secret. If you don't, HedgeDoc will randomly generate a secret, which will log out all users. 
 
 To generate a session secret, run the following command in your terminal: 
 
