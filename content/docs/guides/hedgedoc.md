@@ -9,7 +9,7 @@ description: This guide covers how to use Pomerium to authenticate and authorize
 
 # HedgeDoc
 
- Use Pomerium to secure access to HedgeDoc by providing identity and context. 
+Use Pomerium to secure access to HedgeDoc by providing identity and context. 
 
  ## What is HedgeDoc?
 
