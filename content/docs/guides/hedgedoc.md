@@ -27,7 +27,7 @@ The flow looks like this:
 
 1. User requests to access the secured app
 2. Pomerium identifies user
-3. Pomerium proxy checks if user is authorized to access routes defined in the authorization [`policy`](https://www.pomerium.com/docs/reference/routes/policy)
+3. Pomerium checks if user is authorized to access routes defined in the authorization [`policy`](https://www.pomerium.com/docs/reference/routes/policy)
 4. If authorized, Pomerium proxy authenticates user against IdP
 5. After IdP establishes user's identity, Pomerium proxy checks permissions against the secured app
 6. User can make authorized requests in the secured app
