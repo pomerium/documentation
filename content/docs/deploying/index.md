@@ -1,9 +1,6 @@
 ---
 title: Deploying
-sidebar_label: Deploying
 description: This article describes how to deploy Pomerium to various deployment platforms and environments.
-pagination_prev: null
-pagination_next: null
 ---
 
 There are many ways to install Pomerium. Check out our [Quickstart](install/quickstart) page to get a proof-of-concept container up and running quickly, or see one of the other options below:

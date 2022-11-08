@@ -7,11 +7,12 @@ pagination_next: null
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-
 This doc describes how to create an OIDC app in [OneLogin] for Pomerium and connect to it. It assumes you have already [installed Pomerium].
 
 :::caution
+
 While we do our best to keep our documentation up to date, changes to third-party systems are outside our control. Refer to [Connect an OIDC enabled app](https://developers.onelogin.com/openid-connect/connect-to-onelogin) from OneLogin's documentation as needed, or [let us know](https://github.com/pomerium/documentation/issues/new?assignees=&labels=&template=doc-error.md) if we need to re-visit this page.
+
 :::
 
 ## Create OpenID Connect App
@@ -62,10 +63,10 @@ Update your Pomerium configuration:
 <TabItem value="config.yaml" label="config.yaml">
 
 ```yaml
-idp_provider: "onelogin"
-idp_provider_url: "https://awesomecompany.onelogin.com/oidc/2"
-idp_client_id: "REDACTED" # Your OneLogin application ID
-idp_client_secret: "REDACTED" # Your OneLogin application secret
+idp_provider: 'onelogin'
+idp_provider_url: 'https://awesomecompany.onelogin.com/oidc/2'
+idp_client_id: 'REDACTED' # Your OneLogin application ID
+idp_client_secret: 'REDACTED' # Your OneLogin application secret
 ```
 
 </TabItem>
@@ -85,7 +86,6 @@ After reloading Pomerium, you should be able to see any login events from your O
 
 ![One Login Events Dashboard](./img/onelogin/one-login-events.png)
 
-
 ## Groups
 
 A `groups` claim can be added to tokens returned from Okta by following the [Okta documentation](https://developer.okta.com/docs/guides/customize-tokens-groups-claim/main/).
@@ -102,12 +102,31 @@ routes:
             - groups: admin
 ```
 
+## Setting Up Directory Sync
+
+### Create OneLogin Credentials
+
+In order for Pomerium to validate group membership, we'll also need to configure [API Credentials](https://developers.onelogin.com/api-docs/1/getting-started/working-with-api-credentials) in OneLogin.
+
+1. From the **Administration** dashboard, navigate to **Developers → API Credentials** and select **New Credential**.
+
+1. Name the new credential and give it "Read users" access:
+
+![OneLogin API Access](./img/onelogin/one-login-api-access.png)
+
+A [Group's ID](https://developers.onelogin.com/openid-connect/api/user-info) will be used to affirm a user's group membership.
+
+### Configure Pomerium Enterprise Console
+
+Under **Settings → Identity Providers**, select "Onelogin" as the identity provider and set the Client ID and Client Secret.
+
+![OneLogin Settings](./img/onelogin/one-login-idp.png)
 
 [client id]: /docs/reference/identity-provider-client-id
 [client secret]: /docs/reference/identity-provider-client-secret
-[Identity Provider URL]: /docs/reference/identity-provider-url
+[identity provider url]: /docs/reference/identity-provider-url
 [environmental variables]: https://en.wikipedia.org/wiki/Environment_variable
 [oauth2]: https://oauth.net/2/
 [openid connect]: https://en.wikipedia.org/wiki/OpenID_Connect
-[OneLogin]: https://www.onelogin.com/
-[installed Pomerium]: /docs/install/
+[onelogin]: https://www.onelogin.com/
+[installed pomerium]: /docs/install/

@@ -381,7 +381,7 @@ The expandable legend below describes how different elements are used in the gra
 </details>
 
 [binaries]: /docs/install/binary
-[device identity verification]: /docs/topics/device-identity.md
+[device identity verification]: /docs/concepts/device-identity.md
 [Grafana]: /docs/guides/grafana
 [JWT Verification]: /docs/guides/jwt-verification.md
 [jwt-rfc]: https://datatracker.ietf.org/doc/html/rfc7519
