@@ -8,7 +8,7 @@ keywords: [pomerium, architecture]
 
 Pomerium sits between end users and services requiring strong authentication. After verifying identity with your identity provider (IdP), Pomerium uses a configurable policy to decide how to route your user's request and if they are authorized to access the service. ([What's the difference between Authentication and Authorization?](https://www.pomerium.com/blog/authentication-v-authorization/))
 
-![pomerium architecture diagram](../overview/img/pomerium-system-context.svg)
+![pomerium architecture diagram](./img/architecture/pomerium-system-context.svg)
 
 ## Component Level
 
@@ -46,7 +46,7 @@ In production deployments, it is recommended that you deploy each component [sep
 
 In test deployments, all four components may run from a [single binary and configuration](/docs/reference#all-in-one-vs-split-service-mode).
 
-![pomerium architecture diagram](../overview/img/pomerium-container-context.svg)
+![pomerium architecture diagram](./img/architecture/pomerium-container-context.svg)
 
 ## Authentication Flow
 
@@ -54,4 +54,4 @@ Pomerium's internal and external component interactions during full authenticati
 
 After initial authentication to provide a session token, only the authorization check interactions occur.
 
-![pomerium architecture diagram](../overview/img/pomerium-auth-flow.svg)
+![pomerium architecture diagram](./img/architecture/pomerium-auth-flow.svg)
