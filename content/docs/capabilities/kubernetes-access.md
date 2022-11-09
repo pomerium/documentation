@@ -1,7 +1,6 @@
 ---
 title: Kubernetes `kubectl` Integration
 sidebar_label: Kubernetes Access
-pagination_prev: null
 description: This article describes Pomerium's integration with the Kubernetes API Server
 ---
 

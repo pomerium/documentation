@@ -6,7 +6,9 @@ description: This article describes how the original user context is passed seco
 # Original User Context
 
 :::tip
+
 This article describes a use case available to [Pomerium Enterprise](/docs/enterprise/about) customers.
+
 :::
 
 In enterprise environments where multiple services protected by Pomerium communicate with each other using a [service account](/docs/enterprise/concepts#service-accounts), there are scenarios where the original user context must be preserved. This article describes how this is accomplished with the `X-Pomerium-Jwt-Assertion-For` header.

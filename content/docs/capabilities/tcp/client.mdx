@@ -1,6 +1,17 @@
 ---
 title: Pomerium TCP Clients
+sidebar_label: Clients (Desktop / CLI)
+lang: en-US
+keywords:
+  [
+    pomerium,
+    identity access proxy,
+    pomerium desktop,
+    pomerium cli,
+    pomerium tcp over http,
+  ]
 description: Learn how to create secured TCP connections to services behind Pomerium.
+sidebar_position: 0
 ---
 
 import Tabs from '@theme/Tabs';
@@ -26,9 +37,9 @@ The example below demonstrates a route to the SSH service on the host running th
 <TabItem value="Pomerium Core" label="Pomerium Core">
 
 ```yaml
-  - from: tcp+https://ssh.localhost.pomerium.io:22
-    to: tcp://127.0.0.1:22
-    policy:
+- from: tcp+https://ssh.localhost.pomerium.io:22
+  to: tcp://127.0.0.1:22
+  policy:
     - allow:
         or:
           - email:
@@ -71,7 +82,7 @@ If you want Pomerium Desktop to start automatically when you log in to your comp
 
 #### Autostart for all users
 
-Copy the shortcut for the Pomerium Desktop app into `C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Startup`. 
+Copy the shortcut for the Pomerium Desktop app into `C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Startup`.
 
 #### Autostart for your user
 
@@ -98,7 +109,7 @@ The easiest way to autostart user applications in the Gnome Desktop Environment 
 </TabItem>
 <TabItem value="kde" label="Linux (KDE)">
 
-KDE's documentation covers autostarting applications well: see [System Settings/Autostart](https://userbase.kde.org/System_Settings/Autostart) from the KDE UsersBase Wiki for more information. 
+KDE's documentation covers autostarting applications well: see [System Settings/Autostart](https://userbase.kde.org/System_Settings/Autostart) from the KDE UsersBase Wiki for more information.
 
 </TabItem>
 </Tabs>
@@ -115,7 +126,7 @@ KDE's documentation covers autostarting applications well: see [System Settings/
 
 **Local Address**: The local address and port number from which to access the service locally. If left blank, the client will choose a random port to listen to on the loopback address.
 
-  In most cases, you only need to specify the port (ex: `:2222`), and the client will listen on all available local addresses.
+In most cases, you only need to specify the port (ex: `:2222`), and the client will listen on all available local addresses.
 
 **Tags**: Use tags to sort and organize your TCP routes.
 
@@ -144,7 +155,6 @@ See [Release](/docs/overview/releases#pomerium-cli) to learn how to install pome
    pomerium-cli tcp ssh.localhost.pomerium.io:22
    2:06PM INF tcptunnel: listening on 127.0.0.1:36397
    ```
-
 
    You can optionally supply an address and/or port to the `listen` flag:
 
