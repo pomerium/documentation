@@ -11,8 +11,6 @@ keywords:
     scaling,
     horizontal,
   ]
-pagination_prev: null
-
 sidebar_label: To Production
 sidebar_position: 10
 ---
@@ -33,7 +31,7 @@ Pomerium is designed to be run in two modes: All-In-One or Split Service. These 
 
 Each instance of Pomerium runs in all-in-one mode unless specified to run as a specific component by the `services` key. See [All-In-One vs Split Service mode](/docs/reference#all-in-one-vs-split-service-mode) for more details.
 
-It's important to note that any production deployment with more than one instance of Pomerium (in any combination of modes) should be configured to use Postgres as the [`databroker_storage_type`](/docs/reference/data-broker-storage-type). See [Data Storage - Backends](/docs/topics/data-storage#backends) for more details.
+It's important to note that any production deployment with more than one instance of Pomerium (in any combination of modes) should be configured to use Postgres as the [`databroker_storage_type`](/docs/reference/data-broker-storage-type). See [Data Storage - Backends](/docs/concepts/data-storage#backends) for more details.
 
 ### All-in-One
 
@@ -51,7 +49,7 @@ In split service mode, you have the opportunity to scale the components of Pomer
 
 All of Pomerium's components are designed to be [stateless](/docs/overview/glossary#stateless), and may all be scaled horizontally or vertically. In general, horizontal scaling is recommended. Vertical scaling will lead to diminished returns after ~8 vCPUs.
 
-The Databroker service, which is responsible for session and identity related data, must be [configured for external persistence](/docs/topics/data-storage) to be fully stateless.
+The Databroker service, which is responsible for session and identity related data, must be [configured for external persistence](/docs/concepts/data-storage) to be fully stateless.
 
 Pomerium's individual components can be divided into two categories; the data plane and control plane. Regardless of which mode you run Pomerium in, we strongly recommend multiple instances of each service for fault tolerance.
 
@@ -101,7 +99,7 @@ In many deployments, 2 replicas of Databroker is enough to provide resilient ser
 
 :::caution 
 
-In a production configuration, Databroker CPU/IO utilization also translates to IO load on the [underlying storage system](/docs/topics/data-storage). Ensure it is scaled accordingly! 
+In a production configuration, Databroker CPU/IO utilization also translates to IO load on the [underlying storage system](/docs/concepts/data-storage). Ensure it is scaled accordingly! 
 
 :::
 
@@ -139,7 +137,7 @@ Ensure that you have enough spare capacity to handle the scope of your failure d
 
 :::caution 
 
-Multiple replicas of Databroker or all-in-one service are only supported with [external storage](/docs/topics/data-storage) configured 
+Multiple replicas of Databroker or all-in-one service are only supported with [external storage](/docs/concepts/data-storage) configured 
 
 :::
 
@@ -167,7 +165,7 @@ If you have TLS enabled applications behind the proxy:
 - you may provide a client certificate for the Proxy service to connect to downstream services with and verify
 - the Proxy may be configured to verify the name and certificate authority of downstream services with either the standard Root CA bundle or a custom CA
 
-[jwt verification]: /docs/topics/mutual-auth.md#jwt-verification-application-based-mutual-authentication
+[jwt verification]: /docs/concepts/mutual-auth.md#jwt-verification-application-based-mutual-authentication
 [rbac]: /docs/enterprise/concepts.md#rbac-for-enterprise-console-users
 
 ## Securing Pomerium
@@ -182,14 +180,14 @@ If you're just getting started, we suggest reviewing the following pages:
 
 - [Background](/docs/overview/background) - A quick primer on the failures of legacy models of "perimeter security" and an introduction to the concept of Zero Trust.
 - [Architecture](/docs/overview/architecture) - Learn how Pomerium is broken down into component services. How you choose to deploy Pomerium will set the stage for the kind of security practices that apply to your stack.
-- [Mutual Authentication: A Component of Zero Trust](/docs/topics/mutual-auth) - Zero Trust's core principle could be said as "trust nothing without first (and continuously) verifying it". Mutual authentication is a big part of bringing that principle to bear. This page explains the concept and how it's achieved across several different layers of the network stack.
+- [Mutual Authentication: A Component of Zero Trust](/docs/concepts/mutual-auth) - Zero Trust's core principle could be said as "trust nothing without first (and continuously) verifying it". Mutual authentication is a big part of bringing that principle to bear. This page explains the concept and how it's achieved across several different layers of the network stack.
 - [Glossary](/docs/overview/glossary) - Keep this page handy for when you run into new or unfamiliar terminology.
 
 ### TLS Certificates
 
 The long-time standard for server identity verification, the use of TLS certificates has exploded ever since [Let's Encrypt](https://letsencrypt.org/) made it possible for anyone to get a trusted certificate for free.
 
-- The [Certificates](/docs/topics/certificates) topic page covers several basic methods for generating trusted or testing certificates.
+- The [Certificates](/docs/concepts/certificates) topic page covers several basic methods for generating trusted or testing certificates.
 - Our article on [Installing Pomerium Using Helm](/docs/guides/helm) touches [briefly](/docs/guides/helm#install-and-configure-cert-manager) on using [cert-manager](https://cert-manager.io/docs/) to manage certificates in Kubernetes environments. We also wrote a guide for their docs site covering integration of the [Pomerium Ingress](https://cert-manager.io/docs/tutorials/acme/pomerium-ingress/) Controller with cert-manager.
 - The [Upstream mTLS With Pomerium](/docs/guides/upstream-mtls) guide demonstrates mTLS between Pomerium and upstream services.
 - Depending on your environment's needs, you may choose to verify some of all of your end users with [Client-Side mTLS](/docs/guides/mtls).
@@ -198,15 +196,15 @@ The long-time standard for server identity verification, the use of TLS certific
 
 Part of Pomerium's strength comes from the ability to pass user identity and context to your upstream service. This enables repeated verification of authorization throughout a system.
 
-- [Getting the user's identity](/docs/topics/getting-users-identity) details the JWT Pomerium creates to identify the user in any given request.
-- [Original User Context](/docs/topics/original-request-context) explains how to pass along the user context when upstream services communicate with each other to complete a request.
+- [Getting the user's identity](/docs/concepts/getting-users-identity) details the JWT Pomerium creates to identify the user in any given request.
+- [Original User Context](/docs/concepts/original-request-context) explains how to pass along the user context when upstream services communicate with each other to complete a request.
 - Many applications support native JWT verification. See [Enable jWT Authentication in Grafana](/docs/guides/grafana#enable-jwt-authentication-in-grafana) for an example. For those that don't, you can perform [JWT Verification](/docs/guides/jwt-verification) with a sidecar.
 
 ### Device Identity
 
 Often overlooked or confused with multi-factor authentication (MFA), device identity (and posture) is one of the most important and under-utilized aspects of a strong zero trust security model.
 
-- [Device Identity](/docs/topics/device-identity) provides background on the concept, and points the reader on how to configure policies that use device identity, and enroll devices in both open-source and Enterprise environments.
+- [Device Identity](/docs/concepts/device-identity) provides background on the concept, and points the reader on how to configure policies that use device identity, and enroll devices in both open-source and Enterprise environments.
 
 ### Service Mesh
 
