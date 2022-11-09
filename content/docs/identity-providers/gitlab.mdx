@@ -98,7 +98,17 @@ When a user first uses Pomerium to login, they are presented with an authorizati
 
 ![gitlab access authorization screen](img/gitlab/gitlab-verify-access.png)
 
-## Setting Up Directory Sync
+<Tabs>
+<TabItem value="Custom Claim (Open Source)" label="Custom Claim (Open Source)">
+
+### Custom Claim (Open Source)
+
+Unforunately, Gitlab does not support OpenID Connect, and does not support custom identity (`id_token`) group claims.
+
+</TabItem>
+<TabItem value="Directory Sync (Enterprise)" label="Directory Sync (Enterprise)">
+
+### Directory Sync (Enterprise)
 
 In order for Pomerium to validate group membership, we'll also need to configure a [Personal Access Token](https://gitlab.com/-/profile/personal_access_tokens) in Gitlab.
 
@@ -109,3 +119,6 @@ In order for Pomerium to validate group membership, we'll also need to configure
 Under **Settings → Identity Providers**, select "Gitlab" as the identity provider and set the Private Token.
 
 ![Gitlab Settings](./img/gitlab/gitlab-idp.png)
+
+</TabItem>
+</Tabs>

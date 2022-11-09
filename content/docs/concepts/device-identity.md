@@ -44,21 +44,10 @@ Also known as cross-platform or roaming authenticators, these are authentication
 - FIDO U2F: This [open standard][fido-spec] is used by many products like Yubico's [Yubikey][yubikey-products] and Google's [Titan Security Key](https://support.google.com/titansecuritykey/answer/9115487?hl=en). They usually secure a private key used to decrypt information signed by an accessible public key.
 
 :::tip Note
+
 The nature of cross-platform keys mean they are not associated with a single end-user device. Pomerium policies can be written to allow these keys, or specified to only accept secure enclaves.
+
 :::
-
-## Implement Device Identity with Pomerium
-
-Pomerium supports policies that use device identity since version [0.16.0](/docs/overview/upgrading#policy-for-device-identity). We use the [Web Authentication][webauthn-api] (**WebAuthN**) API to bring authentication and authorization based on device identity into your security framework. Pomerium's device identity support enables users to register their devices, and administrators to enforce access to applications and services to a particular set of trusted devices.
-
-<iframe width="100%" height="500" src="https://www.youtube.com/embed/aJzgnaXEpLo?rel=0" frameBorder="0" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen />
-
-To get started, review the following pages:
-
-- [Pomerium Policy Language](/docs/topics/ppl) to learn how to build policies that use device ID.
-- **End Users** should review [Enroll a Device](/docs/guides/enroll-device) to learn how to enroll devices on Pomerium. In Enterprise environments, self-enrollments must be approved by an admin in the Enterprise Console.
-- **Enterprise Administrators** can review the [Devices](/docs/enterprise/reference/manage#devices) reference material to create pre-approved enrollment links for users.
-- [pomerium/webauthn](https://github.com/pomerium/webauthn) on GitHub, our implementation of the WebAuthn specification.
 
 ## Looking Ahead: Device Posture
 

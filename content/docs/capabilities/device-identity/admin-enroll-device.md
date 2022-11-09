@@ -1,8 +1,19 @@
 ---
 title: Pre-Approved Device Enrollment
-sidebar_label:  Admin Device Enrollment
+sidebar_label: Admin Device Enrollment
 lang: en-US
-keywords: [pomerium, identity access proxy, webauthn, device id, enroll, enrollment, authentication, authorization, enterprise]
+keywords:
+  [
+    pomerium,
+    identity access proxy,
+    webauthn,
+    device id,
+    enroll,
+    enrollment,
+    authentication,
+    authorization,
+    enterprise,
+  ]
 description: This guide covers how Pomerium Enterprise admins can create pre-approved device registration links.
 ---
 
@@ -25,17 +36,16 @@ This guide instructs Pomerium Enterprise admins on how to create user-specific e
 
 1. Click the **+ NEW ENROLLMENT** button at the top:
 
-   ![Visualization of the fist two steps in creating a device enrollment link](img/admin-enroll-1.png)
+   ![Visualization of the fist two steps in creating a device enrollment link](./img/webauthn/admin-enroll-1.png)
 
 1. From the **New Enrollment** modal:
 
-    - search for and select the user this URL will be valid for,
-    - optionally provide a URL for the user to be redirected to after a successful enrollment,
-    - define if the user can enroll any [trusted execution environment](/docs/overview/glossary#trusted-execution-environment), or restrict the user to [secure envlaves](/docs/overview/glossary#secure-enclave):
-    ![Screenshot of the New Enrollment Modal](img/new-enrollment.png)
+   - search for and select the user this URL will be valid for,
+   - optionally provide a URL for the user to be redirected to after a successful enrollment,
+   - define if the user can enroll any [trusted execution environment](/docs/overview/glossary#trusted-execution-environment), or restrict the user to [secure envlaves](/docs/overview/glossary#secure-enclave): ![Screenshot of the New Enrollment Modal](./img/webauthn/new-enrollment.png)
 
 1. Click **Submit** to get the URL:
 
-    ![Screenshot of a new enrollment link](img/enrollment-created.png)
+   ![Screenshot of a new enrollment link](./img/webauthn/enrollment-created.png)
 
-    Provide the URL to the user.
+   Provide the URL to the user.

@@ -13,7 +13,11 @@ import TabItem from '@theme/TabItem';
 
 This document covers configuring Ping Identity as an IdP for your Pomerium gateway. It assumes you have already [installed Pomerium](/docs/install/).
 
-:::caution While we do our best to keep our documentation up to date, changes to third-party systems are outside our control. Refer to [Adding an application - Web application](https://docs.pingidentity.com/bundle/p14c/page/lyd1583255784891.html) from Ping's documentation as needed, or [let us know](https://github.com/pomerium/documentation/issues/new?assignees=&labels=&template=doc-error.md) if we need to re-visit this page. :::
+:::caution
+
+While we do our best to keep our documentation up to date, changes to third-party systems are outside our control. Refer to [Adding an application - Web application](https://docs.pingidentity.com/bundle/p14c/page/lyd1583255784891.html) from Ping's documentation as needed, or [let us know](https://github.com/pomerium/documentation/issues/new?assignees=&labels=&template=doc-error.md) if we need to re-visit this page.
+
+:::
 
 ## Create OpenID Connect App
 
@@ -78,6 +82,13 @@ IDP_CLIENT_SECRET="CLIENT_SECRET"
 
 ## Groups
 
+![Ping Settings](./img/ping/ping-idp.png)
+
+<Tabs>
+<TabItem value="Custom Claim (Open Source)" label="Custom Claim (Open Source)">
+
+### Custom Claim (Open Source)
+
 A `groups` claim can be added to tokens returned from Ping by adding it to the "Attribute Mappings":
 
 ![Ping Attribute Mappings](./img/ping/ping-groups.png)
@@ -100,9 +111,12 @@ The `groups` claim contains group IDs, not group names.
 
 :::
 
-## Setting Up Directory Sync
+</TabItem>
+<TabItem value="Directory Sync (Enterprise)" label="Directory Sync (Enterprise)">
 
-### Create a Ping Worker Application
+### Directory Sync (Enterprise)
+
+#### Create a Ping Worker Application
 
 In order for Pomerium to validate group membership, we'll also need to configure a [Worker Application](https://docs.pingidentity.com/bundle/pingdirectory-73/page/lfm1564011499001.html) in Ping.
 
@@ -116,8 +130,11 @@ In order for Pomerium to validate group membership, we'll also need to configure
 
    ![Ping Worker Configuration](./img/ping/ping-worker-configuration.png)
 
-### Configure Pomerium Enterprise Console
+#### Configure Pomerium Enterprise Console
 
 Under **Settings → Identity Providers**, select "Ping" as the identity provider and set the Client ID, Client Secret and Environment ID. The Environment ID can be found in Ping under **Environment → Properties**.
 
 ![Ping Settings](./img/ping/ping-idp.png)
+
+</TabItem>
+</Tabs>

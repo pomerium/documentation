@@ -102,9 +102,19 @@ routes:
             - groups: admin
 ```
 
-## Setting Up Directory Sync
+<Tabs>
+<TabItem value="Custom Claim (Open Source)" label="Custom Claim (Open Source)">
 
-### Create OneLogin Credentials
+### Custom Claim (Open Source)
+
+Unforunately, OneLogin does not yet support getting groups data using a custom claim. Groups must be loaded by using a plugin to fetch directory information (see Enterprise's Directory Sync).
+
+</TabItem>
+<TabItem value="Directory Sync (Enterprise)" label="Directory Sync (Enterprise)">
+
+### Directory Sync (Enterprise)
+
+#### Create OneLogin Credentials
 
 In order for Pomerium to validate group membership, we'll also need to configure [API Credentials](https://developers.onelogin.com/api-docs/1/getting-started/working-with-api-credentials) in OneLogin.
 
@@ -116,11 +126,14 @@ In order for Pomerium to validate group membership, we'll also need to configure
 
 A [Group's ID](https://developers.onelogin.com/openid-connect/api/user-info) will be used to affirm a user's group membership.
 
-### Configure Pomerium Enterprise Console
+#### Configure Pomerium Enterprise Console
 
 Under **Settings → Identity Providers**, select "Onelogin" as the identity provider and set the Client ID and Client Secret.
 
 ![OneLogin Settings](./img/onelogin/one-login-idp.png)
+
+</TabItem>
+</Tabs>
 
 [client id]: /docs/reference/identity-provider-client-id
 [client secret]: /docs/reference/identity-provider-client-secret

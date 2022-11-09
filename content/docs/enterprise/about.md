@@ -1,11 +1,11 @@
 ---
 title: About
-description: What does the Pomerium Enterpise Console offer?
+description: What does the Pomerium Enterprise Console offer?
 ---
 
 # Pomerium Enterprise
 
-Pomerium Enterprise is built on Pomerium Open Source. Pomerium Enterprise makes Pomerium easier to manage at scale, and adds additional functionality aimed at organizations with auditing, compliance, governance, and risk management needs.
+Pomerium Enterprise is built on Pomerium Core (Open Source). Pomerium Enterprise makes Pomerium easier to manage at scale, and adds additional functionality aimed at organizations with auditing, compliance, governance, and risk management needs.
 
 ## Features
 

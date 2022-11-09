@@ -1,9 +1,9 @@
 ---
-title: Getting the user's identity
+title: Identity Verification
 description: This article describes how to to get and cryptographically verify a user's identity with Pomerium.
 ---
 
-# Verify Identity & Context
+# Identity Verification
 
 This article describes how to retrieve a user's identity from a pomerium managed application. Pomerium uses JSON web tokens (**JWT**) to attest that a given request was handled by Pomerium's authorizer service.
 

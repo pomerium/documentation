@@ -1,5 +1,5 @@
 ---
-title: Certificates
+title: Encryption & Certificates
 lang: en-US
 keywords: [x509, certificates, tls, mtls, letsencrypt, lets encrypt]
 pagination_prev: null
@@ -7,7 +7,7 @@ pagination_prev: null
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
-import GenerateWildcardCert from '@site/content/examples/sh/generate_wildcard_cert.sh.md'
+import GenerateWildcardCert from '@site/content/examples/sh/generate_wildcard_cert.sh.md';
 
 [Certificates](https://en.wikipedia.org/wiki/X.509) and [TLS](https://en.wikipedia.org/wiki/Transport_Layer_Security) play a vital role in [zero trust][principles] networks, and in Pomerium.
 
@@ -51,42 +51,45 @@ See the [Autocert] and [Autocert Directory] settings for more details.
 
 In production, we'd use a public certificate authority such as LetsEncrypt. But for a local proof of concept or for development, we can use [mkcert](https://mkcert.dev/) to make locally trusted development certificates with any names you'd like. The easiest, is probably to use `*.localhost.pomerium.io` which we've already pre-configured to point back to localhost.
 
-1. Install mkcert.
+1.  Install mkcert.
 
-   <Tabs>
-   <TabItem value="go" label="Go">
+    <Tabs>
 
-   ```bash
-   go install filippo.io/mkcert@latest
-   ```
+    <TabItem value="go" label="Go">
 
-   </TabItem>
-   <TabItem value="homebrew" label="Homebrew">
+    ```bash
+    go install filippo.io/mkcert@latest
+    ```
 
-   ```bash
-   brew install mkcert
-   ```
+    </TabItem>
 
-   </TabItem>
-   </Tabs>
+    <TabItem value="homebrew" label="Homebrew">
 
-1. Bootstrap mkcert's root certificate into your operating system's trust store.
+    ```bash
+    brew install mkcert
+    ```
 
-   ```bash
-   mkcert -install
-   ```
+    </TabItem>
 
-1. Create your wildcard domain. `*.localhost.pomerium.io` is helper domain we've hard-coded to route to localhost:
+    </Tabs>
 
-   ```bash
-   mkcert "*.localhost.pomerium.io"
-   ```
+1.  Bootstrap mkcert's root certificate into your operating system's trust store.
+
+    ```bash
+    mkcert -install
+    ```
+
+1.  Create your wildcard domain. `*.localhost.pomerium.io` is helper domain we've hard-coded to route to localhost:
+
+    ```bash
+    mkcert "*.localhost.pomerium.io"
+    ```
 
 ### Manual DNS Let's Encrypt wildcard certificate
 
 Once you've setup your wildcard domain, we can use acme.sh to create a certificate-signing request with LetsEncrypt.
 
-<GenerateWildcardCert/>
+<GenerateWildcardCert />
 
 LetsEncrypt will respond with the corresponding `TXT` record needed to verify our domain.
 
@@ -96,10 +99,10 @@ It may take a few minutes for the DNS records to propagate. Once it does, you ca
 
 Here's how the above certificates signed by LetsEncrypt correspond to their respective Pomerium configuration settings:
 
-Pomerium Config                | Certificate file
------------------------------- | --------------------------------------------------------------
-[CERTIFICATE]                  | `$HOME/.acme.sh/*.corp.example.com_ecc/fullchain.cer`
-[CERTIFICATE_KEY][certificate] | `$HOME/.acme.sh/*.corp.example.com_ecc/*.corp.example.com.key`
+| Pomerium Config | Certificate file |
+| --- | --- |
+| [CERTIFICATE] | `$HOME/.acme.sh/*.corp.example.com_ecc/fullchain.cer` |
+| [CERTIFICATE_KEY][certificate] | `$HOME/.acme.sh/*.corp.example.com_ecc/*.corp.example.com.key` |
 
 Your end users will see a valid certificate for all domains delegated by Pomerium.
 

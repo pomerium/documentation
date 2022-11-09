@@ -1,11 +1,12 @@
 ---
 title: Mutual Authentication
 lang: en-US
-keywords: [pomerium, identity access proxy, mutual authentication, jwt, jwks, mtls]
+keywords:
+  [pomerium, identity access proxy, mutual authentication, jwt, jwks, mtls]
 description: This page describes the concept of mutual authentication and why it's important.
 ---
 
-# Mutual Authentication: A Component of Zero Trust
+# Mutual Authentication
 
 Pomerium provides a good layer of security out of the box, but it's not (and can't be) configured for complete [zero trust] right out of the box. This page explains several methods of achieving mutual authentication — a big part of the zero trust model — with practical examples.
 
@@ -25,7 +26,9 @@ The concept of mutual authentication is deceptively simple. It means that both s
 Let's look at a basic installation of Pomerium on a local network, with a single upstream service. This service contains sensitive data that we want to ensure is confidential and cannot be tampered with.
 
 :::tip Note
+
 Throughout this guide we will diagram Pomerium as a single service, as it is in all-in-one mode. This is the version provided by our [binaries] and in our Docker-based [Quick Start] page.
+
 :::
 
 ```mermaid
@@ -61,7 +64,7 @@ flowchart LR
   E[/Hacker/]---B
 ```
 
-While your network *should* be secured to only allow traffic at specified ports and directed to specified services, this creates a single point of failure. A hacker need only bypass your firewall to get direct access to your service.
+While your network _should_ be secured to only allow traffic at specified ports and directed to specified services, this creates a single point of failure. A hacker need only bypass your firewall to get direct access to your service.
 
 ## JWT Verification: Application-based Mutual Authentication
 
@@ -146,7 +149,7 @@ style Server fill: white, stroke: black
 1. The browser reads the certificate chain to find the CA, and checks against the computer's keystore to see if the CA is one that it trusts.
 1. After confirming the CA is trusted the browser reconnects to the server, this time using the `https` protocol and encrypting the traffic using the public certificate.
 
-The process above, an example of [north-south traffic](https://en.wikipedia.org/wiki/North-south_traffic) over HTTPS, confirms the identity of the *server*, protecting the client. Mutual TLS (**mTLS**) allows the server to confirm the identity of the *client* using a client certificate.
+The process above, an example of [north-south traffic](https://en.wikipedia.org/wiki/North-south_traffic) over HTTPS, confirms the identity of the _server_, protecting the client. Mutual TLS (**mTLS**) allows the server to confirm the identity of the _client_ using a client certificate.
 
 ```mermaid
 flowchart RL
@@ -304,88 +307,88 @@ The expandable legend below describes how different elements are used in the gra
   <summary>Legend</summary>
   <div>
 
-  The graphs in this guide use a consistent format to indicate certain aspects of the data flow.
+The graphs in this guide use a consistent format to indicate certain aspects of the data flow.
 
-  ---
+---
 
-  ```mermaid
-  flowchart LR
-  A --HTTP--- B
-  ```
+```mermaid
+flowchart LR
+A --HTTP--- B
+```
 
-  Thin lines represent un-encrypted traffic over HTTP.
+Thin lines represent un-encrypted traffic over HTTP.
 
-  ---
+---
 
-  ```mermaid
-  flowchart LR
-  A[Client]==tls==o B[Server]
-  ```
+```mermaid
+flowchart LR
+A[Client]==tls==o B[Server]
+```
 
-  Thick lines represent encrypted traffic using TLS. the circle represents which end of the connection is providing a certificate to establish trust.
+Thick lines represent encrypted traffic using TLS. the circle represents which end of the connection is providing a certificate to establish trust.
 
-  ---
+---
 
-  ```mermaid
-  flowchart LR
-  A<==mTLS==>B
-  ```
+```mermaid
+flowchart LR
+A<==mTLS==>B
+```
 
-  Thick lines with arrows on both ends represent a connection secured by mTLS, where each side provides a TLS certificate and the other can verify its identity.
+Thick lines with arrows on both ends represent a connection secured by mTLS, where each side provides a TLS certificate and the other can verify its identity.
 
-  ---
+---
 
-  ```mermaid
-  flowchart LR
-  A-.out-of-band.-B
-  ```
+```mermaid
+flowchart LR
+A-.out-of-band.-B
+```
 
-  Dashed lines represent out-of-band connections. These occur when, for example, various services talk to each other to validate connections made by the user.
+Dashed lines represent out-of-band connections. These occur when, for example, various services talk to each other to validate connections made by the user.
 
-  ---
+---
 
-  ```mermaid
-  flowchart LR
-  A[/Hacker/]--broken--x B[Server]
-  ```
+```mermaid
+flowchart LR
+A[/Hacker/]--broken--x B[Server]
+```
 
-  Lines with an **X** represent a failed attempt to gain access to a system.
+Lines with an **X** represent a failed attempt to gain access to a system.
 
-  ---
+---
 
-  ```mermaid
-  flowchart LR
-  subgraph Internet
-  style Internet stroke-dasharray: 5 5
-  D[Client]
-  end
-  subgraph lan [Internal Network]
+```mermaid
+flowchart LR
+subgraph Internet
+style Internet stroke-dasharray: 5 5
+D[Client]
+end
+subgraph lan [Internal Network]
+  direction TB
+  style lan stroke-dasharray: 5 5
+  A[Pomerium]
+  D--oA
+  A<==>E
+  E[Service Mesh]
+  E<==>C
+  subgraph docker [Docker Network]
+    style docker margin-top: 10
     direction TB
-    style lan stroke-dasharray: 5 5
-    A[Pomerium]
-    D--oA
-    A<==>E
-    E[Service Mesh]
-    E<==>C
-    subgraph docker [Docker Network]
-      style docker margin-top: 10
-      direction TB
-      C[Service]
-    end
+    C[Service]
   end
-  ```
+end
+```
 
-  Yellow blocks represent different networks like the internet, an internal network, or a virtual network like Docker provides. Dashed borders represent network perimeters allowing general access. Solid borders represent secured perimeters only permitting the traffic represented in the diagram.
+Yellow blocks represent different networks like the internet, an internal network, or a virtual network like Docker provides. Dashed borders represent network perimeters allowing general access. Solid borders represent secured perimeters only permitting the traffic represented in the diagram.
 
   </div>
 </details>
 
 [binaries]: /docs/install/binary
 [device identity verification]: /docs/concepts/device-identity.md
-[Grafana]: /docs/guides/grafana
-[JWT Verification]: /docs/guides/jwt-verification.md
+[grafana]: /docs/guides/grafana
+[jwt verification]: /docs/guides/jwt-verification.md
 [jwt-rfc]: https://datatracker.ietf.org/doc/html/rfc7519
 [`pass_identity_headers`]: /docs/reference/routes/pass-identity-headers
-[Quick Start]: /docs/install/quickstart
-[Transport Layer Security]: https://en.wikipedia.org/wiki/Transport_Layer_Security
+[quick start]: /docs/install/quickstart
+[transport layer security]: https://en.wikipedia.org/wiki/Transport_Layer_Security
 [zero trust]: https://www.pomerium.com/docs/background.html

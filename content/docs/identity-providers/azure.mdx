@@ -60,11 +60,19 @@ This will bring you to the admin center of the Azure AD instance backing your Of
 
    ![Creating a Key](./img/azure/azure-create-key.png)
 
-   :::tip If you choose an expiring key, make sure to record the expiration date in your calendar, as you will need to renew the key (get a new one) before that day to ensure users don't experience a service interruption. :::
+   :::tip
+
+   If you choose an expiring key, make sure to record the expiration date in your calendar, as you will need to renew the key (get a new one) before that day to ensure users don't experience a service interruption.
+
+   :::
 
    Click on **Add** and the key will be displayed. **Make sure to copy the value of this key before leaving this screen**, otherwise you may need to create a new key.
 
-   :::note Confirm you are copying the **Value**, and not the **ID**. :::
+   :::note
+
+   Confirm you are copying the **Value**, and not the **ID**.
+
+   :::
 
 ### API Permissions
 
@@ -131,7 +139,12 @@ IDP_CLIENT_SECRET="REPLACE-ME"
 </TabItem>
 </Tabs>
 
-## Groups
+## Getting Groups
+
+<Tabs>
+<TabItem value="Custom Claim (Open Source)" label="Custom Claim (Open Source)">
+
+### Custom Claim (Open Source)
 
 To authorize users based on their group membership, Azure supports adding a `group` claim to the identity token:
 
@@ -155,7 +168,10 @@ The `groups` claim contains group IDs, not group names.
 
 :::
 
-## Setting Up Directory Sync
+</TabItem>
+<TabItem value="Directory Sync (Enterprise)" label="Directory Sync (Enterprise)">
+
+### Directory Sync (Enterprise)
 
 Azure uses the same Client ID and Client Secret used in [Pomerium Core](/docs/identity-providers).
 
@@ -169,6 +185,9 @@ Under **Settings → Identity Providers**, select "Azure" as the identity provid
 
 - In our testing, we found that users could be created in an Active Directory without an email address as part of their user claim. Pomerium user identity depends largely on the associated email address.
 - If your default user in the Active Directory is unauthorized (403) even when specified as allowed in a policy by user, you can mitigate by creating a group membership and corresponding policy.
+
+</TabItem>
+</Tabs>
 
 [client id]: /docs/reference/identity-provider-client-id
 [client secret]: /docs/reference/identity-provider-client-secret

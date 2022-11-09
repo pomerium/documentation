@@ -22,7 +22,7 @@ One of the interesting attributes of [Visual Studio Code] is that it is built on
 
 [code-server] is an open-source project that allows you to run [Visual Studio Code] on a **remote** server, through the browser. For example, this is a screenshot taken at the end of this tutorial.
 
-![visual studio code with pomerium](img/vscode-pomerium.png)
+![visual studio code with pomerium](img/vscode/vscode-pomerium.png)
 
 ## Pre-requisites
 
@@ -73,7 +73,7 @@ services:
 
 1. Navigate to your domain (e.g. `https://code.corp.domain.example`).
 
-    ![visual studio code pomerium hello world](img/vscode-helloworld.png)
+    ![visual studio code pomerium hello world](img/vscode/vscode-helloworld.png)
 
 ## Develop Pomerium in Pomerium (Example)
 

@@ -11,7 +11,11 @@ import TabItem from '@theme/TabItem';
 
 This document describes the use of GitHub as an identity provider for Pomerium. It assumes you have already [installed Pomerium](/docs/install/)
 
-:::caution The [GitHub API] does not support [OpenID Connect], just [OAuth 2.0]. For this reason, it was challenging to implement revocation of a user's **Access Token** (a string representing the granted permissions) when they sign out from Pomerium's user info endpoint. :::
+:::caution
+
+The [GitHub API] does not support [OpenID Connect], just [OAuth 2.0]. For this reason, it was challenging to implement revocation of a user's **Access Token** (a string representing the granted permissions) when they sign out from Pomerium's user info endpoint.
+
+:::
 
 ## Create a GitHub OAuth 2.0 Application
 
@@ -62,7 +66,19 @@ Whenever a user tries to access your application integrated with Pomerium, they 
 
 ![GitHub Sign-on Page](./img/github/github-signon-page.png)
 
-## Setting Up Directory Sync
+### Getting groups
+
+<Tabs>
+<TabItem value="Custom Claim (Open Source)" label="Custom Claim (Open Source)">
+
+### Custom Claim (Open Source)
+
+The [GitHub API] does not support [OpenID Connect], just [OAuth 2.0] and it is not possible to get groups using a custom identity (`id_token`) claim. A full directory sync is required.
+
+</TabItem>
+<TabItem value="Directory Sync (Enterprise)" label="Directory Sync (Enterprise)">
+
+### Directory Sync (Enterprise)
 
 In order for Pomerium to validate group membership, we'll also need to configure a [Personal Access Token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token) in GitHub.
 
@@ -75,6 +91,9 @@ Create a new token at [github.com/settings/tokens/new](https://github.com/settin
 Under **Settings → Identity Providers**, select "Github" as the identity provider and set the Username and Personal Access Token.
 
 ![GitHub Settings](./img/github/github-idp.png)
+
+</TabItem>
+</Tabs>
 
 [github api]: https://developer.github.com/v3/#oauth2-token-sent-in-a-header
 [openid connect]: https://en.wikipedia.org/wiki/OpenID_Connect
