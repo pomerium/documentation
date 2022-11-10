@@ -52,7 +52,9 @@
                         "type": "string"
                       }
                     },
-                    "required": ["url"],
+                    "required": [
+                      "url"
+                    ],
                     "type": "object"
                   },
                   "certificates": {
@@ -62,11 +64,37 @@
                     },
                     "type": "array"
                   },
+                  "cookie": {
+                    "description": "Cookie defines Pomerium cookie options",
+                    "properties": {
+                      "domain": {
+                        "description": "Domain see https://docs.pomerium.com/docs/reference/cookie-domain",
+                        "type": "string"
+                      },
+                      "expire": {
+                        "description": "Expire see https://docs.pomerium.com/docs/reference/cookie-expire",
+                        "type": "string"
+                      },
+                      "httpOnly": {
+                        "description": "HTTPOnly see https://docs.pomerium.com/docs/reference/cookie-http-only",
+                        "type": "boolean"
+                      },
+                      "name": {
+                        "description": "Name see https://docs.pomerium.com/docs/reference/cookie-name",
+                        "type": "string"
+                      },
+                      "secure": {
+                        "description": "Secure see https://docs.pomerium.com/docs/reference/cookie-secure",
+                        "type": "boolean"
+                      }
+                    },
+                    "type": "object"
+                  },
                   "identityProvider": {
                     "description": "IdentityProvider see https://www.pomerium.com/docs/identity-providers/",
                     "properties": {
                       "provider": {
-                        "description": "Provider one of accepted providers https://www.pomerium.com/reference/#identity-provider-name",
+                        "description": "Provider one of accepted providers - see https://www.pomerium.com/reference/#identity-provider-name.",
                         "enum": [
                           "auth0",
                           "azure",
@@ -80,18 +108,23 @@
                         "type": "string"
                       },
                       "refreshDirectory": {
-                        "description": "Specifies refresh settings",
+                        "description": "RefreshDirectory is no longer supported, please see https://docs.pomerium.com/docs/overview/upgrading#idp-directory-sync",
                         "properties": {
                           "interval": {
+                            "description": "interval is the time that pomerium will sync your IDP directory.",
                             "format": "duration",
                             "type": "string"
                           },
                           "timeout": {
+                            "description": "timeout is the maximum time allowed each run.",
                             "format": "duration",
                             "type": "string"
                           }
                         },
-                        "required": ["interval", "timeout"],
+                        "required": [
+                          "interval",
+                          "timeout"
+                        ],
                         "type": "object"
                       },
                       "requestParams": {
@@ -102,29 +135,43 @@
                         "type": "object"
                       },
                       "requestParamsSecret": {
-                        "description": "RequestParamsSecret is a reference to a secret for additional parameters you'd prefer not to provide in plaintext",
+                        "description": "RequestParamsSecret is a reference to a secret for additional parameters you'd prefer not to provide in plaintext.",
                         "type": "string"
                       },
                       "scopes": {
-                        "description": "Scopes see https://www.pomerium.com/reference/#identity-provider-scopes",
+                        "description": "Scopes see https://www.pomerium.com/reference/#identity-provider-scopes.",
                         "items": {
                           "type": "string"
                         },
                         "type": "array"
                       },
                       "secret": {
-                        "description": "Secret refers to a k8s secret containing IdP provider specific parameters and must contain at least `client_id` and `client_secret` map values",
+                        "description": "Secret containing IdP provider specific parameters and must contain at least client_id and client_secret values, an optional `service_account` field, mapped to https://www.pomerium.com/reference/#identity-provider-service-account",
                         "minLength": 1,
                         "type": "string"
                       },
+                      "serviceAccountFromSecret": {
+                        "description": "ServiceAccountFromSecret is no longer supported, see https://docs.pomerium.com/docs/overview/upgrading#idp-directory-sync",
+                        "type": "string"
+                      },
                       "url": {
-                        "description": "URL is identity provider url, see https://www.pomerium.com/reference/#identity-provider-url",
+                        "description": "URL is identity provider url, see https://www.pomerium.com/reference/#identity-provider-url.",
                         "format": "uri",
                         "pattern": "^https://",
                         "type": "string"
                       }
                     },
-                    "required": ["provider", "secret"],
+                    "required": [
+                      "provider",
+                      "secret"
+                    ],
+                    "type": "object"
+                  },
+                  "jwtClaimHeaders": {
+                    "additionalProperties": {
+                      "type": "string"
+                    },
+                    "description": "JWTClaimHeaders convert claims from the assertion token into HTTP headers. We recommend you only use it for compatibility with legacy applications, and use JWT assertion header directly for new applications, read more at https://www.pomerium.com/docs/topics/getting-users-identity",
                     "type": "object"
                   },
                   "secrets": {
@@ -154,7 +201,9 @@
                             "type": "string"
                           }
                         },
-                        "required": ["secret"],
+                        "required": [
+                          "secret"
+                        ],
                         "type": "object"
                       },
                       "redis": {
@@ -179,14 +228,20 @@
                             "type": "boolean"
                           }
                         },
-                        "required": ["secret"],
+                        "required": [
+                          "secret"
+                        ],
                         "type": "object"
                       }
                     },
                     "type": "object"
                   }
                 },
-                "required": ["authenticate", "identityProvider", "secrets"],
+                "required": [
+                  "authenticate",
+                  "identityProvider",
+                  "secrets"
+                ],
                 "type": "object"
               },
               "status": {
@@ -213,9 +268,18 @@
                         "reconciled": {
                           "description": "Reconciled is whether this object generation was successfully synced with pomerium.",
                           "type": "boolean"
+                        },
+                        "warnings": {
+                          "description": "Warnings",
+                          "items": {
+                            "type": "string"
+                          },
+                          "type": "array"
                         }
                       },
-                      "required": ["reconciled"],
+                      "required": [
+                        "reconciled"
+                      ],
                       "type": "object"
                     },
                     "description": "Routes provide per-Ingress status.",
@@ -241,9 +305,18 @@
                       "reconciled": {
                         "description": "Reconciled is whether this object generation was successfully synced with pomerium.",
                         "type": "boolean"
+                      },
+                      "warnings": {
+                        "description": "Warnings",
+                        "items": {
+                          "type": "string"
+                        },
+                        "type": "array"
                       }
                     },
-                    "required": ["reconciled"],
+                    "required": [
+                      "reconciled"
+                    ],
                     "type": "object"
                   }
                 },
