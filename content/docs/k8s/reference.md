@@ -42,12 +42,15 @@ PomeriumSpec defines Pomerium-specific configuration parameters.
                 <code>certificates</code>&#160;&#160;
                 
                     <strong>[]string</strong>&#160;
+                    (namespace/name)
                 
                 </p>
                 <p>
                     
                     Certificates is a list of secrets of type TLS to use
                 </p>
+                
+                    Format: reference to Kubernetes resource with namespace prefix: <code>namespace/name</code> format.
                 
             </td>
         </tr>
@@ -80,7 +83,7 @@ PomeriumSpec defines Pomerium-specific configuration parameters.
                 </p>
                 <p>
                     <strong>Required.</strong>&#160;
-                    IdentityProvider see https://www.pomerium.com/docs/identity-providers/
+                    IdentityProvider configure single-sign-on authentication and user identity details by integrating with your <a href="https://www.pomerium.com/docs/identity-providers/">Identity Provider</a>
                 </p>
                 
             </td>
@@ -96,7 +99,7 @@ PomeriumSpec defines Pomerium-specific configuration parameters.
                 </p>
                 <p>
                     
-                    JWTClaimHeaders convert claims from the assertion token into HTTP headers. We recommend you only use it for compatibility with legacy applications, and use JWT assertion header directly for new applications, read more at https://www.pomerium.com/docs/topics/getting-users-identity
+                    JWTClaimHeaders convert claims from the assertion token into HTTP headers and adds them into JWT assertion header. Please make sure to read <a href="https://www.pomerium.com/docs/topics/getting-users-identity"> Getting User Identity</a> guide.
                 </p>
                 
             </td>
@@ -108,13 +111,16 @@ PomeriumSpec defines Pomerium-specific configuration parameters.
                 <code>secrets</code>&#160;&#160;
                 
                     <strong>string</strong>&#160;
+                    (namespace/name)
                 
                 </p>
                 <p>
                     <strong>Required.</strong>&#160;
-                    Secrets references a Secret with Pomerium bootstrap parameters. In a default Pomerium installation manifest, they would be generated via a one-time job and stored in a <code>pomerium/bootstrap</code> Secret. You may re-run the job to rotate the secrets, or update the Secret values manually. 
- <p> <ul> <li><a href="https://pomerium.com/docs/reference/shared-secret"><code>shared_secret</code></a> - secures inter-Pomerium service communications. </li> <li><a href="https://pomerium.com/docs/reference/cookie-secret"><code>cookie_secret</code></a> - encrypts Pomerium session browser cookie. See also other <a href="#cookie">Cookie</a> parameters. </li> <li><a href="https://pomerium.com/docs/reference/signing-key"><code>signing_key</code></a> signs Pomerium JWT assertion header. See <a href="https://www.pomerium.com/docs/topics/getting-users-identity">Getting the user's identity</a> guide. </li> </ul> </p>
+                    Secrets references a Secret with Pomerium bootstrap parameters. 
+ <p> <ul> <li><a href="https://pomerium.com/docs/reference/shared-secret"><code>shared_secret</code></a> - secures inter-Pomerium service communications. </li> <li><a href="https://pomerium.com/docs/reference/cookie-secret"><code>cookie_secret</code></a> - encrypts Pomerium session browser cookie. See also other <a href="#cookie">Cookie</a> parameters. </li> <li><a href="https://pomerium.com/docs/reference/signing-key"><code>signing_key</code></a> signs Pomerium JWT assertion header. See <a href="https://www.pomerium.com/docs/topics/getting-users-identity">Getting the user's identity</a> guide. </li> </ul> </p> <p> In a default Pomerium installation manifest, they would be generated via a <a href="https://github.com/pomerium/ingress-controller/blob/main/config/gen_secrets/job.yaml">one-time job</a> and stored in a <code>pomerium/bootstrap</code> Secret. You may re-run the job to rotate the secrets, or update the Secret values manually. </p>
                 </p>
+                
+                    Format: reference to Kubernetes resource with namespace prefix: <code>namespace/name</code> format.
                 
             </td>
         </tr>
@@ -141,7 +147,7 @@ PomeriumSpec defines Pomerium-specific configuration parameters.
 
 
 
-### authenticate
+### `authenticate`
 
 Authenticate sets authenticate service parameters
 
@@ -160,7 +166,8 @@ Authenticate sets authenticate service parameters
                 </p>
                 <p>
                     
-                    CallbackPath see https://www.pomerium.com/reference/#authenticate-callback-path
+                    CallbackPath sets the path at which the authenticate service receives callback responses from your identity provider. The value must exactly match one of the authorized redirect URIs for the OAuth 2.0 client. 
+ <p>This value is referred to as the redirect_url in the OpenIDConnect and OAuth2 specs.</p> <p>Defaults to <code>/oauth2/callback</code></p>
                 </p>
                 
             </td>
@@ -177,7 +184,8 @@ Authenticate sets authenticate service parameters
                 </p>
                 <p>
                     <strong>Required.</strong>&#160;
-                    AuthenticateURL should be publicly accessible URL the non-authenticated persons would be referred to see https://www.pomerium.com/reference/#authenticate-service-url
+                    AuthenticateURL is a dedicated domain URL the non-authenticated persons would be referred to. 
+ <p><ul> <li>You do not need to create a dedicated <code>Ingress</code> for this virtual route, as it is handled by Pomerium internally. </li> <li>You do need create a secret with corresponding TLS certificate for this route and reference it via <a href="#prop-certificates"><code>certificates</code></a>. If you use <code>cert-manager</code> with <code>HTTP01</code> challenge, you may use <code>pomerium</code> <code>ingressClass</code> to solve it.</li> </ul></p>
                 </p>
                 
                     Format: an URI as parsed by Golang net/url.ParseRequestURI.
@@ -190,7 +198,7 @@ Authenticate sets authenticate service parameters
 
 
 
-### cookie
+### `cookie`
 
 Cookie defines Pomerium session cookie options.
 
@@ -209,7 +217,7 @@ Cookie defines Pomerium session cookie options.
                 </p>
                 <p>
                     
-                    Domain see https://docs.pomerium.com/docs/reference/cookie-domain
+                    Domain defaults to the same host that set the cookie. If you specify the domain explicitly, then subdomains would also be included.
                 </p>
                 
             </td>
@@ -221,12 +229,15 @@ Cookie defines Pomerium session cookie options.
                 <code>expire</code>&#160;&#160;
                 
                     <strong>string</strong>&#160;
+                    (duration)
                 
                 </p>
                 <p>
                     
-                    Expire see https://docs.pomerium.com/docs/reference/cookie-expire
+                    Expire sets cookie and Pomerium session expiration time. Once session expires, users would have to re-login. If you change this parameter, existing sessions are not affected. <p>See <a href="https://www.pomerium.com/docs/enterprise/about#session-management">Session Management</a> (Enterprise) for a more fine-grained session controls.</p> <p>Defaults to 14 hours.</p>
                 </p>
+                
+                    Format: a duration string like "22s" as parsed by Golang time.ParseDuration.
                 
             </td>
         </tr>
@@ -241,7 +252,7 @@ Cookie defines Pomerium session cookie options.
                 </p>
                 <p>
                     
-                    HTTPOnly see https://docs.pomerium.com/docs/reference/cookie-http-only
+                    HTTPOnly if set to <code>false</code>, the cookie would be accessible from within the JavaScript. Defaults to <code>true</code>.
                 </p>
                 
             </td>
@@ -257,7 +268,7 @@ Cookie defines Pomerium session cookie options.
                 </p>
                 <p>
                     
-                    Name see https://docs.pomerium.com/docs/reference/cookie-name
+                    Name sets the Pomerium session cookie name. Defaults to <code>_pomerium</code>
                 </p>
                 
             </td>
@@ -273,7 +284,7 @@ Cookie defines Pomerium session cookie options.
                 </p>
                 <p>
                     
-                    Secure see https://docs.pomerium.com/docs/reference/cookie-secure
+                    Secure if set to false, would make a cookie accessible over insecure protocols (HTTP). Defaults to <code>true</code>.
                 </p>
                 
             </td>
@@ -284,9 +295,9 @@ Cookie defines Pomerium session cookie options.
 
 
 
-### identityProvider
+### `identityProvider`
 
-IdentityProvider see https://www.pomerium.com/docs/identity-providers/
+IdentityProvider configure single-sign-on authentication and user identity details by integrating with your <a href="https://www.pomerium.com/docs/identity-providers/">Identity Provider</a>
 
 <table>
     <thead>
@@ -320,7 +331,7 @@ IdentityProvider see https://www.pomerium.com/docs/identity-providers/
                 </p>
                 <p>
                     
-                    RefreshDirectory is no longer supported, please see https://docs.pomerium.com/docs/overview/upgrading#idp-directory-sync
+                    RefreshDirectory is no longer supported, please see <a href="https://docs.pomerium.com/docs/overview/upgrading#idp-directory-sync">Upgrade Guide</a>.
                 </p>
                 
             </td>
@@ -348,12 +359,15 @@ IdentityProvider see https://www.pomerium.com/docs/identity-providers/
                 <code>requestParamsSecret</code>&#160;&#160;
                 
                     <strong>string</strong>&#160;
+                    (namespace/name)
                 
                 </p>
                 <p>
                     
                     RequestParamsSecret is a reference to a secret for additional parameters you'd prefer not to provide in plaintext.
                 </p>
+                
+                    Format: reference to Kubernetes resource with namespace prefix: <code>namespace/name</code> format.
                 
             </td>
         </tr>
@@ -368,7 +382,7 @@ IdentityProvider see https://www.pomerium.com/docs/identity-providers/
                 </p>
                 <p>
                     
-                    Scopes correspond to access <a href="https://www.pomerium.com/reference/#identity-provider-scopes">privilege scopes</a>.
+                    Scopes is a list of <a href="https://www.pomerium.com/reference/#identity-provider-scopes">privilege scopes</a> to request access to from the Identity Provider.
                 </p>
                 
             </td>
@@ -380,12 +394,15 @@ IdentityProvider see https://www.pomerium.com/docs/identity-providers/
                 <code>secret</code>&#160;&#160;
                 
                     <strong>string</strong>&#160;
+                    (namespace/name)
                 
                 </p>
                 <p>
                     <strong>Required.</strong>&#160;
-                    Secret containing IdP provider specific parameters and must contain at least <code>client_id</code> and <code>client_secret</code> values.
+                    Secret containing IdP provider specific parameters. and must contain at least <code>client_id</code> and <code>client_secret</code> values.
                 </p>
+                
+                    Format: reference to Kubernetes resource with namespace prefix: <code>namespace/name</code> format.
                 
             </td>
         </tr>
@@ -400,7 +417,7 @@ IdentityProvider see https://www.pomerium.com/docs/identity-providers/
                 </p>
                 <p>
                     
-                    ServiceAccountFromSecret is no longer supported, see <a href="https://docs.pomerium.com/docs/overview/upgrading#idp-directory-sync">Upgrade Guide</a>
+                    ServiceAccountFromSecret is no longer supported, see <a href="https://docs.pomerium.com/docs/overview/upgrading#idp-directory-sync">Upgrade Guide</a>.
                 </p>
                 
             </td>
@@ -430,7 +447,7 @@ IdentityProvider see https://www.pomerium.com/docs/identity-providers/
 
 
 
-### postgres
+### `postgres`
 
 Postgres specifies PostgreSQL database connection parameters
 
@@ -445,12 +462,15 @@ Postgres specifies PostgreSQL database connection parameters
                 <code>caSecret</code>&#160;&#160;
                 
                     <strong>string</strong>&#160;
+                    (namespace/name)
                 
                 </p>
                 <p>
                     
-                    CASecret should refer to a k8s secret with key `ca.crt` containing CA certificate that, if specified, would be used to populate `sslrootcert` parameter of the connection string
+                    CASecret should refer to a k8s secret with key <code>ca.crt</code> containing CA certificate that, if specified, would be used to populate <code>sslrootcert</code> parameter of the connection string.
                 </p>
+                
+                    Format: reference to Kubernetes resource with namespace prefix: <code>namespace/name</code> format.
                 
             </td>
         </tr>
@@ -461,12 +481,15 @@ Postgres specifies PostgreSQL database connection parameters
                 <code>secret</code>&#160;&#160;
                 
                     <strong>string</strong>&#160;
+                    (namespace/name)
                 
                 </p>
                 <p>
                     <strong>Required.</strong>&#160;
-                    Secret specifies a name of a Secret that must contain <code>connection</code> key. See <a href="https://www.postgresql.org/docs/current/libpq-connect.html#LIBPQ-CONNSTRING">DSN Format and Parameters</a>. Keywords related to TLS are not allowed, as they must be populated via <code>tlsCecret</code> and <code>caSecret</code> fields.
+                    Secret specifies a name of a Secret that must contain <code>connection</code> key. See <a href="https://www.postgresql.org/docs/current/libpq-connect.html#LIBPQ-CONNSTRING">DSN Format and Parameters</a>. Do not set <code>sslrootcert</code>, <code>sslcert</code> and <code>sslkey</code> via connection string, use <code>tlsCecret</code> and <code>caSecret</code> CRD options instead.
                 </p>
+                
+                    Format: reference to Kubernetes resource with namespace prefix: <code>namespace/name</code> format.
                 
             </td>
         </tr>
@@ -477,12 +500,15 @@ Postgres specifies PostgreSQL database connection parameters
                 <code>tlsSecret</code>&#160;&#160;
                 
                     <strong>string</strong>&#160;
+                    (namespace/name)
                 
                 </p>
                 <p>
                     
-                    TLSSecret should refer to a k8s secret of type `kubernetes.io/tls` and allows to specify an optional client certificate and key, by constructing `sslcert` and `sslkey` connection string parameter values see https://www.postgresql.org/docs/current/libpq-connect.html#LIBPQ-PARAMKEYWORDS
+                    TLSSecret should refer to a k8s secret of type <code>kubernetes.io/tls</code> and allows to specify an optional client certificate and key, by constructing <code>sslcert</code> and <code>sslkey</code> connection string <a href="https://www.postgresql.org/docs/current/libpq-connect.html#LIBPQ-PARAMKEYWORDS"> parameter values</a>.
                 </p>
+                
+                    Format: reference to Kubernetes resource with namespace prefix: <code>namespace/name</code> format.
                 
             </td>
         </tr>
@@ -492,7 +518,7 @@ Postgres specifies PostgreSQL database connection parameters
 
 
 
-### redis
+### `redis`
 
 Redis defines REDIS connection parameters
 
@@ -507,12 +533,15 @@ Redis defines REDIS connection parameters
                 <code>caSecret</code>&#160;&#160;
                 
                     <strong>string</strong>&#160;
+                    (namespace/name)
                 
                 </p>
                 <p>
                     
                     CASecret should refer to a k8s secret with key <code>ca.crt</code> that must be a PEM-encoded certificate authority to use when connecting to the databroker storage engine.
                 </p>
+                
+                    Format: reference to Kubernetes resource with namespace prefix: <code>namespace/name</code> format.
                 
             </td>
         </tr>
@@ -523,12 +552,15 @@ Redis defines REDIS connection parameters
                 <code>secret</code>&#160;&#160;
                 
                     <strong>string</strong>&#160;
+                    (namespace/name)
                 
                 </p>
                 <p>
                     <strong>Required.</strong>&#160;
                     Secret specifies a name of a Secret that must contain <code>connection</code> key.
                 </p>
+                
+                    Format: reference to Kubernetes resource with namespace prefix: <code>namespace/name</code> format.
                 
             </td>
         </tr>
@@ -539,12 +571,15 @@ Redis defines REDIS connection parameters
                 <code>tlsSecret</code>&#160;&#160;
                 
                     <strong>string</strong>&#160;
+                    (namespace/name)
                 
                 </p>
                 <p>
                     
                     TLSSecret should refer to a k8s secret of type <code>kubernetes.io/tls</code> that would be used to perform TLS connection to REDIS.
                 </p>
+                
+                    Format: reference to Kubernetes resource with namespace prefix: <code>namespace/name</code> format.
                 
             </td>
         </tr>
@@ -570,9 +605,9 @@ Redis defines REDIS connection parameters
 
 
 
-### refreshDirectory
+### `refreshDirectory`
 
-RefreshDirectory is no longer supported, please see https://docs.pomerium.com/docs/overview/upgrading#idp-directory-sync
+RefreshDirectory is no longer supported, please see <a href="https://docs.pomerium.com/docs/overview/upgrading#idp-directory-sync">Upgrade Guide</a>.
 
 <table>
     <thead>
@@ -593,7 +628,7 @@ RefreshDirectory is no longer supported, please see https://docs.pomerium.com/do
                     interval is the time that pomerium will sync your IDP directory.
                 </p>
                 
-                    Format: a duration string like "22s" as parsed by Golang time.ParseDuration
+                    Format: a duration string like "22s" as parsed by Golang time.ParseDuration.
                 
             </td>
         </tr>
@@ -612,7 +647,7 @@ RefreshDirectory is no longer supported, please see https://docs.pomerium.com/do
                     timeout is the maximum time allowed each run.
                 </p>
                 
-                    Format: a duration string like "22s" as parsed by Golang time.ParseDuration
+                    Format: a duration string like "22s" as parsed by Golang time.ParseDuration.
                 
             </td>
         </tr>
@@ -622,7 +657,7 @@ RefreshDirectory is no longer supported, please see https://docs.pomerium.com/do
 
 
 
-### storage
+### `storage`
 
 Storage defines persistent storage for sessions and other data. See <a href="https://www.pomerium.com/docs/topics/data-storage">Storage</a> for details. If no storage is specified, Pomerium would use a transient in-memory storage (not recommended for production).
 
@@ -718,7 +753,7 @@ PomeriumStatus represents configuration and Ingress status.
 
 
 
-### ingress
+### `ingress`
 
 ResourceStatus represents the outcome of the latest attempt to reconcile relevant Kubernetes resource with Pomerium.
 
@@ -815,7 +850,7 @@ ResourceStatus represents the outcome of the latest attempt to reconcile relevan
 
 
 
-### settingsStatus
+### `settingsStatus`
 
 SettingsStatus represent most recent main configuration reconciliation status.
 
