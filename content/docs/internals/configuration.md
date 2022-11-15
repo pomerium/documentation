@@ -24,7 +24,7 @@ See the [reference](/docs/reference) page for a complete list of available optio
 
 When running Pomerium as a single system service or container, all the options on this page can be set in a single `config.yaml` file, or passed to the single instance as environment variables.
 
-When running Pomerium in a distributed environment where there are multiple processes, each handling separate [components](/docs/overview/architecture#component-level), all services can still share a single config file or set of environment variables.
+When running Pomerium in a distributed environment where there are multiple processes, each handling separate [components](/docs/internals/architecture#component-level), all services can still share a single config file or set of environment variables.
 
 Alternately, you can create individual config files or sets of environment variables for each service. When doing so, each file or set can define which component a process will run as using the [service mode](/docs/reference/service-mode) key.
 

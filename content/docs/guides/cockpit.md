@@ -10,7 +10,7 @@ description: Learn how to secure Cockpit, a web GUI for Linux servers, behind Po
 
 ## Before You Begin
 
-This guide assumes you already have Pomerium installed and connected to your [IdP](/docs/overview/glossary#identity-provider). If not, follow the instructions in the following articles before continuing:
+This guide assumes you already have Pomerium installed and connected to your [IdP](/docs/internals/glossary#identity-provider). If not, follow the instructions in the following articles before continuing:
 
 - Install Pomerium
    - [Binaries](/docs/install/binary) if installing Pomerium as a system-level service.

@@ -127,6 +127,6 @@ toc_max_heading_level: 5
 [policies]: /docs/enterprise/reference/manage#policies-2
 [policy language]: /docs/enterprise/reference/manage#pomerium-policy-language
 [runtime]: /docs/enterprise/reference/reports.md#runtime
-[service accounts]: /docs/enterprise/concepts.md#service-accounts
+[service accounts]: /docs/concepts/service-accounts
 [spdy]: /docs/reference/routes/spdy
 [telemetry]: /docs/enterprise/reference/reports.md#traffic

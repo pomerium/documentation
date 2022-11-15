@@ -92,7 +92,7 @@ stringData:
   client_secret: ${IDP_PROVIDED_CLIENT_SECRET}
 ```
 
-The data required in this secret will depend on your [identity provider]. See the [Kubernetes Reference](/docs/k8s/reference#identityprovider) page for all available keys, and cross-reference it with the requirements of your IdP.
+The data required in this secret will depend on your [identity provider]. See the [Kubernetes Reference](/docs/deploying/k8s/reference#identityprovider) page for all available keys, and cross-reference it with the requirements of your IdP.
 
 1. Provide this secret to the cluster:
 
@@ -211,7 +211,7 @@ spec:
                   number: 8000
 ```
 
-Note that we include the [annotation](/docs/k8s/ingress#supported-annotations) `ingress.pomerium.io/pass_identity_headers`, which provides a [JWT](/docs/overview/glossary#json-web-token) to the Verify service.
+Note that we include the [annotation](/docs/deploying/k8s/ingress#supported-annotations) `ingress.pomerium.io/pass_identity_headers`, which provides a [JWT](/docs/internals/glossary#json-web-token) to the Verify service.
 
 Deploy the service with `kubectl apply -f verify-ingress.yaml`, and visit the path in your browser:
 
@@ -225,7 +225,7 @@ Identity verification fails because we're using an untrusted test certificate. U
 
 ## Next steps
 
-Once Pomerium is configured, you should configure [persistence](/docs/topics/data-storage#persistence). This prevents the loss of user sessions if containers are restarted, and supports deployments with multiple replicas. See our Kubernetes [Reference](/docs/k8s/reference#storage) page for more information on configuring Databroker storage.
+Once Pomerium is configured, you should configure [persistence](/docs/topics/data-storage#persistence). This prevents the loss of user sessions if containers are restarted, and supports deployments with multiple replicas. See our Kubernetes [Reference](/docs/deploying/k8s/reference#storage) page for more information on configuring Databroker storage.
 
 ## Troubleshooting
 
@@ -270,7 +270,7 @@ Events:
 
 [cert-manager]: https://cert-manager.io/docs/
 [identity provider]: /docs/identity-providers
-[ingress controller]: /docs/k8s/ingress.md
+[ingress controller]: /docs/deploying/k8s/ingress.md
 [install kubectl]: https://kubernetes.io/docs/tasks/tools/install-kubectl/
 [kubernetes]: https://kubernetes.io
 [mkcert]: https://github.com/FiloSottile/mkcert

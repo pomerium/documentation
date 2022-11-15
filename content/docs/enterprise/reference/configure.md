@@ -285,9 +285,9 @@ For data sources using mTLS, you can select a [client certificate](/docs/enterpr
 
 See [External Data Sources](/docs/enterprise/external-data) for more information on this feature.
 
-[route-concept]: /docs/enterprise/concepts.md#routes
-[route-reference]: /docs/enterprise/reference/manage#routes
-[namespace-concept]: /docs/enterprise/concepts.md#namespaces
-[namespace-reference]: /docs/enterprise/reference/configure.md#namespaces
-[service-accounts-concept]: /docs/enterprise/concepts.md#service-accounts
-[policy-reference]: /docs/enterprise/reference/manage#policies-2
+[route-concept]: /docs/concepts/routes
+[route-reference]: /docs/concepts/routes
+[namespace-concept]: /docs/concepts/namespacing
+[namespace-reference]: /docs/concepts/namespacing
+[service-accounts-concept]: /docs/concepts/service-accounts
+[policy-reference]: /docs/concepts/policies

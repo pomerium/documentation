@@ -2,12 +2,22 @@
 title: Configure Metrics
 sidebar_label: Metrics
 description: Use Prometheus as a metrics data store.
+lang: en-US
+keywords: [pomerium, enterprise pomerium, telemetry, metrics, prometheus]
 ---
+
+:::tip
+
+This article describes a use case available to [Pomerium Enterprise](/docs/enterprise/about) customers.
+
+:::
 
 Pomerium Enterprise uses Prometheus as a metrics collection back-end. You can configure Pomerium and the Console to talk to an existing Prometheus server, or configure the embedded Prometheus backend.
 
 :::tip
+
 For production deployments, we suggest using a dedicated Prometheus instance.
+
 :::
 
 ## Prepare Pomerium
@@ -49,7 +59,7 @@ For production deployments, we suggest using a dedicated Prometheus instance.
 
 1. Restart the Pomerium and Pomerium Enterprise services. You should now see route traffic data in the Enterprise Console:
 
-   ![Traffic Data in Pomerium Enterprise](img/console-route-traffic.png)
+   ![Traffic Data in Pomerium Enterprise](./img/metrics/console-route-traffic.png)
 
 ## Embedded Prometheus
 

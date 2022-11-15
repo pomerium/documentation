@@ -15,13 +15,13 @@ sidebar_label: To Production
 sidebar_position: 10
 ---
 
-# Deploying to Production 
+# Deploying to Production
 
 This page covers the topic of running Pomerium in a production configuration.
 
 Before deploying Pomerium to Production, you should have already tested Pomerium in one or more demo environments and confirmed:
 
-- A working connection to your [IdP](/docs/overview/glossary#identity-provider).
+- A working connection to your [IdP](/docs/internals/glossary#identity-provider).
 - Working test routes to your upstream services, including [JWT verification] where applicable.
 - For Pomerium Enterprise, a working demo of the Pomerium Enterprise Console, with confirmed access for your [Admins and Managers][rbac].
 
@@ -41,21 +41,21 @@ It may be desirable to run in "all-in-one" mode in smaller deployments or while 
 
 In larger footprints, it is recommended to run Pomerium as a collection of discrete service clusters. This limits blast radius in the event of vulnerabilities and allows for per-service [scaling](#scaling) and monitoring.
 
-Please also see [Architecture](/docs/overview/architecture) for information on component interactions.
+Please also see [Architecture](/docs/internals/architecture) for information on component interactions.
 
 ## Scaling
 
 In split service mode, you have the opportunity to scale the components of Pomerium independently.
 
-All of Pomerium's components are designed to be [stateless](/docs/overview/glossary#stateless), and may all be scaled horizontally or vertically. In general, horizontal scaling is recommended. Vertical scaling will lead to diminished returns after ~8 vCPUs.
+All of Pomerium's components are designed to be [stateless](/docs/internals/glossary#stateless), and may all be scaled horizontally or vertically. In general, horizontal scaling is recommended. Vertical scaling will lead to diminished returns after ~8 vCPUs.
 
 The Databroker service, which is responsible for session and identity related data, must be [configured for external persistence](/docs/concepts/data-storage) to be fully stateless.
 
 Pomerium's individual components can be divided into two categories; the data plane and control plane. Regardless of which mode you run Pomerium in, we strongly recommend multiple instances of each service for fault tolerance.
 
-:::tip 
+:::tip
 
-Our [Kubernetes](/docs/k8s/quickstart) supports [Horizontal Pod Autoscaling](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/). 
+Our [Kubernetes](/docs/k8s/quickstart) supports [Horizontal Pod Autoscaling](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/).
 
 :::
 
@@ -97,9 +97,9 @@ Databroker resource requirements scale with the number of replicated services in
 
 In many deployments, 2 replicas of Databroker is enough to provide resilient service.
 
-:::caution 
+:::caution
 
-In a production configuration, Databroker CPU/IO utilization also translates to IO load on the [underlying storage system](/docs/concepts/data-storage). Ensure it is scaled accordingly! 
+In a production configuration, Databroker CPU/IO utilization also translates to IO load on the [underlying storage system](/docs/concepts/data-storage). Ensure it is scaled accordingly!
 
 :::
 
@@ -135,9 +135,9 @@ Regardless of the service mode, it is recommended you run at least 2 instances o
 
 Ensure that you have enough spare capacity to handle the scope of your failure domains.
 
-:::caution 
+:::caution
 
-Multiple replicas of Databroker or all-in-one service are only supported with [external storage](/docs/concepts/data-storage) configured 
+Multiple replicas of Databroker or all-in-one service are only supported with [external storage](/docs/concepts/data-storage) configured
 
 :::
 
@@ -166,11 +166,11 @@ If you have TLS enabled applications behind the proxy:
 - the Proxy may be configured to verify the name and certificate authority of downstream services with either the standard Root CA bundle or a custom CA
 
 [jwt verification]: /docs/concepts/mutual-auth.md#jwt-verification-application-based-mutual-authentication
-[rbac]: /docs/enterprise/concepts.md#rbac-for-enterprise-console-users
+[rbac]: /docs/concepts/namespacing.mdx#rbac-for-enterprise-console-users
 
 ## Securing Pomerium
 
-Pomerium is a tool for securing your infrastructure while adhering to the principles of [Zero Trust](/docs/overview/background#zero-trust). But that doesn't mean that your stack is "secure" right out of the box. Additionally, security is a battle of give and take; more security often comes at the cost of more complexity, both for the administrator and the end-user. What layers of security you choose to apply (and how you configure them) is highly dependent on your use case.
+Pomerium is a tool for securing your infrastructure while adhering to the principles of [Zero Trust](/docs/concepts/zero-trust#zero-trust). But that doesn't mean that your stack is "secure" right out of the box. Additionally, security is a battle of give and take; more security often comes at the cost of more complexity, both for the administrator and the end-user. What layers of security you choose to apply (and how you configure them) is highly dependent on your use case.
 
 While we can't tell you what tools and technologies are right for you, we've compiled a list of all the security-related documentation we have, organized to help you discover what path to take.
 
@@ -178,10 +178,10 @@ While we can't tell you what tools and technologies are right for you, we've com
 
 If you're just getting started, we suggest reviewing the following pages:
 
-- [Background](/docs/overview/background) - A quick primer on the failures of legacy models of "perimeter security" and an introduction to the concept of Zero Trust.
-- [Architecture](/docs/overview/architecture) - Learn how Pomerium is broken down into component services. How you choose to deploy Pomerium will set the stage for the kind of security practices that apply to your stack.
+- [Background](/docs/concepts/zero-trust) - A quick primer on the failures of legacy models of "perimeter security" and an introduction to the concept of Zero Trust.
+- [Architecture](/docs/internals/architecture) - Learn how Pomerium is broken down into component services. How you choose to deploy Pomerium will set the stage for the kind of security practices that apply to your stack.
 - [Mutual Authentication: A Component of Zero Trust](/docs/concepts/mutual-auth) - Zero Trust's core principle could be said as "trust nothing without first (and continuously) verifying it". Mutual authentication is a big part of bringing that principle to bear. This page explains the concept and how it's achieved across several different layers of the network stack.
-- [Glossary](/docs/overview/glossary) - Keep this page handy for when you run into new or unfamiliar terminology.
+- [Glossary](/docs/internals/glossary) - Keep this page handy for when you run into new or unfamiliar terminology.
 
 ### TLS Certificates
 
@@ -208,6 +208,6 @@ Often overlooked or confused with multi-factor authentication (MFA), device iden
 
 ### Service Mesh
 
-If you've read through all the docs linked above, first of all *wow*. That's a lot to absorb, kudos to you. But if you got this far and you're overwhelmed thinking about how to manage mutual authentication, user context verification, etc, between all your various applications, then you're primed and ready for a **service mesh**. A service mesh is a software component that acts as an infrastructure layer to facilitate the communication (and authentication) between services.
+If you've read through all the docs linked above, first of all _wow_. That's a lot to absorb, kudos to you. But if you got this far and you're overwhelmed thinking about how to manage mutual authentication, user context verification, etc, between all your various applications, then you're primed and ready for a **service mesh**. A service mesh is a software component that acts as an infrastructure layer to facilitate the communication (and authentication) between services.
 
 - Our [Istio](/docs/guides/istio) guide covers integration between Pomerium and Istio, the most common service mesh.
