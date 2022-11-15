@@ -137,7 +137,7 @@ database:
     image: quay.io/hedgedoc/hedgedoc:1.9.4
     environment:
       - CMD_DB_URL=postgres://hedgedoc:password@database:5432/hedgedoc
-      - CMD_DOMAIN=localhost
+      - CMD_DOMAIN=hedgedoc.localhost.pomerium.io
       - CMD_URL_ADDPORT=false
       - CMD_EMAIL=true
       - CMD_ALLOW_EMAIL_REGISTER=true
