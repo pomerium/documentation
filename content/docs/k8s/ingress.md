@@ -1,6 +1,6 @@
 ---
-title: Kubernetes Ingress Controller
-sidebar_label: Ingress Controller
+title: Ingress Configuration
+sidebar_label: Ingress
 lang: en-US
 keywords:
   [
@@ -15,91 +15,87 @@ keywords:
 pagination_next: null
 ---
 
-Use Pomerium as a first-class secure-by-default Ingress Controller. The Pomerium Ingress Controller enables workflows more native to Kubernetes environments, such as Git-Ops style actions based on pull requests. Dynamically provision routes from Ingress resources and set policy based on annotations. By defining routes as Ingress resources you can independently create and remove them from Pomerium's configuration.
+If you've tested Pomerium using the [all-in-one binary](/docs/install/binary), you're probably familiar with configuring routes in Pomerium's [`config.yaml`](/docs/install/binary#configuration-file).
+When using the Pomerium Ingress Controller, each route is defined as an Ingress resource in the Kubernetes API.
 
-## Prerequisites
+## Ingress
 
-- A certificate management solution. If you do not already have one in place, this article covers using [cert-manager](https://cert-manager.io/).
-- A Postgres backend with high availability is highly recommended.
+The Pomerium Ingress Controller will monitor Ingress resources in the cluster.
 
-### System Requirements
+- By default, Ingress resources in all namespaces are watched.
+- Only resources with a matching `spec.ingressClassName` would be served.
+- TLS (HTTPS) is required.
 
-- Kubernetes v1.19.0+
-
-### Limitations
-
-:::caution
-
-Only one Ingress Controller instance is supported per Pomerium cluster.
-
-:::
-
-## Installation
-
-### Deployment
-
-Our instructions for [Installing Pomerium on Kubernetes](/docs/k8s/quickstart) includes the Ingress Controller as part of the deployment:
-
-```yaml
-ingressController:
-  enabled: true
-```
-
-### Docker Image
-
-You may deploy the Ingress controller from your own manifests by using the `pomerium/ingress-controller` docker image.
-
-## Configuration
-
-Global configuration parameters are set via [Pomerium CRD](/docs/k8s/reference) while individual routes are configured via `Ingress` resources, with additional annotations.
-
-## Usage
-
-### Defining Routes
-
-If you've tested Pomerium using the [all-in-one binary](/docs/install/binary), you're probably familiar with configuring routes in Pomerium's [`config.yaml`](/docs/install/binary#configuration-file). When using the Pomerium Ingress Controller, each route is defined as an Ingress resource in the Kubernetes API.
-
-The Ingress Controller will monitor Ingress resources in the cluster, creating a Pomerium route definition for each one. Policy and other configuration options for the route are set by using annotations starting with `ingress.pomerium.io/`.
-
-Example:
+<details>
+<summary>Example <code>Ingress</code></summary>
+<div>
 
 ```yaml
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   annotations:
-    ingress.pomerium.io/policy: '[{"allow":{"and":[{"email":{"is":"user@yourdomain.com"}}]}}]' # This can also be a yaml block quote
+    cert-manager.io/cluster-issuer: google-dns
+    external-dns.alpha.kubernetes.io/hostname: httpbin.ingress.sandbox.pomerium.io
+    ingress.pomerium.io/allow_any_authenticated_user: "true"
+    ingress.pomerium.io/pass_identity_headers: "true"
+  name: httpbin
+  namespace: httpbin
 spec:
+  ingressClassName: pomerium
   rules:
-    - host: hello.localhost.pomerium.io
-      http:
-        paths:
-          - backend:
-              service:
-                name: nginx-hello
-                port:
-                  name: http
-            path: /
-            pathType: Prefix
+  - host: httpbin.localhost.pomerium.io
+    http:
+      paths:
+      - backend:
+          service:
+            name: httpbin
+            port:
+              name: http
+        path: /
+        pathType: Prefix
+  tls:
+  - hosts:
+    - httpbin.ingress.localhost.pomerium.io
+    secretName: httpbin-localhost-pomerium-io
 ```
 
-Becomes:
+</div>
+</details>
 
-```yaml
-routes:
-  - from: https://hello.localhost.pomerium.io
-    to: http://nginx-hello.default.svc.cluster.local
-    policy:
-      - allow:
-          and:
-            - email:
-                is: user@yourdomain.com
-```
+### Ingress Class
+
+The default installation adds `pomerium` [IngressClass](https://kubernetes.io/docs/concepts/services-networking/ingress/#ingress-class) to your cluster.
+In order for Pomerium to service your Ingress objects, please set `spec.ingressClassName` to `pomerium`.
+
+It is also possible to [set Pomerium to be a default ingress controller](./install#set-pomerium-as-default-ingressclass) cluster-wide. 
+
+### Annotations
+
+Most configuration keys in non-Kubernetes deployments can be specified as annotation in an Ingress Resource definition. 
+The format is `ingress.pomerium.io/${OPTION_NAME}`. 
+
+
+:::note
+Kubernetes object annotations are a **string map** and
+`Ingress` annotation value has to be a YAML string in quotemarks.
+Pomerium would parse the value of the annotation string to decode the desired format.
 
 <details>
-  <summary>Write Policies in YAML</summary>
+  <summary>Representing JSON objects</summary>
   <div>
-  You can also define a route's policies using YAML:
+
+  Some parameters are objects. Use single quotemarks to escape their string representation.
+
+```yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    ingress.pomerium.io/policy: '[{"allow":{"and":[{"email":{"is":"user@yourdomain.com"}}]}}]'
+```
+
+  Longer single-line JSON strings may be hard to read. You may opt using multi-line YAML strings instead:
 
 ```yaml
 apiVersion: networking.k8s.io/v1
@@ -117,21 +113,9 @@ metadata:
   </div>
 </details>
 
-:::tip
-Routes are sorted and applied in the following order.
-
-1. Ascending by `from`.
-1. Descending by `path`.
-1. Descending by `regex`.
-1. Descending by `prefix`.
-1. Ascending by `id`.
-
-This sorting order helps ensure that more restrictive routes for specific paths and regexes are applied correctly.
 :::
 
-### Supported Annotations
-
-Most configuration keys in non-Kubernetes deployments can be specified as annotation in an Ingress Resource definition. The format is `ingress.pomerium.io/${OPTION_NAME}`. The expandable list below contains the annotations available, which behave as described in our reference documentation (with links to the appropriate reference documentation).
+The expandable list below contains the annotations available, which behave as described in our reference documentation (with links to the appropriate reference documentation).
 
 <details>
 <summary>Pomerium-Standard Annotations</summary>
@@ -142,7 +126,6 @@ Most configuration keys in non-Kubernetes deployments can be specified as annota
 - [`ingress.pomerium.io/allow_spdy`]
 - [`ingress.pomerium.io/allow_websockets`]
 - [`ingress.pomerium.io/allowed_domains`]
-- [`ingress.pomerium.io/allowed_groups`]
 - [`ingress.pomerium.io/allowed_idp_claims`]
 - [`ingress.pomerium.io/allowed_users`]
 - [`ingress.pomerium.io/cors_allow_preflight`]
@@ -184,35 +167,105 @@ The remaining annotations are specific to or behave differently than they do whe
 | `ingress.pomerium.io/tls_custom_ca_secret`             | Name of Kubernetes `tls` Secret containing a custom [CA certificate][`tls_custom_ca_secret`] for the upstream.                                                                                |
 | `ingress.pomerium.io/tls_downstream_client_ca_secret`  | Name of Kubernetes `tls` Secret containing a [Client CA][client-certificate-authority] for validating downstream clients.                                                                     |
 
-:::tip
+### Access Policy
 
-Every value for the annotations above must be in `string` format.
+The access policy is applied by adding Pomerium-specific annotations to the `Ingress` objects.
 
-:::
-
-### cert-manager Integration
-
-Pomerium Ingress Controller can use [cert-manager](https://cert-manager.io/) to automatically provision certificates. These may come from the [ingress-shim](https://cert-manager.io/docs/usage/ingress/) or explicitly configured [`Certificate` resources](https://cert-manager.io/docs/usage/certificate/).
-
-To use [HTTP01 Challenges](https://cert-manager.io/docs/configuration/acme/http01/) with your [Issuer](https://cert-manager.io/docs/concepts/issuer/), configure the solver class to match the Ingress Controller. The Ingress Controller will automatically configure policy to facilitate the HTTP01 challenge:
+<table>
+<thead>
+<th>Annotation</th>
+</thead>
+<tbody>
+<tr><td>
 
 ```yaml
-apiVersion: cert-manager.io/v1
-kind: Issuer
-metadata:
-  name: example-issuer
-spec:
-  acme:
-    server: https://acme-staging-v02.api.letsencrypt.org/directory
-    privateKeySecretRef:
-      name: example-issuer-account-key
-    solvers:
-      - http01:
-          ingress:
-            class: pomerium
+ingress.pomerium.io/allow_any_authenticated_user: "true"
 ```
 
-An example of using the [ingress-shim](https://cert-manager.io/docs/usage/ingress/) with an Ingress resource managed by Pomerium:
+**Boolean**. Allow access to any user that was successfully authenticated with your Identity Provider.
+
+</td></tr>
+<tr><td>
+
+```yaml
+ingress.pomerium.io/allow_public_unauthenticated_access: "true"
+```
+
+**Boolean**. Do not require any authentication, public access.
+
+</td></tr>
+<tr><td>
+
+```yaml
+ingress.pomerium.io/allowed_domains: |
+  - pomerium.com
+```
+
+**Array of strings**. Users with email domains matched would be allowed.
+
+</td></tr>
+<tr><td>
+
+```yaml
+ingress.pomerium.io/allowed_users: |
+  - alice@pomerium.com
+  - bob@contractor.co
+```
+
+<b>Array of strings</b>. Users with matched emails would be allowed.
+
+</td></tr>
+<tr><td>
+
+```yaml
+ingress.pomerium.io/allowed_idp_claims: |
+  groups:
+    - admin
+```
+
+<b>Object</b>. Users with matched claims passed by your Identity Provider would be allowed.
+
+</td></tr>
+<tr><td>
+
+```yaml
+ingress.pomerium.io/policy: |
+  allow:
+    and:
+    - domain:
+        is: example.com
+    - groups:
+        has: admin
+```
+
+[Pomerium Policy Language](/docs/topics/ppl).
+</td></tr>
+</tbody>
+</table>
+
+### Deterministic Matching
+
+If you have Ingresses with potentially overlapping host/path combinations, 
+Pomerium maintains the following order that would match an incoming request:
+
+1. Ascending by `host`.
+2. Descending by `path`.
+3. Descending by `regex`.
+4. Descending by `prefix`.
+
+This sorting order helps ensure that more restrictive routes for specific paths and regexes are applied correctly.
+
+### Regular Expressions Path Matching
+
+You can use a [re2 regular expression] to create an Ingress that matches multiple paths.
+
+1. Set the `path_regex` annotation to `"true"`
+1. Set `pathType` to `ImplementationSpecific`
+1. Set `path` to an re2 expression matching the full path. It must include the `^/` prefix and `$` suffix. Any query strings should be removed.
+
+:::tip
+Check out [this example expression](https://regex101.com/r/IBVUKT/1/) at [regex101.com] for a more detailed explanation and example paths, both matching and not.
+:::
 
 ```yaml
 apiVersion: networking.k8s.io/v1
@@ -220,7 +273,8 @@ kind: Ingress
 metadata:
   annotations:
     cert-manager.io/issuer: example-issuer
-    ingress.pomerium.io/policy: '[{"allow":{"and":[{"email":{"is":"user@exampledomain.com"}}]}}]'
+    ingress.pomerium.io/allowed_domains: '["exampledomain.com"]'
+    ingress.pomerium.io/path_regex: "true"
   name: example
 spec:
   ingressClassName: pomerium
@@ -233,31 +287,110 @@ spec:
                 name: example
                 port:
                   name: http
-            path: /
-            pathType: Prefix
+            path: ^/(admin|superuser)/.*$
+            pathType: ImplementationSpecific
   tls:
     - hosts:
         - example.localhost.pomerium.io
       secretName: example-tls
 ```
 
-## HTTPS Endpoints
+### Unsupported features
 
-The `Ingress` spec assumes that all communications to the upstream service is sent in plaintext. For more information, see the [TLS](https://kubernetes.io/docs/concepts/services-networking/ingress/#tls) section of the Ingress API documentation. Pomerium supports HTTPS communication with upstream endpoints, including mTLS.
+The following Ingress features are not supported:
 
-Annotate your `Ingress` with
+- [Default Backend](https://kubernetes.io/docs/concepts/services-networking/ingress/#default-backend)
+- [Resource Backend](https://kubernetes.io/docs/concepts/services-networking/ingress/#resource-backend)
+
+## Services
+
+Each Ingress should be backed by a Service. 
+Pomerium supports certain extensions while communicating to Kubernetes services, 
+beyond plaintext HTTP interaction via Service Load Balancer. 
+
+### TCP Services
+
+Pomerium is capable of creating secure connections to services like SSH, Databases, and more by creating a TCP tunnel to the service with a local client. 
+
+The example route below defines a route providing a tunneled TCP connection to an upstream service listening for non-web traffic.
+Pomerium provides [command line and GUI](/docs/tcp/client#tcp-client-software) clients to interact with the TCP services. 
 
 ```yaml
-ingress.pomerium.io/secure_upstream: true
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: tcp-example
+  annotations:
+    ingress.pomerium.io/tcp_upstream: "true"
+spec:
+  ingressClassName: pomerium
+  rules:
+    - host: "tcp.localhost.pomerium.io"
+      http:
+        paths:
+          - pathType: ImplementationSpecific
+            backend:
+              service:
+                name: tcp-service
+                port:
+                  name: app
 ```
 
-Additional TLS certificates may be supplied by creating a Kubernetes secret(s) in the same namespaces as the `Ingress` resource. Please note that we do not support file paths or embedded secret references.
+The important points to note in this example:
+
+- The annotation `ingress.pomerium.io/tcp_upstream:` is set to `"true"`,
+- `spec.rules.[].http.paths.[].path` is omitted,
+- `spec.rules.[].http.paths.[].pathType` is set to `ImplementationSpecific`,
+- `spec.rules.[].host` and `spec.rules.[].paths.[].backend.service.port.name/number` together define the address used when connecting to the route using the [Pomerium Desktop or CLI clients](/docs/tcp/client),
+- You may apply standard access control annotations to define access restrictions to the service.
+
+:::note
+Unlike a standalone Pomerium configuration, you may not create multiple TCP routes using the same hostname with different ports. 
+This limitation was made to avoid confusion, and because additional configuration parameters, such as the Ingress resource, do not allow passing port numbers in the `spec.rules.host` parameter.
+:::
+### Service Proxy
+
+For performance reasons, by default, Pomerium routes traffic directly to the referenced Service's Endpoints, 
+bypassing Kubernetes service proxy. If you would like to disable this behaviour, i.e. you are deploying Pomerium inside
+a service mesh such as Istio, set the following annotation to the Ingress:
+
+```yaml
+ingress.pomerium.io/service_proxy_upstream: "true"
+```
+
+### Load Balancing
+
+Unless you disabled direct traffic to Endpoints, Pomerium would load balance the requests to the upstream endpoints.
+See the [Load Balancing](/docs/topics/load-balancing) guide for details, 
+and use relevant Ingress annotations to fine tune load balancing and health checks.
+
+:::note
+Kubernetes has its own concept of [readiness](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#define-readiness-probes) for the endpoints. 
+If a pod fails Readiness probe, its Endpoint is removed. 
+Pomerium would detect this change and stop serving traffic to that upstream endpoint.
+You may use both Pomerium and Kubernetes health checks together.
+:::
+
+### Mutual TLS
+
+The Ingress spec assumes that all communications to the upstream service is sent in plaintext. 
+Pomerium supports mutual TLS communication with upstream endpoints.
+
+Annotate your Ingress with
+
+```yaml
+ingress.pomerium.io/secure_upstream: "true"
+```
+
+Additional TLS certificates may be supplied by creating a Kubernetes secret(s) in the same namespaces as the Ingress resource. 
+Please note that we do not support file paths or embedded secret references.
 
 - [`ingress.pomerium.io/tls_client_secret`](/docs/reference/routes/tls-client-certificate)
 - [`ingress.pomerium.io/tls_custom_ca_secret`](/docs/reference/routes/tls-custom-certificate-authority)
 - [`ingress.pomerium.io/tls_downstream_client_ca_secret`](#supported-annotations)
 
-Please note that the referenced `tls_client_secret` must be a [TLS Kubernetes secret](https://kubernetes.io/docs/concepts/configuration/secret/#tls-secrets). `tls_custom_ca_secret` and `tls_downstream_client_ca_secret` must contain `ca.crt` containing a .PEM encoded (base64-encoded DER format) public certificate.
+Please note that the referenced `tls_client_secret` must be a [TLS Kubernetes secret](https://kubernetes.io/docs/concepts/configuration/secret/#tls-secrets). 
+`tls_custom_ca_secret` and `tls_downstream_client_ca_secret` referenced Secrets must contain `ca.crt` key containing a .PEM encoded (base64-encoded DER format) public certificate.
 
 ### External Services
 
@@ -309,17 +442,29 @@ spec:
                   name: https
 ```
 
-### Regular Expressions Path Matching
+## TLS Certificates
 
-You can use a [re2 regular expression] To create an Ingress that matches multiple paths.
+Pomerium expects TLS (HTTPS) for all routes created from the `Ingress` objects.
 
-1. Set the `path_regex` annotation to `"true"`
-1. Set `pathType` to `ImplementationSpecific`
-1. Set `path` to an re2 expression matching the full path. It must include the `^/` prefix and `$` suffix. Any query strings should be removed.
+HTTP requests would be automatically redirected to the HTTPS port. 
 
-:::tip
-Check out [this example expression](https://regex101.com/r/IBVUKT/1/) at [regex101.com] for a more detailed explanation and example paths, both matching and not.
-:::
+Pomerium certificates may be supplied individually per-Ingress via `spec.tls`, 
+defined globally in the CRD via [`certificates`](./reference#spec), or both.
+
+### `spec.tls`
+
+Pomerium load use certificates referenced by the `spec.tls` section of the `Ingress`. 
+For more information, see the [TLS](https://kubernetes.io/docs/concepts/services-networking/ingress/#tls) section of the Ingress API documentation. 
+
+### Global Certs
+
+You may provide [`certificates`](./reference#spec) as part of the global Pomerium configuration. 
+This may be useful if you i.e. have a wildcard certificate.
+
+### cert-manager Integration
+
+Pomerium Ingress Controller can use [cert-manager](https://cert-manager.io/) to automatically provision certificates.
+These may come from the [ingress-shim](https://cert-manager.io/docs/usage/ingress/) or explicitly configured [`Certificate` resources](https://cert-manager.io/docs/usage/certificate/).
 
 ```yaml
 apiVersion: networking.k8s.io/v1
@@ -327,8 +472,7 @@ kind: Ingress
 metadata:
   annotations:
     cert-manager.io/issuer: example-issuer
-    ingress.pomerium.io/allowed_domains: '["exampledomain.com"]'
-    ingress.pomerium.io/path_regex: "true"
+    ingress.pomerium.io/policy: '[{"allow":{"and":[{"email":{"is":"user@exampledomain.com"}}]}}]'
   name: example
 spec:
   ingressClassName: pomerium
@@ -341,48 +485,32 @@ spec:
                 name: example
                 port:
                   name: http
-            path: ^/(admin|superuser)/.*$
-            pathType: ImplementationSpecific
+            path: /
+            pathType: Prefix
   tls:
     - hosts:
         - example.localhost.pomerium.io
       secretName: example-tls
 ```
 
-## TCP Endpoints
-
-The example route below defines a route providing a [tunneled TCP connection](/docs/tcp/) to an upstream service listening for non-web traffic:
+To use [HTTP01 Challenges](https://cert-manager.io/docs/configuration/acme/http01/) with your [Issuer](https://cert-manager.io/docs/concepts/issuer/), configure the solver class to match the Ingress Controller. 
+The Pomerium Ingress Controller will automatically configure policy to facilitate the HTTP01 challenge:
 
 ```yaml
-apiVersion: networking.k8s.io/v1
-kind: Ingress
+apiVersion: cert-manager.io/v1
+kind: Issuer
 metadata:
-  name: tcp-example
-  annotations:
-    ingress.pomerium.io/tcp_upstream: "true"
+  name: example-issuer
 spec:
-  ingressClassName: pomerium
-  rules:
-    - host: "tcp.localhost.pomerium.io"
-      http:
-        paths:
-          - pathType: ImplementationSpecific
-            backend:
-              service:
-                name: tcp-service
-                port:
-                  name: app
+  acme:
+    server: https://acme-staging-v02.api.letsencrypt.org/directory
+    privateKeySecretRef:
+      name: example-issuer-account-key
+    solvers:
+      - http01:
+          ingress:
+            class: pomerium
 ```
-
-The important points to note in this example:
-
-- The annotation `ingress.pomerium.io/tcp_upstream:` is set to `"true"`,
-- `spec.rules.[].http.paths.[].path` is omitted,
-- `spec.rules.[].http.paths.[].pathType` is set to `ImplementationSpecific`,
-- `spec.rules.[].host` and `spec.rules.[].paths.[].backend.service.port.name/number` together define the address used when connecting to the route using the [Pomerium Desktop or CLI clients](/docs/tcp/client),
-- You may apply standard access control annotations to define access restrictions to your port.
-
-Unlike a standalone Pomerium configuration, you may not create multiple TCP routes using the same hostname with different ports. This limitation was made to avoid confusion, and because additional configuration parameters, such as the Ingress resource, do not allow passing port numbers in the `spec.rules.host` parameter.
 
 ## Troubleshooting
 
@@ -457,6 +585,20 @@ Events:
   Warning  UpdateError  3s                  pomerium-ingress  upsert routes: parsing ingress: annotations: applying policy annotations: parsing policy: invalid rules in policy: unsupported conditional "maybe", only and, or, not, nor and action are allowed
 ```
 
+### Logs
+
+```console
+kubectl logs deployment/pomerium
+```
+
+Pomerium assigns a unique `request-id` that is also set in the response headers. 
+Filter by `request-id` to see access and authorization logs for a particular request.
+
+Pomerium produces an access log entry for each request. Filter by `"service":"envoy"`.
+
+Pomerium performs authorization check for each and every request. 
+Filter by `"service":"authorize"`. See [Authorization Log Keys](/docs/topics/auth-logs#authorization-log-keys).
+
 ### HSTS
 
 If your domain has [HSTS] enabled and you visit an endpoint while Pomerium is using the self-signed bootstrap certificate or a LetsEncrypt staging certificate (before cert-manager has provisioned a production certificate), the untrusted certificate may be pinned in your browser and would need to be reset. See [this article](https://www.ssl2buy.com/wiki/how-to-clear-hsts-settings-on-chrome-firefox-and-ie-browsers) for more information.
@@ -466,7 +608,6 @@ If your domain has [HSTS] enabled and you visit an endpoint while Pomerium is us
 For more information on the Pomerium Ingress Controller or the Kubernetes concepts discussed, see:
 
 - [Ingress (Kubernetes Docs)](https://kubernetes.io/docs/concepts/services-networking/ingress/)
-- [Pomerium Helm Chart README: Pomerium Ingress Controller](https://github.com/pomerium/pomerium-helm/tree/main/charts/pomerium#pomerium-ingress-controller)
 - [Pomerium Kubernetes Ingress Controller (code repository)](https://github.com/pomerium/ingress-controller)
 
 [`ingress.pomerium.io/allow_any_authenticated_user`]: /docs/reference/routes/allow-any-authenticated-user
@@ -474,7 +615,6 @@ For more information on the Pomerium Ingress Controller or the Kubernetes concep
 [`ingress.pomerium.io/allow_spdy`]: /docs/reference/routes/spdy
 [`ingress.pomerium.io/allow_websockets`]: /docs/reference/routes/websocket-connections
 [`ingress.pomerium.io/allowed_domains`]: /docs/reference/policy/allowed-domains
-[`ingress.pomerium.io/allowed_groups`]: /docs/reference/policy/allowed-groups
 [`ingress.pomerium.io/allowed_idp_claims`]: /docs/reference/policy/allowed-idp-claims
 [`ingress.pomerium.io/allowed_users`]: /docs/reference/policy/allowed-users
 [`ingress.pomerium.io/cors_allow_preflight`]: /docs/reference/routes/cors-preflight
