@@ -68,7 +68,7 @@ spec:
 The default installation adds `pomerium` [IngressClass](https://kubernetes.io/docs/concepts/services-networking/ingress/#ingress-class) to your cluster.
 In order for Pomerium to service your Ingress objects, please set `spec.ingressClassName` to `pomerium`.
 
-It is also possible to [set Pomerium to be a default ingress controller](./install#set-pomerium-as-default-ingressclass) cluster-wide. 
+It is also possible to [set Pomerium to be a default ingress controller](/docs/k8s/install#set-pomerium-as-default-ingressclass) cluster-wide. 
 
 ### Annotations
 
@@ -449,7 +449,7 @@ Pomerium expects TLS (HTTPS) for all routes created from the `Ingress` objects.
 HTTP requests would be automatically redirected to the HTTPS port. 
 
 Pomerium certificates may be supplied individually per-Ingress via `spec.tls`, 
-defined globally in the CRD via [`certificates`](./reference#spec), or both.
+defined globally in the CRD via [`certificates`](/docs/k8s/reference#spec), or both.
 
 ### `spec.tls`
 
@@ -458,7 +458,7 @@ For more information, see the [TLS](https://kubernetes.io/docs/concepts/services
 
 ### Global Certs
 
-You may provide [`certificates`](./reference#spec) as part of the global Pomerium configuration. 
+You may provide [`certificates`](/docs/k8s/reference#spec) as part of the global Pomerium configuration. 
 This may be useful if you i.e. have a wildcard certificate.
 
 ### cert-manager Integration
@@ -514,7 +514,7 @@ spec:
 
 ## Metrics
 
-Pomerium [exposes](./install#metrics) a number of Prometheus style metrics that you may use to monitor your Ingress.
+Pomerium [exposes](/docs/k8s/install#metrics) a number of Prometheus style metrics that you may use to monitor your Ingress.
 
 In order to filter out metrics for a particular Ingress, use `envoy_cluster_name` metric label, 
 that has a `ingressnamespace-ingressname-host-domain-com` format.
