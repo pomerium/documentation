@@ -512,6 +512,16 @@ spec:
             class: pomerium
 ```
 
+## Metrics
+
+Pomerium [exposes](./install#metrics) a number of Prometheus style metrics that you may use to monitor your Ingress.
+
+In order to filter out metrics for a particular Ingress, use `envoy_cluster_name` metric label, 
+that has a `ingressnamespace-ingressname-host-domain-com` format.
+
+See [Envoy Cluster Stats](https://www.envoyproxy.io/docs/envoy/latest/configuration/upstream/cluster_manager/cluster_stats) 
+for details on individual metrics. 
+
 ## Troubleshooting
 
 ### View Event History
