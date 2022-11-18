@@ -4,7 +4,6 @@ about: Report a problem with existing documentation
 labels: Fix Content
 ---
 
-
 <!--- ** Partial or incorrectly filled out issues may be deferred.--->
 
 Page: https://www.pomerium.com/docs/${page}
