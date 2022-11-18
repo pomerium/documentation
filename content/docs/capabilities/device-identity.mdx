@@ -3,11 +3,16 @@ title: Device Identity
 description: Learn about how WebAuthn is used to authenticate and authorize access using Device ID and state.
 ---
 
+import ManageDevices from '../reference/_manage-devices.md';
+import NewEnrollment from '../reference/_new-enrollment.md';
+
 :::tip
 
 This article describes a use case available to [Pomerium Enterprise](/docs/enterprise/about) customers.
 
 :::
+
+## Overview
 
 One of the core components of the zero trust security model is **device identity**, which is the ability for a device to have a unique, unclonable identity string that can be authenticated and factored into access control decisions. This topic page covers the concept of device identity, and how it applies to the zero trust model.
 
@@ -26,11 +31,33 @@ Pomerium supports policies that use device identity since version [0.16.0](/docs
 
 To get started, review the following pages:
 
-- [Pomerium Policy Language](/docs/topics/ppl) to learn how to build policies that use device ID.
+- [Pomerium Policy Language](/docs/concepts/ppl) to learn how to build policies that use device ID.
 - **End Users** should review [Enroll a Device](/docs/guides/enroll-device) to learn how to enroll devices on Pomerium. In Enterprise environments, self-enrollments must be approved by an admin in the Enterprise Console.
 - **Enterprise Administrators** can review the [Devices](/docs/enterprise/reference/manage#devices) reference material to create pre-approved enrollment links for users.
 - [pomerium/webauthn](https://github.com/pomerium/webauthn) on GitHub, our implementation of the WebAuthn specification.
 
+### New Enrollment
+
+<NewEnrollment />
+
+#### Search Users
+
+New Enrollment URLs are only valid for the specified user.
+
+#### Redirect URL
+
+**Optional**: The URL the user will be taken to after device enrollment is successful.
+
+#### Enrollment Type
+
+Specify if the user can enroll any device identity, or restrict it to a [secure enclave](/docs/concepts/device-identity#secure-enclaves).
+
+[route-concept]: /docs/concepts/routes
+[route-reference]: /docs/concepts/routes
+[namespace-concept]: /docs/concepts/namespacing
+[namespace-reference]: /docs/concepts/namespacing
+[service-accounts-concept]: /docs/concepts/service-accounts
+[policy-reference]: /docs/enterprise/reference/manage#policies-2
 [android-keystore]: https://source.android.com/security/keystore
 [apple-enclave]: https://support.apple.com/guide/security/secure-enclave-sec59b0b31ff/web
 [apple-passkeys]: https://developer.apple.com/documentation/authenticationservices/public-private_key_authentication/supporting_passkeys

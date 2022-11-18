@@ -90,4 +90,4 @@ We use [Netlify](https://www.netlify.com) to build and host our docs. One of nic
 [verify]: https://verify.pomerium.com/
 [identity provider]: /docs/identity-providers
 [make]: https://en.wikipedia.org/wiki/Make_(software)
-[tls certificates]: /docs/topics/certificates
+[tls certificates]: /docs/concepts/certificates

@@ -173,29 +173,29 @@ Before you begin, confirm you are in the correct Namespace. A service account ca
 
 1. From the main menu, select **Service Accounts** under **CONFIGURE**. Click the **+ ADD SERVICE ACCOUNT** button:
 
-   ![The Service Accounts page](./img/console-service-account.png)
+   ![The Service Accounts page](../enterprise/reference/img/console-service-account.png)
 
 1. Service accounts can be unique and exist only for Pomerium, or impersonate directory users from your IdP.
 
    Give the user a unique ID, or select an existing user to impersonate. Consider referencing the Namespace you're creating it under, for easier reference later. Optionally set an expiration date:
 
-   ![Adding a unique service account](./img/create-service-account.png)
+   ![Adding a unique service account](../enterprise/reference/img/create-service-account.png)
 
    The user ID set here corresponds to the `User` criteria when editing a policy.
 
 1. After you click **Submit**, the modal presents the JSON web token (**JWT**) for the service account. Temporarily save it somewhere secure, as you will not be able to view it again:
 
-   ![Service Account Added](./img/service-account-jwt.png)
+   ![Service Account Added](../enterprise/reference/img/service-account-jwt.png)
 
    This JWT must be added to your application configuration to enable direct communication.
 
 1. Edit or create policies to give the service account access to the internal service:
 
-  ![An example policy for a service account](./img/create-policy-1.png)
+  ![An example policy for a service account](../enterprise/reference/img/create-policy-1.png)
 
   ---
 
-  ![An example policy for a service account](./img/create-policy-2.png)
+  ![An example policy for a service account](../enterprise/reference/img/create-policy-2.png)
 
 ## Namespaces
 

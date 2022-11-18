@@ -50,7 +50,7 @@ You can use the same configuration examples below for other supported [identity 
         - 9000:9000
   ```
 
-  You can generate certificates for `*.localhost.pomerium.io` using [this instruction](/docs/topics/certificates#certificates-2)
+  You can generate certificates for `*.localhost.pomerium.io` using [this instruction](/docs/concepts/certificates#certificates-2)
 
 1. Adjust the Pomerium configuration file:
 

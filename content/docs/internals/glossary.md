@@ -100,7 +100,7 @@ When discussing traffic between end users and services, we use "upstream" to ref
 
 ### Authentication
 
-Abbreviated as **AuthN**, this refers to the validation of a user's identity. It can also refer to validation of an user's [device](/docs/topics/device-identity). Access to a protected resource is usually granted only after a client's authentication and [authorization] are validated. This is usually done by verifying the [JWT] provided by the client.
+Abbreviated as **AuthN**, this refers to the validation of a user's identity. It can also refer to validation of an user's [device](/docs/concepts/device-identity). Access to a protected resource is usually granted only after a client's authentication and [authorization] are validated. This is usually done by verifying the [JWT] provided by the client.
 
 ### Authorization
 
@@ -112,11 +112,11 @@ Abbreviated as **AuthZ**, authorization is the process of validating a client's 
 
 ### Mutual Authentication
 
-Mutual authentication is the security strategy of having both sides of a connection validate the identity of the other. This reduces the possibility of bad actors to impersonate valid communication endpoints. This topic is discussed in detail in [Mutual Authentication: A Component of Zero Trust](/docs/topics/mutual-auth).
+Mutual authentication is the security strategy of having both sides of a connection validate the identity of the other. This reduces the possibility of bad actors to impersonate valid communication endpoints. This topic is discussed in detail in [Mutual Authentication: A Component of Zero Trust](/docs/concepts/mutual-auth).
 
 ### Secure Enclave
 
-A Secure Enclave is a sub-component or device physically bound to a specific device that can safely store sensitive data used to validate [device identity](/docs/topics/device-identity).
+A Secure Enclave is a sub-component or device physically bound to a specific device that can safely store sensitive data used to validate [device identity](/docs/concepts/device-identity).
 
 ### Security Keys
 
@@ -124,7 +124,7 @@ Security keys are often used to provide a physical resource to perform multi-fac
 
 ### Trusted Execution Environment
 
-A **TEE** is a physical method of executing cryptographic functions using data that cannot be accessed by the rest of the physical device. This is a core part of [device identity](/docs/topics/device-identity) validation.
+A **TEE** is a physical method of executing cryptographic functions using data that cannot be accessed by the rest of the physical device. This is a core part of [device identity](/docs/concepts/device-identity) validation.
 
 ### Zero Trust
 

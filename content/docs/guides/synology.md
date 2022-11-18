@@ -214,7 +214,7 @@ And just to be safe, try logging in from another google account to see what happ
 
 ![Synology done](img/synology/synology-step-4-unauthorized.png)
 
-[certificate documentation]: /docs/topics/certificates
+[certificate documentation]: /docs/concepts/certificates
 [configuration variable docs]: /docs/reference
 [diskstation manager]: https://www.synology.com/en-us/dsm
 [docker-capable]: https://www.synology.com/en-us/dsm/packages/Docker
