@@ -8,7 +8,7 @@ keywords: [pomerium, enterprise pomerium, telemetry, metrics, prometheus]
 
 :::tip
 
-This article describes a use case available to [Pomerium Enterprise](/docs/enterprise/about) customers.
+This article describes a use case available to [Pomerium Enterprise](/docs/releases/enterprise.md) customers.
 
 :::
 

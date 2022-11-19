@@ -5,17 +5,15 @@ description: Add custom colors, logos, and error messages.
 
 # Custom Branding / Whitelabeling
 
-
 :::tip
 
-This article describes a use case available to [Pomerium Enterprise](/docs/enterprise/about) customers.
+This article describes a use case available to [Pomerium Enterprise](/docs/releases/enterprise.md) customers.
 
 :::
 
-Pomerium's user and administrative facing GUI and error messages can be customized to meet your organization's needs. 
+Pomerium's user and administrative facing GUI and error messages can be customized to meet your organization's needs.
 
-
-## Settings 
+## Settings
 
 Most of the Branding settings are located in the Branding Tab of the main Settings Page.
 
@@ -49,8 +47,8 @@ You can also set different colors for users using dark mode.
 
 ![Dark Mode Colors](./img/branding/branded_colors_darkmode_console.png)
 
+## Logo
 
-## Logo 
 You may add a URL to link to your logo and favicon which will replace the Pomerium defaults.
 
 ![Replace the Logo and Favicon in Pomerium Enterprise](./img/branding/svg_logo_console.png)

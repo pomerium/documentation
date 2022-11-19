@@ -88,30 +88,15 @@ const config = {
           to: '/docs/guides/',
         },
         {
-          type: 'doc',
-          docId: 'docs/enterprise/about',
-          position: 'right',
-          label: 'Enterprise',
-          to: '/docs/enterprise/',
-        },
-        {
           href: 'https://github.com/pomerium/documentation',
           label: 'GitHub',
           position: 'right',
         },
         {
           type: 'dropdown',
-          label: 'v19',
+          label: 'v20',
           position: 'right',
           items: [
-            {
-              label: 'v18',
-              href: 'https://v18.docs.pomerium.com/docs',
-            },
-            {
-              label: 'v17',
-              href: 'https://v17.docs.pomerium.com/docs',
-            },
             {
               type: 'doc',
               label: 'Archived Versions',

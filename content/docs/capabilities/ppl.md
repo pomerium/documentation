@@ -213,7 +213,7 @@ allow:
 [`allow_any_authenticated_user`]: /docs/reference/routes/allow-any-authenticated-user
 [CORS pre-flight requests]: https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS#preflighted_requests
 [client certificate authority]: /docs/reference/client-certificate-authority
-[Pomerium Enterprise]: /docs/enterprise/about.md
+[Pomerium Enterprise]: /docs/releases/enterprise
 [yaml]: https://en.wikipedia.org/wiki/YAML
 [String Matcher]: #string-matcher
 [Date Matcher]: #date-matcher

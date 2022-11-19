@@ -7,17 +7,17 @@ description: This article describes how the original user context is passed seco
 
 :::tip
 
-This article describes a use case available to [Pomerium Enterprise](/docs/enterprise/about) customers.
+This article describes a use case available to [Pomerium Enterprise](/docs/releases/enterprise.md) customers.
 
 :::
 
-In enterprise environments where multiple services protected by Pomerium communicate with each other using a [service account](/docs/enterprise/concepts#service-accounts), there are scenarios where the original user context must be preserved. This article describes how this is accomplished with the `X-Pomerium-Jwt-Assertion-For` header.
+In enterprise environments where multiple services protected by Pomerium communicate with each other using a [service account](/docs/capabilities/service-accounts.md), there are scenarios where the original user context must be preserved. This article describes how this is accomplished with the `X-Pomerium-Jwt-Assertion-For` header.
 
 ## Abstract
 
 When a User communicates with a service downstream of Pomerium, the service can identify that user by the `X-Pomerium-JWT-Assertion` header, added by Pomerium, which provides as a value a JSON web token (**JWT**) identifying the user.
 
-Should that service need to communicate with another Pomerium-protected service to construct the response, that connection should be authorized through Pomerium with a [Service Account](/docs/enterprise/concepts#service-accounts). Service accounts should be provided to Pomerium from the first service as a bearer token header, i.e. `Authorization: Bearer Pomerium-${service_acount_jwt}`. This header is how the secondary service authenticates the machine-to-machine interaction.
+Should that service need to communicate with another Pomerium-protected service to construct the response, that connection should be authorized through Pomerium with a [Service Account](/docs/capabilities/service-accounts.md). Service accounts should be provided to Pomerium from the first service as a bearer token header, i.e. `Authorization: Bearer Pomerium-${service_acount_jwt}`. This header is how the secondary service authenticates the machine-to-machine interaction.
 
 Should that second service need to know the original user context to return the proper response, it would have no way of knowing, as the first service authenticated as the service account and not the original user.
 
