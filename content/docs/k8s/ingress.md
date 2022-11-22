@@ -36,7 +36,7 @@ kind: Ingress
 metadata:
   annotations:
     cert-manager.io/cluster-issuer: google-dns
-    external-dns.alpha.kubernetes.io/hostname: httpbin.ingress.sandbox.pomerium.io
+    external-dns.alpha.kubernetes.io/hostname: httpbin.localhost.pomerium.io
     ingress.pomerium.io/allow_any_authenticated_user: "true"
     ingress.pomerium.io/pass_identity_headers: "true"
   name: httpbin
