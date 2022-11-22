@@ -88,7 +88,13 @@ const sidebars = {
         type: 'doc',
         id: 'docs/k8s/index',
       },
-      items: ['docs/k8s/quickstart', 'docs/k8s/ingress', 'docs/k8s/reference'],
+      items: [
+        'docs/k8s/quickstart', 
+        'docs/k8s/install', 
+        'docs/k8s/configure', 
+        'docs/k8s/ingress', 
+        'docs/k8s/reference'
+      ],
     },
     {
       type: 'category',
