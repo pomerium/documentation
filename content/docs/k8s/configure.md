@@ -52,7 +52,9 @@ Each Pomerium installation has a special route that unauthenticated users are re
 The authenticate endpoint DNS address should resolve to an external IP address assigned by your Kubernetes Load Balancer to the `pomerium-proxy` service. If you use `external-dns`, that may be [done automatically](#external-dns).
 
 :::note
+
 You should not create a separate Ingress resource for the Authenticate URL.
+
 However, you should provision a matching certificate, and supply it via `certificates` section of the CRD.
 :::
 
