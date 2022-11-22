@@ -2,13 +2,23 @@
 title: Kubernetes Quickstart
 sidebar_label: Quickstart
 lang: en-US
-keywords: [pomerium, identity access proxy, oidc, kubernetes, kustomize, reverse proxy, ingress controller, k8s]
+keywords:
+  [
+    pomerium,
+    identity access proxy,
+    oidc,
+    kubernetes,
+    kustomize,
+    reverse proxy,
+    ingress controller,
+    k8s,
+  ]
 ---
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
-import InstallMkcert from '@site/content/_install-mkcert.md'
-import GlobalExample from "@site/content/examples/kubernetes/pomerium-global-settings.md"
+import InstallMkcert from '@site/content/_install-mkcert.md';
+import GlobalExample from '@site/content/examples/kubernetes/pomerium-global-settings.md';
 
 This quick-start will show you how to deploy Pomerium with [Kubernetes].
 
@@ -27,187 +37,186 @@ This setup uses [mkcert] to generate certificates that are trusted by your local
 
 ### Install mkcert
 
-1. <InstallMkcert/>
+1. <InstallMkcert />
 
 1. Generate a wildcard certificate and key for Pomerium to use:
 
-  ```sh
-  mkcert "*.localhost.pomerium.io"
-  ```
+```sh
+mkcert "*.localhost.pomerium.io"
+```
 
 ## Install Pomerium
 
 1. Install Pomerium to your cluster:
 
-  ```sh
-kubectl apply -f https://raw.githubusercontent.com/pomerium/ingress-controller/v0.19.0/deployment.yaml
-  ```
+```sh
+kubectl apply -f https://raw.githubusercontent.com/pomerium/ingress-controller/v0.20.0/deployment.yaml
+```
 
-  This will create all the components of Pomerium in the `pomerium` namespace, as well as a bootstrap secret:
+This will create all the components of Pomerium in the `pomerium` namespace, as well as a bootstrap secret:
 
-  ```sh
-  namespace/pomerium created
-  customresourcedefinition.apiextensions.k8s.io/pomerium.ingress.pomerium.io created
-  serviceaccount/pomerium-controller created
-  serviceaccount/pomerium-gen-secrets created
-  clusterrole.rbac.authorization.k8s.io/pomerium-controller created
-  clusterrole.rbac.authorization.k8s.io/pomerium-gen-secrets created
-  clusterrolebinding.rbac.authorization.k8s.io/pomerium-controller created
-  clusterrolebinding.rbac.authorization.k8s.io/pomerium-gen-secrets created
-  service/pomerium-metrics created
-  service/pomerium-proxy created
-  deployment.apps/pomerium created
-  job.batch/pomerium-gen-secrets created
-  ingressclass.networking.k8s.io/pomerium created
-  ```
+```sh
+namespace/pomerium created
+customresourcedefinition.apiextensions.k8s.io/pomerium.ingress.pomerium.io created
+serviceaccount/pomerium-controller created
+serviceaccount/pomerium-gen-secrets created
+clusterrole.rbac.authorization.k8s.io/pomerium-controller created
+clusterrole.rbac.authorization.k8s.io/pomerium-gen-secrets created
+clusterrolebinding.rbac.authorization.k8s.io/pomerium-controller created
+clusterrolebinding.rbac.authorization.k8s.io/pomerium-gen-secrets created
+service/pomerium-metrics created
+service/pomerium-proxy created
+deployment.apps/pomerium created
+job.batch/pomerium-gen-secrets created
+ingressclass.networking.k8s.io/pomerium created
+```
 
 1. Add the certificate [created earlier](#certificates) and key to the cluster as a Secret:
 
-  ```sh
-  kubectl create secret tls pomerium-wildcard-tls --namespace=pomerium \
-    --cert=./_wildcard.localhost.pomerium.io.pem --key=./_wildcard.localhost.pomerium.io-key.pem
-  ```
+```sh
+kubectl create secret tls pomerium-wildcard-tls --namespace=pomerium \
+  --cert=./_wildcard.localhost.pomerium.io.pem --key=./_wildcard.localhost.pomerium.io-key.pem
+```
 
 1. Define a Kubernetes secret to hold identity provider (**IdP**) credentials:
 
-  ```yaml title=idp-secret.yaml
-  apiVersion: v1
-  kind: Secret
-  metadata:
-    name: idp
-    namespace: pomerium
-  type: Opaque
-  stringData:
-    client_id: ${IDP_PROVIDED_CLIENT_ID}
-    client_secret: ${IDP_PROVIDED_CLIENT_SECRET}
-  ```
+```yaml title=idp-secret.yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: idp
+  namespace: pomerium
+type: Opaque
+stringData:
+  client_id: ${IDP_PROVIDED_CLIENT_ID}
+  client_secret: ${IDP_PROVIDED_CLIENT_SECRET}
+```
 
-  The data required in this secret will depend on your [identity provider]. See the [Kubernetes Reference](/docs/k8s/reference#identityprovider) page for all available keys, and cross-reference it with the requirements of your IdP.
+The data required in this secret will depend on your [identity provider]. See the [Kubernetes Reference](/docs/k8s/reference#identityprovider) page for all available keys, and cross-reference it with the requirements of your IdP.
 
 1. Provide this secret to the cluster:
 
-  ```sh
-  kubectl apply -f idp-secret.yaml
-  ```
+```sh
+kubectl apply -f idp-secret.yaml
+```
 
-  You can confirm with `kubectl get secrets --namespace pomerium`:
+You can confirm with `kubectl get secrets --namespace pomerium`:
 
-  ```sh {4}
-  NAME                               TYPE                                  DATA   AGE
-  bootstrap                          Opaque                                3      99m
-  default-token-whpnw                kubernetes.io/service-account-token   3      149m
-  idp                                Opaque                                2      5s
-  pomerium-controller-token-cckv5    kubernetes.io/service-account-token   3      99m
-  pomerium-gen-secrets-token-4pdkd   kubernetes.io/service-account-token   3      99m
-  ```
+```sh {4}
+NAME                               TYPE                                  DATA   AGE
+bootstrap                          Opaque                                3      99m
+default-token-whpnw                kubernetes.io/service-account-token   3      149m
+idp                                Opaque                                2      5s
+pomerium-controller-token-cckv5    kubernetes.io/service-account-token   3      99m
+pomerium-gen-secrets-token-4pdkd   kubernetes.io/service-account-token   3      99m
+```
 
 1. Define the global Pomerium settings:
 
-  <GlobalExample/>
+{' '}
+<GlobalExample />
 
 1. Apply the global settings:
 
-  ```sh
-  kubectl apply -f pomerium.yaml
-  ```
+```sh
+kubectl apply -f pomerium.yaml
+```
 
-  The Pomerium Proxy service should now be running in your cluster:
+The Pomerium Proxy service should now be running in your cluster:
 
-  ```sh {1}
-  kubectl describe pomerium
-  Name:         global
-  Namespace:    
-  Labels:       <none>
-  Annotations:  <none>
-  API Version:  ingress.pomerium.io/v1
-  Kind:         Pomerium
-  Metadata:
-    ...
-  ```
+```sh {1}
+kubectl describe pomerium
+Name:         global
+Namespace:
+Labels:       <none>
+Annotations:  <none>
+API Version:  ingress.pomerium.io/v1
+Kind:         Pomerium
+Metadata:
+  ...
+```
 
-  You should now be able to access `https://authenticate.localhost.pomerium.io/` which, after signing in with your IdP, should redirect you to the `.pomerium` endpoint.
+You should now be able to access `https://authenticate.localhost.pomerium.io/` which, after signing in with your IdP, should redirect you to the `.pomerium` endpoint.
 
 ## Test Service
 
 1. Define a test service. We'll use the Pomerium Verify app:
 
-  ```yaml title=verify-service.yaml
-  apiVersion: v1
-  kind: Service
-  metadata:
-    name: verify 
-    labels:
-      app: verify
-      service: verify
-  spec:
-    ports:
-      - port: 8000
-        targetPort: 8000
-        name: http
-    selector:
+```yaml title=verify-service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: verify
+  labels:
+    app: verify
+    service: verify
+spec:
+  ports:
+    - port: 8000
+      targetPort: 8000
+      name: http
+  selector:
+    app: pomerium-verify
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: verify
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
       app: pomerium-verify
-  ---
-  apiVersion: apps/v1
-  kind: Deployment
-  metadata:
-    name: verify
-  spec:
-    replicas: 1 
-    selector:
-      matchLabels:
+  template:
+    metadata:
+      labels:
         app: pomerium-verify
-    template:
-      metadata:
-        labels:
-          app: pomerium-verify
-      spec:
-        containers:
-          - image: docker.io/pomerium/verify
-            imagePullPolicy: IfNotPresent
-            name: httpbin
-            ports:
-              - containerPort: 8000
-                protocol: TCP
-                name: http
-  ```
+    spec:
+      containers:
+        - image: docker.io/pomerium/verify
+          imagePullPolicy: IfNotPresent
+          name: httpbin
+          ports:
+            - containerPort: 8000
+              protocol: TCP
+              name: http
+```
 
-  Deploy it with `kubectl apply -f verify-service.yaml`
+Deploy it with `kubectl apply -f verify-service.yaml`
 
 1. Define an Ingress for the new service:
 
-  ```yaml title=verify-ingress.yaml
-  apiVersion: networking.k8s.io/v1
-  kind: Ingress
-  metadata:
-    name: verify
-    annotations:
-      ingress.pomerium.io/allowed_domains: |
-        - example.com
-      ingress.pomerium.io/pass_identity_headers: "true"
-  spec:
-    ingressClassName: pomerium
-    rules:
-      - host: "verify.localhost.pomerium.io"
-        http:
-          paths:
-            - pathType: Prefix
-              path: /
-              backend:
-                service:
-                  name: verify
-                  port:
-                    number: 8000
-  ```
+```yaml title=verify-ingress.yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: verify
+  annotations:
+    ingress.pomerium.io/allowed_domains: |
+      - example.com
+    ingress.pomerium.io/pass_identity_headers: 'true'
+spec:
+  ingressClassName: pomerium
+  rules:
+    - host: 'verify.localhost.pomerium.io'
+      http:
+        paths:
+          - pathType: Prefix
+            path: /
+            backend:
+              service:
+                name: verify
+                port:
+                  number: 8000
+```
 
-  Note that we include the [annotation](/docs/k8s/ingress#supported-annotations) `ingress.pomerium.io/pass_identity_headers`, which provides a [JWT](/docs/overview/glossary#json-web-token) to the Verify service.
+Note that we include the [annotation](/docs/k8s/ingress#supported-annotations) `ingress.pomerium.io/pass_identity_headers`, which provides a [JWT](/docs/overview/glossary#json-web-token) to the Verify service.
 
-  Deploy the service with `kubectl apply -f verify-ingress.yaml`, and visit the path in your browser:
+Deploy the service with `kubectl apply -f verify-ingress.yaml`, and visit the path in your browser:
 
-  ![The top of the Pomerium Verify page](./img/verify-app.png)
+![The top of the Pomerium Verify page](./img/verify-app.png)
 
-  :::tip
-  Identity verification fails because we're using an untrusted test certificate. Updating your deployment with a trusted certificate solution like Let's Encrypt through [cert-manager] will resolve this error.
-  :::
+:::tip Identity verification fails because we're using an untrusted test certificate. Updating your deployment with a trusted certificate solution like Let's Encrypt through [cert-manager] will resolve this error. :::
 
 ## Next steps
 
@@ -226,13 +235,12 @@ The **Spec** section provides details on the Pomerium configuration:
 ```yaml
 Spec:
   Authenticate:
-    URL:  https://authenticate.localhost.pomerium.io
-  Certificates:
-    pomerium/pomerium-wildcard-tls
+    URL: https://authenticate.localhost.pomerium.io
+  Certificates: pomerium/pomerium-wildcard-tls
   Identity Provider:
-    Provider:  github
-    Secret:    pomerium/idp
-  Secrets:     pomerium/bootstrap
+    Provider: github
+    Secret: pomerium/idp
+  Secrets: pomerium/bootstrap
 ```
 
 The **Status** section details what Ingresses are configured:
@@ -241,8 +249,8 @@ The **Status** section details what Ingresses are configured:
 Status:
   Ingress:
     pomerium/verify:
-      Last Reconciled:  2022-07-13T16:38:39Z
-      Reconciled:       true
+      Last Reconciled: 2022-07-13T16:38:39Z
+      Reconciled: true
 ```
 
 And the **Events** section will provide useful debug information about recent updates to the configuration:
@@ -257,9 +265,9 @@ Events:
 
 [cert-manager]: https://cert-manager.io/docs/
 [identity provider]: /docs/identity-providers
-[Ingress Controller]: /docs/k8s/ingress.md
-[Install kubectl]: https://kubernetes.io/docs/tasks/tools/install-kubectl/
-[Kubernetes]: https://kubernetes.io
+[ingress controller]: /docs/k8s/ingress.md
+[install kubectl]: https://kubernetes.io/docs/tasks/tools/install-kubectl/
+[kubernetes]: https://kubernetes.io
 [mkcert]: https://github.com/FiloSottile/mkcert
-[Organizing Cluster Access Using kubeconfig Files]: https://kubernetes.io/docs/concepts/configuration/organize-cluster-access-kubeconfig/
+[organizing cluster access using kubeconfig files]: https://kubernetes.io/docs/concepts/configuration/organize-cluster-access-kubeconfig/
 [tls certificates]: ../topics/certificates

@@ -15,7 +15,7 @@ Use Pomerium as a first-class secure-by-default Ingress Controller. The Pomerium
 ## Deploy
 
 ```console
-kubectl apply -f https://raw.githubusercontent.com/pomerium/ingress-controller/v0.19.0/deployment.yaml
+kubectl apply -f https://raw.githubusercontent.com/pomerium/ingress-controller/v0.20.0/deployment.yaml
 ```
 
 The Pomerium Ingress Controller is now installed into your cluster. 
@@ -76,7 +76,7 @@ kustomize build config/default
 
 ```yaml title="kustomization.yaml"
 resources:
-  - https://raw.githubusercontent.com/pomerium/ingress-controller/v0.19.0/deployment.yaml
+  - https://raw.githubusercontent.com/pomerium/ingress-controller/v0.20.0/deployment.yaml
 patchesStrategicMerge:
   - patch-proxy-external-dns.yaml
 ```
@@ -97,7 +97,7 @@ An `IngressClass` may be designated as a [default controller](https://kubernetes
 
 ```yaml title="kustomization.yaml"
 resources:
-  - https://raw.githubusercontent.com/pomerium/ingress-controller/v0.19.0/deployment.yaml
+  - https://raw.githubusercontent.com/pomerium/ingress-controller/v0.20.0/deployment.yaml
 patchesStrategicMerge:
   - patch-proxy-external-dns.yaml
 ```
