@@ -6,12 +6,12 @@
 authenticate_service_url: https://authenticate.localhost.pomerium.io
 
 ####################################################################################
-# Certificate settings:  https://www.pomerium.com/docs/reference/certificates.html #
-# The example below assumes a certificate and key file will be mounted to a volume #
-# available to the  Docker image.                                                  #
+# Certificate settings: https://www.pomerium.com/docs/reference/certificates       #
+# You do not need to generate your own certificates. We auto-generate and populate # 
+# the certificate variables below with an X.509 public and private key.            #
 ####################################################################################
-certificate_file: /pomerium/cert.pem
-certificate_key_file: /pomerium/privkey.pem
+# certificate_file: /pomerium/cert.pem
+# certificate_key_file: /pomerium/privkey.pem
 
 ##################################################################################
 # Identity provider settings : https://www.pomerium.com/docs/identity-providers/ #
@@ -22,8 +22,12 @@ idp_provider: google
 idp_client_id: REPLACE_ME
 idp_client_secret: REPLACE_ME
 
-# Generate 256 bit random keys  e.g. `head -c32 /dev/urandom | base64`
-cookie_secret: V2JBZk0zWGtsL29UcFUvWjVDWWQ2UHExNXJ0b2VhcDI=
+##################################################################################
+# Cookie secret settings: https://www.pomerium.com/docs/reference/cookie-secret  #
+# You do not need to generate a cookie secret. We auto-generate and populate the #
+# cookie secret for you below to encrypt and sign session cookies.               #
+##################################################################################
+# cookie_secret: V2JBZk0zWGtsL29UcFUvWjVDWWQ2UHExNXJ0b2VhcDI=
 
 # https://pomerium.com/reference/#routes
 routes:
