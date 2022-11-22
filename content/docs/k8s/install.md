@@ -91,6 +91,33 @@ metadata:
     external-dns.alpha.kubernetes.io/hostname: "authenticate.localhost.pomerium.io"
 ```
 
+### Multiple Replicas
+
+By default, Pomerium deploys with a single replica. You may scale Pomerium instances if necessary by adjusting the default deployment. 
+
+:::caution
+
+You must configure [storage persistence](/docs/k8s/reference#storage) in order to use more then 1 replica of Pomerium.
+
+:::
+
+```yaml title="kustomization.yaml"
+resources:
+  - https://raw.githubusercontent.com/pomerium/ingress-controller/v0.20.0/deployment.yaml
+patchesStrategicMerge:
+  - deployment.yaml
+```
+
+```yaml title="deployment.yaml"
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pomerium
+  namespace: pomerium
+spec:
+  replicas: 2
+```
+
 ### Set Pomerium as default `IngressClass`
 
 An `IngressClass` may be designated as a [default controller](https://kubernetes.io/docs/concepts/services-networking/ingress/#default-ingress-class) for the cluster.
