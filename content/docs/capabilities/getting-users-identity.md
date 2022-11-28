@@ -170,3 +170,8 @@ In the future, we will add implementations for:
 [nist p-256]: https://csrc.nist.gov/csrc/media/events/workshop-on-elliptic-curve-cryptography-standards/documents/papers/session6-adalier-mehmet.pdf
 [secp256r1]: https://wiki.openssl.org/index.php/Command_Line_Elliptic_Curve_Operations
 [signing key]: /docs/reference/signing-key
+
+## Adding Additional Claims
+
+If your IdP passes other claims that you would like to pass to your application, 
+please use [jwt-claims-headers](/docs/reference/jwt-claim-headers) to indicate additional claims to be included into the Assertion JWT.

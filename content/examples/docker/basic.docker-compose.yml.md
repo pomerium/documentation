@@ -4,9 +4,13 @@ services:
   pomerium:
     image: pomerium/pomerium:latest
     volumes:
-      ## Mount your domain's certificates : https://www.pomerium.com/docs/reference/certificates
-      - ./_wildcard.localhost.pomerium.io.pem:/pomerium/cert.pem:ro
-      - ./_wildcard.localhost.pomerium.io-key.pem:/pomerium/privkey.pem:ro
+      #################################################################################
+      # Certificate settings: https://www.pomerium.com/docs/reference/certificates    #
+      # You do not need to mount your certificate files. We auto-generate certificate #
+      # files in your config.yaml file that will mount on your Docker container.      #
+      #################################################################################
+      # - ./_wildcard.localhost.pomerium.io.pem:/pomerium/cert.pem:ro
+      # - ./_wildcard.localhost.pomerium.io-key.pem:/pomerium/privkey.pem:ro
 
       ## Mount your config file : https://www.pomerium.com/docs/reference/
       - ./config.yaml:/pomerium/config.yaml:ro

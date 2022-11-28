@@ -6,13 +6,7 @@ lang: en-US
 keywords: [pomerium, enterprise pomerium, telemetry, metrics, prometheus]
 ---
 
-:::tip
-
-This article describes a use case available to [Pomerium Enterprise](/docs/releases/enterprise.md) customers.
-
-:::
-
-Pomerium Enterprise uses Prometheus as a metrics collection back-end. You can configure Pomerium and the Console to talk to an existing Prometheus server, or configure the embedded Prometheus backend.
+Pomerium Enterprise uses Prometheus as a metrics collection back-end. You can configure Pomerium and the Console to talk to an existing Prometheus server, or configure the embedded Prometheus backend. This guide assumes you're running both Pomerium and Pomerium Enterprise on localhost `127.0.0.1`.
 
 :::tip
 
@@ -22,15 +16,21 @@ For production deployments, we suggest using a dedicated Prometheus instance.
 
 ## Prepare Pomerium
 
-1. In the Pomerium `config.yaml`, define the [`metrics_address`](/docs/reference/metrics-address) key to a network interface and/or port. For example:
+1. In the Pomerium `pomerium-config.yaml`, define the [`metrics_address`](/docs/reference/metrics-address) key to a network interface and/or port. For example:
 
-   ```yaml title="config.yaml"
-   metrics_address: 192.0.2.31:9999
+   ```yaml title="pomerium-config.yaml"
+   metrics_address: 127.0.0.1:9091
    ```
 
    The example above has Pomerium providing metrics at port `9999` on an IP address reachable by the Pomerium Console service.
 
    If you're running Pomerium Enterprise in a distributed environment where the IP address is not known at the time of deployment, you can use the resolvable FQDN of the Pomerium host (`pomerium0.internal.mycompany.com`, for example), or override this key with the environment variable `METRICS_ADDRESS`. We do not recommend exposing this endpoint to public traffic as it can contain potentially sensitive information.
+
+1. In the Pomerium Enterprise `pomerium-enterprise-config.yaml`, define the `metrics_addr` key to a network interface and/or port. For example: 
+
+   ```yaml title="config.yaml"
+   metrics_addr: 127.0.0.1:9092
+   ```
 
 ## External Prometheus
 
@@ -41,7 +41,12 @@ For production deployments, we suggest using a dedicated Prometheus instance.
       scrape_interval: 30s
       scrape_timeout: 5s
       static_configs:
-         - targets: ['192.0.2.10:9999']
+         - targets: ['127.0.0.1:9901']
+   - job_name: 'Pomerium Enterprise'
+      scrape_interval: 30s
+      scrape_timeout: 5s
+      static_configs:
+         - targets: ['127.0.0.1:9902']
 
    ```
 
@@ -57,9 +62,10 @@ For production deployments, we suggest using a dedicated Prometheus instance.
    prometheus_url: http://192.168.122.50:9090
    ```
 
-1. Restart the Pomerium and Pomerium Enterprise services. You should now see route traffic data in the Enterprise Console:
+2. Restart the Pomerium and Pomerium Enterprise services. You should now see route traffic and External Data Source monitoring data in the Enterprise Console:
 
    ![Traffic Data in Pomerium Enterprise](./img/metrics/console-route-traffic.png)
+   ![External Data Source in Pomerium Enterprise](img/console-ext-datasource-monitoring.png)
 
 ## Embedded Prometheus
 
