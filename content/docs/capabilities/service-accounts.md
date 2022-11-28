@@ -1,3 +1,16 @@
+---
+title: Service Accounts
+lang: en-US
+keywords:
+  [
+    pomerium,
+    service-accounts,
+    service accounts,
+    pomerium enterprise,
+    machine to machine,
+    m2m,
+  ]
+---
 ## Service Accounts
 
 [Service accounts](/docs/capabilities/service-accounts.md) offer a protected and standardized method of authenticating machine-to-machine communication between services protected by Pomerium.
