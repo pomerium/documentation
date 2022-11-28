@@ -65,7 +65,7 @@ For production deployments, we suggest using a dedicated Prometheus instance.
 2. Restart the Pomerium and Pomerium Enterprise services. You should now see route traffic and External Data Source monitoring data in the Enterprise Console:
 
    ![Traffic Data in Pomerium Enterprise](./img/metrics/console-route-traffic.png)
-   ![External Data Source in Pomerium Enterprise](img/console-ext-datasource-monitoring.png)
+   ![External Data Source in Pomerium Enterprise](./img/metrics/console-ext-datasource-monitoring.png)
 
 ## Embedded Prometheus
 
