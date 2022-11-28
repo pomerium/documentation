@@ -1,4 +1,5 @@
 # Secondary Color (Dark Mode)
+
 - Type: `hex code`
 - Example: `#49AAA1`
 - Default: Pomerium Green

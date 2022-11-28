@@ -4,8 +4,8 @@ title: Cookie Secret File
 description: |
   File path to a secret used to encrypt and sign session cookies.
 keywords:
-- reference
-- Cookie Secret File
+  - reference
+  - Cookie Secret File
 pagination_prev: null
 pagination_next: null
 ---
@@ -20,5 +20,5 @@ Path to file containing a secret used to encrypt and sign session cookies. You c
 This is useful when deploying in environments that provide secret management like [Docker Swarm](https://docs.docker.com/engine/swarm/secrets/). For example:
 
 ```yaml
-cookie_secret_file: "/run/secrets/POMERIUM_COOKIE_SECRET"
+cookie_secret_file: '/run/secrets/POMERIUM_COOKIE_SECRET'
 ```

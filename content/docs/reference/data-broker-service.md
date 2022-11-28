@@ -2,8 +2,8 @@
 id: data-broker-service
 title: Data Broker Service
 keywords:
-- reference
-- Data Broker Service
+  - reference
+  - Data Broker Service
 pagination_prev: null
 pagination_next: null
 ---

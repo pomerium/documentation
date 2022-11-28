@@ -4,14 +4,14 @@ title: Identity Provider Name
 description: |
   Provider is the short-hand name of a built-in OpenID Connect (oidc) identity provider to be used for authentication.
 keywords:
-- reference
-- Identity Provider Name
+  - reference
+  - Identity Provider Name
 pagination_prev: null
 pagination_next: null
 ---
 
-
 # Identity Provider Name
+
 - Environmental Variable: `IDP_PROVIDER`
 - Config File Key: `idp_provider`
 - Type: `string`
@@ -21,4 +21,3 @@ pagination_next: null
 Provider is the short-hand name of a built-in OpenID Connect (oidc) identity provider to be used for authentication. To use a generic provider,set to `oidc`.
 
 See [identity provider](/docs/identity-providers/) for details.
-

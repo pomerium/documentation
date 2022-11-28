@@ -11,6 +11,7 @@ keywords:
     m2m,
   ]
 ---
+
 ## Service Accounts
 
 [Service accounts](/docs/capabilities/service-accounts.md) offer a protected and standardized method of authenticating machine-to-machine communication between services protected by Pomerium.
@@ -41,8 +42,6 @@ Before you begin, confirm you are in the correct Namespace. A service account ca
 
 1. Edit or create policies to give the service account access to the internal service:
 
-  ![An example policy for a service account](./img/service-accounts/create-policy-1.png)
+   ![An example policy for a service account](./img/service-accounts/create-policy-1.png)
 
-  ---
-
-  ![An example policy for a service account](./img/service-accounts/create-policy-2.png)
+   ![An example policy for a service account in the policy builder](./img/service-accounts/create-policy-2.png)

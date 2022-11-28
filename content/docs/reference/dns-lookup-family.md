@@ -4,14 +4,14 @@ title: DNS Lookup Family
 description: |
   The DNS IP address resolution policy.
 keywords:
-- reference
-- DNS Lookup Family
+  - reference
+  - DNS Lookup Family
 pagination_prev: null
 pagination_next: null
 ---
 
-
 # DNS Lookup Family
+
 - Environmental Variable: `DNS_LOOKUP_FAMILY`
 - Config File Key: `dns_lookup_family`
 - Type: `string`
@@ -19,4 +19,3 @@ pagination_next: null
 - Optional
 
 The DNS IP address resolution policy. If not specified, the value defaults to `AUTO`.
-

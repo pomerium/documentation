@@ -1,4 +1,5 @@
 # Favicon URL
+
 - Type: `URL`
 - Example: `https://subdomain.domain.com/favicon.png`
 - Default: shows the Pomerium Favicon when left blank

@@ -22,7 +22,7 @@ Enabling the debug flag could result in sensitive information being logged!!!
 
 :::
 
-By default, JSON encoded logs are produced. Debug enables colored, human-readable logs to be streamed to [standard out](https://en.wikipedia.org/wiki/Standard_streams#Standard_output_(stdout)>>>). In production, it is recommended to be set to `false`.
+By default, JSON encoded logs are produced. Debug enables colored, human-readable logs to be streamed to [standard out](https://en.wikipedia.org/wiki/Standard_streams). In production, it is recommended to be set to `false`.
 
 For example, if `true`
 
@@ -163,7 +163,6 @@ Do not append proxy IP address to `x-forwarded-for` HTTP header. See [Envoy](htt
 
 Set Response Headers allows you to set static values for the given response headers. These headers will take precedence over the global `set_response_headers`.
 
-
 ## Namespaces
 
 A [Namespace][namespace-concept] is a collection of users, groups, routes, and policies that allows system administrators to organize, manage, and delegate permissions across their infrastructure.
@@ -172,9 +171,7 @@ A [Namespace][namespace-concept] is a collection of users, groups, routes, and p
   - Enforced policies are also enforced on child Namespaces, and optional policies are available to them as well.
 - Users or groups can be granted permission to edit access to routes within a Namespace, allowing them self-serve access to the routes critical to their work.
 
-:::tip
-When using an IdP without directory sync or when working with non-domain users, they will not show up in the look-ahead search. See [Non-Domain Users](/docs/enterprise/concepts#non-domain-users) for more information.
-:::
+:::tip When using an IdP without directory sync or when working with non-domain users, they will not show up in the look-ahead search. See [Non-Domain Users](/docs/enterprise/concepts#non-domain-users) for more information. :::
 
 ## External Data
 
@@ -190,9 +187,9 @@ The path to the external data. The supported formats are:
 
   ```json title="example JSON"
   [
-    { "id": "id4@example.com", "user.id": "user4" },
-    { "id": "id5@example.com", "user.id": "user5" },
-    { "id": "id6@example.com", "user.id": "user6" }
+    {"id": "id4@example.com", "user.id": "user4"},
+    {"id": "id5@example.com", "user.id": "user5"},
+    {"id": "id6@example.com", "user.id": "user6"}
   ]
   ```
 
@@ -240,11 +237,7 @@ If set, allows the import of external data from sources using untrusted TLS cert
 
 #### Polling Min/Max Delay
 
-Defines the minimum and maximum delay times between requests to the external data source. 
-The job would be scheduled to run within `min delay` intervals. Note, if a job may not
-complete within the `min delay` period, it would be interrupted and restarted. If a job 
-is interrupted by timeout or due to an error, it would be restarted with increasing 
-intervals up to the `max delay` period. 
+Defines the minimum and maximum delay times between requests to the external data source. The job would be scheduled to run within `min delay` intervals. Note, if a job may not complete within the `min delay` period, it would be interrupted and restarted. If a job is interrupted by timeout or due to an error, it would be restarted with increasing intervals up to the `max delay` period.
 
 #### Client TLS Key
 

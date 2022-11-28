@@ -91,10 +91,9 @@ sequenceDiagram
 
 1. The **App** software has been configured by the software developer to send a request to **API**, using a bearer token to authenticate as the service account, with the original `X-Pomerium-Jwt-Assertion` header forwarded as well.
 
-1. Pomerium, seeing that the incoming request already includes `X-Pomerium-JTW-Assertion` copies the value  to `X-Pomerium-Jwt-Assertion-For` and includes it in the request to **API**. `X-Pomerium-Jwt-Assertion` now contains the service account bearer token
+1. Pomerium, seeing that the incoming request already includes `X-Pomerium-JTW-Assertion` copies the value to `X-Pomerium-Jwt-Assertion-For` and includes it in the request to **API**. `X-Pomerium-Jwt-Assertion` now contains the service account bearer token
 
 1. Now the **API** can service can read `X-Pomerium-Jwt-Assertion-For` as needed to determine the proper response to send to **App** (through Pomerium), which can then construct the results page for the user.
-
 
 ### Secondary Requests
 

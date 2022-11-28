@@ -36,5 +36,4 @@ See Pomerium's `/.well-known/pomerium` endpoint for the sign-out page's uri. For
 }
 ```
 
-Note, a CSRF token is required for the single sign out endpoint (despite supporting `GET` and `POST`) and can be retrieved from the
-`X-CSRF-Token` response header on the well known endpoint above or using the `_pomerium_csrf` session set.
+Note, a CSRF token is required for the single sign out endpoint (despite supporting `GET` and `POST`) and can be retrieved from the `X-CSRF-Token` response header on the well known endpoint above or using the `_pomerium_csrf` session set.

@@ -4,8 +4,8 @@ title: Shared Secret
 description: |
   Shared Secret is the base64 encoded 256-bit key used to mutually authenticate requests between services.
 keywords:
-- reference
-- Shared Secret
+  - reference
+  - Shared Secret
 pagination_prev: null
 pagination_next: null
 ---

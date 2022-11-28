@@ -1,7 +1,8 @@
 ---
 title: Cross-Origin Configuration
 lang: en-US
-keywords: [cors, javascript, cross-origin, spa, reactjs, single-page-app, nextjs, ajax]
+keywords:
+  [cors, javascript, cross-origin, spa, reactjs, single-page-app, nextjs, ajax]
 description: This guide covers how to configure Pomerium for Cross-Origin setups.
 ---
 
@@ -37,9 +38,9 @@ routes:
     allow_any_authenticated_user: true
     cors_allow_preflight: true
     set_response_headers:
-      "Access-Control-Allow-Credentials": "true"
-      "Access-Control-Allow-Origin": "https://app.localhost.pomerium.io"
-      "Access-Control-Allow-Headers": "X-Pomerium-Authorization"
+      'Access-Control-Allow-Credentials': 'true'
+      'Access-Control-Allow-Origin': 'https://app.localhost.pomerium.io'
+      'Access-Control-Allow-Headers': 'X-Pomerium-Authorization'
   - from: https://app.localhost.pomerium.io
     to: http://app:8000
     allow_any_authenticated_user: true
@@ -79,14 +80,14 @@ And a file `index.mjs`:
 
 ```javascript
 (async () => {
-  const result = await fetch("https://api.localhost.pomerium.io", {
-    method: "POST",
+  const result = await fetch('https://api.localhost.pomerium.io', {
+    method: 'POST',
     headers: {
-      Accept: "application/json",
+      Accept: 'application/json',
     },
   });
   const json = await result.json();
-  console.log("RESULT", json);
+  console.log('RESULT', json);
 })();
 ```
 
@@ -128,9 +129,9 @@ services:
 
   app:
     image: golang:latest
-    command: ["go", "run", "."]
+    command: ['go', 'run', '.']
     environment:
-      GO111MODULE: "off"
+      GO111MODULE: 'off'
     volumes:
       - ./app.go:/go/app.go:ro
       - ./index.html:/go/index.html:ro
@@ -138,9 +139,9 @@ services:
 
   api:
     image: golang:latest
-    command: ["go", "run", "."]
+    command: ['go', 'run', '.']
     environment:
-      GO111MODULE: "off"
+      GO111MODULE: 'off'
     volumes:
       - ./api.go:/go/api.go:ro
 ```
@@ -149,12 +150,7 @@ services:
 
 This configuration results in a 401 error when `app.localhost.pomerium.io` is accessed:
 
-> URL: https://api.localhost.pomerium.io/
-> Status: 401 Unauthorized
-> Source: Network
-> Address: 127.0.0.1:443
-> Initiator:
-> index.mjs:2
+> URL: https://api.localhost.pomerium.io/ Status: 401 Unauthorized Source: Network Address: 127.0.0.1:443 Initiator: index.mjs:2
 
 The 401 is because the browser will not send the Pomerium cookie to a different domain.
 
@@ -179,14 +175,14 @@ In this way all requests to `/api` will be sent to the API server, and all other
 
 ```javascript
 (async () => {
-  const result = await fetch(location.origin + "/api", {
-    method: "POST",
+  const result = await fetch(location.origin + '/api', {
+    method: 'POST',
     headers: {
-      Accept: "application/json",
+      Accept: 'application/json',
     },
   });
   const json = await result.json();
-  console.log("RESULT", json);
+  console.log('RESULT', json);
 })();
 ```
 
@@ -206,17 +202,17 @@ And update the javascript:
 
 ```javascript
 (async () => {
-  const result = await fetch("https://api.localhost.pomerium.io", {
-    method: "POST",
+  const result = await fetch('https://api.localhost.pomerium.io', {
+    method: 'POST',
     headers: {
-      Accept: "application/json",
-      "X-Pomerium-Authorization": document.cookie.substring(
-        document.cookie.indexOf("=") + 1
+      Accept: 'application/json',
+      'X-Pomerium-Authorization': document.cookie.substring(
+        document.cookie.indexOf('=') + 1,
       ),
     },
   });
   const json = await result.json();
-  console.log("RESULT", json);
+  console.log('RESULT', json);
 })();
 ```
 
@@ -225,22 +221,22 @@ And update the javascript:
 If both domains fall under a shared parent domain (`app.example.com` and `api.example.com` are both under `example.com`), you can change the Pomerium's cookie domain and share the cookie. Update the pomerium configuration:
 
 ```yaml
-cookie_domain: ".localhost.pomerium.io" # note the starting .
+cookie_domain: '.localhost.pomerium.io' # note the starting .
 ```
 
 And now the cookie will be used for both domains. However the default browser policy for XHR and Fetch requests is to not pass the cookie, so you also need to change the javascript:
 
 ```javascript
 (async () => {
-  const result = await fetch("https://api.localhost.pomerium.io", {
-    method: "POST",
+  const result = await fetch('https://api.localhost.pomerium.io', {
+    method: 'POST',
     headers: {
-      Accept: "application/json",
+      Accept: 'application/json',
     },
-    credentials: "include",
+    credentials: 'include',
   });
   const json = await result.json();
-  console.log("RESULT", json);
+  console.log('RESULT', json);
 })();
 ```
 

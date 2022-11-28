@@ -4,14 +4,14 @@ title: Insecure Server
 description: |
   Turning on insecure server mode will result in pomerium starting, and operating without any protocol encryption in transit.
 keywords:
-- reference
-- Insecure Server
+  - reference
+  - Insecure Server
 pagination_prev: null
 pagination_next: null
 ---
 
-
 # Insecure Server
+
 - Environmental Variable: `INSECURE_SERVER`
 - Config File Key: `insecure_server`
 - Type: `bool`
@@ -26,4 +26,3 @@ This setting can be useful in a situation where you have Pomerium behind a TLS t
 Pomerium should _never_ be exposed to the internet without TLS encryption.
 
 :::
-

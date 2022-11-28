@@ -26,7 +26,7 @@ For production deployments, we suggest using a dedicated Prometheus instance.
 
    If you're running Pomerium Enterprise in a distributed environment where the IP address is not known at the time of deployment, you can use the resolvable FQDN of the Pomerium host (`pomerium0.internal.mycompany.com`, for example), or override this key with the environment variable `METRICS_ADDRESS`. We do not recommend exposing this endpoint to public traffic as it can contain potentially sensitive information.
 
-1. In the Pomerium Enterprise `pomerium-enterprise-config.yaml`, define the `metrics_addr` key to a network interface and/or port. For example: 
+1. In the Pomerium Enterprise `pomerium-enterprise-config.yaml`, define the `metrics_addr` key to a network interface and/or port. For example:
 
    ```yaml title="config.yaml"
    metrics_addr: 127.0.0.1:9092
@@ -62,10 +62,9 @@ For production deployments, we suggest using a dedicated Prometheus instance.
    prometheus_url: http://192.168.122.50:9090
    ```
 
-2. Restart the Pomerium and Pomerium Enterprise services. You should now see route traffic and External Data Source monitoring data in the Enterprise Console:
+1. Restart the Pomerium and Pomerium Enterprise services. You should now see route traffic and External Data Source monitoring data in the Enterprise Console:
 
-   ![Traffic Data in Pomerium Enterprise](./img/metrics/console-route-traffic.png)
-   ![External Data Source in Pomerium Enterprise](./img/metrics/console-ext-datasource-monitoring.png)
+   ![Traffic Data in Pomerium Enterprise](./img/metrics/console-route-traffic.png) ![External Data Source in Pomerium Enterprise](./img/metrics/console-ext-datasource-monitoring.png)
 
 ## Embedded Prometheus
 

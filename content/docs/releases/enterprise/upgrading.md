@@ -3,7 +3,7 @@ title: Upgrading
 description: This page contains the list of deprecations and important or breaking changes for Pomerium Enterprise. Please read it carefully.
 ---
 
-#  Upgrading Pomerium Enterprise
+# Upgrading Pomerium Enterprise
 
 When new version of Pomerium Enterprise are released, check back to this page before you upgrade.
 
@@ -17,7 +17,7 @@ When new version of Pomerium Enterprise are released, check back to this page be
 
 ## Before You Upgrade
 
-- The new `license-key`  option is required for starting Pomerium Enterprise. Please contact your account team if you have not been issued one yet.
+- The new `license-key` option is required for starting Pomerium Enterprise. Please contact your account team if you have not been issued one yet.
 
 ## 0.16.0
 
@@ -40,9 +40,9 @@ When new version of Pomerium Enterprise are released, check back to this page be
 
 - As of v0.15.0, All Helm charts have been consolidated to a single repository. Remove the `pomerium-enterprise` repo and upgrade from `pomerium`:
 
-   ```bash
-   helm repo remove pomerium-enterprise
-   helm upgrade --install pomerium-console pomerium/pomerium-console --values=pomerium-console-values.yaml
-   ```
+  ```bash
+  helm repo remove pomerium-enterprise
+  helm upgrade --install pomerium-console pomerium/pomerium-console --values=pomerium-console-values.yaml
+  ```
 
 - As noted above, `signing-key` must be shared between Pomerium and Enterprise. See the [Update Pomerium](/docs/enterprise/install/helm#update-pomerium) section of [Install Pomerium Enterprise in Helm](/docs/enterprise/install/helm) for more information.

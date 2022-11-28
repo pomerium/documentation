@@ -41,7 +41,6 @@ Pomerium's threat model does not include:
 - Protecting an upstream application's internal access control system.
 - Protecting against physical access.
 
-
 ## Receiving Security Updates
 
 The best way to receive security announcements is to subscribe to the [pomerium-announce](https://groups.google.com/g/pomerium-announce) mailing list. Any messages pertaining to a security issue will be prefixed with [security].

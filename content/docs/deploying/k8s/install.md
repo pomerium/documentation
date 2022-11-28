@@ -18,17 +18,13 @@ Use Pomerium as a first-class secure-by-default Ingress Controller. The Pomerium
 kubectl apply -f https://raw.githubusercontent.com/pomerium/ingress-controller/v0.20.0/deployment.yaml
 ```
 
-The Pomerium Ingress Controller is now installed into your cluster. 
+The Pomerium Ingress Controller is now installed into your cluster.
 
-:::note
-You need complete [Global Configuration](./configure) for Pomerium to become fully operational,
-before you can [configure Ingress](./ingress). 
-:::
+:::note You need complete [Global Configuration](./configure) for Pomerium to become fully operational, before you can [configure Ingress](./ingress). :::
 
 ## Metrics
 
-Pomerium provides a comprehensive set of Prometheus style metrics. 
-Assuming you are running a [Prometheus Operator](https://github.com/prometheus-operator/prometheus-operator) in your cluster, you may create the following resource to enable metrics collection.
+Pomerium provides a comprehensive set of Prometheus style metrics. Assuming you are running a [Prometheus Operator](https://github.com/prometheus-operator/prometheus-operator) in your cluster, you may create the following resource to enable metrics collection.
 
 ```yaml
 apiVersion: monitoring.coreos.com/v1
@@ -38,7 +34,7 @@ metadata:
   namespace: pomerium-master-postgres
 spec:
   endpoints:
-  - port: metrics
+    - port: metrics
   selector:
     matchLabels:
       app.kubernetes.io/instance: pomerium
@@ -55,13 +51,13 @@ The following resources are created:
 
 1. `pomerium` namespace.
 2. `pomerium` deployment.
-3. `pomerium-proxy` `Service` of type `LoadBalancer`, provisioning an external IP address, that listens on `:80` and `:443` ports. All HTTP requests are upgraded to HTTP requests. 
-4. `pomerium-metrics` `Service` of type `ClusterIP`, accessible from within the cluster, exposing `/metrics` Prometheus-style metrics endpoint. 
-5. `pomerium-gen-secrets` one-time `Job` that generates an initial set of boostrap secrets, and stores them into the `bootstrap` `Secret`. 
+3. `pomerium-proxy` `Service` of type `LoadBalancer`, provisioning an external IP address, that listens on `:80` and `:443` ports. All HTTP requests are upgraded to HTTP requests.
+4. `pomerium-metrics` `Service` of type `ClusterIP`, accessible from within the cluster, exposing `/metrics` Prometheus-style metrics endpoint.
+5. `pomerium-gen-secrets` one-time `Job` that generates an initial set of boostrap secrets, and stores them into the `bootstrap` `Secret`.
 6. [Pomerium CRD](./reference) definitions.
 7. RBAC rules.
 
-The default manifest may be rebuilt by running the below command in the  [`pomerium/ingress-controller`](https://github.com/pomerium/ingress-controller/tree/main/config) repo.
+The default manifest may be rebuilt by running the below command in the [`pomerium/ingress-controller`](https://github.com/pomerium/ingress-controller/tree/main/config) repo.
 
 ```console
 kustomize build config/default
@@ -69,10 +65,9 @@ kustomize build config/default
 
 </details>
 
-
 ### External-DNS
 
-`external-dns` may be used to automatically update your DNS record for the `Ingress`. The below example adjusts the `pomerium-proxy` service that automatically serves your Authentication URL, so that it's external IP address is up to date in the DNS. 
+`external-dns` may be used to automatically update your DNS record for the `Ingress`. The below example adjusts the `pomerium-proxy` service that automatically serves your Authentication URL, so that it's external IP address is up to date in the DNS.
 
 ```yaml title="kustomization.yaml"
 resources:
@@ -88,12 +83,12 @@ metadata:
   name: pomerium-proxy
   namespace: pomerium
   annotations:
-    external-dns.alpha.kubernetes.io/hostname: "authenticate.localhost.pomerium.io"
+    external-dns.alpha.kubernetes.io/hostname: 'authenticate.localhost.pomerium.io'
 ```
 
 ### Multiple Replicas
 
-By default, Pomerium deploys with a single replica. You may scale Pomerium instances if necessary by adjusting the default deployment. 
+By default, Pomerium deploys with a single replica. You may scale Pomerium instances if necessary by adjusting the default deployment.
 
 :::caution
 
@@ -135,7 +130,7 @@ kind: IngressClass
 metadata:
   name: pomerium
   annotations:
-    ingressclass.kubernetes.io/is-default-class: "true"
+    ingressclass.kubernetes.io/is-default-class: 'true'
 ```
 
 ### Multiple controllers
@@ -144,14 +139,11 @@ In some cases, you may need to run multiple controllers, see this [community exa
 
 ## Runtime parameters
 
-Some parameters are only set by default via command line arguments to the container. 
+Some parameters are only set by default via command line arguments to the container.
 
-:::caution Before You Proceed
-Normally, you would not need to adjust the container runtime parameters.
-:::
-
+:::caution Before You Proceed Normally, you would not need to adjust the container runtime parameters. :::
 
 - `debug`: enable debug logging.
 - `server-addr`: the address HTTPS server would bind to, `:8443` by default.
 - `http-redirect-addr`: the address HTTP to HTTPS redirect server would bind to, `:8080`.
-- `metrics-bind-address`: `host:port` exposes Prometheus style metrics. 
+- `metrics-bind-address`: `host:port` exposes Prometheus style metrics.

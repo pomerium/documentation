@@ -4,14 +4,14 @@ title: Certificate Authority
 description: |
   Certificate Authority is set when behind-the-ingress service communication uses self-signed certificates.
 keywords:
-- reference
-- Certificate Authority
+  - reference
+  - Certificate Authority
 pagination_prev: null
 pagination_next: null
 ---
 
-
 # Certificate Authority
+
 - Environmental Variable: `CERTIFICATE_AUTHORITY` or `CERTIFICATE_AUTHORITY_FILE`
 - Config File Key: `certificate_authority` or `certificate_authority_file`
 - Type: [base64 encoded](https://en.wikipedia.org/wiki/Base64) `string` or relative file location
@@ -26,4 +26,3 @@ This defines a set of root certificate authorities that Pomerium uses when commu
 Be sure to include the intermediary certificate.
 
 :::
-

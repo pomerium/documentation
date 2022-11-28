@@ -38,12 +38,11 @@ spec:
 
 ### Bootstrap Secrets
 
-Bootstrap secrets are provisioned via `secrets` property of the [CRD](./reference#spec). 
-The default installation would run a one-off Job that would generate them and store into `bootstrap` Secret of the `pomerium` namespace.
+Bootstrap secrets are provisioned via `secrets` property of the [CRD](./reference#spec). The default installation would run a one-off Job that would generate them and store into `bootstrap` Secret of the `pomerium` namespace.
 
 ### Identity Provider
 
-Integration with your Identity Provider is configured using [`identityProvider`](./reference#identityprovider) parameter. 
+Integration with your Identity Provider is configured using [`identityProvider`](./reference#identityprovider) parameter.
 
 ### Authenticate endpoint
 
@@ -56,6 +55,7 @@ The authenticate endpoint DNS address should resolve to an external IP address a
 You should not create a separate Ingress resource for the Authenticate URL.
 
 However, you should provision a matching certificate, and supply it via `certificates` section of the CRD.
+
 :::
 
 ### Routes (Ingress)

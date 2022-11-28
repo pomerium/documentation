@@ -4,8 +4,8 @@ title: Debug
 description: |
   Debug enables colored, human-readable logs to be streamed to standard out.
 keywords:
-- reference
-- Debug
+  - reference
+  - Debug
 pagination_prev: null
 pagination_next: null
 ---
@@ -21,7 +21,7 @@ Enabling the debug flag could result in sensitive information being logged!!!
 
 :::
 
-By default, JSON encoded logs are produced. Debug enables colored, human-readable logs to be streamed to [standard out](https://en.wikipedia.org/wiki/Standard_streams#Standard_output_(stdout)>>>). In production, it is recommended to be set to `false`.
+By default, JSON encoded logs are produced. Debug enables colored, human-readable logs to be streamed to [standard out](<https://en.wikipedia.org/wiki/Standard_streams#Standard_output_(stdout)>>>>). In production, it is recommended to be set to `false`.
 
 For example, if `true`
 

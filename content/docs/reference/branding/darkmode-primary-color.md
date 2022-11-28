@@ -1,4 +1,5 @@
 # Primary Color (Dark Mode)
+
 - Type: `hex code`
 - Example: `#6F43E7`
 - Default: Pomerium Purple

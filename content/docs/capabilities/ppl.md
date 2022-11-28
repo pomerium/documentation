@@ -4,11 +4,11 @@ sidebar_label: Policy Language
 description: This article covers Pomerium Policy Language, used to define secure access policies for routes.
 ---
 
-# Pomerium Policy Language 
+# Pomerium Policy Language
 
-Pomerium Policy Language (**PPL**) is a [yaml]-based notation for creating easy and flexible authorization policies. This document covers the usage of PPL and provides several example policies. 
+Pomerium Policy Language (**PPL**) is a [yaml]-based notation for creating easy and flexible authorization policies. This document covers the usage of PPL and provides several example policies.
 
-PPL allows administrators to express authorization policy in a high-level, declarative language that promotes safe, performant, fine-grained controls. 
+PPL allows administrators to express authorization policy in a high-level, declarative language that promotes safe, performant, fine-grained controls.
 
 ## At a Glance
 
@@ -17,16 +17,16 @@ Each PPL policy has at the top level a set of `allow` or `deny` actions, with a 
 ```yaml
 allow:
   and:
-  - domain:
-      is: example.com
-  - groups:
-      has: admin
+    - domain:
+        is: example.com
+    - groups:
+        has: admin
 deny:
   or:
-  - user:
-      is: user1@example.com
-  - user:
-      is: user2@example.com
+    - user:
+        is: user1@example.com
+    - user:
+        is: user2@example.com
 ```
 
 This policy will allow a user with an email address at `example.com` who **is also** a member of the `admin` group. It will deny `user1` **or** `user2`, regardless of their domain and group membership.
@@ -47,24 +47,24 @@ A logical operator combines multiple criteria together for the evaluation of a r
   <summary>More on Logical Operators</summary>
   <div>
 
-  Given the following example with `OPERATOR` replaced:
+Given the following example with `OPERATOR` replaced:
 
-  ```yaml
-  allow:
-    OPERATOR:
+```yaml
+allow:
+  OPERATOR:
     - domain:
         is: example.com
     - groups:
         has: admin
-  ```
+```
 
-  If `and` is used, the user will have access if their email address ends in `example.com` **and** they are a member of the admin group. **(A ∧ B)**
+If `and` is used, the user will have access if their email address ends in `example.com` **and** they are a member of the admin group. **(A ∧ B)**
 
-  If `or` is used, the user will have access if their email address ends in `example.com` **or** they are a member of the admin group. **(A ∨ B)**
+If `or` is used, the user will have access if their email address ends in `example.com` **or** they are a member of the admin group. **(A ∨ B)**
 
-  If `not` is used, the user will have access if their email address does not end in `example.com` **and** they are not a member of the `admin` group. **(¬A ∧ ¬B)**
+If `not` is used, the user will have access if their email address does not end in `example.com` **and** they are not a member of the `admin` group. **(¬A ∧ ¬B)**
 
-  If `nor` is used, the user will have access if their email address does not end in `example.com` **or** they are not a member of the admin group. **(¬A ∨ ¬B)**
+If `nor` is used, the user will have access if their email address does not end in `example.com` **or** they are not a member of the admin group. **(¬A ∨ ¬B)**
 
   </div>
 </details>
@@ -76,36 +76,36 @@ Criteria in PPL are represented as an object where the key is the name and optio
 ```yaml
 allow:
   and:
-  - claim/family_name: Smith
+    - claim/family_name: Smith
 ```
 
 PPL supports many different criteria:
 
-| Criterion Name               | Data Format                   | Description                                                                                                                                                                                                                  |
-| ---------------------------- | ----------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `accept`                     | Anything. Typically `true`.   | Always returns true, thus always allowing access. Equivalent to the [`allow_public_unauthenticated_access`] option.                                                                                                          |
-| `authenticated_user`         | Anything. Typically `true`.   | Always returns true for logged-in users. Equivalent to the [`allow_any_authenticated_user`] option.                                                                                                                          |
-| `claim`                      | Anything. Typically a string. | Returns true if a token claim matches the supplied value **exactly**. The claim to check is determined via the sub-path. <br/> For example, `claim/family_name: Smith` matches if the user's `family_name` claim is `Smith`. |
-| `cors_preflight`             | Anything. Typically `true`.   | Returns true if the incoming request uses the `OPTIONS` method and has both the `Access-Control-Request-Method` and `Origin` headers. Used to allow [CORS pre-flight requests].                                              |
-| `device`                     | [Device matcher]              | Returns true if the incoming request includes a valid device ID or type.                                                                                                                                                     |
-| `domain`                     | [String Matcher]              | Returns true if the logged-in user's email address domain (the part after `@`) matches the given value.                                                                                                                      |
-| `email`                      | [String Matcher]              | Returns true if the logged-in user's email address matches the given value.                                                                                                                                                  |
-| `groups`                     | [List Matcher]                | Returns true if the logged-in user is a member of the given group.                                                                                                                                                           |
-| `http_method`                | [String Matcher]              | Returns true if the HTTP method matches the given value.                                                                                                                                                                     |
-| `http_path`                  | [String Matcher]              | Returns true if the HTTP path matches the given value.                                                                                                                                                                       |
-| `invalid_client_certificate` | Anything. Typically `true`.   | Returns true if the incoming request has an invalid client certificate. A default `deny` rule using this criterion is added to all Pomerium policies when an mTLS [client certificate authority] is set.                     |
-| `pomerium_routes`            | Anything. Typically `true`.   | Returns true if the incoming request is for the special `.pomerium` routes. A default `allow` rule using this criterion is added to all Pomerium policies.                                                                   |
-| `reject`                     | Anything. Typically `true`.   | Always returns false. The opposite of `accept`.                                                                                                                                                                              |
-| `user`                       | [String Matcher]              | Returns true if the logged-in user's id matches the given value.                                                                                                                                                             |
+| Criterion Name | Data Format | Description |
+| --- | --- | --- |
+| `accept` | Anything. Typically `true`. | Always returns true, thus always allowing access. Equivalent to the [`allow_public_unauthenticated_access`] option. |
+| `authenticated_user` | Anything. Typically `true`. | Always returns true for logged-in users. Equivalent to the [`allow_any_authenticated_user`] option. |
+| `claim` | Anything. Typically a string. | Returns true if a token claim matches the supplied value **exactly**. The claim to check is determined via the sub-path. <br/> For example, `claim/family_name: Smith` matches if the user's `family_name` claim is `Smith`. |
+| `cors_preflight` | Anything. Typically `true`. | Returns true if the incoming request uses the `OPTIONS` method and has both the `Access-Control-Request-Method` and `Origin` headers. Used to allow [CORS pre-flight requests]. |
+| `device` | [Device matcher] | Returns true if the incoming request includes a valid device ID or type. |
+| `domain` | [String Matcher] | Returns true if the logged-in user's email address domain (the part after `@`) matches the given value. |
+| `email` | [String Matcher] | Returns true if the logged-in user's email address matches the given value. |
+| `groups` | [List Matcher] | Returns true if the logged-in user is a member of the given group. |
+| `http_method` | [String Matcher] | Returns true if the HTTP method matches the given value. |
+| `http_path` | [String Matcher] | Returns true if the HTTP path matches the given value. |
+| `invalid_client_certificate` | Anything. Typically `true`. | Returns true if the incoming request has an invalid client certificate. A default `deny` rule using this criterion is added to all Pomerium policies when an mTLS [client certificate authority] is set. |
+| `pomerium_routes` | Anything. Typically `true`. | Returns true if the incoming request is for the special `.pomerium` routes. A default `allow` rule using this criterion is added to all Pomerium policies. |
+| `reject` | Anything. Typically `true`. | Always returns false. The opposite of `accept`. |
+| `user` | [String Matcher] | Returns true if the logged-in user's id matches the given value. |
 
 [Pomerium Enterprise] supports all the open source criteria, but also supports these additional criteria:
 
-| Criterion Name | Data Format           | Description                                                                                                                |
-| -------------- | --------------------- | -------------------------------------------------------------------------------------------------------------------------- |
-| `date`         | [Date Matcher]        | Returns true if the time of the request matches the constraints.                                                           |
-| `day_of_week`  | [Day of Week Matcher] | Returns true if the day of the request matches the constraints.                                                            |
-| `time_of_day`  | [Time of Day Matcher] | Returns true if the time of the request (for the current day) matches the constraints.                                     |
-| `record`       | variable              | Allows policies to be extended using data from [external data sources](/docs/enterprise/reference/configure#external-data) |
+| Criterion Name | Data Format | Description |
+| --- | --- | --- |
+| `date` | [Date Matcher] | Returns true if the time of the request matches the constraints. |
+| `day_of_week` | [Day of Week Matcher] | Returns true if the day of the request matches the constraints. |
+| `time_of_day` | [Time of Day Matcher] | Returns true if the time of the request (for the current day) matches the constraints. |
+| `record` | variable | Allows policies to be extended using data from [external data sources](/docs/enterprise/reference/configure#external-data) |
 
 ## Matchers
 
@@ -117,11 +117,11 @@ The day of week matcher is a **string**. The string can either be `*`, a comma-s
 - `,` matches either day (e.g. `mon,wed,fri`).
 - `-` matches a range of days. (e.g. `mon-fri`). Days can be specified as English full day names, or as 3 character abbreviations. For example:
 
-    ```yaml
-    allow:
-      and:
-        - day_of_week: tue-fri
-    ```
+  ```yaml
+  allow:
+    and:
+      - day_of_week: tue-fri
+  ```
 
 ### Date Matcher
 
@@ -130,9 +130,9 @@ The date matcher is an object with operators as keys. It supports the following 
 ```yaml
 allow:
   and:
-  - date:
-      after: 2020-01-02T16:20:00
-      before: 2150-01-02T16:20:00
+    - date:
+        after: 2020-01-02T16:20:00
+        before: 2150-01-02T16:20:00
 ```
 
 ### Device Matcher
@@ -166,9 +166,7 @@ Compare to a policy that only allows a set of specific devices:
           is: "GAtL...doqu"
 ```
 
-:::tip
-Users can [find their device IDs](/docs/guides/enroll-device#find-device-id) at the `/.pomerium` endpoint from any route.
-:::
+:::tip Users can [find their device IDs](/docs/guides/enroll-device#find-device-id) at the `/.pomerium` endpoint from any route. :::
 
 ### List Matcher
 
@@ -177,8 +175,8 @@ A list matcher is an object with operators as keys. It supports the following op
 ```yaml
 allow:
   and:
-  - groups:
-      has: 'admin'
+    - groups:
+        has: 'admin'
 ```
 
 ### String Matcher
@@ -188,8 +186,8 @@ A string matcher is an object with operators as keys. It supports the following 
 ```yaml
 allow:
   and:
-  - email:
-      starts_with: 'admin@'
+    - email:
+        starts_with: 'admin@'
 ```
 
 ### Time of Day Matcher
@@ -211,13 +209,13 @@ allow:
 
 [`allow_public_unauthenticated_access`]: /docs/reference/routes/public-access
 [`allow_any_authenticated_user`]: /docs/reference/routes/allow-any-authenticated-user
-[CORS pre-flight requests]: https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS#preflighted_requests
+[cors pre-flight requests]: https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS#preflighted_requests
 [client certificate authority]: /docs/reference/client-certificate-authority
-[Pomerium Enterprise]: /docs/releases/enterprise
+[pomerium enterprise]: /docs/releases/enterprise
 [yaml]: https://en.wikipedia.org/wiki/YAML
-[String Matcher]: #string-matcher
-[Date Matcher]: #date-matcher
-[Day of Week Matcher]: #day-of-week-matcher
-[Time of Day Matcher]: #time-of-day-matcher
-[List Matcher]: #list-matcher
-[Device matcher]: #device-matcher
+[string matcher]: #string-matcher
+[date matcher]: #date-matcher
+[day of week matcher]: #day-of-week-matcher
+[time of day matcher]: #time-of-day-matcher
+[list matcher]: #list-matcher
+[device matcher]: #device-matcher

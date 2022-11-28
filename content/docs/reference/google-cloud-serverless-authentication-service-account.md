@@ -2,14 +2,14 @@
 id: google-cloud-serverless-authentication-service-account
 title: Google Cloud Serverless Authentication Service Account
 keywords:
-- reference
-- Google Cloud Serverless Authentication Service Account
+  - reference
+  - Google Cloud Serverless Authentication Service Account
 pagination_prev: null
 pagination_next: null
 ---
 
-
 # Google Cloud Serverless Authentication Service Account
+
 - Environmental Variable: `GOOGLE_CLOUD_SERVERLESS_AUTHENTICATION_SERVICE_ACCOUNT`
 - Config File Key: `google_cloud_serverless_authentication_service_account`
 - Type: [base64 encoded](https://en.wikipedia.org/wiki/Base64) `string`

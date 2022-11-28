@@ -1,4 +1,5 @@
 # Policy Remediation
+
 - Type: `string` or `markdown`
 - Example: `Contact your admin at someone@support.com`
 - Default: ""

@@ -2,14 +2,14 @@
 id: from
 title: From
 keywords:
-- reference
-- From
+  - reference
+  - From
 pagination_prev: null
 pagination_next: null
 ---
 
-
 # From
+
 - `yaml`/`json` setting: `from`
 - Type: `URL` (must contain a scheme and hostname, must not contain a path)
 - Schemes: `https`, `tcp+https`
@@ -25,4 +25,3 @@ Specifying `tcp+https` for the scheme enables [TCP proxying](/docs/tcp/) support
 Only secure schemes (`https` and `tcp+https`) are supported.
 
 :::
-

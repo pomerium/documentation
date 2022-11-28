@@ -1,4 +1,5 @@
 # Logo URL
+
 - Type: `URL`
 - Example: `https://subdomain.domain.com/logo.png`
 - Default: shows the Pomerium Logo when left blank

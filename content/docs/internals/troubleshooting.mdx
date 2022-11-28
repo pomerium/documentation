@@ -6,9 +6,9 @@ lang: en-US
 keywords: [pomerium, troubleshooting, faq, frequently asked questions]
 ---
 
-import Tabs from "@theme/Tabs";
-import TabItem from "@theme/TabItem";
-import GenerateRecoveryToken from "@site/content/_generate-recovery-token.md";
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import GenerateRecoveryToken from '@site/content/_generate-recovery-token.md';
 
 This article provides troubleshooting information for various tools and features in Pomerium.
 
@@ -38,35 +38,38 @@ To clarify; this does not mean that the upstream service is rejecting the JWT si
 
 For upstream applications that can use a local signing key file, you can circumvent this issue using `curl` or `wget` to download the signing key locally (relative to the upstream service). Using Grafana again as an example:
 
-1. Download the `jwks.json` file from the authenticate server:
+1.  Download the `jwks.json` file from the authenticate server:
 
-   <Tabs>
-<TabItem value="curl" label="curl">
+    <Tabs>
 
-   ```bash
-   curl https://authenticate.localhost.pomerium.io/.well-known/pomerium/jwks.json > /etc/grafana/jwks.json
-   ```
+    <TabItem value="curl" label="curl">
 
-   </TabItem>
-<TabItem value="wget" label="wget">
+    ```bash
+    curl https://authenticate.localhost.pomerium.io/.well-known/pomerium/jwks.json > /etc/grafana/jwks.json
+    ```
 
-   ```bash
-   wget -O /etc/grafana/jwks.json https://authenticate.localhost.pomerium.io/.well-known/pomerium/jwks.json
-   ```
+    </TabItem>
 
-   </TabItem>
-</Tabs>
+    <TabItem value="wget" label="wget">
 
-1. Edit the upstream service configuration to use the local key to verify tokens:
+    ```bash
+    wget -O /etc/grafana/jwks.json https://authenticate.localhost.pomerium.io/.well-known/pomerium/jwks.json
+    ```
 
-   ```ini
-   [auth.jwt]
-   enabled = true
-   header_name = X-Pomerium-Jwt-Assertion
-   email_claim = email
-   jwk_set_file = /etc/grafana/jwks.json
-   cache_ttl = 60m
-   ```
+    </TabItem>
+
+    </Tabs>
+
+1.  Edit the upstream service configuration to use the local key to verify tokens:
+
+    ```ini
+    [auth.jwt]
+    enabled = true
+    header_name = X-Pomerium-Jwt-Assertion
+    email_claim = email
+    jwk_set_file = /etc/grafana/jwks.json
+    cache_ttl = 60m
+    ```
 
 ### Kubernetes Ingress Controller
 
@@ -136,7 +139,9 @@ Update the [shared secret](/docs/reference/shared-secret) across all Pomerium se
 #### Redis Secret Mismatch
 
 :::caution
+
 The use of Redis as the databroker storage type has been deprecated in favor of Postgres. See [Previous Versions](https://v17.docs.pomerium.com/docs/troubleshooting#redis-secret-mismatch) of this page for information regarding Redis.
+
 :::
 
 ### RPC Errors

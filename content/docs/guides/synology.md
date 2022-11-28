@@ -43,10 +43,10 @@ Click **Create**.
 Set the following **Reverse Proxy Rules**.
 
 | Field                | Description |
-|----------------------|-------------|
+| -------------------- | ----------- |
 | Description          | pomerium    |
 | Source Protocol      | HTTPS       |
-| Source Hostname      | *           |
+| Source Hostname      | \*          |
 | Destination Port     | 8443        |
 | HTTP/2               | Enabled     |
 | HSTS                 | Enabled     |
@@ -73,8 +73,8 @@ Once the certificate is showing on the list of certificates screen we need to te
 **Click configure**
 
 | Services | Certificate         |
-|----------|---------------------|
-| *:8443   | `*.int.nas.example` |
+| -------- | ------------------- |
+| \*:8443  | `*.int.nas.example` |
 
 ![Synology assign wildcard certificate](img/synology/synology-certifciate-assignment.png)
 
@@ -169,16 +169,16 @@ These are the minimum set of configuration settings to get Pomerium running in t
 
 Go to **Environment** tab.
 
-| Field                    | Value                                                           |
-|--------------------------|-----------------------------------------------------------------|
-| POLICY                   | output of `base64 -i policy.yaml`                               |
-| INSECURE_SERVER          | `TRUE`, internal routing within docker will not be encrypted.   |
-| IDP_CLIENT_SECRET        | Values from setting up your [identity provider]                 |
-| IDP_CLIENT_ID            | Values from setting up your [identity provider]                 |
-| IDP_PROVIDER             | Values from setting up your [identity provider] (e.g. `google`) |
-| COOKIE_SECRET            | output of `head -c32 /dev/urandom                               | base64`
-| AUTHENTICATE_SERVICE_URL | `https://authenticate.int.nas.example`                          |
-| SHARED_SECRET            | output of `head -c32 /dev/urandom                               | base64`
+| Field | Value |
+| --- | --- | --- |
+| POLICY | output of `base64 -i policy.yaml` |
+| INSECURE_SERVER | `TRUE`, internal routing within docker will not be encrypted. |
+| IDP_CLIENT_SECRET | Values from setting up your [identity provider] |
+| IDP_CLIENT_ID | Values from setting up your [identity provider] |
+| IDP_PROVIDER | Values from setting up your [identity provider] (e.g. `google`) |
+| COOKIE_SECRET | output of `head -c32 /dev/urandom | base64` |
+| AUTHENTICATE_SERVICE_URL | `https://authenticate.int.nas.example` |
+| SHARED_SECRET | output of `head -c32 /dev/urandom | base64` |
 
 For a detailed explanation, and additional options, please refer to the [configuration variable docs]. Also note, though not covered in this guide, settings can be made via a mounted configuration file.
 

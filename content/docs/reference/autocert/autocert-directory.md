@@ -4,14 +4,14 @@ title: Autocert Directory
 description: |
   Autocert directory is the path which autocert will store x509 certificate data.
 keywords:
-- reference
-- Autocert Directory
+  - reference
+  - Autocert Directory
 pagination_prev: null
 pagination_next: null
 ---
 
-
 # Autocert Directory
+
 - Environmental Variable: either `AUTOCERT_DIR`
 - Config File Key: `autocert_dir`
 - Type: `string` pointing to the path of the directory
@@ -23,4 +23,3 @@ pagination_next: null
   - `$HOME/.local/share/pomerium`
 
 Autocert directory is the path which autocert will store x509 certificate data.
-
