@@ -190,7 +190,7 @@ The long-time standard for server identity verification, the use of TLS certific
 - The [Certificates](/docs/concepts/certificates) topic page covers several basic methods for generating trusted or testing certificates.
 - Our article on [Installing Pomerium Using Helm](/docs/guides/helm) touches [briefly](/docs/guides/helm#install-and-configure-cert-manager) on using [cert-manager](https://cert-manager.io/docs/) to manage certificates in Kubernetes environments. We also wrote a guide for their docs site covering integration of the [Pomerium Ingress](https://cert-manager.io/docs/tutorials/acme/pomerium-ingress/) Controller with cert-manager.
 - The [Upstream mTLS With Pomerium](/docs/guides/upstream-mtls) guide demonstrates mTLS between Pomerium and upstream services.
-- Depending on your environment's needs, you may choose to verify some of all of your end users with [Client-Side mTLS](/docs/guides/mtls).
+- Depending on your environment's needs, you may choose to verify some of all of your end users with [Client-Side mTLS](/docs/concepts/mutual-auth.md).
 
 ### User Identity and Context
 

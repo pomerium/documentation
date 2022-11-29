@@ -28,7 +28,7 @@ For Open Source, please use IdP Claims passed by your IdP.
   - [Cognito](/docs/identity-providers/cognito.html#group-based-policies)
 - You may need adjust requested scopes via `idp_scopes` config option.
 - visit your authenticate endpoint `/.pomerium` route to check the group claims are passed by your IdP.
-- use `claim/` [PPL criteria](/docs/topics/ppl.html#criteria)
+- use `claim/` [PPL criteria](/docs/capabilities/ppl.html#criteria)
 
 ```yaml
 routes:
@@ -45,7 +45,7 @@ For Enterprise, use PPL Builder ![policy_groups_enterprise](./img/upgrading/poli
 
 ### IdP Directory Sync
 
-IdP directory sync has been moved to https://github.com/pomerium/datasource and becomes part of the [External Data Sources integration](/docs/enterprise/external-data), in order to provide unification with other external data sources, consolidate job scheduling and monitoring.
+IdP directory sync has been moved to https://github.com/pomerium/datasource and becomes part of the [External Data Sources integration](/docs/integrations/), in order to provide unification with other external data sources, consolidate job scheduling and monitoring.
 
 Setting the below options in Pomerium config file would now result in an error. In Pomerium Enterprise Console, please navigate to Settings > Identity Provider and configure directory sync there.
 
@@ -54,7 +54,7 @@ Setting the below options in Pomerium config file would now result in an error. 
 - `idp_refresh_directory_interval`: replaced by [Polling Max Delay](docs/enterprise/reference/configure#polling-minmax-delay).
 - `idp_qps`: not required, IdP providers adjust their qps rate.
 
-Pomerium Core would only perform user authentication and session refresh with the IdP provider, and would not try to synchronize user details and groups, which is now part of [External Data Sources](/docs/enterprise/external-data).
+Pomerium Core would only perform user authentication and session refresh with the IdP provider, and would not try to synchronize user details and groups, which is now part of [External Data Sources](/docs/integrations/).
 
 ![idp_enterprise](./img/upgrading/idp_enterprise.png)
 
@@ -88,7 +88,7 @@ See [Device Identity](/docs/concepts/device-identity) for more details.
 
 #### HTTP PPL Criteria
 
-`http_path` and `http_method` are now supported for matching HTTP requests in policies. See [Pomerium Policy Language](/docs/concepts/ppl#criteria) for more details.
+`http_path` and `http_method` are now supported for matching HTTP requests in policies. See [Pomerium Policy Language](/docs/capabilities/ppl#criteria) for more details.
 
 ### Breaking
 
@@ -116,7 +116,7 @@ To improve performance, IdP directory synchronization for GitHub now uses the Gr
 
 #### CLI Source and Packaging Update
 
-`pomerium-cli` has been factored out of the core repository and now resides at <https://github.com/pomerium/cli>. If you currently install the CLI tool from [Packages](/docs/overview/releases#packages-2) or [Homebrew](/docs/overview/releases#homebrew), no changes should be required to your process. However, users of docker images or direct github release downloads will need to update their references.
+`pomerium-cli` has been factored out of the core repository and now resides at <https://github.com/pomerium/cli>. If you currently install the CLI tool from [Packages](/docs/releases/core#packages-2) or [Homebrew](/docs/releases/core#homebrew), no changes should be required to your process. However, users of docker images or direct github release downloads will need to update their references.
 
 Please see the [updated install instructions](@site/content/docs/releases/pomerium-cli.mdx) for additional details.
 

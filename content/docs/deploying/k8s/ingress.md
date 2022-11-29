@@ -233,7 +233,7 @@ ingress.pomerium.io/policy: |
         has: admin
 ```
 
-[Pomerium Policy Language](/docs/topics/ppl).
+[Pomerium Policy Language](/docs/capabilities/ppl).
 
 </td></tr>
 </tbody>
@@ -354,7 +354,7 @@ ingress.pomerium.io/service_proxy_upstream: 'true'
 
 ### Load Balancing
 
-Unless you disabled direct traffic to Endpoints, Pomerium would load balance the requests to the upstream endpoints. See the [Load Balancing](/docs/topics/load-balancing) guide for details, and use relevant Ingress annotations to fine tune load balancing and health checks.
+Unless you disabled direct traffic to Endpoints, Pomerium would load balance the requests to the upstream endpoints. See the [Load Balancing](/docs/capabilities/load-balancing) guide for details, and use relevant Ingress annotations to fine tune load balancing and health checks.
 
 :::note
 
