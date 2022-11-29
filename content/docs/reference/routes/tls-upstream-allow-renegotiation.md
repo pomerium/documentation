@@ -13,7 +13,7 @@ keywords:
 - Type: `bool`
 - Default: `false`
 
-TLS Upstream Allow Renegotiation controls whether server-initiated TLS renegotiation is allowed for upstream servers.
+TLS Upstream Allow Renegotiation controls whether server-initiated TLS renegotiation is allowed for upstream servers. For more details, see Envoy's documentation on [`allow_renegotiation`](https://www.envoyproxy.io/docs/envoy/latest/api-v3/extensions/transport_sockets/tls/v3/tls.proto).
 
 :::warning
 
