@@ -111,7 +111,7 @@ In any production deployment, running multiple replicas of each Pomerium service
 
 You should deploy Layer 4 load balancing between end users and Pomerium Proxy services to provide high availability and horizontal scaling. Do not use L7 load balancers, since the Proxy service handles redirects, sticky sessions, etc.
 
-Note that deployments on Kubernetes can utilize The [Pomerium Ingress Controller](/docs/k8s/ingress) to simplify configuration.
+Note that deployments on Kubernetes can utilize The [Pomerium Ingress Controller](/docs/deploying/k8s/ingress) to simplify configuration.
 
 ### Authenticate
 

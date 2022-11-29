@@ -227,7 +227,7 @@ When using an IdP without directory sync or when working with non-domain users, 
 
 ## External Data
 
-This section lets [administrators](/docs/enterprise/concepts#admin) add and manage external data sources. Information from external data sources can be used to extend [policies](/docs/capabilities/policies).
+This section lets [administrators](/docs/concepts/namespacing#admin) add and manage external data sources. Information from external data sources can be used to extend [policies](/docs/capabilities/policies).
 
 ### Add or Edit External Data Source
 
