@@ -1,6 +1,7 @@
 ---
 id: tls-upstream-allow-renegotiation
 title: TLS Upstream Allow Renegotiation
+description: TLS Upstream Allow Renegotiation controls whether server-initiated TLS renegotiation is allowed for upstream servers.
 keywords:
 - reference
 - TLS Upstream Allow Renegotiation
