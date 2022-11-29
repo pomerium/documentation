@@ -15,7 +15,7 @@ keywords:
 pagination_next: null
 ---
 
-If you've tested Pomerium using the [all-in-one binary](/docs/install/binary), you're probably familiar with configuring routes in Pomerium's [`config.yaml`](/docs/install/binary#configuration-file). When using the Pomerium Ingress Controller, each route is defined as an Ingress resource in the Kubernetes API.
+If you've tested Pomerium using the [all-in-one binary](/docs/releases/core), you're probably familiar with configuring routes in Pomerium's [`config.yaml`](/docs/releases/core#configuration-file). When using the Pomerium Ingress Controller, each route is defined as an Ingress resource in the Kubernetes API.
 
 ## Ingress
 
@@ -307,7 +307,7 @@ Each Ingress should be backed by a Service. Pomerium supports certain extensions
 
 Pomerium is capable of creating secure connections to services like SSH, Databases, and more by creating a TCP tunnel to the service with a local client.
 
-The example route below defines a route providing a tunneled TCP connection to an upstream service listening for non-web traffic. Pomerium provides [command line and GUI](/docs/tcp/client#tcp-client-software) clients to interact with the TCP services.
+The example route below defines a route providing a tunneled TCP connection to an upstream service listening for non-web traffic. Pomerium provides [command line and GUI](/docs/capabilities/tcp/client#tcp-client-software) clients to interact with the TCP services.
 
 ```yaml
 apiVersion: networking.k8s.io/v1
@@ -335,7 +335,7 @@ The important points to note in this example:
 - The annotation `ingress.pomerium.io/tcp_upstream:` is set to `"true"`,
 - `spec.rules.[].http.paths.[].path` is omitted,
 - `spec.rules.[].http.paths.[].pathType` is set to `ImplementationSpecific`,
-- `spec.rules.[].host` and `spec.rules.[].paths.[].backend.service.port.name/number` together define the address used when connecting to the route using the [Pomerium Desktop or CLI clients](/docs/tcp/client),
+- `spec.rules.[].host` and `spec.rules.[].paths.[].backend.service.port.name/number` together define the address used when connecting to the route using the [Pomerium Desktop or CLI clients](/docs/capabilities/tcp/client),
 - You may apply standard access control annotations to define access restrictions to the service.
 
 :::note

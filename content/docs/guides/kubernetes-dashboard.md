@@ -100,7 +100,7 @@ Because we've defined RBAC for our users, they can authenticate with Pomerium an
 [cert-manager]: https://cert-manager.io/docs/
 [helm chart]: https://github.com/pomerium/pomerium-helm
 [helm]: https://helm.sh
-[kubernetes quickstart]: /docs/k8s/quickstart
+[kubernetes quickstart]: /docs/deploying/k8s/quickstart
 [kubernetes dashboard]: https://kubernetes.io/docs/tasks/access-application-cluster/web-ui-dashboard/
 [securing kubernetes]: /docs/guides/kubernetes.md
 [user permissions]: /docs/guides/kubernetes.md#user-permissions

@@ -383,12 +383,12 @@ Yellow blocks represent different networks like the internet, an internal networ
   </div>
 </details>
 
-[binaries]: /docs/install/binary
+[binaries]: /docs/releases/core
 [device identity verification]: /docs/concepts/device-identity.md
 [grafana]: /docs/guides/grafana
 [jwt verification]: /docs/guides/jwt-verification.md
 [jwt-rfc]: https://datatracker.ietf.org/doc/html/rfc7519
 [`pass_identity_headers`]: /docs/reference/routes/pass-identity-headers
-[quick start]: /docs/install/quickstart
+[quick start]: /docs/quickstart
 [transport layer security]: https://en.wikipedia.org/wiki/Transport_Layer_Security
 [zero trust]: https://www.pomerium.com/docs/background.html

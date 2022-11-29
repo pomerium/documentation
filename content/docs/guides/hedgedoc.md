@@ -45,7 +45,7 @@ The flow looks like this:
 
 ### Set up your environment
 
-This guide uses Docker containers to create the minimal development environment required to run Pomerium with another service. Visit the [Pomerium using Docker](https://www.pomerium.com/docs/install/quickstart) quickstart for more information.
+This guide uses Docker containers to create the minimal development environment required to run Pomerium with another service. Visit the [Pomerium using Docker](https://www.pomerium.com/docs/quickstart) quickstart for more information.
 
 To complete this guide, you need:
 

@@ -18,7 +18,7 @@ pagination_next: null
 
 `From` is the externally accessible URL for the proxied request.
 
-Specifying `tcp+https` for the scheme enables [TCP proxying](/docs/tcp/) support for the route. You may map more than one port through the same hostname by specifying a different `:port` in the URL.
+Specifying `tcp+https` for the scheme enables [TCP proxying](/docs/capabilities/tcp/) support for the route. You may map more than one port through the same hostname by specifying a different `:port` in the URL.
 
 :::warning
 

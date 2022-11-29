@@ -25,7 +25,7 @@ pagination_next: null
     - https://b.example.com
 ```
 
-A load balancing weight may be associated with a particular upstream by appending `,[weight]` to the URL. The exact behavior depends on your [`lb_policy`](/docs/reference/routes/load-balancing-policy) setting. See [Load Balancing](/docs/concepts/load-balancing) for example [configurations](/docs/concepts/load-balancing#load-balancing-weight).
+A load balancing weight may be associated with a particular upstream by appending `,[weight]` to the URL. The exact behavior depends on your [`lb_policy`](/docs/reference/routes/load-balancing-policy) setting. See [Load Balancing](@site/content/docs/capabilities/load-balancing.md) for example [configurations](@site/content/docs/capabilities/load-balancing.md#load-balancing-weight).
 
 Must be `tcp` if `from` is `tcp+https`.
 

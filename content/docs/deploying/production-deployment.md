@@ -55,7 +55,7 @@ Pomerium's individual components can be divided into two categories; the data pl
 
 :::tip
 
-Our [Kubernetes](/docs/k8s/quickstart) supports [Horizontal Pod Autoscaling](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/).
+Our [Kubernetes](/docs/deploying/k8s/quickstart) supports [Horizontal Pod Autoscaling](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/).
 
 :::
 

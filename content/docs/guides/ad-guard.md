@@ -74,4 +74,4 @@ Simply navigate to your new adguard instance (e.g. `https://adguard.domain.examp
 
 ![adguard dashboard](img/adguard/adguard-dashboard.png)
 
-[quick start]: /docs/install/quickstart
+[quick start]: /docs/quickstart
