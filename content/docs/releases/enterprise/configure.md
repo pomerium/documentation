@@ -293,7 +293,7 @@ Defines the minimum and maximum delay times between requests to the external dat
 
 #### Client TLS Key
 
-For data sources using mTLS, you can select a [client certificate](/docs/enterprise/reference/manage#certificates) (added under **Manage** → **Certificates**) to provide to the data source.
+For data sources using mTLS, you can select a [client certificate](/docs/concepts/certificates) (added under **Manage** → **Certificates**) to provide to the data source.
 
 See [External Data Sources](/docs/integrations/) for more information on this feature.
 
