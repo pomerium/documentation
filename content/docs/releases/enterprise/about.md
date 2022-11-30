@@ -31,7 +31,7 @@ Quickly view who is logged in your infrastructure, with easy access to revoke se
 
 Easily define who can control access to what areas of your infrastructure. Our [Namespaces](/docs/enterprise/concepts#namespaces) make it easy to allow teams to self-manage access to the infrastructure they build from or depend on.
 
-[User roles](/docs/enterprise/concepts#rbac-for-enterprise-console-users) are granted along Namespace hierarchy, with inheritance from parents.
+[User roles](/docs/concepts/namespacing#rbac-for-enterprise-console-users) are granted along Namespace hierarchy, with inheritance from parents.
 
 Pomerium Enterprise uses teams and groups defined by your identity provider (**IdP**), so you can build stable policies that don't need to be adjusted as your company changes.
 
