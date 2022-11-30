@@ -436,7 +436,7 @@ Pomerium expects TLS (HTTPS) for all routes created from the `Ingress` objects.
 
 HTTP requests would be automatically redirected to the HTTPS port.
 
-Pomerium certificates may be supplied individually per-Ingress via `spec.tls`, defined globally in the CRD via [`certificates`](/docs/deploying/k8s/reference#spec), or both.
+Pomerium certificates may be supplied individually per-Ingress via `spec.tls`, defined globally in the CRD via [`certificates`](/docs/reference/certificates), or both.
 
 ### `spec.tls`
 
@@ -444,7 +444,7 @@ Pomerium load use certificates referenced by the `spec.tls` section of the `Ingr
 
 ### Global Certs
 
-You may provide [`certificates`](/docs/deploying/k8s/reference#spec) as part of the global Pomerium configuration. This may be useful if you i.e. have a wildcard certificate.
+You may provide [`certificates`](/docs/reference/certificates) as part of the global Pomerium configuration. This may be useful if you i.e. have a wildcard certificate.
 
 ### cert-manager Integration
 
@@ -507,7 +507,7 @@ See [Envoy Cluster Stats](https://www.envoyproxy.io/docs/envoy/latest/configurat
 
 ### View Event History
 
-Pomerium Ingress Controller will add **events** to the Ingress objects as it processes them, and updates the status section of [Pomerium CRD](/docs/deploying/k8s/reference).
+Pomerium Ingress Controller will add **events** to the Ingress objects as it processes them, and updates the status section of [Pomerium CRD](/docs/internals/glossary#custom-resource-definition).
 
 ```bash
 kubectl describe pomerium/global
@@ -586,7 +586,7 @@ Pomerium assigns a unique `request-id` that is also set in the response headers.
 
 Pomerium produces an access log entry for each request. Filter by `"service":"envoy"`.
 
-Pomerium performs authorization check for each and every request. Filter by `"service":"authorize"`. See [Authorization Log Keys](/docs/topics/auth-logs#authorization-log-keys).
+Pomerium performs authorization check for each and every request. Filter by `"service":"authorize"`. See [Authorization Log Keys](/docs/capabilities/audit-logs#authorization-log-keys).
 
 ### HSTS
 
