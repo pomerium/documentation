@@ -214,5 +214,5 @@ kubectl --context=via-pomerium cluster-info
 You should be prompted to login and see the resulting cluster info.
 
 [kubernetes]: https://kubernetes.io
-[pomerium-cli]: @site/docs/releases/pomerium-cli
+[pomerium-cli]: /docs/releases/pomerium-cli
 [pomerium using helm]: /docs/guides/helm
