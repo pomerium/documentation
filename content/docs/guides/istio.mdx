@@ -180,7 +180,7 @@ Now that Pomerium is installed in the cluster, we can define authentication and 
      - **if** the request includes a JWT (already validated by `RequestAuthentication`) with the audience key `aud`,
      - **and** the value of the `aud` key matches our known route, `hello.localhost.pomerium.io`.
 
-   In other words, `RequestAuthentication` confirms that the incoming traffic to the sidecar has a signed and valid JWT, which confirms that the user has been authenticated and is authorized to access this service. The `AuthorizationPolicy` confirms that the traffic originated from a valid Pomerium route. The latter is especially important in Pomerium Enterprise, where a manager of a separate [Namespace](/docs/enterprise/concepts#namespaces) could create a second route to a service normally routed and managed in your namespace.
+   In other words, `RequestAuthentication` confirms that the incoming traffic to the sidecar has a signed and valid JWT, which confirms that the user has been authenticated and is authorized to access this service. The `AuthorizationPolicy` confirms that the traffic originated from a valid Pomerium route. The latter is especially important in Pomerium Enterprise, where a manager of a separate [Namespace](/docs/concepts/namespacing) could create a second route to a service normally routed and managed in your namespace.
 
 1. Apply the new resources with `kubectl`:
 

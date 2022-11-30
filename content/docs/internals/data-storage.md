@@ -110,4 +110,4 @@ databroker_storage_ca_file: /tls/ca.pem
 
 ## Troubleshooting
 
-Most issues with the Databroker service are caused by a [`shared_secret`](/docs/reference/shared-secret) mismatch between services. See [Troubleshooting - Shared Secret Mismatch](/docs/troubleshooting#shared-secret-mismatch) for details.
+Most issues with the Databroker service are caused by a [`shared_secret`](/docs/reference/shared-secret) mismatch between services. See [Troubleshooting - Shared Secret Mismatch](/docs/reference/shared-secret) for details.

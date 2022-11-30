@@ -42,7 +42,7 @@ The default view shows all changes made through Pomerium Enterprise. Use the **C
 
 [route-concept]: /docs/concepts/routes
 [route-reference]: /docs/capabilities/routing
-[namespace-concept]: /docs/enterprise/concepts#namespaces
+[namespace-concept]: /docs/concepts/namespacing
 [namespace-reference]: /docs/enterprise/reference/configure#namespaces
 [service-accounts-concept]: /docs/capabilities/service-accounts.md
 [policy-reference]: /docs/capabilities/policies

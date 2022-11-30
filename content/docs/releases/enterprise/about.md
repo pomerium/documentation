@@ -29,7 +29,7 @@ Quickly view who is logged in your infrastructure, with easy access to revoke se
 
 ### Self-Service & Governance
 
-Easily define who can control access to what areas of your infrastructure. Our [Namespaces](/docs/enterprise/concepts#namespaces) make it easy to allow teams to self-manage access to the infrastructure they build from or depend on.
+Easily define who can control access to what areas of your infrastructure. Our [Namespaces](/docs/concepts/namespacing) make it easy to allow teams to self-manage access to the infrastructure they build from or depend on.
 
 [User roles](/docs/concepts/namespacing#rbac-for-enterprise-console-users) are granted along Namespace hierarchy, with inheritance from parents.
 
