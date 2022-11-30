@@ -92,7 +92,7 @@ By default, Pomerium deploys with a single replica. You may scale Pomerium insta
 
 :::caution
 
-You must configure [storage persistence](/docs/deploying/k8s/reference#storage) in order to use more then 1 replica of Pomerium.
+You must configure [storage persistence](/docs/internals/data-storage) in order to use more then 1 replica of Pomerium.
 
 :::
 
