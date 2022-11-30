@@ -40,7 +40,7 @@ The default view shows all changes made through Pomerium Enterprise. Use the **C
 
 ![A screenshot showing the diff of a change to a route, adding a policy](./img/reports/deployment-diff.png)
 
-[route-concept]: /docs/enterprise/concepts#routes
+[route-concept]: /docs/concepts/routes
 [route-reference]: /docs/capabilities/routing
 [namespace-concept]: /docs/enterprise/concepts#namespaces
 [namespace-reference]: /docs/enterprise/reference/configure#namespaces
