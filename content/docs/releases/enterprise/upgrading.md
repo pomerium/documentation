@@ -45,4 +45,4 @@ When new version of Pomerium Enterprise are released, check back to this page be
   helm upgrade --install pomerium-console pomerium/pomerium-console --values=pomerium-console-values.yaml
   ```
 
-- As noted above, `signing-key` must be shared between Pomerium and Enterprise. See the [Update Pomerium](/docs/enterprise/install/helm#update-pomerium) section of [Install Pomerium Enterprise in Helm](/docs/enterprise/install/helm) for more information.
+- As noted above, `signing-key` must be shared between Pomerium and Enterprise. See the [Update Pomerium](/docs/guides/helm#update-pomerium) section of [Install Pomerium Enterprise in Helm](/docs/guides/helm) for more information.
