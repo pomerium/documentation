@@ -124,8 +124,8 @@ toc_max_heading_level: 5
 
 [`signing key`]: /docs/reference/signing-key
 [google cloud serverless]: /docs/reference/routes/enable-google-cloud-serverless-authentication
-[policies]: /docs/capabilities/manage#policies-2
-[policy language]: /docs/capabilities/manage#pomerium-policy-language
+[policies]: /docs/concepts/policies
+[policy language]: /docs/capabilities/ppl
 [runtime]: /docs/capabilities/reports.md#runtime
 [service accounts]: /docs/concepts/service-accounts
 [spdy]: /docs/reference/routes/spdy

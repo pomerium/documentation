@@ -35,7 +35,7 @@ Easily define who can control access to what areas of your infrastructure. Our [
 
 Pomerium Enterprise uses teams and groups defined by your identity provider (**IdP**), so you can build stable policies that don't need to be adjusted as your company changes.
 
-See [Concepts: Self-Service Capabilities](concepts#self-service-capabilities) for more information.
+See [Concepts: Self-Service Capabilities](/docs/concepts/namespacing#self-service-capabilities) for more information.
 
 ### Deployment History & Audit Logs
 

@@ -221,13 +221,13 @@ A [Namespace][namespace-concept] is a collection of users, groups, routes, and p
 
 :::tip 
 
-When using an IdP without directory sync or when working with non-domain users, they will not show up in the look-ahead search. See [Non-Domain Users](/docs/enterprise/concepts#non-domain-users) for more information. 
+When using an IdP without directory sync or when working with non-domain users, they will not show up in the look-ahead search. See [Non-Domain Users](/docs/concepts/access-control#non-domain-users) for more information. 
 
 :::
 
 ## External Data
 
-This section lets [administrators](/docs/concepts/namespacing#admin) add and manage external data sources. Information from external data sources can be used to extend [policies](/docs/capabilities/policies).
+This section lets [administrators](/docs/concepts/namespacing#admin) add and manage external data sources. Information from external data sources can be used to extend [policies](/docs/concepts/policies).
 
 ### Add or Edit External Data Source
 
