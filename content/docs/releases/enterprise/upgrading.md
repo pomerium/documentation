@@ -11,7 +11,7 @@ When new version of Pomerium Enterprise are released, check back to this page be
 
 ## Before You Upgrade
 
-- When using [`external-data`](/docs/integrations/) the Databroker backend for Pomerium should be switched from Redis to [Postgres](/docs/concepts/data-storage#postgres).
+- When using [`external-data`](/docs/integrations/) the Databroker backend for Pomerium should be switched from Redis to [Postgres](/docs/internals/data-storage#postgres).
 
 ## 0.17.0
 

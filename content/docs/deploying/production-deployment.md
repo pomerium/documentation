@@ -31,7 +31,7 @@ Pomerium is designed to be run in two modes: All-In-One or Split Service. These 
 
 Each instance of Pomerium runs in all-in-one mode unless specified to run as a specific component by the `services` key. See [All-In-One vs Split Service mode](/docs/reference#all-in-one-vs-split-service-mode) for more details.
 
-It's important to note that any production deployment with more than one instance of Pomerium (in any combination of modes) should be configured to use Postgres as the [`databroker_storage_type`](/docs/reference/data-broker-storage-type). See [Data Storage - Backends](/docs/concepts/data-storage#backends) for more details.
+It's important to note that any production deployment with more than one instance of Pomerium (in any combination of modes) should be configured to use Postgres as the [`databroker_storage_type`](/docs/reference/data-broker-storage-type). See [Data Storage - Backends](/docs/internals/data-storage#backends) for more details.
 
 ### All-in-One
 
@@ -49,7 +49,7 @@ In split service mode, you have the opportunity to scale the components of Pomer
 
 All of Pomerium's components are designed to be [stateless](/docs/internals/glossary#stateless), and may all be scaled horizontally or vertically. In general, horizontal scaling is recommended. Vertical scaling will lead to diminished returns after ~8 vCPUs.
 
-The Databroker service, which is responsible for session and identity related data, must be [configured for external persistence](/docs/concepts/data-storage) to be fully stateless.
+The Databroker service, which is responsible for session and identity related data, must be [configured for external persistence](/docs/internals/data-storage) to be fully stateless.
 
 Pomerium's individual components can be divided into two categories; the data plane and control plane. Regardless of which mode you run Pomerium in, we strongly recommend multiple instances of each service for fault tolerance.
 
@@ -99,7 +99,7 @@ In many deployments, 2 replicas of Databroker is enough to provide resilient ser
 
 :::caution
 
-In a production configuration, Databroker CPU/IO utilization also translates to IO load on the [underlying storage system](/docs/concepts/data-storage). Ensure it is scaled accordingly!
+In a production configuration, Databroker CPU/IO utilization also translates to IO load on the [underlying storage system](/docs/internals/data-storage). Ensure it is scaled accordingly!
 
 :::
 
@@ -137,7 +137,7 @@ Ensure that you have enough spare capacity to handle the scope of your failure d
 
 :::caution
 
-Multiple replicas of Databroker or all-in-one service are only supported with [external storage](/docs/concepts/data-storage) configured
+Multiple replicas of Databroker or all-in-one service are only supported with [external storage](/docs/internals/data-storage) configured
 
 :::
 
@@ -196,8 +196,8 @@ The long-time standard for server identity verification, the use of TLS certific
 
 Part of Pomerium's strength comes from the ability to pass user identity and context to your upstream service. This enables repeated verification of authorization throughout a system.
 
-- [Getting the user's identity](/docs/concepts/getting-users-identity) details the JWT Pomerium creates to identify the user in any given request.
-- [Original User Context](/docs/concepts/original-request-context) explains how to pass along the user context when upstream services communicate with each other to complete a request.
+- [Getting the user's identity](/docs/capabilities/getting-users-identity) details the JWT Pomerium creates to identify the user in any given request.
+- [Original User Context](/docs/capabilities/original-request-context) explains how to pass along the user context when upstream services communicate with each other to complete a request.
 - Many applications support native JWT verification. See [Enable jWT Authentication in Grafana](/docs/guides/grafana#enable-jwt-authentication-in-grafana) for an example. For those that don't, you can perform [JWT Verification](/docs/guides/jwt-verification) with a sidecar.
 
 ### Device Identity
