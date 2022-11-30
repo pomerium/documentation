@@ -54,7 +54,7 @@ The following resources are created:
 3. `pomerium-proxy` `Service` of type `LoadBalancer`, provisioning an external IP address, that listens on `:80` and `:443` ports. All HTTP requests are upgraded to HTTP requests.
 4. `pomerium-metrics` `Service` of type `ClusterIP`, accessible from within the cluster, exposing `/metrics` Prometheus-style metrics endpoint.
 5. `pomerium-gen-secrets` one-time `Job` that generates an initial set of boostrap secrets, and stores them into the `bootstrap` `Secret`.
-6. [Pomerium CRD](./reference) definitions.
+6. [Pomerium CRD](/docs/internals/glossary) definitions.
 7. RBAC rules.
 
 The default manifest may be rebuilt by running the below command in the [`pomerium/ingress-controller`](https://github.com/pomerium/ingress-controller/tree/main/config) repo.
