@@ -1,8 +1,18 @@
 ---
-title: Pomerium CRD Reference
-sidebar_label: CRD Reference
+title: Kubernetes Deployment Reference
+sidebar_label: Reference
 description: Reference for Pomerium settings in Kubernetes deployments.
 ---
+
+Pomerium-specific parameters should be configured via the `ingress.pomerium.io/Pomerium` CRD.
+The default Pomerium deployment is listening to the CRD `global`, that may be customized via command line parameters.
+
+Pomerium posts updates to the CRD <a href="#status">`/status`</a>:
+```shell
+kubectl describe pomerium
+```
+
+Kubernetes-specific deployment parameters should be added via `kustomize` to the manifests.
 
 ## Spec
 
