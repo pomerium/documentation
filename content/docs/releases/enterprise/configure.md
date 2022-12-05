@@ -11,7 +11,7 @@ keywords:
     reference,
     pomerium,
     pomerium enterprise,
-    environmental variables
+    environmental variables,
   ]
 ---
 
@@ -52,7 +52,6 @@ The keys listed below can be applied in Pomerium Console's `config.yaml` file, o
 | <a className="entRef-anchor" id="tls-key">#</a><a href='#tls-key'>tls-key</a> | base64-encoded string of tls-key | none |
 | <a className="entRef-anchor" id="tls-key-file">#</a><a href='#tls-key-file'>tls-key-file</a> | file storing tls-key | none |
 | <a className="entRef-anchor" id="use-static-assets">#</a><a href='#use-static-assets'>use-static-assets</a> | When false, forward static requests to `localhost:3000`. | `true` |
-
 
 ## Settings
 
@@ -219,9 +218,9 @@ A [Namespace][namespace-concept] is a collection of users, groups, routes, and p
   - Enforced policies are also enforced on child Namespaces, and optional policies are available to them as well.
 - Users or groups can be granted permission to edit access to routes within a Namespace, allowing them self-serve access to the routes critical to their work.
 
-:::tip 
+:::tip
 
-When using an IdP without directory sync or when working with non-domain users, they will not show up in the look-ahead search. See [Non-Domain Users](/docs/concepts/access-control#non-domain-users) for more information. 
+When using an IdP without directory sync or when working with non-domain users, they will not show up in the look-ahead search. See [Non-Domain Users](/docs/concepts/access-control#non-domain-users) for more information.
 
 :::
 
