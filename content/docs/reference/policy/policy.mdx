@@ -8,17 +8,19 @@ pagination_prev: null
 pagination_next: null
 ---
 
-import PolicyExample from "../../../examples/config/policy.example.yaml.md"
+import PolicyExample from '../../../examples/config/policy.example.yaml.md';
 
 :::warning
+
 The `policy` field as a top-level configuration key has been replaced with [`routes`](/docs/reference/routes). Moving forward, define policies within each defined route.
 
 Existing policy definitions will currently behave as expected, but are deprecated and will be removed in a future version of Pomerium.
+
 :::
 
 Policy contains route specific settings, and access control details. If you are configuring via POLICY environment variable, just the contents of the policy needs to be passed. If you are configuring via file, the policy should be present under the policy key. For example,
 
-<PolicyExample/>
+<PolicyExample />
 
 Policy routes are checked in the order they appear in the policy, so more specific routes should appear before less specific routes. For example:
 
@@ -27,7 +29,7 @@ policy:
   - from: http://from.example.com
     to: http://to.example.com
     prefix: /admin
-    allowed_groups: ["superuser"]
+    allowed_groups: ['superuser']
   - from: http://from.example.com
     to: http://to.example.com
     allow_public_unauthenticated_access: true

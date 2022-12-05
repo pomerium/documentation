@@ -4,14 +4,14 @@ title: GRPC Address
 description: |
   Address specifies the host and port to serve GRPC requests from.
 keywords:
-- reference
-- GRPC Address
+  - reference
+  - GRPC Address
 pagination_prev: null
 pagination_next: null
 ---
 
-
 # GRPC Address
+
 - Environmental Variable: `GRPC_ADDRESS`
 - Config File Key: `grpc_address`
 - Type: `string`
@@ -19,4 +19,3 @@ pagination_next: null
 - Default: `:443` or `:5443` if in all-in-one mode
 
 gRPC Address specifies the host and port to serve gRPC requests from.
-

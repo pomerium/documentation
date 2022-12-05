@@ -1,0 +1,114 @@
+---
+title: Pomerium CLI
+lang: en-US
+pagination_prev: null
+pagination_next: null
+description: How to get Pomerium's CLI which be used to proxy TCP services and kubernetes commands
+keywords:
+  [
+    pomerium,
+    cli,
+    commandline,
+    command line interface,
+    kubectl,
+    tcp,
+    tcp over http,
+  ]
+sidebar_label: pomerium-cli (client)
+sidebar_position: 3
+---
+
+# Pomerium's Command Line Interface
+
+`pomerium-cli` (optional, Pomerium is clientless for HTTP based protocols) is a command-line client for working with Pomerium. Functions include acting as an authentication helper for tools like [kubectl](/docs/deploying/k8s/configure.md) or TCP [based applications](/docs/capabilities/tcp/).
+
+- Supported Operating Systems: `linux`, `darwin`, `windows`, `freebsd`
+- Supported Architectures: `amd64`, `arm64`, `armv6`, `armv7`
+
+### Binaries
+
+Official binaries can be found on our [GitHub Releases](https://github.com/pomerium/cli/releases) page.
+
+```shell
+ARCH=[your arch]
+OS=[your os]
+VERSION=[desired version]
+curl -L https://github.com/pomerium/cli/releases/download/${VERSION}/pomerium-cli-${OS}-${ARCH}.tar.gz \
+    | tar -z -x
+```
+
+### Packages
+
+- Supported formats: `rpm`, `deb`
+
+Official packages can be found on our [GitHub Releases](https://github.com/pomerium/cli/releases) page or from [Cloudsmith](https://cloudsmith.io/~pomerium/repos/pomerium/packages/).
+
+- [RPM Instructions](https://cloudsmith.io/~pomerium/repos/pomerium/setup/#formats-rpm)
+- [Deb Instructions](https://cloudsmith.io/~pomerium/repos/pomerium/setup/#formats-deb)
+
+<Tabs>
+
+<TabItem value="yum" label="Yum">
+
+```abnf title="/etc/yum.repos.d/pomerium-cli.repo"
+[pomerium-pomerium]
+name=pomerium-pomerium
+baseurl=https://dl.cloudsmith.io/public/pomerium/pomerium/rpm/el/$releasever/$basearch
+repo_gpgcheck=1
+enabled=1
+gpgkey=https://dl.cloudsmith.io/public/pomerium/pomerium/gpg.6E388440B94E1407.key
+gpgcheck=1
+sslverify=1
+pkg_gpgcheck=1
+```
+
+</TabItem>
+<TabItem value="deb" label="Deb">
+
+```bash
+curl -1sLf 'https://dl.cloudsmith.io/public/pomerium/pomerium/gpg.6E388440B94E1407.key' | apt-key add -
+echo "deb https://dl.cloudsmith.io/public/pomerium/pomerium/deb/debian buster main" > /etc/apt/sources.list.d/pomerium-pomerium.list
+```
+
+</TabItem>
+</Tabs>
+
+### Homebrew
+
+```shell
+brew tap pomerium/tap
+brew install pomerium-cli
+```
+
+### Docker Image
+
+The CLI utilizes a [minimal](https://github.com/GoogleContainerTools/distroless) [docker container](https://www.docker.com/resources/what-container). You can find the Pomerium CLI image on [dockerhub](https://hub.docker.com/r/pomerium/cli). It can be pulled in several flavors and architectures.
+
+- `:vX.Y.Z`: which will pull the a [specific tagged release](https://github.com/pomerium/cli/tags).
+
+  ```bash {2}
+  docker run pomerium/cli:v0.1.0 --version
+  v0.1.0+53bfa4e
+  ```
+
+- `:latest`: which will pull the [most recent tagged release](https://github.com/pomerium/cli/releases).
+
+  ```bash {2}
+  docker run pomerium/cli:latest --version
+  v0.2.0+87e214b
+  ```
+
+- `:main` : which will pull an image in sync with git's [main](https://github.com/pomerium/pomerium/tree/main) branch.
+
+  ```bash
+  docker pull pomerium/cli:main
+  ```
+
+### Source
+
+```shell
+git clone git@github.com:pomerium/cli.git
+cd pomerium
+make build
+./bin/pomerium-cli --help
+```

@@ -2,14 +2,14 @@
 id: certificates
 title: Certificates
 keywords:
-- reference
-- Certificates
+  - reference
+  - Certificates
 pagination_prev: null
 pagination_next: null
 ---
 
-
 # Certificates
+
 - Config File Key: `certificates` (not yet settable using environmental variables)
 - Config File Key: `certificate` / `certificate_key`
 - Config File Key: `certificate_file` / `certificate_key_file`
@@ -28,20 +28,19 @@ For example, if specifying multiple certificates at once:
 
 ```yaml
 certificates:
-  - cert: "$HOME/.acme.sh/authenticate.example.com_ecc/fullchain.cer"
-    key: "$HOME/.acme.sh/authenticate.example.com_ecc/authenticate.example.com.key"
-  - cert: "$HOME/.acme.sh/verify.example.com_ecc/fullchain.cer"
-    key: "$HOME/.acme.sh/verify.example.com_ecc/verify.example.com.key"
-  - cert: "$HOME/.acme.sh/prometheus.example.com_ecc/fullchain.cer"
-    key: "$HOME/.acme.sh/prometheus.example.com_ecc/prometheus.example.com.key"
+  - cert: '$HOME/.acme.sh/authenticate.example.com_ecc/fullchain.cer'
+    key: '$HOME/.acme.sh/authenticate.example.com_ecc/authenticate.example.com.key'
+  - cert: '$HOME/.acme.sh/verify.example.com_ecc/fullchain.cer'
+    key: '$HOME/.acme.sh/verify.example.com_ecc/verify.example.com.key'
+  - cert: '$HOME/.acme.sh/prometheus.example.com_ecc/fullchain.cer'
+    key: '$HOME/.acme.sh/prometheus.example.com_ecc/prometheus.example.com.key'
 ```
 
 Or to set a single certificate and key covering multiple domains and/or a wildcard subdomain:
 
 ```yaml
-certificate_file: "$HOME/.acme.sh/*.example.com/fullchain.crt"
-certificate_key:  "$HOME/.acme.sh/*.example.com/*.example.com.key"
+certificate_file: '$HOME/.acme.sh/*.example.com/fullchain.crt'
+certificate_key: '$HOME/.acme.sh/*.example.com/*.example.com.key'
 ```
 
 **Note:** Pomerium will check your system's trust/key store for valid certificates first. If your certificate solution imports into the system store, you don't need to also specify them with these configuration keys.
-

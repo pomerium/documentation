@@ -11,10 +11,12 @@ import TabItem from '@theme/TabItem';
 
 # Ping Identity
 
-This document covers configuring Ping Identity as an IdP for your Pomerium gateway. It assumes you have already [installed Pomerium](/docs/install/).
+This document covers configuring Ping Identity as an IdP for your Pomerium gateway. It assumes you have already [installed Pomerium](/docs/deploying/).
 
 :::caution
+
 While we do our best to keep our documentation up to date, changes to third-party systems are outside our control. Refer to [Adding an application - Web application](https://docs.pingidentity.com/bundle/p14c/page/lyd1583255784891.html) from Ping's documentation as needed, or [let us know](https://github.com/pomerium/documentation/issues/new?assignees=&labels=&template=doc-error.md) if we need to re-visit this page.
+
 :::
 
 ## Create OpenID Connect App
@@ -43,9 +45,9 @@ While we do our best to keep our documentation up to date, changes to third-part
 
 1. From the **Configuration** tab of your new application, note the values of the following keys to use in your Pomerium Configuration:
 
-   * **ISSUER**: used as the `idp_provider_url` (e.g. `https://auth.pingone.com/720dbe8a-83ed-48e1-9988-9928301ae668/as`)
-   * **CLIENT ID**: used as the `idp_client_id`
-   * **CLIENT SECRET**: used as the `idp_client_secret`
+   - **ISSUER**: used as the `idp_provider_url` (e.g. `https://auth.pingone.com/720dbe8a-83ed-48e1-9988-9928301ae668/as`)
+   - **CLIENT ID**: used as the `idp_client_id`
+   - **CLIENT SECRET**: used as the `idp_client_secret`
 
    ![Ping Configuration](./img/ping/ping-configuration.png)
 
@@ -59,10 +61,10 @@ Update your Pomerium configuration to use Ping as the IdP:
 <TabItem value="config.yaml" label="config.yaml">
 
 ```yaml
-idp_provider: "ping"
-idp_provider_url: "https://auth.pingone.com/720dbe8a-83ed-48e1-9988-9928301ae668/as"
-idp_client_id: "CLIENT_ID"
-idp_client_secret: "CLIENT_SECRET"
+idp_provider: 'ping'
+idp_provider_url: 'https://auth.pingone.com/720dbe8a-83ed-48e1-9988-9928301ae668/as'
+idp_client_id: 'CLIENT_ID'
+idp_client_secret: 'CLIENT_SECRET'
 ```
 
 </TabItem>
@@ -79,6 +81,13 @@ IDP_CLIENT_SECRET="CLIENT_SECRET"
 </Tabs>
 
 ## Groups
+
+![Ping Settings](./img/ping/ping-idp.png)
+
+<Tabs>
+<TabItem value="Custom Claim (Open Source)" label="Custom Claim (Open Source)">
+
+### Custom Claim (Open Source)
 
 A `groups` claim can be added to tokens returned from Ping by adding it to the "Attribute Mappings":
 
@@ -101,3 +110,31 @@ routes:
 The `groups` claim contains group IDs, not group names.
 
 :::
+
+</TabItem>
+<TabItem value="Directory Sync (Enterprise)" label="Directory Sync (Enterprise)">
+
+### Directory Sync (Enterprise)
+
+#### Create a Ping Worker Application
+
+In order for Pomerium to validate group membership, we'll also need to configure a [Worker Application](https://docs.pingidentity.com/bundle/pingdirectory-73/page/lfm1564011499001.html) in Ping.
+
+1. Click **Add Application**, and select **Worker → Worker App**.
+
+   ![Ping Add Worker](./img/ping/ping-add-worker.png)
+
+1. Toggle the green slider to enable your new application.
+
+1. This application's **Client ID** and **Client Secret** will be used in the Pomerium Enterprise Console.
+
+   ![Ping Worker Configuration](./img/ping/ping-worker-configuration.png)
+
+#### Configure Pomerium Enterprise Console
+
+Under **Settings → Identity Providers**, select "Ping" as the identity provider and set the Client ID, Client Secret and Environment ID. The Environment ID can be found in Ping under **Environment → Properties**.
+
+![Ping Settings](./img/ping/ping-idp.png)
+
+</TabItem>
+</Tabs>

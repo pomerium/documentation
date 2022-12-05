@@ -64,7 +64,7 @@ adguard:
 
 ### Router
 
-![adguard router setup](img/adguard-router-setup.png)
+![adguard router setup](img/adguard/adguard-router-setup.png)
 
 Set your router to use your new host as the primary DNS server.
 
@@ -72,6 +72,6 @@ Set your router to use your new host as the primary DNS server.
 
 Simply navigate to your new adguard instance (e.g. `https://adguard.domain.example`) and behold all of the malware you and your family are no longer subjected to.
 
-![adguard dashboard](img/adguard-dashboard.png)
+![adguard dashboard](img/adguard/adguard-dashboard.png)
 
-[quick start]: /docs/install/quickstart
+[quick start]: /docs/quickstart

@@ -2,7 +2,8 @@
 title: Securing Kubernetes Dashboard
 sidebar_label: Kubernetes Dashboard
 lang: en-US
-keywords: [pomerium, identity access proxy, kubernetes, helm, k8s, oauth, dashboard,]
+keywords:
+  [pomerium, identity access proxy, kubernetes, helm, k8s, oauth, dashboard]
 description: This guide covers how to add authentication and authorization to kubernetes dashboard using single-sing-on, pomerium, helm, and letsencrypt certificates.
 ---
 
@@ -48,60 +49,58 @@ Following the configuration defined in [Install Pomerium using Helm], add a rout
 
 1. Modify `pomerium-values.yaml` with the following route:
 
-    ```yaml title="pomerium-values.yaml"
-        - from: https://dashboard.localhost.pomerium.io
-          to: https://kubernetes-dashboard.default.svc.cluster.local
-          allow_spdy: true
-          tls_skip_verify: true
-          kubernetes_service_account_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
-          policy:
-            - allow:
-                or:
-                  - domain:
-                      is: pomerium.com
-    ```
+   ```yaml title="pomerium-values.yaml"
+   - from: https://dashboard.localhost.pomerium.io
+     to: https://kubernetes-dashboard.default.svc.cluster.local
+     allow_spdy: true
+     tls_skip_verify: true
+     kubernetes_service_account_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
+     policy:
+       - allow:
+           or:
+             - domain:
+                 is: pomerium.com
+   ```
 
-    The service account token used for `kubernetes_service_account_token_file` is defined by our [helm chart]. Modify the policy to match your configuration.
+   The service account token used for `kubernetes_service_account_token_file` is defined by our [helm chart]. Modify the policy to match your configuration.
 
 1. Access to the dashboard for a user is authorized by the cluster role binding defined in role-based access control (**RBAC**) permissions. Following the [User Permissions] section of [Securing Kubernetes], you should already have permissions for your user, or you can create a new RBAC definition following this example:
 
-    ```yaml title="rbac-someuser.yaml"
-    apiVersion: rbac.authorization.k8s.io/v1
-    kind: ClusterRoleBinding
-    metadata:
-      name: cluster-admin-crb
-    roleRef:
-      apiGroup: rbac.authorization.k8s.io
-      kind: ClusterRole
-      name: cluster-admin
-    subjects:
-      - apiGroup: rbac.authorization.k8s.io
-        kind: User
-        name: someuser@example.com
-    ```
+   ```yaml title="rbac-someuser.yaml"
+   apiVersion: rbac.authorization.k8s.io/v1
+   kind: ClusterRoleBinding
+   metadata:
+     name: cluster-admin-crb
+   roleRef:
+     apiGroup: rbac.authorization.k8s.io
+     kind: ClusterRole
+     name: cluster-admin
+   subjects:
+     - apiGroup: rbac.authorization.k8s.io
+       kind: User
+       name: someuser@example.com
+   ```
 
-    Apply the permissions with `kubectl apply -f rbac-someuser.yaml`.
+   Apply the permissions with `kubectl apply -f rbac-someuser.yaml`.
 
 1. Apply the new route to Pomerium with Helm:
 
-    ```bash
-    helm upgrade --install pomerium pomerium/pomerium --values pomerium-values.yaml
-    ```
+   ```bash
+   helm upgrade --install pomerium pomerium/pomerium --values pomerium-values.yaml
+   ```
 
 ## Conclusion
 
 Because we've defined RBAC for our users, they can authenticate with Pomerium and Kubernetes will recognize that user in the Dashboard:
 
-<video controls  muted={true}width="100%" height="600" control=""><source src="/k8s-dashboard-user.mp4" type="video/mp4"/>
-Your browser does not support the video tag.
-</video>
+<video controls muted={true}width="100%" height="600" control=""><source src="/k8s-dashboard-user.mp4" type="video/mp4"/> Your browser does not support the video tag. </video>
 
 🎉🍾🎊 **Congratulations!** 🎉🍾🎊 You now have a single-sign-on enabled [Kubernetes Dashboard] protected by Pomerium.
 
 [cert-manager]: https://cert-manager.io/docs/
 [helm chart]: https://github.com/pomerium/pomerium-helm
-[Helm]: https://helm.sh
-[Kubernetes Quickstart]: /docs/k8s/quickstart
-[Kubernetes Dashboard]: https://kubernetes.io/docs/tasks/access-application-cluster/web-ui-dashboard/
-[Securing Kubernetes]: /docs/guides/kubernetes.md
-[User Permissions]: /docs/guides/kubernetes.md#user-permissions
+[helm]: https://helm.sh
+[kubernetes quickstart]: /docs/deploying/k8s/quickstart
+[kubernetes dashboard]: https://kubernetes.io/docs/tasks/access-application-cluster/web-ui-dashboard/
+[securing kubernetes]: /docs/guides/kubernetes.md
+[user permissions]: /docs/guides/kubernetes.md#user-permissions

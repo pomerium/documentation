@@ -2,7 +2,18 @@
 title: Securing Visual Studio Code Server
 sidebar_label: code-server
 lang: en-US
-keywords: [pomerium, identity access proxy, visual studio code, authentication, authorization, code server, vscode, coder, codercom]
+keywords:
+  [
+    pomerium,
+    identity access proxy,
+    visual studio code,
+    authentication,
+    authorization,
+    code server,
+    vscode,
+    coder,
+    codercom,
+  ]
 description: This guide covers how to add authentication and authorization to a hosted, fully, online instance of visual studio code.
 ---
 
@@ -14,7 +25,7 @@ This guide covers using Pomerium to secure an instance of [code-server]. Pomeriu
 
 [Visual Studio Code] is an open source code editor by Microsoft that has become [incredibly popular](https://insights.stackoverflow.com/survey/2019#technology-_-most-popular-development-environments) in the last few years. For many developers, [Visual Studio Code] hits the sweet spot between no frills editors like vim/emacs and full feature IDE's like Eclipse and IntelliJ. VS Code offers some of the creature comforts like intellisense, git integration, and plugins, while staying relatively lightweight.
 
-One of the interesting attributes of [Visual Studio Code] is that it is built on the [Electron](https://en.wikipedia.org/wiki/Electron_(software_framework)) framework which uses a headless instance of Chrome rendered as a desktop application. It didn't take long for folks to realize that if we already had this great IDE written in Javascript, it may be possible to make [Visual Studio Code] run remotely.
+One of the interesting attributes of [Visual Studio Code] is that it is built on the [Electron](<https://en.wikipedia.org/wiki/Electron_(software_framework)>) framework which uses a headless instance of Chrome rendered as a desktop application. It didn't take long for folks to realize that if we already had this great IDE written in Javascript, it may be possible to make [Visual Studio Code] run remotely.
 
 > "Any application that can be written in JavaScript, will eventually be written in JavaScript." -- [Jeff Atwood](https://blog.codinghorror.com/the-principle-of-least-power/)
 
@@ -22,7 +33,7 @@ One of the interesting attributes of [Visual Studio Code] is that it is built on
 
 [code-server] is an open-source project that allows you to run [Visual Studio Code] on a **remote** server, through the browser. For example, this is a screenshot taken at the end of this tutorial.
 
-![visual studio code with pomerium](img/vscode-pomerium.png)
+![visual studio code with pomerium](img/vscode/vscode-pomerium.png)
 
 ## Pre-requisites
 
@@ -35,7 +46,6 @@ This guide assumes you have already completed one of the [install] guides, and h
 Define a route in your Pomerium configuration file:
 
 ```yaml
-
 routes:
   - from: https://code.corp.example.com
     to: http://codeserver:8080
@@ -73,7 +83,7 @@ services:
 
 1. Navigate to your domain (e.g. `https://code.corp.domain.example`).
 
-    ![visual studio code pomerium hello world](img/vscode-helloworld.png)
+   ![visual studio code pomerium hello world](img/vscode/vscode-helloworld.png)
 
 ## Develop Pomerium in Pomerium (Example)
 
@@ -81,42 +91,42 @@ As a final touch, now that we've done all this work we might as well use our new
 
 1. To build Pomerium, we must [install go](https://golang.org/doc/install) which is as simple as running the following commands in the [integrated terminal] :
 
-    ```bash
-    # install dependencies with apt
-    sudo apt-get update && sudo apt-get install -y wget make zip
+   ```bash
+   # install dependencies with apt
+   sudo apt-get update && sudo apt-get install -y wget make zip
 
-    # download go
-    wget https://golang.org/dl/go1.16.4.linux-amd64.tar.gz
-    sudo tar -C /usr/local -xzf go1.16.4.linux-amd64.tar.gz
-    ```
+   # download go
+   wget https://golang.org/dl/go1.16.4.linux-amd64.tar.gz
+   sudo tar -C /usr/local -xzf go1.16.4.linux-amd64.tar.gz
+   ```
 
 1. Add Go to our [PATH] :
 
-    ```bash
-    # add the following to $HOME/.bashrc
-    export PATH=$PATH:/usr/local/go/bin
-    export PATH=$PATH:$(go env GOPATH)/bin
-    ```
+   ```bash
+   # add the following to $HOME/.bashrc
+   export PATH=$PATH:/usr/local/go/bin
+   export PATH=$PATH:$(go env GOPATH)/bin
+   ```
 
 1. Reload [PATH] by opening the [integrated terminal] and sourcing the updated `.bashrc` file:
 
-    ```bash
-    source $HOME/.bashrc
-    ```
+   ```bash
+   source $HOME/.bashrc
+   ```
 
 1. Now that we've got Go all we need to go is grab the latest source and build:
 
-    ```bash
-    # get the latest source
-    git clone https://github.com/pomerium/pomerium.git
+   ```bash
+   # get the latest source
+   git clone https://github.com/pomerium/pomerium.git
 
-    # build pomerium
-    cd pomerium
-    make build
-    # run pomerium!
-    ./bin/pomerium --version
-    # v0.14.0-28-g38a75913+38a75913
-    ```
+   # build pomerium
+   cd pomerium
+   make build
+   # run pomerium!
+   ./bin/pomerium --version
+   # v0.14.0-28-g38a75913+38a75913
+   ```
 
 Happy remote hacking!!!😁
 
@@ -128,7 +138,7 @@ When the code-server container is rebuilt, any files outside of `/home/coder/pro
 
 [integrated terminal]: https://code.visualstudio.com/docs/editor/integrated-terminal
 [path]: https://en.wikipedia.org/wiki/PATH_(variable)
-[install]: /docs/install/
+[install]: /docs/deploying/
 [synology nas]: /docs/guides/synology.md
 [visual studio code]: https://code.visualstudio.com/
 [code-server]: https://github.com/cdr/code-server

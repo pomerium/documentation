@@ -1,4 +1,5 @@
 # Error Messages Header
+
 - Type: `string` containing [markdown](https://www.markdownguide.org/basic-syntax/
 - Example: `Please see https://your.internal.supportsite.com/how-do-remediate-something for details.`
 - Default: ''

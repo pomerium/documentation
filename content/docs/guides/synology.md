@@ -28,7 +28,7 @@ Though any supported [identity provider] would work, this guide uses google.
 
 This will vary depending on what type of router you have but the gist is you want to be forwarding all HTTPS/TLS traffic from port `443` to your NAS on some high port (in this case`8443`).
 
-![Synology configure firewall rules](img/synology-firewall-rules.png)
+![Synology configure firewall rules](img/synology/synology-firewall-rules.png)
 
 ## DSM
 
@@ -43,10 +43,10 @@ Click **Create**.
 Set the following **Reverse Proxy Rules**.
 
 | Field                | Description |
-|----------------------|-------------|
+| -------------------- | ----------- |
 | Description          | pomerium    |
 | Source Protocol      | HTTPS       |
-| Source Hostname      | *           |
+| Source Hostname      | \*          |
 | Destination Port     | 8443        |
 | HTTP/2               | Enabled     |
 | HSTS                 | Enabled     |
@@ -54,7 +54,7 @@ Set the following **Reverse Proxy Rules**.
 | Destination Hostname | localhost   |
 | Destination Port     | 32443       |
 
-![Synology setup nginx reverse proxy](img/synology-reverse-proxy.png)
+![Synology setup nginx reverse proxy](img/synology/synology-reverse-proxy.png)
 
 This will forward any incoming HTTPS traffic to the Pomerium service that is (not yet) running on port **32443**.
 
@@ -73,10 +73,10 @@ Once the certificate is showing on the list of certificates screen we need to te
 **Click configure**
 
 | Services | Certificate         |
-|----------|---------------------|
-| *:8443   | `*.int.nas.example` |
+| -------- | ------------------- |
+| \*:8443  | `*.int.nas.example` |
 
-![Synology assign wildcard certificate](img/synology-certifciate-assignment.png)
+![Synology assign wildcard certificate](img/synology/synology-certifciate-assignment.png)
 
 ## Docker
 
@@ -86,7 +86,7 @@ Download and install docker from the package manager.
 
 **Package manager** > **search** > **docker**
 
-![Synology download pomerium docker image](img/synology-docker-package-center.png)
+![Synology download pomerium docker image](img/synology/synology-docker-package-center.png)
 
 Once installed open the docker app.
 
@@ -94,11 +94,11 @@ Once installed open the docker app.
 
 **Download** the official Pomerium docker image.
 
-![Synology download pomerium docker image](img/synology-docker-pomerium-package.png)
+![Synology download pomerium docker image](img/synology/synology-docker-pomerium-package.png)
 
 We'll also need a test application to manage access to. For this guide we'll use the canonical test app [httpbin] but the this could be any [self-hosted apps], wiki, download tool, etc.
 
-![Synology download httpbin docker image](img/synology-httpbin.png)
+![Synology download httpbin docker image](img/synology/synology-httpbin.png)
 
 ### Route
 
@@ -129,7 +129,7 @@ Set the **Container Name** to `httpbin`. Keep the rest of the settings the defau
 
 Click **apply**
 
-![Synology launch httpbin](img/synology-docker-httpbin.png)
+![Synology launch httpbin](img/synology/synology-docker-httpbin.png)
 
 This will create a small python webserver on port 80\. The container name we just used will be used as an alias to route requests as defined in our policy.
 
@@ -143,7 +143,7 @@ Click **Launch**
 
 Set the **Container Name** to `Pomerium`.
 
-![Synology pomerium create container](img/synology-docker-pomerium-create-container.png)
+![Synology pomerium create container](img/synology/synology-docker-pomerium-create-container.png)
 
 Click **Advanced Settings**
 
@@ -151,7 +151,7 @@ Go to **Port Settings** tab.
 
 Add an entry where the **Local Port** is **32443** and the container port is **443** and the type is **TCP**.
 
-![Synology pomerium port settings docker](img/synology-docker-port-settings.png)
+![Synology pomerium port settings docker](img/synology/synology-docker-port-settings.png)
 
 Go to **Links** tab.
 
@@ -163,22 +163,22 @@ The alias value must match the `to` DNS name from your policy.yaml configuration
 
 :::
 
-![Synology pomerium set alias to app](img/synology-docker-pomerium-alias.png)
+![Synology pomerium set alias to app](img/synology/synology-docker-pomerium-alias.png)
 
 These are the minimum set of configuration settings to get Pomerium running in this deployment environment.
 
 Go to **Environment** tab.
 
-| Field                    | Value                                                           |
-|--------------------------|-----------------------------------------------------------------|
-| POLICY                   | output of `base64 -i policy.yaml`                               |
-| INSECURE_SERVER          | `TRUE`, internal routing within docker will not be encrypted.   |
-| IDP_CLIENT_SECRET        | Values from setting up your [identity provider]                 |
-| IDP_CLIENT_ID            | Values from setting up your [identity provider]                 |
-| IDP_PROVIDER             | Values from setting up your [identity provider] (e.g. `google`) |
-| COOKIE_SECRET            | output of `head -c32 /dev/urandom                               | base64`
-| AUTHENTICATE_SERVICE_URL | `https://authenticate.int.nas.example`                          |
-| SHARED_SECRET            | output of `head -c32 /dev/urandom                               | base64`
+| Field | Value |
+| --- | --- | --- |
+| POLICY | output of `base64 -i policy.yaml` |
+| INSECURE_SERVER | `TRUE`, internal routing within docker will not be encrypted. |
+| IDP_CLIENT_SECRET | Values from setting up your [identity provider] |
+| IDP_CLIENT_ID | Values from setting up your [identity provider] |
+| IDP_PROVIDER | Values from setting up your [identity provider] (e.g. `google`) |
+| COOKIE_SECRET | output of `head -c32 /dev/urandom | base64` |
+| AUTHENTICATE_SERVICE_URL | `https://authenticate.int.nas.example` |
+| SHARED_SECRET | output of `head -c32 /dev/urandom | base64` |
 
 For a detailed explanation, and additional options, please refer to the [configuration variable docs]. Also note, though not covered in this guide, settings can be made via a mounted configuration file.
 
@@ -186,7 +186,7 @@ Click **Launch**.
 
 If properly configured you should see something like the following when you see the container's details.
 
-![Synology pomerium all setup](img/synology-docker-pomerium-done.png)
+![Synology pomerium all setup](img/synology/synology-docker-pomerium-done.png)
 
 If something goes wrong, click the **Logs** tab.
 
@@ -196,15 +196,15 @@ Navigate to your new service. `https://httpbin.int.nas.example`
 
 You should be redirected to your identity provider.
 
-![Synology redirected login](img/synology-step-1-redirect.png)
+![Synology redirected login](img/synology/synology-step-1-redirect.png)
 
 If you've enabled multi-factor authentication you should see that too.
 
-![Synology multi-factor authentication](img/synology-step-2-mfa.png)
+![Synology multi-factor authentication](img/synology/synology-step-2-mfa.png)
 
 If that user is authorized to see the httpbin service, you should be redirected back to httpbin!
 
-![Synology done](img/synology-step-3-validate-header.png)
+![Synology done](img/synology/synology-step-3-validate-header.png)
 
 You can also navigate to the special pomerium endpoint `httpbin.your.domain.example/.pomerium/` to see your current user details.
 
@@ -212,9 +212,9 @@ You can also navigate to the special pomerium endpoint `httpbin.your.domain.exam
 
 And just to be safe, try logging in from another google account to see what happens. You should be greeted with a `403` unauthorized access page.
 
-![Synology done](img/synology-step-4-unauthorized.png)
+![Synology done](img/synology/synology-step-4-unauthorized.png)
 
-[certificate documentation]: /docs/topics/certificates
+[certificate documentation]: /docs/concepts/certificates
 [configuration variable docs]: /docs/reference
 [diskstation manager]: https://www.synology.com/en-us/dsm
 [docker-capable]: https://www.synology.com/en-us/dsm/packages/Docker

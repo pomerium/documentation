@@ -4,14 +4,14 @@ title: Authenticate Callback Path
 description: |
   The authenticate callback path is the path/url from the authenticate service that will receive the response from your identity provider.
 keywords:
-- reference
-- Authenticate Callback Path
+  - reference
+  - Authenticate Callback Path
 pagination_prev: null
 pagination_next: null
 ---
 
-
 # Authenticate Callback Path
+
 - Environmental Variable: `AUTHENTICATE_CALLBACK_PATH`
 - Config File Key: `authenticate_callback_path`
 - Type: `string`

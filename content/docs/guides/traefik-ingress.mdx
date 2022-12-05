@@ -2,21 +2,35 @@
 title: Securing Traefik Ingress
 sidebar_label: Traefik Ingress
 lang: en-US
-keywords: [pomerium, identity access proxy, traefik, kubernetes, forwardauth, forward auth, external, helm, k8s, ingress]
+keywords:
+  [
+    pomerium,
+    identity access proxy,
+    traefik,
+    kubernetes,
+    forwardauth,
+    forward auth,
+    external,
+    helm,
+    k8s,
+    ingress,
+  ]
 description: This guide covers how to use Pomerium to secure Traefik when used as a Kubernetes Ingress Controller
 ---
 
-import PomeriumValues from '../../examples/traefik-ingress/values/pomerium.yaml.md'
-import TraefikValues from '../../examples/traefik-ingress/values/traefik.yaml.md'
-import Middleware from '../../examples/traefik-ingress/crds/middleware.yaml.md'
-import HelloValues from '../../examples/traefik-ingress/values/hello.yaml.md'
-import AddRepos from '../../examples/traefik-ingress/add_repos.sh.md'
-import Install from '../../examples/traefik-ingress/install.sh.md'
+import PomeriumValues from '../../examples/traefik-ingress/values/pomerium.yaml.md';
+import TraefikValues from '../../examples/traefik-ingress/values/traefik.yaml.md';
+import Middleware from '../../examples/traefik-ingress/crds/middleware.yaml.md';
+import HelloValues from '../../examples/traefik-ingress/values/hello.yaml.md';
+import AddRepos from '../../examples/traefik-ingress/add_repos.sh.md';
+import Install from '../../examples/traefik-ingress/install.sh.md';
 
-:::danger Before You Proceed
-Since this guide was written, Pomerium has developed into a first-class proxy service, and provides an integrated [Ingress Controller](/docs/k8s/ingress) for Kubernetes.
+:::danger
+
+Before You Proceed Since this guide was written, Pomerium has developed into a first-class proxy service, and provides an integrated [Ingress Controller](/docs/deploying/k8s/ingress) for Kubernetes.
 
 This guide will remain available for those already using Traefik with Pomerium, but we strongly encourage new users to configure Pomerium as the single method of authentication and proxying.
+
 :::
 
 At the end of this guide, you will have an install of a hello-world app proxied by [Traefik](https://containo.us/traefik/) with authorization policy enforced by Pomerium.
@@ -25,7 +39,7 @@ This guide specifically demonstrates using Traefik and Pomerium in the context o
 
 ## Background
 
-Traefik can be [configured](https://docs.traefik.io/middlewares/forwardauth/) to authorize requests by calling a remote authorization service.  Pomerium is compatible with this protocol and can thus be used to protect services behind Traefik.  In this configuration, Pomerium does not directly proxy traffic, but only performs authorization decisions on behalf of Traefik.  This is useful for integrating into existing load balancer infrastructure.
+Traefik can be [configured](https://docs.traefik.io/middlewares/forwardauth/) to authorize requests by calling a remote authorization service. Pomerium is compatible with this protocol and can thus be used to protect services behind Traefik. In this configuration, Pomerium does not directly proxy traffic, but only performs authorization decisions on behalf of Traefik. This is useful for integrating into existing load balancer infrastructure.
 
 For more information on using Pomerium as an external authorization endpoint, see [forward auth](https://www.pomerium.com/reference/#forward-auth) in the Pomerium docs.
 
@@ -78,41 +92,37 @@ To provide your own [certificates](https://www.pomerium.com/reference/#certifica
 
 Update `values/pomerium.yaml` with your Identity Provider settings, domain names and policy
 
-<PomeriumValues/>
+<PomeriumValues />
 
 ### Traefik
 
 Helm chart values:
 
-<TraefikValues/>
+<TraefikValues />
 
-:::tip
-Please note `forwardedHeaders.insecure` must be set on the entrypoint in front of Pomerium proxy if you are routing forward auth requests through Traefik.  See [docs](https://docs.traefik.io/routing/entrypoints/#forwarded-headers) for more information.
-:::
+:::tip Please note `forwardedHeaders.insecure` must be set on the entrypoint in front of Pomerium proxy if you are routing forward auth requests through Traefik. See [docs](https://docs.traefik.io/routing/entrypoints/#forwarded-headers) for more information. :::
 
 Middleware:
 
-<Middleware/>
+<Middleware />
 
-:::caution
-Please note `trustForwardHeader: true` must be set for the middleware to work correctly.  See [docs](https://docs.traefik.io/middlewares/forwardauth/#trustforwardheader) for more information.
-:::
+:::caution Please note `trustForwardHeader: true` must be set for the middleware to work correctly. See [docs](https://docs.traefik.io/middlewares/forwardauth/#trustforwardheader) for more information. :::
 
 ### Hello
 
 Helm chart values:
 
-<HelloValues/>
+<HelloValues />
 
 ## Install
 
 ### Add helm repos
 
-<AddRepos/>
+<AddRepos />
 
 ### Install charts and CRDs
 
-<Install/>
+<Install />
 
 After 1-2 minutes, browse to [hello.localhost.pomerium.io](https://hello.localhost.pomerium.io).
 
@@ -124,4 +134,10 @@ Your `hello` application is protected by Pomerium.
 
 Here's a run through of the steps in this demo:
 
-<iframe width="100%" height="500" src="https://www.youtube.com/embed/wrvNV9fP5hw?rel=0" frameborder="0" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe>
+<iframe
+  width="100%"
+  height="500"
+  src="https://www.youtube.com/embed/wrvNV9fP5hw?rel=0"
+  frameborder="0"
+  allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+  allowFullScreen></iframe>

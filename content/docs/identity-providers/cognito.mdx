@@ -9,12 +9,13 @@ pagination_next: null
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-This document describes the use of AWS Cognito as an identity provider with Pomerium. It assumes you have already [installed Pomerium](/docs/install/)
+This document describes the use of AWS Cognito as an identity provider with Pomerium. It assumes you have already [installed Pomerium](/docs/deploying/)
 
 :::caution
-While we do our best to keep our documentation up to date, changes to third-party systems are outside our control. Refer to [Amazon Cognito Documentation](https://docs.aws.amazon.com/cognito/index.html) as needed, or [let us know](https://github.com/pomerium/pomerium/issues/new?assignees=&labels=&template=bug_report.md) if we need to re-visit this page.
-:::
 
+While we do our best to keep our documentation up to date, changes to third-party systems are outside our control. Refer to [Amazon Cognito Documentation](https://docs.aws.amazon.com/cognito/index.html) as needed, or [let us know](https://github.com/pomerium/pomerium/issues/new?assignees=&labels=&template=bug_report.md) if we need to re-visit this page.
+
+:::
 
 ## Setting up AWS Cognito
 
@@ -45,9 +46,7 @@ If you're following this doc you likely already have a Cognito user pool. If not
 
    You can enable Multi-Factor Authentication (MFA), change your Password requirements, Tag the pool, among many other settings.
 
-   :::tip
-   If you need to make changes after creating your pool, be aware that some settings will recreate the pool rather than update the existing pool. This will also generate new **Client IDs** and **Client Secrets**. An example would be changing _How do you want your end users to sign in?_ in **Attributes** from **Username** to **Email address or phone number**.
-   :::
+   :::tip If you need to make changes after creating your pool, be aware that some settings will recreate the pool rather than update the existing pool. This will also generate new **Client IDs** and **Client Secrets**. An example would be changing _How do you want your end users to sign in?_ in **Attributes** from **Username** to **Email address or phone number**. :::
 
 </details>
 
@@ -67,12 +66,12 @@ If you're following this doc you likely already have a Cognito user pool. If not
 
    In the settings for **Pomerium** app, put in the following details
 
-   | **Field**                  | **Description**                                                                              |
-   | -------------------------- | -------------------------------------------------------------------------------------------- |
+   | **Field** | **Description** |
+   | --- | --- |
    | Enabled Identity Providers | Choose **Cognito User Pool**, unless you have set up another **Identity Provider** (eg SAML) |
-   | Callback URL(s)            | https://${authenticate_service_url}/oauth2/callback                                          |
-   | Allowed OAuth Flows        | Authorization code grant                                                                     |
-   | Allowed OAuth Scopes       | Email, OpenID, Profile                                                                       |
+   | Callback URL(s) | https://${authenticate_service_url}/oauth2/callback |
+   | Allowed OAuth Flows | Authorization code grant |
+   | Allowed OAuth Scopes | Email, OpenID, Profile |
 
 1. **IMPORTANT**: For OAuth2 to work correctly with AWS Cognito, you must configure a **Domain name**. This is under **App integration** in the side menu
 
@@ -88,11 +87,11 @@ Once you have configured AWS Cognito, configure Pomerium to connext to it:
 <TabItem value="config.yaml" label="config.yaml">
 
 ```yaml
-idp_provider: "oidc"
-idp_provider_url: "https://cognito-idp.${AWS-REGION}.amazonaws.com/${USER-POOL-ID}"
-idp_client_id: "304a12ktcc5djt9d7enj6dsjkg"
-idp_client_secret: "1re5ukkv3dab6up5aefv7rru65lu60oblf04t6cv8u9s0itjbci7"
-idp_scopes: "openid,profile,email"
+idp_provider: 'oidc'
+idp_provider_url: 'https://cognito-idp.${AWS-REGION}.amazonaws.com/${USER-POOL-ID}'
+idp_client_id: '304a12ktcc5djt9d7enj6dsjkg'
+idp_client_secret: '1re5ukkv3dab6up5aefv7rru65lu60oblf04t6cv8u9s0itjbci7'
+idp_scopes: 'openid,profile,email'
 ```
 
 </TabItem>
@@ -132,12 +131,14 @@ metadata:
 
 To retrieve the **User Pool ID**, go to **General Settings** in the Cognito Side menu within your pool. The **Pool ID** is just above the **Pool ARN**.
 
-## Group Based Policies
+## Getting Groups
 
 Cognito embeds group membership into the access token. To create policies based on group membership, use the `allowed_idp_claims` key. Replace `admins` in the examples below with your group:
 
 <Tabs>
-<TabItem value="core" label="Pomerium Core">
+<TabItem value="Custom Claim (Open Source)" label="Custom Claim (Open Source)">
+
+### Custom Claim (Open Source)
 
 ```yaml
 - from: http://from.example.com
@@ -148,7 +149,9 @@ Cognito embeds group membership into the access token. To create policies based 
 ```
 
 </TabItem>
-<TabItem value="enterprise" label="Pomerium Enterprise Console">
+<TabItem value="Directory Sync (Enterprise)" label="Directory Sync (Enterprise)">
+
+### Directory Sync (Enterprise)
 
 ![Example policy using Cognito groups in Pomerium Enterprise Console](./img/cognito/cognito-group-claim.png)
 

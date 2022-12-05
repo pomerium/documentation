@@ -4,8 +4,8 @@ title: Cookie Secret
 description: |
   Secret used to encrypt and sign session cookies.
 keywords:
-- reference
-- Cookie Secret
+  - reference
+  - Cookie Secret
 pagination_prev: null
 pagination_next: null
 ---

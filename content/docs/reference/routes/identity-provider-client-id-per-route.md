@@ -2,8 +2,8 @@
 id: identity-provider-client-id-per-route
 title: Identity Provider Client ID (per route)
 keywords:
-- reference
-- Identity Provider Client ID (per route)
+  - reference
+  - Identity Provider Client ID (per route)
 pagination_prev: null
 pagination_next: null
 ---

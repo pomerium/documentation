@@ -2,14 +2,15 @@
 title: Securing Cloud Run endpoints
 sidebar_label: Cloud Run
 lang: en-US
-keywords: [pomerium, identity access proxy, gcp, google, iap, serverless, cloudrun]
+keywords:
+  [pomerium, identity access proxy, gcp, google, iap, serverless, cloudrun]
 description: This guide covers how to deploy Pomerium to Cloud Run and use it to protect other endpoints via Authorization Headers.
 ---
 
-import CloudRunConfig from '../../examples/cloudrun/config.yaml.md'
-import PolicyTemplate from '../../examples/cloudrun/policy.template.yaml.md'
-import Zonefile from '../../examples/cloudrun/zonefile.txt.md'
-import DeployScript from '../../examples/cloudrun/deploy.sh.md'
+import CloudRunConfig from '../../examples/cloudrun/config.yaml.md';
+import PolicyTemplate from '../../examples/cloudrun/policy.template.yaml.md';
+import Zonefile from '../../examples/cloudrun/zonefile.txt.md';
+import DeployScript from '../../examples/cloudrun/deploy.sh.md';
 
 This recipe's sources can be found [on github](https://github.com/pomerium/pomerium/tree/main/examples/cloudrun)
 
@@ -46,17 +47,17 @@ The image expects a config file at `/pomerium/config.yaml`. Set `VALS_FILES=[sec
 
 Set up a `config.yaml` file to contain your IdP credentials and secrets:
 
-<CloudRunConfig/>
+<CloudRunConfig />
 
 Substitute `cloudrun.pomerium.io` for your own subdomain and your e-mail domain if appropriate:
 
-<PolicyTemplate/>
+<PolicyTemplate />
 
 ### DNS
 
 Substitute `cloudrun.pomerium.io` for your own subdomain (zonefile.txt):
 
-<Zonefile/>
+<Zonefile />
 
 Or set an equivalent CNAME in your DNS provider.
 
@@ -68,7 +69,7 @@ Ensure you have set a default project:
 glcoud config set default-project MYTESTPROJECT
 ```
 
-<DeployScript/>
+<DeployScript />
 
 ## Results
 
@@ -114,4 +115,4 @@ You should see your identity header set:
 
 ![Hello](img/cloud-run/headers.png)
 
-See [getting user's identity](/docs/topics/getting-users-identity) for more details on using this header.
+See [getting user's identity](/docs/capabilities/getting-users-identity) for more details on using this header.

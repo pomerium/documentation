@@ -2,18 +2,29 @@
 title: Install Pomerium using Helm
 sidebar_label: Helm
 lang: en-US
-keywords: [pomerium, identity access proxy, oidc, kubernetes, helm, reverse proxy, ingress controller]
+keywords:
+  [
+    pomerium,
+    identity access proxy,
+    oidc,
+    kubernetes,
+    helm,
+    reverse proxy,
+    ingress controller,
+  ]
 ---
 
-import InstallMkcert from '@site/content/_install-mkcert.md'
-import PomeriumCerts from '@site/content/examples/kubernetes/pomerium-certificates.yaml.md'
-import PomeriumValues from '@site/content/examples/kubernetes/pomerium-values.yaml.md'
-import ExampleIngress from '@site/content/examples/kubernetes/example-ingress.yaml.md'
+import InstallMkcert from '@site/content/_install-mkcert.md';
+import PomeriumCerts from '@site/content/examples/kubernetes/pomerium-certificates.yaml.md';
+import PomeriumValues from '@site/content/examples/kubernetes/pomerium-values.yaml.md';
+import ExampleIngress from '@site/content/examples/kubernetes/example-ingress.yaml.md';
 
 This guide will show you how to deploy Pomerium with [Helm] on [Kubernetes].
 
 :::warning
-After re-evaluating the complexity required to both use and manage Helm for Pomerium, we've opted not to continue updating our Helm chart. Instead we've created a simpler deployment method, which you can read about on our [Kubernetes Quickstart](/docs/k8s/quickstart) page.
+
+After re-evaluating the complexity required to both use and manage Helm for Pomerium, we've opted not to continue updating our Helm chart. Instead we've created a simpler deployment method, which you can read about on our [Kubernetes Quickstart](/docs/deploying/k8s/quickstart) page.
+
 :::
 
 ## Prerequisites
@@ -21,21 +32,22 @@ After re-evaluating the complexity required to both use and manage Helm for Pome
 - [Install kubectl].
 - [Install helm].
 - A Kubernetes provider.
+
   - A cluster, with your local `kubectl` authorized to interact with it. The cluster configuration and node pool will depend on your provider and the scope of your project.
   - Export the configuration file from your Kubernetes host and export it to your `KUBECONFIG` environment variable (usually by placing it in `~/.kube`).
 
     See [Organizing Cluster Access Using kubeconfig Files] for more information.
+
   - A namespace in the cluster for Pomerium. This document assumes the namespace `pomerium`, which you can create with `kubectl create namespace pomerium`.
+
 - A configured [identity provider].
 - A domain space. The steps below use `*.localhost.pomerium.io` as a placeholder value. We have set DNS records for this domain space to point to `127.0.0.1` (localhost), so you can use this domain space when testing Pomerium locally.
 - [TLS certificates]. If you don't yet have a production environment with trusted certificates, this page will cover using [mkcert] to create locally trusted certificates, and [cert-manager] to manage them in the cluster.
 - A Postgres database.
 
-:::tip
-This configuration installs Postgres as the data broker service. While this isn't strictly required when running Pomerium by itself, it is necessary for Pomerium Enterprise, and still highly recommended if not.
+:::tip This configuration installs Postgres as the data broker service. While this isn't strictly required when running Pomerium by itself, it is necessary for Pomerium Enterprise, and still highly recommended if not.
 
-The configuration detailed below uses the Pomerium Ingress Controller. See our [Ingress Controller] doc for more detailed information and configuration options.
-:::
+The configuration detailed below uses the Pomerium Ingress Controller. See our [Ingress Controller] doc for more detailed information and configuration options. :::
 
 ## Certificates
 
@@ -43,7 +55,7 @@ This setup uses [mkcert] to generate certificates that are trusted by your local
 
 ### Install mkcert
 
-<InstallMkcert/>
+<InstallMkcert />
 
 ## Install and Configure cert-manager
 
@@ -74,13 +86,13 @@ If you haven't already, install cert-manager and create a CA issuer. You can fol
 
 1. Confirm deployment with `kubectl get pods --namespace cert-manager`:
 
-    ```bash {1}
-    kubectl get pods --namespace cert-manager
-    NAME                                       READY   STATUS    RESTARTS   AGE
-    cert-manager-5d7f97b46d-8g942              1/1     Running   0          33s
-    cert-manager-cainjector-69d885bf55-6x5v2   1/1     Running   0          33s
-    cert-manager-webhook-8d7495f4-s5s6p        1/1     Running   0          33s
-    ```
+   ```bash {1}
+   kubectl get pods --namespace cert-manager
+   NAME                                       READY   STATUS    RESTARTS   AGE
+   cert-manager-5d7f97b46d-8g942              1/1     Running   0          33s
+   cert-manager-cainjector-69d885bf55-6x5v2   1/1     Running   0          33s
+   cert-manager-webhook-8d7495f4-s5s6p        1/1     Running   0          33s
+   ```
 
 1. In your Pomerium namespace, create a Kubernetes secret for the rootCA-key file in your local CA root:
 
@@ -115,71 +127,74 @@ If you haven't already, install cert-manager and create a CA issuer. You can fol
 
 ## Install Pomerium
 
-1. Set your `kubectl` context to the Pomerium namespace:
+1.  Set your `kubectl` context to the Pomerium namespace:
 
-   ```bash
-   kubectl config set-context --current --namespace=pomerium
-   ```
+    ```bash
+    kubectl config set-context --current --namespace=pomerium
+    ```
 
-1. Create certificate configurations for Pomerium. Our example is named `pomerium-certificates.yaml`, to differentiate from a configuration file for Pomerium Enterprise, if you choose to install it later:
+1.  Create certificate configurations for Pomerium. Our example is named `pomerium-certificates.yaml`, to differentiate from a configuration file for Pomerium Enterprise, if you choose to install it later:
 
-   <PomeriumCerts/>
+    <PomeriumCerts />
 
-   :::tip
-   If you already have a domain space for Pomerium with a certificate solution, use it in place of `.localhost.pomerium.io`.
-   :::
+    :::tip If you already have a domain space for Pomerium with a certificate solution, use it in place of `.localhost.pomerium.io`. :::
 
-1. Apply the certificate configuration, and confirm:
+1.  Apply the certificate configuration, and confirm:
 
-   ```bash
-   kubectl apply -f pomerium-certificates.yaml
-   ```
+    ```bash
+    kubectl apply -f pomerium-certificates.yaml
+    ```
 
-   ```bash {1}
-   kubectl get certificate
-   NAME                    READY   SECRET                 AGE
-   pomerium-cert           True    pomerium-tls           10s
-   ```
+    ```bash {1}
+    kubectl get certificate
+    NAME                    READY   SECRET                 AGE
+    pomerium-cert           True    pomerium-tls           10s
+    ```
 
-1. Create a values file for Helm to use when installing Pomerium. Our example is named `pomerium-values.yaml`.
+1.  Create a values file for Helm to use when installing Pomerium. Our example is named `pomerium-values.yaml`.
 
-   <PomeriumValues/>
+            {' '}
 
-   :::tip
-   The options required in the `authenticate.idp` block will vary depending on your [identity provider].
+            {' '}
+            <PomeriumValues />
 
-   If you changed the `*.localhost.pomerium.io` value in `pomerium-certificates.yaml` update `config.rootDomain` to match, omitting the `*`.
-   :::
+            :::tip The options required in the `authenticate.idp` block will vary depending on your [identity provider].
 
-   <details>
-      <summary>Default Certificate</summary>
-      <div>
-      If you're using a single wildcard certificate for all routes managed by Pomerium, you can set it in an annotation for the ingress controller.
+            If you changed the `*.localhost.pomerium.io` value in `pomerium-certificates.yaml` update `config.rootDomain` to match, omitting the `*`. :::
 
-      Add a block defining the default certificate to `pomerium-values.yaml`:
+                <details>
 
-      ```yaml
-      ingressController:
-      ingressClassResource:
-         defaultCertSecret: 'namespace/certSecretName'
-      ```
+            <summary>Default Certificate</summary>
 
-      Now when defining ingresses you need not specify individual certificates, as documented in our example service below.
+        <div>
 
-      </div>
-   </details>
+    If you're using a single wildcard certificate for all routes managed by Pomerium, you can set it in an annotation for the ingress controller.
 
-1. Add Pomerium's Helm repo:
+            Add a block defining the default certificate to `pomerium-values.yaml`:
 
-   ```bash
-   helm repo add pomerium https://helm.pomerium.io
-   ```
+            ```yaml
+            ingressController:
+            ingressClassResource:
+              defaultCertSecret: 'namespace/certSecretName'
+            ```
 
-1. Install Pomerium to the cluster:
+            Now when defining ingresses you need not specify individual certificates, as documented in our example service below.
 
-   ```bash
-   helm upgrade --install pomerium pomerium/pomerium --values ./pomerium-values.yaml
-   ```
+                   </div>
+
+             </details>
+
+1.  Add Pomerium's Helm repo:
+
+    ```bash
+    helm repo add pomerium https://helm.pomerium.io
+    ```
+
+1.  Install Pomerium to the cluster:
+
+    ```bash
+    helm upgrade --install pomerium pomerium/pomerium --values ./pomerium-values.yaml
+    ```
 
 ## Define a Test Service
 
@@ -203,7 +218,7 @@ If you haven't already, install cert-manager and create a CA issuer. You can fol
 
 1. Create a new Ingress manifest (`example-ingress.yaml`) for our test service:
 
-   <ExampleIngress/>
+   <ExampleIngress />
 
 1. Apply the nginx Ingress manifest to the cluster:
 
@@ -238,18 +253,18 @@ You can also navigate to the special pomerium endpoint `hello.localhost.pomerium
 Congratulations on installing Pomerium to your Kubernetes cluster!
 
 - See [Ingress Controller] to learn more about the Pomerium Ingress Controller.
-- If you're installing Pomerium Enterprise next, see [Install Pomerium Enterprise in Helm]. If not, check our our [guides](/docs/guides) to install common services behind Pomerium.
+- If you're installing Pomerium Enterprise next, see [Install Pomerium Enterprise in Helm]. If not, check our our [guides](/docs/guides/ad-guard.md) to install common services behind Pomerium.
 
 [cert-manager]: https://cert-manager.io/docs/
-[cert-manager: CA]: https://cert-manager.io/docs/configuration/ca/
-[cert-manager: Installing with Helm]: https://cert-manager.io/docs/installation/kubernetes/#installing-with-helm
-[Helm]: https://helm.sh
-[Install helm]: https://helm.sh/docs/using_helm/
+[cert-manager: ca]: https://cert-manager.io/docs/configuration/ca/
+[cert-manager: installing with helm]: https://cert-manager.io/docs/installation/kubernetes/#installing-with-helm
+[helm]: https://helm.sh
+[install helm]: https://helm.sh/docs/using_helm/
 [identity provider]: /docs/identity-providers
-[Ingress Controller]: /docs/k8s/ingress.md
-[Install Pomerium Enterprise in Helm]: /docs/enterprise/install/helm
-[Install kubectl]: https://kubernetes.io/docs/tasks/tools/install-kubectl/
-[Kubernetes]: https://kubernetes.io
+[ingress controller]: /docs/deploying/k8s/ingress.md
+[install pomerium enterprise in helm]: /docs/guides/helm
+[install kubectl]: https://kubernetes.io/docs/tasks/tools/install-kubectl/
+[kubernetes]: https://kubernetes.io
 [mkcert]: https://github.com/FiloSottile/mkcert
-[Organizing Cluster Access Using kubeconfig Files]: https://kubernetes.io/docs/concepts/configuration/organize-cluster-access-kubeconfig/
-[tls certificates]: ../topics/certificates
+[organizing cluster access using kubeconfig files]: https://kubernetes.io/docs/concepts/configuration/organize-cluster-access-kubeconfig/
+[tls certificates]: /docs/concepts/certificates

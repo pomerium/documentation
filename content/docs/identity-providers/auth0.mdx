@@ -9,7 +9,7 @@ pagination_next: null
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-This page documents configuring an [Auth0] Web Application and Machine to Machine Application for Pomerium to read user data. It assumes you have already [installed Pomerium](/docs/install/).
+This page documents configuring an [Auth0] Web Application and Machine to Machine Application for Pomerium to read user data. It assumes you have already [installed Pomerium](/docs/deploying/).
 
 :::caution
 
@@ -76,6 +76,11 @@ Remember to prepend the provider URL from Auth0 with `https://`.
 
 ## Groups
 
+<Tabs>
+<TabItem value="Custom Claim (Open Source)" label="Custom Claim (Open Source)">
+
+### Custom Claim
+
 To authorize users based on their group membership (roles in Auth0), a claim can be added to the identity and access tokens with a [login action](https://auth0.com/docs/customize/actions).
 
 1. Create an action named `add groups` with the following code:
@@ -114,6 +119,38 @@ routes:
           and:
             - claim/pomerium.io/groups: admin
 ```
+
+</TabItem>
+<TabItem value="Directory Sync (Enterprise)" label="Directory Sync (Enterprise)">
+
+### Setting Up Directory Sync
+
+1. Create a **Machine to Machine Application**. A different application is used for grabbing roles to keep things more secure.
+
+   ![Auth Create Application Select Service Account Platform](./img/auth0/create-m2m.png)
+
+   Click **Create**.
+
+1. On the next page select **Auth0 Management API** from the dropdown. Under **Permissions** use the filter on the right to narrow things down to `role`, and choose the `read:roles` and `read:role_members` roles.
+
+   ![Auth0 Management API Scopes](./img/auth0/m2m-scopes.png)
+
+   Then click **Authorize**.
+
+1. Retrieve the **Client ID** and **Client Secret** from the **Settings** tab.
+
+### Configure Pomerium Enterprise Console
+
+Under **Settings → Identity Providers**, select "Auth0" as the identity provider and set the Client ID, Client Secret and Domain.
+
+![Auth0 Settings](./img/auth0/auth0-idp.png)
+
+[auth0]: https://auth0.com/
+[authenticate service url]: /docs/reference/authenticate-service-url
+[environmental variables]: https://en.wikipedia.org/wiki/Environment_variable
+
+</TabItem>
+</Tabs>
 
 [auth0]: https://auth0.com/
 [authenticate service url]: /docs/reference/authenticate-service-url

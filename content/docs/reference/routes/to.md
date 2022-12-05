@@ -2,14 +2,14 @@
 id: to
 title: To
 keywords:
-- reference
-- To
+  - reference
+  - To
 pagination_prev: null
 pagination_next: null
 ---
 
-
 # To
+
 - `yaml`/`json` setting: `to`
 - Type: `URL` or list of `URL`s (must contain a scheme and hostname) with an optional weight
 - Schemes: `http`, `https`, `tcp`
@@ -21,11 +21,11 @@ pagination_next: null
 ```yaml
 - from: https://example.com
   to:
-  - https://a.example.com
-  - https://b.example.com
+    - https://a.example.com
+    - https://b.example.com
 ```
 
-A load balancing weight may be associated with a particular upstream by appending `,[weight]` to the URL.  The exact behavior depends on your [`lb_policy`](/docs/reference/routes/load-balancing-policy) setting.  See [Load Balancing](/docs/topics/load-balancing) for example [configurations](/docs/topics/load-balancing#load-balancing-weight).
+A load balancing weight may be associated with a particular upstream by appending `,[weight]` to the URL. The exact behavior depends on your [`lb_policy`](/docs/reference/routes/load-balancing-policy) setting. See [Load Balancing](@site/content/docs/capabilities/load-balancing.md) for example [configurations](@site/content/docs/capabilities/load-balancing.md#load-balancing-weight).
 
 Must be `tcp` if `from` is `tcp+https`.
 
@@ -54,4 +54,3 @@ All requests to `https://verify.corp.example.com/*` will be forwarded to `https:
 Either `redirect` or `to` must be set.
 
 :::
-

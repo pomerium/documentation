@@ -2,9 +2,9 @@
 id: set-request-headers
 title: Set Request Headers
 keywords:
-- reference
-- Set Request Headers
-- set_request_headers
+  - reference
+  - Set Request Headers
+  - set_request_headers
 pagination_prev: null
 pagination_next: null
 ---
@@ -27,7 +27,7 @@ Set Request Headers allows you to set static values for given request headers. T
     # works auto-magically!
     # https://verify.corp.example.com/basic-auth/root/hunter42
     Authorization: Basic cm9vdDpodW50ZXI0Mg==
-    X-Your-favorite-authenticating-Proxy: "Pomerium"
+    X-Your-favorite-authenticating-Proxy: 'Pomerium'
 ```
 
 :::warning

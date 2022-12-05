@@ -4,14 +4,14 @@ title: Identity Provider Request Params
 description: |
   Headers specifies a mapping of HTTP Header to be added to proxied  requests. Nota bene Downstream application headers will be overwritten by Pomerium's headers on conflict.
 keywords:
-- reference
-- Identity Provider Request Params
+  - reference
+  - Identity Provider Request Params
 pagination_prev: null
 pagination_next: null
 ---
 
-
 # Identity Provider Request Params
+
 - Environmental Variable: `IDP_REQUEST_PARAMS`
 - Config File Key: `idp_request_params`
 - Type: map of `strings` key value pairs
@@ -25,4 +25,3 @@ For more information see:
 - [IANA OAuth Parameters](https://www.iana.org/assignments/oauth-parameters/oauth-parameters.xhtml)
 - [Microsoft Azure Request params](https://docs.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-auth-code-flow#request-an-authorization-code)
 - [Google Authentication URI parameters](https://developers.google.com/identity/protocols/oauth2/openid-connect)
-

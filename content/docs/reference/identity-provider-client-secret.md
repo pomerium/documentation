@@ -4,8 +4,8 @@ title: Identity Provider Client Secret
 description: |
   Client Secret is the OAuth 2.0 Secret Identifier retrieved from your identity provider.
 keywords:
-- reference
-- Identity Provider Client Secret
+  - reference
+  - Identity Provider Client Secret
 pagination_prev: null
 pagination_next: null
 ---

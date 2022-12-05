@@ -2,14 +2,14 @@
 id: metrics-certificate
 title: Metrics Certificate
 keywords:
-- reference
-- Metrics Certificate
+  - reference
+  - Metrics Certificate
 pagination_prev: null
 pagination_next: null
 ---
 
-
 # Metrics Certificate
+
 - Config File Key: `metrics_certificate` / `metrics_certificate_key`
 - Config File Key: `metrics_certificate_file` / `metrics_certificate_key_file`
 - Environmental Variable: `METRICS_CERTIFICATE` / `METRICS_CERTIFICATE_KEY`
@@ -19,4 +19,3 @@ pagination_next: null
 - Optional
 
 Certificates are the x509 _public-key_ and _private-key_ used to secure the metrics endpoint.
-
