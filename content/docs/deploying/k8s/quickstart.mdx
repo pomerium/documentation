@@ -72,14 +72,14 @@ job.batch/pomerium-gen-secrets created
 ingressclass.networking.k8s.io/pomerium created
 ```
 
-1. Add the certificate [created earlier](#certificates) and key to the cluster as a Secret:
+2. Add the certificate [created earlier](#certificates) and key to the cluster as a Secret:
 
 ```sh
 kubectl create secret tls pomerium-wildcard-tls --namespace=pomerium \
   --cert=./_wildcard.localhost.pomerium.io.pem --key=./_wildcard.localhost.pomerium.io-key.pem
 ```
 
-1. Define a Kubernetes secret to hold identity provider (**IdP**) credentials:
+3. Define a Kubernetes secret to hold identity provider (**IdP**) credentials:
 
 ```yaml title=idp-secret.yaml
 apiVersion: v1
@@ -95,7 +95,7 @@ stringData:
 
 The data required in this secret will depend on your [identity provider]. See the [Kubernetes Reference](/docs/identity-providers) page for all available keys, and cross-reference it with the requirements of your IdP.
 
-1. Provide this secret to the cluster:
+4. Provide this secret to the cluster:
 
 ```sh
 kubectl apply -f idp-secret.yaml
@@ -112,13 +112,11 @@ pomerium-controller-token-cckv5    kubernetes.io/service-account-token   3      
 pomerium-gen-secrets-token-4pdkd   kubernetes.io/service-account-token   3      99m
 ```
 
-1. Define the global Pomerium settings:
-
-{' '}
+5. Define the global Pomerium settings:
 
 <GlobalExample />
 
-1. Apply the global settings:
+6. Apply the global settings:
 
 ```sh
 kubectl apply -f pomerium.yaml
@@ -186,7 +184,7 @@ spec:
 
 Deploy it with `kubectl apply -f verify-service.yaml`
 
-1. Define an Ingress for the new service:
+2. Define an Ingress for the new service:
 
 ```yaml title=verify-ingress.yaml
 apiVersion: networking.k8s.io/v1
