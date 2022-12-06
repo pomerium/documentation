@@ -44,13 +44,48 @@ const sidebars = {
         },
 
         // Enterprise
-        'docs/capabilities/device-identity',
-        'docs/capabilities/enterprise-api',
-        'docs/capabilities/original-request-context',
-        'docs/capabilities/branding',
-        'docs/capabilities/metrics',
-        'docs/capabilities/reports',
-        'docs/capabilities/service-accounts',
+        {
+          id: 'docs/capabilities/device-identity',
+          className: 'enterprise',
+          type: 'doc',
+          label: 'Device Identity',
+        },
+        {
+          id: 'docs/capabilities/enterprise-api',
+          className: 'enterprise',
+          type: 'doc',
+          label: 'Management API',
+        },
+        {
+          id: 'docs/capabilities/original-request-context',
+          className: 'enterprise',
+          type: 'doc',
+          label: 'Original User Context',
+        },
+        {
+          id: 'docs/capabilities/branding',
+          className: 'enterprise',
+          type: 'doc',
+          label: 'Custom Branding / Errors',
+        },
+        {
+          id: 'docs/capabilities/metrics',
+          className: 'enterprise',
+          type: 'doc',
+          label: 'Metrics',
+        },
+        {
+          id: 'docs/capabilities/reports',
+          className: 'enterprise',
+          type: 'doc',
+          label: 'Reports',
+        },
+        {
+          id: 'docs/capabilities/service-accounts',
+          className: 'enterprise',
+          type: 'doc',
+          label: 'Service Accounts',
+        },
       ],
     },
     {
