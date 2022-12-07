@@ -153,10 +153,10 @@ In an actual client, you'll want to ensure that all the other claims values are 
 We currently maintain SDKs for the following languages:
 
 - [Go](https://github.com/pomerium/sdk-go)
+- [Nodejs/Typescript](https://github.com/pomerium/js-sdk)
 
 In the future, we will add implementations for:
 
-- Nodejs
 - Python
 - Java
 - .NET
