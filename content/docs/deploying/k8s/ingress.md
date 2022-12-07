@@ -507,7 +507,7 @@ See [Envoy Cluster Stats](https://www.envoyproxy.io/docs/envoy/latest/configurat
 
 ### View Event History
 
-Pomerium Ingress Controller will add **events** to the Ingress objects as it processes them, and updates the status section of [Pomerium CRD](/docs/internals/glossary#custom-resource-definition).
+Pomerium Ingress Controller will add **events** to the Ingress objects as it processes them, and updates the status section of [Pomerium CRD](./reference).
 
 ```bash
 kubectl describe pomerium/global

@@ -1,6 +1,7 @@
 ---
 title: Installation
 sidebar_label: Installation
+sidebar_position: 2
 description: This article describes installation and customization of the Ingress Controller deployment.
 ---
 
@@ -20,7 +21,11 @@ kubectl apply -f https://raw.githubusercontent.com/pomerium/ingress-controller/v
 
 The Pomerium Ingress Controller is now installed into your cluster.
 
-:::note You need complete [Global Configuration](./configure) for Pomerium to become fully operational, before you can [configure Ingress](./ingress). :::
+:::note
+
+You need complete [Global Configuration](./configure) for Pomerium to become fully operational, before you can [configure Ingress](./ingress).
+
+:::
 
 ## Metrics
 
@@ -54,7 +59,7 @@ The following resources are created:
 3. `pomerium-proxy` `Service` of type `LoadBalancer`, provisioning an external IP address, that listens on `:80` and `:443` ports. All HTTP requests are upgraded to HTTP requests.
 4. `pomerium-metrics` `Service` of type `ClusterIP`, accessible from within the cluster, exposing `/metrics` Prometheus-style metrics endpoint.
 5. `pomerium-gen-secrets` one-time `Job` that generates an initial set of boostrap secrets, and stores them into the `bootstrap` `Secret`.
-6. [Pomerium CRD](/docs/internals/glossary) definitions.
+6. [Pomerium CRD](./reference) definitions.
 7. RBAC rules.
 
 The default manifest may be rebuilt by running the below command in the [`pomerium/ingress-controller`](https://github.com/pomerium/ingress-controller/tree/main/config) repo.
@@ -141,7 +146,11 @@ In some cases, you may need to run multiple controllers, see this [community exa
 
 Some parameters are only set by default via command line arguments to the container.
 
-:::caution Before You Proceed Normally, you would not need to adjust the container runtime parameters. :::
+:::caution
+
+Normally, you would not need to adjust the container runtime parameters.
+
+:::
 
 - `debug`: enable debug logging.
 - `server-addr`: the address HTTPS server would bind to, `:8443` by default.
