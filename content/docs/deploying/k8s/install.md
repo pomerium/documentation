@@ -1,6 +1,7 @@
 ---
 title: Installation
 sidebar_label: Installation
+sidebar_position: 2
 description: This article describes installation and customization of the Ingress Controller deployment.
 ---
 
@@ -20,7 +21,11 @@ kubectl apply -f https://raw.githubusercontent.com/pomerium/ingress-controller/v
 
 The Pomerium Ingress Controller is now installed into your cluster.
 
-:::note You need complete [Global Configuration](./configure) for Pomerium to become fully operational, before you can [configure Ingress](./ingress). :::
+:::note
+
+You need complete [Global Configuration](./configure) for Pomerium to become fully operational, before you can [configure Ingress](./ingress).
+
+:::
 
 ## Metrics
 
