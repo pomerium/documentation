@@ -146,7 +146,11 @@ In some cases, you may need to run multiple controllers, see this [community exa
 
 Some parameters are only set by default via command line arguments to the container.
 
-:::caution Before You Proceed Normally, you would not need to adjust the container runtime parameters. :::
+:::caution
+
+Normally, you would not need to adjust the container runtime parameters.
+
+:::
 
 - `debug`: enable debug logging.
 - `server-addr`: the address HTTPS server would bind to, `:8443` by default.
