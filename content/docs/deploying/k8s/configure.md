@@ -10,7 +10,7 @@ Individual routes are configured via [Ingress](./ingress) objects.
 
 ## Configuration
 
-While Pomerium distributions for bare-metal installations are configured via a config file and/or environment variables, Pomerium distribution for Kubernetes should be configured via [Pomerium CRD](/docs/internals/glossary), that brings the following benefits:
+While Pomerium distributions for bare-metal installations are configured via a config file and/or environment variables, Pomerium distribution for Kubernetes should be configured via [Pomerium CRD](./reference), that brings the following benefits:
 
 - Supply sensitive parts of the configuration via Kubernetes `Secrets`.
 - Seamless configuration updates.
@@ -18,7 +18,7 @@ While Pomerium distributions for bare-metal installations are configured via a c
 - Centralized place to observe events.
 - `/status` endpoint posts `Ingress` status.
 
-The default installation uses [Pomerium Settings CRD](/docs/internals/glossary) named `global`. This is a cluster-wide resource. The below is a minimum configuration you need to set up.
+The default installation uses [Pomerium Settings CRD](./reference) named `global`. This is a cluster-wide resource. The below is a minimum configuration you need to set up.
 
 ```yaml
 apiVersion: ingress.pomerium.io/v1
@@ -46,7 +46,7 @@ Integration with your Identity Provider is configured using [`identityProvider`]
 
 ### Authenticate endpoint
 
-Each Pomerium installation has a special route that unauthenticated users are redirected to that handles sign-in via your Identity Provider. It is configured via the [`authenticate`](/docs/reference/authenticate-service-url) parameter.
+Each Pomerium installation has a special route that unauthenticated users are redirected to that handles sign-in via your Identity Provider. It is configured via the [`authenticate`](/docs/deploying/k8s/reference#authenticate) parameter of the [CRD](./reference#authenticate).
 
 The authenticate endpoint DNS address should resolve to an external IP address assigned by your Kubernetes Load Balancer to the `pomerium-proxy` service. If you use `external-dns`, that may be [done automatically](#external-dns).
 
@@ -54,7 +54,7 @@ The authenticate endpoint DNS address should resolve to an external IP address a
 
 You should not create a separate Ingress resource for the Authenticate URL.
 
-However, you should provision a matching certificate, and supply it via `certificates` section of the CRD.
+However, you should provision a matching certificate, and supply it via [`certificates`](./reference#spec) section of the CRD.
 
 :::
 
@@ -66,7 +66,7 @@ See a [dedicated Ingress guide](./ingress) for details on how to configure Pomer
 
 All Pomerium features are available in the Kubernetes deployment, except for `autocert`. Use [`cert-manager`](./ingress#cert-manager-integration) or other Kubernetes-native certificate solution instead.
 
-See [Configuration Reference](/docs/internals/glossary) for full description of all CRD configuration options.
+See [Configuration Reference](./reference) for full description of all CRD configuration options.
 
 ## Status
 
