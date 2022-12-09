@@ -122,7 +122,25 @@ You will be redirected to the route defined in `config.yaml`:
 
 <TabItem value="Enterprise" label="Enterprise">
 
-WIP: Add Enterprise steps
+In your Console, create a [policy](/docs/concepts/policies) that allows any authenticated user to access the route:
+
+1. Select **New Policy**
+2. Enter a **Name** for your policy (e.g. 'Allow anybody')
+3. Select **Builder**
+4. Select **Any Authenticated User**
+5. Save your policy
+
+In your Console, build a route:
+
+1. Select **Routes**
+2. Enter a **Name** for your route
+3. In the **From** field, enter a publicly accessible route (e.g. `code.localhost.pomerium.io`)
+4. In the **To** field, enter the local hostname for the server running code-server
+5. Select **Timeouts**
+6. Select **Allow Websockets**
+7. Under Policies, select **Allow anybody**
+8. Select **Pass identity headers to upstream applications**
+9. Save your route
 
 </TabItem>
 
