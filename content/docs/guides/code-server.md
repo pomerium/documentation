@@ -1,6 +1,6 @@
 ---
-title: Securing Visual Studio Code Server
-sidebar_label: code-server
+title: Code-server
+sidebar_label: Code-server
 lang: en-US
 keywords:
   [
@@ -14,52 +14,76 @@ keywords:
     coder,
     codercom,
   ]
-description: This guide covers how to add authentication and authorization to a hosted, fully, online instance of visual studio code.
+description: Learn how to add authentication and authorization to a hosted, online instance of Visual Studio Code using code-server.
 ---
 
-## Background
+# Code-server
 
-This guide covers using Pomerium to secure an instance of [code-server]. Pomerium is an identity-aware access proxy that can add single-sign-on / access control to any service, including Visual Studio Code.
+Use Pomerium to add authentication and authorization to a hosted, online instance of Visual Studio Code using code-server.
 
-### Visual Studio Code
+## What is code-server?
 
-[Visual Studio Code] is an open source code editor by Microsoft that has become [incredibly popular](https://insights.stackoverflow.com/survey/2019#technology-_-most-popular-development-environments) in the last few years. For many developers, [Visual Studio Code] hits the sweet spot between no frills editors like vim/emacs and full feature IDE's like Eclipse and IntelliJ. VS Code offers some of the creature comforts like intellisense, git integration, and plugins, while staying relatively lightweight.
+[Code-server](https://github.com/coder/code-server) is an open-source project that allows you to run [Visual Studio Code](https://code.visualstudio.com/) (VSCode) on a **remote** server through the browser.
 
-One of the interesting attributes of [Visual Studio Code] is that it is built on the [Electron](<https://en.wikipedia.org/wiki/Electron_(software_framework)>) framework which uses a headless instance of Chrome rendered as a desktop application. It didn't take long for folks to realize that if we already had this great IDE written in Javascript, it may be possible to make [Visual Studio Code] run remotely.
+VSCode is an open-source code editor by Microsoft that offers features like IntelliSense, git integration, and plugins, while staying relatively lightweight.
 
-> "Any application that can be written in JavaScript, will eventually be written in JavaScript." -- [Jeff Atwood](https://blog.codinghorror.com/the-principle-of-least-power/)
+## Integrate Pomerium with code-server
 
-### code-server
+This guide shows you how to secure code-server with Pomerium.
 
-[code-server] is an open-source project that allows you to run [Visual Studio Code] on a **remote** server, through the browser. For example, this is a screenshot taken at the end of this tutorial.
+By the end, you will be able to write code using VSCode in your browser:
 
-![visual studio code with pomerium](img/vscode/vscode-pomerium.png)
+![visual studio code with pomerium](./img/code-server/vscode-pomerium.png)
 
-## Pre-requisites
+### Set up your environment
 
-This guide assumes you have already completed one of the [install] guides, and have a working instance of Pomerium up and running. For purpose of this guide, we'll use [Docker Compose](https://docs.docker.com/compose/), though any other deployment method would work equally well.
+This guide uses the `config.yaml` and `docker-compose.yaml` files defined in the [Pomerium quickstart](https://www.pomerium.com/docs/install/quickstart) to deploy code-server.
 
-## Configure
+To complete this guide, you need:
 
-### Add A Route
+- [Docker Compose](https://docs.docker.com/compose/install/)
+- A preconfigured [identity provider (IdP)](https://www.pomerium.com/docs/identity-providers)
 
-Define a route in your Pomerium configuration file:
+:::tip **Note**
+
+This guide uses [GitHub](https://www.pomerium.com/docs/identity-providers/github) as the preconfigured IdP.
+
+:::
+
+### Configure Pomerium
+
+In your `config.yaml` file, add the following route:
 
 ```yaml
-routes:
-  - from: https://code.corp.example.com
-    to: http://codeserver:8080
-    policy:
-      - allow:
-          or:
-            - email:
-                is: user@example.com
-    allow_websockets: true
+# routes:
+#   - from: https://verify.localhost.pomerium.io
+#     to: http://verify:8000
+#     policy:
+#       - allow:
+#           or:
+#             - email:
+#                 is: user@example.com
+#     pass_identity_headers: true
+---
+- from: https://code.localhost.pomerium.io
+  to: http://codeserver:8080
+  policy:
+    - allow:
+        or:
+          - email:
+              is: user@example.com
+  allow_any_authenticated_user: true
+  allow_websockets: true
 ```
 
-In this example route, `code.corp.example.com` is the publicly accessible route for the route, and `codeserver` is the local hostname for the server or container running code-server.
+:::tip **Note**
 
-### Docker Compose
+In this example route, `code.localhost.pomerium.io` is the publicly accessible route. `codeserver` is the local hostname for the server or container running code-server.
+
+:::
+
+
+### Configure Docker Compose
 
 In the `services` section of your `docker-compose.yaml` file, add a block for code-server:
 
@@ -75,60 +99,50 @@ services:
     command: --auth none --disable-telemetry /home/coder/project
 ```
 
-### Apply and Test
+### Run Docker Compose
 
-1. Bring up your new code-server container. If you're already running your containers with Docker Compose in detached mode, you can apply changes with `docker-compose up -d`.
+To see if you configured your routes correctly:
 
-1. After saving your Pomerium configuration file, you may need to restart the docker Pomerium docker container. This is caused by issues with Docker recognizing timestamp updates for files in volume mounts.
+1. Run `docker-compose up`
+2. Navigate to `https://code.localhost.pomerium.io`
+3. Authorize Pomerium to access the account associated with your IdP
 
-1. Navigate to your domain (e.g. `https://code.corp.domain.example`).
+You will be redirected to the route defined in `config.yaml`:
 
-   ![visual studio code pomerium hello world](img/vscode/vscode-helloworld.png)
+![visual studio code pomerium hello world](./img/code-server/vscode-helloworld.png)
 
-## Develop Pomerium in Pomerium (Example)
+## Build a project in code-server
 
-As a final touch, now that we've done all this work we might as well use our new development environment to write some real, actual code. And what better project is there than Pomerium? 😉
+Test out code-server by building a quick front-end project.
 
-1. To build Pomerium, we must [install go](https://golang.org/doc/install) which is as simple as running the following commands in the [integrated terminal] :
+1. Create an `index.html` file and add the following code:
 
-   ```bash
-   # install dependencies with apt
-   sudo apt-get update && sudo apt-get install -y wget make zip
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Code-Server Sample</title>
+  </head>
+  <body>
+    <h1 style="color:blueviolet">Check out more from Pomerium:</h1>
+    <ul style="font-size: 20px;">
+      <li><a href="https://www.pomerium.com/docs/guides">Guides</a></li>
+      <li><a href="https://www.pomerium.com/blog/">Blog</a></li>
+      <li><a href="https://www.pomerium.com/docs">Documentation</a></li>
+    </ul>
+    <h2 style="color:blueviolet">Happy coding!</h2>
+  </body>
+</html>
+```
 
-   # download go
-   wget https://golang.org/dl/go1.16.4.linux-amd64.tar.gz
-   sudo tar -C /usr/local -xzf go1.16.4.linux-amd64.tar.gz
-   ```
+3. Go to **Extensions** and install [Live Server](https://marketplace.visualstudio.com/items?itemName=ritwickdey.LiveServer)
+4. Right-click `index.html` and select **Open with Live Server**
+5. Select any of the links to learn more about Pomerium
 
-1. Add Go to our [PATH] :
-
-   ```bash
-   # add the following to $HOME/.bashrc
-   export PATH=$PATH:/usr/local/go/bin
-   export PATH=$PATH:$(go env GOPATH)/bin
-   ```
-
-1. Reload [PATH] by opening the [integrated terminal] and sourcing the updated `.bashrc` file:
-
-   ```bash
-   source $HOME/.bashrc
-   ```
-
-1. Now that we've got Go all we need to go is grab the latest source and build:
-
-   ```bash
-   # get the latest source
-   git clone https://github.com/pomerium/pomerium.git
-
-   # build pomerium
-   cd pomerium
-   make build
-   # run pomerium!
-   ./bin/pomerium --version
-   # v0.14.0-28-g38a75913+38a75913
-   ```
-
-Happy remote hacking!!!😁
+Great job! You successfully deployed code-server.
 
 :::tip
 
@@ -136,7 +150,6 @@ When the code-server container is rebuilt, any files outside of `/home/coder/pro
 
 :::
 
-[integrated terminal]: https://code.visualstudio.com/docs/editor/integrated-terminal
 [path]: https://en.wikipedia.org/wiki/PATH_(variable)
 [install]: /docs/deploying/
 [synology nas]: /docs/guides/synology.md
