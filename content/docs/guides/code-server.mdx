@@ -38,7 +38,12 @@ By the end, you will be able to write code using VSCode in your browser:
 
 ![visual studio code with pomerium](img/vscode/vscode-pomerium.png)
 
+
 ### Set up your environment
+
+<Tabs>
+
+<TabItem value="Core" label="Core">
 
 This guide uses the `config.yaml` and `docker-compose.yaml` files defined in the [Pomerium quickstart](https://www.pomerium.com/docs/install/quickstart) to deploy code-server.
 
@@ -54,10 +59,6 @@ This guide uses [GitHub](https://www.pomerium.com/docs/identity-providers/github
 :::
 
 ### Configure Pomerium
-
-<Tabs>
-
-<TabItem value="Core" label="Core">
 
 In your `config.yaml` file, add the following route:
 
@@ -122,6 +123,14 @@ You will be redirected to the route defined in `config.yaml`:
 
 <TabItem value="Enterprise" label="Enterprise">
 
+This  guide shows you how to deploy code-server using Pomerium Enterprise. 
+
+To complete this guide, you need:
+- [Pomerium Core](https://www.pomerium.com/docs/releases/core)
+- [Pomerium Enterprise](https://www.pomerium.com/docs/releases/enterprise/install/quickstart#install-pomerium-enterprise)
+
+### Configure Pomerium
+
 In your Console, create a [policy](/docs/concepts/policies) that allows any authenticated user to access the route:
 
 1. Select **New Policy**
@@ -132,22 +141,32 @@ In your Console, create a [policy](/docs/concepts/policies) that allows any auth
 
 ![Edit 'Allow anybody' policy](img/code-server/code-server-edit-policy.png)
 
-In your Console, build a route:
+Build a route:
 
 1. Select **Routes** and enter a **Name**
 2. In the **From** field, enter the publicly accessible route (e.g. `code.localhost.pomerium.io`)
 3. In the **To** field, enter the local hostname for the server running code-server (e.g. `http://codeserver:8080`)
 
-Allow your route to create a WebSocket connection:
+Allow your route to create [Websocket connections](/docs/reference/routes/websocket-connections):
+
 1. Select **Timeouts**
 2. Select **Allow Websockets**
 
-Lastly, add a policy and allow your route to pass identity headers:
+Add a policy and allow your route to [pass identity headers](/docs/reference/routes/pass-identity-headers):
+
 1. Under **General** > **Policies**, select **Allow anybody**
 2. Select **Pass identity headers to upstream applications**
 3. Save your route
 
 ![Add policy and allow identity headers](img/code-server/code-server-build-route.png)
+
+### Test your routes
+
+To see if your routes are configured correctly, navigate to the externally accessible route you defined in the **From** field:
+
+`https://code.localhost.pomerium.io`
+
+![visual studio code pomerium hello world](img/vscode/vscode-helloworld.png)
 
 </TabItem>
 
