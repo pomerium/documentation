@@ -36,7 +36,7 @@ This guide shows you how to secure code-server with Pomerium.
 
 By the end, you will be able to write code using VSCode in your browser:
 
-<!-- ![visual studio code with pomerium](./img/code-server/vscode-pomerium.png) -->
+![visual studio code with pomerium](img/vscode/vscode-pomerium.png)
 
 ### Set up your environment
 
@@ -116,7 +116,7 @@ To see if you configured your routes correctly:
 
 You will be redirected to the route defined in `config.yaml`:
 
-<!-- ![visual studio code pomerium hello world](./img/code-server/vscode-helloworld.png) -->
+![visual studio code pomerium hello world](img/vscode/vscode-helloworld.png)
 
 </TabItem>
 
@@ -130,17 +130,24 @@ In your Console, create a [policy](/docs/concepts/policies) that allows any auth
 4. Select **Any Authenticated User**
 5. Save your policy
 
+![Edit 'Allow anybody' policy](img/code-server/code-server-edit-policy.png)
+
 In your Console, build a route:
 
-1. Select **Routes**
-2. Enter a **Name** for your route
-3. In the **From** field, enter a publicly accessible route (e.g. `code.localhost.pomerium.io`)
-4. In the **To** field, enter the local hostname for the server running code-server
-5. Select **Timeouts**
-6. Select **Allow Websockets**
-7. Under Policies, select **Allow anybody**
-8. Select **Pass identity headers to upstream applications**
-9. Save your route
+1. Select **Routes** and enter a **Name**
+2. In the **From** field, enter the publicly accessible route (e.g. `code.localhost.pomerium.io`)
+3. In the **To** field, enter the local hostname for the server running code-server (e.g. `http://codeserver:8080`)
+
+Allow your route to create a WebSocket connection:
+1. Select **Timeouts**
+2. Select **Allow Websockets**
+
+Lastly, add a policy and allow your route to pass identity headers:
+1. Under **General** > **Policies**, select **Allow anybody**
+2. Select **Pass identity headers to upstream applications**
+3. Save your route
+
+![Add policy and allow identity headers](img/code-server/code-server-build-route.png)
 
 </TabItem>
 
