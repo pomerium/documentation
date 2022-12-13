@@ -77,29 +77,58 @@ Here is what the code is doing:
 - `readers` and `writers` authorizes users to read and/or write to the TiddlyWiki server
 - `username` and `password` specify which user can access TiddlyWiki in a session; excluding these variables will result in a `401` error
 
-Run `docker-compose up`. You should notice the following behavior:
-
-- If you log in as `reader@example.com`, you can only read tiddlers
-- If you log in as `writer@example.com`, you can read and write tiddlers
-- If you log in as `user@example.com`, you will receive a 401 error 
+Run `docker-compose up`.
 
 
 <TabItem value="Enterprise" label="Enterprise">
 
-TODO: Add Enterprise steps
+In your Console, create a policy: 
+
+1. Enter a **Name** (e.g. 'Allow Authenticated Users')
+2. Select **Builder**, **ADD ALLOW BLOCK**
+3. Select **+** and add an **OR** operator
+4. Under the **Criteria** dropdown, select **Email**
+5. In the **Value** field, enter **reader@example.com**
+6. Select **+** and repeat step 5, but enter **writer@example.com** instead. 
+
+Save your policy. 
+
+![Build TiddlyWiki policy](img/tiddlywiki/tiddlywiki-policy-builder.png)
+
+
+Create a route:
+
+1. Enter a **Name** (e.g. 'TiddlyWiki')
+2. In the **From** field, enter the externally accessible URL (e.g. `https://wiki.localhost.pomerium.io`)
+3. In the **To** field, enter the host name (e.g. `http://tiddlywiki:8080`)
+4. Under **Policies**, select **Add Authenticated Users**
+5. Select **Pass Identity Headers**
+
+Save your route. 
+
+![Create TiddlyWiki route](img/tiddlywiki/tiddlywiki-route.png)
+
+Configure your settings to send JWT claims headers to the upstream application:
+
+1. Under **Settings**, select **Proxy**
+2. In the **Header Key** field, enter **X-Pomerium-claim**
+3. In the **JWT Claim** field, enter **Email**
+
+Save your settings. 
+
+![Configure settings](img/tiddlywiki/tiddlywiki-settings.png)
+
 
 </TabItem>
 
 </Tabs>
 
-### That's it
+### Test your routes
 
-Navigate to your TiddlyWiki instance (e.g. `https://wiki.example.local`) and log in:
+Navigate to your TiddlyWiki instance (e.g. `https://wiki.example.local`):
 
-- as reader1@example.com: user can read the wiki, but there is no create new tiddler button is show up.
-
-- as writer1@example.com: user can read the wiki and create new tiddlers.
-
-- as another email: pomerium displays a permission denied error.
+- If you log in as `reader@example.com`, you can only read tiddlers
+- If you log in as `writer@example.com`, you can read and write tiddlers
+- If you log in as `user@example.com`, you will receive a 401 error 
 
 [quick-start]: /docs/quickstart
