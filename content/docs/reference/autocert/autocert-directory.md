@@ -19,11 +19,11 @@ pagination_next: null
 - Type: `string` pointing to the path of the directory, or a URL to an S3 or GCS bucket.
 - Optional
 - Default:
-  - `/data/autocert` in published Pomerium docker images
+  - `/data/autocert` in published Pomerium Docker images
   - [$XDG_DATA_HOME](https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html)
   - `$HOME/.local/share/pomerium`
 
-Autocert directory is the path which autocert will store x509 certificate data.
+Autocert directory is the path which Autocert will store X.509 certificate data.
 
 ## S3 Bucket
 
