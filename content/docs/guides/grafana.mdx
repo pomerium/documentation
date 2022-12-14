@@ -19,39 +19,82 @@ description: This guide covers how to use Pomerium to authenticate and authorize
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
+# Grafana
+
+Learn how to use Pomerium to authenticate and authorize users of Grafana.
+
+## What is Grafana?
+
 [Grafana](https://grafana.com/) is an open-source analytics visualization and monitoring tool. It provides many user-contributed [Dashboards](https://grafana.com/grafana/dashboards/) that make it popular for enthusiasts as well as professionals.
 
-This guide will demonstrate how to secure an instance of Grafana behind Pomerium, and provide users with a seamless login to Grafana using your Identity Provider (**IdP**).
+This guide will demonstrate how to secure an instance of Grafana behind Pomerium, and provide users with a seamless login to Grafana using your identity provider.
 
-## Before You Begin
+## Set up Grafana
 
-This guide begins with the following steps assumed complete:
+This guide assumes you have administrator access to a working Grafana instance and write access to the [Grafana configuration file](https://grafana.com/docs/grafana/latest/setup-grafana/configure-grafana/).
 
-- A running instance of Pomerium. If you haven't already installed Pomerium, see our articles for installation on [Docker](/docs/quickstart), [Kubernetes](/docs/deploying/k8s/quickstart), or as an all-in-one [binary](/docs/releases/core).
-- Administrator access to a working Grafana instance, including write access to the config file `grafana.ini`, usually found in `/etc/grafana`.
+### Configure Grafana for JWT authentication
 
-This guide uses the following temporary values in commands and configuration examples, which will need to be adjusted for your setup:
+You need to configure Grafana to enable JWT authentication. This makes it possible for Grafana to accept identity claims sent upstream by Pomerium.  
 
-- `http://grafana:3000` - The path Pomerium will use to access Grafana. This example emulates a common Docker-based setup.
-- `http://grafana.local:3000` - The path to access the Grafana interface from your local computer. Depending on your desired configuration, you may need direct access to add at least one user before Pomerium is configured.
-- `https://grafana.localhost.pomerium.io` - The path to access Grafana through Pomerium. Change this to match the domain space Pomerium is configured in.
-
-## Enable JWT Authentication in Grafana
-
-Edit `grafana.ini` to configure [JWT authentication]. Replace `auth.localhost.pomerium.io` with the value of [`authenticate_service_url`] in your Pomerium configuration:
+In your `grafana.ini` file, make the following changes:
 
 ```ini title="grafana.ini"
 [auth]
-signout_redirect_url = https://grafana.localhost.pomerium.io/.pomerium/sign_out ; signs users out of Pomerium when they sign out from Grafana
+signout_redirect_url = https://grafana.localhost.pomerium.io/.pomerium/sign_out
 [auth.jwt]
-enabled = true ;enables authentication by JWT
-header_name = X-Pomerium-Jwt-Assertion ;defines the header to look at to provide the JWT
-email_claim = email ;associates the email_claim in the JWT with the email of the Grafana user
-jwk_set_url = https://auth.localhost.pomerium.io/.well-known/pomerium/jwks.json ;URL to the signing key to validate the JWT
-cache_ttl = 60m ;sets a 60 minute cache time for the token
+enabled = true
+header_name = X-Pomerium-Jwt-Assertion
+email_claim = email
+jwk_set_url = https://auth.localhost.pomerium.io/.well-known/pomerium/jwks.json
+cache_ttl = 60m
 ```
 
+:::tip **Note**
+
+In `jwk_set_url`, replace `auth.localhost.pomerium.io` with the value of [`authenticate_service_url`] in your Pomerium configuration. See the Pomerium Core [quick-start] guide for more information.
+
+:::
+
+Under `[auth]`:
+- `signout_redirect_url` signs users out of Pomerium when they sign out of grafana
+
+Under `[auth.jwt]`:
+- `enabled = true` enables JWT authentication (Grafana disables it by default)
+- `header_name = X-Pomerium-Jwt-Assertion` tells Grafana which HTTP header to look for the JWT (see [Identity Verification] for more information)
+- `email_claim` associates the `email_claim` in the JWT with the email of the Grafana user
+- `jwk_set_url` defines the URL with the signing key to validate the JWT
+- `cache_ttl` sets a 60-minute cache time for the token
+
 Once you've saved and exited the file, restart Grafana.
+
+## Configure Pomerium
+
+<Tabs>
+
+<TabItem value="Core" label="Core">
+
+To configure Pomerium Core, you need:
+
+- [Docker](https://www.docker.com/) and [Docker Compose](https://docs.docker.com/compose/install/)
+- A preconfigured [identity provider](/docs/identity-providers) (IdP)
+
+:::tip **Note**
+
+This guide uses [GitHub](/docs/identity-providers/github) as the preconfigured IdP, but you can use any supported IdP. 
+
+:::
+
+
+
+</TabItem>
+<TabItem value="Enterprise" label="Enterprise">
+
+TODO: Add Enterprise steps and screenshots
+
+</TabItem>
+
+</Tabs>
 
 ## Add Users to Grafana
 
@@ -260,4 +303,6 @@ cache_ttl = 60m
 [expired dst r3 root]: https://letsencrypt.org/docs/dst-root-ca-x3-expiration-september-2021/
 [global users]: https://grafana.com/docs/grafana/latest/http_api/admin/#global-users
 [ingress-cert-manager]: /docs/deploying/k8s/ingress.md#cert-manager-integration
-[jwt authentication]: https://grafana.com/docs/grafana/latest/auth/jwt/
+[JWT authentication]: https://grafana.com/docs/grafana/v9.0/setup-grafana/configure-security/configure-authentication/jwt/
+[Identity Verification]: /docs/capabilities/getting-users-identity
+[quick-start]: /docs/quickstart
