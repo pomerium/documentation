@@ -25,7 +25,6 @@ jobs:
       - name: Build PR Branch
         run: |
           yarn && yarn build
-          pwd
           cp ./build/docs/sitemap.xml new-sitemap.xml
 
       - name: Checkout Main
@@ -36,7 +35,7 @@ jobs:
       - name: Build Main Branch
         run: |
           yarn && yarn build
-          cp ../../build/docs/sitemap.xml old-sitemap.xml
+          cp ./build/docs/sitemap.xml old-sitemap.xml
 
       - name: Do the diff
         uses: LouisBrunner/diff-action@v0.2.0
