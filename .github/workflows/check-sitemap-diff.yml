@@ -38,12 +38,20 @@ jobs:
           cp ./build/docs/sitemap.xml old-sitemap.xml
 
       - name: Do the diff
+        id: diff
         uses: LouisBrunner/diff-action@v0.2.0
         with:
           old: old-sitemap.xml
           new: new-sitemap.xml
           mode: deletion
-          tolerance: same
-          token: ${{ steps.generate_token.outputs.token }}
-          notify_issue: true
+          tolerance: mixed-worse
+          output: diff.txt
+
+      - name: Comment
+        uses: github-actions-up-and-running/pr-comment@v1.0.0
+        if: ${{ cat diff.txt }}
+        with:
+          repo-token: ${{ steps.generate_token.outputs.token }}
+          message: ${{ cat diff.txt }}
+
 
