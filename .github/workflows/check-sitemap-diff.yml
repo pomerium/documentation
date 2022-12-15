@@ -1,6 +1,6 @@
 name: Check SiteMap Diff
 on:
-  pull_request:
+  push:
 
 jobs:
   check-sitemap-diff:
@@ -25,7 +25,8 @@ jobs:
       - name: Build PR Branch
         run: |
           yarn && yarn build
-          cp ../../build/docs/sitemap.xml new-sitemap.xml
+          pwd
+          cp ./build/docs/sitemap.xml new-sitemap.xml
 
       - name: Checkout Main
         uses: actions/checkout@v3
