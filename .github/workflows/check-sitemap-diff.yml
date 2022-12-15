@@ -1,0 +1,48 @@
+name: Check SiteMap Diff
+on:
+  pull_request:
+
+jobs:
+  check-sitemap-diff:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Generate token
+        id: generate_token
+        uses: tibdex/github-app-token@f717b5ecd4534d3c4df4ce9b5c1c2214f0f7cd06
+        with:
+          app_id: ${{ secrets.BACKPORT_APP_APPID }}
+          private_key: ${{ secrets.BACKPORT_APP_PRIVATE_KEY }}
+
+      - name: Set up Node.js
+        uses: actions/setup-node@8c91899e586c5b171469028077307d293428b516
+        with:
+          node-version: 18.x
+
+      - name: Checkout Pull Request Branch
+        uses: actions/checkout@v3
+
+      - name: Build PR Branch
+        run: |
+          yarn && yarn build
+          cp ../../build/docs/sitemap.xml new-sitemap.xml
+
+      - name: Checkout Main
+        uses: actions/checkout@v3
+        with:
+          path: main
+
+      - name: Build Main Branch
+        run: |
+          yarn && yarn build
+          cp ../../build/docs/sitemap.xml old-sitemap.xml
+
+      - name: Do the diff
+        uses: LouisBrunner/diff-action@v0.2.0
+        with:
+          old: old-sitemap.xml
+          new: new-sitemap.xml
+          mode: deletion
+          token: ${{ steps.generate_token.outputs.token }}
+          notify_issue: true
+
