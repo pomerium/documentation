@@ -106,7 +106,11 @@ databroker_storage_key_file: /tls/client.key
 databroker_storage_ca_file: /tls/ca.pem
 ```
 
-:::tip the second `s` in `rediss` is intentional and turns on TLS support :::
+:::tip 
+
+  the second `s` in `rediss` is intentional and turns on TLS support 
+
+:::
 
 ## Troubleshooting
 

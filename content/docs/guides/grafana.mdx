@@ -69,11 +69,19 @@ Further down in this guide we'll go over Grafana's `auto_sign_up` option to crea
 
    ![The users option under the server admin menu](img/grafana-server-admin-users.png)
 
-   :::caution This is distinct from the **Users** option under the cog wheel (**Configuration**), which will only finalize a new user when they accept an invite via email or link. :::
+  :::caution
+
+    This is distinct from the **Users** option under the cog wheel (**Configuration**), which will only finalize a new user when they accept an invite via email or link.
+
+  :::
 
 1. Click the **New user** button to create a new user. Make sure that the email address matches the one provided by Pomerium via your IdP.
 
-   :::tip You can access the special endpoint `/.pomerium` from any Pomerium route to view the data provided by Pomerium in the JWT. :::
+   :::tip
+
+      You can access the special endpoint `/.pomerium` from any Pomerium route to view the data provided by Pomerium in the JWT.
+
+    :::
 
 After creating a new user in Grafana, that user should be logged in automatically when they access Grafana from the Pomerium route (after first authenticating with your IdP, of course).
 
@@ -151,7 +159,11 @@ Once the new route is applied, users can access Grafana from `https://grafana.lo
 
 ### Manage Access at Scale
 
-:::tip Note Ensure that Grafana is up to date to take advantage of `auto_sign_up`, as it is only available for JWT as of version 8.4.0. :::
+:::tip
+
+Note Ensure that Grafana is up to date to take advantage of `auto_sign_up`, as it is only available for JWT as of version 8.4.0.
+
+:::
 
 The steps outlined above work to confirm the configuration for small teams, but adding users individually and manually does not scale for larger organizations. To add users to Grafana at scale, you can use the Grafana's `auto_sign_up`configuration to auto-signup users as they log in:
 
@@ -202,7 +214,9 @@ extraEnv:
 
 This configuration will allow seamless authentication and authorization without any additional toil for your team.
 
-:::tip Tip for Google Users When using Google as an IdP, the user field is populated by a numeric value that you can not configure. Note that Grafana can accept the `name` field as a username, including spaces:
+:::tip
+
+Tip for Google Users When using Google as an IdP, the user field is populated by a numeric value that you can not configure. Note that Grafana can accept the `name` field as a username, including spaces:
 
 ```abnf
 username_claim = name
