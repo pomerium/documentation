@@ -135,59 +135,59 @@ Mac and Linux users can use DNSMasq to map the `*.localhost.pomerium.io` domain 
                                cluster: egress-httpbin
                                auto_host_rewrite: true
                    http_filters:
-                    - name: envoy.filters.http.jwt_authn
-                      typed_config:
-                        '@type': type.googleapis.com/envoy.extensions.filters.http.jwt_authn.v3.JwtAuthentication
-                        providers:
-                          pomerium:
-                           issuer: authenticate.localhost.pomerium.io
-                           audiences:
-                             - httpbin.localhost.pomerium.io
-                           from_headers:
-                             - name: X-Pomerium-Jwt-Assertion
-                           remote_jwks:
-                             http_uri:
-                               uri: https://authenticate.localhost.pomerium.io/.well-known/pomerium/jwks.json
-                               cluster: egress-authenticate
-                               timeout: 1s
-                        rules:
-                          - match:
-                            prefix: /
-                            requires:
-                             provider_name: pomerium
-                    - name: envoy.filters.http.router
-   clusters:
-     - name: egress-httpbin
-       connect_timeout: 0.25s
-       type: STRICT_DNS
-       lb_policy: ROUND_ROBIN
-       load_assignment:
-         cluster_name: httpbin
-         endpoints:
-           - lb_endpoints:
-               - endpoint:
-                   address:
-                     socket_address:
-                       address: httpbin
-                       port_value: 80
-     - name: egress-authenticate
-       connect_timeout: '0.25s'
-       type: STRICT_DNS
-       lb_policy: ROUND_ROBIN
-       load_assignment:
-         cluster_name: authenticate
-         endpoints:
-           - lb_endpoints:
-               - endpoint:
-                   address:
-                     socket_address:
-                       address: pomerium
-                       port_value: 443
-       transport_socket:
-         name: tls
-         typed_config:
-           '@type': type.googleapis.com/envoy.extensions.transport_sockets.tls.v3.UpstreamTlsContext
-           sni: authenticate.localhost.pomerium.io
+                     - name: envoy.filters.http.jwt_authn
+                       typed_config:
+                         '@type': type.googleapis.com/envoy.extensions.filters.http.jwt_authn.v3.JwtAuthentication
+                         providers:
+                           pomerium:
+                             issuer: authenticate.localhost.pomerium.io
+                             audiences:
+                               - httpbin.localhost.pomerium.io
+                             from_headers:
+                               - name: X-Pomerium-Jwt-Assertion
+                             remote_jwks:
+                               http_uri:
+                                 uri: https://authenticate.localhost.pomerium.io/.well-known/pomerium/jwks.json
+                                 cluster: egress-authenticate
+                                 timeout: 1s
+                         rules:
+                           - match:
+                               prefix: /
+                             requires:
+                               provider_name: pomerium
+                     - name: envoy.filters.http.router
+     clusters:
+       - name: egress-httpbin
+         connect_timeout: 0.25s
+         type: STRICT_DNS
+         lb_policy: ROUND_ROBIN
+         load_assignment:
+           cluster_name: httpbin
+           endpoints:
+             - lb_endpoints:
+                 - endpoint:
+                     address:
+                       socket_address:
+                         address: httpbin
+                         port_value: 80
+       - name: egress-authenticate
+         connect_timeout: '0.25s'
+         type: STRICT_DNS
+         lb_policy: ROUND_ROBIN
+         load_assignment:
+           cluster_name: authenticate
+           endpoints:
+             - lb_endpoints:
+                 - endpoint:
+                     address:
+                       socket_address:
+                         address: pomerium
+                         port_value: 443
+         transport_socket:
+           name: tls
+           typed_config:
+             '@type': type.googleapis.com/envoy.extensions.transport_sockets.tls.v3.UpstreamTlsContext
+             sni: authenticate.localhost.pomerium.io
    ```
 
    This configuration pulls the JWT out of the `X-Pomerium-Jwt-Assertion` header, verifies the `iss` and `aud` claims and checks the signature via the public key defined at the `jwks.json` endpoint. Documentation for additional configuration options is available here: [Envoy JWT Authentication](https://www.envoyproxy.io/docs/envoy/latest/configuration/http/http_filters/jwt_authn_filter#config-http-filters-jwt-authn).
