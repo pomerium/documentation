@@ -151,7 +151,7 @@ The remaining annotations are specific to or behave differently than they do whe
 
 | Annotation | Description |
 | --- | --- |
-| `ingress.pomerium.io/kubernetes_service_account_token` | Name of a Kubernetes `token` Secret containing a [Kubernetes Service Account Token](/docs/reference/routes/kubernetes-service-account-token). |
+| `ingress.pomerium.io/kubernetes_service_account_token_secret` | Name of a Kubernetes Secret containing a [Kubernetes Service Account Token](/docs/reference/routes/kubernetes-service-account-token) in a `token` key. |
 | `ingress.pomerium.io/path_regex` | When set to `"true"` enables path regex matching. See the [Regular Expressions Path Matching](#regular-expressions-path-matching) section for more information. |
 | `ingress.pomerium.io/secure_upstream` | When set to `"true"`, use `https` when connecting to the upstream endpoint. |
 | `ingress.pomerium.io/set_request_headers_secret` | Name of Kubernetes Secret containing the contents of the request header to send upstream. When used, `ingress.pomerium.io/set_request_headers` should not contain overlapping keys. |
