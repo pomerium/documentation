@@ -27,6 +27,10 @@ head -c32 /dev/urandom | base64
 shared_secret_file: '/run/secrets/POMERIUM_SHARED_SECRET'
 ```
 
-:::tip If you adjust your shared secret and/or how it's accessed by Pomerium, you may create a [secret mismatch](/docs/internals/troubleshooting#redis-secret-mismatch). :::
+:::tip
+
+If you adjust your shared secret and/or how it's accessed by Pomerium, you may create a [secret mismatch](/docs/internals/troubleshooting#redis-secret-mismatch).
+
+:::
 
 [shared_secret]: ./shared-secret
