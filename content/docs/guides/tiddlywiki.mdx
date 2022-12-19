@@ -35,7 +35,6 @@ Pomerium can forward specific user session data to upstream applications. In the
 
 <TabItem value="Core" label="Core">
 
-
 To complete this guide, you need:
 
 - [Docker](https://www.docker.com/)
@@ -72,6 +71,7 @@ Add the following code in your `docker-compose.yaml` file:
 <DockerCompose />
 
 Here is what the code is doing:
+
 - `mywiki --listen host=0.0.0.0` starts the TiddlyWiki server, and maps ports `0.0.0.0` and `8080`
 - `authenticated-user-header=x-pomerium-claim-email` enables Tiddlywiki to receive the user's email address from Pomerium
 - `readers` and `writers` authorizes users to read and/or write to the TiddlyWiki server
@@ -82,19 +82,18 @@ Run `docker-compose up`.
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
 
-In your Console, create a policy: 
+In your Console, create a policy:
 
 1. Enter a **Name** (e.g. 'Allow Authenticated Users')
 2. Select **Builder**, **ADD ALLOW BLOCK**
 3. Select **+** and add an **OR** operator
 4. Under the **Criteria** dropdown, select **Email**
 5. In the **Value** field, enter **reader@example.com**
-6. Select **+** and repeat step 5, but enter **writer@example.com** instead. 
+6. Select **+** and repeat step 5, but enter **writer@example.com** instead.
 
-Save your policy. 
+Save your policy.
 
 ![Build TiddlyWiki policy](img/tiddlywiki/tiddlywiki-policy-builder.png)
-
 
 Create a route:
 
@@ -104,7 +103,7 @@ Create a route:
 4. Under **Policies**, select **Add Authenticated Users**
 5. Select **Pass Identity Headers**
 
-Save your route. 
+Save your route.
 
 ![Create TiddlyWiki route](img/tiddlywiki/tiddlywiki-route.png)
 
@@ -114,10 +113,9 @@ Configure your settings to send JWT claims headers to the upstream application:
 2. In the **Header Key** field, enter **X-Pomerium-Claim**
 3. In the **JWT Claim** field, enter **Email**
 
-Save your settings. 
+Save your settings.
 
 ![Configure settings](img/tiddlywiki/tiddlywiki-settings.png)
-
 
 </TabItem>
 
@@ -129,6 +127,6 @@ Navigate to your TiddlyWiki instance (e.g. `https://wiki.example.local`) and log
 
 - If you log in as `reader@example.com`, you can only read tiddlers
 - If you log in as `writer@example.com`, you can read and write tiddlers
-- If you log in as `user@example.com`, you will receive a 401 error 
+- If you log in as `user@example.com`, you will receive a 401 error
 
 [quick-start]: /docs/quickstart
