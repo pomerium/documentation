@@ -86,6 +86,12 @@ const sidebars = {
           type: 'doc',
           label: 'Service Accounts',
         },
+        {
+          id: 'docs/capabilities/high-availability',
+          className: 'enterprise',
+          type: 'doc',
+          label: 'High Availability',
+        },
       ],
     },
     {
