@@ -27,8 +27,10 @@ services:
       - --listen
       - host=0.0.0.0
       - authenticated-user-header=x-pomerium-claim-email
-      - readers=reader1@example.com
-      - writers=writer1@example.com
+      - readers=reader@example.com
+      - writers=writer@example.com
+      - username=<reader/writer@example.com>
+      - password=password
     depends_on:
       - tiddlywiki_init
 ```
