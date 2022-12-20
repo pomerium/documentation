@@ -3,12 +3,16 @@ title: Securing TiddlyWiki on Node.js
 sidebar_label: TiddlyWiki
 lang: en-US
 keywords: [pomerium, identity access proxy, wiki, tiddlywiki]
-description: This guide covers how to add authentication and authorization to a hosted, fully, online instance of TiddlyWiki.
+description: This guide covers how to add authentication and authorization to a hosted online instance of TiddlyWiki.
 ---
 
 import DockerCompose from '../../examples/tiddlywiki/docker-compose.yaml.md';
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
 
-This guide covers using Pomerium to add authentication and authorization to an instance of [TiddlyWiki on NodeJS](https://tiddlywiki.com/static/TiddlyWiki%2520on%2520Node.js.html).
+# TiddlyWiki
+
+Learn how to add authentication and authorization to an instance of [TiddlyWiki on NodeJS](https://tiddlywiki.com/static/TiddlyWiki%2520on%2520Node.js.html) with Pomerium.
 
 ## What is TiddlyWiki on Node.js
 
@@ -17,19 +21,30 @@ TiddlyWiki is a personal wiki and a non-linear notebook for organizing and shari
 - a single HTML page
 - [a Node.js application](https://www.npmjs.com/package/tiddlywiki)
 
-We are using the Node.js application in this guide.
+You will use the Node.js application in this guide.
 
-## Where Pomerium fits
+## Authentication with Pomerium
 
-TiddlyWiki allows a simple form of authentication by using authenticated-user-header parameter of [listen command](https://tiddlywiki.com/static/ListenCommand.html). Pomerium provides the ability to login with well-known [identity providers](/docs/identity-providers#identity-provider-configuration).
+TiddlyWiki allows you to authenticate users with the authenticated-user-header parameter of [listen command](https://tiddlywiki.com/static/ListenCommand.html). Pomerium provides the ability to login with well-known [identity providers](/docs/identity-providers#identity-provider-configuration) (IdP).
 
-## Pre-requisites
+Pomerium can forward specific user session data to upstream applications. In the case of this guide, Pomerium will forward the email associated with your IdP to TiddlyWiki.
 
-This guide assumes you have already completed one of the [quick start] guides, and have a working instance of Pomerium up and running. For purpose of this guide, We will use docker-compose, though any other deployment method would work equally well.
+## Set up your environment
 
-## Configure
+<Tabs>
 
-### Pomerium Config
+<TabItem value="Core" label="Core">
+
+To complete this guide, you need:
+
+- [Docker](https://www.docker.com/)
+- [Docker Compose](https://docs.docker.com/compose/install/)
+
+Refer to the [quick-start] guide for more information on how to run Pomerium Core with Docker and Docker Compose.
+
+### Configure Pomerium
+
+Add the following code in your `config.yaml` file:
 
 ```yaml title="config.yaml"
 jwt_claims_headers: email
@@ -40,23 +55,78 @@ routes:
       - allow:
           or:
             - email:
-                is: reader1@example.com
+                is: reader@example.com
             - email:
-                is: writer1@example.com
+                is: writer@example.com
 ```
 
-### Docker-compose
+The [`jwt_claims_header`](/docs/reference/jwt-claim-headers) forwards the email associated with your IdP in the HTTP request header to TiddlyWiki.
+
+In the policy above, the emails specified (`reader@example.com` and `writer@example.com`) will be forwarded to TiddlyWiki.
+
+### Configure Docker-Compose
+
+Add the following code in your `docker-compose.yaml` file:
 
 <DockerCompose />
 
-### That's it
+Here is what the code is doing:
 
-Navigate to your TiddlyWiki instance (e.g. `https://wiki.example.local`) and log in:
+- `mywiki --listen host=0.0.0.0` starts the TiddlyWiki server, and maps ports `0.0.0.0` and `8080`
+- `authenticated-user-header=x-pomerium-claim-email` enables Tiddlywiki to receive the user's email address from Pomerium
+- `readers` and `writers` authorizes users to read and/or write to the TiddlyWiki server
+- `username` and `password` specify which user can access TiddlyWiki in a session; excluding these variables will result in a `401` error
 
-- as reader1@example.com: user can read the wiki, but there is no create new tiddler button is show up.
+Run `docker-compose up`.
 
-- as writer1@example.com: user can read the wiki and create new tiddlers.
+</TabItem>
+<TabItem value="Enterprise" label="Enterprise">
 
-- as another email: pomerium displays a permission denied error.
+In your Console, create a policy:
 
-[quick start]: /docs/quickstart
+1. Enter a **Name** (e.g. 'Allow Authenticated Users')
+2. Select **Builder**, **ADD ALLOW BLOCK**
+3. Select **+** and add an **OR** operator
+4. Under the **Criteria** dropdown, select **Email**
+5. In the **Value** field, enter **reader@example.com**
+6. Select **+** and repeat step 5, but enter **writer@example.com** instead.
+
+Save your policy.
+
+![Build TiddlyWiki policy](img/tiddlywiki/tiddlywiki-policy-builder.png)
+
+Create a route:
+
+1. Enter a **Name** (e.g. 'TiddlyWiki')
+2. In the **From** field, enter the externally accessible URL (e.g. `https://wiki.localhost.pomerium.io`)
+3. In the **To** field, enter the host name (e.g. `http://tiddlywiki:8080`)
+4. Under **Policies**, select **Add Authenticated Users**
+5. Select **Pass Identity Headers**
+
+Save your route.
+
+![Create TiddlyWiki route](img/tiddlywiki/tiddlywiki-route.png)
+
+Configure your settings to send JWT claims headers to the upstream application:
+
+1. Under **Settings**, select **Proxy**
+2. In the **Header Key** field, enter **X-Pomerium-Claim**
+3. In the **JWT Claim** field, enter **Email**
+
+Save your settings.
+
+![Configure settings](img/tiddlywiki/tiddlywiki-settings.png)
+
+</TabItem>
+
+</Tabs>
+
+### Test your routes
+
+Navigate to your TiddlyWiki instance (e.g. `https://wiki.example.local`) and log in using the following usernames:
+
+- If you log in as `reader@example.com`, you can only read tiddlers
+- If you log in as `writer@example.com`, you can read and write tiddlers
+- If you log in as `user@example.com`, you will receive a 401 error
+
+[quick-start]: /docs/quickstart
