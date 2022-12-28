@@ -184,10 +184,8 @@ For more examples and detailed usage information, see [TCP Support](/docs/capabi
 
 ## Advanced Configuration
 
-If Pomerium is listening on a port other than `443` (set with the [`address` key](/docs/reference/address)), the `pomerium-url` flag (CLI) or "Pomerium URL" field (GUI) is required. This specifies the address and port for the client to communicate over, while the standard URL defines the port assignment for the specific route. For example:
+If Pomerium is listening on a port other than `443` (set with the [`address` key](/docs/reference/address)), the full TCP URL can be specified with a bastion host:
 
 ```bash
-pomerium-cli tcp ssh.localhost:pomerium.io:2222 \
-   --pomerium-url https://ssh.localhost.pomerium.io:8443 \
-   --listen :2222
+pomerium-cli tcp tcp+https://ssh.localhost:pomerium.io:8443/ssh.localhost.pomerium.io:2222 --listen :2222
 ```

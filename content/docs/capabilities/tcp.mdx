@@ -90,15 +90,21 @@ You may specify an optional address and port for the `tcp` command to listen on.
 
 `-` specifies that STDIN and STDOUT should be directly attached to the remote TCP connection. This is useful for [SSH](tcp/examples/ssh#tunnel-and-connect-simultaneously) or for sending data through a shell pipe.
 
-### Custom URL
+### Bastion Host
 
-If the Pomerium proxy is not reachable through port `443` or the route is not in external DNS, you can specify a custom URL:
+If the Pomerium proxy is not reachable through port `443` or the route is not in external DNS, you can use Pomerium as a bastion host using the extended TCP URL syntax in your route definition:
 
-```bash
-pomerium-cli tcp --pomerium-url https://pomerium.corp.example.com:8443 redis.corp.example.com:6379
+```yaml
+from: tcp+https://proxy.corp.example.com:8443/redis.internal.example.com:6379
 ```
 
-The command above connects to `https://pomerium.corp.example.com:8443` and then requests the TCP route for `redis.corp.example.com:6379`.
+And then using the same URL in the pomerium-cli command invocation:
+
+```bash
+pomerium-cli tcp tcp+https://proxy.corp.example.com:8443/redis.internal.example.com:6379
+```
+
+The command above connects to `https://pomerium.corp.example.com:8443` and then requests the TCP route for `redis.internal.example.com:6379`.
 
 ## Service-Specific Documentation
 
