@@ -1,4 +1,6 @@
 ---
+# cSpell:ignore serviceaccount
+
 id: kubernetes-service-account-token
 title: Kubernetes Service Account Token
 keywords:

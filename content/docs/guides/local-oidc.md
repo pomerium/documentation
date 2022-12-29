@@ -1,4 +1,6 @@
 ---
+# cSpell:ignore qlik identityprovider
+
 title: Local OIDC Provider
 lang: en-US
 keywords: [pomerium, identity access proxy, oidc, identity provider, idp]
@@ -21,7 +23,7 @@ services:
       - COOKIE_SECRET=<redacted>
     volumes:
       # Mount your domain's certificates : https://www.pomerium.com/docs/reference/certificates
-      - ./_wildcard.localhost.pomerium.io-key.pem:/pomerium/privkey.pem:ro
+      - ./_wildcard.localhost.pomerium.io-key.pem:/pomerium/private-key.pem:ro
       - ./_wildcard.localhost.pomerium.io.pem:/pomerium/cert.pem:ro
       # Mount your config file : https://www.pomerium.com/docs/reference/
 
@@ -62,7 +64,7 @@ authenticate_service_url: https://authenticate.localhost.pomerium.io
 autocert: false
 
 certificate_file: /pomerium/cert.pem
-certificate_key_file: /pomerium/privkey.pem
+certificate_key_file: /pomerium/private-key.pem
 
 idp_provider_url: http://identityprovider:9000
 idp_provider: oidc

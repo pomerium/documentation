@@ -22,7 +22,7 @@ services:
     environment:
       PASSWORD_ACCESS: "true"
       USER_PASSWORD: supersecret
-      USER_NAME: myuser
+      USER_NAME: user
 
   pgsql:
     image: postgres

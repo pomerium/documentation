@@ -3,21 +3,22 @@
 # resources to avoid being billed.
 # For reference, this tutorial cost ~10 cents for a couple of hours.
 # NOTE! You must change the identity provider client secret setting in your config file!
+# cSpell:ignore fullchain
 
 echo "=> creating cluster"
 gcloud container clusters create pomerium --num-nodes 3 --region us-west2
 
-echo "=> get cluster credentials so we can use kubctl locally"
+echo "=> get cluster credentials so we can use kubectl locally"
 gcloud container clusters get-credentials pomerium --region us-west2
 
 echo "=> create config from kubernetes-config.yaml which we will mount"
 kubectl create configmap config --from-file="config.yaml"="kubernetes-config.yaml"
 
-echo "=> create our random shared-secret and cookie-secret keys as envars"
+echo "=> create our random shared-secret and cookie-secret keys as env vars"
 kubectl create secret generic shared-secret --from-literal=shared-secret=$(head -c32 /dev/urandom | base64)
 kubectl create secret generic cookie-secret --from-literal=cookie-secret=$(head -c32 /dev/urandom | base64)
 
-echo "=> initiliaze secrets for TLS wild card for service use"
+echo "=> initialize secrets for TLS wild card for service use"
 kubectl create secret generic certificate \
 	--from-literal=certificate=$(base64 -i "$HOME/.acme.sh/*.corp.beyondperimeter.com_ecc/fullchain.cer")
 kubectl create secret generic certificate-key \

@@ -22,7 +22,7 @@ helm install \
     --set minio.install=true \
     --set installCRD=false \
     argo argo/argo
-kubectly apply \
+kubectl apply \
     --namespace kube-system \
     --file https://raw.githubusercontent.com/argoproj/argo/master/manifests/base/crds/workflow-crd.yaml
 ```

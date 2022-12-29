@@ -1,4 +1,6 @@
 ---
+# cSpell:ignore serviceaccount someuser
+
 title: Securing Kubernetes Dashboard
 sidebar_label: Kubernetes Dashboard
 lang: en-US

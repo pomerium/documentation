@@ -2,7 +2,7 @@
 id: identity-provider-client-secret-file
 title: Identity Provider Client Secret File
 description: |
-  File path containting the Client Secret, the OAuth 2.0 Secret Identifier retrieved from your identity provider.
+  File path containing the Client Secret, the OAuth 2.0 Secret Identifier retrieved from your identity provider.
 keywords:
   - reference
   - Identity Provider Client Secret File

@@ -10,7 +10,7 @@ services:
       # files in your config.yaml file that will mount on your Docker container.      #
       #################################################################################
       # - ./_wildcard.localhost.pomerium.io.pem:/pomerium/cert.pem:ro
-      # - ./_wildcard.localhost.pomerium.io-key.pem:/pomerium/privkey.pem:ro
+      # - ./_wildcard.localhost.pomerium.io-key.pem:/pomerium/private-key.pem:ro
 
       ## Mount your config file : https://www.pomerium.com/docs/reference/
       - ./config.yaml:/pomerium/config.yaml:ro

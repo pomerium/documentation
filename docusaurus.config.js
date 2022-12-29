@@ -51,8 +51,8 @@ const config = {
   themeConfig: {
     image: 'docs/img/logo.svg',
     algolia: {
-      appId: process.env.ALGOALIA_APPID,
-      apiKey: process.env.ALGOLIA_APIKEY,
+      appId: process.env.ALGOLIA_APPID,
+      apiKey: process.env.ALGOLIA_APIKEY, // cSpell:ignore APIKEY
       indexName: process.env.INDEX_NAME,
       contextualSearch: false,
       searchPagePath: false,
@@ -184,7 +184,7 @@ const config = {
   ],
 };
 
-if (!process.env.ALGOALIA_APPID) {
+if (!process.env.ALGOLIA_APPID) {
   delete config.themeConfig.algolia;
 }
 

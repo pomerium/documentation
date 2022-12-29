@@ -1,4 +1,6 @@
 ---
+# cSpell:ignore sysaccounts
+
 title: FreeIPA with Dex
 description: This article describes how to connect Pomerium to third-party identity providers / single-sign-on services. You will need to generate keys, copy these into your Pomerium settings, and enable the connection.
 pagination_prev: null
@@ -27,9 +29,9 @@ _Flow with the diagram_
 
 _Here is our flow for accessing nextcloud service_
 
-1. User access https://hello.YOURDOMAIN.dev
+1. User access https://hello.YOUR_DOMAIN.dev
 
-2. It will be redirected to the https://authenticate.YOURDOMAIN.dev (which is pomerium's authenticate service url)
+2. It will be redirected to the https://authenticate.YOUR_DOMAIN.dev (which is pomerium's authenticate service url)
 
 3. Pomerium's authenticate service will redirect this to check at oidc provider( in our case DEX).
 
@@ -44,15 +46,15 @@ Now to implement this flow we have configured static dex client `pom` with pomer
 ```yaml
 connectors:
       - config:
-          bindDN: uid=dex,cn=sysaccounts,cn=etc,dc=YOURDOMAIN,dc=dev
+          bindDN: uid=dex,cn=sysaccounts,cn=etc,dc=YOUR_DOMAIN,dc=dev
           bindPW: mN****tG****
-          host: freeipa.YOURDOMAIN.dev:636
+          host: freeipa.YOUR_DOMAIN.dev:636
           insecureNoSSL: false
           insecureSkipVerify: true
 
           # (Group Search )
           groupSearch:
-            baseDN: cn=groups,cn=accounts,dc=YOURDOMAIN,dc=dev
+            baseDN: cn=groups,cn=accounts,dc=YOUR_DOMAIN,dc=dev
             filter: "(|(objectClass=posixGroup)(objectClass=group))"
             userAttr: DN # Use "DN" here not "uid"
             groupAttr: member
@@ -60,7 +62,7 @@ connectors:
 
           # (User Search)
           userSearch:
-            baseDN: cn=users,cn=accounts,dc=YOURDOMAIN,dc=dev
+            baseDN: cn=users,cn=accounts,dc=YOUR_DOMAIN,dc=dev
             emailAttr: mail
             filter: ""
             idAttr: uidNumber
@@ -71,7 +73,7 @@ connectors:
         id: ldap
         name: FreeIPA/LDAP
         type: ldap
-      issuer: http://dex.YOURDOMAIN.dev
+      issuer: http://dex.YOUR_DOMAIN.dev
       logger:
         level: debug
       oauth2:
@@ -85,7 +87,7 @@ connectors:
         name: pom
         redirectURIs:
         # (pomerium authenticate service url)
-        - https://authenticate.YOURDOMAIN.dev/oauth2/callback
+        - https://authenticate.YOUR_DOMAIN.dev/oauth2/callback
         secret: pomerium
 
 ```
@@ -97,17 +99,17 @@ Below is configuration which supposed to be done in Pomerium
 ```yaml
 config:
   # routes under this wildcard domain are handled by pomerium
-  rootDomain: YOURDOMAIN.dev
+  rootDomain: YOUR_DOMAIN.dev
 
   policy:
     # (give any name instead of hello, this will be the proxy url to access the particular service)
-    - from: https://hello.YOURDOMAIN.dev
+    - from: https://hello.YOUR_DOMAIN.dev
       # (give fqdn of the actual service which is being authenticated, here I am giving nextcloud service endpoint, which is running in nextcloud namespace)
       to: http://nextcloud.nextcloud.svc.cluster.local:8080
 
       # allowed_domains:
       #(in general give here your domain)
-      #   - YOURDOMAIN.dev
+      #   - YOUR_DOMAIN.dev
 
       # (If you want to give access to particular group members, I have tested this by creating devops group and members in that group, in freeipa)
       allowed_groups:
@@ -129,14 +131,14 @@ extraEnv:
 
 authenticate:
   # (This we have set in dex's static client also remember! should be same)
-  redirectUrl: 'https://authenticate.YOURDOMAIN.dev/oauth2/callback'
+  redirectUrl: 'https://authenticate.YOUR_DOMAIN.dev/oauth2/callback'
 
   idp:
     provider: oidc
     clientID: pom
     clientSecret: pomerium
     # (your dex url)
-    url: http://dex.YOURDOMAIN.dev
+    url: http://dex.YOUR_DOMAIN.dev
     scopes: 'openid profile email groups offline_access'
     # (for group based access policy)
     serviceAccount: 'pomerium-authenticate'

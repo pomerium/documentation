@@ -14,7 +14,7 @@ $HOME/.acme.sh/acme.sh \
 	--dns \
 	--yes-I-know-dns-manual-mode-enough-go-ahead-please
 
-read -p "press anykey once you've updated your TXT entries"
+read -p "press any key once you've updated your TXT entries"
 
 $HOME/.acme.sh/acme.sh \
 	--renew \

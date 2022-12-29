@@ -6,8 +6,8 @@ cookie_secret: YVFTMIfW8yBJw+a6sYwdW8rHbU+IAAV/SUkCTg9Jtpo=
 shared_secret: 80ldlrU2d7w+wVpKNfevk6fmb8otEx6CqOfshj2LwhQ=
 
 idp_provider: "google"
-idp_client_id: REPLACEME
-idp_client_secret: REPLACEME
+idp_client_id: REPLACE_ME
+idp_client_secret: REPLACE_ME
 
 insecure_server: true
 forward_auth_url: http://fwdauth.localhost.pomerium.io

@@ -1,4 +1,6 @@
 ---
+# cSpell:ignore Diskstation webserver
+
 title: Synology
 lang: en-US
 keywords: [pomerium, identity access proxy, synology, docker, dsm, nas]

@@ -14,7 +14,7 @@ pagination_next: null
 - Type: `enum`
 - Optional
 
-In presence of multiple upstreams, defines load balancing strategy between them.
+In presence of multiple upstream servers, defines load balancing strategy between them.
 
 See [Envoy documentation](https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/cluster/v3/cluster.proto#envoy-v3-api-enum-config-cluster-v3-cluster-lbpolicy) for more details.
 
