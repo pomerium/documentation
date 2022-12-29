@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pomerium-console
+spec:
+  template:
+    spec:
+      containers:
+        - name: pomerium-console
+          ports:
+            - name: app
+              containerPort: 8701
+              protocol: TCP
+            - name: grpc-api
+              containerPort: 8702
+              protocol: TCP
+            - name: metrics
+              containerPort: 9092
+              protocol: TCP
