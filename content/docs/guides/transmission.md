@@ -69,7 +69,7 @@ Don't forget to switch your terminal prompt to the Transmission host before cont
 
 :::
 
-1. If you don't already have the Transmission daemon installed, install it through your distro's package manager. The commands to install and configure Transmission below assume a Debian-based Linux distribution, but can be adapted for any Linux distro:
+1. If you don't already have the Transmission daemon installed, install it through your distribution's package manager. The commands to install and configure Transmission below assume a Debian-based Linux distribution, but can be adapted for any Linux distribution:
 
    ```bash
    sudo apt update && sudo apt install transmission-daemon
@@ -98,7 +98,7 @@ Don't forget to switch your terminal prompt to the Transmission host before cont
    - Enable and configure the RPC Host whitelist. This ensures that the service will only work when accessed from the domain defined in Pomerium's `config.yaml` file (the `policy.from` key). This helps to mitigate DNS hijacking attack vectors:
 
      ```json
-     "rpc-host-whitelist": "<transmission.mydomain.com>",
+     "rpc-host-whitelist": "<transmission.example.com>",
      "rpc-host-whitelist-enabled": true,
      ```
 
@@ -119,7 +119,7 @@ You should now be able to authenticate and access your Transmission daemon remot
 
 ![The Transmission web interface, secured with Pomerium](img/transmission-demo.png)
 
-In addition to the lock symbol in your browser's address bar, you can go to `<transmission.mydomain.com>/.pomerium` to view and confirm your session details.
+In addition to the lock symbol in your browser's address bar, you can go to `<transmission.example.com>/.pomerium` to view and confirm your session details.
 
 [transmission]: https://transmissionbt.com/
 [quick start]: /docs/quickstart

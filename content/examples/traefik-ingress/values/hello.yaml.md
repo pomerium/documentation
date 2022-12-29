@@ -1,3 +1,6 @@
+---
+# cSpell:ignore middlewares kubernetescrd
+---
 ```yaml
 ingress:
   enabled: true

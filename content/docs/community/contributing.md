@@ -59,7 +59,7 @@ Doing so will create a [fork](https://help.github.com/en/articles/fork-a-repo) o
 
 If you need to add a new page, or would like greater control over the editing process you can edit the docs similar to how you would make changes to the source code.
 
-#### Pre-reqs
+#### Pre-requisites
 
 We use [VuePress](https://vuepress.vuejs.org) to generate our docs. Vuepress is a simple, [markdown](https://v1.vuepress.vuejs.org/config/#markdown) and [Vue.js](https://v1.vuepress.vuejs.org/config/#markdown) based static site generator. Before building the docs, you'll need to install the following pre-requisites.
 

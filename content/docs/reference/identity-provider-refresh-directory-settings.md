@@ -16,7 +16,7 @@ pagination_next: null
 - Example: `IDP_REFRESH_DIRECTORY_INTERVAL=30m`
 - Defaults: `IDP_REFRESH_DIRECTORY_INTERVAL=10m` `IDP_REFRESH_DIRECTORY_TIMEOUT=1m`
 
-Refresh directory interval is the time that pomerium will sync your IDP diretory, while refresh directory timeout is the maximum time allowed each run.
+Refresh directory interval is the time that pomerium will sync your IDP directory, while refresh directory timeout is the maximum time allowed each run.
 
 :::warning
 

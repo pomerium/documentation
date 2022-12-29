@@ -1,4 +1,6 @@
 ---
+# cSpell:ignore exampledomain ingressnamespace ingressname
+
 title: Ingress Configuration
 sidebar_label: Ingress
 lang: en-US
@@ -74,13 +76,13 @@ Most configuration keys in non-Kubernetes deployments can be specified as annota
 
 :::note
 
-Kubernetes object annotations are a **string map** and `Ingress` annotation value has to be a YAML string in quotemarks. Pomerium would parse the value of the annotation string to decode the desired format.
+Kubernetes object annotations are a **string map** and `Ingress` annotation value has to be a YAML string in quote marks. Pomerium would parse the value of the annotation string to decode the desired format.
 
 <details>
   <summary>Representing JSON objects</summary>
   <div>
 
-Some parameters are objects. Use single quotemarks to escape their string representation.
+Some parameters are objects. Use single quote marks to escape their string representation.
 
 ```yaml
 apiVersion: networking.k8s.io/v1
@@ -156,7 +158,7 @@ The remaining annotations are specific to or behave differently than they do whe
 | `ingress.pomerium.io/secure_upstream` | When set to `"true"`, use `https` when connecting to the upstream endpoint. |
 | `ingress.pomerium.io/set_request_headers_secret` | Name of Kubernetes Secret containing the contents of the request header to send upstream. When used, `ingress.pomerium.io/set_request_headers` should not contain overlapping keys. |
 | `ingress.pomerium.io/set_response_headers_secret` | Name of Kubernetes Secret containing the contents of the response header to send downstream. When used, `ingress.pomerium.io/set_response_headers` should not contain overlapping keys. |
-| `ingress.pomerium.io/service_proxy_upstream` | When set to `"true"` forces Pomerium to connect to upstreams through the k8s service proxy, and not individual endpoints. <br/> This is useful when deploying Pomerium inside a service mesh. |
+| `ingress.pomerium.io/service_proxy_upstream` | When set to `"true"` forces Pomerium to connect to upstream servers through the k8s service proxy, and not individual endpoints. <br/> This is useful when deploying Pomerium inside a service mesh. |
 | `ingress.pomerium.io/tcp_upstream` | When set to `"true"`, defines the route as supporting a TCP tunnel. See the [example below](#tcp-endpoints) for more information. |
 | `ingress.pomerium.io/tls_client_secret` | Name of Kubernetes `tls` Secret containing a [client certificate][tls_client_certificate] for connecting to the upstream. |
 | `ingress.pomerium.io/tls_custom_ca_secret` | Name of Kubernetes `tls` Secret containing a custom [CA certificate][`tls_custom_ca_secret`] for the upstream. |
@@ -248,7 +250,7 @@ If you have Ingresses with potentially overlapping host/path combinations, Pomer
 3. Descending by `regex`.
 4. Descending by `prefix`.
 
-This sorting order helps ensure that more restrictive routes for specific paths and regexes are applied correctly.
+This sorting order helps ensure that more restrictive routes for specific paths and regular expressions are applied correctly.
 
 ### Regular Expressions Path Matching
 
@@ -346,7 +348,7 @@ Unlike a standalone Pomerium configuration, you may not create multiple TCP rout
 
 ### Service Proxy
 
-For performance reasons, by default, Pomerium routes traffic directly to the referenced Service's Endpoints, bypassing Kubernetes service proxy. If you would like to disable this behaviour, i.e. you are deploying Pomerium inside a service mesh such as Istio, set the following annotation to the Ingress:
+For performance reasons, by default, Pomerium routes traffic directly to the referenced Service's Endpoints, bypassing Kubernetes service proxy. If you would like to disable this behavior, i.e. you are deploying Pomerium inside a service mesh such as Istio, set the following annotation to the Ingress:
 
 ```yaml
 ingress.pomerium.io/service_proxy_upstream: 'true'

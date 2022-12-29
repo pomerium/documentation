@@ -1,4 +1,6 @@
 ---
+# cSpell:ignore abnf
+
 title: Securing Grafana with Pomerium
 sidebar_label: Grafana
 lang: en-US
@@ -38,13 +40,13 @@ This guide will demonstrate how to secure an instance of Grafana behind Pomerium
 To complete this guide, you need:
 
 - [Docker](https://www.docker.com/) and [Docker Compose](https://docs.docker.com/compose/install/)
-- A preconfigured [identity provider](/docs/identity-providers) (IdP)
+- A pre-configured [identity provider](/docs/identity-providers) (IdP)
 
 See the Pomerium [quick-start] guide to run Pomerium in a containerized Docker environment.
 
 :::tip **Note**
 
-This guide uses [GitHub](/docs/identity-providers/github) as the preconfigured IdP, but you can use any supported IdP.
+This guide uses [GitHub](/docs/identity-providers/github) as the pre-configured IdP, but you can use any supported IdP.
 
 :::
 
@@ -184,7 +186,7 @@ Under `[auth]`:
 Under `[auth.jwt]`:
 
 - `enabled = true`: enables JWT authentication (Grafana disables it by default)
-- `header_name = X-Pomerium-Jwt-Assertion`: tells Grafana which HTTP header to look for the JWT (see [Identity Verification] for more infor mation) `header_name = X-Pomerium-Jwt-Assertion`: tells Grafana which HTTP header to look at for the JWT (see [Identity Verification] for more in formation)
+- `header_name = X-Pomerium-Jwt-Assertion`: tells Grafana which HTTP header to look for the JWT (see [Identity Verification] for more information) `header_name = X-Pomerium-Jwt-Assertion`: tells Grafana which HTTP header to look at for the JWT (see [Identity Verification] for more in formation)
 - `email_claim`: associates the `email_claim` in the JWT with the email of the Grafana user
 - `jwk_set_url`: defines the URL with the signing key to validate the JWT
 - `cache_ttl`: sets a 60-minute cache time for the token
@@ -239,7 +241,7 @@ Ensure that Grafana is up to date to take advantage of `auto_sign_up`, as it is 
 
 :::
 
-The steps outlined above work to confirm the configuration for small teams, but adding users individually and manually does not scale for larger organizations. To add users to Grafana at scale, you can use the Grafana's `auto_sign_up`configuration to auto-signup users as they log in:
+The steps outlined above work to confirm the configuration for small teams, but adding users individually and manually does not scale for larger organizations. To add users to Grafana at scale, you can use the Grafana's `auto_sign_up` configuration to auto sign up users as they log in:
 
 ```ini
 [auth]

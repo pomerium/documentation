@@ -2,7 +2,7 @@
 echo "=> create config from kubernetes-config.yaml which we will mount"
 kubectl create configmap config --from-file="config.yaml"="kubernetes-config.yaml"
 
-echo "=> create our random shared-secret and cookie-secret keys as envars"
+echo "=> create our random shared-secret and cookie-secret keys as env vars"
 kubectl create secret generic shared-secret --from-literal=shared-secret=$(head -c32 /dev/urandom | base64)
 kubectl create secret generic cookie-secret --from-literal=cookie-secret=$(head -c32 /dev/urandom | base64)
 

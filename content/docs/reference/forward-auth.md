@@ -1,4 +1,6 @@
 ---
+# cSpell:ignore signin entrypoints forwardedheaders middlewares forwardauth
+
 id: forward-auth
 title: Forward Auth
 description: |

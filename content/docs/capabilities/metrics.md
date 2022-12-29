@@ -1,4 +1,6 @@
 ---
+# cSpell:ignore XPOST tsdb
+
 title: Configure Metrics
 sidebar_label: Metrics
 description: Use Prometheus as a metrics data store.
@@ -24,7 +26,7 @@ For production deployments, we suggest using a dedicated Prometheus instance.
 
    The example above has Pomerium providing metrics at port `9999` on an IP address reachable by the Pomerium Console service.
 
-   If you're running Pomerium Enterprise in a distributed environment where the IP address is not known at the time of deployment, you can use the resolvable FQDN of the Pomerium host (`pomerium0.internal.mycompany.com`, for example), or override this key with the environment variable `METRICS_ADDRESS`. We do not recommend exposing this endpoint to public traffic as it can contain potentially sensitive information.
+   If you're running Pomerium Enterprise in a distributed environment where the IP address is not known at the time of deployment, you can use the resolvable FQDN of the Pomerium host (`pomerium0.internal.example.com`, for example), or override this key with the environment variable `METRICS_ADDRESS`. We do not recommend exposing this endpoint to public traffic as it can contain potentially sensitive information.
 
 1. In the Pomerium Enterprise `pomerium-enterprise-config.yaml`, define the `metrics_addr` key to a network interface and/or port. For example:
 

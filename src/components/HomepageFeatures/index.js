@@ -42,6 +42,7 @@ const FeatureList = [
 ];
 
 function Feature({title, description, path, icon}) {
+  // cSpell:ignore horiz
   return (
     <div className={clsx('col col--4')}>
       <div className="text--center">

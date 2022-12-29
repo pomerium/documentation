@@ -1,3 +1,6 @@
+---
+# cSpell:ignore fwdauth authredirect
+---
 ```nginx
 # Protected application
 server {

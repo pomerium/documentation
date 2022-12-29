@@ -1,3 +1,6 @@
+---
+# cSpell:ignore containo
+---
 ```yaml
 apiVersion: traefik.containo.us/v1alpha1
 kind: Middleware

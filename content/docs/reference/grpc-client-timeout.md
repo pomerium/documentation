@@ -15,4 +15,4 @@ pagination_next: null
 - Type: [Go Duration](https://golang.org/pkg/time/#Duration.String) `string`
 - Default: `10s`
 
-Maximum time before canceling an upstream gRPC request. During transient failures, the proxy will retry upstreams for this duration. You should leave this high enough to handle backend service restart and rediscovery so that client requests do not fail.
+Maximum time before canceling an upstream gRPC request. During transient failures, the proxy will retry upstream servers for this duration. You should leave this high enough to handle backend service restart and rediscovery so that client requests do not fail.

@@ -3,10 +3,10 @@ authenticate_service_url: https://authenticate.localhost.pomerium.io
 certificates:
   - cert: /pomerium/cert.pem
     key: /pomerium/key.pem
-shared_secret: CHANGEME
-cookie_secret: CHANGEME
-idp_client_id: CHANGEME
-idp_client_secret: CHANGEME
+shared_secret: CHANGE_ME
+cookie_secret: CHANGE_ME
+idp_client_id: CHANGE_ME
+idp_client_secret: CHANGE_ME
 idp_provider: google
 routes:
   - from: tcp+https://redis.localhost.pomerium.io:6379

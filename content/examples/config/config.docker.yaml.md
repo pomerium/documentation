@@ -7,11 +7,11 @@ authenticate_service_url: https://authenticate.localhost.pomerium.io
 
 ####################################################################################
 # Certificate settings: https://www.pomerium.com/docs/reference/certificates       #
-# You do not need to generate your own certificates. We auto-generate and populate # 
+# You do not need to generate your own certificates. We auto-generate and populate #
 # the certificate variables below with an X.509 public and private key.            #
 ####################################################################################
 # certificate_file: /pomerium/cert.pem
-# certificate_key_file: /pomerium/privkey.pem
+# certificate_key_file: /pomerium/private-key.pem
 
 ##################################################################################
 # Identity provider settings : https://www.pomerium.com/docs/identity-providers/ #

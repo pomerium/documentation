@@ -1,3 +1,6 @@
+---
+# cSpell:ignore zonefile envsubst secretmanager vals gcpsecrets
+---
 ```bash title="deploy.sh"
 #!/bin/bash
 

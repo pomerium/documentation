@@ -1,4 +1,6 @@
 ---
+# cSpell:ignore cm9vdDpodW50ZXI0Mg
+
 id: set-request-headers
 title: Set Request Headers
 keywords:

@@ -1,14 +1,14 @@
 ---
 title: Upstream Load Balancing
 sidebar_label: Load Balancing
-description: This article covers Pomerium built-in load balancing capabilities in presence of multiple upstreams.
+description: This article covers Pomerium built-in load balancing capabilities in presence of multiple upstream servers.
 ---
 
 # Upstream Load Balancing
 
-This article covers Pomerium built-in load balancing capabilities in presence of multiple upstreams.
+This article covers Pomerium built-in load balancing capabilities in presence of multiple upstream servers.
 
-## Multiple Upstreams
+## Multiple Upstream Servers
 
 You may specify multiple servers for your upstream application, and Pomerium would load balance user requests between them.
 
@@ -22,7 +22,7 @@ routes:
 
 :::tip
 
-In the presence of multiple upstreams, make sure to specify either an active or passive health check, or both, to avoid requests being served to an unhealthy backend.
+In the presence of multiple upstream servers, make sure to specify either an active or passive health check, or both, to avoid requests being served to an unhealthy backend.
 
 :::
 
@@ -112,7 +112,7 @@ When a list of upstream URLs is specified in the `to` field, you may append an o
 
 ### Example
 
-This configuration uses the default `round_robin` load balancer policy but specifies different frequency of selection be applied to the upstreams.
+This configuration uses the default `round_robin` load balancer policy but specifies different frequency of selection be applied to the upstream servers.
 
 ```yaml
 routes:

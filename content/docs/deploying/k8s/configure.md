@@ -1,4 +1,6 @@
 ---
+# cSpell:ignore wcztn
+
 title: Global Configuration
 sidebar_label: Configuration
 description: This article describes global configuration options.

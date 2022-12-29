@@ -1,4 +1,6 @@
 ---
+# cSpell:ignore secp256r1
+
 title: Cryptography
 lang: en-US
 keywords: [pomerium, security, disclosure, vulnerabilities]
@@ -8,7 +10,7 @@ keywords: [pomerium, security, disclosure, vulnerabilities]
 
 ## Summary
 
-Pomerium uses cryptography to secure data in transit, at rest, and to provide guarantees around confidentiality, authenticity, and integrity between its services and upstreams it manages access for.
+Pomerium uses cryptography to secure data in transit, at rest, and to provide guarantees around confidentiality, authenticity, and integrity between its services and upstream servers it manages access for.
 
 ## Encryption at rest
 

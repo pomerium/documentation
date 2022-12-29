@@ -27,7 +27,7 @@ const sidebars = {
         'docs/capabilities/authorization',
         'docs/capabilities/ppl',
         'docs/capabilities/routing',
-        // 2ndary capabilities
+        // secondary capabilities
         'docs/capabilities/audit-logs',
         'docs/capabilities/mtls-clients',
         'docs/capabilities/mtls-services',
@@ -158,8 +158,8 @@ const sidebars = {
           className: 'enterprise',
           type: 'doc',
           label: 'Zenefits',
-        }
-      ]
+        },
+      ],
     },
     {
       type: 'category',

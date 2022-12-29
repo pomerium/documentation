@@ -1,4 +1,6 @@
 ---
+# cSpell:ignore freebind
+
 id: envoy-bootstrap-options
 title: Envoy Bootstrap Options
 keywords:

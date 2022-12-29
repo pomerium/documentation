@@ -20,7 +20,7 @@ Helm installation is deprecated and is not recommended for new deployments. Plea
 
 Pomerium Enterprise requires:
 
-- An accessible RDBMS. We support PostgreSQL 9+.
+- An accessible SQL database. We support PostgreSQL 9+.
   - A database and user with full permissions for it.
 - A certificate management solution. This page will assume a store of certificates using [cert-manager] as the solution. If you use another certificate solution, adjust the steps accordingly.
 - An existing Pomerium installation. If you don't already have open-source Pomerium installed in your cluster, see [Pomerium using Helm] before you continue.
@@ -73,7 +73,7 @@ This setup assumes an existing certificate solution using cert-manager, as descr
          - allow:
              or:
                - domain:
-                   is: companydomain.com
+                   is: example.com
        pass_identity_headers: true
    ```
 
@@ -108,7 +108,7 @@ This setup assumes an existing certificate solution using cert-manager, as descr
    database:
      type: pg
      username: pomeriumDbUser
-     password: IAMASTRONGPASSWORDLOOKATME
+     password: PASSWORD
      host: 198.51.100.53
      name: pomeriumDbName
      sslmode: require
@@ -118,7 +118,7 @@ This setup assumes an existing certificate solution using cert-manager, as descr
      administrators: 'youruser@yourcompany.com' #This is a hard-coded access, remove once setup is complete
      signingKey: 'ZZZZZZZ' #This base64-encoded key is shared with open-source Pomerium
      audience: console.localhost.pomerium.com # This should match the "from" value in your Pomerium route, excluding protocol.
-     licenseKey: 'XXXYYYYZZZZ' # This should be provided by your account team.
+     licenseKey: 'LICENSE_KEY' # This should be provided by your account team.
    tls:
      existingCASecret: pomerium-tls
      caSecretKey: ca.crt
