@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: enterprise
+data:
+  # should match authenticate service URL from Pomerium Settings CRD
+  authenticate_service_url: https://authenticate.domain.com/
+  # audience should correspond to the name in the ingress you created for the console
+  # without the protocol part
+  audience: console.domain.com
+  # administrators is a comma separated list of emails that would be granted admin privileges
+  # only use it for bootstrapping, and grant explicit permissions via the UI to the Global namespace
+  administrators: me@domain.com
+  # databroker service URL allows Console to communicate to Pomerium
+  databroker_service_url: http://pomerium-databroker.pomerium.svc.cluster.local:5443
+  # external Prometheus service URL, to enable metrics.
+  # see https://www.pomerium.com/docs/deploying/k8s/install#metrics
+  # prometheus_url: ""
