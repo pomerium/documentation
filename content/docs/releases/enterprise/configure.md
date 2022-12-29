@@ -113,7 +113,7 @@ If true, instructs browsers to only send user session cookies over HTTPS.
 
 :::warning
 
-Setting this to false may result in session cookies being sent in cleartext.
+Setting this to false may result in session cookies being sent in clear text.
 
 :::
 

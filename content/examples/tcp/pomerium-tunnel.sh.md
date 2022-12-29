@@ -1,10 +1,10 @@
 ```bash
 #!/bin/bash
-scriptname="$(basename $0)"
+script_name="$(basename $0)"
 
 if [ $# -lt 3 ]
  then
-    echo "Usage: $scriptname start | stop  POMERIUM_ROUTE LOCAL_PORT"
+    echo "Usage: $script_name start | stop  POMERIUM_ROUTE LOCAL_PORT"
     exit
 fi
 

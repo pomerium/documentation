@@ -1,4 +1,6 @@
 ---
+# cSpell:ignore serviceaccounts selfsubjectaccessreviews someuser serviceaccount
+
 sidebar_label: Kubernetes API / Kubectl
 lang: en-US
 keywords: [pomerium, identity access proxy, kubernetes, helm, k8s, oauth]

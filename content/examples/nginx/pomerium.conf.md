@@ -1,3 +1,6 @@
+---
+# cSpell:ignore fwdauth
+---
 ```nginx
 # Pomerium endpoint
 server {

@@ -3,4 +3,4 @@
 - Type: `bool`
 - Default: false
 
-Determines whether to show policy explanations and remediations for this route.
+Determines whether to show policy explanations and remediation for this route.

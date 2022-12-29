@@ -1,4 +1,6 @@
 ---
+# cSpell:ignore LGUI
+
 title: Security Policy
 sidebar_label: Security
 lang: en-US

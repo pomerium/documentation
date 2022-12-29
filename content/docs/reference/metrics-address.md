@@ -31,7 +31,7 @@ Each metric exposed by Pomerium has a `pomerium` prefix, which is omitted in the
 
 | Name | Type | Description |
 | --- | --- | --- |
-| build_info | Gauge | Pomerium build metadata by git revision, service, version and goversion |
+| build_info | Gauge | Pomerium build metadata by git revision, service, version and go version |
 | config_checksum_int64 | Gauge | Currently loaded configuration checksum by service |
 | config_last_reload_success | Gauge | Whether the last configuration reload succeeded by service |
 | config_last_reload_success_timestamp | Gauge | The timestamp of the last successful configuration reload by service |

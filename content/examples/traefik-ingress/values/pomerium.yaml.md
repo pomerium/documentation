@@ -1,10 +1,10 @@
 ```yaml
 authenticate:
   idp:
-    provider: REPLACEME
-    url: REPLACEME
-    clientID: REPLACEME
-    clientSecret: REPLACEME
+    provider: REPLACE_ME
+    url: REPLACE_ME
+    clientID: REPLACE_ME
+    clientSecret: REPLACE_ME
 
 config:
   rootDomain: localhost.pomerium.io

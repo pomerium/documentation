@@ -1,4 +1,6 @@
 ---
+# cSpell:ignore kubeconfig mycluster
+
 title: Kubernetes `kubectl` Integration
 sidebar_label: Kubernetes Access
 description: This article describes Pomerium's integration with the Kubernetes API Server
@@ -63,4 +65,4 @@ kubectl config set-credentials via-pomerium --exec-command=pomerium-cli \
 
 ## More info
 
-See the [complete walkthrough](/docs/guides/kubernetes) for a working end-to-end example.
+See the [complete walk-through](/docs/guides/kubernetes) for a working end-to-end example.

@@ -1,4 +1,6 @@
 ---
+# cSpell:ignore HVAC Armon Dadgar pico BYOD Kindervag Forrester USENIX
+
 title: Zero trust
 lang: en-US
 keywords:
@@ -32,7 +34,7 @@ Most importantly, the model is just not as secure as we thought. Recent high-pro
 
 > In reality, there's never one front door; there are many front doors...[and] ... we're not securing a single castle. We're starting to think about securing many different interconnected castles.
 >
-> [Armon Dadgar, Cofounder of HashiCorp @ PagerDuty Nov 2018](https://www.hashicorp.com/resources/how-zero-trust-networking)
+> [Armon Dadgar, Co-founder of HashiCorp @ PagerDuty Nov 2018](https://www.hashicorp.com/resources/how-zero-trust-networking)
 
 The other side of the security trade-off is operational agility. Perimeter based approaches tend to focus on network segmentation which entails creating virtual or physical boundaries around services that need to communicate. Making those boundaries is increasingly difficult to manage in a world of micro-services, and cloud computing where service communication requirements are constantly in flux.
 

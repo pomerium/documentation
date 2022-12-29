@@ -1,4 +1,6 @@
 ---
+# cSpell:ignore rankinc
+
 title: Changelog
 toc_max_heading_level: 5
 ---

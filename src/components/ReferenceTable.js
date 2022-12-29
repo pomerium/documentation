@@ -110,8 +110,8 @@ export default function ReferenceTable() {
       renderCell: function ServicesCell(params) {
         return (
           <div>
-            {params.row.services.map(function (serv) {
-              return <div>{serv}</div>;
+            {params.row.services.map(function (service) {
+              return <div>{service}</div>;
             })}
           </div>
         );

@@ -1,4 +1,6 @@
 ---
+# cSpell:ignore reactjs nextjs
+
 title: Cross-Origin Configuration
 lang: en-US
 keywords:
@@ -24,7 +26,7 @@ Create a file `config.yaml`:
 authenticate_service_url: https://authenticate.localhost.pomerium.io
 
 certificate_file: /pomerium/cert.pem
-certificate_key_file: /pomerium/privkey.pem
+certificate_key_file: /pomerium/private-key.pem
 
 idp_provider: REPLACE
 idp_client_id: REPLACE
@@ -48,7 +50,7 @@ routes:
 
 ### Web Application
 
-The Web applicatoin is a simple go HTTP server. Create a file `app.go`:
+The Web application is a simple go HTTP server. Create a file `app.go`:
 
 ```go
 package main
@@ -124,7 +126,7 @@ services:
       - 443:443
     volumes:
       - ./_wildcard.localhost.pomerium.io.pem:/pomerium/cert.pem:ro
-      - ./_wildcard.localhost.pomerium.io-key.pem:/pomerium/privkey.pem:ro
+      - ./_wildcard.localhost.pomerium.io-key.pem:/pomerium/private-key.pem:ro
       - ./config.yaml:/pomerium/config.yaml:ro
 
   app:

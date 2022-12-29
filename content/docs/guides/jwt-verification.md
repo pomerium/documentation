@@ -1,4 +1,6 @@
 ---
+# cSpell:ignore envoyproxy
+
 title: JWT Verification
 lang: en-US
 keywords: [pomerium, identity access proxy, envoy, jwt]
@@ -23,7 +25,7 @@ Three services are configured in a `docker-compose.yaml` file:
 
 - `pomerium` running an all-in-one deployment of Pomerium on `*.localhost.pomerium.io`
 - `envoy-jwt-checker` running envoy with a JWT Authn filter
-- `httpbin` as our example legacy application without JWT verifivation.
+- `httpbin` as our example legacy application without JWT verification.
 
 In our Docker Compose configuration we'll define two networks. `pomerium` and `envoy-jwt-checker` will be on the `frontend` network, simulating your local area network (**LAN**). `envoy-jwt-checker` will also be on the `backend` network, along with `httpbin`. This means that `envoy-jwt-checker` is the only other service that can communicate with `httpbin`.
 

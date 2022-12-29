@@ -17,7 +17,7 @@ pagination_next: null
 - Type: map of `strings` key value pairs
 - Optional
 
-Request parameters to be added as part of a signin request using OAuth2 code flow.
+Request parameters to be added as part of a sign in request using OAuth2 code flow.
 
 For more information see:
 

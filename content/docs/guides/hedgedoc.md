@@ -1,4 +1,6 @@
 ---
+# cSpell:ignore hedgedoc addport
+
 title: Securing HedgeDoc with Pomerium
 sidebar_label: HedgeDoc
 lang: en-US
@@ -52,13 +54,13 @@ To complete this guide, you need:
 - [Docker](https://www.docker.com/)
 - [Docker Compose](https://docs.docker.com/compose/install/)
 - A running Pomerium instance
-- A [preconfigured IdP](https://www.pomerium.com/docs/identity-providers)
+- A [pre-configured IdP](https://www.pomerium.com/docs/identity-providers)
 
 :::tip
 
 **Note**
 
-This guide uses [GitHub](https://www.pomerium.com/docs/identity-providers/github) as the preconfigured IdP.
+This guide uses [GitHub](https://www.pomerium.com/docs/identity-providers/github) as the pre-configured IdP.
 
 :::
 

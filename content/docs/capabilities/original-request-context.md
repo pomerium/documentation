@@ -1,4 +1,6 @@
 ---
+# cSpell:ignore companydomain autonumber rgba
+
 title: Original User Context
 description: This article describes how the original user context is passed secondary requests.
 ---
@@ -17,7 +19,7 @@ In enterprise environments where multiple services protected by Pomerium communi
 
 When a User communicates with a service downstream of Pomerium, the service can identify that user by the `X-Pomerium-JWT-Assertion` header, added by Pomerium, which provides as a value a JSON web token (**JWT**) identifying the user.
 
-Should that service need to communicate with another Pomerium-protected service to construct the response, that connection should be authorized through Pomerium with a [Service Account](/docs/capabilities/service-accounts.md). Service accounts should be provided to Pomerium from the first service as a bearer token header, i.e. `Authorization: Bearer Pomerium-${service_acount_jwt}`. This header is how the secondary service authenticates the machine-to-machine interaction.
+Should that service need to communicate with another Pomerium-protected service to construct the response, that connection should be authorized through Pomerium with a [Service Account](/docs/capabilities/service-accounts.md). Service accounts should be provided to Pomerium from the first service as a bearer token header, i.e. `Authorization: Bearer Pomerium-${service_account_jwt}`. This header is how the secondary service authenticates the machine-to-machine interaction.
 
 Should that second service need to know the original user context to return the proper response, it would have no way of knowing, as the first service authenticated as the service account and not the original user.
 

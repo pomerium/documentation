@@ -1,3 +1,6 @@
+---
+# cSpell:ignore crds
+---
 ```bash {4,10,16,22,25}
 kubectl create namespace pomerium
 

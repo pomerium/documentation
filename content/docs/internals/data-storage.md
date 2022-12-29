@@ -1,4 +1,6 @@
 ---
+# cSpell:ignore libpq userspec dbname paramspec hostspec setuser rediss
+
 title: Persistance
 description: This article describes Pomerium's data storage requirements and backends
 ---
@@ -91,7 +93,7 @@ Redis should be configured to provide high availability via [replication](https:
 Pomerium supports and strongly encourages [ACL](https://redis.io/topics/acl) based authentication. To set up an ACL for pomerium, use the following template:
 
 ```actionscript
-ACL setuser pomerium on >[MYPASSWORD] ~* +@all -@scripting -@dangerous -@admin -@connection
+ACL setuser pomerium on >[PASSWORD] ~* +@all -@scripting -@dangerous -@admin -@connection
 ```
 
 Pomerium supports and strongly encourages [TLS](https://redis.io/topics/encryption) support in Redis version 6. Both traditional and mutual TLS are supported.
@@ -100,7 +102,7 @@ Example secure configuration:
 
 ```yaml
 databroker_storage_type: redis
-databroker_storage_connection_string: rediss://pomerium:MYSECUREPASSWORD@[HOST]:6379/
+databroker_storage_connection_string: rediss://pomerium:PASSWORD@[HOST]:6379/
 databroker_storage_cert_file: /tls/client.pem
 databroker_storage_key_file: /tls/client.key
 databroker_storage_ca_file: /tls/ca.pem

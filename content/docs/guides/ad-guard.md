@@ -1,4 +1,6 @@
 ---
+# cSpell:ignore piehole dXNlcjpwYXNzd29yZA workdir adguardhome confdir
+
 title: Securing AdGuard Home
 sidebar_label: AdGuard
 lang: en-US
