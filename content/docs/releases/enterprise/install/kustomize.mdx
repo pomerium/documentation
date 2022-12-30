@@ -1,0 +1,77 @@
+---
+title: Kustomize
+description: Install Pomerium Enterprise in Kubernetes with Kustomize
+---
+
+# Install Pomerium Enterprise in Kubernetes with Kustomize
+
+This document covers installing Pomerium Enterprise into your existing Kubernetes cluster. It's designed to work with an existing cluster running Pomerium, as described in [Pomerium Kustomize]. Follow that document before continuing here.
+
+The assumption is that Pomerium is installed into the `pomerium` namespace, and Enterprise would be installed into the `pomerium-enterprise` namespace.
+
+## Prepare Core
+
+The below command will expose the Pomerium Core Databroker gRPC interface.
+
+```console
+kubectl apply -k https://www.pomerium.com/k8s/core.yaml
+```
+
+## Deploy Enterprise Console
+
+```console
+kubectl apply -k https://pomerium.com/k8s/console.yaml
+```
+
+The Enterprise Console need be configured before it becomes fully operational.
+
+## Create Cloudsmith Directory Secret
+
+```console
+kubectl create secret docker-registry pomerium-enterprise-docker \
+    --namespace pomerium-enterprise \
+    --docker-server=docker.cloudsmith.io \
+    --docker-username=pomerium/enterprise \
+    --docker-password="your password provided by Pomerium Sales"
+```
+
+## Configure Enterprise Console
+
+Create a `config` directory, and fill in the configuration parameters for the following template files:
+
+import CodeBlock from '@theme/CodeBlock';
+
+import Kustomization from '!!raw-loader!@site/k8s/config-template/kustomization.yaml';
+import Config from '!!raw-loader!@site/k8s/config-template/config.yaml';
+import Ingress from '!!raw-loader!@site/k8s/config-template/ingress-console.yaml';
+import Secret from '!!raw-loader!@site/k8s/config-template/secret.yaml';
+
+<CodeBlock language="jsx" title="kustomization.yaml">
+  {Kustomization}
+</CodeBlock>
+
+See [Environment Variables] for Config and Secret keys description.
+
+<CodeBlock language="jsx" title="config.yaml">
+  {Config}
+</CodeBlock>
+
+<CodeBlock language="jsx" title="secret.yaml">
+  {Secret}
+</CodeBlock>
+
+Create [Ingress] for Console.
+
+<CodeBlock language="jsx" title="ingress.yaml">
+  {Ingress}
+</CodeBlock>
+
+```console
+
+kubectl apply -k ./config
+
+```
+
+[pomerium kustomize]: /docs/deploying/k8s/install
+[environment variables]: /docs/releases/enterprise/configure#environmental-variables
+[ingress]: /docs/deploying/k8s/ingress
