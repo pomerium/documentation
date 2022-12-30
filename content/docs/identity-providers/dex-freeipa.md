@@ -110,10 +110,6 @@ config:
       #   - YOURDOMAIN.dev
 
       # (If you want to give access to particular group members, I have tested this by creating devops group and members in that group, in freeipa)
-      allowed_groups:
-        - devops
-
-      # (If you want to give access to particular group members, I have tested this by creating devops group and members in that group, in freeipa)
       allowed_idp_claims:
         groups:
           - devops

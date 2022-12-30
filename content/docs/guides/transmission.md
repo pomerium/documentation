@@ -55,8 +55,6 @@ routes:
           or:
             - email:
                 is: myUser@mydomain.com # Replace with authorized user(s), or remove if using group permissions only.
-            - groups:
-                has: '<transmission-users>' # Replace with authorized user group(s), or remove if using user permissions only.
 ```
 
 Remember to restart the Pomerium instance after saving your changes.

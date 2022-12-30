@@ -229,8 +229,7 @@ ingress.pomerium.io/policy: |
     and:
     - domain:
         is: example.com
-    - groups:
-        has: admin
+    - claim/groups: admin
 ```
 
 [Pomerium Policy Language](/docs/capabilities/ppl).

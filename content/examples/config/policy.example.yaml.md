@@ -24,11 +24,8 @@
   to: http://neverssl.com
   allowed_users:
     - user@example.com
-  allowed_groups:
-    - admins
-    - developers
 - from: https://hello.localhost.pomerium.io
   to: http://localhost:8080
-  allowed_groups:
-    - admins@pomerium.io
+  allowed_users:
+    - user@example.com
 ```
