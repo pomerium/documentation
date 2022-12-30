@@ -90,14 +90,9 @@ routes:
           or:
             - email:
                 is: user@example.com
-            - groups:
-                has: "admins"
-            - groups:
-                has: "developers"
   - from: https://hello.localhost.pomerium.io
     to: http://localhost:8080
     policy:
       - allow:
           or:
-            - groups:
-                has: "admins@pomerium.io"
+            - claim/groups: "admins@pomerium.io"

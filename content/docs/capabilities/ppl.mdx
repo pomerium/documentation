@@ -21,17 +21,17 @@ allow:
   and:
     - domain:
         is: example.com
-    - groups:
-        has: admin
+    - user:
+        is: user1@example.com
 deny:
   or:
     - user:
-        is: user1@example.com
-    - user:
         is: user2@example.com
+    - user:
+        is: user3@example.com
 ```
 
-This policy will allow a user with an email address at `example.com` who **is also** a member of the `admin` group. It will deny `user1` **or** `user2`, regardless of their domain and group membership.
+This policy will allow a user with an email address at `example.com` who **is also** `user`. It will deny `user2` **or** `user3`, regardless of their domain and group membership.
 
 ## Rules
 
@@ -56,8 +56,7 @@ allow:
   OPERATOR:
     - domain:
         is: example.com
-    - groups:
-        has: admin
+    - claim/groups: admin
 ```
 
 If `and` is used, the user will have access if their email address ends in `example.com` **and** they are a member of the admin group. **(A ∧ B)**
@@ -92,7 +91,6 @@ PPL supports many different criteria:
 | `device` | [Device matcher] | Returns true if the incoming request includes a valid device ID or type. |
 | `domain` | [String Matcher] | Returns true if the logged-in user's email address domain (the part after `@`) matches the given value. |
 | `email` | [String Matcher] | Returns true if the logged-in user's email address matches the given value. |
-| `groups` | [List Matcher] | Returns true if the logged-in user is a member of the given group. |
 | `http_method` | [String Matcher] | Returns true if the HTTP method matches the given value. |
 | `http_path` | [String Matcher] | Returns true if the HTTP path matches the given value. |
 | `invalid_client_certificate` | Anything. Typically `true`. | Returns true if the incoming request has an invalid client certificate. A default `deny` rule using this criterion is added to all Pomerium policies when an mTLS [client certificate authority] is set. |
@@ -173,17 +171,6 @@ Compare to a policy that only allows a set of specific devices:
 Users can [find their device IDs](/docs/capabilities/device-identity#find-device-id) at the `/.pomerium` endpoint from any route.
 
 :::
-
-### List Matcher
-
-A list matcher is an object with operators as keys. It supports the following operators: `has`. For example:
-
-```yaml
-allow:
-  and:
-    - groups:
-        has: 'admin'
-```
 
 ### String Matcher
 
