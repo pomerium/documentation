@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pomerium-console
+spec:
+  template:
+    spec:
+      containers:
+        - name: pomerium-console
+          livenessProbe:
+            httpGet:
+              path: /
+              port: app
+              scheme: HTTP
+            initialDelaySeconds: 15
+            periodSeconds: 20
+          readinessProbe:
+            httpGet:
+              path: /
+              port: app
+              scheme: HTTP
+            initialDelaySeconds: 5
+            periodSeconds: 10

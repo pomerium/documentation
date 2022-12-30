@@ -1,0 +1,27 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: pomerium-console
+  annotations:
+    cert-manager.io/cluster-issuer: your-cluster-issuer
+    external-dns.alpha.kubernetes.io/hostname: "console.domain.com"
+    # the below two annotations are required
+    ingress.pomerium.io/pass_identity_headers: "true"
+    ingress.pomerium.io/allow_any_authenticated_user: "true"
+spec:
+  ingressClassName: pomerium
+  tls:
+    - secretName: console-domain-com
+      hosts:
+        - console.domain.com
+  rules:
+    - host: "console.domain.com"
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: pomerium-console
+                port:
+                  name: app
