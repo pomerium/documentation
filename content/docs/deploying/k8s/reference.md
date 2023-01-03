@@ -1,6 +1,4 @@
 ---
-# cSpell:ignore identityprovider refreshdirectory signin settingsstatus
-
 title: Kubernetes Deployment Reference
 sidebar_label: Reference
 description: Reference for Pomerium settings in Kubernetes deployments.
@@ -492,7 +490,7 @@ Postgres specifies PostgreSQL database connection parameters
                 </p>
                 <p>
                     <strong>Required.</strong>&#160;
-                    Secret specifies a name of a Secret that must contain <code>connection</code> key. See <a href="https://www.postgresql.org/docs/current/libpq-connect.html#LIBPQ-CONNSTRING">DSN Format and Parameters</a>. Do not set <code>sslrootcert</code>, <code>sslcert</code> and <code>sslkey</code> via connection string, use <code>tlsSecret</code> and <code>caSecret</code> CRD options instead.
+                    Secret specifies a name of a Secret that must contain <code>connection</code> key. See <a href="https://www.postgresql.org/docs/current/libpq-connect.html#LIBPQ-CONNSTRING">DSN Format and Parameters</a>. Do not set <code>sslrootcert</code>, <code>sslcert</code> and <code>sslkey</code> via connection string, use <code>tlsCecret</code> and <code>caSecret</code> CRD options instead.
                 </p>
                 
                     Format: reference to Kubernetes resource with namespace prefix: <code>namespace/name</code> format.
