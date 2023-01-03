@@ -17,9 +17,9 @@ pagination_next: null
 - Type: [base64 encoded](https://en.wikipedia.org/wiki/Base64) `string`
 - Optional
 
-Signing Key is the private key used to sign a user's attestation JWT which can be consumed by upstream applications to pass along identifying user information like username, id, and groups.
+Signing Key is one or more PEM-encoded private keys used to sign a user's attestation JWT which can be consumed by upstream applications to pass along identifying user information like username, id, and groups. If multiple keys are provided only the first will be used for signing.
 
-If set, the signing key's public key will can retrieved by hitting Pomerium's `/.well-known/pomerium/jwks.json` endpoint which lives on the authenticate service. Otherwise, the endpoint will return an empty keyset.
+If set, the signing key's public key(s) can retrieved by hitting Pomerium's `/.well-known/pomerium/jwks.json` endpoint which lives on the authenticate service. Otherwise, the endpoint will return an empty keyset.
 
 For example, assuming you have [generated an ES256 key](https://github.com/pomerium/pomerium/blob/main/scripts/generate_self_signed_signing_key.sh) as follows.
 
@@ -52,4 +52,16 @@ curl https://authenticate.int.example.com/.well-known/pomerium/jwks.json | jq
 }
 ```
 
+If multiple keys are supplied in the PEM data, all of them will be published to the JWKS endpoint.
+
 If no certificate is specified, one will be generated and the base64'd public key will be added to the logs. Note, however, that this key be unique to each service, ephemeral, and will not be accessible via the authenticate service's `jwks_uri` endpoint.
+
+### Key Rotation
+
+To implement key rotation follow a 3 step process:
+
+1. Generate a new key and add it to the existing PEM data.
+2. Swap the order of the keys in the PEM data so that new key is first and will be used for all subsequent signing.
+3. Remove the old key from the list.
+
+With sufficient time between the steps, this process should be resilient to caching of the JWKS endpoint by applications.
