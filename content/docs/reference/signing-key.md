@@ -4,7 +4,7 @@
 id: signing-key
 title: Signing Key
 description: |
-  Signing Key is the key used to sign a user's attestation JWT which can be consumed by upstream applications to pass along identifying user information like username, id, and groups.
+  Signing Key is one or more PEM-encoded private keys used to sign a user's attestation JWT which can be consumed by upstream applications to pass along identifying user information like username, id, and groups. If multiple keys are provided only the first will be used for signing.
 keywords:
   - reference
   - Signing Key
@@ -19,9 +19,9 @@ pagination_next: null
 
 Signing Key is one or more PEM-encoded private keys used to sign a user's attestation JWT which can be consumed by upstream applications to pass along identifying user information like username, id, and groups. If multiple keys are provided only the first will be used for signing.
 
-If set, the signing key's public key(s) can retrieved by hitting Pomerium's `/.well-known/pomerium/jwks.json` endpoint which lives on the authenticate service. Otherwise, the endpoint will return an empty keyset.
+If set, the signing key's public key(s) can be retrieved by hitting Pomerium's well-known JWKS endpoint (`/.well-known/pomerium/jwks.json`), which lives on the authenticate service. Otherwise, the endpoint will return an empty keyset.
 
-For example, assuming you have [generated an ES256 key](https://github.com/pomerium/pomerium/blob/main/scripts/generate_self_signed_signing_key.sh) as follows.
+For example, assuming you have [generated an ES256 key](https://github.com/pomerium/pomerium/blob/main/scripts/generate_self_signed_signing_key.sh) with the following commands:
 
 ```bash
 # Generates an P-256 (ES256) signing key
@@ -30,7 +30,7 @@ openssl ecparam  -genkey  -name prime256v1  -noout  -out ec_private.pem
 cat ec_private.pem | base64
 ```
 
-That signing key can be accessed via the well-known jwks endpoint.
+You can access that signing key from Pomerium's well-known JWKS endpoint.
 
 ```bash
 curl https://authenticate.int.example.com/.well-known/pomerium/jwks.json | jq
@@ -54,14 +54,14 @@ curl https://authenticate.int.example.com/.well-known/pomerium/jwks.json | jq
 
 If multiple keys are supplied in the PEM data, all of them will be published to the JWKS endpoint.
 
-If no certificate is specified, one will be generated and the base64'd public key will be added to the logs. Note, however, that this key be unique to each service, ephemeral, and will not be accessible via the authenticate service's `jwks_uri` endpoint.
+If no certificate is specified, one will be generated and the base64'd public key will be added to the logs. Note, however, that this key is unique to each service, ephemeral, and will not be accessible via the authenticate service's well-known JWKS endpoint.
 
-### Key Rotation
+### Key rotation
 
-To implement key rotation follow a 3 step process:
+To implement key rotation, follow a 3-step process:
 
 1. Generate a new key and add it to the existing PEM data.
-2. Swap the order of the keys in the PEM data so that new key is first and will be used for all subsequent signing.
+2. Swap the order of the keys in the PEM data so that the new key is first and will be used for all subsequent signing.
 3. Remove the old key from the list.
 
 With sufficient time between the steps, this process should be resilient to caching of the JWKS endpoint by applications.
