@@ -20,12 +20,14 @@ Pomerium is composed of 4 logical components:
   - Verifies all requests with Authentication service
   - Directs users to Authentication service to establish session identity
   - Processes policy to determine external/internal route mappings
+  - Receives user OIDC tokens and session data from Authentication service and stores in Databroker service
 
 - Authentication Service
 
   - Handles authentication flow to your IdP as needed
   - Handles identity verification after initial Authentication
   - Establishes user session cookie
+  - Stores user OIDC tokens in Proxy service
 
 - Authorization Service
 
@@ -34,7 +36,7 @@ Pomerium is composed of 4 logical components:
   - Directs Proxy service to initiate Authentication flow as required
   - Provides additional security related headers for upstream services to consume
 
-- Data Broker Service
+- Databroker Service
 
   - Retrieves identity provider related data such as group membership
   - Stores and refreshes identity provider access and refresh tokens
@@ -45,7 +47,7 @@ In production deployments, it is recommended that you deploy each component [sep
 
 In test deployments, all four components may run from a [single binary and configuration](/docs/reference#all-in-one-vs-split-service-mode).
 
-![pomerium architecture diagram](./img/architecture/pomerium-container-context.svg)
+![pomerium architecture diagram](./img/architecture/pomerium-container-context-stateless-authn.svg)
 
 ## Authentication Flow
 
