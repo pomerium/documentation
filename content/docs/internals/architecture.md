@@ -26,7 +26,6 @@ Pomerium is composed of 4 logical components:
   - Handles authentication flow to your IdP as needed
   - Handles identity verification after initial Authentication
   - Establishes user session cookie
-  - Stores user OIDC tokens in databroker service
 
 - Authorization Service
 
