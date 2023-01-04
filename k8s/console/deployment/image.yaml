@@ -1,0 +1,14 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pomerium-console
+spec:
+  replicas: 1
+  template:
+    spec:
+      containers:
+        - name: pomerium-console
+          image: docker.cloudsmith.io/pomerium/enterprise/pomerium-console:v0.20.1
+          imagePullPolicy: IfNotPresent
+      imagePullSecrets:
+        - name: pomerium-enterprise-docker
