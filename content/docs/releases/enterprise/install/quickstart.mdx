@@ -25,10 +25,34 @@ To complete this guide, you need:
 
 This guide runs Pomerium Core and PostgreSQL as Docker containers. If you haven't, pull the [Pomerium](https://hub.docker.com/r/pomerium/pomerium) and [PostgreSQL](https://hub.docker.com/_/postgres) Docker images from Docker Hub and complete the [Pomerium Core quickstart](/docs/quickstart) to set up a Pomerium instance that's compatible with this guide.
 
-The Pomerium Enterprise Console uses an embedded Prometheus server to collect and display metrics. While you can [configure metrics](/docs/capabilities/metrics) to use an existing Prometheus server, this guide uses Pomerium’s Prometheus back-end.
+The Pomerium Enterprise Console uses an embedded Prometheus server to collect and display metrics. While you can [configure metrics](/docs/capabilities/metrics) to use an existing Prometheus server, this guide uses Pomerium’s Prometheus backend.
 
-### Configure the Pomerium Enterprise Console
+### Configure Docker Compose
 
+#### Pomerium Core
+
+Your `docker-compose.yaml` file should contain the Pomerium service:
+
+```yaml
+version: "3"
+networks:
+  main: {}
+services:
+  pomerium:
+    image: pomerium/pomerium:latest
+    volumes:
+      - ./config.yaml:/pomerium/config.yaml:ro
+    ports:
+      - 443:443
+    networks:
+      main:
+        aliases:
+        - authenticate.localhost.pomerium.io
+```
+
+### Configure Pomerium Enterprise Console
+
+In your project's root folder, create a file called `console-config.yaml`.
 
 #############################END NEW GUIDE
 
