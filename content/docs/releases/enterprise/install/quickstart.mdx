@@ -27,13 +27,29 @@ This guide runs Pomerium Core and PostgreSQL as Docker containers. If you haven'
 
 The Pomerium Enterprise Console uses an embedded Prometheus server to collect and display metrics. While you can [configure metrics](/docs/capabilities/metrics) to use an existing Prometheus server, this guide uses Pomerium’s Prometheus backend.
 
-### Configure Docker Compose
+:::tip **Note**
 
-#### Pomerium Core
+This guide assumes you've already registered for Pomerium Enterprise and have credentials to access the private Cloudsmith Docker registry. If you haven't registered for Pomerium Enterprise, [sign up here](https://www.pomerium.com/enterprise-sales/) for a free trial.
 
-Your `docker-compose.yaml` file should contain the Pomerium service:
+:::
 
-```yaml
+### Configure Docker Compose services
+
+In your `docker-compose.yaml` file, define a bridge network:
+
+```yaml title="docker compose"
+version: "3"
+networks:
+  main: {}
+```
+
+In this guide, all the services defined in your Docker Compose config file will communicate over the `main` network.
+
+### Configure Pomerium Core
+
+Add the `pomerium` image to your `docker-compose.yaml` file:
+
+```yaml title="pomerium service"
 version: "3"
 networks:
   main: {}
@@ -50,9 +66,96 @@ services:
         - authenticate.localhost.pomerium.io
 ```
 
+If you completed the Pomerium Core quickstart, your configuration should look similar to `pomerium service`.
+
+However, note that `pomerium service` also defines the alias `authenticate.localhost.pomerium.io`. Defining a container's alias allows other services to communicate with it by that name.
+
 ### Configure Pomerium Enterprise Console
 
-In your project's root folder, create a file called `console-config.yaml`.
+Under the `pomerium` service, add the configuration for `pomerium_console`:
+
+```yaml title="pomerium console"
+  pomerium_console:
+    networks:
+      main:
+    depends_on:
+      database:
+        condition: service_healthy
+      pomerium:
+        condition: service_started
+    image: docker.cloudsmith.io/pomerium/enterprise/pomerium-console:v0.20.0
+    expose:
+      - 8701
+      - 9090
+    volumes:
+      - ./pomerium/metrics:/data:rw
+      - ./console-config.yaml:/pomerium/config.yaml:ro
+```
+
+**Here's what the `pomerium_console` service is doing:**
+
+The `pomerium console` depends on the following services before the container will run:
+- A database connection (in this case, PostgreSQL)
+- A running instance of the Pomerium Core service
+
+Once the container runs, it exposes ports `8701` and `9090`. Later, you will define port `8701` in a route that connects to the Pomerium Enterprise Console. Port `9090` is the [default port](https://prometheus.io/docs/introduction/first_steps/#configuring-prometheus) used by Prometheus to scrape metrics.
+
+Lastly, `pomerium_console` mounts the following files to persist data between sessions:
+- `./pomerium/metrics:/data:rw`
+- `./console-config.yaml:/pomerium/config.yaml:ro`
+
+### Configure the PostgreSQL database
+
+Under the `pomerium_console` service, add the configuration for `postgres`:
+
+```yaml database service
+  database:
+    networks:
+      main: {}
+    image: postgres:latest
+    restart: always
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -d postgres -U postgres" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=postgres
+    ports:
+      - 5432:5432
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data
+```
+
+**Here's what the `database` service is doing:**
+
+`restart: always` closes your database connection when you kill the container and restarts the connection when you run `docker compose up`.
+
+The `healthcheck` parameter ensures the database is ready to receive requests. Without a healthcheck, other containers that depend on the database service (like Pomerium Console) will attempt to connect to the database before it is in a ready state, which will crash the container. (See the [Docker healthcheck docs](https://docs.docker.com/engine/reference/builder/#healthcheck) for more information.)
+
+The `environment` variables define the database user, password, and name, and ports `5432` connects your local port to the container port (`5432` is the default PostgreSQL port).
+
+You must also mount `pgdata` to `/var/lib/postgresql/data` to persist data or to import existing data into your container instance.
+
+### Configure the Verify service
+
+Add the configuration for the final service to, `verify`:
+
+```yaml title="verify"
+  verify:
+    networks:
+      main: {}
+    image: pomerium/verify:latest
+    expose:
+      - 8000
+    restart: always
+```
+
+TODO: write out this section
+
 
 #############################END NEW GUIDE
 
