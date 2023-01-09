@@ -43,7 +43,7 @@ networks:
   main: {}
 ```
 
-In this guide, all the services defined in your Docker Compose config file will communicate over the `main` network.
+All the services defined in your Docker Compose config file will communicate over the `main` network.
 
 ### Configure Pomerium Core
 
@@ -68,7 +68,7 @@ services:
 
 If you completed the Pomerium Core quickstart, your configuration should look similar to `pomerium service`.
 
-However, note that `pomerium service` also defines the alias `authenticate.localhost.pomerium.io`. Defining a container's alias allows other services to communicate with it by that name.
+However, note that `pomerium service` also defines the alias `authenticate.localhost.pomerium.io`. Defining an alias for a container allows other services to communicate with the container by that name.
 
 ### Configure Pomerium Enterprise Console
 
@@ -92,15 +92,13 @@ Under the `pomerium` service, add the configuration for `pomerium_console`:
       - ./console-config.yaml:/pomerium/config.yaml:ro
 ```
 
-**Here's what the `pomerium_console` service is doing:**
-
-The `pomerium console` depends on the following services before the container will run:
+`pomerium console` depends on the following services before the container will run:
 - A database connection (in this case, PostgreSQL)
 - A running instance of the Pomerium Core service
 
 Once the container runs, it exposes ports `8701` and `9090`. Later, you will define port `8701` in a route that connects to the Pomerium Enterprise Console. Port `9090` is the [default port](https://prometheus.io/docs/introduction/first_steps/#configuring-prometheus) used by Prometheus to scrape metrics.
 
-Lastly, `pomerium_console` mounts the following files to persist data between sessions:
+Lastly, `pomerium_console` mounts the following files to persist data after stopping the container:
 - `./pomerium/metrics:/data:rw`
 - `./console-config.yaml:/pomerium/config.yaml:ro`
 
@@ -108,7 +106,7 @@ Lastly, `pomerium_console` mounts the following files to persist data between se
 
 Under the `pomerium_console` service, add the configuration for `postgres`:
 
-```yaml database service
+```yaml title="database service"
   database:
     networks:
       main: {}
@@ -126,23 +124,24 @@ Under the `pomerium_console` service, add the configuration for `postgres`:
       - POSTGRES_DB=postgres
     ports:
       - 5432:5432
-    volumes:
-      - ./pgdata:/var/lib/postgresql/data
 ```
-
-**Here's what the `database` service is doing:**
-
-`restart: always` closes your database connection when you kill the container and restarts the connection when you run `docker compose up`.
 
 The `healthcheck` parameter ensures the database is ready to receive requests. Without a healthcheck, other containers that depend on the database service (like Pomerium Console) will attempt to connect to the database before it is in a ready state, which will crash the container. (See the [Docker healthcheck docs](https://docs.docker.com/engine/reference/builder/#healthcheck) for more information.)
 
-The `environment` variables define the database user, password, and name, and ports `5432` connects your local port to the container port (`5432` is the default PostgreSQL port).
+Mount `pgdata` to `/var/lib/postgresql/data` to persist data or to import existing data into your database service and declare the `pgdata` volume outside the database container:
 
-You must also mount `pgdata` to `/var/lib/postgresql/data` to persist data or to import existing data into your container instance.
+```yaml title="database service"
+  database:
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data
+
+  volumes:
+    pgdata:
+```
 
 ### Configure the Verify service
 
-Add the configuration for the final service to, `verify`:
+Add the configuration for the `verify` service:
 
 ```yaml title="verify"
   verify:
@@ -154,223 +153,133 @@ Add the configuration for the final service to, `verify`:
     restart: always
 ```
 
-TODO: write out this section
+## Update the Pomerium Core configuration file
+
+Your `config.yaml` file should look similar to this:
+
+```yaml title="config.yaml"
+authenticate_service_url: https://authenticate.localhost.pomerium.io
+
+idp_provider: REPLACE_ME
+idp_client_id: REPLACE_ME
+idp_client_secret: REPLACE_ME
 
 
-#############################END NEW GUIDE
-
-## Before You Begin
-
-This document assumes:
-
-- A non-containerized environment, either your local computer or a virtual machine (**vm**). While Pomerium is designed to scale with your production environment, we'll leave containerization and infrastructure as code (**IaC**) out for now, to focus on learning how Pomerium Enterprise works.
-  - `root` or `sudo` privileges on the host.
-- You already have the open-source Pomerium base installed. If not, follow [this doc](/docs/releases/core) before you continue.
-  - While an existing route is not required, we suggest implementing one test route to validate your identity provider (**IdP**) configuration.
-- Pomerium Enterprise requires a relational database. PostgreSQL 9+ is supported.
-  - Securing the database connection with TLS may not be required, especially for a local installation, but is strongly recommended for production deployments. Therefore, this guide will assume a TLS-secured database connection.
-
-## Requirements
-
-- Pomerium Enterprise requires Linux amd64/x86_64. It can manage Pomerium instances on other platforms, however.
-- Each Console instance should have at least:
-  - 4 vCPUs
-  - 8G RAM
-  - 100G of disk wherever logs are stored
-- Each Postgres instance should have at least:
-  - 4 vCPUs
-  - 8G RAM
-  - 20G for data files
-
-## Install Pomerium Enterprise
-
-Pomerium publishes standard OS packages for RPM and DEB based systems. The repositories require authentication via username and access key. These credentials will be issued to you during the onboarding process.
-
-<Tabs>
-
-<TabItem value="deb" label="deb">
-
-1. To automatically configure the repository for Debian and Ubuntu distributions, run the following command replacing `[access-key]`:
-
-   ```bash
-   curl -1sLf \
-   'https://dl.cloudsmith.io/[access-key]/pomerium/enterprise/setup.deb.sh' \
-   | sudo -E bash
-   ```
-
-   Or to manually configure, you can manually import the apt key, then create a new `.list` file in `/etc/apt/source.list.d`. Make sure to replace the distribution and version:
-
-   ```bash
-   curl -1sLf 'https://dl.cloudsmith.io/[access-key]/pomerium/enterprise/gpg.B1D0324399CB9BC3.key' | apt-key add -
-
-   echo "deb https://dl.cloudsmith.io/[access-key]/pomerium/enterprise/deb/debian buster main" | sudo tee /apt/sources.list.d/pomerium-console.list
-   ```
-
-1. Update `apt` and install Pomerium Enterprise:
-
-   ```bash
-   sudo apt update; sudo apt install pomerium-console
-   ```
-
-</TabItem>
-
-<TabItem value="yum" label="yum">
-
-1. To automatically configure the repository for RHEL based distributions, run the following command replacing `[access-key]`:
-
-   ```bash
-   curl -1sLf \
-   'https://dl.cloudsmith.io/[access-key]/pomerium/enterprise/setup.rpm.sh' \
-   | sudo -E bash
-   ```
-
-   Or to manually configure:
-
-   ```bash
-   yum install yum-utils pygpgme
-   rpm --import 'https://dl.cloudsmith.io/[access-key]/pomerium/enterprise/gpg.B1D0324399CB9BC3.key'
-   curl -1sLf 'https://dl.cloudsmith.io/[access-key]/pomerium/enterprise/config.rpm.txt?distro=el&codename=8' > /tmp/pomerium-enterprise.repo
-   yum-config-manager --add-repo '/tmp/pomerium-enterprise.repo'
-   yum -q makecache -y --disablerepo='*' --enablerepo='pomerium-enterprise'
-   ```
-
-1. Update refresh and install:
-
-   ```bash
-   yum -y install pomerium-console
-   ```
-
-</TabItem>
-
-</Tabs>
-
-### System Service
-
-Once the package is installed, enable and start the system service:
-
-```bash
-sudo systemctl enable --now pomerium-console
+# https://pomerium.com/reference/#routes
+routes:
+  - from: https://verify.localhost.pomerium.io
+    to: http://verify:8000
+    policy:
+      - allow:
+          or:
+            - email:
+                is: user@example.com
+    pass_identity_headers: true
 ```
 
-## Initial Configuration
+Add a [cookie secret](/docs/reference/cookie-secret), [signing key](/docs/reference/signing-key), and [shared secret](/docs/reference/shared-secret):
 
-Like the open-source Pomerium base, Pomerium Enterprise is configured through a single config file, located at `/etc/pomerium-console/config.yaml`.
-
-### Update Pomerium
-
-Open your Pomerium config file, `/etc/pomerium/config.yaml`.
-
-1. Add a list item in the `routes` block for the Enterprise Console:
-
-   ```yaml title="/etc/pomerium/config.yaml"
-   routes:
-     - from: https://console.localhost.pomerium.com
-       to: https://localhost:8701
-       policy:
-         - allow:
-             or:
-               - domain:
-                   is: example.com
-       pass_identity_headers: true
-   ```
-
-   The example value for `to:` assumes Pomerium and Pomerium Enterprise are running on the same test environment.
-
-1. If you haven't already, set `signing_key`. See the [reference page](/docs/reference/signing-key) for more information. The same signing key must be used in both Pomerium Core and Enterprise.
-
-   ```yaml title="/etc/pomerium/config.yaml"
-   signing_key: 'ZZZZZZZZZZZZZZ'
-   ```
-
-1. Define the [databroker](/docs/reference/data-broker-service) storage type and connection string. The example below assumes a local Postgres server:
-
-   ```yaml title="/etc/pomerium/config.yaml"
-   databroker_storage_type: postgres
-   databroker_storage_connection_string: postgres://user:pass@dbhost.internal.mydomain.com/pomerium?sslmode=require
-   ```
-
-With these changes made to Pomerium Core, we can begin editing the Pomerium Console configuration.
-
-### External Services
-
-First configure the Console to communicate with the database and databroker service:
-
-```yaml title="/etc/pomerium-console/config.yaml"
-database_url: postgres://user:pass@dbhost.internal.mydomain.com/pomerium?sslmode=require
-databroker_service_url: https://pomerium-cache.internal.mydomain.com
-shared_secret: XXXXXXXXXXXXXXXXXXX
-database_encryption_key: YYYYYYYYYYYYYYYYYYYYYY
+```yaml
+cookie_secret: REPLACE_ME
+signing_key: REPLACE_ME
+shared_secret: REPLACE_ME
 ```
 
-For database uri options (especially TLS settings) see the [PostgreSQL SSL Support](https://www.postgresql.org/docs/9.1/libpq-ssl.html) documentation.
+:::tip **Note:**
 
-### Administrators
+You must use the same signing key in Pomerium Core and Enterprise.
 
-As a first-time setup step, you must also configure at least one administrator for console access. This user (or users) can then configure additional administrators in the console UI.
+:::
 
-```yaml title="/etc/pomerium-console/config.yaml"
-administrators: you@mydomain.com
+Add your [databroker](/docs/reference/data-broker-service) storage type and connection string:
+
+```yaml
+databroker_storage_type: postgres
+databroker_storage_connection_string: postgresql://<username>:<password>@database/<database_name>?sslmode=disable
 ```
+
+Add a route to Pomerium Enterprise Console:
+
+```yaml
+routes:
+  - from: https://console.localhost.pomerium.io
+    to: http://pomerium_console:8701
+    allowed_users:
+      - user@example.com
+    pass_identity_headers: true
+```
+
+Now, you're ready to configure the Console.
+
+## Create a Pomerium Enterprise Console configuration file
+
+1. Create a file called `console-config.yaml` and add `audience` and `administrators` variables:
+
+```yaml title="config console"
+audience: console.localhost.pomerium.io
+administrators: <admin@example.com>
+```
+
+You must configure at least one administrator for console access. This user (or users) can then configure additional administrators in the console UI.
 
 Once you have set permissions in the console UI, you should remove this configuration.
 
-### TLS, Signing Key and Audience
+2. Configure the Console to speak to the **database** and [**databroker service**](/docs/reference/data-broker-service):
 
-1. If your open-source Pomerium installation is already configured to use TLS to secure back-end communication, you can do the same for Pomerium Enterprise by providing it a certificate, key, and optional custom CA file to validate the `databroker_service_url` connection:
-
-   ```yaml title="/etc/pomerium-console/config.yaml"
-   tls_ca_file: /etc/pomerium-console/ca.pem
-   tls_cert_file: /etc/pomerium-console/cert.pem
-   tls_key_file: /etc/pomerium-console/key.pem
-   ```
-
-   For proof-of-concept installations in the same local system, this is not required.
-
-1. Set the [`signing_key`](/docs/reference/signing-key) to match Pomerium's.
-
-1. Set the `audience` key to match the `from` domain value from your [Pomerium configuration](#update-pomerium), excluding protocol:
-
-   ```yaml title="/etc/pomerium-console/config.yaml"
-   audience: console.localhost.pomerium.com
-   ```
-
-   This sets the expected "audience" key in the [JWT header](/docs/reference/jwt-claim-headers) to match what's provided by open-source Pomerium as it proxies traffic to the Enterprise Console UI.
-
-### License Key
-
-Finally, add your license key to the configuration file:
-
-```yaml title="/etc/pomerium-console/config.yaml"
-license-key: YOUR_LICENSE_KEY
+```yaml title="config console"
+database_encryption_key: REPLACE_ME
+databroker_service_url: pomerium://pomerium:5443
+database_url: postgresql://<username>:<password>@database/<database_name>?sslmode=disable
 ```
 
----
+To add a `database_encryption_key`, run the following command:
+```bash
+head -c32 /dev/urandom | base64
+```
 
-Once complete, your `/etc/pomerium-console/config.yaml` file should look something like this:
+See [databroker service url](/docs/reference/data-broker-service-url) for more information on service URLs.
 
-```yaml title="/etc/pomerium-console/config.yaml"
-database_url: postgres://user:pass@dbhost.internal.mydomain.com/pomerium?sslmode=require
-databroker_service_url: https://pomerium-cache.internal.mydomain.com
-shared_secret: 'XXXXXXXXXXXXXXXXXXX'
-database_encryption_key: 'YYYYYYYYYYYYYYYYYYYYYY'
+For database URI options, see the [PostgreSQL SSH support](https://www.postgresql.org/docs/9.1/libpq-ssl.html) page.
 
-# change / remove this after initial setup
-administrators: you@mydomain.com
+3. Add your **[shared secret](/docs/reference/shared-secret)**, **[signing key](/docs/reference/signing-key)**, and **[license key](/docs/releases/enterprise/configure#license-key)**:
 
+```yaml title="config console"
+shared_secret: REPLACE_ME
+license_key: REPLACE_ME
+signing_key: REPLACE_ME
+```
+
+The `signing_key` should match the one used in your `config.yaml` file.
+
+4. Add your **Prometheus configuration**:
+
+```yaml title="config console"
+prometheus_listen_addr: :9090
+prometheus_data_dir: /data
+```
+
+5. Add the [**authenticate service URL**](/docs/reference/authenticate-service-url):
+
+```yaml title="config console"
+authenticate_service_url: https://authenticate.localhost.pomerium.io
+```
+
+### Adding TLS
+If you configured your Pomerium Core installation to use TLS to secure backend communication, you can do the same for Pomerium Enterprise by providing it a certificate, key, and optional custom CA file to validate the `databroker_service_url` connection:
+
+```yaml title="config console"
 tls_ca_file: /etc/pomerium-console/ca.pem
 tls_cert_file: /etc/pomerium-console/cert.pem
 tls_key_file: /etc/pomerium-console/key.pem
-
-signing_key: 'ZZZZZZZZZZZZZZ'
-
-audience: console.localhost.pomerium.com
-
-license-key: YOUR_LICENSE_KEY
 ```
 
-## Next Steps
+For proof-of-concept installations in the same local system, this is not required.
 
-Pomerium Enterprise assumes access to a [Prometheus](https://prometheus.io/) data store for metrics. See [Configure Metrics](/docs/capabilities/metrics) to learn how to configure access.
+## Connect to Pomerium Enterprise Console
+
+Run `docker compose up` to run your containers and connect to the Console.
+
+If your containers run successfully, navigate to `https://console.localhost.pomerium.io` to access your Console.
 
 ## Troubleshooting
 
