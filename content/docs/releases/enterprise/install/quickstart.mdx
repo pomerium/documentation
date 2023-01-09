@@ -15,6 +15,7 @@ import GenerateRecoveryToken from '@site/content/_generate-recovery-token.md';
 Learn how to run Pomerium Enterprise using Docker containers.
 
 ## Prerequisites
+
 To complete this guide, you need:
 
 - Pomerium Core
@@ -38,7 +39,7 @@ This guide assumes you've already registered for Pomerium Enterprise and have cr
 In your `docker-compose.yaml` file, define a bridge network:
 
 ```yaml title="docker compose"
-version: "3"
+version: '3'
 networks:
   main: {}
 ```
@@ -50,7 +51,7 @@ All the services defined in your Docker Compose config file will communicate ove
 Add the `pomerium` image to your `docker-compose.yaml` file:
 
 ```yaml title="pomerium service"
-version: "3"
+version: '3'
 networks:
   main: {}
 services:
@@ -63,7 +64,7 @@ services:
     networks:
       main:
         aliases:
-        - authenticate.localhost.pomerium.io
+          - authenticate.localhost.pomerium.io
 ```
 
 If you completed the Pomerium Core quickstart, your configuration should look similar to `pomerium service`.
@@ -75,30 +76,32 @@ However, note that `pomerium service` also defines the alias `authenticate.local
 Under the `pomerium` service, add the configuration for `pomerium_console`:
 
 ```yaml title="pomerium console"
-  pomerium_console:
-    networks:
-      main:
-    depends_on:
-      database:
-        condition: service_healthy
-      pomerium:
-        condition: service_started
-    image: docker.cloudsmith.io/pomerium/enterprise/pomerium-console:v0.20.0
-    expose:
-      - 8701
-      - 9090
-    volumes:
-      - ./pomerium/metrics:/data:rw
-      - ./console-config.yaml:/pomerium/config.yaml:ro
+pomerium_console:
+  networks:
+    main:
+  depends_on:
+    database:
+      condition: service_healthy
+    pomerium:
+      condition: service_started
+  image: docker.cloudsmith.io/pomerium/enterprise/pomerium-console:v0.20.0
+  expose:
+    - 8701
+    - 9090
+  volumes:
+    - ./pomerium/metrics:/data:rw
+    - ./console-config.yaml:/pomerium/config.yaml:ro
 ```
 
 `pomerium console` depends on the following services before the container will run:
+
 - A database connection (in this case, PostgreSQL)
 - A running instance of the Pomerium Core service
 
 Once the container runs, it exposes ports `8701` and `9090`. Later, you will define port `8701` in a route that connects to the Pomerium Enterprise Console. Port `9090` is the [default port](https://prometheus.io/docs/introduction/first_steps/#configuring-prometheus) used by Prometheus to scrape metrics.
 
 Lastly, `pomerium_console` mounts the following files to persist data after stopping the container:
+
 - `./pomerium/metrics:/data:rw`
 - `./console-config.yaml:/pomerium/config.yaml:ro`
 
@@ -107,23 +110,23 @@ Lastly, `pomerium_console` mounts the following files to persist data after stop
 Under the `pomerium_console` service, add the configuration for `postgres`:
 
 ```yaml title="database service"
-  database:
-    networks:
-      main: {}
-    image: postgres:latest
-    restart: always
-    healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -d postgres -U postgres" ]
-      interval: 5s
-      timeout: 5s
-      retries: 5
-      start_period: 30s
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=postgres
-    ports:
-      - 5432:5432
+database:
+  networks:
+    main: {}
+  image: postgres:latest
+  restart: always
+  healthcheck:
+    test: ['CMD-SHELL', 'pg_isready -d postgres -U postgres']
+    interval: 5s
+    timeout: 5s
+    retries: 5
+    start_period: 30s
+  environment:
+    - POSTGRES_USER=postgres
+    - POSTGRES_PASSWORD=postgres
+    - POSTGRES_DB=postgres
+  ports:
+    - 5432:5432
 ```
 
 The `healthcheck` parameter ensures the database is ready to receive requests. Without a healthcheck, other containers that depend on the database service (like Pomerium Console) will attempt to connect to the database before it is in a ready state, which will crash the container. (See the [Docker healthcheck docs](https://docs.docker.com/engine/reference/builder/#healthcheck) for more information.)
@@ -131,12 +134,12 @@ The `healthcheck` parameter ensures the database is ready to receive requests. W
 Mount `pgdata` to `/var/lib/postgresql/data` to persist data or to import existing data into your database service and declare the `pgdata` volume outside the database container:
 
 ```yaml title="database service"
-  database:
-    volumes:
-      - ./pgdata:/var/lib/postgresql/data
-
+database:
   volumes:
-    pgdata:
+    - ./pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:
 ```
 
 ### Configure the Verify service
@@ -144,13 +147,13 @@ Mount `pgdata` to `/var/lib/postgresql/data` to persist data or to import existi
 Add the configuration for the `verify` service:
 
 ```yaml title="verify"
-  verify:
-    networks:
-      main: {}
-    image: pomerium/verify:latest
-    expose:
-      - 8000
-    restart: always
+verify:
+  networks:
+    main: {}
+  image: pomerium/verify:latest
+  expose:
+    - 8000
+  restart: always
 ```
 
 ## Update the Pomerium Core configuration file
@@ -163,7 +166,6 @@ authenticate_service_url: https://authenticate.localhost.pomerium.io
 idp_provider: REPLACE_ME
 idp_client_id: REPLACE_ME
 idp_client_secret: REPLACE_ME
-
 
 # https://pomerium.com/reference/#routes
 routes:
@@ -233,6 +235,7 @@ database_url: postgresql://<username>:<password>@database/<database_name>?sslmod
 ```
 
 To add a `database_encryption_key`, run the following command:
+
 ```bash
 head -c32 /dev/urandom | base64
 ```
@@ -265,6 +268,7 @@ authenticate_service_url: https://authenticate.localhost.pomerium.io
 ```
 
 ### Adding TLS
+
 If you configured your Pomerium Core installation to use TLS to secure backend communication, you can do the same for Pomerium Enterprise by providing it a certificate, key, and optional custom CA file to validate the `databroker_service_url` connection:
 
 ```yaml title="config console"
