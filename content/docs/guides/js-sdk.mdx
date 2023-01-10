@@ -27,7 +27,7 @@ Pomerium’s JavaScript SDK offers both client- and server-side solutions that m
 
 ## How to use the JavaScript SDK
 
-You can install the JavaScript SDK is available as an [NPM package](https://www.npmjs.com/package/@pomerium/js-sdk).
+The JavaScript SDK is available as an [NPM package](https://www.npmjs.com/package/@pomerium/js-sdk).
 
 To use the JavaScript SDK, you need:
 
@@ -40,7 +40,7 @@ To use the JavaScript SDK, you need:
 
 ### Secure a React app with Pomerium
 
-1. Boostrap a React application using [Create React App](https://reactjs.org/docs/create-a-new-react-app.html#create-react-app)
+1. Bootstrap a React application using [Create React App](https://reactjs.org/docs/create-a-new-react-app.html#create-react-app)
 
 ```bash
 npx create-react-app react-app
@@ -65,7 +65,7 @@ yarn add @pomerium/js-sdk
 
 5. Run `yarn start`
 
-You should see your React application in the browser.
+You should see your React app in the browser.
 
 ![React app in browser](img/js-sdk/js-sdk-react-app-browser.png)
 
@@ -126,21 +126,23 @@ routes:
   - from: https://react.localhost.pomerium.io:4443
     to: http://localhost:3000
     pass_identity_headers: true
-    allowed_domains:
-      - pomerium.com
-      - gmail.com
+     policy:
+       - allow:
+           or:
+             - email:
+                 is: user@example.com
 ```
 
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
 
-Create a policy that only allows `pomerium.com` and `gmail.com` domains:
+Create a policy:
 
 1. Go to **Policies** and enter a **Name**
 2. In the **Create Policy** sidebar, select **Builder**
 3. Select **ADD ALLOW BLOCK** and add an **OR** operator
-4. In the **Value** field, enter **pomerium.com**
-5. Select the **+** icon and add **gmail.com** in the **Value** field
+4. In the **Criteria** field, select **Email**
+5. In the **Value** field, enter the email associated with your [identity provider](/docs/identity-providers)
 6. Save the policy
 
 ![Create a policy in Enterprise Console for React App](img/js-sdk/js-sdk-enterprise-policy.png)
@@ -149,11 +151,16 @@ Build a route:
 
 1. Go to **Routes** and select **NEW ROUTE**
 2. Enter a **Name**
-3. In the **From** field, enter `https://react.localhost.pomerium.io:4443`
+3. In the **From** field, enter the relevant URL:
+
+- `https://react.localhost.pomerium.io:4443`
+- `https://express.localhost.pomerium.io/4443/tofu`
+
 4. In the **To** field, enter `http://localhost:3000`
 5. Select **Pass Identity Headers**
-6. Select **Policies** and **Allow Domains**
-7. Save the route
+6. Select **Policies**
+7. Select the policy you want to use with your route
+8. Save the route
 
 ![Build a route in Enterprise Console for React app](img/js-sdk/js-sdk-enterprise-route.png)
 
@@ -161,9 +168,15 @@ Build a route:
 
 </Tabs>
 
+:::tip **Note:**
+
+If you're using more than one machine, deploy your React app and use the associated IP address instead of localhost.
+
+:::
+
 ### Verify the JWT
 
-In your browser, navigate to the relevant route:
+In your browser, navigate to the relevant URL:
 
 - `https://react.localhost.pomerium.io:4443`
 - `https://express.localhost.pomerium.io:443/tofu`
@@ -175,3 +188,10 @@ If your JWT is valid, you should receive a JSON payload with the following claim
 If the JWT is not valid or something wasn't implemented correctly, you should receive an error:
 
 ![JWT error in browser](img/js-sdk/js-sdk-jwt-error.png)
+
+---
+
+**Resources:**
+
+- [Identity Verification](/docs/capabilities/getting-users-identity)
+- [JWT Verification](/docs/guides/jwt-verification)
