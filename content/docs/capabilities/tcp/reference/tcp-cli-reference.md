@@ -3,7 +3,7 @@ title: Pomerium-CLI TCP Reference
 sidebar_label: TCP Reference
 hide_table_of_contents: false
 description: Manage your TCP connections from the command line with Pomerium-CLI.
-# keywords: [TODO: add keywords]
+keywords: [tcp, cli, pomerium]
 ---
 
 # TCP Reference for pomerium-cli
@@ -11,6 +11,7 @@ description: Manage your TCP connections from the command line with Pomerium-CLI
 This TCP reference covers `pomerium-cli` commands you can use to manage TCP connections in Pomerium.
 
 ## Usage
+
 ```shell
 pomerium-cli tcp [destination] [flags]
 ```
@@ -29,10 +30,3 @@ pomerium-cli tcp [destination] [flags]
 | <a className="entRef-anchor" id="--listen">#</a><a href='#--listen'>--listen</a> | Local address to start a listener on (default "127.0.0.1:0"). | string |
 | <a className="entRef-anchor" id="--pomerium-url">#</a><a href='#--pomerium-url'>--pomerium-url</a> | The URL of the Pomerium server to connect to. | string |
 | <a className="entRef-anchor" id="--version">#</a><a href='#--version'>-v, --version</a> | Version for pomerium-cli. | none |
-
-
-
-
-
-
-
