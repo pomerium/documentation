@@ -172,7 +172,7 @@ version: '3.8'
 services:
   pomerium-proxy:
     hostname: pomerium-proxy
-    image: pomerium/pomerium:v0.20.0
+    image: pomerium/pomerium:v0.21.0
     volumes:
       - ./config.yaml:/pomerium/config.yaml
     ports:
@@ -184,16 +184,18 @@ services:
       - SERVICES=proxy
       - CERTIFICATE_FILE=/run/secrets/wildcard.pem
       - CERTIFICATE_KEY_FILE=/run/secrets/wildcard-key.pem
+      - AUTHENTICATE_INTERNAL_SERVICE_URL=http://pomerium-authenticate
   pomerium-authorize:
     hostname: pomerium-authorize
-    image: pomerium/pomerium:v0.20.0
+    image: pomerium/pomerium:v0.21.0
     volumes:
       - ./config.yaml:/pomerium/config.yaml
     environment:
       - SERVICES=authorize
+      - AUTHENTICATE_INTERNAL_SERVICE_URL=http://pomerium-authenticate
   pomerium-authenticate:
     hostname: pomerium-authenticate
-    image: pomerium/pomerium:v0.20.0
+    image: pomerium/pomerium:v0.21.0
     volumes:
       - ./config.yaml:/pomerium/config.yaml
     environment:
@@ -202,7 +204,7 @@ services:
       - ADDRESS=:80
   pomerium-databroker:
     hostname: pomerium-databroker
-    image: pomerium/pomerium:v0.20.0
+    image: pomerium/pomerium:v0.21.0
     volumes:
       - ./config.yaml:/pomerium/config.yaml
     environment:
