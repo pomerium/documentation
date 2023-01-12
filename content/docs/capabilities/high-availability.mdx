@@ -136,6 +136,14 @@ Generate a wildcard certificate and key for Pomerium to use. You should get two 
 mkcert "*.localhost.pomerium.io"
 ```
 
+Copy the certificate authority cert:
+
+<!-- cSpell:ignore CAROOT -->
+
+```sh
+cp "$(mkcert --CAROOT)"/rootCA.pem .
+```
+
 Create minimum Pomerium configuration file, filling in your identity provider parameters:
 
 ```yaml title="config.yaml"
@@ -146,7 +154,7 @@ idp_client_secret: ***FILL IN***
 grpc_insecure: true
 grpc_address: ':80'
 
-authenticate_service_url: https://authenticate.localhost.pomerium.io
+authenticate_service_url: https://authenticate.localhost.pomerium.io:8443
 authorize_service_url: http://pomerium-authorize
 databroker_service_url: http://pomerium-databroker
 
@@ -155,10 +163,6 @@ shared_secret: 9OkZR6hwfmVD3a7Sfmgq58lUbFJGGz4hl/R9xbHFCAg=
 signing_key: LS0tLS1CRUdJTiBFQyBQUklWQVRFIEtFWS0tLS0tCk1IY0NBUUVFSUhQbkN5MXk0TEZZVkhQb3RzM05rUSttTXJLcDgvVmVWRkRwaUk2TVNxMlVvQW9HQ0NxR1NNNDkKQXdFSG9VUURRZ0FFT1h0VXAxOWFwRnNvVWJoYkI2cExMR1o1WFBXRlE5YWtmeW5ISy9RZ3paNC9MRjZhWEY2egpvS3lHMnNtL2wyajFiQ1JxUGJNd3dEVW9iWFNIODVIeDdRPT0KLS0tLS1FTkQgRUMgUFJJVkFURSBLRVktLS0tLQo=
 
 routes:
-  - from: https://authenticate.localhost.pomerium.io
-    to: http://pomerium-authenticate
-    preserve_host_header: true
-    allow_public_unauthenticated_access: true
   - from: https://httpbin.localhost.pomerium.io
     to: https://httpbin.org/get
     allow_any_authenticated_user: true
@@ -169,10 +173,14 @@ Create docker compose configuration
 
 ```yaml title="docker-compose.yaml"
 version: '3.8'
+networks:
+  main: {}
 services:
   pomerium-proxy:
     hostname: pomerium-proxy
     image: pomerium/pomerium:v0.21.0
+    networks:
+      main: {}
     volumes:
       - ./config.yaml:/pomerium/config.yaml
     ports:
@@ -180,31 +188,48 @@ services:
     secrets:
       - wildcard.pem
       - wildcard-key.pem
+      - ca.pem
     environment:
       - SERVICES=proxy
       - CERTIFICATE_FILE=/run/secrets/wildcard.pem
       - CERTIFICATE_KEY_FILE=/run/secrets/wildcard-key.pem
-      - AUTHENTICATE_INTERNAL_SERVICE_URL=http://pomerium-authenticate
+      - CERTIFICATE_AUTHORITY_FILE=/run/secrets/ca.pem
   pomerium-authorize:
     hostname: pomerium-authorize
     image: pomerium/pomerium:v0.21.0
+    networks:
+      main: {}
     volumes:
       - ./config.yaml:/pomerium/config.yaml
+    secrets:
+      - ca.pem
     environment:
       - SERVICES=authorize
-      - AUTHENTICATE_INTERNAL_SERVICE_URL=http://pomerium-authenticate
+      - CERTIFICATE_AUTHORITY_FILE=/run/secrets/ca.pem
   pomerium-authenticate:
     hostname: pomerium-authenticate
     image: pomerium/pomerium:v0.21.0
     volumes:
       - ./config.yaml:/pomerium/config.yaml
+    secrets:
+      - wildcard.pem
+      - wildcard-key.pem
     environment:
       - SERVICES=authenticate
-      - INSECURE_SERVER=true
-      - ADDRESS=:80
+      - ADDRESS=:8443
+      - CERTIFICATE_FILE=/run/secrets/wildcard.pem
+      - CERTIFICATE_KEY_FILE=/run/secrets/wildcard-key.pem
+    ports:
+      - 8443:8443
+    networks:
+      main:
+        aliases:
+          - authenticate.localhost.pomerium.io
   pomerium-databroker:
     hostname: pomerium-databroker
     image: pomerium/pomerium:v0.21.0
+    networks:
+      main: {}
     volumes:
       - ./config.yaml:/pomerium/config.yaml
     environment:
@@ -214,6 +239,8 @@ secrets:
     file: ./_wildcard.localhost.pomerium.io.pem
   wildcard-key.pem:
     file: ./_wildcard.localhost.pomerium.io-key.pem
+  ca.pem:
+    file: ./rootCA.pem
 ```
 
 Now you may bring up your deployment and visit a test route https://httpbin.localhost.pomerium.io
