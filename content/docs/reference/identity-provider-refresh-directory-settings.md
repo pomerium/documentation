@@ -10,6 +10,12 @@ pagination_next: null
 
 # Identity Provider Refresh Directory Settings
 
+:::caution
+
+This option is no longer supported, please see [Upgrade Guide](/docs/releases/upgrading#idp-directory-sync)
+
+:::
+
 - Environmental Variables: `IDP_REFRESH_DIRECTORY_INTERVAL` `IDP_REFRESH_DIRECTORY_TIMEOUT`
 - Config File Key: `idp_refresh_directory_interval` `idp_refresh_directory_timeout`
 - Type: [Go Duration](https://golang.org/pkg/time/#Duration.String) `string`

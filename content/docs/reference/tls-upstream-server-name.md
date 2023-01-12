@@ -11,6 +11,7 @@ pagination_next: null
 # TLS Upstream Server Name
 
 - Config File Key: `tls_upstream_server_name`
+- Kubernetes: not supported
 - Type: `string`
 - Optional
 

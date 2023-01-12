@@ -14,6 +14,7 @@ pagination_next: null
 
 - Environmental Variable: `IDP_PROVIDER`
 - Config File Key: `idp_provider`
+- Kubernetes: see [`identityProvider.provider`](/docs/deploying/k8s/reference#identityprovider)
 - Type: `string`
 - Required
 - Options: `auth0` `azure` `google` `okta` `onelogin` or `oidc`

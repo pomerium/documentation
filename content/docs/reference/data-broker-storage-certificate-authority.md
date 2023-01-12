@@ -11,6 +11,7 @@ pagination_next: null
 # Data Broker Storage Certificate Authority
 
 - Environment Variable: `DATABROKER_STORAGE_CA_FILE`
+- Kubernetes: see [`storage`](/docs/deploying/k8s/reference#storage)
 - Config File Key: `databroker_storage_ca_file`
 - Type: relative file location
 - Optional

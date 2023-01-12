@@ -14,6 +14,7 @@ pagination_next: null
 
 - Environmental Variable: `INSECURE_SERVER`
 - Config File Key: `insecure_server`
+- Kubernetes: not supported
 - Type: `bool`
 - Required if certificates unset
 

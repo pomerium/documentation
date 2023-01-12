@@ -12,6 +12,7 @@ pagination_next: null
 
 - Environmental Variable: `AUTHORIZE_INTERNAL_SERVICE_URL`
 - Config File Key: `authorize_internal_service_url`
+- Kubernetes: not supported
 - Type: `URL`
 - Required; inferred in all-in-one mode to be localhost.
 - Example: `https://pomerium-authorize-service.default.svc.cluster.local` or `https://localhost:5443`

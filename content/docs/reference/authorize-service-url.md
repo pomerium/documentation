@@ -14,6 +14,7 @@ pagination_next: null
 
 - Environmental Variable: `AUTHORIZE_SERVICE_URL or `AUTHORIZE_SERVICE_URLS`
 - Config File Key: `authorize_service_url` or `authorize_service_urls`
+- Kubernetes: not customizable in all in one mode via CRD
 - Type: `URL`
 - Required; inferred in all-in-one mode to be localhost.
 - Example: `https://pomerium-authorize-service.default.svc.cluster.local`, `https://localhost:5443`, `https://authorize.corp.example.com`

@@ -15,6 +15,7 @@ pagination_next: null
 - Config File Key: `certificate_file` / `certificate_key_file`
 - Environmental Variable: `CERTIFICATE` / `CERTIFICATE_KEY`
 - Environmental Variable: `CERTIFICATE_FILE` / `CERTIFICATE_KEY_FILE`
+- Kubernetes: [`certificates`](/docs/deploying/k8s/reference#spec)
 - Type: array of relative file locations `string`
 - Type: [base64 encoded](https://en.wikipedia.org/wiki/Base64) `string`
 - Type: certificate relative file location `string`

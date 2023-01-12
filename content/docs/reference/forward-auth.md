@@ -16,6 +16,7 @@ pagination_next: null
 
 - Environmental Variable: `FORWARD_AUTH_URL`
 - Config File Key: `forward_auth_url`
+- Kubernetes: not supported
 - Type: `URL` (must contain a scheme and hostname)
 - Example: `https://forwardauth.corp.example.com`
 - Resulting Verification URL: `https://forwardauth.corp.example.com/?uri={URL-TO-VERIFY}`

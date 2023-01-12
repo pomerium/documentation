@@ -12,6 +12,7 @@ pagination_next: null
 
 - Environmental Variable: `GRPC_CLIENT_TIMEOUT`
 - Config File Key: `grpc_client_timeout`
+- Kubernetes: not supported
 - Type: [Go Duration](https://golang.org/pkg/time/#Duration.String) `string`
 - Default: `10s`
 

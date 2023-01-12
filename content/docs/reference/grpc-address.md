@@ -14,6 +14,7 @@ pagination_next: null
 
 - Environmental Variable: `GRPC_ADDRESS`
 - Config File Key: `grpc_address`
+- Kubernetes: not customizable
 - Type: `string`
 - Example: `:443`, `:8443`
 - Default: `:443` or `:5443` if in all-in-one mode

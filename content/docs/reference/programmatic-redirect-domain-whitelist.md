@@ -12,6 +12,7 @@ pagination_next: null
 
 - Config File Key: `programmatic_redirect_domain_whitelist`
 - Type: array of `string`
+- Kubernetes: not supported
 - Optional
 - Default: `localhost`
 

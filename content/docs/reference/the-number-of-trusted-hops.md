@@ -14,6 +14,7 @@ pagination_next: null
 
 - Environmental Variable: `XFF_NUM_TRUSTED_HOPS`
 - Config File Key: `xff_num_trusted_hops`
+- Kubernetes: not supported
 - Type: `uint32`
 - Default: `0`
 
