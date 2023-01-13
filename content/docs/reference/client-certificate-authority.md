@@ -12,6 +12,7 @@ pagination_next: null
 
 - Environment Variable: `CLIENT_CA` / `CLIENT_CA_FILE`
 - Config File Key: `client_ca` / `client_ca_file`
+- Kubernetes: not supported
 - Type: [base64 encoded](https://en.wikipedia.org/wiki/Base64) `string` or relative file location
 - Optional
 

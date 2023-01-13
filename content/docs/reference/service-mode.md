@@ -14,6 +14,7 @@ pagination_next: null
 
 - Environmental Variable: `SERVICES`
 - Config File Key: `services`
+- Kubernetes: not customizable
 - Type: `string`
 - Default: `all`
 - Options: `all` `authenticate` `authorize` `databroker` or `proxy`

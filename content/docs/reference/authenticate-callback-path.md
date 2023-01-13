@@ -14,6 +14,7 @@ pagination_next: null
 
 - Environmental Variable: `AUTHENTICATE_CALLBACK_PATH`
 - Config File Key: `authenticate_callback_path`
+- [Kubernetes](/docs/deploying/k8s/configure): [`authenticate.callbackPath`](/docs/deploying/k8s/reference#authenticate)
 - Type: `string`
 - Default: `/oauth2/callback`
 - Optional

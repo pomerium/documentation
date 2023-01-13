@@ -12,6 +12,7 @@ pagination_next: null
 
 - Environmental Variable: `GOOGLE_CLOUD_SERVERLESS_AUTHENTICATION_SERVICE_ACCOUNT`
 - Config File Key: `google_cloud_serverless_authentication_service_account`
+- Kubernetes: not supported
 - Type: [base64 encoded](https://en.wikipedia.org/wiki/Base64) `string`
 - Optional
 

@@ -12,6 +12,7 @@ pagination_next: null
 
 - Environment Variable: `CODEC_TYPE`
 - Config File Key: `codec_type`
+- Kubernetes: not supported
 - Type: `string`
 - Default: `auto`
 

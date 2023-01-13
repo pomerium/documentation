@@ -12,6 +12,7 @@ pagination_next: null
 
 - Environment Variable: `CLIENT_CRL` / `CLIENT_CRL_FILE`
 - Config File Key: `client_crl` / `client_crl_file`
+- Kubernetes: not supported
 - Type: [base64 encoded](https://en.wikipedia.org/wiki/Base64) `string` or relative file location
 - Optional
 

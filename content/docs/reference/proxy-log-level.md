@@ -14,6 +14,7 @@ pagination_next: null
 
 - Environmental Variable: `PROXY_LOG_LEVEL`
 - Config File Key: `proxy_log_level`
+- Kubernetes: not supported
 - Type: `string`
 - Options: `debug` `info` `warn` `error`
 - Default: value of `log_level` or `debug` if both are unset

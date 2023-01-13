@@ -10,6 +10,7 @@ pagination_next: null
 
 - Environmental Variable: `METRICS_BASIC_AUTH`
 - Config File Key: `metrics_basic_auth`
+- Kubernetes: not supported
 - Type: base64 encoded `string` of `username:password`
 - Example: `eDp5` (for username: x, and password: y)
 - Optional

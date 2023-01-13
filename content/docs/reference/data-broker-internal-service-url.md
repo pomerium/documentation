@@ -12,6 +12,7 @@ pagination_next: null
 
 - Environmental Variable: `DATABROKER_INTERNAL_SERVICE_URL` or `DATABROKER_INTERNAL_SERVICE_URLS`
 - Config File Key: `databroker_internal_service_url` or `databroker_internal_service_urls`
+- Kubernetes: not customizable
 - Type: `URL`
 - Example: `https://databroker.corp.example.com`
 - Default: in all-in-one mode, `http://localhost:5443`

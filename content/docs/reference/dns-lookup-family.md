@@ -14,6 +14,7 @@ pagination_next: null
 
 - Environmental Variable: `DNS_LOOKUP_FAMILY`
 - Config File Key: `dns_lookup_family`
+- Kubernetes: not supported
 - Type: `string`
 - Options: `V4_ONLY` `V6_ONLY` `AUTO`
 - Optional

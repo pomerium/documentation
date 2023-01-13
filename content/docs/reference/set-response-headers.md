@@ -12,6 +12,7 @@ pagination_next: null
 
 - Environmental Variable: `SET_RESPONSE_HEADERS`
 - Config File Key: `set_response_headers`
+- Kubernetes: set per [Ingress](/docs/deploying/k8s/ingress)
 - Type: map of `strings` key value pairs
 - Examples:
 
