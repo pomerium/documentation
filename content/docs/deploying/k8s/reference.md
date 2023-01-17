@@ -43,6 +43,22 @@ PomeriumSpec defines Pomerium-specific configuration parameters.
         <tr>
             <td>
                 <p>
+                <code>caSecrets</code>&#160;&#160;
+                
+                    <strong>[]string</strong>&#160;
+                
+                </p>
+                <p>
+                    
+                    CASecret should refer to k8s secrets with key <code>ca.crt</code> containing a CA certificate.
+                </p>
+                
+            </td>
+        </tr>
+    
+        <tr>
+            <td>
+                <p>
                 <code>certificates</code>&#160;&#160;
                 
                     <strong>[]string</strong>&#160;
