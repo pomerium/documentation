@@ -48,6 +48,7 @@ The keys listed below can be applied in Pomerium Console's `config.yaml` file, o
 | <a className="entRef-anchor" id="tls-ca-file">#</a><a href='#tls-ca-file'>tls-ca-file</a> | file storing tls-ca | none |
 | <a className="entRef-anchor" id="tls-cert">#</a><a href='#tls-cert'>tls-cert</a> | base64-encoded string of tls-cert | none |
 | <a className="entRef-anchor" id="tls-cert-file">#</a><a href='#tls-cert-file'>tls-cert-file</a> | file storing tls-cert | none |
+| <a className="entRef-anchor" id="tls-derive">#</a><a href='#tls-derive'>tls-derive</a> | derive TLS server certificate for the console HTTPS and gRPC endpoints for the host specified by this option, using certificate authority derived from the shared key. Uses this CA authority to verify server certificate presented by the Databroker gRPC TLS when [`tls_derive`](/docs/reference/tls_derive) option is set in the Pomerium Core. | none |
 | <a className="entRef-anchor" id="tls-insecure-skip-verify">#</a><a href='#tls-insecure-skip-verify'>tls-insecure-skip-verify</a> | Disable remote hosts TLS certificate chain and hostname checks. | `false` |
 | <a className="entRef-anchor" id="tls-key">#</a><a href='#tls-key'>tls-key</a> | base64-encoded string of tls-key | none |
 | <a className="entRef-anchor" id="tls-key-file">#</a><a href='#tls-key-file'>tls-key-file</a> | file storing tls-key | none |
