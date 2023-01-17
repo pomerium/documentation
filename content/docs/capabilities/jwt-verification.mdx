@@ -1,0 +1,78 @@
+---
+title: JWT Verification
+sidebar_label: JWT Verification
+description: Verify and parse JWTs issued by the Pomerium authorization service.
+keywords:
+  [
+    jwt,
+    pomerium,
+    authorization,
+    identity verification,
+    javascript,
+    react,
+    node,
+    express,
+    go,
+  ]
+---
+
+import ReactApp from '../../examples/js-sdk/react-app.md';
+
+# JWT verification
+
+Pomerium's [JavaScript SDK](https://github.com/pomerium/js-sdk) provides a client-side solution to verify JWTs issued by the authorization service.
+
+## Requirements to use the JavaScript SDK
+
+The JavaScript SDK is available as an [NPM package](https://www.npmjs.com/package/@pomerium/js-sdk) and can be imported using CommonJS or ECMAScript modules.
+
+To use the JavaScript SDK, you need:
+
+- [Node.js](https://nodejs.org/en/download/) (version 18+)
+- [NPM](https://www.npmjs.com/) (to install Node.js and Yarn)
+- [Yarn](https://classic.yarnpkg.com/lang/en/docs/install/#mac-stable) (preferred package manager)
+
+### Basic usage
+
+The following code provides a minimum working example of how JWT verification works using the JavaScript SDK in a React app:
+
+<ReactApp />
+
+:::tip
+
+See the [JavaScript SDK guide](/docs/guides/js-sdk) for more complete client- and server-side examples using React and Express.
+
+:::
+
+### PomeriumVerifier reference
+
+The `PomeriumVerifier` class is the easiest way to verify JWTs. See the reference below for more information:
+
+#### Parameters
+
+| Parameters | Description | Value |
+| :-- | :-- | --- |
+| issuer | The URL of your authentication domain e.g. `authenticate.corp.example`. | String |
+| audience | The client's final domain e.g. `httpbin.corp.example.com`. | String |
+| expirationBuffer | Adds padding in seconds to prevent throwing errors for expired JWTs that may have differing server times. Defaults to `0` | Integer |
+| firstUse | Decides whether or not to trust the first JWT. | Boolean |
+| jwtData | The JSON payload containing JWT claims. | Object |
+| verifiedJwtData | The verified JSON payload containing JWT claims. | Object |
+
+#### Methods
+
+| Method | Description |
+| :-- | :-- |
+| getClientJwt | Fetches client JWT from the `/.pomerium/jwt` endpoint. |
+| parseJWT | Decodes JWT token. |
+| getJWKsData | Fetches JWKs data from the `/.well-known/pomerium/jwks.json` endpoint. |
+| verifyPomeriumJWT | Verifies JWT using the `jwt`, `authenticateBaseUrl`, `issuer`, and `audience` parameters. |
+| withHttps | Prepends the URL with the `https://` protocol. |
+| signOut | Signs user out and redirects them with the `/.pomerium/sign_out` endpoint. |
+
+## Server-side JWT verification
+
+Pomerium also provides server-side solutions in Go and JavaScript:
+
+- [Go SDK](https://github.com/pomerium/sdk-go)
+- [Node/Express JavaScript SDK](https://github.com/pomerium/js-sdk/tree/main/examples/express)
