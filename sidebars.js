@@ -29,6 +29,7 @@ const sidebars = {
         'docs/capabilities/routing',
         // 2ndary capabilities
         'docs/capabilities/audit-logs',
+        'docs/capabilities/jwt-verification',
         'docs/capabilities/mtls-clients',
         'docs/capabilities/mtls-services',
         'docs/capabilities/getting-users-identity',
