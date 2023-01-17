@@ -1,11 +1,10 @@
 ---
-id: log-level
-title: Log Level
+id: tls-derive
+title: Auto TLS
 description: |
-  Log level sets the global logging level for pomerium.
+  Auto TLS for Console and Core seamless connectivity.
 keywords:
   - reference
-  - Log Level
 pagination_prev: null
 pagination_next: null
 ---
