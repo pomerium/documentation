@@ -37,7 +37,7 @@ This guide assumes you've already registered for Pomerium Enterprise and have cr
 ### Configure Docker Compose services
 
 ```yaml title="Docker Compose config"
-version: "3"
+version: '3'
 networks:
   main: {}
 services:
@@ -50,7 +50,7 @@ services:
     networks:
       main:
         aliases:
-        - authenticate.localhost.pomerium.io
+          - authenticate.localhost.pomerium.io
   pomerium_console:
     networks:
       main:
@@ -84,7 +84,7 @@ services:
     image: postgres:latest
     restart: always
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -d pomeriumDB -U zach" ]
+      test: ['CMD-SHELL', 'pg_isready -d pomeriumDB -U zach']
       interval: 5s
       timeout: 5s
       retries: 5
