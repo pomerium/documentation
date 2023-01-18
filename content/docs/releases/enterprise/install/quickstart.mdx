@@ -1,18 +1,18 @@
 ---
 # cSpell:ignore pygpgme makecache disablerepo enablerepo
 
-title: Quickstart
+title: Enterprise Console Quickstart
 description: Demo Pomerium Enterprise
 sidebar_position: 1
 ---
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
-import GenerateRecoveryToken from '@site/content/_generate-recovery-token.md';
+import EnterpriseCompose from '../../examples/enterprise-quickstart/docker-compose.yaml';
 
 # Pomerium Enterprise Quickstart
 
-Learn how to run Pomerium Enterprise using Docker containers.
+Learn how to run Pomerium Enterprise using Docker Compose.
 
 ## Prerequisites
 
@@ -30,7 +30,7 @@ The Pomerium Enterprise Console uses an embedded Prometheus server to collect an
 
 :::tip **Note**
 
-This guide assumes you've already registered for Pomerium Enterprise and have credentials to access the private Cloudsmith Docker registry. If you haven't registered for Pomerium Enterprise, [sign up here](https://www.pomerium.com/enterprise-sales/) for a free trial.
+This guide assumes you've already registered for Pomerium Enterprise and have credentials to access the private Cloudsmith.io Docker registry, and a license key. If you haven't registered for Pomerium Enterprise, [sign up here](https://www.pomerium.com/enterprise-sales/) for a free trial.
 
 :::
 
@@ -84,7 +84,7 @@ pomerium_console:
       condition: service_healthy
     pomerium:
       condition: service_started
-  image: docker.cloudsmith.io/pomerium/enterprise/pomerium-console:v0.20.0
+  image: docker.cloudsmith.io/pomerium/enterprise/pomerium-console:latest
   expose:
     - 8701
     - 9090
@@ -267,26 +267,8 @@ prometheus_data_dir: /data
 authenticate_service_url: https://authenticate.localhost.pomerium.io
 ```
 
-### Adding TLS
-
-If you configured your Pomerium Core installation to use TLS to secure backend communication, you can do the same for Pomerium Enterprise by providing it a certificate, key, and optional custom CA file to validate the `databroker_service_url` connection:
-
-```yaml title="config console"
-tls_ca_file: /etc/pomerium-console/ca.pem
-tls_cert_file: /etc/pomerium-console/cert.pem
-tls_key_file: /etc/pomerium-console/key.pem
-```
-
-For proof-of-concept installations in the same local system, this is not required.
-
 ## Connect to Pomerium Enterprise Console
 
 Run `docker compose up` to run your containers and connect to the Console.
 
 If your containers run successfully, navigate to `https://console.localhost.pomerium.io` to access your Console.
-
-## Troubleshooting
-
-### Generate Recovery Token
-
-<GenerateRecoveryToken />
