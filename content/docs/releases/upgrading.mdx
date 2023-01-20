@@ -13,6 +13,40 @@ sidebar_position: 10
 
 # Upgrade guide
 
+## Since 0.20.0
+
+### Upgrading
+
+There are several data model changes in this release that are not backward compatible. Please make sure you back up your Postgres database before performing an upgrade.
+
+### Breaking
+
+#### Devices need be re-enrolled
+
+[Devices (beta)](/docs/capabilities/device-identity) data model had an internal change that is not forward compatible. Your enrolled devices need be re-registered, and their IDs would change. Your existing policies may need be updated.
+
+#### (TBD)
+
+confirm sessions can rolled from 0.20 to 0.21 after auth changes
+
+#### Forward Auth (deprecated, removed in this release)
+
+Forward auth was introduced in early versions of Pomerium to provide a gradual migration path for users of other reverse proxies to Pomerium. Since then, Pomerium came a long way - it is now based around first class reverse proxy core (Envoy) and has been battle tested for many years. Unfortunately, supporting forward authorization mode was always causing misconfiguration issues and was hard to troubleshoot, and it is not compatible with some Pomerium newer features and deployment scenarios.
+
+### New
+
+#### Bastion Host support for TCP routes
+
+See [Bastion Host](/docs/capabilities/tcp#bastion-host)
+
+#### Authenticate
+
+Authenticate component is now stateless (no longer depends on the databroker) and uses hybrid public key encryption to carry the authentication session data. Databroker connection parameters and `shared_secret` are no longer required for `authenticate` if you deploy in the split mode.
+
+#### Internal TLS by default
+
+(TBD) waiting for AutoTLS PR to be merged
+
 ## Since 0.19.0
 
 ### Breaking
