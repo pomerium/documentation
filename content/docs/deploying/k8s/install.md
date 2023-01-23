@@ -18,7 +18,7 @@ Use Pomerium as a first-class secure-by-default Ingress Controller. The Pomerium
 ## Deploy
 
 ```console
-kubectl apply -f https://raw.githubusercontent.com/pomerium/ingress-controller/v0.20.0/deployment.yaml
+kubectl apply -f github.com/pomerium/ingress-controller/config/default\?ref=v0.20.0
 ```
 
 The Pomerium Ingress Controller is now installed into your cluster.
@@ -49,7 +49,7 @@ spec:
 
 ## Advanced
 
-You may adjust your base installation with [`kustomize`](https://kustomize.io/), that is also accessible via the `kubectl apply -k kustomize.yaml`.
+You may adjust your base installation with [`kustomize`](https://kustomize.io/), that is also accessible via the `kubectl apply -k`.
 
 <details>
 <summary>Base Installation Summary</summary>
