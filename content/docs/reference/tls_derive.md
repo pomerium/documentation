@@ -17,10 +17,10 @@ pagination_next: null
 - Type: `FQDN` (fully qualified domain name)
 - Default: none
 
-This option enables automatic TLS between Pomerium Core and Enterprise, to secure gRPC connectivity from Console to Databroker and from Proxy to Console HTTPS and gRPC/TLS endpoints, without the need to manually procure certificates (which is still an option for those users who demand it) by deriving CA and server certs from `shared_secret`.
+Auto TLS enables automatic TLS between Pomerium Core and Enterprise by deriving the certificate authority (CA) and server certificates from a `shared_secret`. Auto TLS secures HTTPS and gRPC/TLS endpoints connecting the Console to the Databroker and Proxy services so you don’t have to manually generate certificates (it’s still an option for users who demand it).
 
 When set:
 
-- a certificate authority is derived from the `shared_secret` and is added to default CA.
-- route upstream (`to`) server certificate signed by such a derived CA would be trusted.
-- databroker gRPC server would use a server certificate with a provided domain name and signed by a derived CA.
+- a CA is derived from the `shared_secret` and is added to the list of system default CAs.
+- An upstream route (`to`) server certificate signed by such a derived CA would be trusted.
+- The Databroker gRPC server would use a server certificate with a provided domain name and signed by a derived CA.
