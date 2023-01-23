@@ -1,6 +1,16 @@
 namespace: pomerium
 resources:
-  - https://raw.githubusercontent.com/pomerium/ingress-controller/v0.20.0/deployment.yaml
+  - github.com/pomerium/ingress-controller/config/default?ref=v0.20.0
   - service.yaml
 patchesStrategicMerge:
   - ./deployment.yaml
+patchesJson6902:
+  - target:
+      group: apps
+      version: v1
+      kind: Deployment
+      name: pomerium
+    patch: |-
+      - op: add
+        path: /spec/template/spec/containers/0/args/-
+        value: '--databroker-auto-tls=pomerium-databroker.$(POMERIUM_NAMESPACE).svc.cluster.local'
