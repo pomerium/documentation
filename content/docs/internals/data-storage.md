@@ -117,3 +117,9 @@ the second `s` in `rediss` is intentional and turns on TLS support
 ## Troubleshooting
 
 Most issues with the Databroker service are caused by a [`shared_secret`](/docs/reference/shared-secret) mismatch between services. See [Troubleshooting - Shared Secret Mismatch](/docs/reference/shared-secret) for details.
+
+:::tip **Note**
+
+You only need to include a [`shared_secret`](/docs/reference/shared-secret) and databroker parameters when running Pomerium in [all-in-one mode](/docs/internals/configuration). Running Pomerium in a distributed environment that handles each component separately does not require a shared secret or databroker parameters. 
+
+:::
