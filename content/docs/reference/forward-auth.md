@@ -1,6 +1,6 @@
 ---
 id: forward-auth
-title: Forward Auth
+title: Forward Auth (Deprecated)
 description: |
   Forward authentication creates an endpoint that can be used with third-party proxies.
 keywords:
@@ -10,7 +10,13 @@ pagination_prev: null
 pagination_next: null
 ---
 
-# Forward Auth
+# Forward Auth (Deprecated)
+
+:::warning
+
+Starting v0.21.0, Pomerium will no longer support **Forward Auth**. Supporting Forward Auth requires Pomerium to route requests from third-party proxies to make access control decisions. This goes against zero-trust principles as specified in the BeyondCorp model, which states that all traffic should flow through a single proxy.
+
+:::
 
 - Environmental Variable: `FORWARD_AUTH_URL`
 - Config File Key: `forward_auth_url`
