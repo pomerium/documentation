@@ -30,7 +30,7 @@ The following steps outline how the Proxy service handles a request at a high le
 The Authentication service is responsible for authenticating users against an Identity Provider (IdP) and establishing user sessions. By incorporating OAuth 2.0 and OIDC protocols into the authentication flow, the Authentication service provides single sign-on authentication that enables it to extract user identity details and session data necessary for managing Pomerium sessions. 
 
 At a high level, when the Authentication service first receives a request from the Proxy service, it:
-1. Redirects the client to the IdP
+1. Redirects the client to the IdP to sign in
 1. Completes the authentication flow with the IdP and extracts relevant session data, such as device credentials, user ID, issuance and expiration times, OAuth tokens, and any OIDC claims (scopes) provided by the IdP
 1. Saves session data to a local session cookie and redirects the client with session data encrypted in URL parameters to the Proxy service
 1. Signs the user in after the session expires
@@ -42,7 +42,7 @@ When the Authorization service receives a request from the Proxy service, the fo
 1. The Authorization service first looks for a session cookie, which contains the client’s JWT. If no session cookie is present, the Authorization service returns a redirect response, prompting the browser to authenticate through the Authentication service to establish session identity. 
 1. Once a session cookie is in place, the Proxy service makes a gRPC call to the Authorization service so it can determine permissions based on JWT claims and policy. 
 1. The Authorization service then constructs security headers based on JWT claims, which the Proxy service forwards to upstream applications.
-1. With each subsequent request, the Authorization service checks the session expiration time. 
+1. With each subsequent request, the Authorization service employs on-demand caching to query the Databroker service for updates to session state.
 
 ### Databroker service
 The Databroker service persists session and identity-related data. It also functions as an identity manager in that it's responsible for refreshing user sessions against the IdP until a Pomerium session has expired. 
