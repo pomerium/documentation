@@ -50,11 +50,11 @@ In test deployments, all four components may run from a [single binary and confi
 
 ![pomerium architecture diagram](./img/architecture/pomerium-container-context-stateless-authn.svg)
 
-## Request flow
+## The lifecycle of a request
 
-The diagram below shows how Pomerium's components communicate when authenticating a fresh user. 
+The diagram below shows how Pomerium's components communicate when authenticating a user. 
 
-After initial authentication to provide a session token, only the authorization check interactions occur (step **3**).
+After initial authentication to provide a session token, only the authorization check interactions occur.
 
 ![pomerium architecture diagram](./img/architecture/pomerium-request-flow.jpg)
 
@@ -62,20 +62,18 @@ After initial authentication to provide a session token, only the authorization 
 
 The client sends a request to access a secured application, which prompts the Proxy to send the request over a gRPC call to the Authorization service.
 
-Because the client has not authenticated, the Authorization service can't locate the session ID in the Databroker service. It redirects the request back to the Proxy to authenticate the client. 
+Because the client has not authenticated, the Authorization service can't locate the session ID in the Databroker service. It sends the client to the Authenticate service, which prompts the client to sign in to the IdP. 
 
 **Step 2:** Authenticating the client
 
-The Proxy service redirects the client to the Authentication service, which redirects the request to the IdP. Here, the client is prompted to sign in to the IdP with the required credentials.
+After the client signs in, the IdP exchanges an authorization code with the Authentication service. The Authentication service uses the code to get OAuth tokens and OIDC claims from the IdP. 
 
-After signing in, the IdP exchanges an authorization code with the Authentication service. The Authentication service uses the code to get OAuth tokens and OIDC claims from the IdP. 
-
-The Authorizaton service redirects the request to the Proxy with the session data. 
+The Authentication service redirects the request to the Proxy with the session data. 
 
 **Step 3:** Authorizing the request
 
-The Proxy saves the session data locally and redirects it in an encrypted URL to the Databroker service. The Databroker persists the session data and manages the session, and the Authorizaton service queries the Databroker for session data as needed.
+The Proxy saves the session data locally and sends it to the Databroker service over a gRPC call. The Databroker persists the session data and manages the session, and the Authorizaton service queries the Databroker for session data by way of on-demand caching.
 
-Now that the client is authenticated, the Proxy sends the request again to the Authorization service. The Authorization service can now locate the session in the Databroker by its ID. 
+Now that the client is authenticated, the Proxy sends the request again to the Authorization service. The Authorization service can now locate the session in the Databroker. 
 
-The Authorization service factors in IdP scopes and policy to determine if the client can access the secured application. Assuming the client has sufficient permissions, the Authorization service authorizes the request so the Proxy can redirect the client to the secured application.
+The Authorization service factors in IdP scopes and policy to determine if the client can access the secured application. Assuming the client has sufficient permissions, the Authorization service authorizes the request, and the Proxy sends the client to the route defined in the policy.
