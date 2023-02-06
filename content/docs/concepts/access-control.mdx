@@ -18,16 +18,19 @@ keywords:
 # Identity and Access Management (IAM)
 
 ## What is identity and access management?
+
 Identity and access management (IAM) is the process of verifying a user’s identity and determining what resources they can access. By enforcing an IAM policy within your organization, you can control what permissions a user has, where they can access resources from, and when.
 
 This degree of fine-grained access control is key to implementing a zero-trust security framework within your organization. Learn how Pomerium helps organizations adopt zero trust starting with IAM.
 
 If you're unfamiliar with IAM, review the following core concepts below:
+
 - [OAuth 2.0 and OIDC](#oauth-20-and-open-id-connect-oidc)
 - [Identity providers](#identity-provider-idp)
 - [Authentication and authorization](#how-pomerium-handles-authentication-and-authorization)
 
 ### OAuth 2.0 and Open ID Connect (OIDC)
+
 [OAuth 2.0](https://www.rfc-editor.org/rfc/rfc6749) is an authorization protocol that defines how a user can grant an application limited access to their resources without exchanging details like their username or password. Instead, the application uses an authorization grant to request access to the user's resources from a resource server.
 
 [Open ID Connect](https://openid.net/specs/openid-connect-core-1_0.html#toc) (OIDC) is an authentication protocol built on top of OAuth 2.0. In the case of OIDC, an authorization server verifies the identity of the user and stores that information in an ID token (JWT). The ID token contains identity-related data in the form of claims, and the ID token is passed from the server to the application.
@@ -35,12 +38,15 @@ If you're unfamiliar with IAM, review the following core concepts below:
 Together, these protocols offer a secure and scalable method for organizations to authenticate and authorize users.
 
 ### Identity provider (IdP)
+
 An identity provider (IdP) is a service, like Google or Okta, that stores digital identities (information about a user). When an application needs to verify a user’s identity (OIDC) or request resources on behalf of a user (OAuth 2.0), it speaks to the IdP first. This way, the user only needs to authenticate against the IdP, not the application they want to access.
 
 In the case of Pomerium, the proxy service routes requests to upstream applications and relies on other Pomerium services, like the authentication and authorization services, to handle identity verification with your IdP and to process policy to make access control decisions.
 
 ## How Pomerium handles authentication and authorization
+
 Two core concepts within IAM are [**authentication** vs. **authorization**](https://www.pomerium.com/blog/authentication-v-authorization/):
+
 - **Authentication** (AuthN) verifies your identity (Are you who you say you are?)
 - **Authorization** (AuthZ) determines if you’re allowed to do what you’re trying to do (Do you have permission to access the resource?)
 
@@ -61,6 +67,7 @@ Pomerium can make holistic policy and authorization decisions using external dat
 Pomerium enables zero-trust access. This means trust flows from identity, device state, and context – not network connection.
 
 With Pomerium:
+
 - Requests are continuously re-evaluated on a per-request basis
 - Authorization is context- and identity-aware: You can use Pomerium to integrate data from any source into authorization policy decisions
 - Trust flows from user and device identity, meaning you can authenticate, authorize, and encrypt communication between every user, device, and application
@@ -74,6 +81,7 @@ Pomerium provides detailed [audit logs](/docs/capabilities/audit-logs) for all a
 Pomerium populates users and groups from your IdP. This data is cached to prevent hitting API rate-limits, ensure policy enforcement performance, and provide look-ahead support when adding users or groups to [Namespaces](/docs/concepts/access-control#namespaces) and [Policies](/docs/concepts/access-control#policies).
 
 ### Non-domain users​
+
 You may encounter a situation where you may want to add users that are not directly associated with your corporate IdP service. For example, if you have a corporate Google Workspace account and want to add a contractor with a Gmail account, you would have two options:
 
 - Create a group within your IdP directly with the non-domain users in it. This group can be found and added to Namespaces and Policies.
