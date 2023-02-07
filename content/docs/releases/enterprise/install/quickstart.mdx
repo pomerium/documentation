@@ -36,7 +36,9 @@ This guide assumes you've already registered for Pomerium Enterprise and have cr
 
 ### Configure Docker Compose services
 
-```yaml title="Docker Compose config"
+Create a file called `docker-compose.yaml` in your project's root folder and add the configuration below:
+
+```yaml title="pomerium/docker-compose.yaml"
 version: '3'
 networks:
   main: {}
@@ -67,7 +69,7 @@ services:
       - AUDIENCE=console.localhost.pomerium.io
       - ADMINISTRATORS=admin@example.com
       - DATABASE_ENCRYPTION_KEY=tXBj4gGDj45m8cW7ehhcy5lRuxsEeNl0X/nnsN5YJPw=
-      - DATABROKER_SERVICE_URL=pomerium://pomerium:5443
+      - DATABROKER_SERVICE_URL=http://pomerium:5443
       - SHARED_SECRET=mxGl062SqkrbQKvqG9R2jqHqxq1Oi1BNj2AAeZHNq7c=
       - DATABASE_URL=postgresql://postgres:postgres@database/postgres?sslmode=disable
       # - LICENSE_KEY=REPLACE_ME
@@ -84,7 +86,7 @@ services:
     image: postgres:latest
     restart: always
     healthcheck:
-      test: ['CMD-SHELL', 'pg_isready -d pomeriumDB -U zach']
+      test: ['CMD-SHELL', 'pg_isready -d pomeriumDB -U postgres']
       interval: 5s
       timeout: 5s
       retries: 5
@@ -110,7 +112,7 @@ volumes:
 
 Below are a few points to note about services running in `docker-compose`:
 
-- `pomerium_console` exposes ports `8701` and `9090`. Later, you will define port `8701` in a route that connects to the Pomerium Enterprise Console. Port `9090` is the [default port](https://prometheus.io/docs/introduction/first_steps/#configuring-prometheus) used by Prometheus to scrape metrics.
+- `pomerium_console` exposes ports `8701` and `9090`. In your `config.yaml` file,, you will define port `8701` in a route that connects to the Pomerium Enterprise Console. Port `9090` is the [default port](https://prometheus.io/docs/introduction/first_steps/#configuring-prometheus) used by Prometheus to scrape metrics.
 - You must configure at least one administrator for console access. This user (or users) can then configure additional administrators in the console UI. Multiple administrators are defined as a comma-separated string.
 - The healthcheck parameter ensures the database is ready to receive requests. Without a healthcheck, other containers that depend on the database service (like Pomerium Console) will attempt to connect to the database before it is in a ready state, **which will crash the container**. (See the [Docker healthcheck](https://docs.docker.com/engine/reference/builder/#healthcheck) docs for more information.)
 - See the [signing key reference](/docs/reference/signing-key) for more information on generating signing keys.
@@ -119,7 +121,7 @@ Below are a few points to note about services running in `docker-compose`:
 
 Update your `config.yaml` file:
 
-```yaml title="Pomerium Core config"
+```yaml title="pomerium/config.yaml"
 authenticate_service_url: https://authenticate.localhost.pomerium.io
 
 idp_provider: REPLACE_ME
