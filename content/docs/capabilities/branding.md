@@ -7,7 +7,7 @@ description: Add custom colors, logos, and error messages.
 
 :::tip
 
-This article describes a use case available to [Pomerium Enterprise](/docs/releases/enterprise/install/enterprise) customers.
+This article describes a use case available to [Pomerium Enterprise](/docs/releases/enterprise/install/index.md) customers.
 
 :::
 
