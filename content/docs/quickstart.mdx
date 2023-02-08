@@ -38,6 +38,19 @@ Create a [configuration file] (e.g. `config.yaml`) for defining Pomerium's confi
 
 <ConfigDocker />
 
+## Update signing key
+
+Generate a [signing key](/docs/reference/signing-key):
+
+```bash
+# Generates an P-256 (ES256) signing key
+openssl ecparam  -genkey  -name prime256v1  -noout  -out ec_private.pem
+# Prints the base64 encoded value of the signing key
+cat ec_private.pem | base64
+```
+
+Add the base64-encoded signing key to the `signing_key` variable in your `config.yaml` file.
+
 :::tip **Note**
 
 Keep track of the path to this file, relative to the `docker-compose.yaml` file created in the next step. `docker-compose.yaml` will need the correct relative path to your `config.yaml`.
@@ -64,18 +77,18 @@ You should now be able to access the routes (e.g. `https://verify.localhost.pome
 
 When navigating to the `https://verify.localhost.pomerium.io` route defined in your policy, you may encounter the following self-signed certificate warning:
 
-![self-signed warning](./img/quickstart/self-signed-warning.png)
+![proceed to verify](./img/quickstart/pomerium-proceed-to-verify.png)
 
 To resolve this error:
 
-1. Click anywhere inside the browser window
-2. Type **thisisunsafe**
-3. Make sure **Reload** is selected
-4. Press **ENTER**
+1. Select **Advanced**
+2. Select **Proceed to verify.localhost.pomerium.io (unsafe)**
 
-Your browser will redirect you to the route defined in your policy:
+Your browser will redirect you to the verify route.
 
-![user details page](./img/quickstart/user-details-page.png)
+Under **Signed Identity Token**, you will see a list of JWT claims with your user details:
+
+![jwt claims](./img/quickstart/jwt-claims.png)
 
 ## Next Steps
 
