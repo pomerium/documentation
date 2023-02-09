@@ -10,6 +10,7 @@ services:
       - ./config.yaml:/pomerium/config.yaml:ro
     ports:
       - 443:443
+    ## A network alias is only required when using `localhost.pomerium.io`
     networks:
       main:
         aliases:
