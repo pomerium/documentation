@@ -56,7 +56,7 @@ The diagram below shows how Pomerium's components communicate when authenticatin
 
 After initial authentication to provide a session token, only the authorization check interactions occur.
 
-![pomerium architecture diagram](./img/architecture/pomerium-request-flow.jpg)
+![pomerium architecture diagram](./img/architecture/pomerium-request-flow-2.jpg)
 
 **Step 1:** Unauthenticated client
 
