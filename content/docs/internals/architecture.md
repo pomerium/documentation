@@ -1,5 +1,4 @@
 ---
-# cspell:ignore Authorization
 title: Architecture
 lang: en-US
 description: Pomerium verifies identity with your IdP and uses a configurable policy to route requests and decide if a user is authorized to access the service.
@@ -57,7 +56,7 @@ The diagram below shows how Pomerium's components communicate when authenticatin
 
 After initial authentication to provide a session token, only the authorization check interactions occur.
 
-![pomerium architecture diagram](./img/architecture/pomerium-request-flow-2.jpg)
+![pomerium architecture diagram](./img/architecture/pomerium-request-flow.svg)
 
 **Step 1:** Unauthenticated client
 
@@ -67,7 +66,7 @@ Because the client has not authenticated, the Authorization service can't locate
 
 **Step 2:** Authenticating the client
 
-After the client signs in, the IdP exchanges an authorization code with the Authentication service. The Authentication service uses the code to get OAuth tokens and OIDC claims from the IdP.
+After the client signs in, the IdP exchanges an authorization code with the Authentication service. The Authentication service uses the code to get OAuth tokens and [OIDC claims](https://openid.net/specs/openid-connect-basic-1_0.html) from the IdP.
 
 The Authentication service redirects the request to the Proxy with the session data.
 
