@@ -1,4 +1,5 @@
 ---
+# cspell:ignore Authorization
 title: Architecture
 lang: en-US
 description: Pomerium verifies identity with your IdP and uses a configurable policy to route requests and decide if a user is authorized to access the service.
