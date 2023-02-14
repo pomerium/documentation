@@ -31,7 +31,6 @@ This guide runs Pomerium Core and PostgreSQL as Docker containers. To complete t
 If you haven't, create a file called `config.yaml` and add the following code:
 
 ```yaml title="config.yaml"
-
 idp_provider: REPLACE_ME
 idp_client_id: REPLACE_ME
 idp_client_secret: REPLACE_ME
@@ -63,10 +62,11 @@ This guide assumes you've already registered for Pomerium Enterprise and have cr
 
 Create a file called `config-console.yaml` and update the following values:
 
-``` title="config-console.yaml"
+```title="config-console.yaml"
 administrators: admin@example.com
 license_key: REPLACE_ME
 ```
+
 You must configure at least one administrator for console access. This user (or users) can then configure additional administrators in the console UI. Multiple administrators are defined as a comma-separated string.
 
 ## Configure Docker Compose services
@@ -105,9 +105,9 @@ services:
         condition: service_started
     image: docker.cloudsmith.io/pomerium/enterprise/pomerium-console:v0.21.0
     args:
-      - "serve"
-      - "--config"
-      - "/pomerium/console-config.yaml"
+      - 'serve'
+      - '--config'
+      - '/pomerium/console-config.yaml'
     expose:
       - 8701
       - 9090
