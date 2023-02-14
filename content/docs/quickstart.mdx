@@ -1,9 +1,9 @@
 ---
-# cSpell:ignore thisisunsafe
+# cSpell:ignore thisisunsafe, genkey, noout
 
-title: Pomerium using Docker
+title: Pomerium Core using Docker
 lang: en-US
-sidebar_label: Quick-Start
+sidebar_label: Quickstart
 pagination_prev: null
 pagination_next: null
 description: Get Pomerium up and running quickly with Docker.
@@ -16,7 +16,7 @@ keywords:
     reverse proxy,
     containers,
     identity aware proxy,
-    quick-start pomerium,
+    quickstart pomerium,
     docker,
     docker-compose,
   ]
@@ -25,35 +25,48 @@ keywords:
 import ConfigDocker from '@site/content/examples/config/config.docker.yaml.md';
 import DockerCompose from '@site/content/examples/docker/basic.docker-compose.yml.md';
 
-In this quick-start document, we'll create a minimal but complete environment for running Pomerium with containers.
+In this quickstart guide, you'll run Pomerium Core with Docker containers.
 
 ## Prerequisites
 
 - A configured [identity provider]
-- [Docker] and [docker-compose]
+- [Docker] and [Docker Compose]
 
 ## Configure
 
-Create a [configuration file] (e.g. `config.yaml`) for defining Pomerium's configuration settings, routes, and access policies. Consider the following example:
+Create a [configuration file] (e.g. `config.yaml`) for defining Pomerium's configuration settings, routes, and access policies.
 
 <ConfigDocker />
 
+## Update signing key
+
+Generate a [signing key](/docs/reference/signing-key):
+
+```bash
+# Generates an P-256 (ES256) signing key
+openssl ecparam  -genkey  -name prime256v1  -noout  -out ec_private.pem
+# Prints the base64 encoded value of the signing key
+cat ec_private.pem | base64
+```
+
+Add the base64-encoded signing key to the `signing_key` variable in your `config.yaml` file.
+
 :::tip **Note**
 
-Keep track of the path to this file, relative to the `docker-compose.yml` file created in the next step. `docker-compose.yml` will need the correct relative path to your `config.yaml`.
+Keep track of the path to this file, relative to the `docker-compose.yaml` file created in the next step. `docker-compose.yaml` will need the correct relative path to your `config.yaml`.
 
 :::
 
-Create or copy the following `docker-compose.yaml` file and modify it to match your configuration, including the correct paths to your `config.yaml` and certificate files:
+Copy the following `docker-compose.yaml` file and modify it to include the correct path to your `config.yaml` file:
 
 <DockerCompose />
 
 ## Run
 
-Run docker compose:
+Run Docker Compose:
 
 ```bash
-docker-compose up
+docker compose up
 ```
 
 Docker will automatically download the required [container images] for Pomerium and [verify]. Then, Pomerium will run with the configuration details set in the previous steps.
@@ -64,18 +77,18 @@ You should now be able to access the routes (e.g. `https://verify.localhost.pome
 
 When navigating to the `https://verify.localhost.pomerium.io` route defined in your policy, you may encounter the following self-signed certificate warning:
 
-![self-signed warning](./img/quickstart/self-signed-warning.png)
+![proceed to verify](./img/quickstart/pomerium-proceed-to-verify.png)
 
 To resolve this error:
 
-1. Click anywhere inside the browser window
-2. Type **thisisunsafe**
-3. Make sure **Reload** is selected
-4. Press **ENTER**
+1. Select **Advanced**
+2. Select **Proceed to verify.localhost.pomerium.io (unsafe)**
 
-Your browser will redirect you to the route defined in your policy:
+Your browser will redirect you to the `verify` route.
 
-![user details page](./img/quickstart/user-details-page.png)
+Under **Signed Identity Token**, you will see a list of JWT claims with your user details:
+
+![jwt claims](./img/quickstart/jwt-claims.png)
 
 ## Next Steps
 
@@ -90,7 +103,7 @@ This is a test environment! If you followed all the steps in this doc your Pomer
 [configuration file]: /docs/reference
 [container images]: https://hub.docker.com/r/pomerium/pomerium
 [docker]: https://docs.docker.com/install/
-[docker-compose]: https://docs.docker.com/compose/install/
+[docker compose]: https://docs.docker.com/compose/install/
 [verify]: https://verify.pomerium.com/
 [identity provider]: /docs/identity-providers
 [tls certificates]: /docs/concepts/certificates

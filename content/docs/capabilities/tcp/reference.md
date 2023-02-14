@@ -1,12 +1,12 @@
 ---
 title: Pomerium-CLI TCP Reference
-sidebar_label: TCP Reference
+sidebar_label: Reference
 hide_table_of_contents: false
 description: Manage your TCP connections from the command line with Pomerium-CLI.
 keywords: [tcp, cli, pomerium]
 ---
 
-# TCP Reference for pomerium-cli
+# TCP reference for pomerium-cli
 
 This TCP reference covers `pomerium-cli` commands you can use to manage TCP connections in Pomerium.
 
