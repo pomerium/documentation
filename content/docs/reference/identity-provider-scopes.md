@@ -14,6 +14,7 @@ pagination_next: null
 
 - Environmental Variable: `IDP_SCOPES`
 - Config File Key: `idp_scopes`
+- Kubernetes: see [`identityProvider.scopes`](/docs/deploying/k8s/reference#identityprovider)
 - Type: list of `string`
 - Default: `oidc`,`profile`, `email`, `offline_access` (typically)
 - Optional for built-in identity providers.

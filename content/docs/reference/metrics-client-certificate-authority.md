@@ -12,6 +12,7 @@ pagination_next: null
 
 - Environment Variable: `METRICS_CLIENT_CA` / `METRICS_CLIENT_CA_FILE`
 - Config File Key: `metrics_client_ca` / `metrics_client_ca_file`
+- Kubernetes: not supported
 - Type: [base64 encoded](https://en.wikipedia.org/wiki/Base64) `string` or relative file location
 - Optional
 

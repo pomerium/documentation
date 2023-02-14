@@ -14,6 +14,7 @@ pagination_next: null
 
 - Environmental Variable: `DEFAULT_UPSTREAM_TIMEOUT`
 - Config File Key: `default_upstream_timeout`
+- Kubernetes: not supported
 - Type: [Duration](https://golang.org/pkg/time/#Duration) `string`
 - Example: `10m`, `1h45m`
 - Default: `30s`

@@ -14,6 +14,7 @@ pagination_next: null
 
 - Environmental Variable: `SKIP_XFF_APPEND`
 - Config File Key: `skip_xff_append`
+- Kubernetes: not supported
 - Type: `bool`
 - Default: `false`
 

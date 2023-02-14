@@ -14,6 +14,7 @@ pagination_next: null
 
 - Environmental Variable: `OVERRIDE_CERTIFICATE_NAME`
 - Config File Key: `override_certificate_name`
+- Kubernetes: not supported
 - Type: `string`
 - Optional
 - Example: `*.corp.example.com` if wild card or `authenticate.corp.example.com`/`authorize.corp.example.com`

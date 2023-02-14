@@ -14,6 +14,7 @@ pagination_next: null
 
 - Environmental Variable: `LOG_LEVEL`
 - Config File Key: `log_level`
+- Kubernetes: not supported
 - Type: `string`
 - Options: `debug` `info` `warn` `error`
 - Default: `debug`

@@ -1,6 +1,4 @@
 ---
-# cSpell:ignore identityprovider refreshdirectory signin settingsstatus
-
 title: Kubernetes Deployment Reference
 sidebar_label: Reference
 description: Reference for Pomerium settings in Kubernetes deployments.
@@ -37,6 +35,22 @@ PomeriumSpec defines Pomerium-specific configuration parameters.
                 <p>
                     <strong>Required.</strong>&#160;
                     Authenticate sets authenticate service parameters
+                </p>
+                
+            </td>
+        </tr>
+    
+        <tr>
+            <td>
+                <p>
+                <code>caSecrets</code>&#160;&#160;
+                
+                    <strong>[]string</strong>&#160;
+                
+                </p>
+                <p>
+                    
+                    CASecret should refer to k8s secrets with key <code>ca.crt</code> containing a CA certificate.
                 </p>
                 
             </td>
@@ -353,7 +367,7 @@ IdentityProvider configure single-sign-on authentication and user identity detai
                 </p>
                 <p>
                     
-                    RequestParams to be added as part of a signin request using OAuth2 code flow.
+                    RequestParams to be added as part of a sign-in request using OAuth2 code flow.
                 </p>
                 
             </td>

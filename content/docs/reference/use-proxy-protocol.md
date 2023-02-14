@@ -11,6 +11,7 @@ pagination_next: null
 # Use Proxy Protocol
 
 - Environment Variable: `USE_PROXY_PROTOCOL`
+- Kubernetes: not supported
 - Config File Key: `use_proxy_protocol`
 - Type: `bool`
 - Optional

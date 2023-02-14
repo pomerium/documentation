@@ -14,6 +14,7 @@ pagination_next: null
 
 - Environment Variable: `ENVOY_ADMIN_ADDRESS`, `ENVOY_ADMIN_ACCESS_LOG_PATH`, `ENVOY_ADMIN_PROFILE_PATH`, `ENVOY_BIND_CONFIG_FREEBIND`, `ENVOY_BIND_CONFIG_SOURCE_ADDRESS`
 - Config File Keys: `envoy_admin_address`, `envoy_admin_access_log_path`, `envoy_admin_profile_path`, `envoy_bind_config_freebind`, `envoy_bind_config_source_address`
+- Kubernetes: not supported
 - Type: `string`
 - Optional
 

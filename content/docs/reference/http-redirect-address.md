@@ -14,6 +14,7 @@ pagination_next: null
 
 - Environmental Variable: `HTTP_REDIRECT_ADDR`
 - Config File Key: `http_redirect_addr`
+- Kubernetes: not customizable
 - Type: `string`
 - Example: `:80`, `:8080`
 - Optional

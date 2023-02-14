@@ -12,6 +12,7 @@ pagination_next: null
 
 - Environmental Variable: `SHARED_SECRET_FILE`
 - Config File Key: `shared_secret_file`
+- Kubernetes: see [bootstrap `secrets`](/docs/deploying/k8s/reference#spec)
 - Type: `string`
 - Required (unless using [shared_secret])
 

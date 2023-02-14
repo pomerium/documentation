@@ -119,6 +119,22 @@
     "type": "string",
     "short_description": "Base64 encoded string or relative file location"
   },
+  "cookie-http-only": {
+    "id": "cookie-http-only",
+    "title": "HTTP Only Cookie",
+    "path": "/cookie-http-only",
+    "description": "If true, forbids JavaScript from accessing the cookie.",
+    "services": [],
+    "type": "bool"
+  },
+  "cookie-expire": {
+    "id": "expiration",
+    "title": "Cookie Expiration",
+    "path": "/cookie-expire",
+    "description": "Sets the lifetime of session cookies. After this interval, users must reauthenticate.",
+    "services": [],
+    "type": "duration"
+  },
   "cookie-name": {
     "id": "cookie-name",
     "title": "Cookie Name",
@@ -152,6 +168,14 @@
     "description": "The scope of session cookies issued by Pomerium.",
     "services": [],
     "type": "string"
+  },
+  "cookie-secure": {
+    "id": "cookie-secure",
+    "title": "Secure Cookie",
+    "path": "/cookie-secure",
+    "description": " If true, instructs browsers to only send user session cookies over HTTPS.",
+    "services": [],
+    "type": "bool"
   },
   "https-only": {
     "id": "https-only",
@@ -329,15 +353,6 @@
     "description": "Debug enables colored, human-readable logs to be streamed to standard out.",
     "services": [],
     "type": "bool"
-  },
-  "forward-auth": {
-    "id": "forward-auth",
-    "title": "Forward Auth",
-    "path": "/forward-auth",
-    "description": "Forward authentication creates an endpoint that can be used with third-party proxies.",
-    "short_description": "URL (must contain a scheme and hostname)",
-    "type": "URL",
-    "services": []
   },
   "global-timeouts": {
     "id": "global-timeouts",
@@ -1139,13 +1154,13 @@
   "manage-devices": {
     "title": "Manage Devices",
     "id": "manage-devices",
-    "path": "/../enterprise/reference/manage#manage-devices",
+    "path": "/../capabilities/device-identity",
     "enterpriseOnly": true
   },
   "new-enrollment": {
     "id": "new-enrollment",
     "title": "New Enrollment",
-    "path": "/../guides/admin-enroll-device",
+    "path": "/../capabilities/device-identity#new-enrollment",
     "enterpriseOnly": true
   },
   "migrate-routes": {
@@ -1158,12 +1173,13 @@
     "id": "search-users",
     "title": "Search Users",
     "description": "New Enrollment URLs are only valid for the specified user.",
-    "path": "/../guides/admin-enroll-device",
+    "path": "/../capabilities/device-identity#new-enrollment",
     "enterpriseOnly": true
   },
   "redirect-url": {
     "id": "redirect-url",
     "title": "Redirect URL",
+    "path": "/../capabilities/device-identity#create-an-enrollment-link",
     "description": "Optional: The URL the user will be taken to after device enrollment is successful.",
     "enterpriseOnly": true
   },
@@ -1171,7 +1187,7 @@
     "id": "enrollment-type",
     "title": "Enrollment Type",
     "description": "Specify if the user can enroll any device identity, or restrict it to a secure enclave.",
-    "path": "/../guides/admin-enroll-device",
+    "path": "/../capabilities/device-identity#new-enrollment",
     "enterpriseOnly": true
   }
 }

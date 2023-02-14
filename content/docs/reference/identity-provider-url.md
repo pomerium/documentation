@@ -14,6 +14,7 @@ pagination_next: null
 
 - Environmental Variable: `IDP_PROVIDER_URL`
 - Config File Key: `idp_provider_url`
+- Kubernetes: see [`identityProvider.url`](/docs/deploying/k8s/reference#identityprovider)
 - Type: `string`
 - Required, depending on provider (Do not use with Google).
 

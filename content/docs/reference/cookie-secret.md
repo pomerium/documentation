@@ -12,6 +12,7 @@ pagination_next: null
 
 - Environmental Variable: `COOKIE_SECRET`
 - Config File Key: `cookie_secret`
+- Kubernetes: see [bootstrap secrets](/docs/deploying/k8s/configure#bootstrap-secrets)
 - Type: [base64 encoded](https://en.wikipedia.org/wiki/Base64) `string`
 - Required for Proxy service
 

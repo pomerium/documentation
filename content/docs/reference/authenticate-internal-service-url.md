@@ -12,6 +12,7 @@ pagination_next: null
 
 - Environmental Variable: `AUTHENTICATE_INTERNAL_SERVICE_URL`
 - Config File Key: `authenticate_internal_service_url`
+- Kubernetes: not supported
 - Type: `URL`
 - Required
 - Example: `https://authenticate.internal`

@@ -12,6 +12,7 @@ pagination_next: null
 
 - Environmental Variable: `GRPC_CLIENT_DNS_ROUNDROBIN`
 - Config File Key: `grpc_client_dns_roundrobin`
+- Kubernetes: not supported
 - Type: `bool`
 - Default: `true`
 

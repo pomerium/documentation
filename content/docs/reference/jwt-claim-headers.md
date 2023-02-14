@@ -13,6 +13,7 @@ pagination_next: null
 
 - Environmental Variable: `JWT_CLAIMS_HEADERS`
 - Config File Key: `jwt_claims_headers`
+- Kubernetes: see [`jwtClaimHeaders`](/docs/deploying/k8s/reference#spec)
 - Type: slice of `string`
 - Example: `email`, `groups`, `user`, `given_name`
 - Optional

@@ -14,8 +14,9 @@ pagination_next: null
 
 - Environmental Variable: `DNS_LOOKUP_FAMILY`
 - Config File Key: `dns_lookup_family`
+- Kubernetes: not supported
 - Type: `string`
-- Options: `V4_ONLY` `V6_ONLY` `AUTO`
+- Options: `AUTO` `V4_ONLY` `V6_ONLY` `V4_PREFERRED` `ALL`
 - Optional
 
-The DNS IP address resolution policy. If not specified, the value defaults to `AUTO`.
+The DNS IP address resolution policy. If not specified, the value defaults to `V4_PREFERRED`.

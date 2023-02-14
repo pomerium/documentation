@@ -14,6 +14,7 @@ pagination_next: null
 
 - Environmental Variable: `ADDRESS`
 - Config File Key: `address`
+- Kubernetes: part of deployment manifest, not customizable
 - Type: `string`
 - Example: `:443`, `:8443`
 - Default: `:443`

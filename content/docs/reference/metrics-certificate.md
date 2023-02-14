@@ -14,6 +14,7 @@ pagination_next: null
 - Config File Key: `metrics_certificate_file` / `metrics_certificate_key_file`
 - Environmental Variable: `METRICS_CERTIFICATE` / `METRICS_CERTIFICATE_KEY`
 - Environmental Variable: `METRICS_CERTIFICATE_FILE` / `METRICS_CERTIFICATE_KEY_FILE`
+- Kubernetes: not supported
 - Type: [base64 encoded](https://en.wikipedia.org/wiki/Base64) `string`
 - Type: certificate relative file location `string`
 - Optional
