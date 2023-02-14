@@ -24,116 +24,17 @@ To complete this guide, you need:
 - PostgreSQL
 - Prometheus
 
-This guide runs Pomerium Core and PostgreSQL as Docker containers. If you haven't, complete the [Pomerium Core quickstart](/docs/quickstart) to set up a Pomerium instance that's compatible with this guide.
+This guide runs Pomerium Core and PostgreSQL as Docker containers. To complete this guide, you should first complete the [Pomerium Core quickstart](/docs/quickstart) guide.
 
-The Pomerium Enterprise Console uses an embedded Prometheus server to collect and display metrics. While you can [configure metrics](/docs/capabilities/metrics) to use an existing Prometheus server, this guide uses Pomerium’s Prometheus backend.
+## Configure Pomerium Core
 
-:::tip **Note**
+If you haven't, create a file called `config.yaml` and add the following code:
 
-This guide assumes you've already registered for Pomerium Enterprise and have credentials to access the private Cloudsmith.io Docker registry, and a license key. If you haven't registered for Pomerium Enterprise, [sign up here](https://www.pomerium.com/enterprise-sales/) for a free trial.
-
-:::
-
-### Configure Docker Compose services
-
-Create a file called `docker-compose.yaml` in your project's root folder and add the configuration below:
-
-```yaml title="pomerium/docker-compose.yaml"
-version: '3'
-networks:
-  main: {}
-services:
-  pomerium:
-    image: pomerium/pomerium:latest
-    volumes:
-      - ./config.yaml:/pomerium/config.yaml:ro
-    ports:
-      - 443:443
-    networks:
-      main:
-        aliases:
-          - authenticate.localhost.pomerium.io
-  pomerium_console:
-    networks:
-      main:
-    depends_on:
-      database:
-        condition: service_healthy
-      pomerium:
-        condition: service_started
-    image: docker.cloudsmith.io/pomerium/enterprise/pomerium-console:latest
-    expose:
-      - 8701
-      - 9090
-    environment:
-      - AUDIENCE=console.localhost.pomerium.io
-      - ADMINISTRATORS=admin@example.com
-      - DATABASE_ENCRYPTION_KEY=tXBj4gGDj45m8cW7ehhcy5lRuxsEeNl0X/nnsN5YJPw=
-      - DATABROKER_SERVICE_URL=http://pomerium:5443
-      - SHARED_SECRET=mxGl062SqkrbQKvqG9R2jqHqxq1Oi1BNj2AAeZHNq7c=
-      - DATABASE_URL=postgresql://postgres:postgres@postgres/postgres?sslmode=disable
-      # - LICENSE_KEY=REPLACE_ME
-      - PROMETHEUS_LISTEN_ADDR=:9090
-      - PROMETHEUS_DATA_DIR=/data
-      - AUTHENTICATE_SERVICE_URL=https://authenticate.localhost.pomerium.io
-      # - SIGNING_KEY=REPLACE_ME
-    volumes:
-      - ./pomerium/metrics:/data:rw
-      - ./console-config.yaml:/pomerium/config.yaml:ro
-  database:
-    networks:
-      main: {}
-    image: postgres:latest
-    restart: always
-    healthcheck:
-      test: ['CMD-SHELL', 'pg_isready -d postgres -U postgres']
-      interval: 5s
-      timeout: 5s
-      retries: 5
-      start_period: 30s
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=postgres
-    ports:
-      - 5432:5432
-    volumes:
-      - ./pgdata:/var/lib/postgresql/data
-  verify:
-    networks:
-      main: {}
-    image: pomerium/verify:latest
-    expose:
-      - 8000
-    restart: always
-volumes:
-  pgdata:
-```
-
-Below are a few points to note about services running in `docker-compose`:
-
-- `pomerium_console` exposes ports `8701` and `9090`. In your `config.yaml` file,, you will define port `8701` in a route that connects to the Pomerium Enterprise Console. Port `9090` is the [default port](https://prometheus.io/docs/introduction/first_steps/#configuring-prometheus) used by Prometheus to scrape metrics.
-- You must configure at least one administrator for console access. This user (or users) can then configure additional administrators in the console UI. Multiple administrators are defined as a comma-separated string.
-- The healthcheck parameter ensures the database is ready to receive requests. Without a healthcheck, other containers that depend on the database service (like Pomerium Console) will attempt to connect to the database before it is in a ready state, **which will crash the container**. (See the [Docker healthcheck](https://docs.docker.com/engine/reference/builder/#healthcheck) docs for more information.)
-- See the [signing key reference](/docs/reference/signing-key) for more information on generating signing keys.
-
-## Update the Pomerium Core configuration file
-
-Update your `config.yaml` file:
-
-```yaml title="pomerium/config.yaml"
-authenticate_service_url: https://authenticate.localhost.pomerium.io
+```yaml title="config.yaml"
 
 idp_provider: REPLACE_ME
 idp_client_id: REPLACE_ME
 idp_client_secret: REPLACE_ME
-
-cookie_secret: j9jZgysWVxCs3uqbmw9a2LxWwz1ZPLKQZ8v20eoDT8Y=
-signing_key: REPLACE_ME
-shared_secret: mxGl062SqkrbQKvqG9R2jqHqxq1Oi1BNj2AAeZHNq7c=
-
-databroker_storage_type: postgres
-databroker_storage_connection_string: postgresql://postgres:postgres@database/postgres?sslmode=disable
 
 routes:
   - from: https://verify.localhost.pomerium.io
@@ -150,7 +51,113 @@ routes:
     pass_identity_headers: true
 ```
 
-Update the [identity provider](/docs/identity-providers) configuration variables with your own and make sure you use the same signing key in Pomerium Core and Enterprise.
+Update the [identity provider](/docs/identity-providers) configuration variables with your own, and replace `user@example.com` with the email associated with your IdP.
+
+## Configure Pomerium Enterprise Console
+
+:::tip **Note**
+
+This guide assumes you've already registered for Pomerium Enterprise and have credentials to access the private Cloudsmith.io Docker registry, and a license key. If you haven't registered for Pomerium Enterprise, [sign up here](https://www.pomerium.com/enterprise-sales/) for a free trial.
+
+:::
+
+Create a file called `config-console.yaml` and update the following values:
+
+``` title="config-console.yaml"
+administrators: admin@example.com
+license_key: REPLACE_ME
+```
+You must configure at least one administrator for console access. This user (or users) can then configure additional administrators in the console UI. Multiple administrators are defined as a comma-separated string.
+
+## Configure Docker Compose services
+
+Create a file called `docker-compose.yaml` in your project's root folder and add the configuration below:
+
+```yaml title="docker-compose.yaml"
+version: '3'
+networks:
+  main: {}
+services:
+  pomerium:
+    image: pomerium/pomerium:v0.21.0
+    volumes:
+      - ./config.yaml:/pomerium/config.yaml:ro
+    ports:
+      - 443:443
+    networks:
+      main:
+        aliases:
+          - authenticate.localhost.pomerium.io
+    environment:
+      - AUTHENTICATE_SERVICE_URL=https://authenticate.localhost.pomerium.io
+      - COOKIE_SECRET=j9jZgysWVxCs3uqbmw9a2LxWwz1ZPLKQZ8v20eoDT8Y=
+      - SIGNING_KEY=LS0tLS1CRUdJTiBFQyBQUklWQVRFIEtFWS0tLS0tCk1IY0NBUUVFSURRemVZWDZyT2tuemFnTjRJVTYxaEtRc3pzY1EvRllmbzZPcXhWd2YvdGZvQW9HQ0NxR1NNNDkKQXdFSG9VUURRZ0FFc1V0V2psYXZ3eHprSU9DVUNDeFVnTDJza2NjL3QxSTFmQXlxUDgrMWw5YU1CWDlzdm1pYgpRajJxcWFUbUJZZWhuQzhmak5LODZmVXhpc3d1SXN5bnp3PT0KLS0tLS1FTkQgRUMgUFJJVkFURSBLRVktLS0tLQo=
+      - SHARED_SECRET=mxGl062SqkrbQKvqG9R2jqHqxq1Oi1BNj2AAeZHNq7c=
+      - DATABROKER_STORAGE_TYPE=postgres
+      - DATABROKER_STORAGE_CONNECTION_STRING=postgresql://postgres:postgres@database/postgres?sslmode=disable
+  pomerium_console:
+    networks:
+      main:
+    depends_on:
+      database:
+        condition: service_healthy
+      pomerium:
+        condition: service_started
+    image: docker.cloudsmith.io/pomerium/enterprise/pomerium-console:v0.21.0
+    args:
+      - "serve"
+      - "--config"
+      - "/pomerium/console-config.yaml"
+    expose:
+      - 8701
+      - 9090
+    environment:
+      - AUDIENCE=console.localhost.pomerium.io
+      - DATABASE_ENCRYPTION_KEY=tXBj4gGDj45m8cW7ehhcy5lRuxsEeNl0X/nnsN5YJPw=
+      - DATABROKER_SERVICE_URL=http://pomerium:5443
+      - SHARED_SECRET=mxGl062SqkrbQKvqG9R2jqHqxq1Oi1BNj2AAeZHNq7c=
+      - DATABASE_URL=postgresql://postgres:postgres@database/postgres?sslmode=disable
+      - PROMETHEUS_LISTEN_ADDR=:9090
+      - PROMETHEUS_DATA_DIR=/data
+      - AUTHENTICATE_SERVICE_URL=https://authenticate.localhost.pomerium.io
+    volumes:
+      - metrics:/data:rw
+      - ./console-config.yaml:/pomerium/console-config.yaml:ro
+  database:
+    networks:
+      main: {}
+    image: postgres:latest
+    restart: always
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -d postgres -U postgres']
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=postgres
+    expose:
+      - 5432
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+  verify:
+    networks:
+      main: {}
+    image: pomerium/verify:latest
+    expose:
+      - 8000
+    restart: always
+volumes:
+  pgdata:
+  metrics:
+```
+
+Below are a few points to note about services running in `docker-compose`:
+
+- `pomerium_console` exposes ports `8701` and `9090`. In your `config.yaml` file,, you will define port `8701` in a route that connects to the Pomerium Enterprise Console. Port `9090` is the [default port](https://prometheus.io/docs/introduction/first_steps/#configuring-prometheus) used by Prometheus to scrape metrics.
+- The healthcheck parameter ensures the database is ready to receive requests. Without a healthcheck, other containers that depend on the database service (like Pomerium Console) will attempt to connect to the database before it is in a ready state, **which will crash the container**. (See the [Docker healthcheck](https://docs.docker.com/engine/reference/builder/#healthcheck) docs for more information.)
 
 ## Connect to Pomerium Enterprise Console
 
