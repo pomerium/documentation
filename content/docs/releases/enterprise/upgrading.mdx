@@ -11,6 +11,12 @@ Review the upgrade guide below before upgrading to the latest version of Pomeriu
 
 ### Before you upgrade
 
+#### Breaking
+
+##### Re-enroll devices
+
+The [devices (beta)](/docs/capabilities/device-identity) data model had an internal change that is not forward compatible. Please re-register your enrolled devices and update their device IDs. You may need to update your existing policies as well.
+
 #### Auto TLS
 
 - You can autogenerate TLS certificates to secure communication between the Enterprise Console and the Databroker services with the `--derive-tls=domains` configuration setting. The `derive-tls` setting derives your CA from your `shared_secret` and generates TLS certificates to protect the Databroker gRPC endpoint.
@@ -18,12 +24,6 @@ Review the upgrade guide below before upgrading to the latest version of Pomeriu
 #### Client TLS renegotiation
 
 - You can renegotiate server-initiated TLS for upstream clusters with the new `tls_upstream_allow_renegotiation` configuration setting.
-
-### Breaking
-
-#### Re-enroll devices
-
-The [devices (beta)](/docs/capabilities/device-identity) data model had an internal change that is not forward compatible. Please re-register your enrolled devices and update their device IDs. You may need to update your existing policies as well.
 
 #### Fixes
 
