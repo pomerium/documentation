@@ -64,10 +64,30 @@ In test deployments, all four components may run from a [single binary and confi
 
 ![pomerium architecture diagram](./img/architecture/pomerium-container-context-stateless-authn.svg)
 
-## Authentication Flow
+## The lifecycle of a request
 
-Pomerium's internal and external component interactions during full authentication from a fresh user are diagramed below.
+The diagram below shows how Pomerium's components communicate when authenticating a user.
 
 After initial authentication to provide a session token, only the authorization check interactions occur.
 
-![pomerium architecture diagram](./img/architecture/pomerium-auth-flow-stateless-auth.svg)
+![pomerium architecture diagram](./img/architecture/pomerium-request-flow.svg)
+
+**Step 1:** Unauthenticated client
+
+The client sends a request to access a secured application, which prompts the Proxy to send the request over a gRPC call to the Authorization service.
+
+Because the client has not authenticated, the Authorization service can't locate the session ID in the Databroker service. It sends the client to the Authenticate service, which prompts the client to sign in to the IdP.
+
+**Step 2:** Authenticating the client
+
+After the client signs in, the IdP exchanges an authorization code with the Authentication service. The Authentication service uses the code to get OAuth tokens and [OIDC claims](https://openid.net/specs/openid-connect-basic-1_0.html) from the IdP.
+
+The Authentication service redirects the request to the Proxy with the session data.
+
+**Step 3:** Authorizing the request
+
+The Proxy saves the session data locally and sends it to the Databroker service over a gRPC call. The Databroker persists the session data and manages the session, and the Authorizaton service queries the Databroker for session data by way of on-demand caching.
+
+Now that the client is authenticated, the Proxy sends the request again to the Authorization service. The Authorization service can now locate the session in the Databroker.
+
+The Authorization service factors in IdP scopes and policy to determine if the client can access the secured application. Assuming the client has sufficient permissions, the Authorization service authorizes the request, and the Proxy sends the client to the route defined in the policy.
