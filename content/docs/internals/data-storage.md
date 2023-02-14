@@ -1,11 +1,11 @@
 ---
 # cSpell:ignore libpq userspec dbname paramspec hostspec setuser rediss
 
-title: Persistance
+title: Persistence
 description: This article describes Pomerium's data storage requirements and backends
 ---
 
-# Persistance & Data storage
+# Persistence & Data storage
 
 ### Background
 
