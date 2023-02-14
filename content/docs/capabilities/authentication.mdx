@@ -1,12 +1,59 @@
 ---
 sidebar_label: Authentication
-description: This article describes how Pomerium provides a single source of authentication and identity to all services it manages.
+description: Learn how Pomerium provides identity verification, authentication, and single-sign on to all services it manages.
+keywords:
+  [
+    authentication,
+    SSO,
+    single sign-on,
+    JWT verification,
+    ID tokens,
+    OAuth tokens,
+    legacy applications,
+    external data sources,
+  ]
 ---
 
-# Authentication / SSO
+# Authentication and Single Sign-On (SSO)
 
-While Pomerium itself is not an identity provider, Pomerium does integrate with your existing single-sign-on Identity Provider (**IdP**) of choice. Pomerium uses your IdP to add authentication, single-sign-on, and identity context to all upstream applications even if the app itself doesn't directly support single-sign-on, which is great for legacy apps.
+Pomerium provides authentication and single sign-on (SSO) by authenticating against your identity provider (IdP).
 
-Pomerium supports any identity provider that uses the open standard [OpenID Connect][openid connect] (**OIDC**). In addition to (OIDC), Pomerium supports most well known identity providers specifically, and Pomerium Enterprise users are able to leverage full directory sync for even more context around things like roles, groups, and whatever other relevant user identity context which exists in your directory.
+While Pomerium itself is not an IdP, it supports conventional IdP solutions and can be configured to work with any IdP that uses the [OpenID Connect](https://openid.net/connect/) (OIDC) protocol.
 
-[openid connect]: https://en.wikipedia.org/wiki/OpenID_Connect
+:::tip
+
+See [identity providers](/docs/identity-providers) for step-by-step guides on how to integrate supported IdPs with Pomerium.
+
+:::
+
+## Authentication with Pomerium
+
+Pomerium speaks to your IdP to verify user identities and authenticate users to upstream applications.
+
+After Pomerium has verified and authenticated the user, the Authentication service creates a local session with relevant session data, including OAuth and ID tokens, which Pomerium uses to authenticate and authorize users and manage Pomerium sessions.
+
+### JWT verification and upstream applications
+
+After Pomerium’s Authentication service obtains OAuth and ID tokens and OIDC claims from your IdP, it stores that session data in the Databroker service, never leaking it to the client or the upstream application. This provides an extra layer of security, as it prevents the application from using OAuth tokens provided by the IdP.
+
+Pomerium mints a new Pomerium JWT based on the claims and scopes in the OAuth and ID tokens and signs the JWT with a private key so the upstream application can verify the incoming request came from Pomerium.
+
+Although [JWT verification](/docs/capabilities/jwt-verification) is optional, Pomerium provides a way for you to [verify a user’s identity](/docs/capabilities/getting-users-identity) on the application level by forwarding [JWT claim headers](/docs/reference/jwt-claim-headers) with proxied requests to upstream applications.
+
+Pomerium offers frontend and backend SDKs to simplify JWT verification for application developers:
+
+- [JavaScript SDK](https://github.com/pomerium/js-sdk)
+- [Node and Express SDK](https://github.com/pomerium/js-sdk/tree/main/examples/express)
+- [Go SDK](https://github.com/pomerium/sdk-go)
+
+## SSO support for legacy applications
+
+Legacy apps that may not directly support SSO are still compatible with Pomerium. As a reverse proxy, Pomerium is designed to sit in front of your applications.
+
+By configuring your applications to route requests to Pomerium’s Proxy service, Pomerium can manage the authentication flow and secure your legacy app with minimal to no work on your end.
+
+## External data sources (Enterprise)
+
+[Enterprise customers](https://www.pomerium.com/enterprise-sales/) can enforce context-aware access with Pomerium’s [external data sources](/docs/integrations) feature (directory sync).
+
+From the Enterprise Console, you can import external data from sources other than your IdP. User identity context such as users, groups, roles, language, time zones, location, and more can be included into your authorization policy so you can make granular access control decisions.
