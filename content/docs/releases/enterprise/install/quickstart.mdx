@@ -111,6 +111,7 @@ services:
       - SHARED_SECRET=mxGl062SqkrbQKvqG9R2jqHqxq1Oi1BNj2AAeZHNq7c=
       - DATABROKER_STORAGE_TYPE=postgres
       - DATABROKER_STORAGE_CONNECTION_STRING=postgresql://postgres:postgres@database/postgres?sslmode=disable
+      - SIGNING_KEY=LS0tLS1CRUdJTiBFQyBQUklWQVRFIEtFWS0tLS0tCk1IY0NBUUVFSUc0R0N4bjlxaDBHRVZnV3VCM0VoRm51RlptZ2VkZXJsMEtLd0ZoRWo4Tk9vQW9HQ0NxR1NNNDkKQXdFSG9VUURRZ0FFMXFOWXNUMFpSZEVTS0djSXRqZFUxcGJZREVDTktRd2lNcmNHVFl6RUhLM1V5MnVoT1N3bgpXVGdWUHppTk4vcWozYXFJeSs3Sk55ZEFLVlo3bURPNGtnPT0KLS0tLS1FTkQgRUMgUFJJVkFURSBLRVktLS0tLQo=
   pomerium_console:
     networks:
       main:
@@ -135,7 +136,7 @@ services:
       - DATABASE_URL=postgresql://postgres:postgres@database/postgres?sslmode=disable
       - PROMETHEUS_LISTEN_ADDR=:9090
       - PROMETHEUS_DATA_DIR=/data
-      - AUTHENTICATE_SERVICE_URL=https://authenticate.localhost.pomerium.io
+      - SIGNING_KEY=LS0tLS1CRUdJTiBFQyBQUklWQVRFIEtFWS0tLS0tCk1IY0NBUUVFSUc0R0N4bjlxaDBHRVZnV3VCM0VoRm51RlptZ2VkZXJsMEtLd0ZoRWo4Tk9vQW9HQ0NxR1NNNDkKQXdFSG9VUURRZ0FFMXFOWXNUMFpSZEVTS0djSXRqZFUxcGJZREVDTktRd2lNcmNHVFl6RUhLM1V5MnVoT1N3bgpXVGdWUHppTk4vcWozYXFJeSs3Sk55ZEFLVlo3bURPNGtnPT0KLS0tLS1FTkQgRUMgUFJJVkFURSBLRVktLS0tLQo=
     volumes:
       - metrics:/data:rw
       - ./console-config.yaml:/pomerium/console-config.yaml:ro
