@@ -35,6 +35,8 @@ idp_provider: REPLACE_ME
 idp_client_id: REPLACE_ME
 idp_client_secret: REPLACE_ME
 
+signing_key: REPLACE_ME
+
 routes:
   - from: https://verify.localhost.pomerium.io
     to: http://verify:8000
@@ -50,7 +52,22 @@ routes:
     pass_identity_headers: true
 ```
 
-Update the [identity provider](/docs/identity-providers) configuration variables with your own, and replace `user@example.com` with the email associated with your IdP.
+Next, you need to:
+
+- Update the [identity provider](/docs/identity-providers) configuration variables with your own
+- Replace `user@example.com` with the email associated with your IdP
+- Generate a signing key
+
+To generate a [signing key](/docs/reference/signing-key), use the commands below:
+
+```bash
+# Generates a P-256 (ES256) signing key
+openssl ecparam  -genkey  -name prime256v1  -noout  -out ec_private.pem
+# Prints the base64 encoded value of the signing key
+cat ec_private.pem | base64
+```
+
+Add the base64-encoded signing key to the `signing_key` variable in your `config.yaml` file.
 
 ## Configure Pomerium Enterprise Console
 
@@ -91,7 +108,6 @@ services:
     environment:
       - AUTHENTICATE_SERVICE_URL=https://authenticate.localhost.pomerium.io
       - COOKIE_SECRET=j9jZgysWVxCs3uqbmw9a2LxWwz1ZPLKQZ8v20eoDT8Y=
-      - SIGNING_KEY=LS0tLS1CRUdJTiBFQyBQUklWQVRFIEtFWS0tLS0tCk1IY0NBUUVFSURRemVZWDZyT2tuemFnTjRJVTYxaEtRc3pzY1EvRllmbzZPcXhWd2YvdGZvQW9HQ0NxR1NNNDkKQXdFSG9VUURRZ0FFc1V0V2psYXZ3eHprSU9DVUNDeFVnTDJza2NjL3QxSTFmQXlxUDgrMWw5YU1CWDlzdm1pYgpRajJxcWFUbUJZZWhuQzhmak5LODZmVXhpc3d1SXN5bnp3PT0KLS0tLS1FTkQgRUMgUFJJVkFURSBLRVktLS0tLQo=
       - SHARED_SECRET=mxGl062SqkrbQKvqG9R2jqHqxq1Oi1BNj2AAeZHNq7c=
       - DATABROKER_STORAGE_TYPE=postgres
       - DATABROKER_STORAGE_CONNECTION_STRING=postgresql://postgres:postgres@database/postgres?sslmode=disable
@@ -104,7 +120,7 @@ services:
       pomerium:
         condition: service_started
     image: docker.cloudsmith.io/pomerium/enterprise/pomerium-console:v0.21.0
-    args:
+    command:
       - 'serve'
       - '--config'
       - '/pomerium/console-config.yaml'
