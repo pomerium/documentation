@@ -37,11 +37,11 @@ You should verify that the JWT contains at least the following claims:
   <summary>Audience and issuer claims</summary>
   <div>
 
-Pomerium uses the claims provided by the identity provider's JWT to populate the `audience` and `issuer` claims in the attestion JWT. 
+Pomerium uses the claims provided by the identity provider's JWT to populate the `audience` and `issuer` claims in the attestion JWT.
 
-Audience is the URL of the target upstream application. The `aud` claim defines what application the JWT is intended for. 
+Audience is the URL of the target upstream application. The `aud` claim defines what application the JWT is intended for.
 
-Issuer is the URL of the authentication domain that issued the JWT. The `iss` claim tells the target upstream application who the issuing authority is and provides context about the subject. 
+Issuer is the URL of the authentication domain that issued the JWT. The `iss` claim tells the target upstream application who the issuing authority is and provides context about the subject.
 
   </div>
 </details>
