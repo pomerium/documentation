@@ -53,7 +53,19 @@ routes:
 Next, you need to:
 
 - Update the [identity provider](/docs/identity-providers) configuration variables with your own
-- Replace `user@example.com` with the email associated with your IdP account
+- Replace `user@example.com` with the email associated with your IdP
+- Generate a signing key
+
+To generate a [signing key](/docs/reference/signing-key), use the commands below:
+
+```bash
+# Generates a P-256 (ES256) signing key
+openssl ecparam  -genkey  -name prime256v1  -noout  -out ec_private.pem
+# Prints the base64 encoded value of the signing key
+cat ec_private.pem | base64
+```
+
+Add the base64-encoded signing key to the `signing_key` variable in your `config.yaml` file.
 
 ## Configure Pomerium Enterprise Console
 
