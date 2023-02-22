@@ -198,7 +198,7 @@ Mac and Linux users can use DNSMasq to map the `*.localhost.pomerium.io` domain 
     <summary>Audience and issuer claims</summary>
     <div>
 
-Pomerium uses the claims provided by the identity provider's JWT to populate the `audience` and `issuer` claims in the attestion JWT.
+Pomerium uses the claims provided by the identity provider's JWT to populate the `audience` and `issuer` claims in the attestation JWT.
 
 Audience is the URL of the target upstream application. The `aud` claim defines what application the JWT is intended for.
 
