@@ -8,7 +8,7 @@ sidebar_label: Identity Verification
 
 # Identity Verification (from your app)
 
-This article describes how to retrieve a user's identity from a pomerium managed application. Pomerium uses JSON web tokens (**JWT**) to attest that a given request was handled by Pomerium's authorizer service.
+This article describes how to retrieve a user's identity from a Pomerium-managed application. Pomerium uses JSON web tokens (**JWT**) to attest that a given request was handled by Pomerium's authorization service.
 
 ## Prerequisites
 
@@ -17,7 +17,7 @@ To secure your app with signed headers, you'll need the following:
 - An application you want users to connect to.
 - A [JWT] library. Only the `ES256` signing algorithm is supported.
 
-## Verification
+## JWT verification
 
 If a [signing key] is set, the user's associated identity information will be included in a signed attestation JWT that will be added to each requests's upstream header `X-Pomerium-Jwt-Assertion`. The signed attestation JWT is also available at the special `/.pomerium/jwt` endpoint of any URL handled by Pomerium.
 
@@ -32,6 +32,19 @@ You should verify that the JWT contains at least the following claims:
 | `sub` | Subject is the user's id. Can be used instead of the `X-Pomerium-Claim-Sub` header. |
 | `email` | Email is the user's email. Can be used instead of the `X-Pomerium-Claim-Email` header. |
 | `groups` | Groups is the user's groups. Can be used instead of the `X-Pomerium-Claim-Groups` header. |
+
+<details>
+  <summary>Audience and issuer claims</summary>
+  <div>
+
+Pomerium uses the claims provided by the identity provider's JWT to populate the `audience` and `issuer` claims in the attestation JWT.
+
+Audience is the URL of the target upstream application. The `aud` claim defines what application the JWT is intended for.
+
+Issuer is the URL of the authentication domain that issued the JWT. The `iss` claim tells the target upstream application who the issuing authority is and provides context about the subject.
+
+  </div>
+</details>
 
 The attestation JWT's signature can be verified using the public key which can be retrieved at Pomerium's `/.well-known/pomerium/jwks.json` endpoint which lives on the authenticate service. A `jwks_uri` is useful when integrating with other systems like [istio](https://istio.io/docs/reference/config/security/istio.authentication.v1alpha1/). For example:
 
