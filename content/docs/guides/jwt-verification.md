@@ -192,6 +192,18 @@ Mac and Linux users can use DNSMasq to map the `*.localhost.pomerium.io` domain 
 
    This configuration pulls the JWT out of the `X-Pomerium-Jwt-Assertion` header, verifies the `iss` and `aud` claims and checks the signature via the public key defined at the `jwks.json` endpoint. Documentation for additional configuration options is available here: [Envoy JWT Authentication](https://www.envoyproxy.io/docs/envoy/latest/configuration/http/http_filters/jwt_authn_filter#config-http-filters-jwt-authn).
 
+<details>
+  <summary>Audience and issuer claims</summary>
+  <div>
+Pomerium uses the claims provided by the identity provider's JWT to populate the `audience` and `issuer` claims in the attestation JWT.
+
+Audience is the URL of the target upstream application. The `aud` claim defines what application the JWT is intended for.
+
+Issuer is the URL of the authentication domain that issued the JWT. The `iss` claim tells the target upstream application who the issuing authority is and provides context about the subject.
+
+  </div>
+</details>
+
 1. Create a `pomerium.yaml` file in the `cfg` directory containing:
 
    ```yaml title="pomerium.yaml"
