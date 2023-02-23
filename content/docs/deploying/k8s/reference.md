@@ -102,7 +102,7 @@ PomeriumSpec defines Pomerium-specific configuration parameters.
                 
                 </p>
                 <p>
-                    <strong>Required.</strong>&#160;
+                    
                     IdentityProvider configure single-sign-on authentication and user identity details by integrating with your <a href="https://www.pomerium.com/docs/identity-providers/">Identity Provider</a>
                 </p>
                 
