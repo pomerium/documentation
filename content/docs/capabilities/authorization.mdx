@@ -4,7 +4,7 @@
 title: Authorization & Policy
 lang: en-US
 sidebar_label: Authorization
-description: How to get Pomerium's CLI which be used to proxy TCP services and kubernetes commands
+description: Build authorization policy with Pomerium and apply them to routes and namespaces.
 keywords:
   [
     pomerium,
@@ -14,85 +14,106 @@ keywords:
     rbac,
     abac,
     dynamic access,
+    ppl,
+    namespaces,
   ]
 ---
 
-# Authorization
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
 
-## Policy
+# Authorization Policy
 
-A [Policy](/docs/capabilities/authorization.mdx) defines what permissions a set of users has. Policies are applied to Namespaces or Routes to associate the set of permissions with a service or set of service, completing the authentication model.
+An authorization policy defines what resources a user or group can access within an organization. When applying an authorization policy, factors like access management to on-premises or cloud services, authentication flows, and device identity introduce complexity that only scales with organization size.
 
-Policies can be constructed three ways:
+Pomerium meets you where you are by allowing you to configure granular policies that support or extend your existing policies on a per-route, per-request basis.
 
-### Web UI
+## Pomerium authorization policy
 
-From the **BUILDER** tab, users can add allow or deny blocks to a policy, containing and/or/not/nor logic to allow or deny sets of users and groups.
+You can apply policies in Pomerium to [Namespaces](/docs/concepts/namespacing) or [Routes](/docs/concepts/routes).
 
-![A policy being constructed in Pomerium Enterprise allowing a single user access](./img/authorization/example-policy-single-user.png)
+### Namespaces
 
-Policies can be constructed three ways:
+Administrators can create a namespace, add users, groups, and routes to it, and configure a policy that applies to that specific namespace.
 
-### Pomerium Policy Language
+Namespace support is only available for [Enterprise customers](https://www.pomerium.com/enterprise-sales/).
 
-From the **EDITOR** tab users can write policies in Pomerium Policy Language (**PPL**), a YAML-based notation.
+### Routes
 
-![A policy as viewed from the editor tab](./img/authorization/example-policy-editor.png)
+You can build TLS-encrypted routes to upstream applications and configure policy that restricts access based on the policy criteria.
 
-PPL documents contain one or more rules. Each rule has a corresponding action and one or more logical operators. Each logical operator contains criteria and each criterion has a name and corresponding data.
+Pomerium Enterprise and Core customers can configure and apply policies to routes.
 
-PPL documents are defined via YAML:
+### Continuous verification
 
-```yaml
-- allow:
-    or:
-      - email:
-          is: x@example.com
-      - email:
-          is: y@example.com
+Pomerium continuously evaluates policy on every request.
+
+Policy applied to any route or namespace will enforce authorization checks throughout a session, ensuring that only the intended user with the right context can access a protected resource.
+
+## Apply authorization policy
+
+Pomerium offers three methods to configure and apply policies:
+
+- [Pomerium Policy Language (PPL)](#pomerium-policy-language-ppl)
+- [Enterprise Console GUI](#enterprise-console-gui)
+- [Rego](#rego-support)
+
+### Pomerium Policy Language (PPL)
+
+Pomerium Policy Language (PPL) is a declarative, YAML-based access control policy language you can use to configure authorization policies.
+
+PPL is intuitive by design and defines policy with one or more rules composed of actions, logical operators, and criteria. Each criterion has a name and corresponding data.
+
+<Tabs>
+<TabItem value="Core" label="Core">
+
+In Pomerium Core, you can build a policy with PPL and apply it to a route in your configuration file:
+
+```yaml title=pomerium-config.yaml
+policy:
+  - allow:
+      or:
+        - email:
+            is: user@example.com
 ```
 
-The available rule actions are:
+In this example, only a user with the email `user@example.com` can access the target application.
 
-- `allow`
-- `deny`
+</TabItem>
+<TabItem value="Enterprise" label="Enterprise">
 
-The available logical operators are:
+In the Enterprise Console, you can use the **EDITOR** to manually configure policy with PPL:
 
-- `and`
-- `or`
-- `not`
-- `nor`
+![Build policy with PPL in Console](./img/authorization/ppl-editor-policy.png)
 
-The available criteria types are:
+In this example, a user will have access if their email address ends in `example.com` and they are a member of the `admin` group. The user will be denied access on Saturdays and Sundays.
 
-- `accept`
-- `authenticated_user`
-- `claim`
-- `date`
-- `day_of_week`
-- `domain`
-- `email`
-- `http_method`
-- `http_path`
-- `record`
-- `reject`
-- `time_of_day`
-- `user`
+</TabItem>
+</Tabs>
 
-Some criteria also support a sub-path as part of the criterion name:
+### Enterprise Console GUI
 
-```yaml
-- allow:
-    or:
-      - claim/family_name: Smith
-```
+The Enterprise Console provides a policy builder GUI so you can build policies and reapply them to multiple routes and namespaces.
 
-See [Pomerium Policy Language](/docs/capabilities/ppl) for more details.
+Use the **BUILDER** tab to build your policy:
 
-### Rego
+![Build policy with Console GUI](./img/authorization/ppl-gui-policy.png)
 
-For those using [OPA](https://www.openpolicyagent.org/), the **REGO** tab will accept policies written in Rego.
+In this example, a user will have access if their email address ends in `example.com` and their device ID matches the ID in the **Value** field.
+
+#### Reapply policies
+
+Reapply policies as necessary to any route or namespace:
+
+![Reapply policies to multiple routes or namespaces](./img/authorization/apply-policies-to-routes.png)
+
+### Rego support
+
+Pomerium Core and Enterprise support policies expressed in [Rego](https://www.openpolicyagent.org/docs/latest/#rego) for organizations that prefer to use [OPA](https://www.openpolicyagent.org/).
+
+For Enterprise customers, use the **Rego** tab to configure your policy:
+
+![Apply Rego in Console editor](./img/authorization/ppl-rego-policy.png)
 
 :::tip
 
@@ -154,22 +175,22 @@ This example pulls session data from the Databroker service using `type.googleap
 </div>
 </details>
 
-### Overrides
+### Policy overrides
 
-- **Any Authenticated User**: This setting will allow access to a route with this policy attached to any user who can authenticate to your Identity Provider (**IdP**).
-- **CORS Preflight**: Allow unauthenticated HTTP OPTIONS requests as per the CORS spec.
-- **Public Access**: This setting allows complete, unrestricted access to an associated route. Use this setting with caution.
+Pomerium Core and Enterprise offer the following options for overriding your authorization policy:
 
-## Devices
+- **Any Authenticated User**: Allows access to a route with this policy attached to any user who can authenticate to your identity provider
+- **CORS Preflight**: Allows unauthenticated HTTP OPTIONS requests as per the CORS spec
+- **Public Access**: Allows complete, unrestricted access to an associated route (use this setting with caution)
 
-Introduced in v0.16.0, the **Manage Devices** page lets administrators manage user devices for policy-based authorization.
+## Manage devices
 
-### Manage Devices
+The **Manage Devices** feature in the Enterprise Console allows you to enroll and manage user devices for policy-based authorization.
 
-<ManageDevices />
+![Enroll devices](./img/authorization/enroll-device.png)
 
-### Devices List
-
-Displays the currently enrolled devices for each user, along with their current approval status. Administrators can inspect, approve, or delete registered devices from this table.
+The **Devices List** displays enrolled devices for each user and the approval status. Administrators can inspect, approve, or delete registered devices from this table.
 
 ![List of user devices](./img/authorization/console-devices.png)
+
+See [Device Identity](docs/capabilities/device-identity) for more information.
