@@ -16,7 +16,7 @@ pagination_next: null
 - Config File Key: `idp_scopes`
 - Kubernetes: see [`identityProvider.scopes`](/docs/deploying/k8s/reference#identityprovider)
 - Type: list of `string`
-- Default: `oidc`,`profile`, `email`, `offline_access` (typically)
+- Default: `openid`,`profile`, `email`, `offline_access` (typically)
 - Optional for built-in identity providers.
 
 Identity provider scopes correspond to access privilege scopes as defined in Section 3.3 of OAuth 2.0 RFC6749\. The scopes associated with Access Tokens determine what resources will be available when they are used to access OAuth 2.0 protected endpoints.
