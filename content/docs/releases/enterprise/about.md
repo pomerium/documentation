@@ -29,13 +29,13 @@ Quickly view who is logged in your infrastructure, with easy access to revoke se
 
 ### Self-Service & Governance
 
-Easily define who can control access to what areas of your infrastructure. Our [Namespaces](/docs/concepts/namespacing) make it easy to allow teams to self-manage access to the infrastructure they build from or depend on.
+Easily define who can control access to what areas of your infrastructure. Our [Namespaces](/docs/capabilities/namespacing) make it easy to allow teams to self-manage access to the infrastructure they build from or depend on.
 
-[User roles](/docs/concepts/namespacing#rbac-for-enterprise-console-users) are granted along Namespace hierarchy, with inheritance from parents.
+[User roles](/docs/capabilities/namespacing#rbac-for-enterprise-console-users) are granted along Namespace hierarchy, with inheritance from parents.
 
 Pomerium Enterprise uses teams and groups defined by your identity provider (**IdP**), so you can build stable policies that don't need to be adjusted as your company changes.
 
-See [Concepts: Self-Service Capabilities](/docs/concepts/namespacing#self-service-capabilities) for more information.
+See [Concepts: Self-Service Capabilities](/docs/capabilities/namespacing#self-service-capabilities) for more information.
 
 ### Deployment History & Audit Logs
 
