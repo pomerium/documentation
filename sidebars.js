@@ -93,6 +93,12 @@ const sidebars = {
           type: 'doc',
           label: 'High Availability',
         },
+        {
+          id: 'docs/capabilities/namespacing',
+          className: 'enterprise',
+          type: 'doc',
+          label: 'Namespaces',
+        }
       ],
     },
     {
