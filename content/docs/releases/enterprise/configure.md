@@ -213,7 +213,7 @@ Set Response Headers allows you to set static values for the given response head
 
 ## Namespaces
 
-A [Namespace][namespace-concept] is a collection of users, groups, routes, and policies that allows system administrators to organize, manage, and delegate permissions across their infrastructure.
+A [Namespace][namespace] is a collection of users, groups, routes, and policies that allows system administrators to organize, manage, and delegate permissions across their infrastructure.
 
 - Policies can be optional or enforced on a Namespace.
   - Enforced policies are also enforced on child Namespaces, and optional policies are available to them as well.
@@ -227,7 +227,7 @@ When using an IdP without directory sync or when working with non-domain users, 
 
 ## External Data
 
-This section lets [administrators](/docs/concepts/namespacing#admin) add and manage external data sources. Information from external data sources can be used to extend [policies](/docs/concepts/policies).
+This section lets [administrators](/docs/capabilities/namespacing#admin) add and manage external data sources. Information from external data sources can be used to extend [policies](/docs/concepts/policies).
 
 ### Add or Edit External Data Source
 
@@ -299,7 +299,6 @@ See [External Data Sources](/docs/integrations/) for more information on this fe
 
 [route-concept]: /docs/concepts/routes
 [route-reference]: /docs/concepts/routes
-[namespace-concept]: /docs/concepts/namespacing
-[namespace-reference]: /docs/concepts/namespacing
+[namespace]: /docs/capabilities/namespacing
 [service-accounts-concept]: /docs/concepts/service-accounts
-[policy-reference]: /docs/concepts/policies
+[policy-reference]: /docs/capabilites/ppl

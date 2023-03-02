@@ -50,7 +50,7 @@ If you have TLS enabled applications behind the proxy:
 - the Proxy may be configured to verify the name and certificate authority of downstream services with either the standard Root CA bundle or a custom CA
 
 [jwt verification]: /docs/concepts/mutual-auth.md#jwt-verification-application-based-mutual-authentication
-[rbac]: /docs/concepts/namespacing.mdx#rbac-for-enterprise-console-users
+[rbac]: /docs/capabilities/namespacing.mdx#rbac-for-enterprise-console-users
 
 ## Securing Pomerium
 
