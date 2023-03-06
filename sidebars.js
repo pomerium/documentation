@@ -93,15 +93,6 @@ const sidebars = {
           type: 'doc',
           label: 'High Availability',
         },
-<<<<<<< HEAD
-=======
-        {
-          id: 'docs/capabilities/namespacing',
-          className: 'enterprise',
-          type: 'doc',
-          label: 'Namespaces',
-        },
->>>>>>> 6ca95ab (Docs: adds guides index file (#457))
       ],
     },
     {
