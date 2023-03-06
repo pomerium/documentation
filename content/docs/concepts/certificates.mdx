@@ -1,6 +1,14 @@
 ---
+<<<<<<< HEAD
 title: Encryption & Certificates
+=======
+# cSpell:ignore filippo, signcsr, mycsr
+
+title: SSL/TLS Certificates & Encryption
+sidebar_label: SSL/TLS Certificates & Encryption
+>>>>>>> b12f022 (Docs: updates encryption and certs docs (#440))
 lang: en-US
+description: description
 keywords: [x509, certificates, tls, mtls, letsencrypt, lets encrypt]
 pagination_prev: null
 ---
@@ -9,47 +17,100 @@ import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 import GenerateWildcardCert from '@site/content/examples/sh/generate_wildcard_cert.sh.md';
 
-[Certificates](https://en.wikipedia.org/wiki/X.509) and [TLS](https://en.wikipedia.org/wiki/Transport_Layer_Security) play a vital role in [zero trust][principles] networks, and in Pomerium.
+# SSL/TLS Certificates & Encryption
 
-This document covers a few options in how to generate and set up TLS certificates suitable for working with pomerium.
+Learn what SSL/TLS is, how it secures applications, and how Pomerium incorporates SSL/TLS to secure connections between its end-users, other Pomerium services, and your internal applications.
 
-This guide uses the following tools and resources:
+## What are SSL/TLS certificates?
 
-- [LetsEncrypt](https://letsencrypt.org/about/) is a _public_ certificate authority that issues free certificates trusted by the major browsers. Other [private](https://blog.cloudflare.com/how-to-build-your-own-public-key-infrastructure/) or [public](https://scotthelme.co.uk/are-ev-certificates-worth-the-paper-theyre-written-on/) CAs would also be fine.
-- [Google Domains](https://domains.google.com/) registrar will be used to set up our wildcard domain and certificate validation. But any registrar would do and some providers support [automatic renewal](https://github.com/Neilpang/acme.sh/wiki/dnsapi).
-- [acme.sh](https://github.com/Neilpang/acme.sh) will be used to retrieve the wild-card domain certificate. Any [LetsEncrypt client](https://letsencrypt.org/docs/client-options/) that supports wildcard domains would work.
+The Transport Layer Security (TLS) protocol, formerly known as the Secure Sockets Layer (SSL) protocol, is a cryptographic protocol that secures HTTP communications over a computer network.
 
-It should be noted that there are countless ways of building and managing [public-key infrastructure](https://en.wikipedia.org/wiki/Public_key_infrastructure). And although we hope this guide serves as a helpful baseline for generating and securing pomerium with certificates, these instructions should be modified to meet your own organization's tools, needs, and constraints. In a production environment you will likely be using your corporate load balancer, or a key management system to manage your certificate authority infrastructure.
+### Private key pairs
 
-## Why
+TLS relies on private and public key pairs to authenticate users or services, verify digital signatures, and encrypt and decrypt data.
 
-Since one of Pomerium's core [principles] is to treat internal and external traffic impartially, Pomerium uses [mutually authenticated TLS](https://en.wikipedia.org/wiki/Mutual_authentication) ubiquitously. For example, Pomerium uses mTLS between:
+### SSL/TLS certificates
 
-- end-user and Pomerium
-- Pomerium's services **regardless** of if the network is "trusted"
+TLS certificates enable computer systems to verify your identity and encrypt communication over TLS.
+
+Certificates are issued by a Certificate Authority (CA). The CA, which can be public or private, is a trusted entity that establishes digital identities.
+
+The CA generates and signs a certificate (a digital object) that includes your public key, the certificate issuer, expiration and issuance dates, and other relevant metadata.
+
+Both computer systems (servers and other backend services) and end-users rely on certificates to verify each other’s identity before exchanging information.
+
+### TLS Handshake
+
+The TLS handshake is how a client and server verify each other’s identities, determine which cryptographic algorithms they will use to communicate securely over HTTP, and generate session keys to create new sessions.
+
+During the TLS handshake, both parties use their public key for encryption and their private key for decryption. This gives both parties the opportunity to generate and exchange an agreed-upon shared key used to encrypt and decrypt communication in a session.
+
+## Mutual TLS (mTLS) authentication
+
+Mutual TLS (mTLS), or mutual authentication, means that both the client and server verify each other’s identities.
+
+mTLS makes it possible to verify end-users, devices, and servers within an organization, which is a core principle for organizations that are serious about implementing a zero- trust security model.
+
+## Why Pomerium uses mTLS
+
+Since one of Pomerium's core principles is to treat internal and external traffic impartially, Pomerium uses mutually authenticated TLS ubiquitously.
+
+This enables Pomerium to secure connections between:
+
+- The end-user and Pomerium
+- Pomerium services (even if the network is trusted)
 - Pomerium and the destination application
 
-## Setting up DNS
+Securing all communication with mTLS bolsters security and can help prevent attacks like:
 
-First, you'll want to set a [CNAME](https://en.wikipedia.org/wiki/CNAME_record) record for wild-card domain name you will be using with Pomerium.
+- Spoofing
+- Credential stuffing
+- Brute force attacks
+- On-path attacks
+- Malicious API attacks
 
-![pomerium add a text entry to your dns records](./img/certificate-wildcard-domain.png)
+## Set up mTLS with Pomerium
 
-## Certificates
+This guide covers how to generate and set up TLS certificates suitable for working with Pomerium.
 
-### Per-route automatic certificates
+Tools and resources:
 
-Pomerium itself can be used to retrieve, manage, and renew certificates certificates for free using Let's Encrypt, the only requirement is that Pomerium is able to receive public traffic on ports `80`/`443`. This is probably the easiest option.
+- [LetsEncrypt](https://letsencrypt.org/about/): a public CA that issues free certificates trusted by major browsers; other [private](https://blog.cloudflare.com/how-to-build-your-own-public-key-infrastructure/) or [public](https://scotthelme.co.uk/are-ev-certificates-worth-the-paper-theyre-written-on/) CAs are also fine
+- [mkcert](https://mkcert.org/): a free tool for generating self-signed certificates ideal for testing purposes
+- [Google Domains](https://domains.google.com/): a domain name registrar you will use to set up your wildcard domain and certificate validation. You can use other registrars as well (some even support [automatic renewal](https://github.com/Neilpang/acme.sh/wiki/dnsapi))
+- [Acme.sh](https://github.com/Neilpang/acme.sh): an Automated Certificate Management Environment (ACME) client you will use to fetch your wildcard certificate. Any [LetsEncrypt client](https://letsencrypt.org/docs/client-options/) that supports wildcard domains would work.
+
+:::tip **Note**
+
+There are countless ways to build and manage your public-key infrastructure. Although we hope this guide serves as a helpful baseline for generating and securing Pomerium with certificates, you should modify these instructions to meet your own organization's tools, needs, and constraints.
+
+In a production environment you will likely use your corporate load balancer or a key management system to manage your certificate authority infrastructure.
+
+:::
+
+### Set up DNS
+
+Set a CNAME record for the wildcard domain you will use with Pomerium.
+
+![Certificate wildcard domain](./img/certificates/certificate-wildcard-domain.png)
+
+### Enable per-route TLS certificate automation
+
+Pomerium can retrieve, manage, and renew certificates for you (for free) using LetsEncrypt. To enable certificate automation, you must allow public traffic on ports `80` and `443`.
+
+To use Pomerium’s autocert configuration setting, set `autocert` to `true` in your configuration file:
 
 ```yaml
 autocert: true
 ```
 
-See the [Autocert] and [Autocert Directory] settings for more details.
+See the [Autocert] and [Autocert Directory] settings for more information.
 
-### Self-signed wildcard certificate
+### Generate a self-signed wildcard certificate
 
-In production, we'd use a public certificate authority such as LetsEncrypt. But for a local proof of concept or for development, we can use [mkcert](https://mkcert.dev/) to make locally trusted development certificates with any names you'd like. The easiest, is probably to use `*.localhost.pomerium.io` which we've already pre-configured to point back to localhost.
+In production, you would use a public CA like LetsEncrypt to generate your wildcard certificate. For a local proof of concept or development, you can use mkcert to generate a locally-trusted, self-signed development certificate with any name you like.
+
+For the purposes of this guide, create a wildcard certificate using the domain `*.localhost.pomerium.io`, which we’ve pre-configured to route to localhost.
 
 1.  Install mkcert.
 
@@ -79,23 +140,27 @@ In production, we'd use a public certificate authority such as LetsEncrypt. But 
     mkcert -install
     ```
 
-1.  Create your wildcard domain. `*.localhost.pomerium.io` is helper domain we've hard-coded to route to localhost:
+1.  Create your wildcard domain. `*.localhost.pomerium.io` is a helper domain we've hard-coded to route to localhost:
 
     ```bash
     mkcert "*.localhost.pomerium.io"
     ```
 
-### Manual DNS Let's Encrypt wildcard certificate
+### Sign wildcard certificate
 
-Once you've setup your wildcard domain, we can use acme.sh to create a certificate-signing request with LetsEncrypt.
+With your wildcard domain set at `*.localhost.pomerium.io`, use acme.sh to create a certificate signing request with LetsEncrypt.
 
 <GenerateWildcardCert />
 
-LetsEncrypt will respond with the corresponding `TXT` record needed to verify our domain.
+LetsEncrypt will respond with the corresponding `TXT` record needed to verify your domain.
 
-![pomerium add a text entry to your dns records](./img/certificate-domain-challenge.png)
+![pomerium add a text entry to your dns records](./img/certificates/certificate-domain-challenge.png)
 
-It may take a few minutes for the DNS records to propagate. Once it does, you can run the following command to complete the certificate request process.
+It may take a few minutes for the DNS records to propagate. Once they do, run the following command to complete the certificate request process:
+
+```bash
+acme.sh  --signcsr  --csr /path/to/mycsr/csr  --dns  dns_cf
+```
 
 Here's how the above certificates signed by LetsEncrypt correspond to their respective Pomerium configuration settings:
 
@@ -106,9 +171,9 @@ Here's how the above certificates signed by LetsEncrypt correspond to their resp
 
 Your end users will see a valid certificate for all domains delegated by Pomerium.
 
-![pomerium valid certificate](./img/certificates-valid-secure-certificate.png)
+![pomerium valid certificate](./img/certificates/certificates-valid-secure-certificate.png)
 
-![pomerium certificates A+ ssl labs rating](./img/certificates-ssl-report.png)
+![pomerium certificates A+ ssl labs rating](./img/certificates/certificates-ssl-report.png)
 
 :::caution
 
@@ -118,11 +183,11 @@ LetsEncrypt certificates must be renewed [every 90 days](https://letsencrypt.org
 
 ## Resources
 
-Certificates, TLS, and Public Key Cryptography is a vast subject we cannot adequately cover here so if you are new to or just need a brush up, the following resources may be helpful:
+Certificates, TLS, and Public Key Cryptography is a vast subject we cannot adequately cover here. If you are unfamiliar with these topics, the following resources may be helpful:
 
 - [Why HTTPS for Everything?](https://https.cio.gov/everything/) The US government's CIO office has an excellent guide covering HTTPS and why future government sites will all be HTTPS.
 - [Is TLS Fast](https://istlsfastyet.com/) debunks the performance myth associated with HTTPS.
-- [Use TLS](https://smallstep.com/blog/use-tls.html) covers why TLS should be used everywhere; not just for securing typical internet traffic but for securing service communication in both "trusted" and adversarial situations.
+- [Use TLS](https://smallstep.com/blog/use-tls.html) covers why TLS should be used everywhere; not just for securing typical internet traffic, but for securing service communication in both "trusted" and adversarial situations.
 - [Everything you should know about certificates and PKI but are too afraid to ask](https://smallstep.com/blog/everything-pki.html)
 
 [autocert]: /docs/reference/autocert
