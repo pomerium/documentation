@@ -1,6 +1,19 @@
 ---
 title: Device Identity
 description: Learn about how WebAuthn is used to authenticate and authorize access using Device ID and state.
+lang: en-US
+keywords:
+  [
+    device id,
+    secure enclaves,
+    webauthn,
+    authentication,
+    device identity,
+    MFA,
+    cross-platform security keys,
+    hardware security keys,
+    device posture,
+  ]
 ---
 
 One of the core components of the zero trust security model is **device identity**, which is the ability for a device to have a unique, unclonable identity string that can be authenticated and factored into access control decisions. This topic page covers the concept of device identity, and how it applies to the zero trust model.
@@ -54,6 +67,12 @@ The nature of cross-platform keys mean they are not associated with a single end
 Even if access is restricted to known devices, what happens when a user is found to have a vulnerable OS or browser version? How can an administrator ensure their network is not exposed, and that the user's system is promptly patched and remediated? As secure enclave technologies evolve, **device posture** -- which is sometimes referred to as device state -- will play an increasingly important role in not only authorization decisions but also in helping to quickly remediate vulnerable corporate devices. Device posture is a more complex superset of device identity, with more information about the device and software being used to generate the resulting identifier.
 
 Designing your security model to use device identity also primes your infrastructure to implement advanced security rules based on device posture down the road.
+
+**Read more about how device identity works with Pomerium:**
+
+- Incorporate [device identity](/docs/capabilities/device-identity) into your authorization policies with Pomerium Enterprise
+- Learn about [device management](/docs/capabilities/authorization#manage-devices) with Pomerium
+- [How Context Drives Full-Access Decision Making](https://www.pomerium.com/blog/context-drives-full-access-decision-making/)
 
 [android-keystore]: https://source.android.com/security/keystore
 [apple-enclave]: https://support.apple.com/guide/security/secure-enclave-sec59b0b31ff/web
