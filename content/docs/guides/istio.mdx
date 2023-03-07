@@ -139,7 +139,7 @@ Now that Pomerium is installed in the cluster, we can define authentication and 
        matchLabels:
          app.kubernetes.io/name: nginx # This matches the label applied to our test service
      jwtRules:
-       - issuer: 'authenticate.localhost.pomerium.io' # Adjust to match your Authenticate service URL
+       - issuer: 'hello.localhost.pomerium.io' # Adjust to match your Authenticate service URL
          audiences:
            - hello.localhost.pomerium.io # This should match the value of spec.host in the services Ingress
          fromHeaders:
@@ -287,13 +287,13 @@ To demonstrate complete authorization validation through to the upstream service
        matchLabels:
          app.kubernetes.io/name: grafana # This matches the label applied to our test service
      jwtRules:
-       - issuer: 'authenticate.localhost.pomerium.io' # Adjust to match your Authenticate service URL
+       - issuer: 'grafana.localhost.pomerium.io'
          audiences:
            - grafana.localhost.pomerium.io # This should match the value of spec.host in the services Ingress
          fromHeaders:
            - name: 'X-Pomerium-Jwt-Assertion'
          forwardOriginalToken: true
-         jwksUri: https://authenticate.localhost.pomerium.io/.well-known/pomerium/jwks.json # Adjust to match your Authenticate service URL.
+         jwksUri: https://grafana.localhost.pomerium.io/.well-known/pomerium/jwks.json # Adjust to match your Authenticate service URL.
          # The jwksUri key above is the preferred method of retrieving the signing key, and should be used in production.
          # See https://istio.io/latest/docs/reference/config/security/jwt/#JWTRule
          #
