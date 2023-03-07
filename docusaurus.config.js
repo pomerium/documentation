@@ -88,7 +88,7 @@ const config = {
           to: '/docs/guides/',
         },
         {
-          href: 'https://github.com/pomerium/documentation',
+          href: 'https://github.com/pomerium/pomerium ',
           label: 'GitHub',
           position: 'right',
         },
