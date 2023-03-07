@@ -192,6 +192,26 @@ This guide assumes you can access the Enterprise Console.
 
 This guide uses Auth0 as the IdP and imports an **admin** group configured in Auth0's dashboard. Complete the [Auth0 guide](/docs/identity-providers/auth0) to follow along with this guide, or import groups from your IdP.
 
+First, add Jenkins to the same `docker-compose` file running your Pomerium Core, Console, and PostgreSQL services:
+
+```yaml title=docker-compose.yaml
+jenkins:
+  networks:
+    main: {}
+  image: jenkins/jenkins:lts-jdk11
+  privileged: true
+  user: root
+  ports:
+    - 8080:8080
+    - 50000:50000
+
+  volumes:
+    # File path to Jenkins_home -- stores configs, build logs, and artifacts
+    - ./home/jenkins_compose/jenkins_configuration:/var/jenkins_home
+    # "sock" is the Unix socket the Docker daemon listens on by default
+    - ./var/run/docker.sock:/var/run/docker.sock
+```
+
 In your Enterprise Console, create a policy:
 
 1. Give your policy a name (for example, **Jenkins Admin**), then select the **Builder** tab
@@ -219,7 +239,7 @@ Configure your route to rewrite the host header:
 2. In the **Host Headers** dropdown, select **Rewrite to Header**
 3. In the **Host Rewrite to Header** field, enter the external route without the protocol
 
-![Rewrite host headers](./img/jenkins/8-enterprise-jenkins-policy.png)
+![Rewrite host headers](./img/jenkins/9-enterprise-jenkins-headers.png)
 
 Save your route.
 
@@ -265,7 +285,7 @@ Install the **skip-certificate-check** plugin:
 2. In the search bar, enter **skip-certificate-check**
 3. Select the skip-certificate-check plugin and **Install without restart**
 
-Once you’ve installed both plugins, stop your containers (you don't need to stop your containers if you're using the Enterprise Console).
+Once you’ve installed both plugins, **stop your containers** (you don't need to stop your containers if you're using the Enterprise Console).
 
 ## Configure JWT authentication
 
@@ -288,19 +308,20 @@ Enter the following information in the **Global JWT Auth Settings** field:
 | Field | Value |
 | --- | --- |
 | **Header name** | `x-pomerium-jwt-assertion` |
-| **Username claim name** | `name` |
+| **Username claim name** | `name` or `email` |
 | **Groups claim name** | `groups` |
 | **Groups claim list seperator** | `,` |
 | **Email claim name** | `email` |
 | **Acceptable issuers** | `authenticate.corp.example.com` |
 | **Acceptable audiences** | `jenkins.corp.example.com` |
-| **JWKS JSON URL** | `authenticate.corp.example.com/.well-known/pomerium/jwks.json` |
+| **JWKS JSON URL** | `https://authenticate.corp.example.com/.well-known/pomerium/jwks.json` |
 
 Note the following details about the fields above:
 
+- **Username claim name** can be either your name or email
 - **Acceptable issuers** must be the URL of the authentication domain that issued the JWT. The `iss` claim tells the target application who the issuing authority is and provides context about the subject.
 - **Acceptable audiences** must be the URL of the target application. The `aud` claim defines what application the JWT is intended for.
-- **JWKS JSON URL** appends `/.well-known/pomerium/jwks.json` to the authenticate service URL, and lives on the authenticate service. The JWKS endpoint provides Jenkins the user’s public key to verify their JWT signature.
+- **JWKS JSON URL** appends `/.well-known/pomerium/jwks.json` to the authenticate service URL. The JWKS endpoint provides Jenkins the user’s public key to verify their JWT signature.
 
 :::tip
 
@@ -308,25 +329,33 @@ Go to the external `verify` route defined in your policy to view your JWT claims
 
 :::
 
-Select **save** to apply the security changes.
+In the **Authorization** dropdown, configure Jenkins permissions so that **Anonymous** has **Administer** privileges.
+
+1. Select **Matrix-based security**
+2. Under **Overall**, assign **Administer** to **Anonymous** and **Authenticated Users**
+
+If JWT authentication doesn't authenticate you successfully, Jenkins will sign you in as an anonymous user. With administer privileges, you can troubleshoot JWT settings as an anonymous user and try again.
+
+Select **save** to apply the security settings.
+
+## Test JWT authentication
 
 Restart your container. If the JWT authentication worked, you will see your name in the dashboard instead of **admin**. To see more details about the request, add `/whoAmI` to the URL. For example, `https://jenkins.localhost.pomerium.io/whoAmI`.
 
 ![View JWT request headers](./img/jenkins/6-enterprise-who-am-i.png)
 
-## Configure the Jenkins authorization policy
+## Update your Jenkins authorization settings
 
-Configure your Jenkins authorization policy:
+Now, you can configure your Jenkins authorization settings:
 
-1. Go to **Manage Jenkins** > **Configure Global Security**
-2. In **Authorization** dropdown, select **Matrix-based security**
-3. Select **Add user…** and enter the email associated with your IdP
+1. Select **Matrix-based security**
+2. Select **Add user…** and enter the name or email associated with your IdP (the value depends on what claim you entered for **Username claim name**)
 
 ![Jenkins matrix-based security](./img/jenkins/10-matrix-auth.png)
 
 Assign yourself **Administer** privileges and whatever privileges seem appropriate to **Authenticated Users** and **Anonymous** users.
 
-Save your security settings.
+Select **save** to apply the security changes.
 
 ## Next steps: Add more context to your policies
 
