@@ -1,0 +1,125 @@
+---
+title: Installation
+lang: en-US
+keywords: [binaries, os packages, cloudsmith, pomerium, console]
+description: Install Pomerium using OS packages or binaries.
+sidebar_label: Installation
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Install Pomerium Enterprise Console
+
+Pomerium Enterprise Console is available as RPM and DEB OS packages and as a Docker image.
+
+- **Supported Operating Systems:** `linux`, `darwin`
+- **Supported Architectures:** `amd64`, `arm64`
+
+## Install with OS packages
+
+You can find the latest `rpm` and `deb` packages on [Cloudsmith](https://cloudsmith.io/~pomerium/repos/pomerium/groups/) or download them from the [GitHub releases](https://github.com/pomerium/pomerium/releases) page.
+
+<Tabs>
+<TabItem label="deb" value="deb">
+
+To automatically configure the repository for Debian and Ubuntu distributions:
+
+1. Replace `[access-key]` in the command below and run it:
+
+```bash
+curl -1sLf \
+'https://dl.cloudsmith.io/[access-key]/pomerium/enterprise/setup.deb.sh' \
+| sudo -E bash
+```
+
+To manually configure the repository, import the `apt-key` and create a new `.list file in /etc/apt/source.list.d`:
+
+```bash
+curl -1sLf 'https://dl.cloudsmith.io/[access-key]/pomerium/enterprise/gpg.B1D0324399CB9BC3.key' | apt-key add -
+
+echo "deb https://dl.cloudsmith.io/[access-key]/pomerium/enterprise/deb/debian buster main" | sudo tee /apt/sources.list.d/pomerium-console.list
+```
+
+2. Update `apt` and install Pomerium Enterprise:
+
+```bash
+sudo apt update; sudo apt install pomerium-console
+```
+
+</TabItem>
+<TabItem label="yum" value="yum">
+
+To automatically configure the repository for RHEL based distributions:
+
+1. Replace [access-key] in the commmand below and run it:
+
+```bash
+curl -1sLf \
+'https://dl.cloudsmith.io/[access-key]/pomerium/enterprise/setup.rpm.sh' \
+| sudo -E bash
+```
+
+To manually configure the repository, run:
+
+```bash
+yum install yum-utils pygpgme
+rpm --import 'https://dl.cloudsmith.io/[access-key]/pomerium/enterprise/gpg.B1D0324399CB9BC3.key'
+curl -1sLf 'https://dl.cloudsmith.io/[access-key]/pomerium/enterprise/config.rpm.txt?distro=el&codename=8' > /tmp/pomerium-enterprise.repo
+yum-config-manager --add-repo '/tmp/pomerium-enterprise.repo'
+yum -q makecache -y --disablerepo='*' --enablerepo='pomerium-enterprise'
+```
+
+2. Update `yum` and install Pomerium Enterprise:
+
+```bash
+yum -y install pomerium-console
+```
+
+</TabItem>
+</Tabs>
+
+After you've installed the package, enable and start the system service:
+
+```bash
+sudo systemctl enable --now pomerium-console
+```
+
+## Install with Docker
+
+The Pomerium Enterprise Docker image is available at a private Cloudsmith Docker registry.
+
+To access the Pomerium Enterprise Docker image:
+
+1. In your terminal, run the following command:
+
+```bash
+docker login docker.cloudsmith.io
+```
+
+2. Enter your username and password:
+
+```bash
+ % docker login docker.cloudsmith.io
+Username: <username>
+Password: <password>
+```
+
+3. Pull the Pomerium Enterprise image:
+
+  Pull a specific tagged release:
+  ```bash
+  docker pull docker.cloudsmith.io/pomerium/enterprise/pomerium-console:${vX.X.X}
+  ```
+
+  Pull the most recent tagged release:
+  ```bash
+  docker pull docker.cloudsmith.io/pomerium/enterprise/pomerium-console:latest
+  ```
+
+  Pull an image in sync with git's main branch:
+  ```bash
+  docker pull docker.cloudsmith.io/pomerium/enterprise/pomerium-console:main
+  ```
+
+See the [Enterprise Quickstart](/docs/releases/enterprise/install/quickstart) for instructions to run and deploy the Enterprise Console with Docker Compose.
