@@ -20,7 +20,7 @@ pagination_next: null
 
 Signing Key is one or more PEM-encoded private keys used to sign a user's attestation JWT which can be consumed by upstream applications to pass along identifying user information like username, id, and groups. If multiple keys are provided only the first will be used for signing.
 
-If set, the signing key's public key(s) can be retrieved by hitting Pomerium's well-known JWKS endpoint (`/.well-known/pomerium/jwks.json`), which lives on the authenticate service. Otherwise, the endpoint will return an empty keyset.
+If set, the signing key's public key(s) can be retrieved by hitting Pomerium's well-known JWKS endpoint (`/.well-known/pomerium/jwks.json`). Otherwise, the endpoint will return an empty keyset.
 
 For example, assuming you have [generated an ES256 key](https://github.com/pomerium/pomerium/blob/main/scripts/generate_self_signed_signing_key.sh) with the following commands:
 
@@ -34,7 +34,7 @@ cat ec_private.pem | base64
 You can access that signing key from Pomerium's well-known JWKS endpoint.
 
 ```bash
-curl https://authenticate.int.example.com/.well-known/pomerium/jwks.json | jq
+curl https://route.int.example.com/.well-known/pomerium/jwks.json | jq
 ```
 
 ```json
