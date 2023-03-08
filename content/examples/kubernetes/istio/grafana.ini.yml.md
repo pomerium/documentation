@@ -6,5 +6,5 @@ grafana.ini:
     enabled: true
     header_name: X-Pomerium-Jwt-Assertion
     email_claim: email
-    jwk_set_url: https://authenticate.localhost.pomerium.io/.well-known/pomerium/jwks.json
+    jwk_set_url: https://grafana.localhost.pomerium.io/.well-known/pomerium/jwks.json
 ```
