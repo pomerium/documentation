@@ -31,14 +31,6 @@ Jenkins doesn’t support JWT authentication out of the box. With Pomerium, you 
 
 Once you’ve configured JWT authentication, you can assign permissions within Jenkins for a specific user, any authenticated user, anonymous users, or a user group.
 
-### Groups and namespaces with Pomerium
-
-Most identity providers allow administrators to create user groups. If you use [Pomerium Enterprise](https://www.pomerium.com/enterprise-sales/), you can import users and groups from your identity provider and place them in custom namespaces with the Pomerium Console’s [Namespacing](/docs/capabilities/namespacing) feature.
-
-By adding a group and its users to a namespace, you can pass the group identifier in a custom claim to upstream applications with JWT authentication; you can also apply group claims to your authorization policy so that only members of a group are granted access.
-
-Pomerium Core does not support namespacing. For the Pomerium Core portion of the guide, you will write an authorization policy that grants access to users with the specified domain and/or username.
-
 ## Before you begin
 
 To complete this guide, you need:
@@ -190,8 +182,6 @@ This guide assumes you can access the Enterprise Console.
 
 :::
 
-This guide uses Auth0 as the IdP and imports an **admin** group configured in Auth0's dashboard. Complete the [Auth0 guide](/docs/identity-providers/auth0) to follow along with this guide, or import groups from your IdP.
-
 First, add Jenkins to the same `docker-compose` file running your Pomerium Core, Console, and PostgreSQL services:
 
 ```yaml title=docker-compose.yaml
@@ -216,11 +206,10 @@ In your Enterprise Console, create a policy:
 
 1. Give your policy a name (for example, **Jenkins Admin**), then select the **Builder** tab
 2. Select **ADD ALLOW BLOCK**, then select the **+** icon to add an **AND** operator
-3. In the **Criteria** field, select **Claim**
-4. In the **Type** field, enter the sub-path (optional)
-5. In the **Value** field, enter the criterion value
+3. In the **Criteria** field, select **Email**
+4. In the **Value** field, enter the email address associated with your IdP
 
-![Create Jenkins policy](./img/jenkins/8-enterprise-jenkins-policy.png)
+![Create Jenkins policy](./img/jenkins/8-jenkins-email-policy.png)
 
 Save your policy.
 
@@ -361,4 +350,6 @@ Select **save** to apply the security changes.
 
 You can adjust the authorization policy within Jenkins to limit or broaden what privileges authenticated and anonymous users have, but you can also extend your authorization policies with Pomerium.
 
-For example, you can build a policy that only allows users to access Jenkins at certain times of day or days of the week, or limit access to certain devices.
+For example:
+- You can build a policy that only allows users to access Jenkins at certain times of day or days of the week, or limit access to certain devices
+- You can import custom groups claims from your IdP and only allow access to members of the group
