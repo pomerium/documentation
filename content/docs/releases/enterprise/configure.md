@@ -25,7 +25,7 @@ The keys listed below can be applied in Pomerium Console's `config.yaml` file, o
 | :-- | :-- | --- |
 | <a className="entRef-anchor" id="administrators">#</a><a href='#administrators'>administrators</a> | A list of user ids, names or emails to make administrators. Useful for bootstrapping. | none |
 | <a className="entRef-anchor" id="audience">#</a><a href='#audience'>audience</a> | A list of audiences for verifying the signing key. | `[]` |
-| <a className="entRef-anchor" id="authenticate-service-url">#</a><a href='#authenticate-service-url'>authenticate-service-url</a> | URL for the Authenticate Service. Required for Device Registration. | none |
+| <a className="entRef-anchor" id="authenticate-service-url">#</a><a href='#authenticate-service-url'>authenticate-service-url</a> | (deprecated) Authenticate service URL is not required in the Console configuration. For Device Registration, use the [external route URL](/docs/reference/routes/from). | none |
 | <a className="entRef-anchor" id="bind-addr">#</a><a href='#bind-addr'>bind-addr</a> | The address the Pomerium Console will listen on. | `:8701` |
 | <a className="entRef-anchor" id="customer-id">#</a><a href='#customer-id'>customer-id</a> | The customer ID | none |
 | <a className="entRef-anchor" id="database-encryption-key">#</a><a href='#database-encryption-key'>database-encryption-key</a> | The base64-encoded encryption key for encrypting sensitive data in the database. | none |
