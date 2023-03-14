@@ -46,10 +46,10 @@ Issuer is the URL of the authentication domain that issued the JWT. The `iss` cl
   </div>
 </details>
 
-The attestation JWT's signature can be verified using the public key which can be retrieved at Pomerium's `/.well-known/pomerium/jwks.json` endpoint which lives on the authenticate service. A `jwks_uri` is useful when integrating with other systems like [istio](https://istio.io/docs/reference/config/security/istio.authentication.v1alpha1/). For example:
+The attestation JWT's signature can be verified using the public key which can be retrieved at Pomerium's `/.well-known/pomerium/jwks.json`. A `jwks_uri` is useful when integrating with other systems like [istio](https://istio.io/docs/reference/config/security/istio.authentication.v1alpha1/). For example:
 
 ```bash
-curl https://authenticate.int.example.com/.well-known/pomerium/jwks.json | jq
+curl https://route.int.example.com/.well-known/pomerium/jwks.json | jq
 ```
 
 ```json
