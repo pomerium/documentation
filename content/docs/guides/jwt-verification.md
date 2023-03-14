@@ -33,7 +33,7 @@ For a detailed explanation of this security model, see [Mutual Authentication Wi
 
 Once running, the user visits [verify.localhost.pomerium.io], is authenticated through [authenticate.localhost.pomerium.io], and then the HTTP request is sent to envoy which proxies it to the httpbin app.
 
-Before allowing the request Envoy will verify the signed JWT assertion header using the public key defined by `authenticate.localhost.pomerium.io/.well-known/pomerium/jwks.json`.
+Before allowing the request Envoy will verify the signed JWT assertion header using the public key defined by `httpbin.localhost.pomerium.io/.well-known/pomerium/jwks.json`.
 
 ## Setup
 
@@ -142,14 +142,14 @@ Mac and Linux users can use DNSMasq to map the `*.localhost.pomerium.io` domain 
                          '@type': type.googleapis.com/envoy.extensions.filters.http.jwt_authn.v3.JwtAuthentication
                          providers:
                            pomerium:
-                             issuer: authenticate.localhost.pomerium.io
+                             issuer: httpbin.localhost.pomerium.io
                              audiences:
                                - httpbin.localhost.pomerium.io
                              from_headers:
                                - name: X-Pomerium-Jwt-Assertion
                              remote_jwks:
                                http_uri:
-                                 uri: https://authenticate.localhost.pomerium.io/.well-known/pomerium/jwks.json
+                                 uri: https://httpbin.localhost.pomerium.io/.well-known/pomerium/jwks.json
                                  cluster: egress-authenticate
                                  timeout: 1s
                          rules:
@@ -201,7 +201,7 @@ Pomerium uses the claims provided by the identity provider's JWT to populate the
 
 Audience is the URL of the target upstream application. The `aud` claim defines what application the JWT is intended for.
 
-Issuer is the URL of the authentication domain that issued the JWT. The `iss` claim tells the target upstream application who the issuing authority is and provides context about the subject.
+Issuer is the URL of the domain that issued the JWT. The `iss` claim tells the target upstream application who the issuing authority is and provides context about the subject.
 
   </div>
 </details>
