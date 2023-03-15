@@ -5,7 +5,7 @@ keywords: [tooljet, pomerium, internal developer tools]
 ---
 
 import ToolJetCompose from '../../examples/tooljet/docker-compose.yaml.md';
-import PomeriumCompose from '../../examples/docker/basic.docker-compose.yml.md';
+import PomeriumCompose from '../../examples/tooljet/docker-compose.yaml.md';
 import PomeriumConfig from '../../examples/tooljet/config-tooljet.yaml.md';
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
@@ -16,32 +16,75 @@ Run Pomerium with Docker Compose to secure your ToolJet application.
 
 ## What is ToolJet?
 
-[ToolJet](https://www.tooljet.com/) is a self-hosted, low-code platform that helps you quickly build and deploy internal developer tools.
-
+[ToolJet](https://www.tooljet.com/) is a self-hosted, low-code platform that helps you build and deploy internal developer tools.
 
 ## Why use Pomerium with ToolJet?
 
-ToolJet provides its own [permissions](https://docs.tooljet.com/docs/org-management/permissions) and several options for [user authentication](https://docs.tooljet.com/docs/category/user-authentication).
+Pomerium can secure ToolJet by applying policy to your routes that only grants access to ToolJet by to certain users.
 
-Pomerium can’t sign users into ToolJet itself, but you can apply an authorization policy that only grants access to certain users.
+ToolJet provides its own RBAC-based [permissions](https://docs.tooljet.com/docs/org-management/permissions) and several [user authentication](https://docs.tooljet.com/docs/category/user-authentication) flows, so proxied requests will require users to sign in twice.
 
 ## Single sign-on (SSO) with GitHub
 
-ToolJet supports SSO through GitHub and Google for free (you need a premium plan to use other identity providers that support OIDC).
+ToolJet supports SSO through GitHub and Google for free.
 
-This guide will use GitHub as the identity provider to authenticate users against Pomerium before granting access to a ToolJet workspace.
+This guide will use GitHub as the identity provider (IdP) to authenticate users against Pomerium before granting access to a ToolJet workspace.
 
 ## Before you begin
 
 To complete this guide, you need:
 
 - [Docker](https://docs.docker.com/install/) and [Docker Compose](https://docs.docker.com/compose/install/)
-- [GitHub](/docs/identity-providers/github) as an identity provider
+- [GitHub](/docs/identity-providers/github) as an IdP
 
-## Set up Pomerium
+## Set up ToolJet
 
-<Tabs>
-<TabItem value="Core" label="Core">
+Set up your project to run ToolJet with Docker Compose:
+
+```bash
+curl -LO https://raw.githubusercontent.com/ToolJet/ToolJet/main/deploy/docker/docker-compose-db.yaml
+mv docker-compose-db.yaml docker-compose.yaml
+mkdir postgres_data
+```
+
+Add a `.env` file pre-populated with ToolJet's environment variables:
+
+```bash
+curl -LO https://raw.githubusercontent.com/ToolJet/ToolJet/main/deploy/docker/.env.example
+mv .env.example .env
+```
+
+In your `.env` file, update `LOCKBOX_MASTER_KEY` and `SECRET_KEY_BASE` following ToolJet's [environment variable](https://docs.tooljet.com/docs/setup/env-vars) docs.
+
+Keep the default values for the other environment variables.
+
+## Run ToolJet
+
+Run `docker compose up` to run your Pomerium and ToolJet containers.
+
+In your terminal, wait until ToolJet is in a ready state:
+
+![ToolJet ready state](./img/tooljet/ready-to-use.png)
+
+In your browser, go to `localhost:80` to set up your workspace.
+
+## Set up ToolJet workspace
+
+Set up your admin account:
+
+![Set up admin](./img/tooljet/set-up-admin.png)
+
+Set up your workspace:
+
+![Set up ToolJet workspace](./img/tooljet/set-up-workspace.png)
+
+Skip the prompts asking for your company information.
+
+You should now be in your ToolJet dashboard.
+
+Stop your containers.
+
+## Set up Pomerium config file
 
 Create a `config.yaml` file and add the following code:
 
@@ -49,7 +92,7 @@ Create a `config.yaml` file and add the following code:
 
 Next, you need to:
 
-- Update the identity provider configuration variables with your own (See the [GitHub](/docs/identity-providers/github) guide for more information)
+- Update the IdP configuration variables with your own (See the [GitHub](/docs/identity-providers/github) guide for more information)
 - Replace user@example.com with the email associated with your IdP
 - Generate a signing key
 
@@ -64,63 +107,53 @@ cat ec_private.pem | base64
 
 Add the base64-encoded signing key to the `signing_key` variable in your `config.yaml` file.
 
-## Add Pomerium Services to Docker Compose
+## Add Pomerium services to Docker Compose
 
-Create a `docker-compose.yaml` file and add the following code:
+Update `docker-compose.yaml` with the following configuration:
 
 <PomeriumCompose />
 
-## Set up ToolJet
+### Update ToolJet hostname
 
-Add the ToolJet Docker service to your `docker-compose.yaml` file:
+To add a user to your ToolJet workspace, you must send them an invite link. ToolJet uses the `TOOLJET_HOSTNAME` value to create the link.
 
-<ToolJetCompose />
+If you're following this guide using `localhost`, the link won't work. Replace `TOOLJET_HOSTNAME` with your Pomerium [external route](/docs/reference/routes/from) URL instead.
 
-Run the command below to create an `.env` file pre-populated with ToolJet's environment variables:
-
-```bash
-curl -LO https://raw.githubusercontent.com/ToolJet/ToolJet/main/deploy/docker/.env.example
-mv .env.example .env
-```
-
-In your `.env` file, update `TOOLJET_HOST`, `LOCKBOX_MASTER_KEY`, `SECRET_KEY_BASE`:
+For example:
 
 ```env
-TOOLJET_HOST=https://tooljet.corp.pomerium.io
-LOCKBOX_MASTER_KEY=e90748d8d48fa0740b14e2e34bee3cdf4cc04900023963bd90e21584033e3579
-SECRET_KEY_BASE=7b3db858da97f232d4dc5f0e7c5eb6ca59371f4205324041cfd917a4947f60f03d5b30393ee9b8a4e6ddc6d1e8f43c6164614a3044c14d71e45a99bf1eb7c3bd
+TOOLJET_HOSTNAME=https://tooljet.localhost.pomerium.io
 ```
 
-To update the [environment variables](https://docs.tooljet.com/docs/setup/env-vars/):
-- **TOOLJET_HOST:** Replace `TOOLJET_HOST` with the external route URL in your Pomerium config file (for example, `https://tooljet.corp.pomerium.io`)
-- **LOCKBOX_MASTER_KEY:** Generate a new lockbox master key with `openssl rand -hex 32`
-- **SECRET_KEY_BASE**: Generate a new secret key base with `openssl rand -hex 64`
+Go to your external route (`https://tooljet.localhost.pomerium.io`) to access ToolJet and sign in.
 
-Keep the default database configuration and leave the other environment variables empty.
+![Admin sign in](./img/tooljet/admin-sign-in.png)
 
-## Run ToolJet
+### Enable GitHub SSO
 
-Run `docker compose up` to run your Pomerium and ToolJet containers.
+To enable SSO with GitHub:
 
-In your terminal, wait until ToolJet is in a ready state:
+1. In your ToolJet dashboard, select **Workplace settings**
+2. Select **SSO**
+3. Select **GitHub**
+4. Enter your **Client ID** and **Client Secret**
+5. Select the toggle button to enable GitHub SSO
+6. Select **Save**
 
-![Ready to use ToolJet](./img/tooljet/ready-to-use.png)
+![Enable GitHub SSO](./img/tooljet/tooljet-soo.png)
 
-In your browser, go to `localhost:80` to set up your workspace.
+Disable password login:
 
-## Set up your ToolJet workspace
+1. Under the **SSO** sidebar, select **Password Login**
+2. Select the toggle button to disable password login
+3. Select **Save**
 
-Set up your admin account:
+### Invite a user
+TODO: add steps
 
-![Create admin](./img/tooljet/set-up-admin.png)
-
-Set up your workspace:
-
-![Set up workspace](./img/tooljet/set-up-workspace.png)
-
-Skip the prompts asking for your company information.
-
-You should now be in your ToolJet dashboard.
+<Tabs>
+<TabItem value="Core" label"Core">
+Core steps
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
 Enterprise steps
