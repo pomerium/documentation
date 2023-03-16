@@ -31,7 +31,7 @@ See [this article](https://www.ssl2buy.com/wiki/how-to-clear-hsts-settings-on-ch
 When securing the Pomerium Authenticate service with a certificate signed by Let's Encrypt, your upstream applications may reject the certificate when attempting to access the JWT signing key. Here's an example log line from [Grafana](/docs/guides/grafana):
 
 ```log
-logger=context error=Get "https://authenticate.localhost.pomerium.io/.well-known/pomerium/jwks.json": x509: certificate signed by unknown authority
+logger=context error=Get "https://grafana.localhost.pomerium.io/.well-known/pomerium/jwks.json": x509: certificate signed by unknown authority
 ```
 
 This is often due to the recent expiration of the [DST Root CA X3](https://letsencrypt.org/docs/dst-root-ca-x3-expiration-september-2021/) certificate. Many default keystores used by docker images and less-frequently updated distributions still carry this expired certificate. Even though Let's Encrypt certs are cross-signed with the [ISRG Root X1](https://letsencrypt.org/certificates/) CA certificate, some applications will still reject them.
@@ -47,7 +47,7 @@ For upstream applications that can use a local signing key file, you can circumv
     <TabItem value="curl" label="curl">
 
     ```bash
-    curl https://authenticate.localhost.pomerium.io/.well-known/pomerium/jwks.json > /etc/grafana/jwks.json
+    curl https://grafana.localhost.pomerium.io/.well-known/pomerium/jwks.json > /etc/grafana/jwks.json
     ```
 
     </TabItem>
@@ -55,7 +55,7 @@ For upstream applications that can use a local signing key file, you can circumv
     <TabItem value="wget" label="wget">
 
     ```bash
-    wget -O /etc/grafana/jwks.json https://authenticate.localhost.pomerium.io/.well-known/pomerium/jwks.json
+    wget -O /etc/grafana/jwks.json https://grafana.localhost.pomerium.io/.well-known/pomerium/jwks.json
     ```
 
     </TabItem>
