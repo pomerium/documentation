@@ -55,7 +55,7 @@ curl https://route.int.example.com/.well-known/pomerium/jwks.json | jq
 
 If multiple keys are supplied in the PEM data, all of them will be published to the JWKS endpoint.
 
-If no certificate is specified, one will be generated and the base64'd public key will be added to the logs. Note, however, that this key is unique to each service, ephemeral, and will not be accessible via the authenticate service's well-known JWKS endpoint.
+If no certificate is specified, one will be generated and the base64'd public key will be added to the logs. Note, however, that this key is unique to each service, ephemeral, and will not be accessible via the well-known JWKS endpoint.
 
 ### Key rotation
 

@@ -174,7 +174,7 @@ signout_redirect_url = https://grafana.localhost.pomerium.io/.pomerium/sign_out
 enabled = true
 header_name = X-Pomerium-Jwt-Assertion
 email_claim = email
-jwk_set_url = https://authenticate.localhost.pomerium.io/.well-known/pomerium/jwks.json
+jwk_set_url = https://grafana.localhost.pomerium.io/.well-known/pomerium/jwks.json
 cache_ttl = 60m
 ```
 
@@ -250,7 +250,7 @@ signout_redirect_url = https://grafana.localhost.pomerium.io/.pomerium/sign_out
 enabled = true
 header_name = X-Pomerium-Jwt-Assertion
 email_claim = email
-jwk_set_url = https://auth.localhost.pomerium.io/.well-known/pomerium/jwks.json
+jwk_set_url = https://grafana.localhost.pomerium.io/.well-known/pomerium/jwks.json
 cache_ttl = 60m
 username_claim = sub ;sets the username to the value of the "sub" claim
 auto_sign_up = true ;sets the login to automatically create a new user if one doesn't exist
@@ -301,7 +301,7 @@ In instances where Grafana cannot get the signing key for the JWTs from the Pome
 For example, wildcard certificates signed by LetsEncrypt may still be cross-signed by the [expired DST R3 root]. While many browsers still trust these certificates (as long as they are also signed by a valid root), some applications reject them, including Grafana:
 
 ```log
-logger=context error=Get "https://authenticate.localhost.pomerium.io/.well-known/pomerium/jwks.json": x509: certificate signed by unknown authority
+logger=context error=Get "https://grafana.localhost.pomerium.io/.well-known/pomerium/jwks.json": x509: certificate signed by unknown authority
 ```
 
 To circumvent this issue, you can use `curl` or `wget` to download the signing key locally:
@@ -312,7 +312,7 @@ To circumvent this issue, you can use `curl` or `wget` to download the signing k
 From the Grafana host:
 
 ```bash
-curl https://authenticate.localhost.pomerium.io/.well-known/pomerium/jwks.json > /etc/grafana/jwks.json
+curl https://grafana.localhost.pomerium.io/.well-known/pomerium/jwks.json > /etc/grafana/jwks.json
 ```
 
 </TabItem>
@@ -321,7 +321,7 @@ curl https://authenticate.localhost.pomerium.io/.well-known/pomerium/jwks.json >
 From the Grafana host:
 
 ```bash
-wget -O /etc/grafana/jwks.json https://authenticate.localhost.pomerium.io/.well-known/pomerium/jwks.json
+wget -O /etc/grafana/jwks.json https://grafana.localhost.pomerium.io/.well-known/pomerium/jwks.json
 ```
 
 </TabItem>
