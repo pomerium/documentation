@@ -1,0 +1,266 @@
+---
+title: ToolJet
+lang: en-US
+description: Secure ToolJet with Pomerium and build internal developer tools.
+keywords: [tooljet, pomerium, internal developer tools]
+---
+
+import ToolJetCompose from '../../examples/tooljet/docker-compose.yaml.md';
+import PomeriumCompose from '../../examples/tooljet/docker-compose.yaml.md';
+import PomeriumConfig from '../../examples/tooljet/config-tooljet.yaml.md';
+import ConsoleCompose from '../../examples/tooljet/console-compose.yaml.md';
+import ConfigConsole from '../../examples/tooljet/config-console.yaml.md';
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Run ToolJet with Docker
+
+Run Pomerium with Docker Compose to secure your ToolJet application.
+
+## What is ToolJet?
+
+[ToolJet](https://www.tooljet.com/) is a self-hosted, low-code platform that helps you build and deploy internal developer tools.
+
+## Why use Pomerium with ToolJet?
+
+Pomerium can secure ToolJet by applying policy to your routes that only grants access to ToolJet by to certain users.
+
+ToolJet provides its own RBAC-based [permissions](https://docs.tooljet.com/docs/org-management/permissions) and several [user authentication](https://docs.tooljet.com/docs/category/user-authentication) flows, so proxied requests will require users to sign in twice.
+
+## Before you begin
+
+To complete this guide, you need:
+
+- [Docker](https://docs.docker.com/install/) and [Docker Compose](https://docs.docker.com/compose/install/)
+- An [identity provider](/docs/identity-providers)
+
+## Set up Pomerium
+
+<Tabs>
+<TabItem value="Core" label="Core">
+
+Create a `config.yaml` file and add the following code:
+
+<PomeriumConfig />
+
+Next, you need to:
+
+- Update the IdP configuration variables with your own (See the [GitHub](/docs/identity-providers/github) guide for more information)
+- Replace user@example.com with the email associated with your IdP
+- Generate a signing key
+
+To generate a [signing key](/docs/reference/signing-key), use the commands below:
+
+```bash
+# Generates a P-256 (ES256) signing key
+openssl ecparam  -genkey  -name prime256v1  -noout  -out ec_private.pem
+# Prints the base64 encoded value of the signing key
+cat ec_private.pem | base64
+```
+
+Add the base64-encoded signing key to the `signing_key` variable in your `config.yaml` file.
+
+## Add Pomerium services to Docker Compose
+
+Update `docker-compose.yaml` with the following configuration:
+
+<PomeriumCompose />
+
+This configuration also includes the Docker image to run ToolJet.
+
+## Set up ToolJet
+
+In the root folder of your project, create a folder called `postgres_data` to run ToolJet's [in-built PostgreSQL](https://docs.tooljet.com/docs/setup/docker) database:
+
+```bash
+mkdir postgres_data
+```
+
+Add a `.env` file pre-populated with ToolJet's environment variables:
+
+```bash
+curl -LO https://raw.githubusercontent.com/ToolJet/ToolJet/main/deploy/docker/.env.example
+mv .env.example .env
+```
+
+In your `.env` file, make the following changes:
+
+- Update `LOCKBOX_MASTER_KEY` and `SECRET_KEY_BASE` following ToolJet's [environment variable](https://docs.tooljet.com/docs/setup/env-vars) docs
+- Replace `TOOLJET_HOSTNAME` with your Pomerium [external route](/docs/reference/routes/from) URL instead
+
+For example:
+
+```env
+TOOLJET_HOSTNAME=https://tooljet.localhost.pomerium.io
+```
+
+Keep the default values for the database configuration and the other environment variables.
+
+## Run ToolJet
+
+Run `docker compose up` to run your Pomerium and ToolJet containers.
+
+In your terminal, wait until ToolJet is in a ready state:
+
+![ToolJet ready state](./img/tooljet/ready-to-use.png)
+
+In your browser, go to the external ToolJet URL to set up your workspace.
+
+</TabItem>
+<TabItem value="Enterprise" label="Enterprise">
+
+:::tip **Note**
+
+This guide assumes you can access the Enterprise Console.
+
+The Docker Compose configuration in the Enterprise portion of this guide uses same implementation as the [Enterprise Quickstart](/docs/releases/enterprise/install/quickstart).
+
+:::
+
+The Enterprise Console configuration in this guide consists of three files:
+
+- `config.yaml`
+- `console-config.yaml`
+- `docker-compose.yaml`
+
+In your `config.yaml` file, add the following code:
+
+<ConfigConsole />
+
+Next, you need to:
+
+- Update the IdP configuration variables with your own (See the [GitHub](/docs/identity-providers/github) guide for more information)
+- Replace user@example.com with the email associated with your IdP
+- Generate a signing key
+
+To generate a [signing key](/docs/reference/signing-key), use the commands below:
+
+```bash
+# Generates a P-256 (ES256) signing key
+openssl ecparam  -genkey  -name prime256v1  -noout  -out ec_private.pem
+# Prints the base64 encoded value of the signing key
+cat ec_private.pem | base64
+```
+
+Add the base64-encoded signing key to the `signing_key` variable in your `config.yaml` file.
+
+## Add Console services to Docker Compose
+
+Update your `docker-compose.yaml` file with the following configuration:
+
+<ConsoleCompose />
+
+Add the signing key you generated in `config.yaml` to the `SIGNING_KEY` environment variable.
+
+Add the following configuration settings to `console-config.yaml` and replace the values with your own:
+
+```yaml title=console-config.yaml
+administrators: admin@example.com
+license_key: YOUR_LICENSE_KEY
+```
+
+## Set up ToolJet
+
+In the root of your project, create a folder called `postgres_data` to run ToolJet's [in-built PostgreSQL](https://docs.tooljet.com/docs/setup/docker) database:
+
+```bash
+mkdir postgres_data
+```
+
+Add a `.env` file pre-populated with ToolJet's environment variables:
+
+```bash
+curl -LO https://raw.githubusercontent.com/ToolJet/ToolJet/main/deploy/docker/.env.example
+mv .env.example .env
+```
+
+In your `.env` file, make the following changes:
+
+- Update `LOCKBOX_MASTER_KEY` and `SECRET_KEY_BASE` following ToolJet's [environment variable](https://docs.tooljet.com/docs/setup/env-vars) docs.
+- Replace `TOOLJET_HOSTNAME` with your Pomerium [external route](/docs/reference/routes/from) URL instead.
+
+For example:
+
+```env
+TOOLJET_HOSTNAME=https://tooljet.localhost.pomerium.io
+```
+
+Keep the default values for the database configuration and the other environment variables.
+
+## Build a route and policy
+
+Run `docker compose up` and go to your Console dashboard.
+
+In your Enterprise Console, create a policy:
+
+1. Name your policy (for example, **tooljet**), then select the **Builder** tab
+2. Select **ADD ALLOW BLOCK**, then select the **+** icon to add an **OR** operator
+3. In the **Criteria** field, select **Email**
+4. In the **Value** field, enter the email address associated with your IdP
+
+![Build a policy](./img/tooljet/add-policy.png)
+
+Save your policy.
+
+Create an external route to access ToolJet:
+
+1. Name your route and enter the external route in the **from:** field
+2. Enter the scheme and hostname in the **to:** field
+3. In the **Policies** field, select the policy you built for ToolJet
+4. Select **Pass Identity Headers**
+
+![Build a route](./img/tooljet/build-route.png)
+
+Configure your route to rewrite the host header:
+
+1. Select **Headers** from the sidebar
+2. In the **Host Headers** dropdown, select **Rewrite to Header**
+3. In the **Host Rewrite to Header** field, enter the external route without the protocol
+
+![Rewrite headers](./img/tooljet/rewrite-headers.png)
+
+Save your route.
+
+## Access ToolJet from Console
+
+In your terminal, wait until ToolJet is in a ready state:
+
+![ToolJet ready state](./img/tooljet/ready-to-use.png)
+
+In your browser, go to the external ToolJet URL to set up your workspace.
+
+</TabItem>
+</Tabs>
+
+## Set up ToolJet workspace
+
+Set up your admin account:
+
+![Set up admin](./img/tooljet/set-up-admin.png)
+
+Set up your workspace:
+
+![Set up ToolJet workspace](./img/tooljet/set-up-workspace.png)
+
+Skip the prompts asking for your company information.
+
+You should now be in your ToolJet dashboard.
+
+### Invite a user
+
+To invite a user:
+
+1. Select **Workspace settings** (the **Gear** icon)
+2. In the **Users & Permissions** window, select **Invite new user**
+3. Enter their details and select **Create User**
+4. Copy their invite link
+
+![Copy invite link](./img/tooljet/invite-url.png)
+
+Open the link in a new tab:
+
+![Join workspace](./img/tooljet/join-workspace.png)
+
+Create a password and accept the invite to log in to the workspace.
+
+From here, you can sign in as an admin and create apps within a workspace, create new workspaces, build apps within a given workspace, and configure workplace permissions to manage access and privileges for users and groups within ToolJet.
