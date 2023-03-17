@@ -122,7 +122,6 @@ services:
       - DATABASE_URL=postgresql://postgres:postgres@database/postgres?sslmode=disable
       - PROMETHEUS_LISTEN_ADDR=:9090
       - PROMETHEUS_DATA_DIR=/data
-      - SIGNING_KEY=LS0tLS1CRUdJTiBFQyBQUklWQVRFIEtFWS0tLS0tCk1IY0NBUUVFSUc0R0N4bjlxaDBHRVZnV3VCM0VoRm51RlptZ2VkZXJsMEtLd0ZoRWo4Tk9vQW9HQ0NxR1NNNDkKQXdFSG9VUURRZ0FFMXFOWXNUMFpSZEVTS0djSXRqZFUxcGJZREVDTktRd2lNcmNHVFl6RUhLM1V5MnVoT1N3bgpXVGdWUHppTk4vcWozYXFJeSs3Sk55ZEFLVlo3bURPNGtnPT0KLS0tLS1FTkQgRUMgUFJJVkFURSBLRVktLS0tLQo=
     volumes:
       - metrics:/data:rw
       - ./console-config.yaml:/pomerium/console-config.yaml:ro
@@ -156,6 +155,21 @@ volumes:
   pgdata:
   metrics:
 ```
+
+### Update signing key
+
+Replace the `SIGNING_KEY` variable in your `pomerium` service:
+
+To generate a [signing key](/docs/reference/signing-key), use the commands below:
+
+```bash
+# Generates a P-256 (ES256) signing key
+openssl ecparam  -genkey  -name prime256v1  -noout  -out ec_private.pem
+# Prints the base64 encoded value of the signing key
+cat ec_private.pem | base64
+```
+
+Add the base64-encoded signing key to the `SIGNING_KEY` variable in your `docker-compose.yaml` file.
 
 Below are a few points to note about services running in `docker-compose`:
 
