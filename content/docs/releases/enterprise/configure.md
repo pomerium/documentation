@@ -25,7 +25,7 @@ The keys listed below can be applied in Pomerium Console's `config.yaml` file, o
 | :-- | :-- | --- |
 | <a className="entRef-anchor" id="administrators">#</a><a href='#administrators'>administrators</a> | A list of user ids, names or emails to make administrators. Useful for bootstrapping. | none |
 | <a className="entRef-anchor" id="audience">#</a><a href='#audience'>audience</a> | A list of audiences for verifying the signing key. | `[]` |
-| <a className="entRef-anchor" id="authenticate-service-url">#</a><a href='#authenticate-service-url'>authenticate-service-url</a> | URL for the Authenticate Service. Required for Device Registration. | none |
+| <a className="entRef-anchor" id="authenticate-service-url">#</a><a href='#authenticate-service-url'>authenticate-service-url</a> | (deprecated) Authenticate service URL is not required in the Console configuration. For Device Enrollment, use the [external route URL](/docs/reference/routes/from). | none |
 | <a className="entRef-anchor" id="bind-addr">#</a><a href='#bind-addr'>bind-addr</a> | The address the Pomerium Console will listen on. | `:8701` |
 | <a className="entRef-anchor" id="customer-id">#</a><a href='#customer-id'>customer-id</a> | The customer ID | none |
 | <a className="entRef-anchor" id="database-encryption-key">#</a><a href='#database-encryption-key'>database-encryption-key</a> | The base64-encoded encryption key for encrypting sensitive data in the database. | none |
@@ -43,7 +43,7 @@ The keys listed below can be applied in Pomerium Console's `config.yaml` file, o
 | <a className="entRef-anchor" id="prometheus-scrape-interval">#</a><a href='#prometheus-scrape-interval'>prometheus-scrape-interval</a> | The Prometheus scrape frequency | `10s` |
 | <a className="entRef-anchor" id="prometheus-url">#</a><a href='#prometheus-url'>prometheus-url</a> | The URL to access the Prometheus metrics server. | none |
 | <a className="entRef-anchor" id="shared-secret">#</a><a href='#shared-secret'>shared-secret</a> | The base64-encoded secret for signing JWTs, shared with OSS Pomerium. | none |
-| <a className="entRef-anchor" id="signing-key">#</a><a href='#signing-key'>signing-key</a> | base64-encoded signing key (public or private) for verifying JWTs. This option is deprecated in favor of `authenticate-service-url`. | none |
+| <a className="entRef-anchor" id="signing-key">#</a><a href='#signing-key'>signing-key</a> | (deprecated) base64-encoded signing key (public or private) for verifying JWTs. This option is no longer required in the Console config. |
 | <a className="entRef-anchor" id="tls-ca">#</a><a href='#tls-ca'>tls-ca</a> | base64-encoded string of tls-ca | none |
 | <a className="entRef-anchor" id="tls-ca-file">#</a><a href='#tls-ca-file'>tls-ca-file</a> | file storing tls-ca | none |
 | <a className="entRef-anchor" id="tls-cert">#</a><a href='#tls-cert'>tls-cert</a> | base64-encoded string of tls-cert | none |

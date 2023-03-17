@@ -30,32 +30,40 @@
 /guide/synology /docs/guides/synology
 /guide/synology.html /docs/guides/synology
 /docs/quick-start/synology.html /docs/guides/synology
-# Redirects to /docs/guides go to pomerium homepage (/)
+
 /docs/examples.html /docs/guides
 /docs/examples /docs/guides
+
+# 301 deprecated guides in v21 to v20 guides
+/docs/guides/nginx https://0-20-0.docs.pomerium.com/docs/guides/nginx 301!
+/docs/guides/traefik-ingress https://0-20-0.docs.pomerium.com/docs/guides/traefik-ingress 301!
+/docs/guides/traefik-ingress.html https://0-20-0.docs.pomerium.com/docs/guides/traefik-ingress 301!
+/guides/traefik-ingress.html https://0-20-0.docs.pomerium.com/docs/guides/traefik-ingress 301!
+/docs/reference/forward-auth https://0-20-0.docs.pomerium.com/docs/reference/forward-auth 301!
+https://0-20-0.docs.pomerium.com/category/guides https://0-20-0.docs.pomerium.com/docs/guides
+/docs/reference/policy/* https://0-14-0.docs.pomerium.com/reference/:splat 301!
+
+# /guides/ redirects to capabilities pages
 /docs/guides/enroll-device /docs/capabilities/device-identity
 /docs/guides/enroll-device.html /docs/capabilities/device-identity
 /docs/guides/admin-enroll-device.html /docs/capabilities/device-identity
-/docs/guides/tcp /docs/guides/securing-tcp
-/docs/guides/tcp.html /docs/guides/securing-tcp
 /docs/guides/admin-enroll-device /docs/capabilities/device-identity
-
-# More docs guides redirects
-/recipes/ /docs/guides
-/docs/guides /category/guides
-/recipes/ad-guard.html /docs/guides/ad-guard
-/recipes/argo.html /docs/guides/argo
-/recipes/cloud-run.html /docs/guides/cloud-run
-/recipes/istio.html /docs/guides/istio
-/recipes/kubernetes.html /docs/guides/kubernetes
-/recipes/local-oidc.html /docs/guides/local-oidc
-/recipes/mtls.html /docs/guides/mtls
 /docs/guides/mtls /docs/capabilities/mtls-clients
 /docs/guides/mtls.html /docs/capabilities/mtls-clients
-/recipes/vs-code-server.html /docs/guides/code-server
-/guides/vs-code-server.html /docs/guides/code-server
 /docs/guides/upstream-mtls /docs/capabilities/mtls-services
 /docs/guides/upstream-mtls.html /docs/capabilities/mtls-services
+/guides/tcp /docs/capabilities/tcp
+
+# More docs guides redirects
+/recipes/* /docs/guides/:splat
+/category/guides /docs/guides
+
+# /guides/ splat
+/guides/* /docs/guides/:splat
+/docs/guides/tcp /docs/guides/securing-tcp
+/docs/guides/tcp.html /docs/guides/securing-tcp
+/guides/vs-code-server.html /docs/guides/code-server
+/guides/local-oidc.html /docs/guides/local-oidc
 
 # Reference, capabilities, topics, concepts links
 /docs/reference/readme.html /docs/
@@ -68,6 +76,7 @@
 /docs/reference/data-storage.html /docs/topics/data-storage
 /docs/topics/data-storage /docs/concepts/data-storage
 /docs/concepts/data-storage /docs/internals/data-storage
+/docs/topics/data-storage.html /docs/internals/data-storage
 
 # This link requires multiple redirects
 /docs/reference/getting-users-identity.html /docs/topics/getting-users-identity
@@ -91,7 +100,6 @@
 /docs/concepts/programmatic-access /docs/capabilities/programmatic-access
 
 /docs/topics/programmatic-access.html /docs/capabilities/programmatic-access
-
 
 
 # Blog posts
@@ -128,6 +136,8 @@
 /docs/releases/enterprise /docs/releases/enterprise/about
 /docs/enterprise/about.html /docs/releases/enterprise/about
 /enterprise/reference/reports.html /docs/capabilities/reports
+
+/enterprise/install/helm.html /docs/releases/enterprise/install/helm
 /enterprise/* /docs/enterprise/:splat
 
 #  Installation and deployment methods redirects
@@ -160,7 +170,6 @@
 /docs/k8s/helm.html /docs/guides/helm
 /docs/install/helm /docs/releases/enterprise/install/helm
 /docs/k8s/quickstart /docs/deploying/k8s/quickstart
-/enterprise/install/helm.html /docs/releases/enterprise/install/helm
 
 # From-source links
 /docs/quick-start/from-source.html /docs/install/from-source
@@ -193,38 +202,29 @@
 /docs/enterprise/external-data/* /docs/integrations/:splat
 
 # TCP links
-# /docs/tcp/examples/* redirects links to tcp/examples
-/docs/tcp/examples/* /docs/capabilities/tcp/examples/:splat
-# /docs/tcp/* redirects links to /docs/capabilities/tcp/examples/
-/docs/tcp/* /docs/capabilities/tcp/examples/:splat
-/docs/tcp/git.html /docs/capabilities/tcp/examples/git
-/docs/tcp/git /docs/capabilities/tcp/examples/git
-/docs/tcp/rdp.html /docs/capabilities/tcp/examples/rdp
-/docs/tcp/rdp /docs/capabilities/tcp/examples/rdp
-/docs/tcp/ssh.html /docs/capabilities/tcp/examples/ssh
-/docs/tcp/redis.html /docs/capabilities/tcp/examples/redis
-/docs/tcp/redis /docs/capabilities/tcp/examples/redis
-/docs/tcp/ms-sql.html /docs/capabilities/tcp/examples/ms-sql
-/docs/tcp/ms-sql /docs/capabilities/tcp/examples/ms-sql
-/docs/tcp/examples/ms-sql /docs/capabilities/tcp/examples/ms-sql
-/docs/tcp/mysql.html /docs/capabilities/tcp/examples/mysql
-/docs/tcp/mysql /docs/capabilities/tcp/examples/mysql
-/docs/tcp/examples/mysql /docs/capabilities/tcp/examples/mysql
-/docs/tcp/examples/ssh /docs/capabilities/tcp/examples/ssh
-
-# Enterprise metrics links
-/docs/enterprise/metrics.html /docs/capabilities/metrics
-/docs/enterprise/metrics /docs/capabilities/metrics
-
-# /docs/client.html uses multiple redirects
-/docs/client.html /docs/tcp/client
-/docs/tcp/client.html /docs/capabilities/tcp/client
-
-/docs/tcp/client /docs/capabilities/tcp/client
 
 # /docs/topics/tcp-support.html uses multiple redirects
 /docs/topics/tcp-support.html /docs/tcp/
 /docs/tcp /docs/capabilities/tcp
+# multiple redirects
+/docs/topics/tcp-support /docs/tcp/
+/docs/tcp /docs/capabilities/tcp
+
+
+# /docs/client.html uses multiple redirects
+/docs/client.html /docs/tcp/client
+/docs/tcp/client.html /docs/capabilities/tcp/client
+/docs/tcp/client /docs/capabilities/tcp/client
+
+/docs/capabilities/tcp/reference/tcp-cli-reference /docs/capabilities/tcp/reference
+
+# splats
+/docs/tcp/examples/* /docs/capabilities/tcp/examples/:splat
+/docs/tcp/* /docs/capabilities/tcp/examples/:splat
+
+# Enterprise metrics links
+/docs/enterprise/metrics.html /docs/capabilities/metrics
+/docs/enterprise/metrics /docs/capabilities/metrics
 
 # redirects /examples/ links
 # /examples/js-sdk/express-server 404s
@@ -294,14 +294,15 @@
 /docs/topics/original-request-context.html /docs/concepts/original-request-context
 /docs/concepts/original-request-context /docs/capabilities/original-request-context
 
-# multiple redirects - still 404s
 /docs/topics/load-balancing.html /docs/capabilities/routing
 /docs/topics/certificates /docs/concepts/certificates
+/docs/certificates.html /docs/concepts/certificates
 
 # multiple redirects - still 404s
 /docs/topics/impersonation.html /docs/concepts/impersonation
 /docs/concepts/impersonation /docs/capabilities/service-accounts
 
+/docs/topics/ /docs/concepts/access-control
 /docs/topics/* /docs/concepts/:splat 301!
 /docs/topics/device-identity /docs/concepts/device-identity
 /docs/topics/mutual-auth /docs/concepts/mutual-auth
@@ -339,10 +340,3 @@ https://0-13-0.docs.pomerium.io/ https://0-13-0.docs.pomerium.com/:splat 301!
 https://0-12-0.docs.pomerium.io/ https://0-12-0.docs.pomerium.com/:splat 301!
 https://0-11-0.docs.pomerium.io/ https://0-11-0.docs.pomerium.com/:splat 301!
 https://0-10-0.docs.pomerium.io/ https://0-10-0.docs.pomerium.com/:splat 301!
-
-# Deprecated redirects
-# 301 deprecated guides in v21 to v20 guides
-/docs/guides/nginx https://0-20-0.docs.pomerium.com/docs/guides/nginx 301!
-/docs/guides/traefik-ingress https://0-20-0.docs.pomerium.com/docs/guides/traefik-ingress 301!
-# 301 Redirects deprecated policy reference links to last supported version
-/docs/reference/policy/* https://0-14-0.docs.pomerium.com/reference/:splat 301!
