@@ -43,7 +43,7 @@ The keys listed below can be applied in Pomerium Console's `config.yaml` file, o
 | <a className="entRef-anchor" id="prometheus-scrape-interval">#</a><a href='#prometheus-scrape-interval'>prometheus-scrape-interval</a> | The Prometheus scrape frequency | `10s` |
 | <a className="entRef-anchor" id="prometheus-url">#</a><a href='#prometheus-url'>prometheus-url</a> | The URL to access the Prometheus metrics server. | none |
 | <a className="entRef-anchor" id="shared-secret">#</a><a href='#shared-secret'>shared-secret</a> | The base64-encoded secret for signing JWTs, shared with OSS Pomerium. | none |
-| <a className="entRef-anchor" id="signing-key">#</a><a href='#signing-key'>signing-key</a> | base64-encoded signing key (public or private) for verifying JWTs. This option is deprecated in favor of `authenticate-service-url`. | none |
+| <a className="entRef-anchor" id="signing-key">#</a><a href='#signing-key'>signing-key</a> | (deprecated) base64-encoded signing key (public or private) for verifying JWTs. This option is no longer required in the Console config. |
 | <a className="entRef-anchor" id="tls-ca">#</a><a href='#tls-ca'>tls-ca</a> | base64-encoded string of tls-ca | none |
 | <a className="entRef-anchor" id="tls-ca-file">#</a><a href='#tls-ca-file'>tls-ca-file</a> | file storing tls-ca | none |
 | <a className="entRef-anchor" id="tls-cert">#</a><a href='#tls-cert'>tls-cert</a> | base64-encoded string of tls-cert | none |
