@@ -11,7 +11,7 @@ keywords:
     mtls,
     client certificate,
     mutual authentication,
-    server certificate
+    server certificate,
   ]
 description: This guide covers how to use Pomerium to implement mutual authentication (mTLS) for end-users, using client certificates with a custom certificate authority.
 ---
@@ -29,12 +29,12 @@ This authentication scheme is known as mutual authentication, or in the context 
 
 This guide shows you how to configure Pomerium to implement mutual authentication using client certificates with a custom certificate authority.
 
-
 ## Before You Begin
 
 Pomerium Core and Enterprise both support client-side mTLS.
 
 To complete this guide, you need:
+
 - A working Pomerium instance. Complete the [Pomerium Core quickstart](/docs/quickstart) with Docker for a quick proof of concept to test with this guide.
 - An [identity provider](/docs/identity-providers)
 - `mkcert` to create self-signed certificates and a locally trusted root Certificate Authority (CA)
@@ -76,6 +76,7 @@ mkcert '*.localhost.pomerium.io'
 ```
 
 This creates two files in the current working directory:
+
 - `_wildcard.localhost.pomerium.io.pem`
 - `_wildcard.localhost.pomerium.io-key.pem`
 
@@ -92,6 +93,7 @@ mkcert -client -pkcs12 'yourUsername@localhost.pomerium.io'
 ```
 
 This creates a new file in the current working directory:
+
 - `yourUsername@localhost.pomerium.io-client.p12`
 
 ## Configure Pomerium
@@ -121,7 +123,6 @@ cat $(mkcert -CAROOT)/rootCA.pem | base64 -w 0
 ```
 
 Provide the value to `client_ca`.
-
 
 </TabItem>
 <TabItem value="Environment Variables" label="Environment Variables">
