@@ -9,6 +9,7 @@ import ToolJetCompose from '../../examples/tooljet/docker-compose.yaml.md';
 import PomeriumCompose from '../../examples/tooljet/docker-compose.yaml.md';
 import PomeriumConfig from '../../examples/tooljet/config-tooljet.yaml.md';
 import ConsoleCompose from '../../examples/tooljet/console-compose.yaml.md';
+import ConfigConsole from '../../examples/tooljet/config-console.yaml.md';
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
@@ -119,6 +120,36 @@ The Docker Compose configuration in the Enterprise portion of this guide uses sa
 Update your `docker-compose.yaml` file with the following configuration:
 
 <ConsoleCompose />
+
+Make sure your `console-config.yaml` file contains your `administrators` and your `license_key`:
+
+```yaml title=console-config.yaml
+administrators: admin@example.com
+license_key: YOUR_LICENSE_KEY
+```
+
+## Configure Pomerium
+
+In your `config.yaml` file, add the following code:
+
+<ConfigConsole />
+
+Next, you need to:
+
+- Update the IdP configuration variables with your own (See the [GitHub](/docs/identity-providers/github) guide for more information)
+- Replace user@example.com with the email associated with your IdP
+- Generate a signing key
+
+To generate a [signing key](/docs/reference/signing-key), use the commands below:
+
+```bash
+# Generates a P-256 (ES256) signing key
+openssl ecparam  -genkey  -name prime256v1  -noout  -out ec_private.pem
+# Prints the base64 encoded value of the signing key
+cat ec_private.pem | base64
+```
+
+Add the base64-encoded signing key to the `signing_key` variable in your `config.yaml` file.
 
 ## Set up ToolJet
 
