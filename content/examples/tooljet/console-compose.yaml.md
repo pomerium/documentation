@@ -43,6 +43,7 @@ services:
       - DATABASE_URL=postgresql://postgres:postgres@database/postgres?sslmode=disable
       - PROMETHEUS_LISTEN_ADDR=:9090
       - PROMETHEUS_DATA_DIR=/data
+      - SIGNING_KEY=REPLACE_ME
     volumes:
       - metrics:/data:rw
       - ./console-config.yaml:/pomerium/console-config.yaml:ro

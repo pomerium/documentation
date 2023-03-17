@@ -117,18 +117,13 @@ The Docker Compose configuration in the Enterprise portion of this guide uses sa
 
 :::
 
-Update your `docker-compose.yaml` file with the following configuration:
-
-<ConsoleCompose />
-
-Make sure your `console-config.yaml` file contains your `administrators` and your `license_key`:
-
-```yaml title=console-config.yaml
-administrators: admin@example.com
-license_key: YOUR_LICENSE_KEY
-```
-
 ## Configure Pomerium
+
+The Enterprise Console configuration in this guide consists of three files:
+
+- `config.yaml`
+- `console-config.yaml`
+- `docker-compose.yaml`
 
 In your `config.yaml` file, add the following code:
 
@@ -150,6 +145,21 @@ cat ec_private.pem | base64
 ```
 
 Add the base64-encoded signing key to the `signing_key` variable in your `config.yaml` file.
+
+## Add Console services to Docker Compose
+
+Update your `docker-compose.yaml` file with the following configuration:
+
+<ConsoleCompose />
+
+Add the signing key you generated in `config.yaml` to the `SIGNING_KEY` environment variable.
+
+Add the following configuration settings to `console-config.yaml` and replace the values with your own:
+
+```yaml title=console-config.yaml
+administrators: admin@example.com
+license_key: YOUR_LICENSE_KEY
+```
 
 ## Set up ToolJet
 
