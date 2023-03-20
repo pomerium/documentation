@@ -35,7 +35,7 @@ const FeatureList = [
   },
   {
     title: 'Enterprise',
-    path: '/docs/enterprise/about',
+    path: '/docs/enterprise',
     icon: 'space_dashboard',
     description: <>Scale your access management to match your business</>,
   },

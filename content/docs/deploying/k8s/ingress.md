@@ -17,7 +17,7 @@ keywords:
 pagination_next: null
 ---
 
-If you've tested Pomerium using the [all-in-one binary](/docs/releases/core), you're probably familiar with configuring routes in Pomerium's [`config.yaml`](/docs/releases/core#configuration-file). When using the Pomerium Ingress Controller, each route is defined as an Ingress resource in the Kubernetes API.
+If you've tested Pomerium using the [all-in-one binary](/docs/pomerium-core/core), you're probably familiar with configuring routes in Pomerium's [`config.yaml`](/docs/pomerium-core/core#configuration-file). When using the Pomerium Ingress Controller, each route is defined as an Ingress resource in the Kubernetes API.
 
 ## Ingress
 

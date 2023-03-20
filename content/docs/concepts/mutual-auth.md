@@ -385,7 +385,7 @@ Yellow blocks represent different networks like the internet, an internal networ
   </div>
 </details>
 
-[binaries]: /docs/releases/core
+[binaries]: /docs/pomerium-core/core
 [device identity verification]: /docs/concepts/device-identity.md
 [grafana]: /docs/guides/grafana
 [jwt verification]: /docs/guides/jwt-verification.md

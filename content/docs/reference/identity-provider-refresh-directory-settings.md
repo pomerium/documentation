@@ -12,7 +12,7 @@ pagination_next: null
 
 :::caution
 
-This option is no longer supported, please see [Upgrade Guide](/docs/releases/upgrading#idp-directory-sync)
+This option is no longer supported, please see [Upgrade Guide](/docs/pomerium-core/upgrading#idp-directory-sync)
 
 :::
 
