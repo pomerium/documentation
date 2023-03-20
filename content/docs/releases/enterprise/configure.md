@@ -29,6 +29,8 @@ The keys listed below can be applied in Pomerium Console's `config.yaml` file, o
 | <a className="entRef-anchor" id="bind-addr">#</a><a href='#bind-addr'>bind-addr</a> | The address the Pomerium Console will listen on. | `:8701` |
 | <a className="entRef-anchor" id="customer-id">#</a><a href='#customer-id'>customer-id</a> | The customer ID | none |
 | <a className="entRef-anchor" id="database-encryption-key">#</a><a href='#database-encryption-key'>database-encryption-key</a> | The base64-encoded encryption key for encrypting sensitive data in the database. | none |
+| <a className="entRef-anchor" id="database-encryption-key-file">#</a><a href='#database-encryption-key-file'>database-encryption-key-file</a> | Loads base64-encoded `database-encryption-key` secret from a file. | none |
+| <a className="entRef-anchor" id="database-encryption-key-raw-file">#</a><a href='#database-encryption-key-raw-file'>database-encryption-key-raw-file</a> | Loads `database-encryption-key` secret from a raw file. Setting this option from a raw file does not require base64 encoding. | none |
 | <a className="entRef-anchor" id="database-url">#</a><a href='#database-url'>database-url</a> | The database Pomerium Enterprise Console will use. | `postgresql://pomerium:pomerium`<br/>`@localhost:5432/dashboard?sslmode=disable` |
 | <a className="entRef-anchor" id="databroker-service-url">#</a><a href='#databroker-service-url'>databroker-service-url</a> | The databroker service URL. | `http://localhost:5443` |
 | <a className="entRef-anchor" id="debug-config-dump">#</a><a href='#debug-config-dump'>debug-config-dump</a> | Dumps the Databroker configuration. This is a debug option to be used only when specified by Pomerium Support. | `false` |
@@ -43,7 +45,11 @@ The keys listed below can be applied in Pomerium Console's `config.yaml` file, o
 | <a className="entRef-anchor" id="prometheus-scrape-interval">#</a><a href='#prometheus-scrape-interval'>prometheus-scrape-interval</a> | The Prometheus scrape frequency | `10s` |
 | <a className="entRef-anchor" id="prometheus-url">#</a><a href='#prometheus-url'>prometheus-url</a> | The URL to access the Prometheus metrics server. | none |
 | <a className="entRef-anchor" id="shared-secret">#</a><a href='#shared-secret'>shared-secret</a> | The base64-encoded secret for signing JWTs, shared with OSS Pomerium. | none |
-| <a className="entRef-anchor" id="signing-key">#</a><a href='#signing-key'>signing-key</a> | (deprecated) base64-encoded signing key (public or private) for verifying JWTs. This option is no longer required in the Console config. |
+| <a className="entRef-anchor" id="shared-secret-file">#</a><a href='#shared-secret-file'>shared-secret-file</a> | Loads base64-encoded `shared-secret` from a file. | none |
+| <a className="entRef-anchor" id="shared-secret-raw-file">#</a><a href='#shared-secret-raw-file'>shared-secret-raw-file</a> | Loads `shared-secret` from a raw file. Setting this option from a raw file does not require base64 encoding. | none |
+| <a className="entRef-anchor" id="signing-key">#</a><a href='#signing-key'>signing-key</a> | (deprecated) base64-encoded signing key (public or private) for verifying JWTs. This option is no longer required in the Console config. | none |
+| <a className="entRef-anchor" id="signing-key-file">#</a><a href='#signing-key-file'>signing-key-file</a> | Loads base64-encoded `signing-key` secret from a file. | none |
+| <a className="entRef-anchor" id="signing-key-raw-file">#</a><a href='#signing-key-raw-file'>signing-key-raw-file</a> | Loads `signing-key` secret from a raw file. Setting this option from a raw file does not require base64 encoding. | none |
 | <a className="entRef-anchor" id="tls-ca">#</a><a href='#tls-ca'>tls-ca</a> | base64-encoded string of tls-ca | none |
 | <a className="entRef-anchor" id="tls-ca-file">#</a><a href='#tls-ca-file'>tls-ca-file</a> | file storing tls-ca | none |
 | <a className="entRef-anchor" id="tls-cert">#</a><a href='#tls-cert'>tls-cert</a> | base64-encoded string of tls-cert | none |
