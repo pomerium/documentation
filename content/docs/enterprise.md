@@ -1,6 +1,5 @@
 ---
 title: Pomerium Enterprise
-# sidebar_label: Enterprise
 ---
 
 # Pomerium Enterprise

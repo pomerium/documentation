@@ -17,7 +17,7 @@ keywords:
 pagination_next: null
 ---
 
-If you've tested Pomerium using the [all-in-one binary](/docs/pomerium-core/core), you're probably familiar with configuring routes in Pomerium's [`config.yaml`](/docs/pomerium-core/core#configuration-file). When using the Pomerium Ingress Controller, each route is defined as an Ingress resource in the Kubernetes API.
+If you've tested Pomerium using the [all-in-one binary](/docs/pomerium-core/install/core), you're probably familiar with configuring routes in Pomerium's [`config.yaml`](/docs/pomerium-core/install/core#configuration-file). When using the Pomerium Ingress Controller, each route is defined as an Ingress resource in the Kubernetes API.
 
 ## Ingress
 
@@ -68,7 +68,7 @@ spec:
 
 The default installation adds `pomerium` [IngressClass](https://kubernetes.io/docs/concepts/services-networking/ingress/#ingress-class) to your cluster. In order for Pomerium to service your Ingress objects, please set `spec.ingressClassName` to `pomerium`.
 
-It is also possible to [set Pomerium to be a default ingress controller](/docs/deploying/k8s/install#set-pomerium-as-default-ingressclass) cluster-wide.
+It is also possible to [set Pomerium to be a default ingress controller](/docs/kubernetes/install#set-pomerium-as-default-ingressclass) cluster-wide.
 
 ### Annotations
 
@@ -498,7 +498,7 @@ spec:
 
 ## Metrics
 
-Pomerium [exposes](/docs/deploying/k8s/install#metrics) a number of Prometheus style metrics that you may use to monitor your Ingress.
+Pomerium [exposes](/docs/kubernetes/install#metrics) a number of Prometheus style metrics that you may use to monitor your Ingress.
 
 In order to filter out metrics for a particular Ingress, use `envoy_cluster_name` metric label, that has a `ingressnamespace-ingressname-host-domain-com` format.
 

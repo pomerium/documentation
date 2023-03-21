@@ -10,7 +10,7 @@ pagination_next: null
 
 - Environmental Variable: `DATABROKER_STORAGE_CONNECTION_STRING`
 - Config File Key: `databroker_storage_connection_string`
-- Kubernetes: see [`storage`](/docs/deploying/k8s/reference#storage)
+- Kubernetes: see [`storage`](/docs/kubernetes/reference#storage)
 - Type: `string`
 - **Required** when storage type is `postgres`
 - Example: `"postgres://localhost:5432/pomerium"`

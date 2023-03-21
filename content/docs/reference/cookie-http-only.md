@@ -12,7 +12,7 @@ pagination_next: null
 
 - Environmental Variable: `COOKIE_HTTP_ONLY`
 - Config File Key: `cookie_http_only`
-- Kubernetes: [`cookie.httpOnly`](/docs/deploying/k8s/reference#cookie)
+- Kubernetes: [`cookie.httpOnly`](/docs/kubernetes/reference#cookie)
 - Type: `bool`
 - Default: `true`
 

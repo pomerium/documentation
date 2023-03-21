@@ -14,7 +14,7 @@ pagination_next: null
 
 - Environmental Variable: `IDP_REQUEST_PARAMS`
 - Config File Key: `idp_request_params`
-- Kubernetes: see [`identityProvider.requestParams` and `identityProvider.requestParamsSecret`](/docs/deploying/k8s/reference#identityprovider)
+- Kubernetes: see [`identityProvider.requestParams` and `identityProvider.requestParamsSecret`](/docs/kubernetes/reference#identityprovider)
 - Type: map of `strings` key value pairs
 - Optional
 

@@ -12,7 +12,7 @@ pagination_next: null
 
 - Environment Variable: `DATABROKER_STORAGE_KEY_FILE`
 - Config File Key: `databroker_storage_key_file`
-- Kubernetes: see [`storage`](/docs/deploying/k8s/reference#storage)
+- Kubernetes: see [`storage`](/docs/kubernetes/reference#storage)
 - Type: relative file location
 - Optional
 

@@ -1,8 +1,8 @@
 ---
 # cSpell:ignore kustomization ingressclass
 
-title: Installation
-sidebar_label: Installation
+title: Install
+sidebar_label: Install
 sidebar_position: 2
 description: This article describes installation and customization of the Ingress Controller deployment.
 ---

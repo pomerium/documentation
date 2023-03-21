@@ -7,4 +7,4 @@ There are many ways to install Pomerium. Check out our [Quickstart](/docs/quicks
 
 - [Binaries](/docs/deploying/binary) covers installing Pomerium as a system service from a repository.
 - [From Source](/docs/deploying/from-source) details how to build Pomerium Core from the source code.
-- For Kubernetes environments, see [Kubernetes Quickstart](/docs/deploying/k8s/quickstart) to set up Pomerium and the Pomerium Ingress Controller.
+- For Kubernetes environments, see [Kubernetes Quickstart](/docs/kubernetes/quickstart) to set up Pomerium and the Pomerium Ingress Controller.

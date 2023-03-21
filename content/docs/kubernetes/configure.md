@@ -40,7 +40,7 @@ spec:
 
 ### Bootstrap Secrets
 
-Bootstrap secrets are provisioned via `secrets` property of the [CRD](/docs/deploying/k8s/ingress#tls-certificates). The default installation would run a one-off Job that would generate them and store into `bootstrap` Secret of the `pomerium` namespace.
+Bootstrap secrets are provisioned via `secrets` property of the [CRD](/docs/kubernetes/ingress#tls-certificates). The default installation would run a one-off Job that would generate them and store into `bootstrap` Secret of the `pomerium` namespace.
 
 ### Identity Provider
 
@@ -48,7 +48,7 @@ Integration with your Identity Provider is configured using [`identityProvider`]
 
 ### Authenticate endpoint
 
-Each Pomerium installation has a special route that unauthenticated users are redirected to that handles sign-in via your Identity Provider. It is configured via the [`authenticate`](/docs/deploying/k8s/reference#authenticate) parameter of the [CRD](./reference#authenticate).
+Each Pomerium installation has a special route that unauthenticated users are redirected to that handles sign-in via your Identity Provider. It is configured via the [`authenticate`](/docs/kubernetes/reference#authenticate) parameter of the [CRD](./reference#authenticate).
 
 The authenticate endpoint DNS address should resolve to an external IP address assigned by your Kubernetes Load Balancer to the `pomerium-proxy` service. If you use `external-dns`, that may be [done automatically](#external-dns).
 
@@ -72,7 +72,7 @@ See [Configuration Reference](./reference) for full description of all CRD confi
 
 ## Status
 
-Pomerium posts updates about its internal state to the [`/status` section of the `Pomerium CRD`](/docs/deploying/k8s/ingress#view-event-history).
+Pomerium posts updates about its internal state to the [`/status` section of the `Pomerium CRD`](/docs/kubernetes/ingress#view-event-history).
 
 ```console
 Name:         global

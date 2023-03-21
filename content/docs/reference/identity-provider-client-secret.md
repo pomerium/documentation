@@ -12,7 +12,7 @@ pagination_next: null
 
 - Environmental Variable: `IDP_CLIENT_SECRET`
 - Config File Key: `idp_client_secret`
-- Kubernetes: see [`identityProvider.secret`](/docs/deploying/k8s/reference#identityprovider)
+- Kubernetes: see [`identityProvider.secret`](/docs/kubernetes/reference#identityprovider)
 - Type: `string`
 - Required (unless using [identity_provider_client_secret_file](./identity-provider-client-secret-file))
 

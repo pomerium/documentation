@@ -14,7 +14,7 @@ pagination_next: null
 
 - Environmental Variable: `COOKIE_DOMAIN`
 - Config File Key: `cookie_domain`
-- Kubernetes: [`cookie.domain`](/docs/deploying/k8s/reference#cookie)
+- Kubernetes: [`cookie.domain`](/docs/kubernetes/reference#cookie)
 - Type: `string`
 - Example: `localhost.pomerium.io`
 - Optional

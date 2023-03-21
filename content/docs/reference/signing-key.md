@@ -14,7 +14,7 @@ pagination_next: null
 
 - Environmental Variable: `SIGNING_KEY`
 - Config File Key: `signing_key`
-- Kubernetes: see [bootstrap `secrets`](/docs/deploying/k8s/reference#spec)
+- Kubernetes: see [bootstrap `secrets`](/docs/kubernetes/reference#spec)
 - Type: [base64 encoded](https://en.wikipedia.org/wiki/Base64) `string`
 - Optional
 

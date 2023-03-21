@@ -12,7 +12,7 @@ pagination_next: null
 
 - Environmental Variable: `METRICS_ADDRESS`
 - Config File Key: `metrics_address`
-- Kubernetes: see [Metrics](/docs/deploying/k8s/install#metrics)
+- Kubernetes: see [Metrics](/docs/kubernetes/install#metrics)
 - Type: `string`
 - Example: `:9090`, `127.0.0.1:9090`
 - Default: `disabled`

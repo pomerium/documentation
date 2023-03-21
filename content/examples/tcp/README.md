@@ -11,7 +11,7 @@ Run this demo locally on your docker-compose capable workstation, or replace `lo
 
 ## How
 
-- [Install](/docs/pomerium-core/pomerium-cli) `pomerium-cli` in your `$PATH`
+- [Install](/docs/pomerium-core/install/pomerium-cli) `pomerium-cli` in your `$PATH`
 - Update `config.yaml` for your e-mail address, if not using gmail/google
 - Replace secrets in `config.yaml`
 - Run `docker-compose up` from this directory
