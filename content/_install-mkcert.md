@@ -2,7 +2,9 @@
 # cSpell:ignore CAROOT
 ---
 
-After [installing mkcert], confirm the presence and names of your local CA files:
+If you haven't, install `mkcert` following these [GitHub instructions].
+
+Create a trusted **root CA** and confirm the presence and names of your local CA files:
 
 ```bash
 mkcert -install
@@ -15,4 +17,4 @@ rootCA-key.pem  rootCA.pem
 
 The output of `mkcert -install` may vary depending on your operating system.
 
-[installing mkcert]: https://github.com/FiloSottile/mkcert#installation
+[GitHub instructions]: https://github.com/FiloSottile/mkcert#installation
