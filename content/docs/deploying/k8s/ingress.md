@@ -122,9 +122,6 @@ The expandable list below contains the annotations available, which behave as de
 - [`ingress.pomerium.io/allow_public_unauthenticated_access`]
 - [`ingress.pomerium.io/allow_spdy`]
 - [`ingress.pomerium.io/allow_websockets`]
-- [`ingress.pomerium.io/allowed_domains`]
-- [`ingress.pomerium.io/allowed_idp_claims`]
-- [`ingress.pomerium.io/allowed_users`]
 - [`ingress.pomerium.io/cors_allow_preflight`]
 - [`ingress.pomerium.io/host_path_regex_rewrite_pattern`]
 - [`ingress.pomerium.io/host_path_regex_rewrite_substitution`]
@@ -194,38 +191,6 @@ ingress.pomerium.io/allow_public_unauthenticated_access: 'true'
 <tr><td>
 
 ```yaml
-ingress.pomerium.io/allowed_domains: |
-  - pomerium.com
-```
-
-**Array of strings**. Users with email domains matched would be allowed.
-
-</td></tr>
-<tr><td>
-
-```yaml
-ingress.pomerium.io/allowed_users: |
-  - alice@pomerium.com
-  - bob@contractor.co
-```
-
-<b>Array of strings</b>. Users with matched emails would be allowed.
-
-</td></tr>
-<tr><td>
-
-```yaml
-ingress.pomerium.io/allowed_idp_claims: |
-  groups:
-    - admin
-```
-
-<b>Object</b>. Users with matched claims passed by your Identity Provider would be allowed.
-
-</td></tr>
-<tr><td>
-
-```yaml
 ingress.pomerium.io/policy: |
   allow:
     and:
@@ -271,7 +236,11 @@ kind: Ingress
 metadata:
   annotations:
     cert-manager.io/issuer: example-issuer
-    ingress.pomerium.io/allowed_domains: '["exampledomain.com"]'
+    ingress.pomerium.io/policy: |
+      allow:
+        and:
+        - domain:
+            is: exampledomain.com
     ingress.pomerium.io/path_regex: 'true'
   name: example
 spec:
@@ -604,9 +573,6 @@ For more information on the Pomerium Ingress Controller or the Kubernetes concep
 [`ingress.pomerium.io/allow_public_unauthenticated_access`]: /docs/reference/routes/public-access
 [`ingress.pomerium.io/allow_spdy`]: /docs/reference/routes/spdy
 [`ingress.pomerium.io/allow_websockets`]: /docs/reference/routes/websocket-connections
-[`ingress.pomerium.io/allowed_domains`]: /docs/reference/policy/allowed-domains
-[`ingress.pomerium.io/allowed_idp_claims`]: /docs/reference/policy/allowed-idp-claims
-[`ingress.pomerium.io/allowed_users`]: /docs/reference/policy/allowed-users
 [`ingress.pomerium.io/cors_allow_preflight`]: /docs/reference/routes/cors-preflight
 [`ingress.pomerium.io/health_checks`]: /docs/reference/health-checks
 [`ingress.pomerium.io/host_path_regex_rewrite_pattern`]: /docs/reference/routes/host-rewrite
@@ -617,7 +583,7 @@ For more information on the Pomerium Ingress Controller or the Kubernetes concep
 [`ingress.pomerium.io/lb_config`]: /docs/reference/load-balancing-policy-config
 [`ingress.pomerium.io/outlier_detection`]: /docs/reference/routes/outlier-detection
 [`ingress.pomerium.io/pass_identity_headers`]: /docs/reference/routes/pass-identity-headers
-[`ingress.pomerium.io/policy`]: /docs/reference/policy/policy
+[`ingress.pomerium.io/policy`]: /docs/reference/routes/policy
 [`ingress.pomerium.io/prefix_rewrite`]: /docs/reference/routes/prefix-rewrite
 [`ingress.pomerium.io/preserve_host_header`]: /docs/reference/routes/host-rewrite
 [`ingress.pomerium.io/regex_rewrite_pattern`]: /docs/reference/routes/regex-rewrite
