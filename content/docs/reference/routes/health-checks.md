@@ -24,4 +24,4 @@ Only one of `http_health_check`, `tcp_health_check`, or `grpc_health_check` may 
 - [HTTP](https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/core/v3/health_check.proto#envoy-v3-api-msg-config-core-v3-healthcheck-httphealthcheck)
 - [GRPC](https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/core/v3/health_check.proto#envoy-v3-api-msg-config-core-v3-healthcheck-grpchealthcheck)
 
-See [Load Balancing](@site/content/docs/capabilities/load-balancing.md) for example [configurations](@site/content/docs/capabilities/load-balancing.md#active-health-checks).
+See [Load Balancing](/docs/capabilities/load-balancing.md) for example [configurations](/docs/capabilities/load-balancing.md#active-health-checks).
