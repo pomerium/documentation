@@ -20,6 +20,7 @@ pagination_next: null
 - Optional
 - Default:
   - `/data/autocert` in published Pomerium Docker images
+  - `/etc/pomerium/` in published Pomerium [os pkgs](https://github.com/pomerium/pomerium/blob/5e3ae59658246bfe3d4cc5d12997c6e19350bf80/ospkg/pomerium.service#L8). 
   - [$XDG_DATA_HOME](https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html)
   - `$HOME/.local/share/pomerium`
 
