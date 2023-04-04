@@ -133,7 +133,7 @@ In this way, you've applied a zero trust security model to the protocol layer of
 
 ## Mutual authentication with a sidecar
 
-If your company depends on software that was not built for mutual authentication, you can still secure those services using a **Sidecar**. A sidecare is software designed to access a service, and provides the authentication for traffic routed to that service.
+If your company depends on software that was not built for mutual authentication, you can still secure those services using a **Sidecar**. A sidecar is software designed to access a service, and provides the authentication for traffic routed to that service.
 
 Pomerium describes the technical steps to test such a configuration using Envoy and Docker containers in the [JWT Verification] guide, but you can see a sidecar described conceptually below:
 
