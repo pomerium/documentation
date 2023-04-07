@@ -25,31 +25,18 @@ keywords:
 import ConfigDocker from '@site/content/examples/config/config.docker.yaml.md';
 import DockerCompose from '@site/content/examples/docker/basic.docker-compose.yml.md';
 
-In this quickstart guide, you'll run Pomerium Core with Docker containers.
+In this quickstart guide, you'll run Pomerium Core with Docker containers. Assuming you've got the prerequisites ready to go, this guide should take about 90 seconds to get up and running with Pomerium!
 
 ## Prerequisites
 
 - A configured [identity provider]
 - [Docker] and [Docker Compose]
 
-## Configure
+## Configure Pomerium
 
 Create a [configuration file] (e.g. `config.yaml`) for defining Pomerium's configuration settings, routes, and access policies.
 
 <ConfigDocker />
-
-## Update signing key
-
-Generate a [signing key](/docs/reference/signing-key):
-
-```bash
-# Generates an P-256 (ES256) signing key
-openssl ecparam  -genkey  -name prime256v1  -noout  -out ec_private.pem
-# Prints the base64 encoded value of the signing key
-cat ec_private.pem | base64
-```
-
-Add the base64-encoded signing key to the `signing_key` variable in your `config.yaml` file.
 
 :::tip **Note**
 
@@ -57,13 +44,14 @@ Keep track of the path to this file, relative to the `docker-compose.yaml` file 
 
 :::
 
+## Configure Docker
+
+
 Copy the following `docker-compose.yaml` file and modify it to include the correct path to your `config.yaml` file:
 
 <DockerCompose />
 
-## Run
-
-Run Docker Compose:
+## Run Docker Compose
 
 ```bash
 docker compose up
@@ -75,18 +63,7 @@ You should now be able to access the routes (e.g. `https://verify.localhost.pome
 
 ### Handle self-signed certificate warning
 
-When navigating to the `https://verify.localhost.pomerium.io` route defined in your policy, you may encounter the following self-signed certificate warning:
-
-![proceed to verify](./img/quickstart/pomerium-proceed-to-verify.png)
-
-To resolve this error:
-
-1. Select **Advanced**
-2. Select **Proceed to verify.localhost.pomerium.io (unsafe)**
-
-Your browser will redirect you to the `verify` route.
-
-Under **Signed Identity Token**, you will see a list of JWT claims with your user details:
+Under **(Signed Identity Token)[https://docs.pomerium.com/docs/capabilities/getting-users-identity]**, you will see a list of JWT claims with your user details:
 
 ![jwt claims](./img/quickstart/jwt-claims.png)
 
