@@ -1,7 +1,7 @@
 ```yaml
 # See detailed configuration settings: https://www.pomerium.com/docs/reference/
 
-authenticate_service_url: https://authenticate.localhost.pomerium.io
+authenticate_service_url: https://authenticate.pomerium.app
 
 ##################################################################################
 # Identity provider settings : https://www.pomerium.com/docs/identity-providers/ #
