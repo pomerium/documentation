@@ -19,3 +19,14 @@ pagination_next: null
 - Required
 
 Client ID is the OAuth 2.0 Client Identifier retrieved from your identity provider. See your identity provider's documentation, and our [identity provider](/docs/identity-providers/) docs for details.
+
+:::tip **Note**
+
+Pomerium’s **Hosted Authenticate Service** provides a hosted **authenticate service URL** and a hosted **identity provider**. 
+
+If you use the hosted services, you don’t need to include identity provider settings in your configuration. 
+
+See [Identity Provider Configuration](/docs/identity-providers#hosted-identity-provider) for more information.
+
+:::
+

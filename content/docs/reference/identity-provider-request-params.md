@@ -26,3 +26,13 @@ For more information see:
 - [IANA OAuth Parameters](https://www.iana.org/assignments/oauth-parameters/oauth-parameters.xhtml)
 - [Microsoft Azure Request params](https://docs.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-auth-code-flow#request-an-authorization-code)
 - [Google Authentication URI parameters](https://developers.google.com/identity/protocols/oauth2/openid-connect)
+
+:::tip **Note**
+
+Pomerium’s **Hosted Authenticate Service** provides a hosted **authenticate service URL** and a hosted **identity provider**. 
+
+If you use the hosted services, you don’t need to include identity provider settings in your configuration. 
+
+See [Identity Provider Configuration](/docs/identity-providers#hosted-identity-provider) for more information.
+
+:::

@@ -32,3 +32,13 @@ If you are using a built-in provider, you probably don't want to set customized 
 Some providers, like Amazon Cognito, _do not_ support the `offline_access` scope.
 
 :::
+
+:::tip **Note**
+
+Pomerium’s **Hosted Authenticate Service** provides a hosted **authenticate service URL** and a hosted **identity provider**. 
+
+If you use the hosted services, you don’t need to include identity provider settings in your configuration. 
+
+See [Identity Provider Configuration](/docs/identity-providers#hosted-identity-provider) for more information.
+
+:::

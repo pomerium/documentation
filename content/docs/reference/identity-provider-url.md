@@ -21,3 +21,13 @@ pagination_next: null
 Provider URL is the base path to an identity provider's [OpenID connect discovery document](https://openid.net/specs/openid-connect-discovery-1_0.html). An example Azure URL would be `https://login.microsoftonline.com/common/v2.0` for [their discover document](https://login.microsoftonline.com/common/v2.0/.well-known/openid-configuration).
 
 "Base path" is defined as the section of the URL to the discovery document up to (but not including) `/.well-known/openid-configuration`.
+
+:::tip **Note**
+
+Pomerium’s **Hosted Authenticate Service** provides a hosted **authenticate service URL** and a hosted **identity provider**. 
+
+If you use the hosted services, you don’t need to include identity provider settings in your configuration. 
+
+See [Identity Provider Configuration](/docs/identity-providers#hosted-identity-provider) for more information.
+
+:::
