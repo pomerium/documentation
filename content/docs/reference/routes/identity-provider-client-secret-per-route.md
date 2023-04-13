@@ -16,9 +16,9 @@ When set, this overrides the value of [idp_client_secret](/docs/reference/identi
 
 :::tip **Note**
 
-Pomerium’s **Hosted Authenticate Service** provides a hosted **authenticate service URL** and a hosted **identity provider**. 
+Pomerium’s **Hosted Authenticate Service** provides a hosted **authenticate service URL** and a hosted **identity provider**.
 
-If you use the hosted services, you don’t need to include identity provider settings in your configuration. 
+If you use the hosted services, you don’t need to include identity provider settings in your configuration.
 
 See [Identity Provider Configuration](/docs/identity-providers#hosted-identity-provider) for more information.
 
