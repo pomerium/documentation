@@ -22,16 +22,6 @@ View active Sessions. From here you can revoke sessions, filter by session or us
 
 ![The Sessions page in Pomerium Enterprise](./img/reports/sessions-fullpage.png)
 
-## Events
-
-The events page displays the log output of Envoy as it process changes from Pomerium and applies updates to the underlying services.
-
-![The Events page in Pomerium Enterprise](./img/reports/events-fullpage.png)
-
-The most common updates are to Pomerium Proxy services, which are updated every time a Route or Policy is created or updated.
-
-The value under **Resource ID** will usually match the resource ID of a [Policy][policy-reference], visible in the Policy under **Change History** or in the URL. A value of "Pomerium Restarted" refers to when services are reloaded, usually due to a system update.
-
 ## Deployments
 
 From the **Deployment History** page administrators can review changes made to their Pomerium configuration.
