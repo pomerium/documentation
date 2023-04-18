@@ -1,0 +1,83 @@
+---
+id: authorize-service-url
+title: Authorize Service URL
+description: |
+  Authorize Service URL is the location of the internally accessible Authorize service.
+keywords:
+  - reference
+  - Authorize Service URL
+pagination_prev: null
+pagination_next: null
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Authorize Service URL
+
+<Tabs>
+<TabItem value="Config file key" label="Config file key">
+
+---
+
+**Name:** `authorize_service_url` or `authorize_service_urls` <br/>
+**Type:** `URL` <br/>
+**Required** (Inferred in all-in-one mode to be localhost.)
+
+**Examples:**
+
+```yaml title="config.yaml"
+# One URL
+authorize_service_url: https://pomerium-authorize-service.default.svc.cluster.local
+
+# Multiple URLs
+authorize_service_urls:
+  - https://localhost:5443
+  - https://authorize.corp.example.com
+```
+
+</TabItem>
+<TabItem value="Environment variable" label="Environment variable">
+
+---
+
+**Name:** `AUTHORIZE_SERVICE_URL` OR `AUTHORIZE_SERVICE_URLS` <br/>
+**Type:** `URL` <br/>
+**Required** (Inferred in all-in-one mode to be localhost.)
+
+**Examples:**
+
+```yaml title="config.yaml"
+# One URL
+AUTHORIZE_SERVICE_URL: https://pomerium-authorize-service.default.svc.cluster.local
+
+# Multiple URLs
+AUTHORIZE_SERVICE_URLS:
+  - https://localhost:5443
+  - https://authorize.corp.example.com
+```
+
+</TabItem>
+<TabItem value="Kubernetes" label="Kubernetes">
+
+---
+
+The `authorize_service_url` is not customizable in all-in-one mode with the CRD
+
+</TabItem>
+</Tabs>
+
+---
+
+**Authorize Service URL** is the location of the internally accessible Authorize Service.
+
+Multiple URLs can be specified with `authorize_service_urls` as an array.
+
+:::tip **Note**
+
+Unlike the Authenticate Service, the Authorize Service has no publicly accessible HTTP handlers, so this setting is purely for gRPC communication.
+
+If your load balancer does not support gRPC pass-through, you must set this value to an **internally** routable location (`https://pomerium-authorize-service.default.svc.cluster.local`) instead of an **externally** routable one (`https://authorize.corp.example.com`).
+
+:::
+
