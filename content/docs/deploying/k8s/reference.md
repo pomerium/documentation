@@ -148,6 +148,22 @@ PomeriumSpec defines Pomerium-specific configuration parameters.
         <tr>
             <td>
                 <p>
+                <code>setResponseHeaders</code>&#160;&#160;
+                
+                    <strong>map[string]string</strong>
+                
+                </p>
+                <p>
+                    
+                    SetRequestHeaders sets HTTP headers on the request before sending it to the upstream service. See <a href="https://www.pomerium.com/docs/reference/#set-request-headers">Set Request Headers</a>
+                </p>
+                
+            </td>
+        </tr>
+    
+        <tr>
+            <td>
+                <p>
                 <code>storage</code>&#160;&#160;
                 
                     <strong>object</strong>&#160;
