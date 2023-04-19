@@ -1,7 +1,19 @@
+---
+id: darkmode-primary-color
+title: Primary Color (Dark Mode)
+description: |
+  Add a primary color for branding and theming Pomerium's Enterprise Console and information pages in dark mode. 
+keywords: [branding, dark mode, enterprise console]
+---
+
 # Primary Color (Dark Mode)
 
-- Type: `hex code`
-- Example: `#6F43E7`
-- Default: Pomerium Purple
+**Type:** `hex code` <br/>
+**Example:** `#6F43E7` <br/>
+**Default:**  Pomerium Purple (`#6F43E7`)
 
-Users can add a primary color that will be used for branding and theming for Pomerium's Enterprise Web Console and information pages. This is the color used when users are in Dark Mode.
+**Primary Color (Dark Mode)** sets the primary color for the **Enterprise Console** and **Route Error Details** pages when users are in **Dark Mode**.
+
+See [Custom Branding / Errors](/docs/capabilities/branding) for more information.
+
+![Set custom primary color for dark mode](./img/branding-dark-mode.png)
