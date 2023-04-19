@@ -8,9 +8,13 @@ keywords: [branding, dark mode, enterprise console]
 
 # Secondary Color (Dark Mode)
 
+---
+
 **Type:** `hex code` <br/>
 **Example:** `#49AAA1` <br/>
 **Default:**  Pomerium Purple (`#49AAA1`)
+
+---
 
 **Secondary Color (Dark Mode)** sets the secondary color for the **Enterprise Console** and **Route Error Details** pages when users are in **Dark Mode**.
 

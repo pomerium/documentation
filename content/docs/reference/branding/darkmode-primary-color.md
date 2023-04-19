@@ -8,9 +8,13 @@ keywords: [branding, dark mode, enterprise console]
 
 # Primary Color (Dark Mode)
 
+---
+
 **Type:** `hex code` <br/>
 **Example:** `#6F43E7` <br/>
 **Default:**  Pomerium Purple (`#6F43E7`)
+
+---
 
 **Primary Color (Dark Mode)** sets the primary color for the **Enterprise Console** and **Route Error Details** pages when users are in **Dark Mode**.
 

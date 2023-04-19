@@ -1,7 +1,23 @@
-# Logo URL
+---
+id: logo-url
+title: Logo URL
+description: |
+  Add a custom Logo to the Enterprise Console and Open Source (Core) endpoints. 
+keywords: [branding, logo, Enterprise Console]
+---
 
-- Type: `URL`
-- Example: `https://subdomain.domain.com/logo.png`
-- Default: shows the Pomerium Logo when left blank
+# Favicon URL
 
-Allows users to add their own logo to the Enterprise Console and Open Source Endpoints.
+---
+
+**Type:** `URL` <br/>
+**Example:** `https://subdomain.domain.com/logo.png` <br/>
+**Default:** Pomerium Logo <br/>
+
+---
+
+**Logo URL** customizes the logo displayed in the Enterprise Console and Open Source endpoints. 
+
+See [Custom Branding / Errors](/docs/capabilities/branding) for more information.
+
+![Replace the Logo in Pomerium Enterprise](./img/branding-custom-logo.png)
