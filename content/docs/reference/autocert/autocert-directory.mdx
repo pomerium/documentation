@@ -1,0 +1,84 @@
+---
+id: autocert-directory
+title: Autocert Directory
+description: |
+  Autocert directory is the path which autocert will store x509 certificate data.
+keywords:
+  - reference
+  - Autocert Directory
+  - s3
+  - gcs
+pagination_prev: null
+pagination_next: null
+---
+
+# Autocert Directory
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+<Tabs>
+<TabItem value="Core" label="Core">
+
+---
+
+**Config file key:** `autocert_dir` <br/>
+**Environment variable:** `AUTOCERT_DIR` <br/>
+**Type:** `string` (Must point to the path of the directory, or a URL to an S3 or GCS bucket.) <br/>
+**Optional** <br/>
+**Default paths:**
+- Docker images: `/data/autocert`
+- [OS packages](https://github.com/pomerium/pomerium/blob/5e3ae59658246bfe3d4cc5d12997c6e19350bf80/ospkg/pomerium.service#L8): `/etc/pomerium/` (These need to be manually overwritten using environmental variables.)
+- XDG base directories: [$XDG_DATA_HOME](https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html)
+- Home directories: `$HOME/.local/share/pomerium`
+
+See [**Examples**](#examples) below.
+
+</TabItem>
+<TabItem value="Enterprise" label="Enterprise">
+
+---
+
+**Config file key:** `autocert_dir` <br/>
+**Environment variable:** `AUTOCERT_DIR` <br/>
+**Type:** `string` (Must point to the path of the directory, or a URL to an S3 or GCS bucket.) <br/>
+**Optional** <br/>
+**Default paths:**
+- Docker images: `/data/autocert`
+- [OS packages](https://github.com/pomerium/pomerium/blob/5e3ae59658246bfe3d4cc5d12997c6e19350bf80/ospkg/pomerium.service#L8): `/etc/pomerium/` (These need to be manually overwritten using environmental variables.)
+- XDG base directories: [$XDG_DATA_HOME](https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html)
+- Home directories: `$HOME/.local/share/pomerium`
+
+See [**Examples**](#examples) below.
+
+</TabItem>
+</Tabs>
+
+---
+
+## Description
+
+**Autocert Directory** is the path where [Autocert](/docs/reference/autocert) stores X.509 Certificate data.
+
+
+## Examples
+
+### S3 Bucket
+
+An S3 bucket can be used as storage by using a URL like:
+
+```yaml
+autocert_dir: s3://your-bucket.s3.us-east-1.amazonaws.com/some/prefix
+```
+
+Credentials are sourced from [the environment](https://pkg.go.dev/github.com/aws/aws-sdk-go-v2/config#EnvConfig).
+
+### GCS Bucket
+
+A Google Cloud Storage bucket can be used as storage by using a URL like:
+
+```yaml
+autocert_dir: gs://your-bucket/some/prefix
+```
+
+Credentials are sourced from [Google Application Default Credentials](https://cloud.google.com/docs/authentication/application-default-credentials).
