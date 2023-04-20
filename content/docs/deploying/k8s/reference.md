@@ -148,6 +148,22 @@ PomeriumSpec defines Pomerium-specific configuration parameters.
         <tr>
             <td>
                 <p>
+                <code>setResponseHeaders</code>&#160;&#160;
+                
+                    <strong>map[string]string</strong>
+                
+                </p>
+                <p>
+                    
+                    SetResponseHeaders specifies a mapping of HTTP Header to be added globally to all managed routes and pomerium's authenticate service. See <a href="https://www.pomerium.com/docs/reference/set-response-headers">Set Response Headers</a>
+                </p>
+                
+            </td>
+        </tr>
+    
+        <tr>
+            <td>
+                <p>
                 <code>storage</code>&#160;&#160;
                 
                     <strong>object</strong>&#160;
