@@ -1,20 +1,19 @@
 ---
 id: data-broker-service
-title: Data Broker Service
+title: Databroker Service
 keywords:
   - reference
-  - Data Broker Service
+  - Databroker Service
+description: Learn about databrokers with Pomerium and how to implement your own in-memory database used by the databroker service. 
 pagination_prev: null
 pagination_next: null
 ---
 
-The databroker service is used for storing user session data.
+The **Databroker Service** stores user session data.
 
 By default, the `databroker` service uses an in-memory databroker.
 
-To create your own data broker, implement the following gRPC interface:
-
-- [pkg/grpc/databroker/databroker.proto](https://github.com/pomerium/pomerium/blob/main/pkg/grpc/databroker/databroker.proto)
+To create your own databroker, implement Pomerium's [databroker gRPC interface](https://github.com/pomerium/pomerium/blob/main/pkg/grpc/databroker/databroker.proto).
 
 For an example implementation, the in-memory database used by the databroker service can be found here:
 
