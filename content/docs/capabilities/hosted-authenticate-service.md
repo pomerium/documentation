@@ -8,7 +8,7 @@ description: Use Pomerium's Hosted Authenticate Service to set up and deploy Pom
 
 # Hosted Authenticate Service
 
-Pomerium's **Hosted Authenticate Service** provides a **Hosted Authenticate Service URL** and a **Hosted Identity Provider** you can use in your Pomerium configuration as an alternative to self-hosting these services.
+Pomerium v0.23.0 provides a **Hosted Authenticate Service**, which includes a **Hosted Authenticate Service URL** and a **Hosted Identity Provider** you can use in your Pomerium configuration as an alternative to self-hosting these services.
 
 The Hosted Authenticate Service is available for both open-source Pomerium Core and Enterprise users.
 
