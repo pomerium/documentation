@@ -62,7 +62,3 @@ kubectl config set-context via-pomerium --user=via-pomerium --cluster=via-pomeri
 kubectl config set-credentials via-pomerium --exec-command=pomerium-cli \
   --exec-arg=k8s,exec-credential,https://mycluster.pomerium.io
 ```
-
-## More info
-
-See the [complete walk-through](/docs/guides/kubernetes) for a working end-to-end example.
