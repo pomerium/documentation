@@ -8,9 +8,17 @@ description: Use Pomerium's Hosted Authenticate Service to set up and deploy Pom
 
 # Hosted Authenticate Service
 
-Pomerium v0.23.0 provides a **Hosted Authenticate Service**, which includes a **Hosted Authenticate Service URL** and a **Hosted Identity Provider** you can use in your Pomerium configuration as an alternative to self-hosting these services.
+Pomerium's **Hosted Authenticate Service** provides a hosted alternative to the Self-Hosted Authenticate Service. 
 
-The Hosted Authenticate Service is available for both open-source Pomerium Core and Enterprise users.
+The Hosted Authenticate Service is available in Pomerium v0.22.0 for both open-source Pomerium Core and Enterprise users.
+
+## How the Hosted Authenticate Service works
+
+Pomerium's hosted service includes a **Hosted Authenticate Service URL** and a **Hosted Identity Provider** that handle authentication and authorization using OAuth 2.0 and OIDC protocols. 
+
+Starting in **Pomerium v0.22.0**, both open-source Pomerium Core and Enterprise deployments will use our hosted services by default.
+
+The Hosted Authenticate Service is optional. If you prefer to self-host these services, you still can. See the Self-Hosted Authenticate service page for more information.
 
 ## Why use Hosted Authenticate Service
 
@@ -18,9 +26,7 @@ The Hosted Authenticate Service offers a quicker way for users to deploy and tes
 
 ### Zero configuration
 
-Including the hosted authenticate URL in your configuration file authenticates your users against our hosted identity provider solution (we use Cognito).
-
-This means you only need to include the hosted URL in your configuration file to use Pomerium's hosted services — no [identity provider configuration](/docs/identity-providers) required.
+The Hosted Authenticate Service requires no setup to use. That means you don't need to include the hosted authenticate service URL or IdP settings in your configuration for Pomerium to proxy your requests.
 
 ### Less time to deploy
 
@@ -32,11 +38,30 @@ If you're testing Pomerium for the first time, run [Pomerium with Docker](/docs/
 
 Current Pomerium users who are interested in our [Enterprise Console](https://www.pomerium.com/enterprise-sales/) can test out the [Docker Enterprise Quickstart](/docs/releases/enterprise/install/quickstart) using hosted services as well.
 
-## How to use the Hosted Authenticate Service
+## Configure the Hosted Authenticate Service
 
-1. Include the Hosted Authenticate Service URL in your configuration file
+The Hosted Authenticate Service requires zero configuraiton to use:
+
+1. Remove your Authenticate Service URL from the configuration file
 1. Remove your IdP settings
 1. Set up a route and policy
+
+```yaml title=pomerium-config.yaml
+
+routes:
+  - from: https://verify.localhost.pomerium.io
+    to: http://verify:8000
+    policy:
+      - allow:
+          or:
+            - email:
+                is: user@example.com
+    pass_identity_headers: true
+```
+
+This minimal configuration is all you need to connect to an upstream service with Pomerium's hosted services.
+
+If you want, you can still include the hosted URL in your configuration:
 
 ```yaml title=pomerium-config.yaml
 authenticate_service_url: https://authenticate.pomerium.app
@@ -52,13 +77,25 @@ routes:
     pass_identity_headers: true
 ```
 
-This minimal configuration is all you need to connect to an upstream service with Pomerium.
+If you use the hosted URL and include your own IdP settings, Pomerium will override your IdP configuration and use the hosted IdP instead:
 
-:::tip
+```yaml title=pomerium-config.yaml
+authenticate_service_url: https://authenticate.pomerium.app
 
-If you use the hosted URL and include your own IdP settings, Pomerium will override your IdP configuration and use the hosted IdP instead.
+idp_provider: google
+idp_client_id: my_client_id
+idp_client_secret: my_client_secret
 
-:::
+routes:
+  - from: https://verify.localhost.pomerium.io
+    to: http://verify:8000
+    policy:
+      - allow:
+          or:
+            - email:
+                is: user@example.com
+    pass_identity_headers: true
+```
 
 ## Privacy considerations
 
