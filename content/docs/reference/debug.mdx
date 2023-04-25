@@ -1,0 +1,86 @@
+---
+id: debug
+title: Debug
+description: |
+  Debug enables colored, human-readable logs to be streamed to standard out.
+keywords:
+  - reference
+  - Debug
+pagination_prev: null
+pagination_next: null
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Debug
+
+<Tabs>
+<TabItem value="Core" label="Core">
+
+---
+
+**Config file keys:** `pomerium_debug` <br/>
+**Environment variables:** `POMERIUM_DEBUG` <br/>
+**Type:** `boolean` <br/>
+**Default:** `false`
+**Optional**
+
+See [Examples](#examples) below.
+
+</TabItem>
+<TabItem value="Enterprise" label="Enterprise">
+
+---
+
+**Config file keys:** `pomerium_debug` <br/>
+**Environment variables:** `POMERIUM_DEBUG` <br/>
+**Type:** `boolean` <br/>
+**Default:** `false`
+**Optional**
+
+See [Examples](#examples) below.
+
+</TabItem>
+<TabItem value="Kubernetes" label="Kubernetes">
+
+---
+
+See Kubernetes [--debug](docs/deploying/k8s/install#runtime-parameters) for more information.
+
+</TabItem>
+</Tabs>
+
+---
+
+##  Description
+
+:::danger
+
+Enabling the `debug` flag could result in sensitive information being logged.
+
+:::
+
+By default, Pomerium produces JSON-encoded logs. **Debug** enables Pomerium to stream colored, human-readable logs to [standard out](https://en.wikipedia.org/wiki/Standard_streams#Standard_output_(stdout)).
+
+In production, it is recommended to set Debug to `false`.
+
+## Examples
+
+For example, if `true`:
+
+```log
+10:37AM INF cmd/pomerium version=v0.0.1-dirty+ede4124
+10:37AM INF proxy: new route from=verify.localhost.pomerium.io to=https://verify.pomerium.com
+10:37AM INF proxy: new route from=ssl.localhost.pomerium.io to=http://neverssl.com
+10:37AM INF proxy/authenticator: grpc connection OverrideCertificateName= addr=auth.localhost.pomerium.io:443
+```
+
+If `false`:
+
+```json
+{"level":"info","version":"v0.0.1-dirty+ede4124","time":"2019-02-18T10:41:03-08:00","message":"cmd/pomerium"}
+{"level":"info","from":"verify.localhost.pomerium.io","to":"https://verify.pomerium.com","time":"2019-02-18T10:41:03-08:00","message":"proxy: new route"}
+{"level":"info","from":"ssl.localhost.pomerium.io","to":"http://neverssl.com","time":"2019-02-18T10:41:03-08:00","message":"proxy: new route"}
+{"level":"info","OverrideCertificateName":"","addr":"auth.localhost.pomerium.io:443","time":"2019-02-18T10:41:03-08:00","message":"proxy/authenticator: grpc connection"}
+```

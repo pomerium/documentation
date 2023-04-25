@@ -1,0 +1,62 @@
+---
+id: data-broker-storage-connection-string
+title: Databroker Storage Connection String
+keywords:
+  - reference
+  - Databroker Storage Connection String
+description: Generate a databroker connection string to connect to a storage backend.
+pagination_prev: null
+pagination_next: null
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Databroker Storage Connectin String
+
+<Tabs>
+<TabItem value="Core" label="Core">
+
+---
+
+**Config file keys:** `databroker_storage_connection_string` <br/>
+**Environment variables:** `DATABROKER_STORAGE_CONNECTION_STRING` <br/>
+**Type:** `string` <br/>
+**Required**
+
+</TabItem>
+<TabItem value="Enterprise" label="Enterprise">
+
+---
+
+**Config file keys:** `databroker_storage_connection_string` <br/>
+**Environment variables:** `DATABROKER_STORAGE_CONNECTION_STRING` <br/>
+**Type:** `string` <br/>
+**Required**
+
+</TabItem>
+<TabItem value="Kubernetes" label="Kubernetes">
+
+---
+
+See Kubernetes [Storage reference](/docs/deploying/k8s/reference#storage) for more information.
+
+</TabItem>
+</Tabs>
+
+---
+
+**Databroker Storage Connection String** sets the Postgres connection string that the Databroker service uses to connect to storage backend.
+
+For `postgres`, the following URL types are supported:
+
+- `postgres://[username:password@]host:port/[db]`
+- `postgresql://[userspec@][hostspec][/dbname][?paramspec]`
+
+See the [PostgreSQL connection URI docs](https://www.postgresql.org/docs/current/libpq-connect.html#LIBPQ-CONNSTRING) for more information.
+
+:::tip
+
+When using multiple hosts make sure to specify `target_session_attrs=read-write` so that the Databroker does not attempt to write to a read-only replica.
+
+:::
