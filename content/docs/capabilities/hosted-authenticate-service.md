@@ -18,7 +18,7 @@ Pomerium's hosted service includes a **Hosted Authenticate Service URL** and a *
 
 Starting in **Pomerium v0.22.0**, both open-source Pomerium Core and Enterprise deployments will use our hosted services by default.
 
-The Hosted Authenticate Service is optional. If you prefer to self-host these services, you still can. See the Self-Hosted Authenticate service page for more information.
+The Hosted Authenticate Service is optional. If you prefer to self-host these services, you still can. See the [Self-Hosted Authenticate service](/docs/capabilities/self-hosted-authenticate-service) page for more information.
 
 ## Why use Hosted Authenticate Service
 

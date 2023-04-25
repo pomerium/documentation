@@ -30,6 +30,7 @@ const sidebars = {
         // secondary capabilities
         'docs/capabilities/audit-logs',
         'docs/capabilities/hosted-authenticate-service',
+        'docs/capabilities/self-hosted-authenticate-service',
         'docs/capabilities/jwt-verification',
         'docs/capabilities/mtls-clients',
         'docs/capabilities/mtls-services',
