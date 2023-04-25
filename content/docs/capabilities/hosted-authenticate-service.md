@@ -26,11 +26,11 @@ The Hosted Authenticate Service offers a quicker way for users to deploy and tes
 
 ### Zero configuration
 
-The Hosted Authenticate Service requires no setup to use. That means you don't need to include the hosted authenticate service URL or IdP settings in your configuration for Pomerium to proxy your requests.
+The Hosted Authenticate Service requires no setup to use. That means you don't need to include the hosted authenticate service URL or IdP settings in your configuration.
 
 ### Less time to deploy
 
-Pomerium's hosted services solution removes the tedium of configuring your own identity provider (IdP) and authenticate service URL so you can deploy your Pomerium instance in less time.
+Pomerium's hosted services solution removes the tedium of configuring your own identity provider (IdP) and authenticate service URL so you can deploy Pomerium in less time.
 
 ### Faster proof of concept
 
@@ -40,62 +40,70 @@ Current Pomerium users who are interested in our [Enterprise Console](https://ww
 
 ## Configure the Hosted Authenticate Service
 
-The Hosted Authenticate Service requires zero configuraiton to use:
+The Hosted Authenticate Service requires zero configuration to use. 
 
-1. Remove your Authenticate Service URL from the configuration file
-1. Remove your IdP settings
-1. Set up a route and policy
+Add the following route and policy to your configuration file: 
 
-```yaml title=pomerium-config.yaml
+  ```yaml title=pomerium-config.yaml
 
-routes:
-  - from: https://verify.localhost.pomerium.io
-    to: http://verify:8000
-    policy:
-      - allow:
-          or:
-            - email:
-                is: user@example.com
-    pass_identity_headers: true
-```
+  routes:
+    - from: https://verify.localhost.pomerium.io
+      to: http://verify:8000
+      policy:
+        - allow:
+            or:
+              - email:
+                  is: user@example.com
+      pass_identity_headers: true
+  ```
 
 This minimal configuration is all you need to connect to an upstream service with Pomerium's hosted services.
 
 If you want, you can still include the hosted URL in your configuration:
 
-```yaml title=pomerium-config.yaml
-authenticate_service_url: https://authenticate.pomerium.app
+  ```yaml title=pomerium-config.yaml
+  authenticate_service_url: https://authenticate.pomerium.app
 
-routes:
-  - from: https://verify.localhost.pomerium.io
-    to: http://verify:8000
-    policy:
-      - allow:
-          or:
-            - email:
-                is: user@example.com
-    pass_identity_headers: true
-```
+  routes:
+    - from: https://verify.localhost.pomerium.io
+      to: http://verify:8000
+      policy:
+        - allow:
+            or:
+              - email:
+                  is: user@example.com
+      pass_identity_headers: true
+  ```
 
 If you use the hosted URL and include your own IdP settings, Pomerium will override your IdP configuration and use the hosted IdP instead:
 
-```yaml title=pomerium-config.yaml
-authenticate_service_url: https://authenticate.pomerium.app
+  ```yaml title=pomerium-config.yaml
+  authenticate_service_url: https://authenticate.pomerium.app
 
-idp_provider: google
-idp_client_id: my_client_id
-idp_client_secret: my_client_secret
+  idp_provider: google
+  idp_client_id: my_client_id
+  idp_client_secret: my_client_secret
 
-routes:
-  - from: https://verify.localhost.pomerium.io
-    to: http://verify:8000
-    policy:
-      - allow:
-          or:
-            - email:
-                is: user@example.com
-    pass_identity_headers: true
-```
+  routes:
+    - from: https://verify.localhost.pomerium.io
+      to: http://verify:8000
+      policy:
+        - allow:
+            or:
+              - email:
+                  is: user@example.com
+      pass_identity_headers: true
+  ```
+
+## Limitations
+
+**Limited sign-in options**
+
+Currently, you can only authenticate with Google single-sign on or with email and password credentials. 
+
+**Session management**
+
+The hosted authenticate service is separate from your Pomerium installation. This means you can't refresh session tokens, so users must re-authenticate after roughly one hour. 
 
 ## Privacy considerations
 

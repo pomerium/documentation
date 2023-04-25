@@ -28,8 +28,6 @@ authenticate_service_url: https://authenticate.localhost.pomerium.io
 
 Pomerium's Authenticate Service requires an IdP to authenticate and authorize users. Pomerium supports all major IdP solutions, but can support any IdP that uses OAuth 2.0 and OIDC protocols as well. 
 
-See 
-
 ## Configure the Self-Hosted Authenticate Service
 
 To configure your Pomerium instance to use self-hosted services:
