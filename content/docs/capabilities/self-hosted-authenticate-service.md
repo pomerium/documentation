@@ -26,11 +26,11 @@ authenticate_service_url: https://authenticate.localhost.pomerium.io
 
 ### Identity provider
 
-Pomerium's Authenticate Service requires an IdP to authenticate and authorize users. Pomerium supports all major IdP solutions, but can support any IdP that uses OAuth 2.0 and OIDC protocols as well. 
+Pomerium's Authenticate Service requires an IdP to authenticate and authorize users. Pomerium supports all major IdP solutions and any IdP that uses OAuth 2.0 and OIDC protocols as well. 
 
 ## Configure the Self-Hosted Authenticate Service
 
-To configure your Pomerium instance to use self-hosted services:
+To configure Pomerium to use self-hosted services:
 
 1. Add your authenticate service URL
 
@@ -77,3 +77,5 @@ routes:
                 is: user@example.com
     pass_identity_headers: true
 ```
+
+See the [Pomerium Core Docker quickstart](/docs/quickstart) for more examples. 
