@@ -33,8 +33,8 @@ PomeriumSpec defines Pomerium-specific configuration parameters.
                 
                 </p>
                 <p>
-                    <strong>Required.</strong>&#160;
-                    Authenticate sets authenticate service parameters
+                    
+                    Authenticate sets authenticate service parameters. If not specified, a Pomerium-hosted authenticate service would be used.
                 </p>
                 
             </td>
@@ -185,7 +185,7 @@ PomeriumSpec defines Pomerium-specific configuration parameters.
 
 ### `authenticate`
 
-Authenticate sets authenticate service parameters
+Authenticate sets authenticate service parameters. If not specified, a Pomerium-hosted authenticate service would be used.
 
 <table>
     <thead>
