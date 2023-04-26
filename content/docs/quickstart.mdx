@@ -1,7 +1,7 @@
 ---
 # cSpell:ignore thisisunsafe, genkey, noout
 
-title: Pomerium Core using Docker
+title: Run Pomerium Core With Docker
 lang: en-US
 sidebar_label: Quickstart
 pagination_prev: null
@@ -25,74 +25,61 @@ keywords:
 import ConfigDocker from '@site/content/examples/config/config.docker.yaml.md';
 import DockerCompose from '@site/content/examples/docker/basic.docker-compose.yml.md';
 
-In this quickstart guide, you'll run Pomerium Core with Docker containers.
+Run open-source Pomerium Core with Docker containers in **under 5 minutes**.
+
+The Core quickstart uses Pomerium's **Hosted Authenticate Service**, but you can also configure a **self-hosted authenticate service** to integrate with Pomerium.
 
 ## Prerequisites
 
-- A configured [identity provider]
-- [Docker] and [Docker Compose]
+[Docker] and [Docker Compose]
 
-## Configure
+## Configure Pomerium
 
-Create a [configuration file] (e.g. `config.yaml`) for defining Pomerium's configuration settings, routes, and access policies.
+Create a `config.yaml` file in the root of your project.
+
+Add the configuration below to `config.yaml`:
 
 <ConfigDocker />
 
-## Update signing key
+## Configure Docker
 
-Generate a [signing key](/docs/reference/signing-key):
+Create a `docker-compose.yaml` file in the root of your project.
 
-```bash
-# Generates an P-256 (ES256) signing key
-openssl ecparam  -genkey  -name prime256v1  -noout  -out ec_private.pem
-# Prints the base64 encoded value of the signing key
-cat ec_private.pem | base64
-```
-
-Add the base64-encoded signing key to the `signing_key` variable in your `config.yaml` file.
-
-:::tip **Note**
-
-Keep track of the path to this file, relative to the `docker-compose.yaml` file created in the next step. `docker-compose.yaml` will need the correct relative path to your `config.yaml`.
-
-:::
-
-Copy the following `docker-compose.yaml` file and modify it to include the correct path to your `config.yaml` file:
+Add the configuration below to `docker-compose.yaml`:
 
 <DockerCompose />
 
-## Run
-
-Run Docker Compose:
+## Run Docker Compose
 
 ```bash
 docker compose up
 ```
 
-Docker will automatically download the required [container images] for Pomerium and [verify]. Then, Pomerium will run with the configuration details set in the previous steps.
+Access the **verify route** you built in your policy: `https://verify.localhost.pomerium.io`
 
-You should now be able to access the routes (e.g. `https://verify.localhost.pomerium.io`) as specified in your policy file.
+If you get a self-signed certificate warning, see [Handle Self-Signed Certificate Warning](/docs/internals/troubleshooting#handle-self-signed-certificate-warning) to bypass it.
 
-### Handle self-signed certificate warning
+You should be redirected to the **verify** service. You'll see a page like this:
 
-When navigating to the `https://verify.localhost.pomerium.io` route defined in your policy, you may encounter the following self-signed certificate warning:
+![Verify page](./img/quickstart/verify-service.png)
 
-![proceed to verify](./img/quickstart/pomerium-proceed-to-verify.png)
+Although identity verification failed, you successfully integrated Pomerium with the upstream verify service.
 
-To resolve this error:
+:::tip
 
-1. Select **Advanced**
-2. Select **Proceed to verify.localhost.pomerium.io (unsafe)**
+Because you didn't include a [signing key](/docs/reference/signing-key), identity verification will fail.
 
-Your browser will redirect you to the `verify` route.
+See [Identity Verification](/docs/capabilities/getting-users-identity) for more information on how Pomerium can use JWTs for authentication.
 
-Under **Signed Identity Token**, you will see a list of JWT claims with your user details:
-
-![jwt claims](./img/quickstart/jwt-claims.png)
+:::
 
 ## Next Steps
 
-Now, you can experiment with adding services to Docker and defining routes and policies for them in Pomerium. See [Guides](/docs/guides) for help or inspiration.
+If you want to [try Enterprise](https://www.pomerium.com/enterprise-sales/), check out the [Enterprise with Docker quickstart](/docs/releases/enterprise/install/quickstart).
+
+If you want to try connecting Pomerium with other services, see some of our [Guides](/docs/guides).
+
+**Did you finish this quickstart guide?** We've love to hear what you think about it. Check out our [Community](https://www.pomerium.com/docs/community) page to get in touch.
 
 :::caution
 
@@ -104,9 +91,3 @@ This is a test environment! If you followed all the steps in this doc your Pomer
 [container images]: https://hub.docker.com/r/pomerium/pomerium
 [docker]: https://docs.docker.com/install/
 [docker compose]: https://docs.docker.com/compose/install/
-[verify]: https://verify.pomerium.com/
-[identity provider]: /docs/identity-providers
-[tls certificates]: /docs/concepts/certificates
-[fqdn]: https://en.wikipedia.org/wiki/Fully_qualified_domain_name
-[mkcert]: https://github.com/FiloSottile/mkcert
-[self-signed wildcard certificate]: /docs/concepts/certificates#self-signed-wildcard-certificate
