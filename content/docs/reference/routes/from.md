@@ -38,7 +38,7 @@ Specifying `tcp+https` for the scheme enables [TCP proxying](/docs/capabilities/
 
 **Kubernetes:** Not supported <br/>
 
-**Wildcard From Routes** supports the use of a wildcard asterisk (`*`) prefixed to the domain name portion of a `from` URL.
+**Wildcard From Routes** supports the use of a wildcard asterisk (`*`) placed anywhere within the domain name portion of a `from` URL.
 
 Defining a `from` route with `*` will point any matching routes to the defined [To route](/docs/reference/routes/to). This eliminates the need to define multiple near-identical routes in your configuration. ([Autocert](/docs/reference/autocert) will be disabled for hosts that use Wildcard From Routes.)
 
