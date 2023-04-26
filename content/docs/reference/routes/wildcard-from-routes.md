@@ -1,7 +1,7 @@
 ---
 id: wildcard-from-routes
 title: Wildcard From Routes
-description: Creates a from route that supports any route prefixed with the wildcard character ("*"). 
+description: Creates a from route that supports any route prefixed with the wildcard character ("*").
 keywords: [wildcard from routes]
 pagination_prev: null
 pagination_next: null
@@ -11,16 +11,15 @@ pagination_next: null
 
 ---
 
-**YAML/JSON setting:** `from` <br/>
-**Type:** `URL` <br/>
-**Schemes:**
-- `https`
-- `tcp+https`  <br/>
+**YAML/JSON setting:** `from` <br/> **Type:** `URL` <br/> **Schemes:**
 
-**Kubernetes:** Not supported <br/>
-**Optional**
+- `https`
+- `tcp+https` <br/>
+
+**Kubernetes:** Not supported <br/> **Optional**
 
 **Examples:**
+
 ```yaml
 routes:
   - from: https://*.example.com
@@ -35,8 +34,7 @@ routes:
 
 ---
 
-
-**Wildcard From Routes** supports the use of a wildcard asterisk (`*`) prefixed to the domain name portion of a `from` URL. 
+**Wildcard From Routes** supports the use of a wildcard asterisk (`*`) prefixed to the domain name portion of a `from` URL.
 
 Defining a `from` route with `*` will point any matching routes to the defined [To route](/docs/reference/routes/to). This eliminates the need to define multiple near-identical routes in your configuration. ([Autocert](/docs/reference/autocert) will be disabled for hosts that use Wildcard From Routes.)
 
