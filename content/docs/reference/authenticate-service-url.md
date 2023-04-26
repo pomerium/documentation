@@ -23,9 +23,9 @@ Authenticate Service URL is the externally accessible URL for the authenticate s
 
 :::tip **Note:**
 
-Pomerium uses the [**Hosted Authenticate Service**](/docs/capabilities/hosted-authenticate-service) by default. 
+Pomerium uses the [**Hosted Authenticate Service**](/docs/capabilities/hosted-authenticate-service) by default.
 
-If you want to run Pomerium with a self-hosted authenticate service, you must include an [**identity provider**](/docs/identity-providers) and **authenticate service URL** in your configuration. 
+If you want to run Pomerium with a self-hosted authenticate service, you must include an [**identity provider**](/docs/identity-providers) and **authenticate service URL** in your configuration.
 
 See [**Self-Hosted Authenticate Service**](/docs/capabilities/self-hosted-authenticate-service) for more information.
 
