@@ -106,7 +106,7 @@ The hosted authenticate service is separate from your Pomerium installation. Thi
 
 **Uptime commitment**
 
-We make no commitments to uptime for our free hosted authenticate service. 
+We make no commitments to uptime for our free hosted authenticate service.
 
 ## Privacy considerations
 
