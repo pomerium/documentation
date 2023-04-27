@@ -36,7 +36,11 @@ Specifying `tcp+https` for the scheme enables [TCP proxying](/docs/capabilities/
 
 ## Wildcard From Routes
 
-**Kubernetes:** Not supported <br/>
+:::caution 
+
+**Kubernetes:** Wildcard From Routes in Kubernetes are unofficially supported because Pomerium's implementation behaves differently than what Kubernetes defines in their documentation. See [Wildcard Hostnames](https://kubernetes.io/docs/concepts/services-networking/ingress/#hostname-wildcards) for more information.   
+
+:::
 
 **Wildcard From Routes** supports the use of a wildcard asterisk (`*`) placed anywhere within the domain name portion of a `from` URL.
 
@@ -72,7 +76,20 @@ routes:
 
 :::tip **Note**
 
-Wildcard From Routes (`*`) may take precedence over non-wildcard routes regardless of their ordering. (To be safe, specify the ordering by using Wildcard From Routes after non-wildcard routes.)
+Wildcard From Routes (`*`) may take precedence over non-wildcard routes regardless of their ordering, and more specific wildcard routes will take precedence over less specific wildcard routes. 
+
+In the example below, **Route C** will take priority over routes **A** or **B**: 
+
+```yaml
+# Route A
+https://*.localhost.pomerium.io
+
+# Route B
+https://a*.localhost.pomerium.io
+
+# Route C
+https://a*a.localhost.pomerium.io
+```
 
 :::
 
