@@ -104,6 +104,10 @@ Currently, you can only authenticate with Google single-sign on or with email an
 
 The hosted authenticate service is separate from your Pomerium installation. This means you can't refresh session tokens, so users must re-authenticate after roughly one hour.
 
+**Uptime commitment**
+
+We make no commitments to uptime for our free hosted authenticate service. 
+
 ## Privacy considerations
 
 Users that take advantage of our Hosted Authenticate Service should review the [Terms of Service agreement](https://www.pomerium.com/pomerium-zero-user-agreement/).
