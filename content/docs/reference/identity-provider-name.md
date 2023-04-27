@@ -19,6 +19,16 @@ pagination_next: null
 - Required
 - Options: `auth0` `azure` `google` `okta` `onelogin` or `oidc`
 
-Provider is the short-hand name of a built-in OpenID Connect (oidc) identity provider to be used for authentication. To use a generic provider,set to `oidc`.
+Provider is the short-hand name of a built-in OpenID Connect (oidc) identity provider to be used for authentication. To use a generic provider, set to `oidc`.
 
 See [identity provider](/docs/identity-providers/) for details.
+
+:::tip **Note:**
+
+Pomerium uses the [**Hosted Authenticate Service**](/docs/capabilities/hosted-authenticate-service) by default.
+
+If you want to run Pomerium with a self-hosted authenticate service, include an [**identity provider**](/docs/identity-providers) and [**authenticate service URL**](/docs/reference/authenticate-service-url) in your configuration.
+
+See [**Self-Hosted Authenticate Service**](/docs/capabilities/self-hosted-authenticate-service) for more information.
+
+:::
