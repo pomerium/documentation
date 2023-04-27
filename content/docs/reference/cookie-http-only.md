@@ -1,6 +1,6 @@
 ---
 id: cookie-http-only
-title: HTTP Only Cookie
+title: Cookie HTTP Only
 description: |
   If true, forbids JavaScript from accessing the cookie.
 keywords: [http-only]
