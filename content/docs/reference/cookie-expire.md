@@ -1,6 +1,6 @@
 ---
 id: expiration
-title: Expiration
+title: Cookie Expiration
 description: |
   Sets the lifetime of session cookies. After this interval, users must reauthenticate.
 keywords:
