@@ -2,7 +2,7 @@
 version: "3"
 services:
   pomerium:
-    image: pomerium/pomerium:v0.22.0
+    image: pomerium/pomerium:latest
     volumes:
       ## Mount your config file: https://www.pomerium.com/docs/reference/
       - ./config.yaml:/pomerium/config.yaml:ro

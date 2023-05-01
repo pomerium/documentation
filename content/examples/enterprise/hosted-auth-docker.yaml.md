@@ -2,7 +2,7 @@
 version: '3'
 services:
   pomerium:
-    image: pomerium/pomerium:v0.22.0
+    image: pomerium/pomerium:latest
     volumes:
       - ./config.yaml:/pomerium/config.yaml:ro
     ports:
@@ -20,7 +20,7 @@ services:
         condition: service_healthy
       pomerium:
         condition: service_started
-    image: docker.cloudsmith.io/pomerium/enterprise/pomerium-console:v0.22.0
+    image: docker.cloudsmith.io/pomerium/enterprise/pomerium-console:latest
     command:
       - 'serve'
       - '--config'
