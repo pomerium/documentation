@@ -23,14 +23,17 @@ import TabItem from '@theme/TabItem';
 import InstallMkcert from '@site/content/_install-mkcert.md';
 import GlobalExample from '@site/content/examples/kubernetes/pomerium-global-settings.md';
 
-This quick-start will show you how to deploy Pomerium with [Kubernetes].
+Deploy Pomerium Core with [Kubernetes].
+
+This quickstart guide uses our [**Hosted Authenticate Service**](/docs/capabilities/hosted-authenticate-service) so you don't need to configure an identity provider or authenticate service URL.
+
+If you want to self-host, see the [**Self-Hosted Authenticate Service**](/docs/capabilities/self-hosted-authenticate-service) page.
 
 ## Prerequisites
 
 - [Install kubectl].
 - A Kubernetes provider.
   - A cluster, with your local `kubectl` authorized to interact with it.
-- A configured [identity provider].
 - A domain space. The steps below use `*.localhost.pomerium.io` as a placeholder value. We have set DNS records for this domain space to point to `127.0.0.1` (localhost), so you can use this domain space when testing Pomerium locally.
 - [TLS certificates]. If you don't yet have a production environment with trusted certificates, this page will cover using [mkcert] to create locally trusted certificates.
 
@@ -53,7 +56,7 @@ mkcert "*.localhost.pomerium.io"
 1. Install Pomerium to your cluster:
 
 ```sh
-kubectl apply -k github.com/pomerium/ingress-controller/config/default\?ref=v0.20.0
+kubectl apply -k github.com/pomerium/ingress-controller/config/default\?ref=v0.22.0
 ```
 
 This will create all the components of Pomerium in the `pomerium` namespace, as well as a bootstrap secret:
@@ -81,44 +84,11 @@ kubectl create secret tls pomerium-wildcard-tls --namespace=pomerium \
   --cert=./_wildcard.localhost.pomerium.io.pem --key=./_wildcard.localhost.pomerium.io-key.pem
 ```
 
-3. Define a Kubernetes secret to hold identity provider (**IdP**) credentials:
-
-```yaml title=idp-secret.yaml
-apiVersion: v1
-kind: Secret
-metadata:
-  name: idp
-  namespace: pomerium
-type: Opaque
-stringData:
-  client_id: ${IDP_PROVIDED_CLIENT_ID}
-  client_secret: ${IDP_PROVIDED_CLIENT_SECRET}
-```
-
-The data required in this secret will depend on your [identity provider]. See the [Kubernetes Reference](/docs/identity-providers) page for all available keys, and cross-reference it with the requirements of your IdP.
-
-4. Provide this secret to the cluster:
-
-```sh
-kubectl apply -f idp-secret.yaml
-```
-
-You can confirm with `kubectl get secrets --namespace pomerium`:
-
-```sh {4}
-NAME                               TYPE                                  DATA   AGE
-bootstrap                          Opaque                                3      99m
-default-token-whpnw                kubernetes.io/service-account-token   3      149m
-idp                                Opaque                                2      5s
-pomerium-controller-token-cckv5    kubernetes.io/service-account-token   3      99m
-pomerium-gen-secrets-token-4pdkd   kubernetes.io/service-account-token   3      99m
-```
-
-5. Define the global Pomerium settings:
+3. Define the global Pomerium settings:
 
 <GlobalExample />
 
-6. Apply the global settings:
+4. Apply the global settings:
 
 ```sh
 kubectl apply -f pomerium.yaml
@@ -138,7 +108,7 @@ Metadata:
   ...
 ```
 
-You should now be able to access `https://authenticate.localhost.pomerium.io/` which, after signing in with your IdP, should redirect you to the `.pomerium` endpoint.
+You should now be able to access `https://authenticate.pomerium.app` which, after signing in with our hosted IdP, should redirect you to the `.pomerium` endpoint.
 
 ## Test Service
 
