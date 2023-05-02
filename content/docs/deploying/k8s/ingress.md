@@ -185,7 +185,47 @@ ingress.pomerium.io/allow_any_authenticated_user: 'true'
 ingress.pomerium.io/allow_public_unauthenticated_access: 'true'
 ```
 
-**Boolean**. Do not require any authentication, public access.
+**Boolean**. Does not require any authentication, grants public access.
+
+</td></tr>
+<tr><td>
+
+```yaml
+ingress.pomerium.io/policy: |
+  allow:
+    and:
+      - domain:
+          is: pomerium.com
+```
+
+**Array of strings.** Users with matching email domains would be allowed.
+
+</td></tr>
+<tr><td>
+
+```yaml
+ingress.pomerium.io/policy: |
+  allow:
+  and:
+    - user:
+        is: user1@example.com
+    - user:
+        is: user2@example.com
+```
+
+**Array of strings.** Users with matching emails would be allowed.
+
+</td></tr>
+<tr><td>
+
+```yaml
+ingress.pomerium.io/policy: |
+  allow:
+    and:
+      - claim/groups: admin
+```
+
+**Object.** Users with matching claims passed by your Identity Provider would be allowed.
 
 </td></tr>
 <tr><td>
