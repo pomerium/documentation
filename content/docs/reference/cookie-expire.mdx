@@ -13,17 +13,26 @@ pagination_next: null
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-# Expiration
+# Cookie Expiration
+
+## Summary
+
+**Cookie Expiration** sets the lifetime of session cookies. After this interval, users must reauthenticate.
+
+See [Go Duration](https://golang.org/pkg/time/#Duration.String) for more information about duration formatting.
+
+## How to configure
+
+**Type:** `string` <br/>
+**Default:** `14h` <br/>
 
 <Tabs>
 <TabItem value="Core" label="Core">
 
----
+### Core
 
 **Config file keys:** `cookie_expiration` <br/>
 **Environment variables:** `COOKIE_EXPIRATION` <br/>
-**Type:** `string` <br/>
-**Default:** `14h` <br/>
 
 
 **Example:**
@@ -38,24 +47,18 @@ COOKIE_EXPIRATION=13h15m0.5s
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
 
----
+### Enterprise
 
-**Config file keys:** `cookie_expiration` <br/>
-**Environment variables:** `COOKIE_EXPIRATION` <br/>
-**Type:** `string` <br/>
-**Default:** `14h` <br/>
-
+Set **Cookie Expiration** in the Console:
 ![Setting the cookie expiration time in Enterprise Console](./img/cookies/cookies-expiration.png)
 
 
 </TabItem>
 <TabItem value="Kubernetes" label="Kubernetes">
 
----
+### Kubernetes
 
 **Name:** `cookie.expiration` <br/>
-**Default:** `14h` <br/>
-**Type:** `string`
 
 **Example:**
 ```yaml
@@ -64,9 +67,3 @@ cookie.expiration: 13h15m0.5s
 
 </TabItem>
 </Tabs>
-
----
-
-**Cookie Expiration** sets the lifetime of session cookies. After this interval, users must reauthenticate.
-
-See [Go Duration](https://golang.org/pkg/time/#Duration.String) for more information about duration formatting.
