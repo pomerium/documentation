@@ -1,0 +1,89 @@
+---
+id: global-timeouts
+title: Global Timeouts
+description: |
+  Timeouts set the global server timeouts. Timeouts can also be set for individual routes.
+keywords:
+  - reference
+  - Global Timeouts
+pagination_prev: null
+pagination_next: null
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Global Timeouts
+
+<Tabs>
+<TabItem value="Core" label="Core">
+
+---
+
+**Config file keys:**
+- `timeout_read`
+- `timeout_write`
+- `timeout_idle` <br/>
+
+**Environment variables:**
+- `TIMEOUT_READ`
+- `TIMEOUT_WRITE`
+- `TIMEOUT_IDLE` <br/>
+
+**Type:** `string` ([Go Duration](https://golang.org/pkg/time/#Duration.String) formatting) <br/>
+**Defaults:**
+- `TIMEOUT_READ=30s`
+- `TIMEOUT_WRITE=0`
+- `TIMEOUT_IDLE=5m`
+
+**Examples:**
+```yaml
+timeout_read: 30s
+
+# Or
+
+TIMEOUT_WRITE=0
+```
+
+</TabItem>
+<TabItem value="Enterprise" label="Enterprise">
+
+---
+
+**Config file keys:**
+- `timeout_read`
+- `timeout_write`
+- `timeout_idle` <br/>
+
+**Environment variables:**
+- `TIMEOUT_READ`
+- `TIMEOUT_WRITE`
+- `TIMEOUT_IDLE` <br/>
+
+**Type:** `string` ([Go Duration](https://golang.org/pkg/time/#Duration.String) formatting) <br/>
+**Defaults:**
+- `TIMEOUT_READ=30s`
+- `TIMEOUT_WRITE=0`
+- `TIMEOUT_IDLE=5m`
+
+Configure timeouts in Console:
+![Global timeouts in Console](./img/timeouts/timeouts-default.png)
+
+</TabItem>
+<TabItem value="Kubernetes" label="Kubernetes">
+
+---
+
+Kubernetes does not support **Global Timeouts**
+
+</TabItem>
+</Tabs>
+
+---
+
+**Global Timeouts** set the global server timeouts. Timeouts can also be set for individual [routes](/docs/reference/routes).
+
+**Timeout definitions:**
+- `idle_timeout`: The idle timeout is the time at which a downstream or upstream connection will be terminated if there are no active streams.
+- `write_timeout`: The max stream duration is the maximum time that a stream’s lifetime will span. An HTTP request/response exchange fully consumes a single stream. Therefore, this value must be greater than `read_timeout` as it covers both request and response time.
+- `read_timeout`: The amount of time for the entire request stream to be received from the client.
