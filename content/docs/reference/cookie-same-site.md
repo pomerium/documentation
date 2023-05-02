@@ -9,6 +9,7 @@ keywords:
 pagination_prev: null
 pagination_next: null
 ---
+
 - Environmental Variable: `COOKIE_SAME_SITE`
 - Config File Key: `cookie_same_site`
 - Type: `string`
