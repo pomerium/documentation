@@ -94,7 +94,7 @@ const config = {
         },
         {
           type: 'dropdown',
-          label: 'vNext',
+          label: 'v0.22',
           position: 'right',
           items: [
             {
