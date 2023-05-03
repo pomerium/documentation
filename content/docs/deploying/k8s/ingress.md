@@ -160,34 +160,21 @@ The remaining annotations are specific to or behave differently than they do whe
 | `ingress.pomerium.io/tls_client_secret` | Name of Kubernetes `tls` Secret containing a [client certificate][tls_client_certificate] for connecting to the upstream. |
 | `ingress.pomerium.io/tls_custom_ca_secret` | Name of Kubernetes `tls` Secret containing a custom [CA certificate][`tls_custom_ca_secret`] for the upstream. |
 | `ingress.pomerium.io/tls_downstream_client_ca_secret` | Name of Kubernetes `tls` Secret containing a [Client CA][client-certificate-authority] for validating downstream clients. |
+| `ingress.pomerium.io/policy` | [Pomerium Policy Language](/docs/capabilities/ppl) YAML or JSON block (as string) |
+| `ingress.pomerium.io/allow_any_authenticated_user` | When set to `"true"`, allows access to any user that was successfully authenticated with your Identity Provider. |
+| `ingress.pomerium.io/allow_public_unauthenticated_access` | When set to `"true"`, does not require authentication, grants public access |
 
-### Access Policy
 
-The access policy is applied by adding Pomerium-specific annotations to the `Ingress` objects.
+### Access Policy Examples
+
+The access policy is applied by adding `ingress.pomerium.io/policy` annotation, 
+containing [Pomerium Policy Language](/docs/capabilities/ppl) YAML or JSON block (as string). Below are some (non-exhaustive) examples.
 
 <table>
 <thead>
 <th>Annotation</th>
 </thead>
 <tbody>
-<tr><td>
-
-```yaml
-ingress.pomerium.io/allow_any_authenticated_user: 'true'
-```
-
-**Boolean**. Allow access to any user that was successfully authenticated with your Identity Provider.
-
-</td></tr>
-<tr><td>
-
-```yaml
-ingress.pomerium.io/allow_public_unauthenticated_access: 'true'
-```
-
-**Boolean**. Does not require any authentication, grants public access.
-
-</td></tr>
 <tr><td>
 
 ```yaml
@@ -198,7 +185,7 @@ ingress.pomerium.io/policy: |
           is: pomerium.com
 ```
 
-**Array of strings.** Users with matching email domains would be allowed.
+Users with matching email domains would be allowed.
 
 </td></tr>
 <tr><td>
@@ -213,7 +200,7 @@ ingress.pomerium.io/policy: |
         is: user2@example.com
 ```
 
-**Array of strings.** Users with matching emails would be allowed.
+Users with matching emails would be allowed.
 
 </td></tr>
 <tr><td>
@@ -225,7 +212,7 @@ ingress.pomerium.io/policy: |
       - claim/groups: admin
 ```
 
-**Object.** Users with matching claims passed by your Identity Provider would be allowed.
+Users with matching claims passed by your Identity Provider would be allowed.
 
 </td></tr>
 <tr><td>
@@ -239,7 +226,7 @@ ingress.pomerium.io/policy: |
     - claim/groups: admin
 ```
 
-[Pomerium Policy Language](/docs/capabilities/ppl).
+Users with matching claims and matching domain passed by your Identity Provider would be allowed.
 
 </td></tr>
 </tbody>
