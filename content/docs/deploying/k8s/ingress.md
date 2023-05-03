@@ -164,11 +164,9 @@ The remaining annotations are specific to or behave differently than they do whe
 | `ingress.pomerium.io/allow_any_authenticated_user` | When set to `"true"`, allows access to any user that was successfully authenticated with your Identity Provider. |
 | `ingress.pomerium.io/allow_public_unauthenticated_access` | When set to `"true"`, does not require authentication, grants public access |
 
-
 ### Access Policy Examples
 
-The access policy is applied by adding `ingress.pomerium.io/policy` annotation, 
-containing [Pomerium Policy Language](/docs/capabilities/ppl) YAML or JSON block (as string). Below are some (non-exhaustive) examples.
+The access policy is applied by adding `ingress.pomerium.io/policy` annotation, containing [Pomerium Policy Language](/docs/capabilities/ppl) YAML or JSON block (as string). Below are some (non-exhaustive) examples.
 
 <table>
 <thead>
