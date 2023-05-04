@@ -13,46 +13,46 @@ import TabItem from '@theme/TabItem';
 
 # Databroker Internal Service URL
 
+## Summary
+
+**Databroker Internal Service URL** overrides [`databroker_service_url`](/docs/reference/data-broker-service-url) when determining the TLS Certificate for the Databroker service to listen with.
+
+## How to configure
+
+| **Type** | **Default** |
+| :--- | :--- |
+| `URL` | `http://localhost:5443` (In all-in-one mode) |
+
 <Tabs>
 <TabItem value="Core" label="Core">
 
----
-
-**Config file keys:** `databroker_internal_service_url` or `databroker_internal_service_urls` <br/>
-**Environment variables:** `DATABROKER_INTERNAL_SERVICE_URL` or `DATABROKER_INTERNAL_SERVICE_URLS` <br/>
-**Type:** `URL` <br/>
-**Default:** `http://localhost:5443` (In all-in-one mode)
-
-**Example:**
-```yaml
-databroker_internal_service_url: http://localhost:5443
-```
+| **Config file keys** | **Environment variables** |
+| :--- | :--- |
+| `databroker_internal_service_url` | `DATABROKER_INTERNAL_SERVICE_URL` |
+| `databroker_internal_service_urls` | `DATABROKER_INTERNAL_SERVICE_URLS` |
 
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
 
----
-
-**Config file keys:** `databroker_internal_service_url` or `databroker_internal_service_urls` <br/>
-**Environment variables:** `DATABROKER_INTERNAL_SERVICE_URL` or `DATABROKER_INTERNAL_SERVICE_URLS` <br/>
-**Type:** `URL` <br/>
-**Default:** `http://localhost:5443` (In all-in-one mode)
-
-**Example:**
-```yaml
-databroker_internal_service_url: http://localhost:5443
-```
+| **Config file keys** | **Environment variables** |
+| :--- | :--- |
+| `databroker_internal_service_url` | `DATABROKER_INTERNAL_SERVICE_URL` |
+| `databroker_internal_service_urls` | `DATABROKER_INTERNAL_SERVICE_URLS` |
 
 </TabItem>
 <TabItem value="Kubernetes" label="Kubernetes">
-
----
 
 `databroker_internal_service_url` is not customizable in Kubernetes
 
 </TabItem>
 </Tabs>
 
----
+### Examples
 
-**Databroker Internal Service URL** overrides [`databroker_service_url`](/docs/reference/data-broker-service-url) when determining the TLS Certificate for the Databroker service to listen with.
+```yaml
+databroker_internal_service_urls:
+              - http://localhost:5443
+              - http://service_url.com
+
+DATABROKER_INTERNAL_SERVICE_URL=http://localhost:5443
+```

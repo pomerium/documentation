@@ -13,15 +13,22 @@ import TabItem from '@theme/TabItem';
 
 # Codec Type
 
+## Summary
+
+**Codec Type** specifies the codec to use for downstream connections. The codec type can be either `auto`, `http1` or `http2`.
+
+When `auto` is specified, the codec will be determined via `TLS-ALPN-01` or protocol inference.
+
+## How to configure
+
+**Type:** `string` <br/>
+**Default:** `auto`
+
 <Tabs>
 <TabItem value="Core" label="Core">
 
----
-
 **Config file keys:** `codec_type` <br/>
 **Environment variables:** `CODEC_TYPE` <br/>
-**Type:** `string` <br/>
-**Default:** `auto`
 
 **Example:**
 ```yaml
@@ -35,12 +42,8 @@ CODEC_TYPE=http2
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
 
----
-
 **Config file keys:** `codec_type` <br/>
 **Environment variables:** `CODEC_TYPE` <br/>
-**Type:** `string` <br/>
-**Default:** `auto`
 
 **Example:**
 ```yaml
@@ -51,19 +54,10 @@ codec_type: http1
 CODEC_TYPE=http2
 ```
 
-
 </TabItem>
 <TabItem value="Kubernetes" label="Kubernetes">
-
----
 
 Kubernetes does not support `codec_type`
 
 </TabItem>
 </Tabs>
-
----
-
-**Codec Type** specifies the codec to use for downstream connections. The codec type can be either `auto`, `http1` or `http2`.
-
-When `auto` is specified, the codec will be determined via `TLS-ALPN-01` or protocol inference.

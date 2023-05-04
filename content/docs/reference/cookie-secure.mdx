@@ -15,33 +15,31 @@ import TabItem from '@theme/TabItem';
 
 # Secure Cookie
 
+## Summary
+
+If true, **Cookie Secure** instructs browsers to only send user session cookies over HTTPS.
+
+:::warning
+
+Setting this to `false` may result in session cookies being sent in clear text.
+
+:::
+
+## How to configure
+
+| **Type** | **Default** |
+| :--- | :--- |
+| `boolean` | `true` |
+
 <Tabs>
 <TabItem value="Core" label="Core">
 
----
-
-**Config file keys:** `cookie_secure` <br/>
-**Environment variables:** `COOKIE_SECURE` <br/>
-**Type:** `boolean` <br/>
-**Default:** `true`
-
-
-**Example:**
-```yaml
-cookie_secure: false
-
-COOKIE_SECURE=false
-```
+| **Config file keys** | **Environment variables** |
+| :--- | :--- |
+| `cookie_secure` | `COOKIE_SECURE` |
 
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
-
----
-
-**Config file keys:** `cookie_secure` <br/>
-**Environment variables:** `COOKIE_SECURE` <br/>
-**Type:** `boolean` <br/>
-**Default:** `true`
 
 In the Enterprise Console, configure `cookie_secure` with the **HTTPS only** toggle button. The button has three states:
 - **Unset** ("-") uses the value in your `config.yaml` file
@@ -53,28 +51,19 @@ In the Enterprise Console, configure `cookie_secure` with the **HTTPS only** tog
 </TabItem>
 <TabItem value="Kubernetes" label="Kubernetes">
 
----
-
 **Name:** `cookie.secure`
-**Type:** `string`
-**Default:** `true`
-
-**Example:**
-```yaml
-cookie.secure: false
-```
 
 See Kubernetes [Cookie reference](/docs/deploying/k8s/reference#cookie) for more information.
 
 </TabItem>
 </Tabs>
 
----
+### Examples
 
-If true, **Cookie Secure** instructs browsers to only send user session cookies over HTTPS.
+```yaml
+cookie_secure: false
 
-:::warning
+COOKIE_SECURE=false
 
-Setting this to `false` may result in session cookies being sent in clear text.
-
-:::
+cookie.secure: false
+```

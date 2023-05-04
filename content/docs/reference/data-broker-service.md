@@ -9,7 +9,13 @@ pagination_prev: null
 pagination_next: null
 ---
 
+# Databroker service
+
+## Summary
+
 The **Databroker Service** stores user session data.
+
+## How to configure
 
 By default, the `databroker` service uses an in-memory databroker.
 

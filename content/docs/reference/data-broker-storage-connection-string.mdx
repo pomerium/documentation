@@ -14,46 +14,52 @@ import TabItem from '@theme/TabItem';
 
 # Databroker Storage Connectin String
 
+## Summary
+
+**Databroker Storage Connection String** sets the Postgres connection string that the Databroker service uses to connect to storage backend.
+
+## How to configure
+
+| **Type** | **Usage** |
+| :--- | :--- |
+| `string` | **required** |
+
+For Postgres, the following URL types are supported:
+
+- `postgres://[username:password@]host:port/[db]`
+- `postgresql://[userspec@][hostspec][/dbname][?paramspec]`
+
+See the [PostgreSQL connection URI docs](https://www.postgresql.org/docs/current/libpq-connect.html#LIBPQ-CONNSTRING) for more information.
+
 <Tabs>
 <TabItem value="Core" label="Core">
 
----
-
-**Config file keys:** `databroker_storage_connection_string` <br/>
-**Environment variables:** `DATABROKER_STORAGE_CONNECTION_STRING` <br/>
-**Type:** `string` <br/>
-**Required**
+| **Config file keys** | **Environment variables** |
+| :--- | :--- |
+| `databroker_storage_connection_string` | `DATABROKER_STORAGE_CONNECTION_STRING` |
 
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
 
----
-
-**Config file keys:** `databroker_storage_connection_string` <br/>
-**Environment variables:** `DATABROKER_STORAGE_CONNECTION_STRING` <br/>
-**Type:** `string` <br/>
-**Required**
+| **Config file keys** | **Environment variables** |
+| :--- | :--- |
+| `databroker_storage_connection_string` | `DATABROKER_STORAGE_CONNECTION_STRING` |
 
 </TabItem>
 <TabItem value="Kubernetes" label="Kubernetes">
-
----
 
 See Kubernetes [Storage reference](/docs/deploying/k8s/reference#storage) for more information.
 
 </TabItem>
 </Tabs>
 
----
+### Examples
 
-**Databroker Storage Connection String** sets the Postgres connection string that the Databroker service uses to connect to storage backend.
+```yaml
+databroker_storage_connection_string: postgresql://postgres:postgres@database/postgres?sslmode=disable
 
-For `postgres`, the following URL types are supported:
-
-- `postgres://[username:password@]host:port/[db]`
-- `postgresql://[userspec@][hostspec][/dbname][?paramspec]`
-
-See the [PostgreSQL connection URI docs](https://www.postgresql.org/docs/current/libpq-connect.html#LIBPQ-CONNSTRING) for more information.
+DATABROKER_STORAGE_CONNECTION_STRING=postgresql://postgres:postgres@database/postgres?sslmode=disable
+```
 
 :::tip
 
