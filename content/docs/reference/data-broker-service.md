@@ -21,6 +21,6 @@ By default, the `databroker` service uses an in-memory databroker.
 
 To create your own databroker, implement Pomerium's [databroker gRPC interface](https://github.com/pomerium/pomerium/blob/main/pkg/grpc/databroker/databroker.proto).
 
-For an example implementation, the in-memory database used by the databroker service can be found here:
+For an example implementation, see the in-memory database used by the databroker service here:
 
-- [pkg/databroker/memory](https://github.com/pomerium/pomerium/tree/main/pkg/databroker/memory)
+- [pkg/storage](https://github.com/pomerium/pomerium/tree/main/pkg/storage/inmemory)
