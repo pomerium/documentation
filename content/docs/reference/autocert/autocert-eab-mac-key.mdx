@@ -15,49 +15,46 @@ import TabItem from '@theme/TabItem';
 
 # Autocert EAB MAC Key
 
-<Tabs>
-<TabItem value="Core" label="Core">
-
----
-
-**Config file key:** `autocert_eab_mac_key` <br/>
-**Environment variable:** `AUTOCERT_EAB_MAC_KEY` <br/>
-**Type:** `string` <br/>
-**Optional** <br/>
-
-**Example:**
-```yaml
-# config file key
-autocert_eab_key_id: EAB_MAC_SECRET_KEY
-
-# environment variable
-AUTOCERT_EAB_KEY_ID=EAB_MAC_SECRET_KEY
-```
-
-</TabItem>
-<TabItem value="Enterprise" label="Enterprise">
-
----
-
-**Config file key:** `autocert_eab_mac_key` <br/>
-**Environment variable:** `AUTOCERT_EAB_MAC_KEY` <br/>
-**Type:** `string` <br/>
-**Optional** <br/>
-
-**Example:**
-```yaml
-# config file key
-autocert_eab_mac_key: EAB_MAC_Key
-
-# environment variable
-AUTOCERT_EAB_MAC_KEY=EAB_MAC_SECRET_KEY
-```
-
-</TabItem>
-</Tabs>
-
----
+## Summary
 
 **Autocert EAB MAC Key** is the base64-URL-encoded secret key corresponding to the [Autocert EAB Key ID](/docs/reference/autocert/autocert-eab-key-id).
 
 The Autocert EAB MAC Key setting is required when Autocert EAB Key ID is set.
+
+## How to configure
+
+| **Type** | **Usage** |
+| :--- | :--- |
+| `string` | **optional** |
+
+<Tabs>
+<TabItem value="Core" label="Core">
+
+| **Config file keys** | **Environment variables** |
+| :--- | :--- |
+| `autocert_eab_mac_key` | `AUTOCERT_EAB_MAC_KEY`|
+
+</TabItem>
+<TabItem value="Enterprise" label="Enterprise">
+
+| **Config file keys** | **Environment variables** |
+| :--- | :--- |
+| `autocert_eab_mac_key` | `AUTOCERT_EAB_MAC_KEY`|
+
+</TabItem>
+<TabItem value="Kubernetes" label="Kubernetes">
+
+Kubernetes users should not use Autocert. See the [cert-manager's guide](https://cert-manager.io/docs/tutorials/acme/pomerium-ingress/) for more information.
+
+</TabItem>
+</Tabs>
+
+### Examples
+
+```yaml
+# config file key
+autocert_eab_key_id: base64-URL-encoded_secret_key
+
+# environment variable
+AUTOCERT_EAB_KEY_ID=base64-URL-encoded_secret_key
+```

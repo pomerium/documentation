@@ -15,36 +15,40 @@ import TabItem from '@theme/TabItem';
 
 # Autocert Use Staging
 
+## Summary
+
+**Autocert Use Staging** setting allows you to use Let's Encrypt's [staging environment](https://letsencrypt.org/docs/staging-environment/), which has more lenient [usage limits](https://letsencrypt.org/docs/rate-limits/) than the production environment.
+
+## How to configure
+
+| **Type** | **Usage** |
+| :--- | :--- |
+| `boolean` | **optional** |
+
 <Tabs>
 <TabItem value="Core" label="Core">
 
----
-
-**Config file key:** `autocert_use_staging` <br/>
-**Environment variable:** `AUTOCERT_USE_STAGING` <br/>
-**Type:** `boolean` <br/>
-**Optional** <br/>
-
-**Example:**
-```yaml
-# config file key
-autocert_use_staging: true
-
-# environment variable
-AUTOCERT_USE_STAGING=true
-```
+| **Config file keys** | **Environment variables** |
+| :--- | :--- |
+| `autocert_use_staging` | `AUTOCERT_USE_STAGING` |
 
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
 
----
+| **Config file keys** | **Environment variables** |
+| :--- | :--- |
+| `autocert_use_staging` | `AUTOCERT_USE_STAGING` |
 
-**Config file key:** `autocert_use_staging` <br/>
-**Environment variable:** `AUTOCERT_USE_STAGING` <br/>
-**Type:** `boolean` <br/>
-**Optional** <br/>
+</TabItem>
+<TabItem value="Kubernetes" label="Kubernetes">
 
-**Example:**
+Kubernetes users should not use Autocert. See the [cert-manager's guide](https://cert-manager.io/docs/tutorials/acme/pomerium-ingress/) for more information.
+
+</TabItem>
+</Tabs>
+
+### Examples
+
 ```yaml
 # config file key
 autocert_use_staging: true
@@ -52,10 +56,3 @@ autocert_use_staging: true
 # environment variable
 AUTOCERT_USE_STAGING=true
 ```
-
-</TabItem>
-</Tabs>
-
----
-
-Let's Encrypt has strict [usage limits](https://letsencrypt.org/docs/rate-limits/). Enabling the **Autocert Use Staging** setting allows you to use Let's Encrypt's [staging environment](https://letsencrypt.org/docs/staging-environment/), which has more lenient usage limits.

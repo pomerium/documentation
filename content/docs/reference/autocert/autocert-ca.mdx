@@ -13,48 +13,9 @@ pagination_next: null
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-<Tabs>
-<TabItem value="Core" label="Core">
+# Autocert CA
 
----
-
-**Config file key:** `autocert_ca` <br/>
-**Environment variable:** `AUTOCERT_CA` <br/>
-**Type:** `string` <br/>
-**Optional** <br/>
-
-**Example:**
-```yaml
-# config file key
-autocert_ca: https://acme.zerossl.com/v2/DV90
-
-# environment variable
-AUTOCERT_CA=https://acme.zerossl.com/v2/DV90
-```
-
-</TabItem>
-<TabItem value="Enterprise" label="Enterprise">
-
----
-
-**Config file key:** `autocert_ca` <br/>
-**Environment variable:** `AUTOCERT_CA` <br/>
-**Type:** `string` <br/>
-**Optional** <br/>
-
-**Example:**
-```yaml
-# config file key
-autocert_ca: https://acme.zerossl.com/v2/DV90
-
-# environment variable
-AUTOCERT_CA=https://acme.zerossl.com/v2/DV90
-```
-
-</TabItem>
-</Tabs>
-
----
+## Summary
 
 **Autocert CA** is the directory URL of the ACME CA to use when requesting certificates.
 
@@ -63,3 +24,41 @@ AUTOCERT_CA=https://acme.zerossl.com/v2/DV90
 If set, Autocert CA will override the [**Autocert Use Staging**](/docs/reference/autocert/autocert-use-staging) setting.
 
 :::
+
+## How to configure
+
+| **Type** | **Usage** |
+| :--- | :--- |
+| `string` | **optional** |
+
+<Tabs>
+<TabItem value="Core" label="Core">
+
+| **Config file keys** | **Environment variables** |
+| :--- | :--- |
+| `autocert_ca` | `AUTOCERT_CA` |
+
+</TabItem>
+<TabItem value="Enterprise" label="Enterprise">
+
+| **Config file keys** | **Environment variables** |
+| :--- | :--- |
+| `autocert_ca` | `AUTOCERT_CA` |
+
+</TabItem>
+<TabItem value="Kubernetes" label="Kubernetes">
+
+Kubernetes users should not use Autocert. See the [cert-manager's guide](https://cert-manager.io/docs/tutorials/acme/pomerium-ingress/) for more information.
+
+</TabItem>
+</Tabs>
+
+### Examples
+
+```yaml
+# config file key
+autocert_ca: https://acme.zerossl.com/v2/DV90
+
+# environment variable
+AUTOCERT_CA=https://acme.zerossl.com/v2/DV90
+```

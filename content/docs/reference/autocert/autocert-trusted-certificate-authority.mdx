@@ -13,53 +13,50 @@ import TabItem from '@theme/TabItem';
 
 # Autocert Trusted Certificate Authority
 
-<Tabs>
-<TabItem value="Core" label="Core">
-
----
-
-**Config file key:** `autocert_trusted_ca` or `autocert_trusted_ca_file` <br/>
-**Environment variable:** `AUTOCERT_TRUSTED_CA` or `AUTOCERT_TRUSTED_CA_FILE` <br/>
-**Type:** `string` <br/>
-**Optional** <br/>
-
-**Example:**
-```yaml
-# config file key
-autocert_trusted_ca: base64-encoded-string
-autocert_trusted_ca_file: /relative/file/location
-
-# environment variable
-AUTOCERT_TRUSTED_CA=base64-encoded-string
-AUTOCERT_TRUSTED_CA_FILE=/relative/file/location
-```
-
-</TabItem>
-<TabItem value="Enterprise" label="Enterprise">
-
----
-
-**Config file key:** `autocert_trusted_ca` or `autocert_trusted_ca_file` <br/>
-**Environment variable:** `AUTOCERT_TRUSTED_CA` or `AUTOCERT_TRUSTED_CA_FILE` <br/>
-**Type:** `string` <br/>
-**Optional** <br/>
-
-**Example:**
-```yaml
-# config file key
-autocert_trusted_ca: base64-encoded-string
-autocert_trusted_ca_file: /relative/file/location
-
-# environment variable
-AUTOCERT_TRUSTED_CA=base64-encoded-string
-AUTOCERT_TRUSTED_CA_FILE=/relative/file/location
-```
-
-</TabItem>
-</Tabs>
-
----
+## Summary
 
 **Autocert Trusted Certificate Authority** is the X.509 CA (bundle) used when communicating with a CA supporting the ACME protocol.
 
 If not set, the system trusted roots will be used to verify TLS connections to the ACME CA.
+
+## How to configure
+
+| **Type** | **Usage** |
+| :--- | :--- |
+| `string` | **optional** |
+
+<Tabs>
+<TabItem value="Core" label="Core">
+
+| **Config file keys** | **Environment variables** |
+| :--- | :--- |
+| `autocert_trusted_ca` | `AUTOCERT_TRUSTED_CA` |
+| `autocert_trusted_ca_file` | `AUTOCERT_TRUSTED_CA_FILE` |
+
+</TabItem>
+<TabItem value="Enterprise" label="Enterprise">
+
+| **Config file keys** | **Environment variables** |
+| :--- | :--- |
+| `autocert_trusted_ca` | `AUTOCERT_TRUSTED_CA` |
+| `autocert_trusted_ca_file` | `AUTOCERT_TRUSTED_CA_FILE` |
+
+</TabItem>
+<TabItem value="Kubernetes" label="Kubernetes">
+
+Kubernetes users should not use Autocert. See the [cert-manager's guide](https://cert-manager.io/docs/tutorials/acme/pomerium-ingress/) for more information.
+
+</TabItem>
+</Tabs>
+
+### Examples
+
+```yaml
+# config file key
+autocert_trusted_ca: base64-encoded-string
+autocert_trusted_ca_file: /relative/file/location
+
+# environment variable
+AUTOCERT_TRUSTED_CA=base64-encoded-string
+AUTOCERT_TRUSTED_CA_FILE=/relative/file/location
+```
