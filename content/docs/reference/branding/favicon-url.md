@@ -8,16 +8,20 @@ keywords: [branding, favicon, Enterprise Console]
 
 # Favicon URL
 
----
-
-**Type:** `URL` <br/>
-**Example:** `https://subdomain.domain.com/favicon.png` <br/>
-**Default:** Pomerium Favicon <br/>
-
----
+## Summary
 
 **Favicon URL** customizes the Favicon displayed in the Enterprise Console and Open Source endpoints. 
 
+## How to configure
+
+| **Type** | **Default** |
+| :--- | :--- |
+| `URL` | Pomerium Favicon |
+
 See [Custom Branding / Errors](/docs/capabilities/branding) for more information.
+
+### Examples
+
+Customize **Favicon URL** in the Console:
 
 ![Replace the Favicon in Pomerium Enterprise](./img/branding-favicon-url.png)
