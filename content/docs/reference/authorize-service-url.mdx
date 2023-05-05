@@ -15,61 +15,7 @@ import TabItem from '@theme/TabItem';
 
 # Authorize Service URL
 
-<Tabs>
-<TabItem value="Core" label="Core">
-
----
-
-**Config file key:** `authorize_service_url` or `authorize_service_urls` <br/>
-**Environment variable:** `AUTHORIZE_SERVICE_URL` OR `AUTHORIZE_SERVICE_URLS` <br/>
-**Type:** `URL` <br/>
-**Required** (Inferred in all-in-one mode to be localhost.)
-
-**Examples:**
-
-```yaml
-# config file key
-authorize_service_urls:
-  - https://localhost:5443
-  - https://authorize.corp.example.com
-
-# environment variable
-AUTHORIZE_SERVICE_URL=https://pomerium-authorize-service.default.svc.cluster.local
-```
-
-</TabItem>
-<TabItem value="Enterprise" label="Enterprise">
-
----
-
-**Config file key:** `authorize_service_url` or `authorize_service_urls` <br/>
-**Environment variable:** `AUTHORIZE_SERVICE_URL` OR `AUTHORIZE_SERVICE_URLS` <br/>
-**Type:** `URL` <br/>
-**Required** (Inferred in all-in-one mode to be localhost.)
-
-**Examples:**
-
-```yaml
-# config file key
-authorize_service_urls:
-  - https://localhost:5443
-  - https://authorize.corp.example.com
-
-# environment variable
-AUTHORIZE_SERVICE_URL=https://pomerium-authorize-service.default.svc.cluster.local
-```
-
-</TabItem>
-<TabItem value="Kubernetes" label="Kubernetes">
-
----
-
-The `authorize_service_url` is not customizable in all-in-one mode with the CRD
-
-</TabItem>
-</Tabs>
-
----
+## Summary
 
 **Authorize Service URL** is the location of the internally accessible Authorize Service.
 
@@ -83,3 +29,46 @@ If your load balancer does not support gRPC pass-through, you must set this valu
 
 :::
 
+## How to configure
+
+| **Type** | **Usage** |
+| :--- | :--- |
+| `URL` | **required** (Inferred in all-in-one mode to be localhost) |
+
+<Tabs>
+<TabItem value="Core" label="Core">
+
+| **Config file keys** | **Environment variables** |
+| :--- | :--- |
+| `authorize_service_url` | `AUTHORIZE_SERVICE_URL` |
+| `authorize_service_urls` | `AUTHORIZE_SERVICE_URLS` |
+
+</TabItem>
+<TabItem value="Enterprise" label="Enterprise">
+
+| **Config file keys** | **Environment variables** |
+| :--- | :--- |
+| `authorize_service_url` | `AUTHORIZE_SERVICE_URL` |
+| `authorize_service_urls` | `AUTHORIZE_SERVICE_URLS` |
+
+</TabItem>
+<TabItem value="Kubernetes" label="Kubernetes">
+
+The `authorize_service_url` is not customizable in all-in-one mode with the CRD
+
+</TabItem>
+</Tabs>
+
+### Examples
+
+**Examples:**
+
+```yaml
+# config file key
+authorize_service_urls:
+  - https://localhost:5443
+  - https://authorize.corp.example.com
+
+# environment variable
+AUTHORIZE_SERVICE_URL=https://pomerium-authorize-service.default.svc.cluster.local
+```

@@ -13,76 +13,31 @@ import TabItem from '@theme/TabItem';
 
 # Certificates
 
-<Tabs>
-<TabItem value="Core" label="Core">
+## Summary
 
----
+**Certificates** are the X.509 _public-key_ and _private-key_ pair used to establish secure HTTP and gRPC connections. Any combination of the above settings can be used together and are additive. You can also use any of these settings in conjunction with [`Autocert`](/docs/reference/autocert) to get OCSP stapling.
 
-**Config file keys:**
-- `certificates` (Not settable as environment variable)
-- `certificate` and `certificate_key`
-- `certificate_file` and `certificate_key_file` <br/>
+Certificates loaded into Pomerium from these config values are used to attempt secure connections between end-users and services, between Pomerium services, and to upstream endpoints.
 
-**Environment variables:**
-- `CERTIFICATE` and `CERTIFICATE_KEY`
-- `CERTIFICATE_FILE` and `CERTIFICATE_KEY_FILE` <br/>
+:::tip **Note**
 
-**Type:**
-- `string` (Array of relative file locations for multiple certificates)
-- `string` (base64-encoded string)
-- `string` (Relative file location for a single certificate) <br/>
-
-**Required** (if insecure not set)
-
-**Examples:**
-
-If specifying multiple certificates at once:
-
-```yaml
-# Array of relative file locations for multiple certs
-certificates:
-  - cert: '$HOME/.acme.sh/authenticate.example.com_ecc/fullchain.cer'
-    key: '$HOME/.acme.sh/authenticate.example.com_ecc/authenticate.example.com.key'
-  - cert: '$HOME/.acme.sh/verify.example.com_ecc/fullchain.cer'
-    key: '$HOME/.acme.sh/verify.example.com_ecc/verify.example.com.key'
-  - cert: '$HOME/.acme.sh/prometheus.example.com_ecc/fullchain.cer'
-    key: '$HOME/.acme.sh/prometheus.example.com_ecc/prometheus.example.com.key'
-```
-
-Or to set a single certificate and key covering multiple domains and/or a wildcard subdomain:
-
-```yaml
-# Relative file location for a single cert
-certificate_file: '$HOME/.acme.sh/*.example.com/fullchain.crt'
-certificate_key: '$HOME/.acme.sh/*.example.com/*.example.com.key'
-```
-
-:::tip **Note:**
-
-All certificates supplied to Pemerium must be in **PEM** format.
+Pomerium will check your system's trust/key store for valid certificates first. If your certificate solution imports into the system store, you don't need to also specify them with these configuration keys.
 
 :::
 
+## How to configure
+
+<Tabs>
+<TabItem value="Core" label="Core">
+
+| **Config file keys** | **Environment variables** | **Type** | **Usage** |
+| :--- | :--- | :--- | :--- |
+| `certificates` | Not settable as environment variable | `string` (Array of relative file locations for multiple certificates) | **required** (if insecure not set) |
+| `certificate` and `certificate_key` | `CERTIFICATE` and `CERTIFICATE_KEY` | `string` (base64-encoded string) | **required** (if insecure not set) |
+| `certificate_file` and `certificate_key_file` | `CERTIFICATE_FILE` and `CERTIFICATE_KEY_FILE` | `string` (Relative file location for a single certificate) | **required** (if insecure not set) |
+
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
-
----
-
-**Config file keys:**
-- `certificates` (Not settable as environment variable)
-- `certificate` and `certificate_key`
-- `certificate_file` and `certificate_key_file` <br/>
-
-**Environment variables:**
-- `CERTIFICATE` and `CERTIFICATE_KEY`
-- `CERTIFICATE_FILE` and `CERTIFICATE_KEY_FILE` <br/>
-
-**Type:**
-- `string` (Array of relative file locations for multiple certificates)
-- `string` (base64-encoded string)
-- `string` (Relative file location for a single certificate) <br/>
-
-**Required** (if insecure not set)
 
 Add **Certificates** in the Enterprise Console:
 
@@ -101,8 +56,6 @@ All certificates supplied to Pemerium must be in **PEM** format.
 </TabItem>
 <TabItem value="Kubernetes" label="Kubernetes">
 
----
-
 ```yaml
 Spec:
   Certificates:
@@ -114,14 +67,31 @@ See Kubernetes [Ingress Configuration](/docs/deploying/k8s/reference#spec) for m
 </TabItem>
 </Tabs>
 
----
+### Examples
 
-**Certificates** are the X.509 _public-key_ and _private-key_ pair used to establish secure HTTP and gRPC connections. Any combination of the above settings can be used together and are additive. You can also use any of these settings in conjunction with [`Autocert`](/docs/reference/autocert) to get OCSP stapling.
+Specify multiple certificates at once:
 
-Certificates loaded into Pomerium from these config values are used to attempt secure connections between end-users and services, between Pomerium services, and to upstream endpoints.
+```yaml
+# Array of relative file locations for multiple certs
+certificates:
+  - cert: '$HOME/.acme.sh/authenticate.example.com_ecc/fullchain.cer'
+    key: '$HOME/.acme.sh/authenticate.example.com_ecc/authenticate.example.com.key'
+  - cert: '$HOME/.acme.sh/verify.example.com_ecc/fullchain.cer'
+    key: '$HOME/.acme.sh/verify.example.com_ecc/verify.example.com.key'
+  - cert: '$HOME/.acme.sh/prometheus.example.com_ecc/fullchain.cer'
+    key: '$HOME/.acme.sh/prometheus.example.com_ecc/prometheus.example.com.key'
+```
 
-:::tip **Note**
+Set a single certificate and key covering multiple domains and/or a wildcard subdomain:
 
-Pomerium will check your system's trust/key store for valid certificates first. If your certificate solution imports into the system store, you don't need to also specify them with these configuration keys.
+```yaml
+# Relative file location for a single cert
+certificate_file: '$HOME/.acme.sh/*.example.com/fullchain.crt'
+certificate_key: '$HOME/.acme.sh/*.example.com/*.example.com.key'
+```
+
+:::tip **Note:**
+
+All certificates supplied to Pemerium must be in **PEM** format.
 
 :::

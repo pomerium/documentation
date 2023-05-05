@@ -13,58 +13,47 @@ import TabItem from '@theme/TabItem';
 
 # Authorize Internal Service URL
 
+## Summary
+
+**Authorize Internal Service URL** is only required for [split-service mode](/docs/internals/configuration#all-in-one-vs-split-service-mode) deployments where Pomerium can’t access the public [**Authorize Service URL**](/docs/reference/authorize-service-url).
+
+If included, **Authorize Internal Service URL** will override Authorize Service URL.
+
+## How to configure
+
+| **Type** | **Usage** |
+| :--- | :--- |
+| `URL` | **required** (Inferred in all-in-one mode to be localhost) |
+
 <Tabs>
 <TabItem value="Core" label="Core">
 
----
+| **Config file keys** | **Environment variables** |
+| :--- | :--- |
+| `authorize_internal_service_url` | `AUTHORIZE_INTERNAL_SERVICE_URL` |
 
-**Config file key:** `authorize_internal_service_url` <br/>
-**Environment variable:** `AUTHORIZE_INTERNAL_SERVICE_URL` <br/>
-**Type:** `URL` <br/>
-**Required** (Inferred in all-in-one mode to be localhost.)
-
-**Example:**
-
-```yaml
-# config file key
-authorize_internal_service_url: https://pomerium-authorize-service.default.svc.cluster.local
-
-# environment variable
-AUTHORIZE_INTERNAL_SERVICE_URL=https://localhost:5443
-```
 
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
 
----
-
-**Config file key:** `authorize_internal_service_url` <br/>
-**Environment variable:** `AUTHORIZE_INTERNAL_SERVICE_URL` <br/>
-**Type:** `URL` <br/>
-**Required** (Inferred in all-in-one mode to be localhost.)
-
-**Example:**
-
-```yaml
-# config file key
-authorize_internal_service_url: https://pomerium-authorize-service.default.svc.cluster.local
-
-# environment variable
-AUTHORIZE_INTERNAL_SERVICE_URL=https://localhost:5443
-```
+| **Config file keys** | **Environment variables** |
+| :--- | :--- |
+| `authorize_internal_service_url` | `AUTHORIZE_INTERNAL_SERVICE_URL` |
 
 </TabItem>
 <TabItem value="Kubernetes" label="Kubernetes">
-
----
 
 Kubernetes does not support `authorize_internal_service_url`
 
 </TabItem>
 </Tabs>
 
----
+### Examples
 
-**Authorize Internal Service URL** is only required for [split-service mode](/docs/internals/configuration#all-in-one-vs-split-service-mode) deployments where Pomerium can’t access the public [**Authorize Service URL**](/docs/reference/authorize-service-url).
+```yaml
+# config file key
+authorize_internal_service_url: https://pomerium-authorize-service.default.svc.cluster.local
 
-If included, **Authorize Internal Service URL** will override Authorize Service URL.
+# environment variable
+AUTHORIZE_INTERNAL_SERVICE_URL=https://localhost:5443
+```

@@ -13,57 +13,48 @@ import TabItem from '@theme/TabItem';
 
 # Client Certificate Authority
 
+## Summary
+
+**Client Certificate Authority** is the X.509 _public-key_ used to validate [mTLS client certificates](/docs/capabilities/mtls-clients).
+
+If not set, no client certificate will be required.
+
+## How to configure
+
+| **Type** | **Usage** |
+| :--- | :--- |
+| `string` | **optional** |
+
 <Tabs>
 <TabItem value="Core" label="Core">
 
----
-
-**Config file keys:** `client_ca` and `client_ca_file` <br/>
-**Environment variables:** `CLIENT_CA` and `CLIENT_CA_FILE` <br/>
-**Type:** `string` <br/>
-**Optional**
-
-**Example:**
-```yaml
-client_ca: base64-encoded-string
-client_ca_file: base64-encoded-string
-
-CLIENT_CA=/relative/file/location
-CLIENT_CA_FILE=/relative/file/location
-```
+| **Config file keys** | **Environment variables** |
+| :--- | :--- |
+| `client_ca` | `CLIENT_CA` |
+| `client_ca_file` | `CLIENT_CA_FILE` |
 
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
 
----
-
-**Config file keys:** `client_ca` and `client_ca_file` <br/>
-**Environment variables:** `CLIENT_CA` and `CLIENT_CA_FILE` <br/>
-**Type:** `string` <br/>
-**Optional**
-
-**Example:**
-```yaml
-client_ca: base64-encoded-string
-client_ca_file: base64-encoded-string
-
-CLIENT_CA=/relative/file/location
-CLIENT_CA_FILE=/relative/file/location
-```
-
+| **Config file keys** | **Environment variables** |
+| :--- | :--- |
+| `client_ca` | `CLIENT_CA` |
+| `client_ca_file` | `CLIENT_CA_FILE` |
 
 </TabItem>
 <TabItem value="Kubernetes" label="Kubernetes">
-
----
 
 Kubernetes does not support `client_certificate_ca`
 
 </TabItem>
 </Tabs>
 
----
+### Examples
 
-**Client Certificate Authority** is the X.509 _public-key_ used to validate [mTLS client certificates](/docs/capabilities/mtls-clients).
+```yaml
+client_ca: base64-encoded-string
+client_ca_file: base64-encoded-string
 
-If not set, no client certificate will be required.
+CLIENT_CA=/relative/file/location
+CLIENT_CA_FILE=/relative/file/location
+```

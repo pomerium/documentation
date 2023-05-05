@@ -15,78 +15,60 @@ import TabItem from '@theme/TabItem';
 
 # Authenticate Callback Path
 
+## Summary
+
+**Authenticate Callback Path** sets the path where the Authenticate Service receives callback responses from your identity provider. The value must exactly match one of the authorized redirect URIs for the OAuth 2.0 client.
+
+This value is referred to as the `redirect_uri` in the [OpenIDConnect][oidc rfc] and [OAuth2][oauth2] specs.
+
+See [Google - Setting Redirect URI](https://developers.google.com/identity/protocols/OpenIDConnect#setredirecturi) for more information.
+
+[oidc rfc]: https://openid.net/specs/openid-connect-core-1_0.html#AuthRequest
+[oauth2]: https://tools.ietf.org/html/rfc6749#section-3.1.2
+
+## How to configure
+
+| **Type** | **Usage** | **Default** |
+| :--- | :--- | :--- |
+| `string` | **optional** | `/oauth2/callback` |
+
 <Tabs>
 <TabItem label="Core" value="Core">
 
----
-
-**Config file key:** `authenticate_callback_path` <br/>
-**Environment variable:** `AUTHENTICATE_CALLBACK_PATH` <br/>
-**Type:** `string` <br/>
-**Default:** `/oauth2/callback` <br/>
-**Optional**
-
-**Example:**
-
-```yaml
-# config file key
-authenticate_callback_path: "/custom/callback"
-
-# environment variable
-AUTHENTICATE_CALLBACK_PATH=/custom/callback
-```
+| **Config file keys** | **Environment variables** |
+| :--- | :--- |
+| `authenticate_callback_path` | `AUTHENTICATE_CALLBACK_PATH` |
 
 </TabItem>
 <TabItem label="Enterprise" value="Enterprise">
 
----
-
-**Config file key:** `authenticate_callback_path` <br/>
-**Environment variable:** `AUTHENTICATE_CALLBACK_PATH` <br/>
-**Type:** `string` <br/>
-**Default:** `/oauth2/callback` <br/>
-**Optional**
-
-**Example:**
-
-```yaml
-# config file key
-authenticate_callback_path: "/custom/callback"
-
-# environment variable
-AUTHENTICATE_CALLBACK_PATH=/custom/callback
-```
+| **Config file keys** | **Environment variables** |
+| :--- | :--- |
+| `authenticate_callback_path` | `AUTHENTICATE_CALLBACK_PATH` |
 
 </TabItem>
 <TabItem label="Kubernetes" value="Kubernetes">
 
----
-
-**Name:** `authenticate.callbackPath` <br/>
-**Type:** `string` <br/>
-**Default:** `/oauth2/callback` <br/>
-**Optional**
-
-**Example:**
-
-```yaml
-authenticate.callbackPath: /custom/callback
-```
+| **Name** |
+| :--- |
+| `authenticate.callbackPath` |
 
 See the [Kubernetes Deployment Reference](/docs/deploying/k8s/reference#authenticate) for more information.
 
 </TabItem>
 </Tabs>
 
----
+### Examples
 
-**Authenticate Callback Path** sets the path where the Authenticate Service receives callback responses from your identity provider. The value must exactly match one of the authorized redirect URIs for the OAuth 2.0 client.
+**Example:**
 
-This value is referred to as the `redirect_uri` in the [OpenIDConnect][oidc rfc] and [OAuth2][oauth2] specs.
+```yaml
+# config file key
+authenticate_callback_path: "/custom/callback"
 
-**See also:**
+# environment variable
+AUTHENTICATE_CALLBACK_PATH=/custom/callback
 
-- [Google - Setting Redirect URI](https://developers.google.com/identity/protocols/OpenIDConnect#setredirecturi)
-
-[oidc rfc]: https://openid.net/specs/openid-connect-core-1_0.html#AuthRequest
-[oauth2]: https://tools.ietf.org/html/rfc6749#section-3.1.2
+# ingress
+authenticate.callbackPath: /custom/callback
+```

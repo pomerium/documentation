@@ -10,57 +10,12 @@ pagination_prev: null
 pagination_next: null
 ---
 
-
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
 # Certificate Authority
 
-<Tabs>
-<TabItem value="Core" label="Core">
-
----
-
-**Config file key:** `certificate_authority` or `certificate_authority_file` <br/>
-**Environment variable:** `CERTIFICATE_AUTHORITY` or `CERTIFICATE_AUTHORITY_FILE` <br/>
-**Type:** `string` <br/>
-**Optional**
-
-**Examples:**
-
-```yaml
-# config file key
-certificate_authority: base64-encoded-string
-
-# environment variable
-CERTIFICATE_AUTHORITY_FILE=/relative/file/location
-```
-
-</TabItem>
-<TabItem value="Enterprise" label="Enterprise">
-
----
-
-**Config file key:** `certificate_authority` or `certificate_authority_file` <br/>
-**Environment variable:** `CERTIFICATE_AUTHORITY` or `CERTIFICATE_AUTHORITY_FILE` <br/>
-**Type:** `string` <br/>
-**Optional**
-
-Configure **Certificate Authority** in the Enterprise Console:
-
-![Set Certificate Authority in the Console](./img/certs/cert-authority-console.png)
-
-</TabItem>
-<TabItem value="Kubernetes" label="Kubernetes">
-
----
-
-Kubernetes does not support `certificate_authority`
-
-</TabItem>
-</Tabs>
-
----
+## Summary
 
 **Certificate Authority** defines a set of root certificate authorities (CAs) that Pomerium uses when communicating with other TLS-protected services.
 
@@ -75,3 +30,42 @@ Unlike route-specific CA settings, this setting augments (rather than replaces) 
 Be sure to include the intermediary certificate.
 
 :::
+
+## How to configure
+
+| **Type** | **Usage** |
+| :--- | :--- |
+| `string` | **optional** |
+
+<Tabs>
+<TabItem value="Core" label="Core">
+
+| **Config file keys** | **Environment variables** |
+| :--- | :--- |
+| `certificate_authority` | `CERTIFICATE_AUTHORITY` |
+| `certificate_authority_file` | `CERTIFICATE_AUTHORITY_FILE` |
+
+</TabItem>
+<TabItem value="Enterprise" label="Enterprise">
+
+Configure **Certificate Authority** in the Enterprise Console:
+
+![Set Certificate Authority in the Console](./img/certs/cert-authority-console.png)
+
+</TabItem>
+<TabItem value="Kubernetes" label="Kubernetes">
+
+Kubernetes does not support `certificate_authority`
+
+</TabItem>
+</Tabs>
+
+### Examples
+
+```yaml
+# config file key
+certificate_authority: base64-encoded-string
+
+# environment variable
+CERTIFICATE_AUTHORITY_FILE=/relative/file/location
+```

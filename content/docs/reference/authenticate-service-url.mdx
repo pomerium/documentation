@@ -15,66 +15,52 @@ import TabItem from '@theme/TabItem';
 
 # Authenticate Service URL
 
+## Summary
+
+**Authenticate Service URL** is the externally accessible URL for the Authenticate Service. In [split-service mode](/docs/internals/configuration#all-in-one-vs-split-service-mode), this key is required by all services other than Databroker.
+
+## How to configure
+
+| **Type** | **Usage** |
+| :--- | :--- |
+| `URL` | **required** |
+
 <Tabs>
 <TabItem value="Core" label="Core">
 
----
-
-**Config file key:** `authenticate_service_url` <br/>
-**Environment variable:** `AUTHENTICATE_SERVICE_URL` <br/>
-**Type:** `URL` <br/>
-**Required**
-
-**Example:**
-
-```yaml
-# config file key
-authenticate_service_url: https://authenticate.corp.example.com
-
-# environment variable
-AUTHENTICATE_SERVICE_URL=https://authenticate.corp.example.com
-```
+| **Config file keys** | **Environment variables** |
+| :--- | :--- |
+| `authenticate_service_url` | `AUTHENTICATE_SERVICE_URL` |
 
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
 
----
-
-**Config file key:** `authenticate_service_url` <br/>
-**Environment variable:** `AUTHENTICATE_SERVICE_URL` <br/>
-**Type:** `URL` <br/>
-**Required**
-
-**Example:**
-
-```yaml
-# config file key
-authenticate_service_url: https://authenticate.corp.example.com
-
-# environment variable
-AUTHENTICATE_SERVICE_URL=https://authenticate.corp.example.com
-```
+| **Config file keys** | **Environment variables** |
+| :--- | :--- |
+| `authenticate_service_url` | `AUTHENTICATE_SERVICE_URL` |
 
 </TabItem>
 <TabItem value="Kubernetes" label="Kubernetes">
 
----
+| **Name** |
+| :--- |
+| `AuthenticateUrl` |
 
-**Name:** `AuthenticateUrl` <br/>
-**Type:** `URL` <br/>
-**Required**
-
-**Example:**
-
-```yaml
-authenticate.url: https://authenticate.corp.example.com
-```
 
 See [Kubernetes `authenticate.url`](/docs/deploying/k8s/reference#authenticate) reference for more information.
 
 </TabItem>
 </Tabs>
 
----
+### Examples
 
-**Authenticate Service URL** is the externally accessible URL for the Authenticate Service. In [split-service mode](/docs/internals/configuration#all-in-one-vs-split-service-mode), this key is required by all services other than Databroker.
+```yaml
+# config file key
+authenticate_service_url: https://authenticate.corp.example.com
+
+# environment variable
+AUTHENTICATE_SERVICE_URL=https://authenticate.corp.example.com
+
+# ingress
+authenticate.url: https://authenticate.corp.example.com
+```

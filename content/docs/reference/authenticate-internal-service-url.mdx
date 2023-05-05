@@ -13,58 +13,46 @@ import TabItem from '@theme/TabItem';
 
 # Authenticate Internal Service URL
 
+## Summary
+
+**Authenticate Internal Service URL** is only required for [split-service mode](/docs/internals/configuration#all-in-one-vs-split-service-mode) deployments where Pomerium can’t access the public [**Authenticate Service URL**](/docs/reference/authenticate-service-url).
+
+If included, **Authenticate Internal Service URL** will override Authenticate Service URL.
+
+## How to configure
+
+| **Type** | **Usage** |
+| :--- | :--- |
+| `URL` | **required** (In [split-service mode](/docs/internals/configuration#all-in-one-vs-split-service-mode) only) |
+
 <Tabs>
 <TabItem label="Core" value="Core">
 
----
-
-**Config file key:** `authenticate_internal_service_url` <br/>
-**Environment variable:** ``AUTHENTICATE_INTERNAL_SERVICE_URL`` <br/>
-**Type:** `URL` <br/>
-**Required** (In [split-service mode](/docs/internals/configuration#all-in-one-vs-split-service-mode) only)
-
-**Example:**
-
-```yaml
-# config file key
-authenticate_internal_service_url: https://authenticate.internal
-
-# environment variable
-AUTHENTICATE_INTERNAL_SERVICE_URL=https://authenticate.internal
-```
+| **Config file keys** | **Environment variables** |
+| :--- | :--- |
+| `authenticate_internal_service_url` | `AUTHENTICATE_INTERNAL_SERVICE_URL` |
 
 </TabItem>
 <TabItem label="Enterprise" value="Enterprise">
 
----
-
-**Config file key:** `authenticate_internal_service_url` <br/>
-**Environment variable:** ``AUTHENTICATE_INTERNAL_SERVICE_URL`` <br/>
-**Type:** `URL` <br/>
-**Required** (In [split-service mode](/docs/internals/configuration#all-in-one-vs-split-service-mode) only)
-
-**Example:**
-
-```yaml
-# config file key
-authenticate_internal_service_url: https://authenticate.internal
-
-# environment variable
-AUTHENTICATE_INTERNAL_SERVICE_URL=https://authenticate.internal
-```
+| **Config file keys** | **Environment variables** |
+| :--- | :--- |
+| `authenticate_internal_service_url` | `AUTHENTICATE_INTERNAL_SERVICE_URL` |
 
 </TabItem>
 <TabItem label="Kubernetes" value="Kubernetes">
-
----
 
 Kubernetes does not support `authenticate_internal_service_url`
 
 </TabItem>
 </Tabs>
 
----
+### Examples
 
-**Authenticate Internal Service URL** is only required for [split-service mode](/docs/internals/configuration#all-in-one-vs-split-service-mode) deployments where Pomerium can’t access the public [**Authenticate Service URL**](/docs/reference/authenticate-service-url).
+```yaml
+# config file key
+authenticate_internal_service_url: https://authenticate.internal
 
-If included, **Authenticate Internal Service URL** will override Authenticate Service URL.
+# environment variable
+AUTHENTICATE_INTERNAL_SERVICE_URL=https://authenticate.internal
+```
