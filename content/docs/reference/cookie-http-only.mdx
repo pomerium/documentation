@@ -1,8 +1,8 @@
 ---
 id: cookie-http-only
-title: HTTP Only Cookie
+title: Cookie HTTP Only
 description: |
-  If true, forbids JavaScript from accessing the cookie.
+  If true, Cookie HTTP Only forbids JavaScript from accessing the cookie.
 keywords: [http-only]
 pagination_prev: null
 pagination_next: null
@@ -11,39 +11,29 @@ pagination_next: null
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-# HTTP Only Cookie
+# Coookie HTTP Only
+
+## Summary
+
+If true, **HTTP Only Cookie** forbids JavaScript from accessing the cookie.
+
+## How to configure
+
+| **Type** | **Default** |
+| :--- | :--- |
+| `boolean` | `true` |
 
 <Tabs>
 <TabItem value="Core" label="Core">
 
----
-
-**Config file keys:** `cookie_http_only` <br/>
-**Environment variables:** `COOKIE_HTTP_ONLY` <br/>
-**Type:** `boolean` <br/>
-**Default:** `true` <br/>
-
-
-**Example:**
-```yaml
-# config file key
-cookie_http_only: false
-
-# environment variable
-COOKIE_HTTP_ONLY=false
-```
+| **Config file keys** | **Environment variables** |
+| :--- | :--- |
+| `cookie_http_only` | `COOKIE_HTTP_ONLY` |
 
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
 
----
-
-**Config file keys:** `cookie_http_only` <br/>
-**Environment variables:** `COOKIE_HTTP_ONLY` <br/>
-**Type:** `boolean` <br/>
-**Default:** `true` <br/>
-
-In the Enterprise Console, configure `cookie_http_only` with the **Javascript Security** toggle button. The button has three states:
+Configure **Cookie HTTP Only** with the **Javascript Security** toggle button in the Console. The button has three states:
 - **Unset** ("-") uses the value in your `config.yaml` file
 - **Checkmark** sets `cookie_http_only` to `true`
 - **Empty** sets `cookie_http_only` to `false`
@@ -53,23 +43,24 @@ In the Enterprise Console, configure `cookie_http_only` with the **Javascript Se
 </TabItem>
 <TabItem value="Kubernetes" label="Kubernetes">
 
----
-
-**Name:** `cookie.expiration` <br/>
-**Default:** `14h` <br/>
-**Type:** `string`
-
-**Example:**
-```yaml
-cookie.httpOnly: false
-```
+| **Name** |
+| :--- |
+| `cookie.httpOnly` |
 
 See Kubernetes [Cookie Reference](/docs/deploying/k8s/reference#cookie) for more information.
 
 </TabItem>
 </Tabs>
 
----
+### Examples
 
-If true, **HTTP Only Cookie** forbids JavaScript from accessing the cookie.
+```yaml
+# config file key
+cookie_http_only: false
 
+# environment variable
+COOKIE_HTTP_ONLY=false
+
+# ingress
+cookie.httpOnly: false
+```

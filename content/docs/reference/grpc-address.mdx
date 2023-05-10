@@ -1,11 +1,11 @@
 ---
-id: cookie-name
-title: Cookie Name
+id: grpc-address
+title: gRPC Address
 description: |
-  The name of the session cookie sent to clients.
+  Address specifies the host and port to serve gRPC requests from.
 keywords:
   - reference
-  - Cookie Name
+  - GRPC Address
 pagination_prev: null
 pagination_next: null
 ---
@@ -13,41 +13,36 @@ pagination_next: null
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-# Cookie Name
+# gRPC Address
 
 ## Summary
 
-**Cookie Name** sets the name of the session cookie sent to clients.
+**gRPC Address** specifies the host and port to serve gRPC requests from.
 
 ## How to configure
 
 | **Type** | **Default** |
 | :--- | :--- |
-| `string` | `_pomerium` |
+| `string` | `:443` (`:5443` if in [all-in-one](/docs/internals/configuration#all-in-one-vs-split-service-mode) mode) |
 
 <Tabs>
 <TabItem value="Core" label="Core">
 
 | **Config file keys** | **Environment variables** |
 | :--- | :--- |
-| `cookie_name` | `COOKIE_NAME` |
-
+| `grpc_address` | `GRPC_ADDRESS` |
 
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
 
 | **Config file keys** | **Environment variables** |
 | :--- | :--- |
-| `cookie_name` | `COOKIE_NAME` |
+| `grpc_address` | `GRPC_ADDRESS` |
 
 </TabItem>
 <TabItem value="Kubernetes" label="Kubernetes">
 
-| **Name** |
-| :--- |
-| `cookie.name` |
-
-See Kubernetes [Cookie Reference](/docs/deploying/k8s/reference#cookie) for more information.
+**gRPC Address** is not customizable with Kubernetes
 
 </TabItem>
 </Tabs>
@@ -56,11 +51,8 @@ See Kubernetes [Cookie Reference](/docs/deploying/k8s/reference#cookie) for more
 
 ```yaml
 # config file key
-cookie_name: cookie_name
+grpc_address: :8443
 
 # environment variable
-COOKIE_NAME=cookie_name
-
-# ingress
-cookie.name: cookie_name
+GRPC_ADDRESS=:8443
 ```
