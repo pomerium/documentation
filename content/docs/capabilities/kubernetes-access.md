@@ -42,7 +42,7 @@ Pomerium can be leveraged as a proxy for user requests to the API Server.
 Building on top of a standard Kubernetes and Pomerium deployment:
 
 1. Pomerium is given access to a Kubernetes service account with [impersonation](https://kubernetes.io/docs/reference/access-authn-authz/authentication/#user-impersonation) permissions
-2. A [policy route](/docs/reference/policy/policy) is created for the API server and [configured](/docs/reference/routes/kubernetes-service-account-token) to use the service account token
+2. A [route's policy](/docs/reference/routes/policy) is created for the API server and [configured](/docs/reference/routes/kubernetes-service-account-token) to use the service account token
 3. Kubernetes RoleBindings operate against IdP Users and Group subjects
 4. Users access the protected cluster through their standard tools, using [pomerium-cli](/docs/releases/pomerium-cli) as an auth provider in `~/.kube/config`
 5. Pomerium authorizes requests and passes the user identity to the API server for fine grained RBAC
@@ -62,7 +62,3 @@ kubectl config set-context via-pomerium --user=via-pomerium --cluster=via-pomeri
 kubectl config set-credentials via-pomerium --exec-command=pomerium-cli \
   --exec-arg=k8s,exec-credential,https://mycluster.pomerium.io
 ```
-
-## More info
-
-See the [complete walk-through](/docs/guides/kubernetes) for a working end-to-end example.

@@ -256,3 +256,23 @@ We've repurposed a truncated version of the Response Code Details list in the ta
 ### Invalid Certificates from Command Line Tools
 
 When using Let's Encrypt certificates, you must use the `fullchain.pem` file, not `cert.pem` in order to include intermediate certs. Browsers like Chrome will store intermediate certs for LE but other tools (like `curl`) don't, which is why your route might look fine in a web browser, but not when curl'd or used for TCP tunneling.
+
+### Handle self-signed certificate warning
+
+If you're testing Pomerium locally with self-signed certificates, you may encounter the following self-signed certificate warning:
+
+![proceed to verify](./img/self-signed-warning/pomerium-proceed-to-verify.png)
+
+To resolve this error:
+
+1. Select **Advanced**
+1. Select **Proceed to verify.localhost.pomerium.io (unsafe)**
+
+If you don't see an **Advanced** option:
+
+1. Click anywhere in the window
+1. Type `thisisunsafe`
+1. Make sure **Reload** is selected
+1. Select **Enter**
+
+Your browser will redirect you to the route defined in your policy.

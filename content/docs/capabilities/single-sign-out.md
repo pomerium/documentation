@@ -8,7 +8,7 @@ Single sign-out (SSO) signs a user out of a secured application and clears both 
 
 ## OIDC Front-Channel Logout
 
-Pomerium supports Front-Channel Logout as described in [OpenID Connect Front-Channel Logout 1.0 - draft 04](https://openid.net/specs/openid-connect-frontchannel-1_0.html).
+Pomerium supports Front-Channel Logout as described in [OpenID Connect Front-Channel Logout 1.0](https://openid.net/specs/openid-connect-frontchannel-1_0.html).
 
 ### Identity provider support
 

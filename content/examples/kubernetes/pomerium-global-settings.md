@@ -6,10 +6,7 @@ metadata:
 spec:
   secrets: pomerium/bootstrap
   authenticate:
-      url: https://authenticate.localhost.pomerium.io
-  identityProvider:
-      provider: ${YOUR_IdP}
-      secret: pomerium/idp
+      url: https://authenticate.pomerium.app
   certificates:
       - pomerium/pomerium-wildcard-tls
   ```

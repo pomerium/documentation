@@ -10,15 +10,88 @@ pagination_next: null
 
 # From
 
-- `yaml`/`json` setting: `from`
-- Type: `URL` (must contain a scheme and hostname, must not contain a path)
-- Schemes: `https`, `tcp+https`
-- Required
-- Example: `https://verify.corp.example.com`, `tcp+https://ssh.corp.example.com:22`
+---
+
+**YAML/JSON setting:** `from` <br/> **Type:** `URL` (must contain a scheme and hostname, must not contain a path) <br/> **Schemes:** `https`, `tcp+https` <br/> **Required** <br/>
+
+**Example:**
+
+```yaml
+routes:
+  - from: https://verify.corp.example.com
+  - to: https://example.com
+
+# Or
+
+routes:
+  - from: tcp+https://ssh.corp.example.com:22
+  - to: tcp://example.com:22
+```
+
+---
 
 `From` is the externally accessible URL for the proxied request.
 
 Specifying `tcp+https` for the scheme enables [TCP proxying](/docs/capabilities/tcp/) support for the route. You may map more than one port through the same hostname by specifying a different `:port` in the URL.
+
+## Wildcard From Routes
+
+:::caution
+
+**Kubernetes:** Wildcard From Routes in Kubernetes are unofficially supported because Pomerium's implementation behaves differently than what Kubernetes defines in their documentation. See [Wildcard Hostnames](https://kubernetes.io/docs/concepts/services-networking/ingress/#hostname-wildcards) for more information.
+
+:::
+
+**Wildcard From Routes** supports the use of a wildcard asterisk (`*`) placed anywhere within the domain name portion of a `from` URL.
+
+Defining a `from` route with `*` will point any matching routes to the defined [To route](/docs/reference/routes/to). This eliminates the need to define multiple near-identical routes in your configuration. ([Autocert](/docs/reference/autocert) will be disabled for hosts that use Wildcard From Routes.)
+
+For example:
+
+```yaml
+# Before:
+routes:
+  - from: https://a.example.com
+    to: https://example.com
+  - from: https://b.example.com
+    to: https://example.com
+  - from: https://c.example.com
+    to: https://example.com
+  - from: https://d.example.com
+    to: https://example.com
+  - from: https://e.example.com
+    to: https://example.com
+
+# After
+routes:
+  - from: https://*.example.com
+    to: https://example.com
+
+# Or
+
+routes:
+  - from: tcp+https://*.example.com:22
+    to: tcp://example.com:22
+```
+
+:::tip **Note**
+
+Wildcard From Routes (`*`) may take precedence over non-wildcard routes regardless of their ordering, and more specific wildcard routes will take precedence over less specific wildcard routes.
+
+In the example below, **Route C** will take priority over routes **A** or **B**:
+
+```yaml
+# Route A
+https://*.localhost.pomerium.io
+
+# Route B
+https://a*.localhost.pomerium.io
+
+# Route C
+https://a*a.localhost.pomerium.io
+```
+
+:::
 
 :::warning
 
