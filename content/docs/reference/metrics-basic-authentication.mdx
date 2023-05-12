@@ -1,0 +1,60 @@
+---
+id: metrics-basic-authentication
+title: Metrics Basic Authentication
+keywords:
+  - reference
+  - Metrics Basic Authentication
+description: Metrics Basic Authentication requires basic HTTP authentication to access the metrics endpoint.
+pagination_prev: null
+pagination_next: null
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Metrics Basic Authentication
+
+## Summary
+
+**Metrics Basic Authentication** requires [Basic HTTP Authentication](https://tools.ietf.org/html/rfc7617) to access the metrics endpoint.
+
+To support this in Prometheus, consult the `basic_auth` option in the [`scrape_config`](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#scrape_config) documentation.
+
+## How to configure
+
+| **Type** | **Usage** |
+| :--- | :--- |
+| `string` ([base64 encoded](https://en.wikipedia.org/wiki/Base64)) | **optional** |
+
+<Tabs>
+<TabItem value="Core" label="Core">
+
+| **Config file keys** | **Environment variables** |
+| :--- | :--- |
+| `metrics_basic_authentication` | `METRICS_BASIC_AUTHENTICATION` |
+
+</TabItem>
+<TabItem value="Enterprise" label="Enterprise">
+
+| **Config file keys** | **Environment variables** |
+| :--- | :--- |
+| `metrics_basic_authentication` | `METRICS_BASIC_AUTHENTICATION` |
+
+</TabItem>
+<TabItem value="Kubernetes" label="Kubernetes">
+
+Kubernetes does not support `metrics_basic_authentication`
+
+</TabItem>
+</Tabs>
+
+### Examples
+
+```yaml
+# for username: x and password: y
+metrics_basic_authentication: eDp5
+
+METRICS_BASIC_AUTHENTICATION=eDp5
+```
+
+

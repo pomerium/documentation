@@ -2,7 +2,7 @@
 id: metrics-address
 title: Metrics Address
 description: |
-  Expose a prometheus format HTTP endpoint on the specified port.
+  Expose a Prometheus format HTTP endpoint on the specified port.
 keywords:
   - reference
   - Metrics Address
@@ -10,21 +10,58 @@ pagination_prev: null
 pagination_next: null
 ---
 
-- Environmental Variable: `METRICS_ADDRESS`
-- Config File Key: `metrics_address`
-- Kubernetes: see [Metrics](/docs/deploying/k8s/install#metrics)
-- Type: `string`
-- Example: `:9090`, `127.0.0.1:9090`
-- Default: `disabled`
-- Optional
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
 
-Expose a prometheus endpoint on the specified port.
+# Metrics Address
+
+## Summary
+
+**Metrics Address** exposes a Prometheus endpoint on the specified port.
 
 :::warning
 
 **Use with caution:** the endpoint can expose frontend and backend server names or addresses. Do not externally expose the metrics if this is sensitive information.
 
 :::
+
+## How to configure
+
+| **Type** | **Usage** | **Default** |
+| :--- | :--- | :--- |
+| `string` | **optional** | `disabled` |
+
+<Tabs>
+<TabItem value="Core" label="Core">
+
+| **Config file keys** | **Environment variables** |
+| :--- | :--- |
+| `metrics_address` | `METRICS_ADDRESS` |
+
+</TabItem>
+<TabItem value="Enterprise" label="Enterprise">
+
+| **Config file keys** | **Environment variables** |
+| :--- | :--- |
+| `metrics_address` | `METRICS_ADDRESS` |
+
+</TabItem>
+<TabItem value="Kubernetes" label="Kubernetes">
+
+See Kubernetes [Metrics](/docs/deploying/k8s/install#metrics)
+
+</TabItem>
+</Tabs>
+
+### Examples
+
+```yaml
+# config file key
+metrics_address: :9090
+
+# environment variable
+METRICS_ADDRESS: 127.0.0.1:9090
+```
 
 ## Pomerium Metrics Tracked
 
@@ -56,7 +93,7 @@ Each metric exposed by Pomerium has a `pomerium` prefix, which is omitted in the
 
 ## Identity Manager
 
-Identity manager metrics have `pomerium_identity_manager` prefix.
+Identity manager metrics have a `pomerium_identity_manager` prefix.
 
 | Name | Type | Description |
 | --- | --- | --- |
@@ -76,6 +113,8 @@ Identity manager metrics have `pomerium_identity_manager` prefix.
 
 ## Envoy Proxy Metrics
 
-As of `v0.9`, Pomerium uses [envoy](https://www.envoyproxy.io/) for the data plane. As such, proxy related metrics are sourced from envoy, and use envoy's internal [stats data model](https://www.envoyproxy.io/docs/envoy/latest/operations/stats_overview). Please see Envoy's documentation for information about specific metrics.
+As of `v0.9`, Pomerium uses [Envoy](https://www.envoyproxy.io/) for the data plane. As such, proxy related metrics are sourced from Envoy, and use Envoy's internal [stats data model](https://www.envoyproxy.io/docs/envoy/latest/operations/stats_overview). Please see Envoy's documentation for information about specific metrics.
 
-All metrics coming from envoy will be labeled with `service="pomerium"` or `service="pomerium-proxy"`, depending if you're running all-in-one or distributed service mode and have `pomerium` prefix added to the standard envoy metric name.
+All metrics coming from Envoy will be labeled with `service="pomerium"` or `service="pomerium-proxy"`, depending if you're running all-in-one or distributed service mode and have `pomerium` prefix added to the standard envoy metric name.
+
+See [Configuration & Settings](/docs/internals/configuration#all-in-one-vs-split-service-mode) for more information configuration environments.

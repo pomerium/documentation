@@ -1,0 +1,61 @@
+---
+id: service-mode
+title: Service Mode
+description: |
+  Service mode sets the pomerium service(s) to run.
+keywords:
+  - reference
+  - Service Mode
+pagination_prev: null
+pagination_next: null
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Service Mode
+
+## Summary
+
+**Service Mode** sets which service(s) to run. If testing, you may want to set to `all` and run Pomerium in [all-in-one mode](/docs/internals/configuration#all-in-one-vs-split-service-mode). In production, you'll likely want to spin up several instances of each service mode for [high availability](/docs/capabilities/high-availability).
+
+## How to configure
+
+| **Type** | **Default** | **Options** |
+| :--- | :--- | :--- |
+| `string` | `all` | `all` |
+|  | | `authenticate` |
+|  | | `authorize` |
+|  | | `proxy` |
+|  | | `databroker` |
+
+<Tabs>
+<TabItem value="Core" label="Core">
+
+| **Config file keys** | **Environment variables** |
+| :--- | :--- |
+| `service` | `SERVICE` |
+
+</TabItem>
+<TabItem value="Enterprise" label="Enterprise">
+
+| **Config file keys** | **Environment variables** |
+| :--- | :--- |
+| `service` | `SERVICE` |
+
+</TabItem>
+<TabItem value="Kubernetes" label="Kubernetes">
+
+**Service Mode** is not customizable in Kubernetes
+
+</TabItem>
+</Tabs>
+
+### Examples
+
+```yaml
+# config file key
+service: authorize
+
+SERVICE=databroker
+```

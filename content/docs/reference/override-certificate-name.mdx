@@ -1,0 +1,63 @@
+---
+id: override-certificate-name
+title: Override Certificate Name
+description: |
+  Secure service communication can fail if the external certificate does not match the internally routed service hostname/SNI.
+keywords:
+  - reference
+  - Override Certificate Name
+pagination_prev: null
+pagination_next: null
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Override Certificate Name
+
+## Summary
+
+Secure service communication can fail if the external certificate does not match the internally routed service hostname/[SNI](https://en.wikipedia.org/wiki/Server_Name_Indication).
+
+**Override Certificate Name** allows you to override that value.
+
+## How to configure
+
+| **Type** | **Usage** |
+| :--- | :--- |
+| `string` | **optional** |
+
+<Tabs>
+<TabItem value="Core" label="Core">
+
+| **Config file keys** | **Environment variables** |
+| :--- | :--- |
+| `override_certificate_name` | `OVERRIDE_CERTIFICATE_NAME` |
+
+</TabItem>
+<TabItem value="Enterprise" label="Enterprise">
+
+| **Config file keys** | **Environment variables** |
+| :--- | :--- |
+| `override_certificate_name` | `OVERRIDE_CERTIFICATE_NAME` |
+
+</TabItem>
+<TabItem value="Kubernetes" label="Kubernetes">
+
+Kubernetes does not support **Override Certificate Name**
+
+</TabItem>
+</Tabs>
+
+### Examples
+
+```yaml
+# wildcard support
+override_certificate_name: *.corp.example.com
+
+# domain
+OVERRIDE_CERTIFICATE_NAME=authenticate.corp.example.com
+
+# or
+override_certificate_name: authorize.corp.example.com
+```
