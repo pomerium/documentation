@@ -18,52 +18,69 @@ import TabItem from '@theme/TabItem';
 
 ## Summary
 
-The **JWT Claim Headers** setting allows you to pass specific user session data to upstream applications as HTTP request headers. Unlike the `X-Pomerium-Jwt-Assertion` header, JWT Claim Header values are not signed by the Authorization Service.
+The **JWT Claims Headers** setting allows you to pass specific user session data to upstream applications as HTTP request headers. Claims forwarded with JWT Claims Headers are not signed by the Authorization Service (unlike the ` X-Pomerium-Jwt-Assertion` header).
 
-Forwarding a claim with JWT Claim Headers adds the claim to the `X-Pomerium-Jwt-Assertion` header (if it's not already included).
-
-Additionally, this will add the claim to the `X-Pomerium-Jwt-Assertion` header provided by [`pass_identity_headers`](/docs/reference/routes/pass-identity-headers), if not already present.
-
-Any claim in the pomerium session JWT can be placed into a corresponding header and the JWT payload for upstream consumption. This claim information is sourced from your Identity Provider (IdP) and Pomerium's own session metadata.
-
-### JWT Claim Header format
-
-
+Forwarding a claim with JWT Claims Headers adds the claim to the X-Pomerium-Jwt-Assertion header if the claim is not already included in the assertion header. Both JWT Claims Headers and the signed assertion header are forwarded with the [`pass_identity_headers`](/docs/reference/routes/pass-identity-headers) setting.
 
 ## How to configure
+
+| **Type** | **Usage** |
+| :--- | :--- |
+| `string` | **optional** |
 
 <Tabs>
 <TabItem value="Core" label="Core">
 
+| **Config file keys** | **Environment variables** |
+| :--- | :--- |
+| `jwt_claims_headers` | `JWT_CLAIMS_HEADERS` |
+
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
+
+Format **JWT Claims Headers** in the Console:
+
+![Format JWT Claims Headers in the Console](./img/jwts/jwt-claims-headers-console.png)
 
 </TabItem>
 <TabItem value="Kubernetes" label="Kubernetes">
 
+| **Name** |
+| :--- |
+| `jwtClaimHeaders` |
+
+See Kubernetes [jwtClaimHeaders](/docs/deploying/k8s/reference#spec) for more information.
+
 </TabItem>
 </Tabs>
 
-- Environmental Variable: `JWT_CLAIMS_HEADERS`
-- Config File Key: `jwt_claims_headers`
-- Kubernetes: see [`jwtClaimHeaders`](/docs/deploying/k8s/reference#spec)
-- Type: slice of `string`
-- Example: `email`, `groups`, `user`, `given_name`
-- Optional
+### Format JWT Claims Headers
 
+Any claim in Pomerium’s session JWT can be placed into a corresponding header and the JWT payload for upstream consumption. Claim information is sourced from your [identity provider](/docs/identity-providers) and Pomerium’s own session metadata.
 
 The header will have the following format:
 
-`X-Pomerium-Claim-{Name}` where `{Name}` is the name of the claim requested. Underscores will be replaced with dashes; e.g. `X-Pomerium-Claim-Given-Name`.
+`X-Pomerium-Claim-{Name}`, where `{Name}` is the name of the requested claim. Underscores will replace dashes. For example, `X-Pomerium-Claim-Given-Name`.
 
-This option also supports a nested object to customize the header name. For example:
+### Customize header names
+
+The JWT Claims Headers setting allows you to customize claim headers with a nested object:
 
 ```yaml
 jwt_claims_headers:
-  X-Email: email
+	X-Email: email
+	X-Username: user
 ```
+The JSON payload from this example would look similar to the sample data below:
 
-Will add an `X-Email` header with a value of the `email` claim.
+```JSON
+"X-Email": [
+  "user@example.com"
+],
+"X-Username": [
+  "user"
+]
+```
 
 Use this option if you previously relied on `x-pomerium-authenticated-user-{email|user-id|groups}`.
 
