@@ -8,17 +8,27 @@ pagination_prev: null
 pagination_next: null
 ---
 
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
 # Tracing
+
+## Summary
 
 Tracing tracks the progression of a single user request as it is handled by Pomerium.
 
 Each unit of work is called a Span in a trace. Spans include metadata about the work, including the time spent in the step (latency), status, time events, attributes, links. You can use tracing to debug errors and latency issues in your applications, including in downstream connections.
 
+## How to configure
+
+<Tabs>
+<TabItem value="Core" label="Core">
+
 #### Shared Tracing Settings
 
 | Config Key | Description | Required |
 | :-- | :-- | --- |
-| tracing_provider | The name of the tracing provider. (e.g. jaeger, zipkin) | ✅ |
+| tracing_provider | The name of the tracing provider. (e.g. Jaeger, Zipkin) | ✅ |
 | tracing_sample_rate | Percentage of requests to sample in decimal notation. Default is `0.0001`, or .01% | ❌ |
 
 #### Datadog
@@ -31,7 +41,7 @@ Datadog is a real-time monitoring system that supports distributed tracing and m
 
 #### Jaeger (partial)
 
-**Warning** At this time, Jaeger protocol does not capture spans inside the Proxy service. Please use Zipkin protocol with Jaeger for full support.
+**Warning** At this time, the Jaeger protocol does not capture spans inside the Proxy Service. Please use the Zipkin protocol with Jaeger for full support.
 
 [Jaeger](https://www.jaegertracing.io/) is a distributed tracing system released as open source by Uber Technologies. It is used for monitoring and troubleshooting microservices-based distributed systems, including:
 
@@ -48,14 +58,34 @@ Datadog is a real-time monitoring system that supports distributed tracing and m
 
 #### Zipkin
 
-Zipkin is an open source distributed tracing system and protocol.
+Zipkin is an open-source distributed tracing system and protocol.
 
-Many tracing backends support zipkin either directly or through intermediary agents, including Jaeger. For full tracing support, we recommend using the Zipkin tracing protocol.
+Many tracing backends support Zipkin either directly or through intermediary agents, including Jaeger. For full tracing support, we recommend using the Zipkin tracing protocol.
 
 | Config Key              | Description                      | Required |
 | :---------------------- | :------------------------------- | -------- |
 | tracing_zipkin_endpoint | Url to the Zipkin HTTP endpoint. | ✅       |
 
-#### Example
+</TabItem>
+<TabItem value="Enterprise" label="Enterprise">
+
+Configure **Tracing** in the Console:
+
+1. Select a **Tracing Provider** and set **Sample Tracing Rate**
+
+![Select tracing provider](./img/tracing/tracing-providers.png)
+
+![Select tracing provider and sample rate](./img/tracing/default-tracing.png)
+
+2. Configure tracing **Endpoints**
+
+![Set Jaeger enpdoints](./img/tracing/jaeger-endpoints.png)
+
+![Set Zipkin endpoint](./img/tracing/zipkin-endpoint.png)
+
+</TabItem>
+</Tabs>
+
+### Examples
 
 ![jaeger example trace](img/jaeger.png)

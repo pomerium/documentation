@@ -12,15 +12,54 @@ pagination_prev: null
 pagination_next: null
 ---
 
-- Environmental Variable: `SIGNING_KEY`
-- Config File Key: `signing_key`
-- Kubernetes: see [bootstrap `secrets`](/docs/deploying/k8s/reference#spec)
-- Type: [base64 encoded](https://en.wikipedia.org/wiki/Base64) `string`
-- Optional
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
 
-Signing Key is one or more PEM-encoded private keys used to sign a user's attestation JWT which can be consumed by upstream applications to pass along identifying user information like username, id, and groups. If multiple keys are provided only the first will be used for signing.
+# Signing Key
 
-If set, the signing key's public key(s) can be retrieved by hitting Pomerium's well-known JWKS endpoint (`/.well-known/pomerium/jwks.json`). Otherwise, the endpoint will return an empty keyset.
+## Summary
+
+**Signing Key** is one or more PEM-encoded private keys used to sign a user's attestation JWT, which can be consumed by upstream applications to pass along identifying user information like username, id, and groups.
+
+## How to configure
+
+| **Type** | **Usage** |
+| :--- | :--- |
+| `string` | **optional** |
+
+<Tabs>
+<TabItem value="Core" label="Core">
+
+| **Config file keys** | **Environment variables** |
+| :--- | :--- |
+| `signing_key` | `SIGNING_KEY` |
+
+</TabItem>
+<TabItem value="Enterprise" label="Enterprise">
+
+| **Config file keys** | **Environment variables** |
+| :--- | :--- |
+| `signing_key` | `SIGNING_KEY` |
+
+</TabItem>
+<TabItem value="Kubernetes" label="Kubernetes">
+
+| **Name** |
+| :--- |
+| `secrets.signing_key` |
+
+See Kubernetes [bootstrap secrets](/docs/deploying/k8s/reference#spec) for more information.
+
+</TabItem>
+</Tabs>
+
+### How to use signing key
+
+If set, the signing key's public key(s) can be retrieved by hitting Pomerium's well-known JWKS endpoint:
+
+`/.well-known/pomerium/jwks.json`
+
+Otherwise, the endpoint will return an empty keyset.
 
 For example, assuming you have [generated an ES256 key](https://github.com/pomerium/pomerium/blob/main/scripts/generate_self_signed_signing_key.sh) with the following commands:
 
@@ -56,6 +95,8 @@ curl https://route.int.example.com/.well-known/pomerium/jwks.json | jq
 If multiple keys are supplied in the PEM data, all of them will be published to the JWKS endpoint.
 
 If no certificate is specified, one will be generated and the base64'd public key will be added to the logs. Note, however, that this key is unique to each service, ephemeral, and will not be accessible via the well-known JWKS endpoint.
+
+If multiple keys are provided, only the first will be used for signing.
 
 ### Key rotation
 
