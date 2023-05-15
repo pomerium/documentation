@@ -8,37 +8,71 @@ pagination_prev: null
 pagination_next: null
 ---
 
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
 # From
 
----
+## Summary
 
-**YAML/JSON setting:** `from` <br/> **Type:** `URL` (must contain a scheme and hostname, must not contain a path) <br/> **Schemes:** `https`, `tcp+https` <br/> **Required** <br/>
+**From** is the externally accessible URL for the proxied request.
 
-**Example:**
+Specifying `tcp+https` for the scheme enables [TCP proxying](/docs/capabilities/tcp/) support for the route. You may map more than one port through the same hostname by specifying a different `:port` in the URL.
+
+## How to configure
+
+| **Type** | **Schemes** | **Usage** |
+| :--- | :--- | :--- |
+| `URL` |  `https`, `tcp+https` | **required** |
+
+The `URL` must contain a **scheme** and **hostname** and cannot contain a path.
+
+:::warning
+
+Only secure schemes (`https` and `tcp+https`) are supported.
+
+:::
+
+<Tabs>
+<TabItem value="Core" label="Core">
+
+| **YAML**/**JSON** setting |
+| :--- |
+| `from` |
+
+</TabItem>
+<TabItem value="Enterprise" label="Enterprise">
+
+Define a **From** route under **General** route settings in the Console:
+
+![Define a route in the Console](../img/routes/from-route.png)
+
+</TabItem>
+<TabItem value="Kubernetes" label="Kubernetes">
+
+See Kubernetes [Ingress](/docs/deploying/k8s/ingress) for more information.
+
+</TabItem>
+</Tabs>
+
+### Examples
 
 ```yaml
 routes:
   - from: https://verify.corp.example.com
   - to: https://example.com
 
-# Or
-
+# TCP
 routes:
   - from: tcp+https://ssh.corp.example.com:22
   - to: tcp://example.com:22
 ```
 
----
-
-`From` is the externally accessible URL for the proxied request.
-
-Specifying `tcp+https` for the scheme enables [TCP proxying](/docs/capabilities/tcp/) support for the route. You may map more than one port through the same hostname by specifying a different `:port` in the URL.
-
 ## Wildcard From Routes
 
 :::caution
 
-**Kubernetes:** Wildcard From Routes in Kubernetes are unofficially supported because Pomerium's implementation behaves differently than what Kubernetes defines in their documentation. See [Wildcard Hostnames](https://kubernetes.io/docs/concepts/services-networking/ingress/#hostname-wildcards) for more information.
+Kubernetes: Wildcard From Routes in Kubernetes are unofficially supported because Pomerium's implementation behaves differently than what Kubernetes defines in their documentation. See [Wildcard Hostnames](https://kubernetes.io/docs/concepts/services-networking/ingress/#hostname-wildcards) for more information.
 
 :::
 
@@ -90,11 +124,5 @@ https://a*.localhost.pomerium.io
 # Route C
 https://a*a.localhost.pomerium.io
 ```
-
-:::
-
-:::warning
-
-Only secure schemes (`https` and `tcp+https`) are supported.
 
 :::
