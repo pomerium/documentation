@@ -1,0 +1,54 @@
+---
+id: idle-timeout
+title: Idle Timeout
+keywords:
+  - reference
+  - Idle Timeout
+pagination_prev: null
+pagination_next: null
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Idle Timeout
+
+## Summary
+
+If you are proxying long-lived requests that employ streaming calls such as websockets or gRPC, set **Idle Timeout** to either a maximum value there may be no data exchange over a connection (recommended), or set it to unlimited (`0s`).
+
+If `idle_timeout` is specified, and [route timeout](/docs/reference/routes/route-timeout) is not explicitly set, then the route timeout would be unlimited (`0s`). You still may specify maximum lifetime of the connection using the route timeout value (i.e. to 1 day).
+
+## How to configure
+
+| **Type** | **Usage** | **Default** |
+| :--- | :--- | :--- |
+| `string` ([Go Duration](https://golang.org/pkg/time/#Duration.String) formatting) | **optional** | `5m` |
+
+<Tabs>
+<TabItem value="Core" label="Core">
+
+| **YAML**/**JSON** setting |
+| :--- |
+| `idle_timeout` |
+
+</TabItem>
+<TabItem value="Enterprise" label="Enterprise">
+
+Set **Idle Timeout** under route **Timeouts** settings in the Console:
+
+![Set idle timeout in the Console](../img/routes/timeouts/idle-and-route-timeouts.png)
+
+</TabItem>
+<TabItem value="Kubernetes" label="Kubernetes">
+
+</TabItem>
+</Tabs>
+
+```yaml
+routes:
+  - from: https://verify.localhost.pomerium.io
+    to: http://verify:8000
+    timeout: 1m
+    idle_timeout: 5m
+```
