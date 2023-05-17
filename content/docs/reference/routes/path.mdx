@@ -1,0 +1,56 @@
+---
+id: path
+title: Path
+keywords:
+  - reference
+  - Path
+pagination_prev: null
+pagination_next: null
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Path
+
+## Summary
+
+If **Path** is set, the route will only match incoming requests with a path that is an exact match for the specified path.
+
+## How to configure
+
+| **Type** | **Usage** |
+| :--- | :--- |
+| `string` | **optional** |
+
+<Tabs>
+<TabItem value="Core" label="Core">
+
+| **YAML**/**JSON** setting |
+| :--- |
+| `path` |
+
+</TabItem>
+<TabItem value="Enterprise" label="Enterprise">
+
+Set **Path** under **Path Matching** settings in the Console:
+
+![Set path in the Console](../img/routes/path-matching/exact-path.png)
+
+</TabItem>
+<TabItem value="Kubernetes" label="Kubernetes">
+
+See Kubernetes [Ingress](/docs/deploying/k8s/ingress#regular-expressions-path-matching) for more information
+
+</TabItem>
+</Tabs>
+
+### Examples
+
+```yaml
+routes:
+  - from: https://verify.localhost.pomerium.io
+    to: http://verify:8000
+    path: /admin/some/exact/path
+```
+
