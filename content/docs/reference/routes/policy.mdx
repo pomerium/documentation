@@ -7,6 +7,79 @@ pagination_prev: null
 pagination_next: null
 ---
 
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Policy
+
+## Summary
+
 The `policy` block inside a `route` definition defines the authorization policy applied to a route. Policies are defined using Pomerium Policy Language (**PPL**), a yaml-based markup designed to be easier to read and implement compared to current alternatives.
 
 See [Pomerium Policy Language](/docs/capabilities/ppl) for a full explanation of how to write policies in PPL.
+
+## How to configure
+
+| **Type** | **Usage** |
+| :--- | :--- |
+| `string` | **optional** |
+
+<Tabs>
+<TabItem value="Core" label="Core">
+
+| **YAML**/**JSON** setting |
+| :--- |
+| `policy` |
+
+</TabItem>
+<TabItem value="Enterprise" label="Enterprise">
+
+Build a **Policy** in the Console:
+
+Create a policy:
+
+![Create a policy](../img/routes/policies/create-policy.png)
+
+Add actions and rules in the **Policy Builder**:
+
+![Add actions and rules in the policy builder](../img/routes/policies/build-policy.png)
+
+Edit your policy:
+
+![Edit your policy](../img/routes/policies/edit-policy.png)
+
+</TabItem>
+<TabItem value="Kubernetes" label="Kubernetes">
+
+| **Name** |
+| :--- |
+| `policy` |
+
+See Kubernetes [Ingress](/docs/deploying/k8s/ingress#access-policy-examples) for more information
+
+</TabItem>
+</Tabs>
+
+### Examples
+
+```yaml
+routes:
+  - from: https://verify.localhost.pomerium.io
+    to: http://verify:8000
+    policy:
+      - allow:
+          and:
+            - domain:
+                is: pomerium.com
+            - user:
+                is: user
+
+# ingress
+ingress.pomerium.io/policy: |
+  allow:
+    and:
+      - domain:
+          is: pomerium.com
+      - user:
+          is: user
+```
