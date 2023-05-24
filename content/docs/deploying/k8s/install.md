@@ -18,7 +18,7 @@ Use Pomerium as a first-class secure-by-default Ingress Controller. The Pomerium
 ## Deploy
 
 ```console
-kubectl apply -k github.com/pomerium/ingress-controller/config/default\?ref=v0.20.0
+kubectl apply -k github.com/pomerium/ingress-controller/config/default\?ref=v0.22.1
 ```
 
 The Pomerium Ingress Controller is now installed into your cluster.
@@ -78,7 +78,7 @@ kustomize build config/default
 
 ```yaml title="kustomization.yaml"
 resources:
-  - https://raw.githubusercontent.com/pomerium/ingress-controller/v0.20.0/deployment.yaml
+  - https://raw.githubusercontent.com/pomerium/ingress-controller/v0.22.1/deployment.yaml
 patchesStrategicMerge:
   - patch-proxy-external-dns.yaml
 ```
@@ -105,7 +105,7 @@ You must configure [storage persistence](/docs/internals/data-storage) in order 
 
 ```yaml title="kustomization.yaml"
 resources:
-  - https://raw.githubusercontent.com/pomerium/ingress-controller/v0.20.0/deployment.yaml
+  - https://raw.githubusercontent.com/pomerium/ingress-controller/v0.22.1/deployment.yaml
 patchesStrategicMerge:
   - deployment.yaml
 ```
@@ -126,7 +126,7 @@ An `IngressClass` may be designated as a [default controller](https://kubernetes
 
 ```yaml title="kustomization.yaml"
 resources:
-  - https://raw.githubusercontent.com/pomerium/ingress-controller/v0.20.0/deployment.yaml
+  - https://raw.githubusercontent.com/pomerium/ingress-controller/v0.22.0/deployment.yaml
 patchesStrategicMerge:
   - patch-proxy-external-dns.yaml
 ```
@@ -144,6 +144,59 @@ metadata:
 
 In some cases, you may need to run multiple controllers, see this [community example](https://discuss.pomerium.com/t/kubernetes-ingress-multiple-idp/155/3).
 
+### Expose Envoy Admin interface
+
+Make sure to always restrict access to the envoy admin interface ingress.
+
+```yaml title="kustomization.yaml"
+resources:
+  - github.com/pomerium/ingress-controller/config/default\?ref=v0.22.1
+  - admin-service.yaml
+  - admin-ingress.yaml
+patches:
+  - patch: |-
+      - op: add
+        path: /spec/template/spec/containers/0/args/-
+        value: "--debug-admin-addr=localhost:9901"
+    target:
+      kind: Deployment
+      name: pomerium
+```
+
+```yaml title="admin-service.yaml"
+apiVersion: v1
+kind: Service
+metadata:
+  name: envoy
+spec:
+  type: ExternalName
+  externalName: 'localhost'
+  ports:
+    - protocol: TCP
+      name: admin
+      port: 9901
+```
+
+```yaml title="admin-ingress.yaml"
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: envoy
+spec:
+  ingressClassName: pomerium
+  rules:
+    - host: 'envoy.localhost.pomerium.io'
+      http:
+        paths:
+          - pathType: Prefix
+            path: /
+            backend:
+              service:
+                name: envoy
+                port:
+                  name: admin
+```
+
 ## Runtime parameters
 
 Some parameters are only set by default via command line arguments to the container.
@@ -158,3 +211,4 @@ Normally, you would not need to adjust the container runtime parameters.
 - `server-addr`: the address HTTPS server would bind to, `:8443` by default.
 - `http-redirect-addr`: the address HTTP to HTTPS redirect server would bind to, `:8080`.
 - `metrics-bind-address`: `host:port` exposes Prometheus style metrics.
+- `debug-admin-addr`: `localhost:port` exposes Envoy admin interface.
