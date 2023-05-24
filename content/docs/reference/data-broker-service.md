@@ -4,7 +4,7 @@ title: Databroker Service
 keywords:
   - reference
   - Databroker Service
-description: Learn about databrokers with Pomerium and how to implement your own in-memory database used by the databroker service. 
+description: Learn about databrokers with Pomerium and how to implement your own in-memory database used by the databroker service.
 pagination_prev: null
 pagination_next: null
 ---

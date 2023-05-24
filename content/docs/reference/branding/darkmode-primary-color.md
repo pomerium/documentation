@@ -14,8 +14,8 @@ keywords: [branding, dark mode, enterprise console]
 
 ## How to configure
 
-| **Type** | **Default** |
-| :--- | :--- |
+| **Type**   | **Default**                 |
+| :--------- | :-------------------------- |
 | `hex code` | Pomerium Purple (`#6F43E7`) |
 
 See [Custom Branding / Errors](/docs/capabilities/branding) for more information.

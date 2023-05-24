@@ -2,7 +2,7 @@
 id: logo-url
 title: Logo URL
 description: |
-  Add a custom Logo to the Enterprise Console and Open Source (Core) endpoints. 
+  Add a custom Logo to the Enterprise Console and Open Source (Core) endpoints.
 keywords: [branding, logo, Enterprise Console]
 ---
 
@@ -10,13 +10,13 @@ keywords: [branding, logo, Enterprise Console]
 
 ## Summary
 
-**Logo URL** customizes the logo displayed in the Enterprise Console and Open Source endpoints. 
+**Logo URL** customizes the logo displayed in the Enterprise Console and Open Source endpoints.
 
 ## How to configure
 
-| **Type** | **Default** |
-| :--- | :--- |
-| `URL` | Pomerium Logo |
+| **Type** | **Default**   |
+| :------- | :------------ |
+| `URL`    | Pomerium Logo |
 
 See [Custom Branding / Errors](/docs/capabilities/branding) for more information.
 
