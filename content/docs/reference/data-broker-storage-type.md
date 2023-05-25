@@ -10,7 +10,7 @@ pagination_next: null
 
 - Environmental Variable: `DATABROKER_STORAGE_TYPE`
 - Config File Key: `databroker_storage_type`
-- Kubernetes: see [`storage`](/docs/deploying/k8s/reference#storage)
+- Kubernetes: see [`storage`](/docs/deploy/k8s/reference#storage)
 - Type: `string`
 - Optional
 - Example: `postgres`,`memory`

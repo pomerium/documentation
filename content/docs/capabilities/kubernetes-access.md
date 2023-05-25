@@ -37,7 +37,7 @@ Pomerium can be leveraged as a proxy for user requests to the API Server.
 
 ## How it works
 
-![Kubernetes Integration](../deploying/k8s/img/kubernetes-integration.svg)
+![Kubernetes Integration](../kubernetes/k8s/img/kubernetes-integration.svg)
 
 Building on top of a standard Kubernetes and Pomerium deployment:
 

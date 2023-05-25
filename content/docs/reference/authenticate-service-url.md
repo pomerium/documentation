@@ -14,7 +14,7 @@ pagination_next: null
 
 - Environmental Variable: `AUTHENTICATE_SERVICE_URL`
 - Config File Key: `authenticate_service_url`
-- Kubernetes: [`authenticate.url`](/docs/deploying/k8s/reference#authenticate)
+- Kubernetes: [`authenticate.url`](/docs/deploy/k8s/reference#authenticate)
 - Type: `URL`
 - Required
 - Example: `https://authenticate.corp.example.com`

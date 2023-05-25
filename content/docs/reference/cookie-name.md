@@ -14,7 +14,7 @@ pagination_next: null
 
 - Environmental Variable: `COOKIE_NAME`
 - Config File Key: `cookie_name`
-- Kubernetes: [`cookie.name`](/docs/deploying/k8s/reference#cookie)
+- Kubernetes: [`cookie.name`](/docs/deploy/k8s/reference#cookie)
 - Type: `string`
 - Default: `_pomerium`
 
