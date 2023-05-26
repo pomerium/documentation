@@ -179,7 +179,7 @@ const sidebars = {
     {
       id: 'docs/releases',
       type: 'doc',
-      label: 'Releases'
+      label: 'Releases',
     },
   ],
   reference: [
