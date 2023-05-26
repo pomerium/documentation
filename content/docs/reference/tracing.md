@@ -18,8 +18,10 @@ Each unit of work is called a Span in a trace. Spans include metadata about the 
 
 | Config Key | Description | Required |
 | :-- | :-- | --- |
-| tracing_provider | The name of the tracing provider. (e.g. jaeger, zipkin) | ✅ |
+| tracing_provider | The name of the tracing provider. (e.g. jaeger, zipkin or datadog) | ✅ |
 | tracing_sample_rate | Percentage of requests to sample in decimal notation. Default is `0.0001`, or .01% | ❌ |
+
+Set `tracing_sample_rate = 1` if you want to see all requests in the tracings.
 
 #### Datadog
 
@@ -46,6 +48,14 @@ Datadog is a real-time monitoring system that supports distributed tracing and m
 | tracing_jaeger_collector_endpoint | Url to the Jaeger HTTP Thrift collector. | ✅ |
 | tracing_jaeger_agent_endpoint | Send spans to jaeger-agent at this address. | ✅ |
 
+Example
+
+```yaml
+tracing_provider: jaeger
+tracing_jaeger_collector_endpoint: http://localhost:14268/api/traces
+tracing_jaeger_agent_endpoint: http://localhost:6831
+```
+
 #### Zipkin
 
 Zipkin is an open source distributed tracing system and protocol.
@@ -55,6 +65,17 @@ Many tracing backends support zipkin either directly or through intermediary age
 | Config Key              | Description                      | Required |
 | :---------------------- | :------------------------------- | -------- |
 | tracing_zipkin_endpoint | Url to the Zipkin HTTP endpoint. | ✅       |
+
+Example
+
+```yaml
+tracing_provider: zipkin
+tracing_zipkin_endpoint: http://localhost:9411/api/v2/spans
+```
+
+Remember to replace `localhost` with the appropriate hostname or IP address for your specific setup.
+
+If you are running Pomerium and Zipkin/Jaeger in separate Docker containers and they are on the same host, try using `host.docker.internal` as the hostname instead of `localhost` in the Pomerium settings. This allows containers to access services running on the host machine. Update the Zipkin/Jaeger endpoint URL in Pomerium accordingly.
 
 #### Example
 
