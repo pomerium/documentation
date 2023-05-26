@@ -31,4 +31,4 @@ Password: <password>
 docker pull docker.cloudsmith.io/pomerium/enterprise/pomerium-console:${vX.X.X}
 ```
 
-See the [Enterprise Quickstart](/docs/releases/enterprise/install/quickstart) for instructions to run and deploy the Enterprise Console with Docker Compose.
+See the [Enterprise Quickstart](/docs/deploy/enterprise/quickstart) for instructions to run and deploy the Enterprise Console with Docker Compose.
