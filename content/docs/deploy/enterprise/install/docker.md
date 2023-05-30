@@ -1,7 +1,7 @@
 ---
 id: docker
 title: Install with Docker
-sidebar_label: Docker
+sidebar_label: With Docker
 description: Learn how to install Enterprise Console with Docker and Docker Compose.
 ---
 
