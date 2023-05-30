@@ -194,6 +194,23 @@ PomeriumSpec defines Pomerium-specific configuration parameters.
             </td>
         </tr>
     
+        <tr>
+            <td>
+                <p>
+                <code>timeouts</code>&#160;&#160;
+                
+                    <strong>object</strong>&#160;
+                    (<a href="#timeouts">timeouts</a>)
+                
+                </p>
+                <p>
+                    
+                    Timeout specifies the <a href="https://www.pomerium.com/docs/reference/global-timeouts">global timeouts</a> for all routes.
+                </p>
+                
+            </td>
+        </tr>
+    
     </tbody>
 </table>
 
@@ -764,6 +781,77 @@ Storage defines persistent storage for sessions and other data. See <a href="htt
                     
                     Redis defines REDIS connection parameters
                 </p>
+                
+            </td>
+        </tr>
+    
+    </tbody>
+</table>
+
+
+
+### `timeouts`
+
+Timeout specifies the <a href="https://www.pomerium.com/docs/reference/global-timeouts">global timeouts</a> for all routes.
+
+<table>
+    <thead>
+    </thead>
+    <tbody>
+    
+        <tr>
+            <td>
+                <p>
+                <code>idle</code>&#160;&#160;
+                
+                    <strong>string</strong>&#160;
+                    (duration)
+                
+                </p>
+                <p>
+                    
+                    Idle specifies the time at which a downstream or upstream connection will be terminated if there are no active streams.
+                </p>
+                
+                    Format: a duration string like "22s" as parsed by Golang time.ParseDuration.
+                
+            </td>
+        </tr>
+    
+        <tr>
+            <td>
+                <p>
+                <code>read</code>&#160;&#160;
+                
+                    <strong>string</strong>&#160;
+                    (duration)
+                
+                </p>
+                <p>
+                    
+                    Read specifies the amount of time for the entire request stream to be received from the client.
+                </p>
+                
+                    Format: a duration string like "22s" as parsed by Golang time.ParseDuration.
+                
+            </td>
+        </tr>
+    
+        <tr>
+            <td>
+                <p>
+                <code>write</code>&#160;&#160;
+                
+                    <strong>string</strong>&#160;
+                    (duration)
+                
+                </p>
+                <p>
+                    
+                    Write specifies max stream duration is the maximum time that a stream’s lifetime will span. An HTTP request/response exchange fully consumes a single stream. Therefore, this value must be greater than read_timeout as it covers both request and response time.
+                </p>
+                
+                    Format: a duration string like "22s" as parsed by Golang time.ParseDuration.
                 
             </td>
         </tr>
