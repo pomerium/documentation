@@ -48,13 +48,35 @@ Datadog is a real-time monitoring system that supports distributed tracing and m
 | tracing_jaeger_collector_endpoint | Url to the Jaeger HTTP Thrift collector. | ✅ |
 | tracing_jaeger_agent_endpoint | Send spans to jaeger-agent at this address. | ✅ |
 
-Example
+For quick local testing, use Jaeger all-in-one, which is an executable designed to launch the Jaeger UI, jaeger-collector, jaeger-query, and jaeger-agent, with an in-memory storage component.
+
+```bash
+docker run -d --name jaeger \
+  -e COLLECTOR_ZIPKIN_HOST_PORT=:9411 \
+  -e COLLECTOR_OTLP_ENABLED=true \
+  -p 6831:6831/udp \
+  -p 6832:6832/udp \
+  -p 5778:5778 \
+  -p 16686:16686 \
+  -p 4317:4317 \
+  -p 4318:4318 \
+  -p 14250:14250 \
+  -p 14268:14268 \
+  -p 14269:14269 \
+  -p 9411:9411 \
+  jaegertracing/all-in-one:1.45
+
+```
+
+Pomerium settings
 
 ```yaml
 tracing_provider: jaeger
 tracing_jaeger_collector_endpoint: http://localhost:14268/api/traces
 tracing_jaeger_agent_endpoint: http://localhost:6831
 ```
+
+Open Jaeger UI at `http://localhost:16686` in the browser to view Pomerium traces.
 
 #### Zipkin
 
@@ -66,12 +88,26 @@ Many tracing backends support zipkin either directly or through intermediary age
 | :---------------------- | :------------------------------- | -------- |
 | tracing_zipkin_endpoint | Url to the Zipkin HTTP endpoint. | ✅       |
 
-Example
+Add next configuration for running `zipkin`.
+
+docker-compose.yaml
+
+```yaml
+services:
+  zipkin:
+    image: openzipkin/zipkin:latest
+    ports:
+      - 9411:9411
+```
+
+Pomerium settings
 
 ```yaml
 tracing_provider: zipkin
 tracing_zipkin_endpoint: http://localhost:9411/api/v2/spans
 ```
+
+Open Zipkin UI at `http://localhost:9411` in the browser to view Pomerium traces.
 
 Remember to replace `localhost` with the appropriate hostname or IP address for your specific setup.
 
