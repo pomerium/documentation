@@ -17,6 +17,12 @@ To complete this guide:
 - [Install Pomerium](/docs/deploying)
 - Enroll in Apple's [Developer Program](https://apps.apple.com/us/app/wwdc/id640199958)
 
+:::caution
+
+While we do our best to keep our documentation up to date, changes to third-party systems are outside our control. Refer to the [Sign in with Apple](https://developer.apple.com/documentation/sign_in_with_apple) developer docs as needed, or let us know if we need to re-visit this page.
+
+:::
+
 ## Set up Apple
 
 In your Account dashboard, go to **Certificates, IDs, & Profiles**.
@@ -75,7 +81,7 @@ Download the key and store it somewhere safe. You can only download it once and 
 
 Apple requires a signed JWT for the client secret.
 
-You can use any library to generate and sign the JWT. At a minimum, the JWT should include the following claims, fields, and values (per [Apple's docs](https://developer.apple.com/documentation/sign_in_with_apple/generate_and_validate_tokens#3262048)):
+You can use any [JWT library](https://jwt.io/libraries) to generate and sign the JWT. At a minimum, the JWT should include the following claims, fields, and values (per [Apple's docs](https://developer.apple.com/documentation/sign_in_with_apple/generate_and_validate_tokens#3262048)):
 
 | **Header** |  |
 | :-- | :-- |
