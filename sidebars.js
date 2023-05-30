@@ -151,6 +151,7 @@ const sidebars = {
         id: 'docs/identity-providers/index',
       },
       items: [
+        'docs/identity-providers/apple',
         'docs/identity-providers/auth0',
         'docs/identity-providers/azure',
         'docs/identity-providers/cognito',
