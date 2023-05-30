@@ -8,8 +8,8 @@ sidebar_label: Clients
 
 Pomerium offers optional CLI and Desktop clients:
 
-- [Pomerium CLI](/docs/deploy/core/clients/pomerium-cli)
-- [Pomerium Desktop](/docs/deploy/core/clients/pomerium-desktop)
+- [Pomerium CLI](/docs/deploy/clients/pomerium-cli)
+- [Pomerium Desktop](/docs/deploy/clients/pomerium-desktop)
 
 Both the CLI and Desktop clients act as an authentication helper for tools like kubectl and TCP-based connections.
 

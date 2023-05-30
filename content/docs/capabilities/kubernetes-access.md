@@ -44,12 +44,12 @@ Building on top of a standard Kubernetes and Pomerium deployment:
 1. Pomerium is given access to a Kubernetes service account with [impersonation](https://kubernetes.io/docs/reference/access-authn-authz/authentication/#user-impersonation) permissions
 2. A [route's policy](/docs/reference/routes/policy) is created for the API server and [configured](/docs/reference/routes/kubernetes-service-account-token) to use the service account token
 3. Kubernetes RoleBindings operate against IdP Users and Group subjects
-4. Users access the protected cluster through their standard tools, using [pomerium-cli](/docs/deploy/core/clients/pomerium-cli) as an auth provider in `~/.kube/config`
+4. Users access the protected cluster through their standard tools, using [pomerium-cli](/docs/deploy/clients/pomerium-cli) as an auth provider in `~/.kube/config`
 5. Pomerium authorizes requests and passes the user identity to the API server for fine grained RBAC
 
 ## Kubeconfig Setup
 
-After installing the [pomerium-cli](/docs/deploy/core/clients/pomerium-cli), you must configure your `kubeconfig` for authentication.
+After installing the [pomerium-cli](/docs/deploy/clients/pomerium-cli), you must configure your `kubeconfig` for authentication.
 
 Substitute `mycluster.pomerium.io` with your own API Server's `from` in Pomerium's policy:
 
