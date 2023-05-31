@@ -63,11 +63,11 @@ The [devices (beta)](/docs/capabilities/device-identity) data model had an inter
 
 IdP directory sync has been moved to be part of the [External Data Sources integration](/docs/integrations/), in order to provide unification with other external data sources, consolidate job scheduling and monitoring. Setting the below options in Pomerium config file would now result in an error. In Pomerium Enterprise Console, please navigate to Settings > Identity Provider and configure directory sync there.
 
-![idp_enterprise](../img/upgrading/idp_enterprise.png)
+![idp_enterprise](../enterprise/img/upgrading/idp_enterprise.png)
 
 - `idp_service_account`: use IdP provider specific options in the UI.
-- `idp_refresh_directory_timeout`: use [Polling Min Delay](/docs/releases/enterprise/configure#polling-minmax-delay).
-- `idp_refresh_directory_interval`: replaced by [Polling Max Delay](/docs/releases/enterprise/configure#polling-minmax-delay).
+- `idp_refresh_directory_timeout`: use [Polling Min Delay](/docs/deploy/enterprise/configure#polling-minmax-delay).
+- `idp_refresh_directory_interval`: replaced by [Polling Max Delay](/docs/deploy/enterprise/configure#polling-minmax-delay).
 - `idp_qps`: not required, IdP providers adjust their qps rate.
 
 Pomerium Core would only perform user authentication and session refresh with the IdP provider, and would not try to synchronize user details and groups, which is now part of [External Data Sources](/docs/integrations/). Please review your [identity provider's](/docs/identity-providers/) docs for instructions specific to your IdP (e.g. `Identity Providers` -> `Google` -> `Directory Sync (Enterprise)`).

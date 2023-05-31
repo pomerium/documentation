@@ -14,7 +14,7 @@ pagination_next: null
 
 - Environmental Variable: `COOKIE_SECURE`
 - Config File Key: `cookie_secure`
-- Kubernetes: [`cookie.secure`](/docs/deploying/k8s/reference#cookie)
+- Kubernetes: [`cookie.secure`](/docs/deploy/k8s/reference#cookie)
 - Type: `bool`
 - Default: `true`
 

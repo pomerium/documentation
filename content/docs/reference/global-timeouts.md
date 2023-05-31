@@ -14,7 +14,7 @@ pagination_next: null
 
 - Environmental Variables: `TIMEOUT_READ` `TIMEOUT_WRITE` `TIMEOUT_IDLE`
 - Config File Key: `timeout_read` `timeout_write` `timeout_idle`
-- Kubernetes: [`timeouts`](/docs/deploying/k8s/reference#timeouts)
+- Kubernetes: [`timeouts`](/docs/deploy/k8s/reference#timeouts)
 - Type: [Go Duration](https://golang.org/pkg/time/#Duration.String) `string`
 - Example: `TIMEOUT_READ=30s`
 - Defaults: `TIMEOUT_READ=30s` `TIMEOUT_WRITE=0` `TIMEOUT_IDLE=5m`
