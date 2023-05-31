@@ -21,5 +21,7 @@ There are several ways to install Pomerium Enterprise to suit your organization'
 
 Our docs are updated frequently, so check back if you don't see your preferred installation method here.
 
-- [Quickstart](/docs/releases/enterprise/install/quickstart)
-- [Kubernetes with Kustomize](/docs/releases/enterprise/install/kustomize)
+- [Quickstart](/docs/deploy/enterprise/quickstart)
+- [Docker](/docs/deploy/enterprise/install/docker)
+- [OS Packages](/docs/deploy/enterprise/install/os-packages)
+- [Kubernetes with Kustomize](/docs/deploy/enterprise/install/kustomize)
