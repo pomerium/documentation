@@ -12,7 +12,7 @@ pagination_next: null
 
 - Environmental Variable: `COOKIE_SECRET_FILE`
 - Config File Key: `cookie_secret_file`
-- Kubernetes: see [secrets](/docs/deploying/k8s/reference#spec)
+- Kubernetes: see [secrets](/docs/deploy/k8s/reference#spec)
 - Type: `string`
 - Required for Proxy service
 
