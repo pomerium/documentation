@@ -8,7 +8,7 @@ function App() {
 
   useEffect(() => {
     const jwtVerifier = new PomeriumVerifier({
-      issuer: 'authenticate.localhost.pomerium.io:4443',
+      issuer: 'react.localhost.pomerium.io',
       audience: 'react.localhost.pomerium.io',
       expirationBuffer: 1000
     });
