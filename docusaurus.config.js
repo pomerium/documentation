@@ -46,6 +46,20 @@ const config = {
         },
       },
     ],
+    [
+      'redocusaurus',
+      {
+        specs: [
+          {
+            spec: 'content/openapi/openapi.yaml',
+            route: '/api/',
+          }
+        ],
+        theme: {
+          primaryColor: '#1890ff',
+        },
+      },
+    ],
   ],
 
   themeConfig: {
