@@ -7,6 +7,7 @@ sidebar_label: Identity Verification
 ---
 
 import GoApp from '../../examples/go-sdk/go-app.md';
+
 import ReactApp from '../../examples/js-sdk/react-app.md';
 
 # Identity Verification (from your app)
