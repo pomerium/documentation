@@ -39,36 +39,26 @@ The JWT will contain at least the following claims:
   <summary>Audience and issuer claims</summary>
   <div>
 
-The audience (`aud`) claim defines what application the JWT is intended for.
-Pomerium sets the audience claim to be the domain of the target upstream
-application.
+The audience (`aud`) claim defines what application the JWT is intended for. Pomerium sets the audience claim to be the domain of the target upstream application.
 
-Since version 0.22, Pomerium sets the issuer (`iss`) claim also to the domain
-of the target upstream application. (In previous versions, this was instead set
-to the authentication service domain.)
+Since version 0.22, Pomerium sets the issuer (`iss`) claim also to the domain of the target upstream application. (In previous versions, this was instead set to the authentication service domain.)
 
-Upstream services should verify that these claims match the expected domain
-in order to prevent token reuse between different upstream services.
+Upstream services should verify that these claims match the expected domain in order to prevent token reuse between different upstream services.
 
   </div>
 </details>
 
-If your identity provider (IdP) provides other claims that you would like to
-pass to your application, you can use the [JWT Claims
-Headers](/docs/reference/jwt-claim-headers) option to include them in the JWT
-as well.
+If your identity provider (IdP) provides other claims that you would like to pass to your application, you can use the [JWT Claims Headers](/docs/reference/jwt-claim-headers) option to include them in the JWT as well.
 
 ## JWT verification
 
-Before trusting any user identity information in the JWT, your application
-should verify:
+Before trusting any user identity information in the JWT, your application should verify:
+
 1. The JWT has a valid signature from a trusted source.
 2. The JWT has not expired.
 3. The JWT audience and issuer match your application's domain.
 
-The attestation JWT's signature can be verified using the public key retrieved
-from Pomerium's `/.well-known/pomerium/jwks.json` endpoint (on any route
-domain). For example:
+The attestation JWT's signature can be verified using the public key retrieved from Pomerium's `/.well-known/pomerium/jwks.json` endpoint (on any route domain). For example:
 
 ```bash
 curl https://your-app.corp.example.com/.well-known/pomerium/jwks.json | jq
@@ -90,32 +80,21 @@ curl https://your-app.corp.example.com/.well-known/pomerium/jwks.json | jq
 }
 ```
 
-(This endpoint can also be used to integrate with other systems, such as
-[Istio](https://istio.io/). For example, see the Istio guide on
-[Authentication Policy](https://istio.io/latest/docs/reference/config/security/jwt/#JWTRule-jwks_uri),
-and specifically the
-[`jwksUri`](https://istio.io/latest/docs/reference/config/security/jwt/#JWTRule-jwks_uri)
-key on the `jwtRules` mapping.)
+(This endpoint can also be used to integrate with other systems, such as [Istio](https://istio.io/). For example, see the Istio guide on [Authentication Policy](https://istio.io/latest/docs/reference/config/security/jwt/#JWTRule-jwks_uri), and specifically the [`jwksUri`](https://istio.io/latest/docs/reference/config/security/jwt/#JWTRule-jwks_uri) key on the `jwtRules` mapping.)
 
 :::caution
 
-In order to use the `/.well-known/pomerium/jwks.json` endpoint you must set
-either the [Signing Key] or [Signing Key File] configuration option.
+In order to use the `/.well-known/pomerium/jwks.json` endpoint you must set either the [Signing Key] or [Signing Key File] configuration option.
 
 :::
 
-After verifying the JWT signature, your application should verify that JWT has
-not expired, by comparing the current time with the timestamps in the `exp` and
-`iat` claims. We recommend allowing up to 1 minute leeway in this comparison,
-to account for clock skew between Pomerium and your application.
+After verifying the JWT signature, your application should verify that JWT has not expired, by comparing the current time with the timestamps in the `exp` and `iat` claims. We recommend allowing up to 1 minute leeway in this comparison, to account for clock skew between Pomerium and your application.
 
-And finally, your application should verify that the `aud` and `iss` claim both
-match the domain used to serve your application.
+And finally, your application should verify that the `aud` and `iss` claim both match the domain used to serve your application.
 
 ### Verification in a Go application
 
-For an application written in Go, you can use the [Go SDK] to perform the
-necessary verification steps. For example:
+For an application written in Go, you can use the [Go SDK] to perform the necessary verification steps. For example:
 
 ```go
 package main
@@ -182,10 +161,9 @@ func (c cache) Add(key, value interface{}) {
 
 ### Verification in a Single-Page Application
 
-A single-page javascript application can verify the JWT using the [JavaScript
-SDK]. For example:
+A single-page javascript application can verify the JWT using the [JavaScript SDK]. For example:
 
-<ReactApp/>
+<ReactApp />
 
 See the [guide](/docs/guides/js-sdk) to the JavaScript SDK for more information.
 
@@ -241,4 +219,3 @@ In an actual client, you'll want to ensure that all the other claims values are 
 [secp256r1]: https://wiki.openssl.org/index.php/Command_Line_Elliptic_Curve_Operations
 [signing key]: /docs/reference/signing-key
 [signing key file]: /docs/reference/signing-key-file
-
