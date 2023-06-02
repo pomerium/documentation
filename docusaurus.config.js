@@ -51,8 +51,8 @@ const config = {
       {
         specs: [
           {
-            spec: 'content/openapi/openapi.yaml',
-            route: '/api/',
+            spec: './content/openapi/petstore.yaml',
+            route: '/docs/api/',
           }
         ],
         theme: {
