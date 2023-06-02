@@ -1,3 +1,7 @@
+---
+# cSpell:ignore gopkg Fatalln Fprintln Fprintf struct
+---
+
 ```go
 package main
 
