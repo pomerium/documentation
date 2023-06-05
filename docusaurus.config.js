@@ -102,6 +102,12 @@ const config = {
           to: '/docs/guides/',
         },
         {
+          docId: 'docs/api',
+          position: 'right',
+          label: 'API',
+          to: '/docs/api/',
+        },
+        {
           href: 'https://github.com/pomerium/pomerium ',
           label: 'GitHub',
           position: 'right',
