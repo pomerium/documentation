@@ -1,6 +1,5 @@
 // @ts-check
 // Note: type annotations allow type checking and IDEs autocompletion
-
 const lightCodeTheme = require('prism-react-renderer/themes/github');
 const darkCodeTheme = require('prism-react-renderer/themes/dracula');
 const dotenv = require('dotenv');
@@ -53,7 +52,7 @@ const config = {
           {
             spec: './content/openapi/petstore.yaml',
             route: '/docs/api/',
-          }
+          },
         ],
         theme: {
           primaryColor: '#1890ff',
@@ -201,6 +200,7 @@ const config = {
         id: process.env.GTM,
       },
     ],
+    './docusaurus-plugins/src/webpackDebugFix.js',
   ],
 };
 
