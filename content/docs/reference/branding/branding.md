@@ -145,8 +145,8 @@ See [Custom Branding / Errors](/docs/capabilities/branding) for more information
 
 Customize the **Error Message Header** in the Console:
 
-  1. Enter your custom error message ![Error message box](./img/branding-error-message-header.png)
+1. Enter your custom error message ![Error message box](./img/branding-error-message-header.png)
 
-  1. Select **Show Error Details** for the route where you want to display the custom error message ![Show error details for a specific route](./img/branding-show-error-details.png)
+1. Select **Show Error Details** for the route where you want to display the custom error message ![Show error details for a specific route](./img/branding-show-error-details.png)
 
-  1. View your custom error message ![Shows custom error message](./img/branding-custom-error-message.png)
+1. View your custom error message ![Shows custom error message](./img/branding-custom-error-message.png)

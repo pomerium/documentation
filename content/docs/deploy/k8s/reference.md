@@ -774,8 +774,6 @@ Storage defines persistent storage for sessions and other data. See <a href="htt
     </tbody>
 </table>
 
-
-
 ### `timeouts`
 
 Timeout specifies the <a href="https://www.pomerium.com/docs/reference/global-timeouts">global timeouts</a> for all routes.
@@ -844,8 +842,6 @@ Timeout specifies the <a href="https://www.pomerium.com/docs/reference/global-ti
     
     </tbody>
 </table>
-
-
 
 ## Status
 
