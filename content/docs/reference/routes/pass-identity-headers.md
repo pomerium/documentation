@@ -19,3 +19,5 @@ When enabled, this option will pass identity headers to upstream applications. T
 
 - X-Pomerium-Jwt-Assertion
 - X-Pomerium-Claim-\*
+
+See also: [JWT Claim Headers](/docs/reference/jwt-claim-headers)
