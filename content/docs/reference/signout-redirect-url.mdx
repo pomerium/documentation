@@ -1,0 +1,54 @@
+---
+id: signout-redirect-url
+title: Signout Redirect URL
+keywords:
+  - reference
+  - Signout Redirect URL
+pagination_prev: null
+pagination_next: null
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Signout Redirect URL
+
+## Summary
+
+**Signout Redirect URL** is the URL the user will be redirected to after signing out.
+
+You can overwrite this behavior by passing the query param `pomerium_redirect_uri` or post value `pomerium_redirect_uri` to the `/.pomerium/sign_out/` endpoint.
+
+## How to configure
+
+| **Type** | **Usage**    |
+| :------- | :----------- |
+| `URL`    | **required** |
+
+<Tabs>
+<TabItem value="Core" label="Core">
+
+| **Config file keys**   | **Environment variables** |
+| :--------------------- | :------------------------ |
+| `signout_redirect_url` | `SIGNOUT_REDIRECT_URL`    |
+
+</TabItem>
+<TabItem value="Enterprise" label="Enterprise">
+
+`signout_redirect_url` is a bootstrap configuration setting and is not configurable in the Console.
+
+</TabItem>
+<TabItem value="Kubernetes" label="Kubernetes">
+
+**Signout Redirect URL** is not configurable in Kubernetes
+
+</TabItem>
+</Tabs>
+
+### Examples
+
+```yaml
+signout_redirect_url: https://signout-redirect-url.corp.example.com
+
+SIGNOUT_REDIRECT_URL=https://signout-redirect-url.corp.example.com
+```

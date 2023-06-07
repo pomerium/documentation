@@ -1,0 +1,59 @@
+---
+id: log-level
+title: Log Level
+description: |
+  Log level sets the global logging level for pomerium.
+keywords:
+  - reference
+  - Log Level
+pagination_prev: null
+pagination_next: null
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Log Level
+
+## Summary
+
+**Log Level** sets the global logging level for Pomerium. Only logs of the desired level and above will be logged.
+
+## How to configure
+
+| **Type** | **Default** | **Options** |
+| :------- | :---------- | :---------- |
+| `string` | `debug`     | `debug`     |
+|          |             | `info`      |
+|          |             | `warn`      |
+|          |             | `error`     |
+
+<Tabs>
+<TabItem value="Core" label="Core">
+
+`log_level` is a bootstrap configuration setting and is not configurable in the Console.
+
+</TabItem>
+<TabItem value="Enterprise" label="Enterprise">
+
+Set **Log Level** under **Global** settings in the Console:
+
+![Set log level in the Console](./img/global-settings/log-level.gif)
+
+</TabItem>
+<TabItem value="Kubernetes" label="Kubernetes">
+
+Kubernetes does not support `log_level`
+
+</TabItem>
+</Tabs>
+
+### Examples
+
+```yaml
+# config file key
+log_level: error
+
+# environment variable
+LOG_LEVEL=warn
+```

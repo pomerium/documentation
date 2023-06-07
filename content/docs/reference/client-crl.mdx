@@ -1,0 +1,59 @@
+---
+id: client-crl
+title: Client CRL
+keywords:
+  - reference
+  - Client CRL
+pagination_prev: null
+pagination_next: null
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Client CRL
+
+## Summary
+
+**Client CRL** is the [certificate revocation list](https://en.wikipedia.org/wiki/Certificate_revocation_list) (in **PEM** format) for client certificates.
+
+If not set, no CRL will be used.
+
+## How to configure
+
+| **Type** | **Usage**    |
+| :------- | :----------- |
+| `string` | **optional** |
+
+<Tabs>
+<TabItem value="Core" label="Core">
+
+| **Config file keys** | **Environment variables** |
+| :------------------- | :------------------------ |
+| `client_crl`         | `CLIENT_CRL`              |
+| `client_crl_file`    | `CLIENT_CRL_FILE`         |
+
+</TabItem>
+<TabItem value="Enterprise" label="Enterprise">
+
+`client_crl` and `client_crl_file` are bootstrap configuration settings and are not configurable in the Console.
+
+</TabItem>
+<TabItem value="Kubernetes" label="Kubernetes">
+
+Kubernetes does not support `client_crl`
+
+</TabItem>
+</Tabs>
+
+### Examples
+
+```yaml
+# config file key
+client_crl: base64-encoded-string
+client_crl_file: base64-encoded-string
+
+# environment variable
+CLIENT_CRL=/relative/file/location
+CLIENT_CRL_FILE=/relative/file/location
+```

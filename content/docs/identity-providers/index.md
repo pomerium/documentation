@@ -40,8 +40,8 @@ If you use the hosted services, you don’t need to include IdP settings or an a
 
 See [Configure hosted services](/docs/capabilities/hosted-authenticate-service#configure-the-hosted-authenticate-service) for more information.
 
-[client id]: /docs/reference/identity-provider-client-id
-[client secret]: /docs/reference/identity-provider-client-secret
+[client id]: /docs/reference/identity-provider-settings#identity-provider-client-id
+[client secret]: /docs/reference/identity-provider-settings#identity-provider-client-secret
 [environmental variables]: https://en.wikipedia.org/wiki/Environment_variable
 [oauth2]: https://oauth.net/2/
 [openid connect]: https://en.wikipedia.org/wiki/OpenID_Connect

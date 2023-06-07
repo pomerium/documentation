@@ -1,0 +1,69 @@
+---
+id: dns-lookup-family
+title: DNS Lookup Family
+description: |
+  The DNS IP address resolution policy.
+keywords:
+  - reference
+  - DNS Lookup Family
+pagination_prev: null
+pagination_next: null
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# DNS Lookup Family
+
+## Summary
+
+**DNS Lookup Family** sets the DNS IP address resolution policy.
+
+## How to configure
+
+| **Type** | **Default**    |
+| :------- | :------------- |
+| `string` | `V4_PREFERRED` |
+
+<Tabs>
+<TabItem value="Core" label="Core">
+
+| **Config file keys** | **Environment variables** |
+| :------------------- | :------------------------ |
+| `dns_lookup_family`  | `DNS_LOOKUP_FAMILY`       |
+
+</TabItem>
+<TabItem value="Enterprise" label="Enterprise">
+
+Set **DNS Lookup Family** in the Console:
+
+![Set DNS lookup family settings in Enterprise Console](./img/dns/dns-lookup-family.gif)
+
+</TabItem>
+<TabItem value="Kubernetes" label="Kubernetes">
+
+Kubernetes does not support `dns_lookup_family`
+
+</TabItem>
+</Tabs>
+
+### Options
+
+| **Options** | **Description** |
+| :-- | :-- |
+| `NONE` (Enterprise only) | Defers to configuration settings or default if none specified |
+| `AUTO` | DNS resolver will first perform a lookup for addresses in the IPv6 family and fallback to a lookup for addresses in the IPv4 family |
+| `V4_ONLY` | DNS resolver will only perform a lookup for addresses in the IPv4 family |
+| `V6_ONLY` | DNS resolver will only perform a lookup for addresses in the IPv6 family |
+| `V4_PREFERRED` | DNS resolver will first perform a lookup for addresses in the IPv4 family and fallback to a lookup for addresses in the IPv6 family |
+| `ALL` | DNS resolver will perform a lookup for both IPv4 and IPv6 families, and return all resolved addresses |
+
+See the [Envoy docs](https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/cluster/v3/cluster.proto.html#enum-config-cluster-v3-cluster-dnslookupfamily) for more information about these options.
+
+### Examples
+
+```yaml
+default_lookup_family: AUTO
+
+DEFAULT_LOOKUP_FAMILY=V6_ONLY
+```

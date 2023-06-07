@@ -772,7 +772,6 @@ Storage defines persistent storage for sessions and other data. See <a href="htt
 </table>
 
 
-
 ## Status
 
 PomeriumStatus represents configuration and Ingress status.

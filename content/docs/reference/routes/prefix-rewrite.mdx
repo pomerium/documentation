@@ -1,0 +1,67 @@
+---
+id: prefix-rewrite
+title: Prefix Rewrite
+keywords:
+  - reference
+  - Prefix Rewrite
+pagination_prev: null
+pagination_next: null
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Prefix Rewrite
+
+## Summary
+
+If set, **Prefix Rewrite** indicates that during forwarding, the matched prefix (or path) should be swapped with this value.
+
+## How to configure
+
+| **Type** | **Usage**    |
+| :------- | :----------- |
+| `string` | **optional** |
+
+<Tabs>
+<TabItem value="Core" label="Core">
+
+| **YAML**/**JSON** setting |
+| :------------------------ |
+| `prefix_rewrite`          |
+
+</TabItem>
+<TabItem value="Enterprise" label="Enterprise">
+
+Configure **Prefix Rewrite** in the Console:
+
+1. Set the **Prefix** in **Path Matching** settings:
+
+![Set the prefix in path matching settings](../img/routes/path-matching/prefix.png)
+
+2. Set the **Prefix Rewrite** in **Path Rewriting** settings:
+
+![Set the prefix rewrite in path rewriting settings](../img/routes/path-rewrite/prefix-rewrite.png)
+
+</TabItem>
+<TabItem value="Kubernetes" label="Kubernetes">
+
+| **Name**         |
+| :--------------- |
+| `prefix_rewrite` |
+
+See Kubernetes [Ingress](/docs/deploy/k8s/ingress#annotations) for more information
+
+</TabItem>
+</Tabs>
+
+### Examples
+
+```yaml
+from: https://from.example.com
+to: https://to.example.com
+prefix: /admin
+prefix_rewrite: /
+```
+
+A request to `https://from.example.com/admin` would be forwarded to `https://to.example.com/`.

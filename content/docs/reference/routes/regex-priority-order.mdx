@@ -1,0 +1,55 @@
+---
+id: regex-priority-Order
+title: Regex Priority Order
+description: If set, the route will only match incoming requests with a path that matches the specified regular expression.
+keywords: [reference, regex priority order]
+pagination_prev: null
+pagination_next: null
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Regex Priority Order
+
+## Summary
+
+If **Regex Priority Order** is set, the route will only match incoming requests with a path that matches the specified regular expression. The supported syntax is the same as the Go [regexp package](https://golang.org/pkg/regexp/) which is based on [re2](https://github.com/google/re2/wiki/Syntax).
+
+## How to configure
+
+| **Type** | **Usage**    |
+| :------- | :----------- |
+| `uint32` | **optional** |
+
+<Tabs>
+<TabItem value="Core" label="Core">
+
+| **YAML**/**JSON** setting |
+| :------------------------ |
+| `regex_priority_order`    |
+
+</TabItem>
+<TabItem value="Enterprise" label="Enterprise">
+
+Set **Regex Priority Order** in the Console:
+
+1. Enter a regular expression in the **Regex** field
+2. Enter the **Regex Priority Order**
+
+![Enter Regex Priority Order in the Console](../img/routes/regex/regex.png)
+
+</TabItem>
+<TabItem value="Kubernetes" label="Kubernetes">
+
+Kubernetes does not support **Regex Priority Order**
+
+</TabItem>
+</Tabs>
+
+### Examples
+
+```yaml
+regex: '^/(admin|superuser)/.*$'
+regex_priority_order: 1
+```

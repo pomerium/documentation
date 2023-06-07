@@ -1,0 +1,54 @@
+---
+id: the-number-of-trusted-hops
+title: The number of trusted hops
+description: |
+  The number of trusted reverse proxies in front of pomerium.
+keywords:
+  - reference
+  - The number of trusted hops
+pagination_prev: null
+pagination_next: null
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# The number of trusted hops
+
+## Summary
+
+**The Number of Trusted Hops** setting reverse proxies in front of Pomerium. This affects `x-forwarded-proto` header and [`x-envoy-external-address` header](https://www.envoyproxy.io/docs/envoy/latest/configuration/http/http_conn_man/headers#x-envoy-external-address), which reports trusted client address. See the [Envoy](https://www.envoyproxy.io/docs/envoy/latest/configuration/http/http_conn_man/headers.html?highlight=xff_num_trusted_hops#x-forwarded-for) docs for more detail.
+
+## How to configure
+
+| **Type** | **Usage**    |
+| :------- | :----------- |
+| `uint32` | **optional** |
+
+<Tabs>
+<TabItem value="Core" label="Core">
+
+| **Config file keys**   | **Environment variables** |
+| :--------------------- | :------------------------ |
+| `xff_num_trusted_hops` | `XFF_NUM_TRUSTED_HOPS`    |
+
+</TabItem>
+<TabItem value="Enterprise" label="Enterprise">
+
+`xff_num_trusted_hops` is a bootstrap configuration setting and is not configurable in the Console.
+
+</TabItem>
+<TabItem value="Kubernetes" label="Kubernetes">
+
+Kubernetes does not support `xff_num_trusted_hops`
+
+</TabItem>
+</Tabs>
+
+### Examples
+
+```yaml
+xff_num_trusted_hops: 2
+
+XFF_NUM_TRUSTED_HOPS=2
+```

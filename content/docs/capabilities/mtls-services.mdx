@@ -24,7 +24,7 @@ This means Pomerium and the upstream service should authenticate each other.
 
 ## How Pomerium authenticates upstream services
 
-Pomerium confirms the identity of an upstream service by verifying the service’s TLS certificate. (See [tls_custom_ca_file](/docs/reference/routes/tls-custom-certificate-authority) and [tls_upstream_server_name](/docs/reference/routes/tls-server-name) for more information on configuring Pomerium to accept an upstream's TLS certificate.)
+Pomerium confirms the identity of an upstream service by verifying the service’s TLS certificate. (See [tls_custom_ca_file](/docs/reference/routes/tls-custom-certificate-authority) and [tls_upstream_server_name](/docs/reference/routes/tls-upstream-server-name) for more information on configuring Pomerium to accept an upstream's TLS certificate.)
 
 Generally, every organization has a preferred method of managing internal certificates. How an upstream service is configured to validate and accept client certificates is entirely up to that specific service and how it's configured.
 
@@ -119,7 +119,7 @@ OpenSSL is installed or easily available for most 'nix-based operating systems l
    ```yaml title="config.yaml"
    - from: https://openssl.localhost.pomerium.io
      to: https://localhost:44330
-     tls_server_name: openssl.localhost
+     tls_upstream_server_name: openssl.localhost
      policy:
        - allow:
            or:
@@ -160,7 +160,7 @@ OpenSSL is installed or easily available for most 'nix-based operating systems l
    ```yaml title="config.yaml"
    - from: https://openssl.pomerium.localhost.io
      to: https://localhost:44330
-     tls_server_name: openssl.localhost
+     tls_upstream_server_name: openssl.localhost
      tls_client_cert_file: /etc/pomerium/pomerium@localhost-client.pem
      tls_client_key_file: /etc/pomerium/pomerium@localhost-client-key.pem
      policy:
@@ -183,4 +183,4 @@ Obviously, the OpenSSL server is a trivial upstream service, and is purpose-buil
 [mkcert]: https://github.com/FiloSottile/mkcert
 [openssl]: https://www.openssl.org/
 [`tls_custom_ca_file`]: /docs/reference/routes/tls-custom-certificate-authority
-[`tls_server_name`]: /docs/reference/routes/tls-server-name
+[`tls_upstream_server_name`]: /docs/reference/routes/tls-upstream-server-name
