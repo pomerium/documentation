@@ -1,0 +1,295 @@
+---
+id: databroker
+title: Databroker Settings
+sidebar_label: Databroker Settings
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Databroker Settings
+
+This reference covers all of Pomerium's **Databroker Settings**:
+
+- [Databroker Service](#databroker-service)
+- [Databroker Service URL](#databroker-service-url)
+- [Databroker Internal Service URL](#databroker-internal-service-url)
+- [Databroker Storage Certificate Authority](#databroker-storage-certificate-authority)
+- [Databroker Storage Certificate File](#databroker-storage-certificate-file)
+- [Databroker Storage Connection String](#databroker-storage-connection-string)
+- [Databroker Storage TLS Skip Verify](#databroker-storage-tls-skip-verify)
+- [Databroker Storage Type](#databroker-storage-type)
+
+## Databroker Service
+
+The **Databroker Service** stores user session data.
+
+### How to configure
+
+By default, the `databroker` service uses an in-memory databroker.
+
+To create your own databroker, implement Pomerium's [databroker gRPC interface](https://github.com/pomerium/pomerium/blob/main/pkg/grpc/databroker/databroker.proto).
+
+For an example implementation, see the in-memory database used by the databroker service here:
+
+- [pkg/storage](https://github.com/pomerium/pomerium/tree/main/pkg/storage/inmemory)
+
+## Databroker Service URL
+
+**Databroker Service URL** points to a data broker which is responsible for storing associated authorization context (for example, sessions, users, and user groups).
+
+### How to configure
+
+<Tabs>
+<TabItem value="Core" label="Core">
+
+| **Config file keys**      | **Environment variables** | **Type** | **Default**                                  |
+| :------------------------ | :------------------------ | :------- | :------------------------------------------- |
+| `databroker_service_url`  | `DATABROKER_SERVICE_URL`  | `URL`    | `http://localhost:5443` (In all-in-one mode) |
+| `databroker_service_urls` | `DATABROKER_SERVICE_URLS` | `URL`    | `http://localhost:5443` (In all-in-one mode) |
+
+</TabItem>
+<TabItem value="Enterprise" label="Enterprise">
+
+`databroker_service_url` and `databroker_internal_service_urls` are bootstrap configuration settings and are not configurable in the Console.
+
+</TabItem>
+<TabItem value="Kubernetes" label="Kubernetes">
+
+`databroker_service_url` is not customizable in Kubernetes for all-in-one mode deployments
+
+</TabItem>
+</Tabs>
+
+### Examples
+
+```yaml
+databroker_service_urls:
+  - http://databroker.corp.example1.com
+  - https://databroker.corp.example2.com
+
+DATABROKER_SERVICE_URL=https://databroker.corp.example.com
+```
+
+## Databroker Internal Service URL
+
+**Databroker Internal Service URL** overrides [`databroker_service_url`](/docs/reference/data-broker-service-url) when determining the TLS Certificate for the Databroker service to listen with.
+
+### How to configure
+
+<Tabs>
+<TabItem value="Core" label="Core">
+
+| **Config file keys**               | **Environment variables**          | **Type** | **Default**                                  |
+| :--------------------------------- | :--------------------------------- | :------- | :------------------------------------------- |
+| `databroker_internal_service_url`  | `DATABROKER_INTERNAL_SERVICE_URL`  | `URL`    | `http://localhost:5443` (In all-in-one mode) |
+| `databroker_internal_service_urls` | `DATABROKER_INTERNAL_SERVICE_URLS` | `URL`    | `http://localhost:5443` (In all-in-one mode) |
+
+</TabItem>
+<TabItem value="Enterprise" label="Enterprise">
+
+`databroker_internal_service_url` and `databroker_internal_service_urls` are bootstrap configuration settings and are not configurable in the Console.
+
+</TabItem>
+<TabItem value="Kubernetes" label="Kubernetes">
+
+`databroker_internal_service_url` is not customizable in Kubernetes
+
+</TabItem>
+</Tabs>
+
+### Examples
+
+```yaml
+databroker_internal_service_urls:
+              - http://localhost:5443
+              - http://service_url.com
+
+DATABROKER_INTERNAL_SERVICE_URL=http://localhost:5443
+```
+
+## Databroker Storage Certificate Authority
+
+**Databroker Storage Certificate Authority** defines the set of root certificates used when verifying storage server connections.
+
+### How to configure
+
+<Tabs>
+<TabItem value="Core" label="Core">
+
+| **Config file keys**         | **Environment variables**    | **Type** | **Usage**    |
+| :--------------------------- | :--------------------------- | :------- | :----------- |
+| `databroker_storage_ca_file` | `DATABROKER_STORAGE_CA_FILE` | `string` | **optional** |
+
+</TabItem>
+<TabItem value="Enterprise" label="Enterprise">
+
+`databroker_storage_ca_file` is a bootstrap configuration setting and is not configurable in the Console.
+
+</TabItem>
+<TabItem value="Kubernetes" label="Kubernetes">
+
+See Kubernetes [Storage reference](/docs/deploy/k8s/reference#storage) for more information.
+
+</TabItem>
+</Tabs>
+
+### Examples
+
+```yaml
+databroker_storage_ca_file: /relative/file/location
+
+DATABROKER_STORAGE_CA_FILE=/relative/file/location
+```
+
+## Databroker Storage Certificate File
+
+**Databroker Storage Certificate File** stores the certificate used to connect to a storage backend.
+
+### How to configure
+
+<Tabs>
+<TabItem value="Core" label="Core">
+
+| **Config file keys**           | **Environment variables**      | **Type** | **Usage**    |
+| :----------------------------- | :----------------------------- | :------- | :----------- |
+| `databroker_storage_cert_file` | `DATABROKER_STORAGE_CERT_FILE` | `string` | **optional** |
+
+</TabItem>
+<TabItem value="Enterprise" label="Enterprise">
+
+`databroker_storage_cert_file` is a bootstrap configuration setting and is not configurable in the Console.
+
+</TabItem>
+<TabItem value="Kubernetes" label="Kubernetes">
+
+See Kubernetes [Storage reference](/docs/deploy/k8s/reference#storage) for more information.
+
+</TabItem>
+</Tabs>
+
+### Examples
+
+```yaml
+databroker_storage_cert_file: /relative/file/location
+
+DATABROKER_STORAGE_CERT_FILE=/relative/file/location
+```
+
+## Databroker Storage Connection String
+
+**Databroker Storage Connection String** sets the Postgres connection string that the Databroker service uses to connect to storage backend.
+
+### How to configure
+
+For Postgres, the following URL types are supported:
+
+- `postgres://[username:password@]host:port/[db]`
+- `postgresql://[userspec@][hostspec][/dbname][?paramspec]`
+
+See the [PostgreSQL connection URI docs](https://www.postgresql.org/docs/current/libpq-connect.html#LIBPQ-CONNSTRING) for more information.
+
+<Tabs>
+<TabItem value="Core" label="Core">
+
+| **Config file keys** | **Environment variables** | **Type** | **Usage**    |
+| :-- | :-- | :------- | :----------- |
+| `databroker_storage_connection_string` | `DATABROKER_STORAGE_CONNECTION_STRING` | `string` | **required** |
+
+</TabItem>
+<TabItem value="Enterprise" label="Enterprise">
+
+`databroker_storage_connection_string` is a bootstrap configuration setting and is not configurable in the Console.
+
+</TabItem>
+<TabItem value="Kubernetes" label="Kubernetes">
+
+See Kubernetes [Storage reference](/docs/deploy/k8s/reference#storage) for more information.
+
+</TabItem>
+</Tabs>
+
+### Examples
+
+```yaml
+databroker_storage_connection_string: postgresql://postgres:postgres@database/postgres?sslmode=disable
+
+DATABROKER_STORAGE_CONNECTION_STRING=postgresql://postgres:postgres@database/postgres?sslmode=disable
+```
+
+:::tip
+
+When using multiple hosts make sure to specify `target_session_attrs=read-write` so that the Databroker does not attempt to write to a read-only replica.
+
+:::
+
+## Databroker Storage TLS Skip Verify
+
+If **Databroker Storage TLS Skip Verify** is set, the TLS connection to the storage backend will not be verified.
+
+### How to configure
+
+<Tabs>
+<TabItem value="Core" label="Core">
+
+| **Config file keys**                 | **Environment variables**            | **Type** | **Usage**    |
+| :----------------------------------- | :----------------------------------- | :------- | :----------- |
+| `databroker_storage_tls_skip_verify` | `DATABROKER_STORAGE_TLS_SKIP_VERIFY` | `string` | **optional** |
+
+</TabItem>
+<TabItem value="Enterprise" label="Enterprise">
+
+`databroker_storage_tls_skip_verify` is a bootstrap configuration setting and is not configurable in the Console.
+
+</TabItem>
+<TabItem value="Kubernetes" label="Kubernetes">
+
+See Kubernetes [Storage reference](/docs/deploy/k8s/reference#storage) for more information.
+
+</TabItem>
+</Tabs>
+
+### Examples
+
+```yaml
+databroker_storage_tls_skip_verify: /relative/file/location
+
+DATABROKER_STORAGE_TLS_SKIP_VERIFY=/relative/file/location
+```
+
+## Databroker Storage Type
+
+**Databroker Storage Type** sets the backend storage that the Databroker server will use.
+
+Only `memory` and `postgres` are supported.
+
+### How to configure
+
+<Tabs>
+<TabItem value="Core" label="Core">
+
+| **Config file keys**      | **Environment variables** | **Type** | **Usage**    | **Default** |
+| :------------------------ | :------------------------ | :------- | :----------- | :---------- |
+| `databroker_storage_type` | `DATABROKER_STORAGE_TYPE` | `string` | **required** | **memory**  |
+
+</TabItem>
+<TabItem value="Enterprise" label="Enterprise">
+
+`databroker_storage_type` is a bootstrap configuration setting and is not configurable in the Console.
+
+</TabItem>
+<TabItem value="Kubernetes" label="Kubernetes">
+
+See Kubernetes [Storage reference](/docs/deploy/k8s/reference#storage) for more information.
+
+</TabItem>
+</Tabs>
+
+### Example
+
+```yaml
+databroker_storage_type: postgres
+
+DATABROKER_STORAGE_TYPE=postgres
+```
+
