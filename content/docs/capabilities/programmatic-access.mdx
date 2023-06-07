@@ -13,9 +13,9 @@ This page describes how to obtain Pomerium access credentials programmatically v
 
 ### Login API
 
-The API returns a cryptographically signed sign-in url that can be used to complete a user-driven login process with Pomerium and your identity provider. The login API endpoint takes a `pomerium_redirect_uri` query parameter as an argument which points to the location of the callback server to be called following a successful login.
+The API returns a cryptographically signed sign-in URL that can be used to complete a user-driven login process with Pomerium and your identity provider. The login API endpoint takes a `pomerium_redirect_uri` query parameter as an argument, which points to the location of the callback server to be called following a successful login.
 
-Here's a full example.
+Here's a full example:
 
 ```bash
 # we'll call the hidden pomerium path below against a proxied-by-pomerium
@@ -37,14 +37,25 @@ curl "https://$ANY_POMERIUM_PROXIED_SERVICE/.pomerium/api/v1/login?pomerium_redi
 # > http://$MY_LOCAL_DEV_SERVICE/?pomerium_jwt=a.real.jwt or expanded as
 # http://localhost:8000/?pomerium_jwt=programmatic.pomerium.jwt
 
-# you can now use the value from `pomerium_jwt` to Authorize to our proxied endpoint (which you could use to proxy `localhost`)
+# you can now use the value from `pomerium_jwt` to authorize to our proxied endpoint (which you could use to proxy `localhost`)
 
 curl -H 'Authorization: Pomerium a.real.jwt' https://verify.example.com
 ```
 
+:::tip **Note**
+
+The value of `pomerium_jwt` is an opaque token, meaning the token does not carry identifying information about the user. Unlike encrypted JWTs used for user verification, Pomerium's opaque token functions as an identifier to authenticate against the API, so you should not inspect or rely on the token's values.
+
+To learn more about JWTs and identity verification, see the following docs:
+
+- [Identity Verification](/docs/capabilities/getting-users-identity)
+- [JWT Verification](/docs/capabilities/jwt-verification)
+
+:::
+
 - `service.example.com` is our endpoint fronted by pomerium-proxy
-- `localhost:8000` is our service we're developing locally, it'll need to accept the programmatic token directly as a query param `?pomerium_jwt=programmatic.pomerium.jwt` _see [callback handler](#callback-handler)_
-- `authenticate.example.com` is the pomerium-authenticate service, we'll open that in the browser to authenticate, it will be set as `iss` on the jwt
+- `localhost:8000` is our service we're developing locally, it'll need to accept the programmatic token directly as a query param `?pomerium_jwt=programmatic.pomerium.jwt` (_see [callback handler](#callback-handler)_)
+- `authenticate.example.com` is the pomerium-authenticate service, we'll open that in the browser to authenticate
 
 **Note**: By default only `localhost` URLs are allowed as the `pomerium_redirect_uri`. This can be customized with the [`programmatic_redirect_domain_whitelist`](/docs/reference/programmatic-redirect-domain-whitelist) option.
 
