@@ -19,9 +19,31 @@ import TabItem from '@theme/TabItem';
 
 ## How to configure
 
-| **Type** | **Default**                     |
-| :------- | :------------------------------ |
-| `string` | see [Default headers](#default) |
+<Tabs>
+<TabItem value="Core" label="Core">
+
+| **Config file keys**   | **Environment variables** | **Type** | **Default**                     |
+| :--------------------- | :------------------------ | :------- | :------------------------------ |
+| `set_response_headers` | `SET_RESPONSE_HEADERS`    | `string` | see [Default headers](#default) |
+
+</TabItem>
+<TabItem value="Enterprise" label="Enterprise">
+
+Configure **Response Headers** under **Proxy** settings in the Console:
+
+![Configure response headers in the Console](./img/proxy-settings/response-headers.png)
+
+</TabItem>
+<TabItem value="Kubernetes" label="Kubernetes">
+
+| **Name**               | **Type** | **Default**                     |
+| :--------------------- | :------- | :------------------------------ |
+| `set_response_headers` | `string` | see [Default headers](#default) |
+
+Set per [Ingress](/docs/deploy/k8s/ingress).
+
+</TabItem>
+</Tabs>
 
 ### Default headers
 
@@ -47,32 +69,6 @@ See [MDN Web Docs - Strict-Transport-Security](https://developer.mozilla.org/en-
 Several security-related headers are not set by default since doing so might break legacy sites. These include: `Cross-Origin Resource Policy`, `Cross-Origin Opener Policy`, and `Cross-Origin Embedder Policy`. If possible, users are encouraged to add these to `set_response_headers` or their downstream applications.
 
 :::
-
-<Tabs>
-<TabItem value="Core" label="Core">
-
-| **Config file keys**   | **Environment variables** |
-| :--------------------- | :------------------------ |
-| `set_response_headers` | `SET_RESPONSE_HEADERS`    |
-
-</TabItem>
-<TabItem value="Enterprise" label="Enterprise">
-
-Configure **Response Headers** under **Proxy** settings in the Console:
-
-![Configure response headers in the Console](./img/proxy-settings/response-headers.png)
-
-</TabItem>
-<TabItem value="Kubernetes" label="Kubernetes">
-
-| **Name**               |
-| :--------------------- |
-| `set_response_headers` |
-
-Set per [Ingress](/docs/deploy/k8s/ingress).
-
-</TabItem>
-</Tabs>
 
 ### Disable response headers
 
