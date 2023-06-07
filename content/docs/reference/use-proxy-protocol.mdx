@@ -1,0 +1,52 @@
+---
+id: use-proxy-protocol
+title: Use Proxy Protocol
+keywords:
+  - reference
+  - Use Proxy Protocol
+pagination_prev: null
+pagination_next: null
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Use Proxy Protocol
+
+## Summary
+
+Setting **Use Proxy Protocol** will configure Pomerium to require the [HAProxy proxy protocol](https://www.haproxy.org/download/1.9/doc/proxy-protocol.txt) on incoming connections. Versions 1 and 2 of the protocol are supported.
+
+## How to configure
+
+| **Type**  | **Usage**    | **Default** |
+| :-------- | :----------- | :---------- |
+| `boolean` | **optional** | `false`     |
+
+<Tabs>
+<TabItem value="Core" label="Core">
+
+| **Config file keys** | **Environment variables** |
+| :------------------- | :------------------------ |
+| `use_proxy_protocol` | `USE_PROXY_PROTOCOL`      |
+
+</TabItem>
+<TabItem value="Enterprise" label="Enterprise">
+
+`use_proxy_protocol` is a bootstrap configuration setting and is not configurable in the Console.
+
+</TabItem>
+<TabItem value="Kubernetes" label="Kubernetes">
+
+Kubernetes does not support `use_proxy_protocol`
+
+</TabItem>
+</Tabs>
+
+### Examples
+
+```yaml
+use_proxy_protocol: true
+
+USE_PROXY_PROTOCOL=true
+```

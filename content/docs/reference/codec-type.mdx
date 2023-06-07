@@ -1,0 +1,56 @@
+---
+id: codec-type
+title: Codec Type
+keywords:
+  - reference
+  - Codec Type
+pagination_prev: null
+pagination_next: null
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Codec Type
+
+## Summary
+
+**Codec Type** specifies the codec to use for downstream connections. The codec type can be either `auto`, `http1` or `http2`.
+
+When `auto` is specified, the codec will be determined via `TLS-ALPN-01` or protocol inference.
+
+## How to configure
+
+| **Type** | **Default** |
+| :------- | :---------- |
+| `string` | `auto`      |
+
+<Tabs>
+<TabItem value="Core" label="Core">
+
+| **Config file keys** | **Environment variables** |
+| :------------------- | :------------------------ |
+| `codec_type`         | `CODEC_TYPE`              |
+
+</TabItem>
+<TabItem value="Enterprise" label="Enterprise">
+
+`codec_type` is a bootstrap configuration setting and is not configurable in the Console.
+
+</TabItem>
+<TabItem value="Kubernetes" label="Kubernetes">
+
+Kubernetes does not support `codec_type`
+
+</TabItem>
+</Tabs>
+
+### Examples
+
+```yaml
+# config file key
+codec_type: http1
+
+# environment variable
+CODEC_TYPE=http2
+```

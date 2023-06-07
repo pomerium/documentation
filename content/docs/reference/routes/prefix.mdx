@@ -1,0 +1,73 @@
+---
+id: prefix
+title: Prefix
+keywords:
+  - reference
+  - Prefix
+pagination_prev: null
+pagination_next: null
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Prefix
+
+## Summary
+
+If **Prefix** is set, the route will only match incoming requests with a path that begins with the specified prefix.
+
+## How to configure
+
+| **Type** | **Usage**    |
+| :------- | :----------- |
+| `string` | **optional** |
+
+<Tabs>
+<TabItem value="Core" label="Core">
+
+| **YAML**/**JSON** setting |
+| :------------------------ |
+| `prefix`                  |
+
+</TabItem>
+<TabItem value="Enterprise" label="Enterprise">
+
+Set the **Prefix** in **Path Matching** settings:
+
+![set the prefix in the path matching settings](../img/routes/path-matching/prefix.png)
+
+</TabItem>
+<TabItem value="Kubernetes" label="Kubernetes">
+
+| **Name** |
+| :------- |
+| `Prefix` |
+
+See Kubernetes [Ingress](/docs/deploy/k8s/ingress#annotations) for more information
+
+</TabItem>
+</Tabs>
+
+### Examples
+
+```yaml
+from: https://from.example.com
+to: https://to.example.com
+prefix: /admin
+
+# ingress
+spec:
+  ingressClassName: pomerium
+  rules:
+    - host: example.localhost.pomerium.io
+      http:
+        paths:
+          - backend:
+              service:
+                name: example
+                port:
+                  name: http
+            path: /
+            pathType: Prefix
+```

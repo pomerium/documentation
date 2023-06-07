@@ -1,0 +1,55 @@
+---
+id: grpc-client-timeout
+title: gRPC Client Timeout
+keywords:
+  - reference
+  - gRPC Client Timeout
+description: Sets the maximum time before canceling an upstream gRPC request.
+pagination_prev: null
+pagination_next: null
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# gRPC Client Timeout
+
+## Summary
+
+**gRPC Client Timeout** sets the maximum time before canceling an upstream gRPC request. During transient failures, the proxy will retry upstream servers for this duration. You should leave this high enough to handle backend service restart and rediscovery so that client requests do not fail.
+
+## How to configure
+
+| **Type** | **Default** |
+| :-- | :-- |
+| `string` ([Go Duration](https://golang.org/pkg/time/#Duration.String) formatting) | `10s` |
+
+<Tabs>
+<TabItem value="Core" label="Core">
+
+| **Config file keys**  | **Environment variables** |
+| :-------------------- | :------------------------ |
+| `grpc_client_timeout` | `GRPC_CLIENT_TIMEOUT`     |
+
+</TabItem>
+<TabItem value="Enterprise" label="Enterprise">
+
+`grpc_client_timeout` is a bootstrap configuration setting and is not configurable in the Console.
+
+</TabItem>
+<TabItem value="Kubernetes" label="Kubernetes">
+
+Kubernetes does not support **gRPC Client Timeout**
+
+</TabItem>
+</Tabs>
+
+### Examples
+
+```yaml
+# config file key
+grpc_client_timeout: 15s
+
+# environment variable
+GRPC_CLIENT_TIMEOUT=15s
+```
