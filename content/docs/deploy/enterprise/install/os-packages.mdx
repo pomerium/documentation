@@ -1,23 +1,18 @@
 ---
-# cSpell:ignore pygpgme, makecache, disablerepo, enablerepo
-
-title: Installation
-lang: en-US
-keywords: [binaries, os packages, cloudsmith, pomerium, console]
-description: Install Pomerium using OS packages or binaries.
-sidebar_label: Installation
+id: os-packages
+title: Install with OS packages
+sidebar_label: With OS Packages
 ---
 
-# Install Pomerium Enterprise Console
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
 
-Pomerium Enterprise Console is available as RPM and DEB OS packages and as a Docker image.
+# Install With OS Packages
 
 | **Supported Operating Systems** | **Supported Architectures** |
 | :------------------------------ | :-------------------------- |
 | `linux`                         | `amd64`                     |
 | `darwin`                        | `arm64`                     |
-
-## Install with OS packages
 
 You can find the latest `rpm` and `deb` packages on [Cloudsmith](https://cloudsmith.io/~pomerium/repos/pomerium/groups/) or download them from the [GitHub releases](https://github.com/pomerium/pomerium/releases) page.
 
@@ -85,31 +80,3 @@ After you've installed the package, enable and start the system service:
 ```bash
 sudo systemctl enable --now pomerium-console
 ```
-
-## Install with Docker
-
-The Pomerium Enterprise Docker image is available at a private Cloudsmith Docker registry.
-
-To access the Pomerium Enterprise Docker image:
-
-1. In your terminal, run the following command:
-
-```bash
-docker login docker.cloudsmith.io
-```
-
-2. Enter your username and password:
-
-```bash
- % docker login docker.cloudsmith.io
-Username: <username>
-Password: <password>
-```
-
-3. Pull a specific tagged release of the Pomerium Enterprise image:
-
-```bash
-docker pull docker.cloudsmith.io/pomerium/enterprise/pomerium-console:${vX.X.X}
-```
-
-See the [Enterprise Quickstart](/docs/releases/enterprise/install/quickstart) for instructions to run and deploy the Enterprise Console with Docker Compose.

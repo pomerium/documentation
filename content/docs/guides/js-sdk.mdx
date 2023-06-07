@@ -1,5 +1,5 @@
 ---
-# cSpell:ignore finalizers e1c5d20b9cf771de0bd6038ee5b5fe831f771d3715b72c2db921611ffca7242f cxprp jfWNKJkq3b5hrTz2JsrXCcvgJCPP7QSFgX1ZT9wapIQ j8I1I7eb0Imr2pvxRk13cK9ZjAA3VPrdUIHkAslX2e0
+# cSpell:ignore 00u1gkwtecq0Mj1u04x7
 
 title: Pomerium JavaScript SDK
 sidebar_label: JavaScript SDK
@@ -71,7 +71,7 @@ The `issuer` and `audience` parameters are optional. If you don’t define them,
 
 If you define the `issuer` and `audience` parameters, `PomeriumVerifier` verifies their values against the claims provided by the identity provider.
 
-The `issuer` is your **authenticate service URL** without the prefixed protocol (for example, `authenticate.corp.example`). The `audience` is the URL of the upstream application without the prefixed protocol (for example, `httpbin.corp.example.com`).
+The `issuer` and `audience` will both be set to the URL of the upstream application without the prefixed protocol (for example, `httpbin.corp.example.com`).
 
   </div>
 </details>
@@ -124,7 +124,7 @@ The `issuer` and `audience` parameters are optional. If you don’t define them,
 
 If you define the `issuer` and `audience` parameters, `PomeriumVerifier` verifies their values against the claims provided by the identity provider.
 
-The `issuer` is your **authenticate service URL** without the prefixed protocol (for example, `authenticate.corp.example`). The `audience` is the URL of the upstream application without the prefixed protocol (for example, `httpbin.corp.example.com`).
+The `issuer` and `audience` will both be set to the URL of the upstream application without the prefixed protocol (for example, `httpbin.corp.example.com`).
 
   </div>
 </details>
@@ -207,9 +207,31 @@ In your browser, navigate to the relevant URL:
 - `https://react.localhost.pomerium.io:4443`
 - `https://express.localhost.pomerium.io:443/tofu`
 
-If your JWT is valid, you should receive a JSON payload with the following claims:
+If your JWT is valid, you should see a JSON payload with the following claims:
 
-![JWT payload in browser](img/js-sdk/js-sdk-jwt-payload.png)
+```json
+{
+  "payload": {
+    "aud": "react.localhost.pomerium.io",
+    "email": /* redacted */
+    "exp": 1685477549,
+    "groups": [],
+    "iat": 1685477249,
+    "iss": "react.localhost.pomerium.io",
+    "jti": "d6e514e9-f8a6-49bb-a5c4-258391d19e4d",
+    "name": /* redacted */
+    "sid": "d6e514e9-f8a6-49bb-a5c4-258391d19e4d",
+    "sub": "00u1gkwtecq0Mj1u04x7",
+    "user": "00u1gkwtecq0Mj1u04x7"
+  },
+  "protectedHeader": {
+    "alg": "ES256",
+    "kid": "997cf46e7e54de7e077419a5bf467dc1f711a96b2bf71d6de2ba35d07f29c3a2",
+    "typ": "JWT"
+  },
+  "key": {}
+}
+```
 
 If the JWT is not valid or something wasn't implemented correctly, you should receive an error:
 

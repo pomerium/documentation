@@ -12,7 +12,7 @@ pagination_next: null
 
 - Environmental Variable: `POMERIUM_DEBUG`
 - Config File Key: `pomerium_debug`
-- Kubernetes: see [`--debug`](/docs/deploying/k8s/install#runtime-parameters)
+- Kubernetes: see [`--debug`](/docs/deploy/k8s/install#runtime-parameters)
 - Type: `bool`
 - Default: `false`
 

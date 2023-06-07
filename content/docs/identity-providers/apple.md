@@ -14,7 +14,7 @@ Integrate Apple as an identity provider with Pomerium using Apple's **Sign in wi
 
 To complete this guide:
 
-- [Install Pomerium](/docs/deploying)
+- [Install Pomerium](/docs/deploy)
 - Enroll in Apple's [Developer Program](https://apps.apple.com/us/app/wwdc/id640199958)
 
 :::caution

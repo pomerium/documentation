@@ -15,7 +15,7 @@ In addition to the capabilities provided by open-source Pomerium, Pomerium Enter
 
 Pomerium Enterprise lets you view traffic and logs, define routes and policies, and organize your service access from an intuitive web interface.
 
-![Overview animation of Pomerium Enterprise](img/console-overview.gif)
+![Overview animation of Pomerium Enterprise](./enterprise/img/console-overview.gif)
 
 ### Programmatic API
 
@@ -25,7 +25,7 @@ Integrate Pomerium into your workflows by managing configuration from the progra
 
 Quickly view who is logged in your infrastructure, with easy access to revoke sessions.
 
-![Pomerium Enterprise Session List](img/console-session-list.png)
+![Pomerium Enterprise Session List](./enterprise/img/console-session-list.png)
 
 ### Self-Service & Governance
 

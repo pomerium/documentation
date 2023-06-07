@@ -12,7 +12,7 @@ pagination_next: null
 
 - Environment Variable: `DATABROKER_STORAGE_TLS_SKIP_VERIFY`
 - Config File Key: `databroker_storage_tls_skip_verify`
-- Kubernetes: see [`storage`](/docs/deploying/k8s/reference#storage)
+- Kubernetes: see [`storage`](/docs/deploy/k8s/reference#storage)
 - Type: relative file location
 - Optional
 
