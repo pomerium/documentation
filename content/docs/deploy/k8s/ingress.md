@@ -622,7 +622,7 @@ For more information on the Pomerium Ingress Controller or the Kubernetes concep
 [`ingress.pomerium.io/tls_downstream_server_name`]: /docs/reference/routes/tls-downstream-server-name
 [`ingress.pomerium.io/tls_skip_verify`]: /docs/reference/routes/tls-skip-verification
 [`tls_custom_ca_secret`]: /docs/reference/routes/tls-custom-certificate-authority
-[client-certificate-authority]: /docs/reference/client-certificate-authority
+[client-certificate-authority]: /docs/reference/certificates
 [hsts]: https://en.wikipedia.org/wiki/HTTP_Strict_Transport_Security
 [re2 regular expression]: https://github.com/google/re2/wiki/Syntax
 [regex101.com]: https://regex101.com
