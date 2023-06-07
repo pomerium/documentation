@@ -1,0 +1,55 @@
+---
+id: metrics-client-certificate-authority
+title: Metrics Client Certificate Authority
+keywords:
+  - reference
+  - Metrics Client Certificate Authority
+description: Metrics Client Certificate Authority is the X.509 public-key used to validate [mTLS](https://en.wikipedia.org/wiki/Mutual_authentication) client certificates for the metrics endpoint.
+pagination_prev: null
+pagination_next: null
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Metrics Client Certificate Authority
+
+## Summary
+
+**Metrics Client Certificate Authority** is the X.509 _public-key_ used to validate [mTLS](https://en.wikipedia.org/wiki/Mutual_authentication) client certificates for the metrics endpoint. If not set, no client certificate will be required.
+
+## How to configure
+
+| **Type** | **Usage**    |
+| :------- | :----------- |
+| `string` | **optional** |
+
+<Tabs>
+<TabItem value="Core" label="Core">
+
+| **Config file keys** | **Environment variables** |
+| :-- | :-- |
+| `metrics_client_ca` and `metrics_client_ca_file` | `METRICS_CLIENT_CA` and `METRICS_CLIENT_CA_FILE` |
+
+</TabItem>
+<TabItem value="Enterprise" label="Enterprise">
+
+`metrics_client_ca` and `metrics_client_ca_file` are bootstrap configuration settings and are not configurable in the Console.
+
+</TabItem>
+<TabItem value="Kubernetes" label="Kubernetes">
+
+Kubernetes does not support **Metrics Client Certificate Authority**
+
+</TabItem>
+</Tabs>
+
+### Examples
+
+```yaml
+# config file key
+metrics_client_ca: base64-encoded-string
+
+# environment variable
+METRICS_CLIENT_CA_FILE=/relative/file/location
+```

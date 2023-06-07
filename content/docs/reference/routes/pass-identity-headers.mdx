@@ -1,0 +1,60 @@
+---
+id: pass-identity-headers
+title: Pass Identity Headers
+keywords:
+  - reference
+  - Pass Identity Headers
+pagination_prev: null
+pagination_next: null
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Pass Identity Headers
+
+## Summary
+
+When set, **Pass Identity Headers** will pass identity headers to the upstream application.
+
+These headers include:
+
+- `X-Pomerium-Jwt-Assertion`
+- `X-Pomerium-Claim-*` (see [JWT Claim Headers](/docs/reference/jwt-claim-headers) for more information)
+
+## How to configure
+
+| **Type**  | **Usage**    | **Default** |
+| :-------- | :----------- | :---------- |
+| `boolean` | **optional** | `false`     |
+
+<Tabs>
+<TabItem value="Core" label="Core">
+
+| **YAML**/**JSON** setting |
+| :------------------------ |
+| `pass_identity_headers`   |
+
+</TabItem>
+<TabItem value="Enterprise" label="Enterprise">
+
+Set **Pass Identity Headers** under **General** route settings in the Console:
+
+![Set pass identity headers in the Console](../img/routes/identity-headers/pass-identity-headers.png)
+
+</TabItem>
+<TabItem value="Kubernetes" label="Kubernetes">
+
+See Kubernetes [Ingress](/docs/deploy/k8s/ingress#annotations) for more information
+
+</TabItem>
+</Tabs>
+
+### Examples
+
+```yaml
+routes:
+  - from: https://verify.localhost.pomerium.io
+    to: http://verify:8000
+    pass_identity_headers: true
+```

@@ -1,0 +1,60 @@
+---
+id: tls-skip-verification
+title: TLS Skip Verification
+keywords:
+  - reference
+  - TLS Skip Verification
+pagination_prev: null
+pagination_next: null
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# TLS Skip Verification
+
+## Summary
+
+TLS Skip Verification controls whether the Pomerium Proxy Service verifies the upstream server's certificate chain and host name.
+
+If enabled, Pomerium accepts any certificate presented by the upstream server and any host name in that certificate.
+
+In this mode, TLS is susceptible to man-in-the-middle attacks. This should be used only for testing.
+
+## How to configure
+
+| **Type**  | **Default** |
+| :-------- | :---------- |
+| `boolean` | `false`     |
+
+<Tabs>
+<TabItem value="Core" label="Core">
+
+| **YAML**/**JSON** setting |
+| :------------------------ |
+| `tls_skip_verify`         |
+
+</TabItem>
+<TabItem value="Enterprise" label="Enterprise">
+
+Enable **TLS Skip Verify** in the Console:
+
+![Enable TLS skip verify in the console](../img/routes/tls/route-tls-settings.png)
+
+</TabItem>
+<TabItem value="Kubernetes" label="Kubernetes">
+
+| **Name**          |
+| :---------------- |
+| `tls_skip_verify` |
+
+See Kubernetes [Ingress](/docs/deploy/k8s/ingress#annotations) for more information
+
+</TabItem>
+</Tabs>
+
+### Examples
+
+```yaml
+tls_skip_verify: true
+```

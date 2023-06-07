@@ -1,0 +1,57 @@
+---
+id: tls-upstream-allow-renegotiation
+title: TLS Upstream Allow Renegotiation
+description: TLS Upstream Allow Renegotiation controls whether server-initiated TLS renegotiation is allowed for upstream servers.
+keywords:
+  - reference
+  - TLS Upstream Allow Renegotiation
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# TLS Upstream Allow Renegotiation
+
+## Summary
+
+**TLS Upstream Allow Renegotiation** controls whether server-initiated TLS renegotiation is allowed for upstream servers. For more details, see Envoy's documentation on [`allow_renegotiation`](https://www.envoyproxy.io/docs/envoy/latest/api-v3/extensions/transport_sockets/tls/v3/tls.proto).
+
+:::warning
+
+TLS renegotiation is considered insecure and shouldn’t be used unless absolutely necessary.
+
+:::
+
+## How to configure
+
+| **Type**  | **Default** |
+| :-------- | :---------- |
+| `boolean` | `false`     |
+
+<Tabs>
+<TabItem value="Core" label="Core">
+
+| **YAML**/**JSON** setting          |
+| :--------------------------------- |
+| `tls_upstream_allow_renegotiation` |
+
+</TabItem>
+<TabItem value="Enterprise" label="Enterprise">
+
+Enable **TLS Upstream Allow Renegotiation** in the Console:
+
+![Enable tls upstream renegotiation in the console](../img/routes/tls/route-tls-settings.png)
+
+</TabItem>
+<TabItem value="Kubernetes" label="Kubernetes">
+
+Kubernetes does not support **TLS Upstream Allow Renegotiation**
+
+</TabItem>
+</Tabs>
+
+### Examples
+
+```yaml
+tls_upstream_allow_renegotiation: true
+```

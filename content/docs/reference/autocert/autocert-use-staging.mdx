@@ -1,0 +1,56 @@
+---
+id: autocert-use-staging
+title: Autocert Use Staging
+description: |
+  Let's Encrypt has strict usage limits. Enabling this setting allows you to use Let's Encrypt's staging environment which has much more lax usage limits.
+keywords:
+  - reference
+  - Autocert Use Staging
+pagination_prev: null
+pagination_next: null
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Autocert Use Staging
+
+## Summary
+
+**Autocert Use Staging** setting allows you to use Let's Encrypt's [staging environment](https://letsencrypt.org/docs/staging-environment/), which has more lenient [usage limits](https://letsencrypt.org/docs/rate-limits/) than the production environment.
+
+## How to configure
+
+| **Type**  | **Usage**    |
+| :-------- | :----------- |
+| `boolean` | **optional** |
+
+<Tabs>
+<TabItem value="Core" label="Core">
+
+| **Config file keys**   | **Environment variables** |
+| :--------------------- | :------------------------ |
+| `autocert_use_staging` | `AUTOCERT_USE_STAGING`    |
+
+</TabItem>
+<TabItem value="Enterprise" label="Enterprise">
+
+`autocert_use_staging` is a bootstrap configuration setting and is not configurable in the Console.
+
+</TabItem>
+<TabItem value="Kubernetes" label="Kubernetes">
+
+Kubernetes users should not use Autocert. See the [cert-manager's guide](https://cert-manager.io/docs/tutorials/acme/pomerium-ingress/) for more information.
+
+</TabItem>
+</Tabs>
+
+### Examples
+
+```yaml
+# config file key
+autocert_use_staging: true
+
+# environment variable
+AUTOCERT_USE_STAGING=true
+```

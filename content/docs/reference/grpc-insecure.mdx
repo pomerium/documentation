@@ -1,0 +1,56 @@
+---
+id: grpc-insecure
+title: gRPC Insecure
+description: |
+  If set, gRPC Insecure disables transport security for communication between the proxy and authorize components.
+keywords:
+  - reference
+  - gRPC Insecure
+pagination_prev: null
+pagination_next: null
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# gRPC Insecure
+
+## Summary
+
+**gRPC Insecure** disables transport security for gRPC communication. If running in [all-in-one](/docs/internals/configuration#all-in-one-vs-split-service-mode) mode, defaults to true as communication will run over localhost's own socket.
+
+## How to configure
+
+| **Type** | **Default** |
+| :-- | :-- |
+| `boolean` | `true` (If in [all-in-one](/docs/internals/configuration#all-in-one-vs-split-service-mode) mode) |
+
+<Tabs>
+<TabItem value="Core" label="Core">
+
+| **Config file keys** | **Environment variables** |
+| :------------------- | :------------------------ |
+| `grpc_insecure`      | `GRPC_INSECURE`           |
+
+</TabItem>
+<TabItem value="Enterprise" label="Enterprise">
+
+`grpc_insecure` is a bootstrap configuration setting and is not configurable in the Console.
+
+</TabItem>
+<TabItem value="Kubernetes" label="Kubernetes">
+
+**gRPC Insecure** is not customizable in Kubernetes
+
+</TabItem>
+</Tabs>
+
+### Examples
+
+```yaml
+# config file key
+grpc_insecure: false
+
+# environment variable
+GRPC_INSECURE=false
+```
