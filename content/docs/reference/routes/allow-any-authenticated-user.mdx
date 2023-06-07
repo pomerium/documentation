@@ -1,0 +1,63 @@
+---
+id: allow-any-authenticated-user
+title: Allow Any Authenticated User
+keywords:
+  - reference
+  - Allow Any Authenticated User
+pagination_prev: null
+pagination_next: null
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Allow Any Authenticated User
+
+## Summary
+
+**Use with caution**: **Allow Any Authenticated User** allows all requests for any user that authenticates against your identity provider.
+
+For example, if you use a corporate GSuite account, an unrelated user with a Gmail account can access the upstream application.
+
+Use of this setting means Pomerium **will not enforce your centralized authorization policy** for this route. The upstream is responsible for handling any authorization.
+
+## How to configure
+
+| **Type**  | **Default** | **Usage**    |
+| :-------- | :---------- | :----------- |
+| `boolean` | `false`     | **optional** |
+
+<Tabs>
+<TabItem value="Core" label="Core">
+
+| **YAML**/**JSON** setting      |
+| :----------------------------- |
+| `allow_any_authenticated_user` |
+
+</TabItem>
+<TabItem value="Enterprise" label="Enterprise">
+
+Enable **Any Authenticated User** in the **Policy Builder** in the Console:
+
+![Enable any authenticated user in the console](../img/routes/allow-any-authenticated-user/allow-any-user.png)
+
+</TabItem>
+<TabItem value="Kubernetes" label="Kubernetes">
+
+| **Name**                       |
+| :----------------------------- |
+| `allow_any_authenticated_user` |
+
+See Kubernetes [Ingress reference](/docs/deploy/k8s/ingress#annotations) for more information.
+
+</TabItem>
+</Tabs>
+
+### Examples
+
+```yaml
+allow_any_authenticated_user: true
+
+# ingress
+ingress.pomerium.io/allow_any_authenticated_user: true
+```

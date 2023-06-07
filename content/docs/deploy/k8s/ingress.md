@@ -618,7 +618,8 @@ For more information on the Pomerium Ingress Controller or the Kubernetes concep
 [`ingress.pomerium.io/set_request_headers`]: /docs/reference/routes/set-request-headers
 [`ingress.pomerium.io/set_response_headers`]: /docs/reference/set-response-headers
 [`ingress.pomerium.io/timeout`]: /docs/reference/routes/route-timeout
-[`ingress.pomerium.io/tls_server_name`]: /docs/reference/routes/tls-server-name
+[`ingress.pomerium.io/tls_upstream_server_name`]: /docs/reference/routes/tls-upstream-server-name
+[`ingress.pomerium.io/tls_downstream_server_name`]: /docs/reference/routes/tls-downstream-server-name
 [`ingress.pomerium.io/tls_skip_verify`]: /docs/reference/routes/tls-skip-verification
 [`tls_custom_ca_secret`]: /docs/reference/routes/tls-custom-certificate-authority
 [client-certificate-authority]: /docs/reference/client-certificate-authority

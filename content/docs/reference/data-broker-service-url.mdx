@@ -1,0 +1,55 @@
+---
+id: data-broker-service-url
+title: Databroker Service URL
+keywords:
+  - reference
+  - Data Broker Service URL
+pagination_prev: null
+pagination_next: null
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Databroker Service URL
+
+## Summary
+
+**Databroker Service URL** points to a data broker which is responsible for storing associated authorization context (for example, sessions, users, and user groups).
+
+## How to configure
+
+| **Type** | **Default**                                  |
+| :------- | :------------------------------------------- |
+| `URL`    | `http://localhost:5443` (In all-in-one mode) |
+
+<Tabs>
+<TabItem value="Core" label="Core">
+
+| **Config file keys**      | **Environment variables** |
+| :------------------------ | :------------------------ |
+| `databroker_service_url`  | `DATABROKER_SERVICE_URL`  |
+| `databroker_service_urls` | `DATABROKER_SERVICE_URLS` |
+
+</TabItem>
+<TabItem value="Enterprise" label="Enterprise">
+
+`databroker_service_url` and `databroker_internal_service_urls` are bootstrap configuration settings and are not configurable in the Console.
+
+</TabItem>
+<TabItem value="Kubernetes" label="Kubernetes">
+
+`databroker_service_url` is not customizable in Kubernetes for all-in-one mode deployments
+
+</TabItem>
+</Tabs>
+
+### Examples
+
+```yaml
+databroker_service_urls:
+  - http://databroker.corp.example1.com
+  - https://databroker.corp.example2.com
+
+DATABROKER_SERVICE_URL=https://databroker.corp.example.com
+```

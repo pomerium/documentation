@@ -1,0 +1,52 @@
+---
+id: outlier-detection
+title: Outlier Detection
+keywords:
+  - reference
+  - Outlier Detection
+pagination_prev: null
+pagination_next: null
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Outlier Detection
+
+## Summary
+
+**Outlier Detection** and ejection is the process of dynamically determining whether some number of hosts in an upstream cluster are performing unlike the others and removing them from the healthy load balancing set.
+
+See Envoy [documentation](https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/upstream/outlier#arch-overview-outlier-detection) and [API](https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/cluster/v3/outlier_detection.proto#envoy-v3-api-msg-config-cluster-v3-outlierdetection) for more information.
+
+## How to configure
+
+| **Type** | **Usage**    |
+| :------- | :----------- |
+| `object` | **optional** |
+
+<Tabs>
+<TabItem value="Core" label="Core">
+
+| **Config file key** |
+| :------------------ |
+| `outlier_detection` |
+
+</TabItem>
+<TabItem value="Enterprise" label="Enterprise">
+
+`outlier_detection` is a bootstrap configuration setting and is not configurable in the Console.
+
+</TabItem>
+<TabItem value="Kubernetes" label="Kubernetes">
+
+See the [Load Balancing](/docs/capabilities/load-balancing#passive-health-checks) guide for more information
+
+</TabItem>
+</Tabs>
+
+### Examples
+
+```yaml
+outlier_detection: {'consecutive_5xx': 12}
+```

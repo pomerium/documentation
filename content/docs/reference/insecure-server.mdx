@@ -1,0 +1,64 @@
+---
+id: insecure-server
+title: Insecure Server
+description: |
+  Turning on insecure server mode will result in pomerium starting, and operating without any protocol encryption in transit.
+keywords:
+  - reference
+  - Insecure Server
+pagination_prev: null
+pagination_next: null
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Insecure Server
+
+## Summary
+
+If true, **Insecure Server** mode will result in Pomerium starting and operating without any protocol encryption in transit.
+
+This setting can be useful in a situation where you have Pomerium behind a TLS terminating ingress or proxy. However, even in that case, it is highly recommended to use TLS to protect the confidentiality and integrity of service communication even behind the ingress using self-signed certificates or an internal CA.
+
+:::warning
+
+Pomerium should _never_ be exposed to the internet without TLS encryption.
+
+:::
+
+## How to configure
+
+| **Type** | **Usage** |
+| :-- | :-- |
+| `boolean` | **required** (if [certificates](/docs/reference/certificates) unset) |
+
+<Tabs>
+<TabItem value="Core" label="Core">
+
+| **Config file keys** | **Environment variables** |
+| :------------------- | :------------------------ |
+| `insecure_server`    | `INSECURE_SERVER`         |
+
+</TabItem>
+<TabItem value="Enterprise" label="Enterprise">
+
+`insecure_server` is a bootstrap configuration setting and is not configurable in the Console.
+
+</TabItem>
+<TabItem value="Kubernetes" label="Kubernetes">
+
+Kubernetes does not support **Insecure Server**
+
+</TabItem>
+</Tabs>
+
+### Examples
+
+```yaml
+# config file key
+insecure_server: true
+
+# environment variable
+INSECURE_SERVER=true
+```

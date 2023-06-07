@@ -1,0 +1,80 @@
+---
+id: authenticate-callback-path
+title: Authenticate Callback Path
+description: |
+  The authenticate callback path is the path/url from the authenticate service that will receive the response from your identity provider.
+keywords:
+  - reference
+  - Authenticate Callback Path
+pagination_prev: null
+pagination_next: null
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Authenticate Callback Path
+
+## Summary
+
+**Authenticate Callback Path** sets the path where the Authenticate Service receives callback responses from your identity provider. The value must exactly match one of the authorized redirect URIs for the OAuth 2.0 client.
+
+This value is referred to as the `redirect_uri` in the [OpenIDConnect][oidc rfc] and [OAuth2][oauth2] specs.
+
+See [Google - Setting Redirect URI](https://developers.google.com/identity/protocols/OpenIDConnect#setredirecturi) for more information.
+
+[oidc rfc]: https://openid.net/specs/openid-connect-core-1_0.html#AuthRequest
+[oauth2]: https://tools.ietf.org/html/rfc6749#section-3.1.2
+
+:::tip **Note:**
+
+Pomerium uses the [**Hosted Authenticate Service**](/docs/capabilities/hosted-authenticate-service) by default.
+
+If you want to run Pomerium with a self-hosted authenticate service, you must include an [**identity provider**](/docs/identity-providers) and [**authenticate service URL**](/docs/reference/authenticate-service-url) in your configuration.
+
+See [**Self-Hosted Authenticate Service**](/docs/capabilities/self-hosted-authenticate-service) for more information.
+
+:::
+
+## How to configure
+
+| **Type** | **Usage**    | **Default**        |
+| :------- | :----------- | :----------------- |
+| `string` | **optional** | `/oauth2/callback` |
+
+<Tabs>
+<TabItem label="Core" value="Core">
+
+| **Config file keys**         | **Environment variables**    |
+| :--------------------------- | :--------------------------- |
+| `authenticate_callback_path` | `AUTHENTICATE_CALLBACK_PATH` |
+
+</TabItem>
+<TabItem label="Enterprise" value="Enterprise">
+
+`authenticate_callback_path` is a bootstrap configuration setting and is not configurable in the Console.
+
+</TabItem>
+<TabItem label="Kubernetes" value="Kubernetes">
+
+| **Name**                    |
+| :-------------------------- |
+| `authenticate.callbackPath` |
+
+See the [Kubernetes Deployment Reference](/docs/deploy/k8s/reference#authenticate) for more information.
+
+</TabItem>
+</Tabs>
+
+### Examples
+
+```yaml
+# config file key
+authenticate_callback_path: "/custom/callback"
+
+# environment variable
+AUTHENTICATE_CALLBACK_PATH=/custom/callback
+
+# ingress
+authenticate.callbackPath: /custom/callback
+```

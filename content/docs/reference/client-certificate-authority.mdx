@@ -1,0 +1,57 @@
+---
+id: client-certificate-authority
+title: Client Certificate Authority
+keywords:
+  - reference
+  - Client Certificate Authority
+pagination_prev: null
+pagination_next: null
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Client Certificate Authority
+
+## Summary
+
+**Client Certificate Authority** is the X.509 _public-key_ used to validate [mTLS client certificates](/docs/capabilities/mtls-clients).
+
+If not set, no client certificate will be required.
+
+## How to configure
+
+| **Type** | **Usage**    |
+| :------- | :----------- |
+| `string` | **optional** |
+
+<Tabs>
+<TabItem value="Core" label="Core">
+
+| **Config file keys** | **Environment variables** |
+| :------------------- | :------------------------ |
+| `client_ca`          | `CLIENT_CA`               |
+| `client_ca_file`     | `CLIENT_CA_FILE`          |
+
+</TabItem>
+<TabItem value="Enterprise" label="Enterprise">
+
+`client_ca` and `client_ca_file` are bootstrap configuration settings and are not configurable in the Console.
+
+</TabItem>
+<TabItem value="Kubernetes" label="Kubernetes">
+
+Kubernetes does not support `client_certificate_ca`
+
+</TabItem>
+</Tabs>
+
+### Examples
+
+```yaml
+client_ca: base64-encoded-string
+client_ca_file: base64-encoded-string
+
+CLIENT_CA=/relative/file/location
+CLIENT_CA_FILE=/relative/file/location
+```

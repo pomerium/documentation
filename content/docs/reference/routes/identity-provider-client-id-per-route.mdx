@@ -1,0 +1,53 @@
+---
+id: identity-provider-client-id-per-route
+title: Identity Provider Client ID (per route)
+keywords:
+  - reference
+  - Identity Provider Client ID (per route)
+pagination_prev: null
+pagination_next: null
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Identity Provider Client ID (per route)
+
+## Summary
+
+When set, **Identity Provider Client ID (per route)** overrides the value of [idp_client_id](/docs/reference/identity-provider-settings#identity-provider-client-id) set globally for this route.
+
+## How to configure
+
+| **Type** | **Usage**    |
+| :------- | :----------- |
+| `string` | **optional** |
+
+<Tabs>
+<TabItem value="Core" label="Core">
+
+| **YAML**/**JSON** setting |
+| :------------------------ |
+| `idp_client_id`           |
+
+</TabItem>
+<TabItem value="Enterprise" label="Enterprise">
+
+`idp_client_id` is a bootstrap configuration setting and is not configurable in the Console.
+
+</TabItem>
+<TabItem value="Kubernetes" label="Kubernetes">
+
+Kubernetes does not support `idp_client_id` (per route)
+
+</TabItem>
+</Tabs>
+
+### Examples
+
+```yaml
+routes:
+  - from: https://verify.localhost.pomerium.io
+    to: http://verify:8000
+    idp_client_id: idp_client_id
+```

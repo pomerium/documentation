@@ -1,0 +1,62 @@
+---
+id: address
+title: Address
+description: |
+  Address specifies the host and port to serve HTTP requests from.
+keywords:
+  - reference
+  - Address
+pagination_prev: null
+pagination_next: null
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Address
+
+## Summary
+
+**Address** specifies the Host and Port to serve HTTP requests from. If empty, `:443` is used.
+
+:::tip **Note**
+
+In all-in-one deployments, gRPC traffic will be served on loopback on port `:5443`.
+
+:::
+
+## How to configure
+
+| **Type** | **Usage**    | **Default** |
+| :------- | :----------- | :---------- |
+| `string` | **required** | `:443`      |
+
+<Tabs>
+<TabItem label="Core" value="Core">
+
+| **Config file keys** | **Environment variables** |
+| :------------------- | :------------------------ |
+| `address`            | `ADDRESS`                 |
+
+</TabItem>
+<TabItem label="Enterprise" value="Enterprise">
+
+`address` is a bootstrap configuration setting and is not configurable in the Console.
+
+</TabItem>
+<TabItem label="Kubernetes" value="Kubernetes">
+
+`address` is included in the deployment manifest and not customizable.
+
+</TabItem>
+</Tabs>
+
+### Examples
+
+```yaml
+# config file key
+address: :8443
+
+# environment variable
+ADDRESS=:8443
+```
