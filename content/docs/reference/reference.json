@@ -20,11 +20,80 @@
   "autocert": {
     "id": "autocert",
     "path": "/autocert",
-    "title": "Autocert Settings",
-    "description": "Enable Autocert and Autocert settings to retrieve, manage, and renew public-facing TLS certificates from Let's Encrypt.",
-    "short_description": "Autocert manages client-facing TLS certificates from Let's Encrypt.",
+    "title": "Autocert",
+    "description": "Turning on autocert allows Pomerium to automatically retrieve, manage, and renew public facing TLS certificates from Lets Encrypt.",
+    "short_description": "",
     "services": ["authenticate", "proxy"],
     "type": "bool"
+  },
+  "autocert-ca": {
+    "id": "autocert-ca",
+    "title": "Autocert CA",
+    "path": "/autocert",
+    "filename": "autocert-ca.md",
+    "description": "Autocert CA is the directory URL of the ACME CA to use when requesting certificates.",
+    "short_description": "",
+    "type": "",
+    "services": ["authenticate", "proxy"]
+  },
+  "autocert-email": {
+    "id": "autocert-email",
+    "title": "Autocert Email",
+    "path": "/autocert",
+    "description": "Autocert Email is the email address to use when requesting certificates from an ACME CA.",
+    "short_description": "",
+    "services": ["authenticate", "proxy"],
+    "type": "email"
+  },
+  "autocert-must-staple": {
+    "id": "autocert-must-staple",
+    "title": "Autocert Must-Staple",
+    "path": "/autocert",
+    "type": "bool",
+    "services": ["authenticate", "proxy"]
+  },
+  "autocert-directory": {
+    "id": "autocert-directory",
+    "title": "Autocert Directory",
+    "path": "/autocert",
+    "description": "Autocert directory is the path which autocert will store x509 certificate data.",
+    "services": ["authenticate", "proxy"],
+    "short_description": "String pointing to the path of the directory",
+    "type": "string"
+  },
+  "autocert-use-staging": {
+    "id": "autocert-use-staging",
+    "title": "Autocert Use Staging",
+    "path": "/autocert",
+    "description": "Let's Encrypt has strict usage limits. Enabling this setting allows you to use Let's Encrypt's staging environment which has much more lax usage limits.",
+    "type": "bool",
+    "services": ["authenticate", "proxy"]
+  },
+  "autocert-eab-key-id": {
+    "id": "autocert-eab-key-id",
+    "title": "Autocert EAB Key ID",
+    "path": "/autocert",
+    "description": "Autocert EAB Key ID is the key identifier when requesting a certificate from a CA with External Account Binding enabled.",
+    "short_description": "String containing the identifier for an ACME EAB key to use",
+    "type": "string",
+    "services": ["authenticate", "proxy"]
+  },
+  "autocert-eab-mac-key": {
+    "id": "autocert-eab-mac-key",
+    "title": "Autocert EAB MAC Key",
+    "path": "/autocert",
+    "description": "Autocert EAB MAC Key is the base64url-encoded secret key corresponding to the Autocert EAB Key ID.",
+    "short_description": "String containing a base64url-encoded secret key",
+    "type": "string",
+    "services": ["authenticate", "proxy"]
+  },
+  "autocert-trusted-certificate-authority": {
+    "id": "autocert-trusted-certificate-authority",
+    "title": "Autocert Trusted Certificate Authority",
+    "path": "/autocert",
+    "services": ["authenticate", "proxy"],
+    "type": "string",
+    "short_description": "Base64 encoded string or relative file location"
   },
   "branding-settings": {
     "id": "branding",
