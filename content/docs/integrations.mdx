@@ -11,3 +11,89 @@ For more information on how context enriches access decisions, read our [blog po
 Pomerium Enterprise Console's external data feature allows you to collect data from sources other than your identity provider (**IdP**) to make context-aware policy decisions. Pomerium provides several data sources as examples, but we encourage you to create (and share with the community) your own integrations to expand your data-driven policies.
 
 See the pages in this section for more information on our example data sources, or learn how to create your own by reviewing our [datasource](https://github.com/pomerium/datasource) repository.
+
+## Integrate external data sources in the Console
+
+![Configure external data sources in the Console](./integrations/img/external-data-gui.gif)
+
+Any external data source integration requires the following settings:
+
+### **URL**
+
+The path to the external data.
+
+Supported external data formats include:
+
+A **JSON file** containing an array of objects. Each object **must** contain an `id` field.
+
+For example:
+
+```json title="example JSON"
+[
+  {"id": "id4@example.com", "user.id": "user4"},
+  {"id": "id5@example.com", "user.id": "user5"},
+  {"id": "id6@example.com", "user.id": "user6"}
+]
+```
+
+A **CSV file** where the first row indicates the field names and subsequent rows are records. One of the fields **must** be an `id`.
+
+For example:
+
+```json title="example CSV"
+id,user.id
+id1@example.com,user1
+id2@example.com,user2
+id3@example.com,user3
+```
+
+**tar or ZIP files**
+
+A `.tar` or `.zip` file containing files of one of the formats above. The file path within the `.tar` file specifies the record type, if not defined in the configuration.
+
+For example, in an archive containing the following structure:
+
+```bash
+example.com/geoip.csv
+devices/jamf.json
+devices/tanium.json
+```
+
+The Pomerium Databroker would be updated with types `example.com/geoip`, `devices/jamf`, and `devices/tanium`.
+
+Compressed versions are supported using `gz` format.
+
+### **Record Type**
+
+Unless defined by the directory structure of a supplied archive file, the Record Type field defines how the records will be stored and accessed in the Databroker.
+
+### **Foreign Key**
+
+**Foreign Key** is used to map an authorization evaluation to the corresponding record. The supported values are:
+
+- `user.id` (Also the default if no value is provided),
+- `user.email`,
+- `request.ip`,
+- `device.id`.
+
+### **Headers**
+
+Headers defined here will be used when connecting to the external data source.
+
+### **Allow Insecure TLS**
+
+If set, allows the import of external data from sources using untrusted TLS certificates.
+
+### **Polling Min/Max Delay**
+
+Defines the minimum and maximum delay times between requests to the external data source. The job would be scheduled to run within `min delay` intervals.
+
+:::tip **Note**
+
+If a job may not complete within the `min delay` period, it would be interrupted and restarted. If a job is interrupted by timeout or due to an error, it would be restarted with increasing intervals up to the `max delay` period.
+
+:::
+
+### **Client TLS Key**
+
+For data sources using mTLS, you can select a [client certificate](/docs/concepts/certificates) (added under **Manage** → **Certificates**) to provide to the data source.
