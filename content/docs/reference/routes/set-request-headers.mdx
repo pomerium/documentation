@@ -18,7 +18,11 @@ import TabItem from '@theme/TabItem';
 
 ## Summary
 
-**Set Request Headers** allows you to set static values for given request headers. This can be useful if you want to pass along additional information to downstream applications as headers, or set authentication header to the request.
+**Set Request Headers** allows you to set both static and dynamic values for given request headers. Static values can be useful if you want to pass along additional information to downstream applications as headers, or set authentication header to the request.
+
+The dynamic values enable you to pass ID and Access tokens in your requests.
+
+See the configuraiton options below for examples of static and dynamic headers applied to a route.
 
 ## How to configure
 
@@ -39,16 +43,25 @@ Configure **Set Request Headers** in the Console:
 </TabItem>
 <TabItem value="Kubernetes" label="Kubernetes">
 
-| **Name**              | **Type** | **Usage**    |
-| :-------------------- | :------- | :----------- |
-| `set_request_headers` | `string` | **optional** |
+| **Name**                                  | **Type** | **Usage**    |
+| :---------------------------------------- | :------- | :----------- |
+| `ingress.pomerium.io/set_request_headers` | `string` | **optional** |
 
 See Kubernetes [Ingress](/docs/deploy/k8s/ingress#annotations) for more information
 
 </TabItem>
 </Tabs>
 
+### Pass ID and Access tokens
+
+| **Option** | **Value** | **Type** | **Usage** |
+| :-- | :-- | :-- | :-- |
+| `x-pomerium-downstream-id-token` | `$pomerium.id_token` | Map of key-value pairs | **optional** |
+| `x-pomerium-downstream-access-token` | `$pomerium.access_token` | Map of key-value pairs | **optional** |
+
 ### Examples
+
+Pass static values as headers in the request:
 
 ```yaml
 - from: https://verify.corp.example.com
@@ -63,6 +76,21 @@ See Kubernetes [Ingress](/docs/deploy/k8s/ingress#annotations) for more informat
     # https://verify.corp.example.com/basic-auth/root/hunter42
     Authorization: Basic cm9vdDpodW50ZXI0Mg==
     X-Your-favorite-authenticating-Proxy: 'Pomerium'
+```
+
+Pass ID and Access tokens as dynamic headers in the request:
+
+```yaml
+- from: https://verify.corp.example.com
+  to: https://verify.pomerium.com
+  policy:
+    - allow:
+        or:
+          - email:
+              is: user@example.com
+  set_request_headers:
+    x-pomerium-downstream-id-token: $pomerium.id_token
+    x-pomerium-downstream-access-token: $pomerium.access_token
 ```
 
 :::warning
