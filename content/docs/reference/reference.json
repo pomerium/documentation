@@ -439,6 +439,7 @@
     "title": "Identity Provider Scopes",
     "path": "/identity-provider-settings",
     "description": "Identity provider scopes correspond to access privilege scopes as defined in Section 33 of OAuth 20 RFC6749.",
+    "short_description": "e.g. openid, profile, email, offline_access",
     "services": [],
     "type": "comma separated strings"
   },
@@ -862,6 +863,7 @@
     "path": "/routes/set-authorization-header",
     "services": ["proxy"],
     "type": "enum",
+    "description": "DEPRECATED! Will be removed in future versions in favor of using set_request_headers",
     "short_description": "pass_through, access_token or id_token"
   },
   "set-request-headers": {
@@ -869,7 +871,9 @@
     "title": "Set Request Headers",
     "path": "/routes/set-request-headers",
     "services": ["proxy"],
-    "type": "map of strings key value pairs"
+    "type": "map of strings key value pairs",
+    "description": "Map of key value pairs. Using $pomerium.id_token or $pomerium.access_token for the value will autopopulate the correct token.",
+    "short_description": "Value should be a string or use $pomerium.id_token and $pomerium.access_token to auto-populate"
   },
   "show-error-details": {
     "id": "show-error-details",
