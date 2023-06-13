@@ -1,6 +1,6 @@
 ---
 id: certificates
-title: Certificates
+title: Certificates Settings
 keywords:
   - reference
   - Certificates
@@ -11,9 +11,22 @@ pagination_next: null
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-# Certificates
+# Certificates Settings
 
-## Summary
+This reference covers all of Pomerium's **Certificates Settings**:
+
+- [Certificates](#certificates)
+- [Certificate Authority](#certificate-authority)
+- [Client Certificate Authority](#client-certificate-authority)
+- [Client CRL](#client-crl)
+
+:::tip **Note**
+
+All certificates supplied to Pomerium must be in **PEM** format.
+
+:::
+
+## Certificates
 
 **Certificates** are the X.509 _public-key_ and _private-key_ pair used to establish secure HTTP and gRPC connections. Any combination of these settings can be used together and are additive. You can also use any of these settings in conjunction with [`Autocert`](/docs/reference/autocert) to get OCSP stapling.
 
@@ -25,7 +38,7 @@ Pomerium will check your system's trust/key store for valid certificates first. 
 
 :::
 
-## How to configure
+### How to configure
 
 <Tabs>
 <TabItem value="Core" label="Core">
@@ -41,17 +54,11 @@ Pomerium will check your system's trust/key store for valid certificates first. 
 
 Add **Certificates** in the Enterprise Console:
 
-![Add Certificates in the Enterprise Console](./img/certs/certs-console.png)
+![Add Certificates in the Enterprise Console](./img/certificates/certs-console.png)
 
 View **Certificates**:
 
-![See your Certificates in the Enterprise Console](./img/certs/certs-console-list.png)
-
-:::tip **Note:**
-
-All certificates supplied to Pomerium must be in **PEM** format.
-
-:::
+![See your Certificates in the Enterprise Console](./img/certificates/certs-console-list.png)
 
 </TabItem>
 <TabItem value="Kubernetes" label="Kubernetes">
@@ -94,3 +101,134 @@ certificate_key: '$HOME/.acme.sh/*.example.com/*.example.com.key'
 All certificates supplied to Pomerium must be in **PEM** format.
 
 :::
+
+## Certificate Authority
+
+**Certificate Authority** defines a set of root certificate authorities (CAs) that Pomerium uses when communicating with other TLS-protected services.
+
+:::tip **Note:**
+
+Unlike route-specific CA settings, this setting augments (rather than replaces) the system's trust store. Routes that specify a CA will ignore those provided here.
+
+:::
+
+:::warning
+
+Be sure to include the intermediary certificate.
+
+:::
+
+### How to configure
+
+<Tabs>
+<TabItem value="Core" label="Core">
+
+| **Config file keys** | **Environment variables** | **Type** | **Usage** |
+| :-- | :-- | :-- | :-- |
+| `certificate_authority` | `CERTIFICATE_AUTHORITY` | `string` | **optional** |
+| `certificate_authority_file` | `CERTIFICATE_AUTHORITY_FILE` | `string` | **optional** |
+
+</TabItem>
+<TabItem value="Enterprise" label="Enterprise">
+
+Configure **Certificate Authority** in the Enterprise Console:
+
+![Set Certificate Authority in the Console](./img/certificates/cert-authority-console.png)
+
+</TabItem>
+<TabItem value="Kubernetes" label="Kubernetes">
+
+Kubernetes does not support `certificate_authority`
+
+</TabItem>
+</Tabs>
+
+### Examples
+
+```yaml
+# config file key
+certificate_authority: base64-encoded-string
+
+# environment variable
+CERTIFICATE_AUTHORITY_FILE=/relative/file/location
+```
+
+## Client Certificate Authority
+
+**Client Certificate Authority** is the X.509 _public-key_ used to validate [mTLS client certificates](/docs/capabilities/mtls-clients).
+
+If not set, no client certificate will be required.
+
+### How to configure
+
+<Tabs>
+<TabItem value="Core" label="Core">
+
+| **Config file keys** | **Environment variables** | **Type** | **Usage**    |
+| :------------------- | :------------------------ | :------- | :----------- |
+| `client_ca`          | `CLIENT_CA`               | `string` | **optional** |
+| `client_ca_file`     | `CLIENT_CA_FILE`          | `string` | **optional** |
+
+</TabItem>
+<TabItem value="Enterprise" label="Enterprise">
+
+`client_ca` and `client_ca_file` are bootstrap configuration settings and are not configurable in the Console.
+
+</TabItem>
+<TabItem value="Kubernetes" label="Kubernetes">
+
+Kubernetes does not support `client_certificate_ca`
+
+</TabItem>
+</Tabs>
+
+### Examples
+
+```yaml
+client_ca: base64-encoded-string
+client_ca_file: base64-encoded-string
+
+CLIENT_CA=/relative/file/location
+CLIENT_CA_FILE=/relative/file/location
+```
+
+## Client CRL
+
+**Client CRL** is the [certificate revocation list](https://en.wikipedia.org/wiki/Certificate_revocation_list) (in **PEM** format) for client certificates.
+
+If not set, no CRL will be used.
+
+### How to configure
+
+<Tabs>
+<TabItem value="Core" label="Core">
+
+| **Config file keys** | **Environment variables** | **Type** | **Usage**    |
+| :------------------- | :------------------------ | :------- | :----------- |
+| `client_crl`         | `CLIENT_CRL`              | `string` | **optional** |
+| `client_crl_file`    | `CLIENT_CRL_FILE`         | `string` | **optional** |
+
+</TabItem>
+<TabItem value="Enterprise" label="Enterprise">
+
+`client_crl` and `client_crl_file` are bootstrap configuration settings and are not configurable in the Console.
+
+</TabItem>
+<TabItem value="Kubernetes" label="Kubernetes">
+
+Kubernetes does not support `client_crl`
+
+</TabItem>
+</Tabs>
+
+### Examples
+
+```yaml
+# config file key
+client_crl: base64-encoded-string
+client_crl_file: base64-encoded-string
+
+# environment variable
+CLIENT_CRL=/relative/file/location
+CLIENT_CRL_FILE=/relative/file/location
+```
