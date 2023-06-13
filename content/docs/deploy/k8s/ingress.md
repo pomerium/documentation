@@ -377,7 +377,7 @@ For example:
 
 ```yaml
 ingress.pomerium.io/lb_policy: LEAST_REQUEST
-ingress.pomerium.io/least_request_lb_config: '{"choice_count": 2}' 
+ingress.pomerium.io/least_request_lb_config: '{"choice_count": 2}'
 ```
 
 See [Envoy documentation](https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/cluster/v3/cluster.proto#envoy-v3-api-enum-config-cluster-v3-cluster-lbpolicy) for more details.
