@@ -351,6 +351,37 @@ ingress.pomerium.io/service_proxy_upstream: 'true'
 
 Unless you disabled direct traffic to Endpoints, Pomerium would load balance the requests to the upstream endpoints. See the [Load Balancing](/docs/capabilities/load-balancing) guide for details, and use relevant Ingress annotations to fine tune load balancing and health checks.
 
+```yaml
+ingress.pomerium.io/lb_policy: 'lb_policy_option'
+```
+
+The `lb_policy` has the following options:
+
+| **Load Balancer Policy options** |
+| :-- |
+| [`ROUND_ROBIN`](https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/upstream/load_balancing/load_balancers#weighted-round-robin) |
+| [`RING_HASH`](https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/upstream/load_balancing/load_balancers#ring-hash) (may be further configured using [`ring_hash_lb_config`](https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/cluster/v3/cluster.proto#config-cluster-v3-cluster-ringhashlbconfig) option) |
+| [`LEAST_REQUEST`](https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/upstream/load_balancing/load_balancers#weighted-least-request) (may be further configured using [`least_request_lb_config`](https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/cluster/v3/cluster.proto#envoy-v3-api-msg-config-cluster-v3-cluster-leastrequestlbconfig)) |
+| [`RANDOM`](https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/upstream/load_balancing/load_balancers#random) |
+| [`MAGLEV`](https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/upstream/load_balancing/load_balancers#maglev) (may be further configured using [`maglev_lb_config`](https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/cluster/v3/cluster.proto#envoy-v3-api-msg-config-cluster-v3-cluster-maglevlbconfig) option) |
+
+You can further configure `lb_policy` with the following flags:
+
+| **Annotation name** | **Type** | **Usage** |
+| :-- | :-- | :-- |
+| [`least_request_lb_config`](https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/cluster/v3/cluster.proto#envoy-v3-api-msg-config-cluster-v3-cluster-leastrequestlbconfig) | `object` | **optional** |
+| [`ring_hash_lb_config`](https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/cluster/v3/cluster.proto#config-cluster-v3-cluster-ringhashlbconfig) | `object` | **optional** |
+| [`maglev_lb_config`](https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/cluster/v3/cluster.proto#envoy-v3-api-msg-config-cluster-v3-cluster-maglevlbconfig) | `object` | **optional** |
+
+For example:
+
+```yaml
+ingress.pomerium.io/lb_policy: LEAST_REQUEST
+ingress.pomerium.io/least_request_lb_config: '{"choice_count": 2}' 
+```
+
+See [Envoy documentation](https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/cluster/v3/cluster.proto#envoy-v3-api-enum-config-cluster-v3-cluster-lbpolicy) for more details.
+
 :::note
 
 Kubernetes has its own concept of [readiness](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#define-readiness-probes) for the endpoints. If a pod fails Readiness probe, its Endpoint is removed. Pomerium would detect this change and stop serving traffic to that upstream endpoint. You may use both Pomerium and Kubernetes health checks together.
