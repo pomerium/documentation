@@ -140,7 +140,7 @@ Though you will likely verify signed headers programmatically in your applicatio
 
 1. Finally, we want to cryptographically verify the validity of the token. To do this, we will need the signer's public key. You can simply copy and past the output of `cat ec_public.pem`.
 
-   ![httpbin displaying verified jwt](./img/verifying-headers-2.png)
+   ![httpbin displaying verified jwt](./img/jwt-payload.png)
 
 **Voila!** Hopefully walking through a manual verification has helped give you a better feel for how signed JWT tokens are used as a secondary validation mechanism in pomerium.
 
