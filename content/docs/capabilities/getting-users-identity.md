@@ -36,6 +36,7 @@ The JWT will contain at least the following claims:
 | `sub` | The user's ID, as specified by the identity provider. |
 | `email` | The user's email address. |
 | `groups` | The user's group memberships (if supported for the identity provider). |
+| `name` | The user's full name, as specified by the identity provider. |
 
 <details>
   <summary>Audience and issuer claims</summary>
