@@ -18,22 +18,26 @@ import TabItem from '@theme/TabItem';
 
 ## Summary
 
-**Set Request Headers** allows you to set both static and dynamic values in request headers for downstream applications.
+**Set Request Headers** allows you to set both static and dynamic values for given request headers. Static values can be useful if you want to pass along additional information to upstream applications as headers, or to set a fixed authentication header on the request.
 
-You can use static header values to pass additional information to downstream applications, or to send static credentials in an Authorization header (see [Basic Authentication](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Authorization#basic_authentication) for more information).
+The dynamic values enable you to pass ID and Access tokens from your identity provider to upstream applications.
 
-You can use dynamic header values to pass ID and Access tokens in your requests to downstream applications.
+To pass dynamic values from the user's OIDC claim to an upstream service, see [JWT Claim Headers](../jwt-claim-headers).
 
-See the configuration options below for examples of static and dynamic headers applied to a route.
+:::caution
+
+Neither HTTP/2 [psuedo-headers](https://www.rfc-editor.org/rfc/rfc9113.html#PseudoHeaderFields) (e.g. `:authority`) nor the `Host:` header may be modified via this mechanism. Those headers may instead be modified via [`prefix_rewrite`](/docs/reference/routes/prefix-rewrite), [`regex_rewrite`](/docs/reference/routes/regex-rewrite), and [`host_rewrite`](/docs/reference/routes/host-rewrite).
+
+:::
 
 ## How to configure
 
 <Tabs>
 <TabItem value="Core" label="Core">
 
-| **YAML**/**JSON** setting | **Type** | **Usage**    |
-| :------------------------ | :------- | :----------- |
-| `set_request_headers`     | `string` | **optional** |
+| **YAML**/**JSON** setting | **Type**                          | **Usage**    |
+| :------------------------ | :-------------------------------- | :----------- |
+| `set_request_headers`     | `string` (map of key-value pairs) | **optional** |
 
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
@@ -54,18 +58,24 @@ See Kubernetes [Ingress](/docs/deploy/k8s/ingress#annotations) for more informat
 </TabItem>
 </Tabs>
 
-### Pass dynamic values in headers
+### Pass dynamic tokens in headers
 
-| **Option** | **Value** | **Type** | **Usage** |
-| :-- | :-- | :-- | :-- |
-| `x-pomerium-downstream-id-token` | `$pomerium.id_token` | Map of key-value pairs | **optional** |
-| `x-pomerium-downstream-access-token` | `$pomerium.access_token` | Map of key-value pairs | **optional** |
+| **Token**                | **Value**                                     |
+| :----------------------- | :-------------------------------------------- |
+| `$pomerium.id_token`     | OIDC ID token from the identity provider      |
+| `$pomerium.access_token` | OAuth access token from the identity provider |
 
 **Note:** Token values must use the `$pomerium.<token>` syntax.
 
+:::warning
+
+Be very careful when passing access tokens to an upstream application. This may allow the application to make other authenticated requests on behalf of the user.
+
+:::
+
 ### Examples
 
-Pass static values as headers in the request:
+Pass static header values in the request:
 
 ```yaml
 - from: https://verify.corp.example.com
@@ -76,9 +86,9 @@ Pass static values as headers in the request:
           - email:
               is: user@example.com
   set_request_headers:
-    # works auto-magically!
-    # https://verify.corp.example.com/basic-auth/root/hunter42
+    # Set a fixed Basic Auth username and password (root:hunter42)
     Authorization: Basic cm9vdDpodW50ZXI0Mg==
+    # Set a custom header
     X-Your-favorite-authenticating-Proxy: 'Pomerium'
 ```
 
@@ -93,14 +103,6 @@ Pass ID and Access tokens as dynamic headers in the request:
           - email:
               is: user@example.com
   set_request_headers:
-    x-pomerium-downstream-id-token: $pomerium.id_token
-    x-pomerium-downstream-access-token: $pomerium.access_token
+    x-pomerium-idp-id-token: $pomerium.id_token
+    x-pomerium-idp-access-token: $pomerium.access_token
 ```
-
-:::warning
-
-Neither `:-prefixed` pseudo-headers nor the `Host:` header may be modified via this mechanism. Those headers may instead be modified via mechanisms such as `prefix_rewrite`, `regex_rewrite`, and `host_rewrite`.
-
-:::
-
-To pass dynamic values from the user's OIDC claim to the upstream service, see [JWT Claim Headers](../jwt-claim-headers).
