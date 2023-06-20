@@ -261,24 +261,15 @@ auto_assign_org_role = Editor ;auto assigns the user the "Editor" role
 
 Note that the value of `auto_assign_org_role` could also be "Admin" or "Viewer".
 
-This will automatically create a user with their email and username populated. To have the "Name" field populated for users, you can set the `jwt_claims_headers` option in Pomerium to include `name` in the JWT payload:
+This will automatically create a user with their email and username populated.
 
-<Tabs>
-<TabItem value="config.yaml" label="config.yaml">
+:::tip
 
-```yaml
-jwt_claims_headers: name
-```
+Pomerium now autopopulates the JWT `name` claim by default with the value provided by the identity provider.
 
-</TabItem>
-<TabItem value="Environment Variable" label="Environment Variable">
+You don't need to pass the `name` claim as a custom header with the `jwt_claims_headers` setting as was previously instructed in this guide.
 
-```bash
-JWT_CLAIMS_HEADERS=name
-```
-
-</TabItem>
-</Tabs>
+:::
 
 This configuration will allow seamless authentication and authorization without any additional toil for your team.
 
