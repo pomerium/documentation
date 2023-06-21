@@ -70,6 +70,8 @@ Different timeouts apply at various stages of the connection lifecycle:
 
 - **Upstream timeout**: This timeout applies to the time a request takes to travel from Pomerium to the upstream service and back. It can be configured per-route via the [`timeout`](/docs/reference/routes/route-timeout) parameter and is considered part of the request timeout. By default, it aligns with the global [`default_upstream_timeout`](docs/reference/default-upstream-timeout) setting.
 
+![Example of HTTP request lifecycle and timeout settings](./img/timeouts-http-request/timeouts-http-diagram.png)
+
 ## Long-lived connections
 
 Most browser HTTP requests are relatively short-lived. However, certain upstream applications may require long-lived connections that span hours or even days. Examples include Websockets, gRPC streaming, and proxied TCP connections.
