@@ -28,7 +28,7 @@ Pomerium currently does not support QUIC or HTTP/3 transports. Most modern brows
 
 - Pomerium presents a server certificate for use based on the provided [`certificates`](/docs/reference/certificates#certificates).
 - Optionally, [client-side mTLS](/docs/capabilities/mtls-clients) can be enabled for downstream connections to enforce the use and validation of client certificates.
-- Pomerium only terminates TLS traffic that meets certain criteria for best practice, which are non-configurable.
+- Pomerium enforces some [minimum TLS requirements](/docs/internals/cryptography#downstream-tls) for best practice, which are non-configurable.
 
 ### 2. **Request initiation**
 
