@@ -32,7 +32,7 @@ Pomerium currently does not support QUIC or HTTP/3 transports. Most modern brows
 
 ### 2. **Request initiation**
 
-After the transport layer connection is established, the downstream client sends an HTTP request. The proxy parses this request, matches it against its configuration, and determines the upstream service to which the request should be forwarded.
+After the transport layer connection is established, the downstream client sends an HTTP request. The proxy parses this request, matches it against the configuration, and determines the upstream service to which the request should be forwarded.
 
 ### 3. **Request authorization**
 
