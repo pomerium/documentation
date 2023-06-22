@@ -37,7 +37,7 @@ For downstream TLS (connections from the user's client to Pomerium)
 - The following elliptic curves are offered, in this order:
 
   - X25519
-  - secp256r1
+  - NIST P-256
 
 ### Upstream TLS
 
@@ -64,9 +64,9 @@ For upstream TLS (connections from Pomerium to the application or service)
 - The following elliptic curves are supported:
 
   - X25519
-  - P-256
-  - P-384
-  - P-521
+  - NIST P-256
+  - NIST P-384
+  - NIST P-521
 
 - [HTTP Strict Transport Security](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security) (HSTS) with a long duration is used by default.
 - [Mutually authenticated](https://en.wikipedia.org/wiki/Mutual_authentication) TLS is used when client side certificates are provided.
