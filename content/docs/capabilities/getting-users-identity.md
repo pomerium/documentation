@@ -113,7 +113,7 @@ See the [JavaScript SDK guide](/docs/guides/js-sdk) for more information.
 
 Though you will likely verify signed headers programmatically in your application's middleware with a third-party JWT library, if you are new to JWT it may be helpful to show what manual verification looks like.
 
-1. Provide Pomerium with a base64-encoded Elliptic Curve ([NIST P-256] aka [secp256r1] aka prime256v1) Private Key. In production, you'd likely want to get these from your key management service (KMS).
+1. Provide Pomerium with a base64-encoded Elliptic Curve ([NIST P-256]) Private Key. In production, you'd likely want to get these from your key management service (KMS).
 
    ```bash
    openssl ecparam -genkey -name prime256v1 -noout -out ec_private.pem
@@ -158,6 +158,5 @@ In an actual client, you'll want to ensure that all the other claims values are 
 [key management service]: https://en.wikipedia.org/wiki/Key_management
 [nist p-256]: https://csrc.nist.gov/csrc/media/events/workshop-on-elliptic-curve-cryptography-standards/documents/papers/session6-adalier-mehmet.pdf
 [pass identity headers]: /docs/reference/routes/pass-identity-headers
-[secp256r1]: https://wiki.openssl.org/index.php/Command_Line_Elliptic_Curve_Operations
 [signing key]: /docs/reference/signing-key
 [signing key file]: /docs/reference/signing-key-file
