@@ -56,7 +56,7 @@ The connections between the client, Pomerium, and the upstream service are maint
 
 Web apps, especially modern single-page applications, often handle multiple requests simultaneously. Such apps can benefit significantly from using HTTP/2 transport from the downstream, through Pomerium, and up to the upstream application server.
 
-Typically, HTTP/2 necessitates TLS. Thus, enabling mutual TLS (mTLS) between Pomerium and the upstream applications not only boosts security, but also significantly enhances performance, leading to a smoother and faster user experience.
+Typically, HTTP/2 necessitates TLS. Thus, enabling TLS between Pomerium and the upstream applications not only boosts security, but also significantly enhances performance, leading to a smoother and faster user experience.
 
 ## Timeouts
 
