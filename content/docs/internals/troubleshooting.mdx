@@ -203,6 +203,26 @@ Usually, this is the result of either a routing issue or a configuration error. 
 
 <GenerateRecoveryToken />
 
+### Directory sync
+
+**Problem:**
+
+When syncing your identity provider directory to the Enterprise Console, you may have issues completing the sync due to timeouts or errors.
+
+**Solution:**
+
+If your directory sync fails, use the **External Data** > **Last Error** and **Metrics** dashboards to determine the source of the failure, and review your Console logs as well. If the failure is due to a timeout, increase the **IdP Polling Min/Max Delay** settings until the sync completes.
+
+1. In the Console, go to **External Data** > **Last Error** to check for errors that may have caused the sync to fail. Go to **External Data** > **Metrics** to review request durations:
+
+![Check Last Error to see if an error interrupted directory sync](./img/polling-delays/last-error-and-request-duration.gif)
+
+2. Select **Settings** > **Identity Providers** to see the **IdP Polling Min/Max Delay** settings. Increase the **Polling Min Delay** and **Polling Max Delay** settings before attempting to sync your directory again. Continue to monitor the sync; if it fails due to timeout, increase the durations.
+
+![Find the IdP Polling Delays settings in the Console](./img/polling-delays/adjust-polling-delay-settings.gif)
+
+See [**Identity Provider Polling Min/Max Delay**](/docs/reference/identity-provider-settings#identity-provider-polling-minmax-delay) for more information.
+
 ## Envoy error messages
 
 Because Pomerium relies on Envoy to manage HTTP connections, you will notice Envoy connection errors and messages at some point in your logs as you configure Pomerium.
