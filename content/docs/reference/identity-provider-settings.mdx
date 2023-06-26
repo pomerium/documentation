@@ -19,6 +19,7 @@ This reference covers all of Pomerium's **Identity Provider Settings**:
 - [Identity Provider Request Params](#identity-provider-request-params)
 - [Identity Provider Scopes](#identity-provider-scopes)
 - [Identity Provider URL](#identity-provider-url)
+- [Identity Provider Polling Min/Max Delay](#identity-provider-polling-minmax-delay)
 
 :::tip **Note:**
 
@@ -54,7 +55,7 @@ Pomerium can also integrate with any identity provider that supports OAuth 2.0 a
 
 Configure **Identity Provider Client ID** under **IDP Options** in the Console:
 
-![Configure Identity Provider Client ID under IDP Options in the Console](../img/idp_options/idp-options-console.png)
+![Configure Identity Provider Client ID under IDP Options in the Console](./img/idp_options/idp-options-console.png)
 
 </TabItem>
 <TabItem value="Kubernetes" label="Kubernetes">
@@ -92,7 +93,7 @@ IDP_CLIENT_ID=idp_client_id
 
 Configure **Identity Provider Client Secret** under **IDP Settings** in the Console:
 
-![Configure identity provider client secret under IDP Settings in the Console](../img/idp_options/idp-options-console.png)
+![Configure identity provider client secret under IDP Settings in the Console](./img/idp_options/idp-options-console.png)
 
 </TabItem>
 <TabItem value="Kubernetes" label="Kubernetes">
@@ -170,7 +171,7 @@ See [identity provider](/docs/identity-providers/) for details.
 
 Set **Identity Provider Name** under the **Identity Provider** options in the Console:
 
-![Set Identity Provider Name under Identity Providers in the Console](../img/idp_options/idp-providers.gif)
+![Set Identity Provider Name under Identity Providers in the Console](./img/idp_options/idp-providers.gif)
 
 </TabItem>
 <TabItem value="Kubernetes" label="Kubernetes">
@@ -210,7 +211,7 @@ Downstream application headers will be overwritten by Pomerium's headers on conf
 
 Configure **Identity Provider Request Params** under **Authenticate** settings in the Console:
 
-![Configure request parameters under authenticate settings in the console](../img/idp_options/idp-request-params.png)
+![Configure request parameters under authenticate settings in the console](./img/idp_options/idp-request-params.png)
 
 </TabItem>
 <TabItem value="Kubernetes" label="Kubernetes">
@@ -271,7 +272,7 @@ Some providers, like Amazon Cognito, _do not_ support the `offline_access` scope
 
 Configure **Identity Provider Scopes** under **Authenticate** settings in the Console:
 
-![Configure request parameters under authenticate settings in the console](../img/idp_options/idp-scopes.png)
+![Configure request parameters under authenticate settings in the console](./img/idp_options/idp-scopes.png)
 
 </TabItem>
 <TabItem value="Kubernetes" label="Kubernetes">
@@ -320,7 +321,7 @@ IDP_SCOPES=openid, profile, offline_access, email
 
 Set the **Identity Provider URL** under **IDP Options** settings in the Console:
 
-![Set idp provider url in the console](../img/idp_options/idp-options-console.png)
+![Set idp provider url in the console](./img/idp_options/idp-options-console.png)
 
 </TabItem>
 <TabItem value="Kubernetes" label="Kubernetes">
@@ -339,3 +340,45 @@ idp_provider_url: 'https://awesome-company.auth0.com'
 # environment variable
 IDP_PROVIDER_URL='https://awesome-company.auth0.com'
 ```
+
+## Identity Provider Polling Min/Max Delay
+
+Identity provider **Polling Minimum Delay** and **Polling Maximum Delay** settings define the minimum and maximum delay times between requests to the identity provider data source.
+
+A job starts with the **minimum delay** intervals. If the job fails to complete within the minimum delay period, it will be interrupted and the job will restart. If the job is interrupted due to timeout or an error, it will restart with increasing intervals up to the **maximum delay** period.
+
+### How to configure
+
+Set the **Identity Provider Max/Min Delay** settings in the Console:
+
+![Set IdP minimum and maximum polling delay settings in the console](./img/idp_options/idp-polling-min-max-delay.png)
+
+:::note
+
+The `minimum_delay` and `maximum_delay` settings are an [Enterprise Console](https://www.pomerium.com/enterprise-sales/) feature, and are not configurable in Pomerium Core.
+
+:::
+
+### Defaults
+
+While minimum and maximum polling time defaults are set for any Console installation, the required durations will vary depending on your identity provider and the size or your organization's directory.
+
+If the job fails before completing, increase the minimum and maximum durations until the job completes.
+
+Keep in mind that large directories may take several hours to complete.
+
+### Monitor directory sync
+
+To determine the appropriate durations required to sync your directory, check your Console logs and the **Last Error** and **Request Duration** sections of the Console GUI to determine the source of the failure.
+
+#### Last error
+
+You can check if an error interrupted a job by checking **External Data** > **Last Error**.
+
+![Check for external data sync errors](./img/idp_options/external-data-last-error.png)
+
+#### Request duration
+
+You can also check **External Data** > **Metrics** to view request durations.
+
+![Monitor request duration](./img/idp_options/external-data-request-duration.png)
