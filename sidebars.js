@@ -83,6 +83,12 @@ const sidebars = {
 
         // Enterprise
         {
+          id: 'docs/capabilities/impersonation',
+          className: 'enterprise',
+          type: 'doc',
+          label: 'User Impersonation',
+        },
+        {
           id: 'docs/capabilities/device-identity',
           className: 'enterprise',
           type: 'doc',
