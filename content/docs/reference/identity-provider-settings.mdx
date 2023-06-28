@@ -209,22 +209,6 @@ IDP_PROVIDER=github
 
 **Identity Provider Request Params** lists the parameters you want to include as part of a sign-in request using the OAuth 2.0 code flow.
 
-### Defaults
-
-Pomerium includes some default parameters for specific identity providers. Setting this configuration option will replace these default parameters. To remove the default parameters entirely, set this option to an empty map\* (e.g. `idp_request_params: {}` in the config file).
-
-| **Provider** | **Default parameters** |
-| :-- | :-- |
-| `apple`\* | <pre>response_mode: form_post</pre> |
-| `azure` | <pre>prompt: select_account</pre> |
-| `google` | <pre>prompt: select_account consent<br />access_type: offline</pre> |
-
-:::note 
-
-\*The default parameters for `apple` behave differently; any values set using this configuration option will be merged with the default parameters.
-
-:::
-
 ### How to configure
 
 <Tabs>
@@ -248,6 +232,22 @@ See Kubernetes [`identityProvider.requestParams` and `identityProvider.requestPa
 
 </TabItem>
 </Tabs>
+
+### Defaults
+
+Pomerium includes some default parameters for specific identity providers. Setting this configuration option will replace these default parameters. To remove the default parameters entirely, set this option to an empty map\* (e.g. `idp_request_params: {}` in the config file).
+
+| **Provider** | **Default parameters** |
+| :-- | :-- |
+| `apple`\* | <pre>response_mode: form_post</pre> |
+| `azure` | <pre>prompt: select_account</pre> |
+| `google` | <pre>prompt: select_account consent<br />access_type: offline</pre> |
+
+:::note
+
+\*The default parameters for `apple` behave differently; any values set using this configuration option will be merged with the default parameters.
+
+:::
 
 ### Examples
 
