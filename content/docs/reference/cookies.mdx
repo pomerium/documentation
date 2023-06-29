@@ -21,11 +21,11 @@ This reference covers all of Pomerium's **Cookies Settings**:
 - [Cookie Same Site](#cookie-samesite)
 - [Cookie Secret File](#cookie-secret-file)
 
-## Cookie Name
+## Cookie Name {#cookie-name}
 
 **Cookie Name** sets the name of the session cookie sent to clients.
 
-### How to configure
+### How to configure {#cookie-name-how-to-configure}
 
 <Tabs>
 <TabItem value="Core" label="Core">
@@ -51,7 +51,7 @@ See Kubernetes [Cookie Reference](/docs/deploy/k8s/reference#cookie) for more in
 </TabItem>
 </Tabs>
 
-### Examples
+### Examples {#cookie-name-examples}
 
 ```yaml
 # config file key
@@ -64,11 +64,11 @@ COOKIE_NAME=cookie_name
 cookie.name: cookie_name
 ```
 
-## Cookie Secret
+## Cookie Secret {#cookie-secret}
 
 **Cookie Secret** is the secret used to encrypt and sign session cookies. If you don't provide a cookie secret, Pomerium will generate one for you.
 
-### How to configure
+### How to configure {#cookie-secret-how-to-configure}
 
 <Tabs>
 <TabItem value="Core" label="Core">
@@ -90,7 +90,7 @@ See Kubernetes [bootstrap secrets](/docs/deploy/k8s/configure#bootstrap-secrets)
 </TabItem>
 </Tabs>
 
-### Examples
+### Examples {#cookie-secret-examples}
 
 Generate a random, base64-encoded key:
 
@@ -106,13 +106,13 @@ cookie_secret: tdkuWzUelRukP/6VYzopfh6kis7y5u5Ldl3MrIq9ZR0=
 COOKIE_SECRET=tdkuWzUelRukP/6VYzopfh6kis7y5u5Ldl3MrIq9ZR0=
 ```
 
-## Cookie Domain
+## Cookie Domain {#cookie-domain}
 
 **Cookie Domain** sets the scope of session cookies issued by Pomerium.
 
 If you specify the domain explicitly, then subdomains would also be included.
 
-### How to configure
+### How to configure {#cookie-domain-how-to-configure}
 
 <Tabs>
 <TabItem value="Core" label="Core">
@@ -138,7 +138,7 @@ See Kubernetes [Cookie Reference](/docs/deploy/k8s/reference#cookie) for more in
 </TabItem>
 </Tabs>
 
-### Examples
+### Examples {#cookie-domain-examples}
 
 ```yaml
 # config file key
@@ -151,7 +151,7 @@ COOKIE_DOMAIN=localhost.pomerium.io
 cookie.domain: localhost.pomerium.io
 ```
 
-## Cookie Secure
+## Cookie Secure {#cookie-secure}
 
 If true, **Cookie Secure** instructs browsers to only send user session cookies over HTTPS.
 
@@ -161,7 +161,7 @@ Setting this to `false` may result in session cookies being sent in clear text.
 
 :::
 
-### How to configure
+### How to configure {#cookie-secure-how-to-configure}
 
 <Tabs>
 <TabItem value="Core" label="Core">
@@ -179,7 +179,7 @@ Configure **Cookie Secure** with the **HTTPS only** toggle button in the Console
 - **Checkmark** sets `cookie_secure` to `true`
 - **Empty** sets `cookie_secure` to `false`
 
-![Configure Cookie Secure in the Console](../img/cookies/cookie-settings.png)
+![Configure Cookie Secure in the Console](./img/cookies/cookie-settings.png)
 
 </TabItem>
 <TabItem value="Kubernetes" label="Kubernetes">
@@ -193,7 +193,7 @@ See Kubernetes [Cookie Reference](/docs/deploy/k8s/reference#cookie) for more in
 </TabItem>
 </Tabs>
 
-### Examples
+### Examples {#cookie-secure-examples}
 
 ```yaml
 # config file key
@@ -206,11 +206,11 @@ COOKIE_SECURE=false
 cookie.secure: false
 ```
 
-## Cookie HTTP Only
+## Cookie HTTP Only {#cookie-http-only}
 
 If true, **Cookie HTTP Only** forbids JavaScript from accessing the cookie.
 
-### How to configure
+### How to configure {#cookie-http-only-how-to-configure}
 
 <Tabs>
 <TabItem value="Core" label="Core">
@@ -228,7 +228,7 @@ Configure **Cookie HTTP Only** with the **Javascript Security** toggle button in
 - **Checkmark** sets `cookie_http_only` to `true`
 - **Empty** sets `cookie_http_only` to `false`
 
-![Configure Cookie HTTP only in the Console](../img/cookies/cookie-settings.png)
+![Configure Cookie HTTP only in the Console](./img/cookies/cookie-settings.png)
 
 </TabItem>
 <TabItem value="Kubernetes" label="Kubernetes">
@@ -242,7 +242,7 @@ See Kubernetes [Cookie Reference](/docs/deploy/k8s/reference#cookie) for more in
 </TabItem>
 </Tabs>
 
-### Examples
+### Examples {#cookie-http-only-examples}
 
 ```yaml
 # config file key
@@ -255,11 +255,11 @@ COOKIE_HTTP_ONLY=false
 cookie.httpOnly: false
 ```
 
-## Cookie Expiration
+## Cookie Expiration {#cookie-expiration}
 
 **Cookie Expiration** sets the lifetime of session cookies. After this interval, users must reauthenticate.
 
-### How to configure
+### How to configure {#cookie-expiration-how-to-configure}
 
 <Tabs>
 <TabItem value="Core" label="Core">
@@ -271,7 +271,7 @@ cookie.httpOnly: false
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
 
-Set **Cookie Expiration** in the Console: ![Setting the cookie expiration time in Enterprise Console](../img/cookies/cookies-expiration.png)
+Set **Cookie Expiration** in the Console: ![Setting the cookie expiration time in Enterprise Console](./img/cookies/cookies-expiration.png)
 
 </TabItem>
 <TabItem value="Kubernetes" label="Kubernetes">
@@ -285,7 +285,7 @@ See Kubernetes [Cookie Reference](/docs/deploy/k8s/reference#cookie) for more in
 </TabItem>
 </Tabs>
 
-### Examples
+### Examples {#cookie-expiration-examples}
 
 ```yaml
 # config file key
@@ -298,11 +298,11 @@ COOKIE_EXPIRATION=13h15m0.5s
 cookie.expiration: 13h15m0.5s
 ```
 
-## Cookie SameSite
+## Cookie SameSite {#cookie-samesite}
 
 **Cookie SameSite** sets the [SameSite](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie#samesitesamesite-value) option for cookies.
 
-### How to configure
+### How to configure {#cookie-samesite-how-to-configure}
 
 <Tabs>
 <TabItem value="Core" label="Core">
@@ -330,7 +330,7 @@ cookie.expiration: 13h15m0.5s
 </TabItem>
 </Tabs>
 
-### Examples
+### Examples {#cookie-samesite-examples}
 
 ```yaml
 # config file key
@@ -343,11 +343,11 @@ COOKIE_SAME_SITE=Strict
 cookie.sameSite: None
 ```
 
-## Cookie Secret File
+## Cookie Secret File {#cookie-secret-file}
 
 **Cookie Secret File** sets the path to the file containing a secret used to encrypt and sign session cookies.
 
-### How to configure
+### How to configure {#cookie-secret-file-how-to-configure}
 
 <Tabs>
 <TabItem value="Core" label="Core">
@@ -369,7 +369,7 @@ See Kubernetes [Secrets reference](/docs/deploy/k8s/reference#spec) for more inf
 </TabItem>
 </Tabs>
 
-### Examples
+### Examples {#cookie-secret-file-examples}
 
 Generate a random, base64-encoded key:
 
