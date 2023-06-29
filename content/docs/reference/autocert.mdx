@@ -27,7 +27,7 @@ This reference covers all of Pomerium's **Autocert Settings**:
 - [Autocert Trusted Certificate Authority](#autocert-trusted-certificate-authority)
 - [Autocert Use Staging](#autocert-use-staging)
 
-## Autocert
+## Autocert {#autocert}
 
 Turning on Autocert allows Pomerium to automatically retrieve, manage, and renew public facing TLS Certificates from [Let's Encrypt][letsencrypt], which includes managed routes and the Authenticate Service.
 
@@ -51,7 +51,7 @@ Autocert requires that port `443` be accessible from the internet in order to co
 
 [letsencrypt]: https://letsencrypt.org/
 
-### How to configure
+### How to configure {#autocert-how-to-configure}
 
 <Tabs>
 <TabItem value="Core" label="Core">
@@ -73,7 +73,7 @@ Kubernetes users should not use Autocert. See the [cert-manager's guide](https:/
 </TabItem>
 </Tabs>
 
-### Examples
+### Examples {#autocert-examples}
 
 ```yaml
 # config file key
@@ -83,7 +83,7 @@ autocert: true
 AUTOCERT=TRUE
 ```
 
-## Autocert CA
+## Autocert CA {#autocert-ca}
 
 **Autocert CA** is the directory URL of the ACME CA to use when requesting certificates.
 
@@ -93,7 +93,7 @@ If set, Autocert CA will override the [**Autocert Use Staging**](/docs/reference
 
 :::
 
-### How to configure
+### How to configure {#autocert-ca-how-to-configure}
 
 <Tabs>
 <TabItem value="Core" label="Core">
@@ -115,7 +115,7 @@ Kubernetes users should not use Autocert. See the [cert-manager's guide](https:/
 </TabItem>
 </Tabs>
 
-### Examples
+### Examples {#autocert-ca-examples}
 
 ```yaml
 # config file key
@@ -125,11 +125,11 @@ autocert_ca: https://acme.zerossl.com/v2/DV90
 AUTOCERT_CA=https://acme.zerossl.com/v2/DV90
 ```
 
-## Autocert Directory
+## Autocert Directory {#autocert-directory}
 
 **Autocert Directory** is the path where [Autocert](/docs/reference/autocert) stores X.509 Certificate data.
 
-### How to configure
+### How to configure {#autocert-directory-how-to-configure}
 
 <Tabs>
 <TabItem value="Core" label="Core">
@@ -153,7 +153,7 @@ Kubernetes users should not use Autocert. See the [cert-manager's guide](https:/
 </TabItem>
 </Tabs>
 
-### Defaults
+### Defaults {#autocert-directory-defaults}
 
 | **Default paths** | **Value** |
 | :-- | :-- |
@@ -162,9 +162,9 @@ Kubernetes users should not use Autocert. See the [cert-manager's guide](https:/
 | XDG base directories | [$XDG_DATA_HOME](https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html) |
 | Home directories | `$HOME/.local/share/pomerium` |
 
-### Examples
+### Examples {#autocert-directory-examples}
 
-#### S3 Bucket
+#### S3 Bucket {#s3-bucket}
 
 An S3 bucket can be used as storage by using a URL like:
 
@@ -174,7 +174,7 @@ autocert_dir: s3://your-bucket.s3.us-east-1.amazonaws.com/some/prefix
 
 Credentials are sourced from [the environment](https://pkg.go.dev/github.com/aws/aws-sdk-go-v2/config#EnvConfig).
 
-#### GCS Bucket
+#### GCS Bucket {#gcs-bucket}
 
 A Google Cloud Storage bucket can be used as storage by using a URL like:
 
@@ -184,11 +184,11 @@ autocert_dir: gs://your-bucket/some/prefix
 
 Credentials are sourced from [Google Application Default Credentials](https://cloud.google.com/docs/authentication/application-default-credentials).
 
-## Autocert EAB Key ID
+## Autocert EAB Key ID {#autocert-eab-key-id}
 
 **Autocert EAB Key ID** is the key identifier when requesting a certificate from a CA with External Account Binding (EAB) enabled.
 
-### How to configure
+### How to configure {#autocert-eab-key-id-how-to-configure}
 
 <Tabs>
 <TabItem value="Core" label="Core">
@@ -212,7 +212,7 @@ Kubernetes users should not use Autocert. See the [cert-manager's guide](https:/
 </TabItem>
 </Tabs>
 
-### Examples
+### Examples {#autocert-eab-key-id-examples}
 
 ```yaml
 # config file key
@@ -222,13 +222,13 @@ autocert_eab_key_id: EAB_KID
 AUTOCERT_EAB_KEY_ID=EAB_KID
 ```
 
-## Autocert EAB MAC Key
+## Autocert EAB MAC Key {#autocert-eab-mac-key}
 
 **Autocert EAB MAC Key** is the base64-URL-encoded secret key corresponding to the [Autocert EAB Key ID](/docs/reference/autocert).
 
 The Autocert EAB MAC Key setting is required when Autocert EAB Key ID is set.
 
-### How to configure
+### How to configure {#autocert-eab-mac-key-how-to-configure}
 
 <Tabs>
 <TabItem value="Core" label="Core">
@@ -250,7 +250,7 @@ Kubernetes users should not use Autocert. See the [cert-manager's guide](https:/
 </TabItem>
 </Tabs>
 
-### Examples
+### Examples {#autocert-eab-mac-key-examples}
 
 ```yaml
 # config file key
@@ -260,7 +260,7 @@ autocert_eab_key_id: base64-URL-encoded_secret_key
 AUTOCERT_EAB_KEY_ID=base64-URL-encoded_secret_key
 ```
 
-## Autocert Email
+## Autocert Email {#autocert-email}
 
 **Autocert Email** is the email address to use when requesting certificates from an ACME CA or registering an ACME account.
 
@@ -270,7 +270,7 @@ The CA may contact you at this address when, for example, a certificate expires.
 
 :::
 
-### How to configure
+### How to configure {#autocert-email-how-to-configure}
 
 <Tabs>
 <TabItem value="Core" label="Core">
@@ -292,7 +292,7 @@ Kubernetes users should not use Autocert. See the [cert-manager's guide](https:/
 </TabItem>
 </Tabs>
 
-### Examples
+### Examples {#autocert-email-examples}
 
 ```yaml
 # config file key
@@ -302,7 +302,7 @@ autocert_email: example@domain.com
 AUTOCERT_EMAIL=example@domain.com
 ```
 
-## Autocert Must Staple
+## Autocert Must Staple {#autocert-must-staple}
 
 If true, **Autocert Must Staple** forces Autocert to request a certificate with the `status_request` extension (commonly called `Must-Staple`).
 
@@ -316,7 +316,7 @@ The Autocert Must Staple setting will only take effect when you request or renew
 
 :::
 
-### How to configure
+### How to configure {#autocert-must-staple-how-to-configure}
 
 <Tabs>
 <TabItem value="Core" label="Core">
@@ -340,7 +340,7 @@ Kubernetes users should not use Autocert. See the [cert-manager's guide](https:/
 </TabItem>
 </Tabs>
 
-### Examples
+### Examples {#autocert-must-staple-examples}
 
 ```yaml
 # config file key
@@ -350,13 +350,13 @@ autocert_must_staple: true
 AUTOCERT_MUST_STAPLE=true
 ```
 
-## Autocert Trusted Certificate Authority
+## Autocert Trusted Certificate Authority {#autocert-trusted-certificate-authority}
 
 **Autocert Trusted Certificate Authority** is the X.509 CA (bundle) used when communicating with a CA supporting the ACME protocol.
 
 If not set, the system trusted roots will be used to verify TLS connections to the ACME CA.
 
-### How to configure
+### How to configure {#autocert-trusted-certificate-authority-how-to-configure}
 
 <Tabs>
 <TabItem value="Core" label="Core">
@@ -379,7 +379,7 @@ Kubernetes users should not use Autocert. See the [cert-manager's guide](https:/
 </TabItem>
 </Tabs>
 
-### Examples
+### Examples {#autocert-trusted-certificate-authority-examples}
 
 ```yaml
 # config file key
@@ -391,11 +391,11 @@ AUTOCERT_TRUSTED_CA=base64-encoded-string
 AUTOCERT_TRUSTED_CA_FILE=/relative/file/location
 ```
 
-## Autocert Use Staging
+## Autocert Use Staging {#autocert-use-staging}
 
 **Autocert Use Staging** setting allows you to use Let's Encrypt's [staging environment](https://letsencrypt.org/docs/staging-environment/), which has more lenient [usage limits](https://letsencrypt.org/docs/rate-limits/) than the production environment.
 
-### How to configure
+### How to configure {#autocert-use-staging-how-to-configure}
 
 <Tabs>
 <TabItem value="Core" label="Core">
@@ -417,7 +417,7 @@ Kubernetes users should not use Autocert. See the [cert-manager's guide](https:/
 </TabItem>
 </Tabs>
 
-### Examples
+### Examples {#autocert-use-staging-examples}
 
 ```yaml
 # config file key
