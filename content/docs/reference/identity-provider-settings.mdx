@@ -157,6 +157,20 @@ IDP_CLIENT_SECRET_FILE='/run/secrets/POMERIUM_CLIENT_SECRET'
 
 See [identity provider](/docs/identity-providers/) for details.
 
+The supported values for this setting are:
+
+- `apple`
+- `auth0`
+- `azure`
+- `cognito`
+- `github`
+- `gitlab`
+- `google`
+- `oidc`
+- `okta`
+- `onelogin`
+- `ping`
+
 ### How to configure
 
 <Tabs>
@@ -195,8 +209,6 @@ IDP_PROVIDER=github
 
 **Identity Provider Request Params** lists the parameters you want to include as part of a sign-in request using the OAuth 2.0 code flow.
 
-Downstream application headers will be overwritten by Pomerium's headers on conflict.
-
 ### How to configure
 
 <Tabs>
@@ -220,6 +232,22 @@ See Kubernetes [`identityProvider.requestParams` and `identityProvider.requestPa
 
 </TabItem>
 </Tabs>
+
+### Defaults
+
+Pomerium includes some default parameters for specific identity providers. Setting this configuration option will replace these default parameters.\*
+
+| **Provider** | **Default parameters** |
+| :-- | :-- |
+| `apple`\* | <pre>response_mode: form_post</pre> |
+| `azure` | <pre>prompt: select_account</pre> |
+| `google` | <pre>prompt: select_account consent<br />access_type: offline</pre> |
+
+:::note
+
+\*The default parameters for `apple` behave differently; any values set using this configuration option will be merged with the default parameters.
+
+:::
 
 ### Examples
 
