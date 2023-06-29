@@ -21,11 +21,11 @@ This reference covers all of Pomerium's **Databroker Settings**:
 - [Databroker Storage TLS Skip Verify](#databroker-storage-tls-skip-verify)
 - [Databroker Storage Type](#databroker-storage-type)
 
-## Databroker Service
+## Databroker Service {#databroker-service}
 
 The **Databroker Service** stores user session data.
 
-### How to configure
+### How to configure {#databroker-service-how-to-configure}
 
 By default, the `databroker` service uses an in-memory databroker.
 
@@ -35,11 +35,11 @@ For an example implementation, see the in-memory database used by the databroker
 
 - [pkg/storage](https://github.com/pomerium/pomerium/tree/main/pkg/storage/inmemory)
 
-## Databroker Service URL
+## Databroker Service URL {#databroker-service-url}
 
 **Databroker Service URL** points to a data broker which is responsible for storing associated authorization context (for example, sessions, users, and user groups).
 
-### How to configure
+### How to configure {#databroker-service-url-how-to-configure}
 
 <Tabs>
 <TabItem value="Core" label="Core">
@@ -62,7 +62,7 @@ For an example implementation, see the in-memory database used by the databroker
 </TabItem>
 </Tabs>
 
-### Examples
+### Examples {#databroker-service-url-examples}
 
 ```yaml
 databroker_service_urls:
@@ -72,11 +72,11 @@ databroker_service_urls:
 DATABROKER_SERVICE_URL=https://databroker.corp.example.com
 ```
 
-## Databroker Internal Service URL
+## Databroker Internal Service URL {#databroker-internal-service-url}
 
 **Databroker Internal Service URL** overrides [`databroker_service_url`](/docs/reference/databroker) when determining the TLS Certificate for the Databroker service to listen with.
 
-### How to configure
+### How to configure {#databroker-internal-service-url-how-to-configure}
 
 <Tabs>
 <TabItem value="Core" label="Core">
@@ -99,7 +99,7 @@ DATABROKER_SERVICE_URL=https://databroker.corp.example.com
 </TabItem>
 </Tabs>
 
-### Examples
+### Examples {#databroker-internal-service-url-examples}
 
 ```yaml
 databroker_internal_service_urls:
@@ -109,11 +109,11 @@ databroker_internal_service_urls:
 DATABROKER_INTERNAL_SERVICE_URL=http://localhost:5443
 ```
 
-## Databroker Storage Certificate Authority
+## Databroker Storage Certificate Authority {#databroker-storage-certificate-authority}
 
 **Databroker Storage Certificate Authority** defines the set of root certificates used when verifying storage server connections.
 
-### How to configure
+### How to configure {#databroker-storage-certificate-authority-how-to-configure}
 
 <Tabs>
 <TabItem value="Core" label="Core">
@@ -135,7 +135,7 @@ See Kubernetes [Storage reference](/docs/deploy/k8s/reference#storage) for more 
 </TabItem>
 </Tabs>
 
-### Examples
+### Examples {#databroker-storage-certificate-authority-examples}
 
 ```yaml
 databroker_storage_ca_file: /relative/file/location
@@ -143,11 +143,11 @@ databroker_storage_ca_file: /relative/file/location
 DATABROKER_STORAGE_CA_FILE=/relative/file/location
 ```
 
-## Databroker Storage Certificate File
+## Databroker Storage Certificate File {#databroker-storage-certificate-file}
 
 **Databroker Storage Certificate File** stores the certificate used to connect to a storage backend.
 
-### How to configure
+### How to configure {#databroker-storage-certificate-file-how-to-configure}
 
 <Tabs>
 <TabItem value="Core" label="Core">
@@ -169,7 +169,7 @@ See Kubernetes [Storage reference](/docs/deploy/k8s/reference#storage) for more 
 </TabItem>
 </Tabs>
 
-### Examples
+### Examples {#databroker-storage-certificate-file-examples}
 
 ```yaml
 databroker_storage_cert_file: /relative/file/location
@@ -177,11 +177,11 @@ databroker_storage_cert_file: /relative/file/location
 DATABROKER_STORAGE_CERT_FILE=/relative/file/location
 ```
 
-## Databroker Storage Certificate Key File
+## Databroker Storage Certificate Key File {#databroker-storage-certificate-key-file}
 
 **Databroker Storage Certificate Key File** stores the certificate key used to connect to a storage backend.
 
-### How to configure
+### How to configure {#databroker-storage-certificate-key-file-how-to-configure}
 
 <Tabs>
 <TabItem value="Core" label="Core">
@@ -203,18 +203,18 @@ See Kubernetes [Storage reference](/docs/deploy/k8s/reference#storage) for more 
 </TabItem>
 </Tabs>
 
-### Examples
+### Examples {#databroker-storage-certificate-key-file-examples}
 
 ```yaml
 databroker_storage_key_file: /relative/file/location
 DATABROKER_STORAGE_KEY_FILE=/relative/file/location
 ```
 
-## Databroker Storage Connection String
+## Databroker Storage Connection String {#databroker-storage-connection-string}
 
 **Databroker Storage Connection String** sets the Postgres connection string that the Databroker service uses to connect to storage backend.
 
-### How to configure
+### How to configure {#databroker-storage-connection-string-how-to-configure}
 
 For Postgres, the following URL types are supported:
 
@@ -243,7 +243,7 @@ See Kubernetes [Storage reference](/docs/deploy/k8s/reference#storage) for more 
 </TabItem>
 </Tabs>
 
-### Examples
+### Examples {#databroker-storage-connection-string-examples}
 
 ```yaml
 databroker_storage_connection_string: postgresql://postgres:postgres@database/postgres?sslmode=disable
@@ -257,11 +257,11 @@ When using multiple hosts make sure to specify `target_session_attrs=read-write`
 
 :::
 
-## Databroker Storage TLS Skip Verify
+## Databroker Storage TLS Skip Verify {#databroker-storage-tls-skip-verify}
 
 If **Databroker Storage TLS Skip Verify** is set, the TLS connection to the storage backend will not be verified.
 
-### How to configure
+### How to configure {#databroker-storage-tls-skip-verify-how-to-configure}
 
 <Tabs>
 <TabItem value="Core" label="Core">
@@ -283,7 +283,7 @@ See Kubernetes [Storage reference](/docs/deploy/k8s/reference#storage) for more 
 </TabItem>
 </Tabs>
 
-### Examples
+### Examples {#databroker-storage-tls-skip-verify-examples}
 
 ```yaml
 databroker_storage_tls_skip_verify: /relative/file/location
@@ -291,13 +291,13 @@ databroker_storage_tls_skip_verify: /relative/file/location
 DATABROKER_STORAGE_TLS_SKIP_VERIFY=/relative/file/location
 ```
 
-## Databroker Storage Type
+## Databroker Storage Type {#databroker-storage-type}
 
 **Databroker Storage Type** sets the backend storage that the Databroker server will use.
 
 Only `memory` and `postgres` are supported.
 
-### How to configure
+### How to configure {#databroker-storage-type-how-to-configure}
 
 <Tabs>
 <TabItem value="Core" label="Core">
@@ -319,7 +319,7 @@ See Kubernetes [Storage reference](/docs/deploy/k8s/reference#storage) for more 
 </TabItem>
 </Tabs>
 
-### Example
+### Example {#databroker-storage-type-example}
 
 ```yaml
 databroker_storage_type: postgres
