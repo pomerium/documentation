@@ -19,46 +19,32 @@ keywords:
 
 # What is Pomerium?
 
-Pomerium is an identity-aware [proxy](https://www.pomerium.com/blog/proxy-vs-reverse-proxy/) that enables secure access to internal applications. Pomerium provides a standardized interface to add access control to applications regardless of whether the application itself has authorization or authentication baked-in. Pomerium gateways both internal and external requests, and can be used in situations where you'd typically reach for a VPN.
+Pomerium is a zero-trust gateway that secures access to your internal and external applications. As an open-source reverse proxy, Pomerium verifies requests to any resource by enforcing your access control policies, ensuring that only the right users with the right permissions can reach the protected resource.
 
-## What does Pomerium do?
+## Why Pomerium?
 
-Pomerium can be used to:
+### Dynamic Access Control
 
-- **authenticate**: provide a **single-sign-on** and **verifiable user identity** to internal applications
-- **authorize**: enforce dynamic access policy based on **context**, **identity**, and **device identity**
-- **audit**: aggregate access logs and telemetry data
-- perform delegated user authorization for service-based authorization systems
-- add unified access and identity to [custom, on-prem, and hosted apps and services](https://www.pomerium.com/integrations/)
-- serve as a **VPN alternative**
-- manage [device identity](https://www.pomerium.com/docs/capabilities/device-identity)
-- consistently enforce other checks specified by your access policies
+Pomerium allows you to configure [Authorization Policy](/docs/capabilities/authorization) that factors in **User Identity** and **Context** to policy decisions. By verifying that a user is who they say they are and the context surrounding a user’s request satisfies your policy criteria, Pomerium can dynamically enforce access control to any endpoint, be it in the cloud or on-premises.
 
-## Demo of Pomerium
+### Context-Aware Access and External Data Sources
 
-Still feel too abstract? Hate text? Check out a two minute explainer demo of Pomerium.
+Pomerium allows you to integrate [External Data Sources](/docs/integrations), which serve as additional context that you can use to inform policy decisions. For example, you could import a list of GeoIP ranges to restrict or grant access to a resource based on a user’s known IP fingerprint, or import your HR directory so that only members of the HR department can access HR data.
 
-<center>
-  <iframe
-    width="100%"
-    height="450"
-    src="https://www.youtube.com/embed/WGwC9ULDnAY?rel=0"
-    title="YouTube video player"
-    frameBorder="0"
-    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-    allowFullScreen></iframe>
-</center>
+### JWT Verification
 
-## Set up Pomerium in under 5 minutes
+Pomerium supports [JWT verification](/docs/capabilities/getting-users-identity) by allowing you to forward JWT claims in a cryptographically signed **Assertion Header** to upstream applications. Pomerium generates and signs a new JWT based on the ID token provided by your identity provider; this way, you can verify **user identity** and that Pomerium signed and forwarded the JWT.
 
-There are several ways to install Pomerium Enterprise to suit your organization's needs. We provide open-source Pomerium and Pomerium Enterprise as deb and rpm packages from an upstream repository, as Docker images, and as Helm charts. You can also build Pomerium from source.
+### Mutual TLS (mTLS) Authentication
 
-<iframe
-  width="100%"
-  height="450"
-  src="https://www.youtube.com/embed/NrRwisO9sDg?rel=0"
-  title="YouTube video player"
-  frameborder="0"
-  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-  allowFullScreen
-/>
+Pomerium supports [client-side mTLS](/docs/capabilities/mtls-clients) and [server-side mTLS](/docs/capabilities/mtls-services). Mutual authentication ensures both the client and server have authenticated each other's identities by presenting valid certificates signed by a trusted Certificate Authority before communicating over an encrypted network — a key aspect of enforcing a zero trust security framework.
+
+### Continuous Verification
+
+A true zero trust architecture requires that you verify each request before access is granted to a protected resource. Pomerium holds true to this tenet by continuously evaluating policy on a [per-request basis](/docs/capabilities/authorization#continuous-verification) — even after a user has successfully authenticated and accessed a resource.
+
+### Request Audit Logs
+
+In addition to enforcing stringent policy checks on every request, Pomerium also provides verbose [Audit Logs](/docs/capabilities/audit-logs) that include request metadata, such as request ID, request method and time, user and session ID, email, and more.
+
+## True Zero Trust Architecture
