@@ -19,11 +19,11 @@ This reference covers all of Pomerium's branding settings:
 - [Logo URL](#logo-url)
 - [Error Message Header](#error-message-header)
 
-## Primary Color
+## Primary Color {#primary-color}
 
 **Primary Color** sets the primary color for the **Enterprise Console** and **Route Error Details** pages when users are in **Light Mode**.
 
-### How to configure
+### How to configure {#primary-color-how-to-configure}
 
 | **Type**   | **Default**                 |
 | :--------- | :-------------------------- |
@@ -31,17 +31,17 @@ This reference covers all of Pomerium's branding settings:
 
 See [Custom Branding / Errors](/docs/capabilities/branding) for more information.
 
-### Examples
+### Examples {#primary-color-examples}
 
 Customize **Primary Color** in the Console:
 
 ![Set custom primary color for light mode](./img/branding-primary-light-mode.png)
 
-## Secondary Color
+## Secondary Color {#secondary-color}
 
 **Secondary Color** sets the primary color for the **Enterprise Console** and **Route Error Details** pages when users are in **Light Mode**.
 
-### How to configure
+### How to configure {#secondary-color-how-to-configure}
 
 | **Type**   | **Default**                 |
 | :--------- | :-------------------------- |
@@ -49,17 +49,17 @@ Customize **Primary Color** in the Console:
 
 See [Custom Branding / Errors](/docs/capabilities/branding) for more information.
 
-### Examples
+### Examples {#secondary-color-examples}
 
 Customize **Secondary Color** in the Console:
 
 ![Set custom secondary color for light mode](./img/branding-secondary-light-mode.png)
 
-## Primary Color (Dark Mode)
+## Primary Color (Dark Mode) {#primary-color-dark-mode}
 
 **Primary Color (Dark Mode)** sets the primary color for the **Enterprise Console** and **Route Error Details** pages when users are in **Dark Mode**.
 
-### How to configure
+### How to configure {#primary-color-dark-mode-how-to-configure}
 
 | **Type**   | **Default**                 |
 | :--------- | :-------------------------- |
@@ -67,17 +67,17 @@ Customize **Secondary Color** in the Console:
 
 See [Custom Branding / Errors](/docs/capabilities/branding) for more information.
 
-### Examples
+### Examples {#primary-color-dark-mode-examples}
 
 Customize **Primary Color (Dark Mode)** in the Console:
 
 ![Set custom primary color for dark mode](./img/branding-dark-mode.png)
 
-## Secondary Color (Dark Mode)
+## Secondary Color (Dark Mode) {#secondary-color-dark-mode}
 
 **Secondary Color (Dark Mode)** sets the secondary color for the **Enterprise Console** and **Route Error Details** pages when users are in **Dark Mode**.
 
-### How to configure
+### How to configure {#secondary-color-dark-mode-how-to-configure}
 
 | **Type**   | **Default**                |
 | :--------- | :------------------------- |
@@ -85,17 +85,17 @@ Customize **Primary Color (Dark Mode)** in the Console:
 
 See [Custom Branding / Errors](/docs/capabilities/branding) for more information.
 
-### Examples
+### Examples {#secondary-color-dark-mode-examples}
 
 Customize **Secondary Color (Dark Mode)** in the Console:
 
 ![Set custom secondary color for dark mode](./img/branding-dark-mode-secondary.png)
 
-## Favicon URL
+## Favicon URL {#favicon-url}
 
 **Favicon URL** customizes the Favicon displayed in the Enterprise Console and Open Source endpoints.
 
-### How to configure
+### How to configure {#favicon-url-how-to-configure}
 
 | **Type** | **Default**      |
 | :------- | :--------------- |
@@ -103,17 +103,17 @@ Customize **Secondary Color (Dark Mode)** in the Console:
 
 See [Custom Branding / Errors](/docs/capabilities/branding) for more information.
 
-### Examples
+### Examples {#favicon-url-examples}
 
 Customize **Favicon URL** in the Console:
 
 ![Replace the Favicon in Pomerium Enterprise](./img/branding-favicon-url.png)
 
-## Logo URL
+## Logo URL {#logo-url}
 
 **Logo URL** customizes the logo displayed in the Enterprise Console and Open Source endpoints.
 
-### How to configure
+### How to configure {#logo-url-how-to-configure}
 
 | **Type** | **Default**   |
 | :------- | :------------ |
@@ -121,19 +121,19 @@ Customize **Favicon URL** in the Console:
 
 See [Custom Branding / Errors](/docs/capabilities/branding) for more information.
 
-### Examples
+### Examples {#logo-url-examples}
 
 Customize **Logo URL** in the Console:
 
 ![Replace the Logo in Pomerium Enterprise](./img/branding-custom-logo.png)
 
-## Error Message Header
+## Error Message Header {#error-message-header}
 
 **Error Message Header** customizes the error message that Pomerium displays on the Error Details page for `403 Unauthorized` errors.
 
 Error messages must be written in plain text or [Markdown](https://www.markdownguide.org/basic-syntax/), and are only applied to routes where the **Show Error Details** setting is enabled.
 
-### How to configure
+### How to configure {#error-message-header-how-to-configure}
 
 | **Type** | **Default**            |
 | :------- | :--------------------- |
@@ -141,7 +141,7 @@ Error messages must be written in plain text or [Markdown](https://www.markdowng
 
 See [Custom Branding / Errors](/docs/capabilities/branding) for more information.
 
-### Examples
+### Examples {#error-message-header-examples}
 
 Customize the **Error Message Header** in the Console:
 
