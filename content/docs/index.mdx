@@ -1,7 +1,7 @@
 ---
 title: 'What is Pomerium?'
 lang: en-US
-hide_table_of_contents: true
+hide_table_of_contents: false
 sidebar_label: What is Pomerium?
 pagination_prev: null
 keywords:
@@ -41,10 +41,32 @@ Pomerium supports [client-side mTLS](/docs/capabilities/mtls-clients) and [serve
 
 ### Continuous Verification
 
-A true zero trust architecture requires that you verify each request before access is granted to a protected resource. Pomerium holds true to this tenet by continuously evaluating policy on a [per-request basis](/docs/capabilities/authorization#continuous-verification) — even after a user has successfully authenticated and accessed a resource.
+A true zero trust architecture requires that you verify each request before access is granted to a protected resource or asset. Pomerium continuously evaluates policy on a [per-request basis](/docs/capabilities/authorization#continuous-verification) — even after a user has successfully authenticated and accessed a resource.
 
 ### Request Audit Logs
 
-In addition to enforcing stringent policy checks on every request, Pomerium also provides verbose [Audit Logs](/docs/capabilities/audit-logs) that include request metadata, such as request ID, request method and time, user and session ID, email, and more.
+Pomerium provides verbose [Audit Logs](/docs/capabilities/audit-logs) where you can review request data, such as request ID, request method and time, user and session ID, email, and more.
 
-## True Zero Trust Architecture
+## Edge Deployment and Architecture
+
+### Edge Deployment
+
+As an open-source product, Pomerium is designed to be deployed at your network's edge. This provides all the benefits of edge computing, including low latency, data privacy and control, and high availability.
+
+### Request Lifecycle: How Pomerium Works
+
+The diagram below depicts how Pomerium's components interact when a user accesses a protected resource:
+
+![pomerium architecture diagram](./internals/img/architecture/pomerium-request-flow.svg)
+
+See [Architecture](/docs/internals/architecture) for more information.
+
+### Zero Trust Architecture
+
+Pomerium is true to NIST's definition of a true [Zero Trust architecture](https://www.pomerium.com/blog/a-close-read-at-nists-definition-of-zero-trust-architecture/):
+
+- **Policy Enforcement Point** (PEP): The Proxy service functions as the PEP; each request to a protected resource passes through the **PEP** first
+- **Policy Information Points** (PIP): Your identity provider and user directory serve as the PIP; the Authentication and Authorization services speak to your identity provider to gather user details
+- **Policy Decision Point**: The Authentication and Authorization services use this context to determine if a user has sufficient credentials and permissions to access a protected resource
+
+![Pomerium interactions presented in a Zero Trust format](./internals/img/architecture/pomerium-zero-trust-architecture.png)
