@@ -347,6 +347,16 @@ For performance reasons, by default, Pomerium routes traffic directly to the ref
 ingress.pomerium.io/service_proxy_upstream: 'true'
 ```
 
+### HAProxy Proxy Protocol
+
+Setting **Use Proxy Protocol** will configure Pomerium to require the [HAProxy proxy protocol](https://www.haproxy.org/download/1.9/doc/proxy-protocol.txt) on incoming connections. Versions 1 and 2 of the protocol are supported.
+
+To enforce **Use Proxy Protocol**, set the following annotation to the Ingress:
+
+```yaml
+ingress.pomerium.io/use_proxy_protocol: 'true'
+```
+
 ### Load Balancing
 
 Unless you disabled direct traffic to Endpoints, Pomerium would load balance the requests to the upstream endpoints. See the [Load Balancing](/docs/capabilities/load-balancing) guide for details, and use relevant Ingress annotations to fine tune load balancing and health checks.
