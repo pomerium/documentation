@@ -351,9 +351,9 @@ ingress.pomerium.io/service_proxy_upstream: 'true'
 
 Setting **Use Proxy Protocol** will configure Pomerium to require the [HAProxy proxy protocol](https://www.haproxy.org/download/1.9/doc/proxy-protocol.txt) on incoming connections. Versions 1 and 2 of the protocol are supported.
 
-| **Annotation name** | **Type** | **Usage** | **Default** |
-| :-- | :-- | :-- | :-- |
-| `use_proxy_protocol` | `boolean` | **optional** | `false` |
+| **Annotation name**  | **Type**  | **Usage**    | **Default** |
+| :------------------- | :-------- | :----------- | :---------- |
+| `use_proxy_protocol` | `boolean` | **optional** | `false`     |
 
 To enforce **Use Proxy Protocol**, set the following annotation to the Ingress:
 
