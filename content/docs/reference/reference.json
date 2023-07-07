@@ -135,21 +135,100 @@
     "type": "string",
     "short_description": "Base64-encoded string or relative file location"
   },
-  "certificate-authority": {
-    "id": "certificate-authority",
-    "title": "Certificate Authority",
-    "path": "/certificates",
-    "description": "Certificate Authority is set when behind-the-ingress service communication uses self-signed certificates.",
-    "services": [],
-    "type": "string",
-    "short_description": "Base64 encoded string or relative file location"
-  },
   "identity-provider-settings": {
     "id": "identity-provider-settings",
     "title": "Identity Provider Settings",
     "path": "/identity-provider-settings",
     "description": "Configure and self-host your own Identity Provider with Pomerium's Identity Provider settings.",
     "type": "string"
+  },
+  "cookie-secure": {
+    "id": "cookie-secure",
+    "title": "Secure Cookie",
+    "path": "/cookies#cookie-secure",
+    "description": " If true, instructs browsers to only send user session cookies over HTTPS.",
+    "services": [],
+    "type": "bool"
+  },
+  "https-only": {
+    "id": "https-only",
+    "title": "HTTPS only",
+    "path": "/cookies#cookie-http-only",
+    "description": "If true, instructs browsers to only send user session cookies over HTTPS.",
+    "services": [],
+    "type": "bool"
+  },
+  "identity-provider": {
+    "id": "identity-provider",
+    "title": "Identity Provider",
+    "path": "/identity-providers",
+    "description": "Choose from a list of supported IDPs.",
+    "type": "string",
+    "enterpriseOnly": true
+  },
+  "idp-options-auth0": {
+    "id": "idp-options-auth0",
+    "path": "/identity-providers/auth0",
+    "title": "Identity Provider Auth0",
+    "description": "Click for information on Auth0",
+    "type": "string",
+    "enterpriseOnly": true
+  },
+  "idp-options-azure": {
+    "id": "idp-options-azure",
+    "path": "/identity-providers/azure",
+    "title": "Identity Provider Azure",
+    "description": "Click for information on Azure",
+    "type": "string",
+    "enterpriseOnly": true
+  },
+  "idp-options-github": {
+    "id": "idp-options-github",
+    "path": "/identity-providers/github",
+    "title": "Identity Provider Github",
+    "description": "Click for information on Github",
+    "type": "string",
+    "enterpriseOnly": true
+  },
+  "idp-options-gitlab": {
+    "id": "idp-options-gitlab",
+    "title": "Identity Provider Gitlab",
+    "path": "/identity-providers/gitlab",
+    "description": "Click for information on Gitlab",
+    "type": "string",
+    "enterpriseOnly": true
+  },
+  "idp-options-google": {
+    "id": "idp-options-google",
+    "path": "/identity-providers/google",
+    "title": "Identity Provider Google",
+    "description": "Click for information on getting a service account from Google.",
+    "type": "string",
+    "enterpriseOnly": true
+  },
+  "idp-options-okta": {
+    "id": "idp-options-okta",
+    "path": "/identity-providers/okta",
+    "title": "Identity Provider Okta",
+    "description": "Click for information on Okta.",
+    "type": "string",
+    "enterpriseOnly": true
+  },
+  "idp-options-onelogin": {
+    "id": "idp-options-onelogin",
+    "path": "/identity-providers/one-login",
+    "title": "Identity Provider Onelogin",
+    "description": "Click for information on Onelogin.",
+    "type": "string",
+    "enterpriseOnly": true
+  },
+  "idp-options-ping": {
+    "id": "idp-options-ping",
+    "path": "/identity-providers/ping",
+    "title": "Identity Provider Ping",
+    "description": "Click for information on Ping.",
+    "type": "string",
+    "enterpriseOnly": true
   },
   "polling-min-delay": {
     "id": "polling-min-delay",
@@ -164,6 +243,22 @@
     "path": "/../enterprise/reference/configure#polling-minmax-delay",
     "description": "Minimum delay between requests to the IdP Directory.",
     "type": "string"
+  },
+  "javascript-security": {
+    "id": "javascript-security",
+    "title": "Javascript Security",
+    "path": "/reference/cookies#cookie-http-only",
+    "description": "If true, prevents javascript in browsers from reading user session cookies.",
+    "services": [],
+    "type": "bool"
+  },
+  "expiration": {
+    "id": "expiration",
+    "title": "Expiration",
+    "path": "/reference/cookies#cookie-expiration",
+    "description": "Sets the lifetime of session cookies. After this interval, users must reauthenticate.",
+    "services": [],
+    "type": "datetime"
   },
   "ext-data-url": {
     "id": "ext-data-url",
@@ -482,6 +577,15 @@
     "services": [],
     "type": "URL"
   },
+  "certificate-authority": {
+    "id": "certificate-authority",
+    "title": "Certificate Authority",
+    "path": "/certificates",
+    "description": "Certificate Authority is set when behind-the-ingress service communication uses self-signed certificates.",
+    "services": [],
+    "type": "string",
+    "short_description": "Base64 encoded string or relative file location"
+  },
   "default-upstream-timeout": {
     "id": "default-upstream-timeout",
     "title": "Default Upstream Timeout",
@@ -620,12 +724,6 @@
     "services": ["proxy"],
     "type": "bool"
   },
-  "databroker-settings": {
-    "id": "databroker",
-    "title": "Databroker Settings",
-    "path": "/databroker",
-    "services": ["databroker"]
-  },
   "enable-google-cloud-serverless-authentication": {
     "id": "enable-google-cloud-serverless-authentication",
     "title": "Enable Google Cloud Serverless Authentication",
@@ -747,6 +845,15 @@
     "services": ["proxy"],
     "short_description": "Only match requests with an exact match for this path",
     "type": "string"
+  },
+  "policy-explanation": {
+    "id": "policy-explanation",
+    "title": "Explanation",
+    "description": "Adds an explanation to the user when they hit a 403 Unauthorized Endpoint that has this policy.",
+    "path": "/policy-explanation",
+    "services": [],
+    "type": "string",
+    "enterpriseOnly": "true"
   },
   "prefix": {
     "id": "prefix",
@@ -891,6 +998,13 @@
     "services": [],
     "type": "bool"
   },
+  "signout-redirect-url": {
+    "id": "signout-redirect-url",
+    "title": "Signout Redirect URL",
+    "path": "/signout-redirect-url",
+    "services": ["proxy"],
+    "type": "URL"
+  },
   "tls-client-certificate": {
     "id": "tls-client-certificate",
     "title": "TLS Client Certificate",
@@ -987,13 +1101,6 @@
     "type": "string",
     "short_description": "File path containing a Base64 encoded string"
   },
-  "signout-redirect-url": {
-    "id": "signout-redirect-url",
-    "title": "Signout Redirect URL",
-    "path": "/signout-redirect-url",
-    "services": ["proxy"],
-    "type": "URL"
-  },
   "devices": {
     "id": "devices",
     "title": "Devices",
@@ -1039,5 +1146,11 @@
     "description": "Specify if the user can enroll any device identity, or restrict it to a secure enclave.",
     "path": "/../capabilities/device-identity#new-enrollment",
     "enterpriseOnly": true
+  },
+  "databroker-settings": {
+    "id": "databroker",
+    "title": "Databroker Settings",
+    "path": "/databroker",
+    "services": ["databroker"]
   }
 }
