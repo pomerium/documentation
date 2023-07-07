@@ -145,7 +145,7 @@
   "cookie-secure": {
     "id": "cookie-secure",
     "title": "Secure Cookie",
-    "path": "/cookie-secure",
+    "path": "/cookies#cookie-secure",
     "description": " If true, instructs browsers to only send user session cookies over HTTPS.",
     "services": [],
     "type": "bool"
@@ -161,14 +161,14 @@
   "identity-provider": {
     "id": "identity-provider",
     "title": "Identity Provider",
-    "path": "/../enterprise/identity-providers",
+    "path": "/identity-providers",
     "description": "Choose from a list of supported IDPs.",
     "type": "string",
     "enterpriseOnly": true
   },
   "idp-options-auth0": {
     "id": "idp-options-auth0",
-    "path": "/../enterprise/identity-providers/auth0",
+    "path": "/identity-providers/auth0",
     "title": "Identity Provider Auth0",
     "description": "Click for information on Auth0",
     "type": "string",
@@ -176,7 +176,7 @@
   },
   "idp-options-azure": {
     "id": "idp-options-azure",
-    "path": "/../enterprise/identity-providers/azure",
+    "path": "/identity-providers/azure",
     "title": "Identity Provider Azure",
     "description": "Click for information on Azure",
     "type": "string",
@@ -184,7 +184,7 @@
   },
   "idp-options-github": {
     "id": "idp-options-github",
-    "path": "/../enterprise/identity-providers/github",
+    "path": "/identity-providers/github",
     "title": "Identity Provider Github",
     "description": "Click for information on Github",
     "type": "string",
@@ -193,14 +193,14 @@
   "idp-options-gitlab": {
     "id": "idp-options-gitlab",
     "title": "Identity Provider Gitlab",
-    "path": "/../enterprise/identity-providers/gitlab",
+    "path": "/identity-providers/gitlab",
     "description": "Click for information on Gitlab",
     "type": "string",
     "enterpriseOnly": true
   },
   "idp-options-google": {
     "id": "idp-options-google",
-    "path": "/../enterprise/identity-providers/google",
+    "path": "/identity-providers/google",
     "title": "Identity Provider Google",
     "description": "Click for information on getting a service account from Google.",
     "type": "string",
@@ -208,7 +208,7 @@
   },
   "idp-options-okta": {
     "id": "idp-options-okta",
-    "path": "/../enterprise/identity-providers/okta",
+    "path": "/identity-providers/okta",
     "title": "Identity Provider Okta",
     "description": "Click for information on Okta.",
     "type": "string",
@@ -216,7 +216,7 @@
   },
   "idp-options-onelogin": {
     "id": "idp-options-onelogin",
-    "path": "/../enterprise/identity-providers/one-login",
+    "path": "/identity-providers/one-login",
     "title": "Identity Provider Onelogin",
     "description": "Click for information on Onelogin.",
     "type": "string",
@@ -224,7 +224,7 @@
   },
   "idp-options-ping": {
     "id": "idp-options-ping",
-    "path": "/../enterprise/identity-providers/ping",
+    "path": "/identity-providers/ping",
     "title": "Identity Provider Ping",
     "description": "Click for information on Ping.",
     "type": "string",
@@ -247,7 +247,7 @@
   "javascript-security": {
     "id": "javascript-security",
     "title": "Javascript Security",
-    "path": "/javascript-security",
+    "path": "/reference/cookies#cookie-http-only",
     "description": "If true, prevents javascript in browsers from reading user session cookies.",
     "services": [],
     "type": "bool"
@@ -255,7 +255,7 @@
   "expiration": {
     "id": "expiration",
     "title": "Expiration",
-    "path": "/expiration",
+    "path": "/reference/cookies#cookie-expiration",
     "description": "Sets the lifetime of session cookies. After this interval, users must reauthenticate.",
     "services": [],
     "type": "datetime"
@@ -850,9 +850,10 @@
     "id": "policy-explanation",
     "title": "Explanation",
     "description": "Adds an explanation to the user when they hit a 403 Unauthorized Endpoint that has this policy.",
-    "path": "/policy/policy-explanation",
+    "path": "/policy-explanation",
     "services": [],
-    "type": "string"
+    "type": "string",
+    "enterpriseOnly": "true"
   },
   "prefix": {
     "id": "prefix",
@@ -1000,7 +1001,7 @@
   "signout-redirect-url": {
     "id": "signout-redirect-url",
     "title": "Signout Redirect URL",
-    "path": "/routes/signout-redirect-url",
+    "path": "/signout-redirect-url",
     "services": ["proxy"],
     "type": "URL"
   },
@@ -1029,13 +1030,6 @@
     "path": "/routes/tls-skip-verification",
     "services": ["proxy"],
     "type": "bool"
-  },
-  "tls-server-name": {
-    "id": "tls-server-name",
-    "title": "TLS Server Name",
-    "path": "/routes/tls-server-name",
-    "services": ["proxy"],
-    "type": "string"
   },
   "tls-upstream-allow-renegotiation": {
     "id": "tls-upstream-allow-renegotiation",
@@ -1152,5 +1146,11 @@
     "description": "Specify if the user can enroll any device identity, or restrict it to a secure enclave.",
     "path": "/../capabilities/device-identity#new-enrollment",
     "enterpriseOnly": true
+  },
+  "databroker-settings" : {
+    "id": "databroker",
+    "title": "Databroker Settings",
+    "path": "/databroker",
+    "services": ["databroker"]
   }
 }
