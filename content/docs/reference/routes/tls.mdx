@@ -12,21 +12,21 @@ import TabItem from '@theme/TabItem';
 
 This reference covers all of Pomerium's TLS route settings:
 
-- TLS Client Certificate
-- TLS Custom Certificate Authority
-- TLS Downstream Client Certificate Authority
-- TLS Downstream Server Name
-- TLS Skip Verification
-- TLS Upstream Allow Renegotiation
-- TLS Upstream Server Name
+- [TLS Client Certificate](#tls-client-certificate)
+- [TLS Custom Certificate Authority](#tls-custom-certificate-authority)
+- [TLS Downstream Client Certificate Authority](#tls-downstream-client-certificate-authority)
+- [TLS Downstream Server Name](#tls-downstream-server-name)
+- [TLS Skip Verification](#tls-skip-verification)
+- [TLS Upstream Allow Renegotiation](#tls-upstream-allow-renegotiation)
+- [TLS Upstream Server Name](#tls-upstream-server-name)
 
-## TLS Client Certificate
+## TLS Client Certificate {#tls-client-certificate}
 
 If specified, Pomerium will present this client certificate to upstream services when requested to enforce [mutual authentication](https://en.wikipedia.org/wiki/Mutual_authentication) (mTLS).
 
 For more details, see our [mTLS example repository](https://github.com/pomerium/pomerium/tree/main/examples/mutual-tls) and the [Upstream mTLS With Pomerium](/docs/capabilities/mtls-services) guide.
 
-### How to configure
+### How to configure {#how-to-configure-tls-client-certificate}
 
 <Tabs>
 <TabItem value="Core" label="Core">
@@ -51,7 +51,7 @@ See Kubernetes [TLS Certificates](/docs/deploy/k8s/ingress#tls-certificates) for
 </TabItem>
 </Tabs>
 
-### Examples
+### Examples {#examples-tls-client-certificate}
 
 ```yaml
 tls_client_cert: base64-encoded-certificate
@@ -62,13 +62,13 @@ tls_client_cert_file: /relative/file/location
 tls_client_key_file: /relative/file/location
 ```
 
-## TLS Custom Certificate Authority
+## TLS Custom Certificate Authority {#tls-custom-certificate-authority}
 
 **TLS Custom Certificate Authority** defines a set of root certificate authorities that the Pomerium Proxy Service uses when verifying upstream server certificates.
 
 **Note**: This setting will replace (not append) the system's trust store for a given route.
 
-### How to configure
+### How to configure {#how-to-configure-tls-custom-certificate-authority}
 
 <Tabs>
 <TabItem value="Core" label="Core">
@@ -92,20 +92,20 @@ See Kubernetes [TLS Certificates](/docs/deploy/k8s/ingress#tls-certificates) for
 </TabItem>
 </Tabs>
 
-### Examples
+### Examples {#examples-tls-custom-certificate-authority}
 
 ```yaml
 tls_custom_ca: base64-encoded-custom-ca
 tls_custom_ca_file: /relative/file/location
 ```
 
-## TLS Downstream Client Certificate Authority
+## TLS Downstream Client Certificate Authority {#tls-downstream-client-certificate-authority}
 
 If specified, downstream clients (like a user's browser) will be required to provide a valid client TLS certificate. This overrides the global `client_ca` option for this route.
 
 See [Client-Side mTLS With Pomerium](/docs/concepts/mutual-auth.md) for more information.
 
-### How to configure
+### How to configure {#how-to-configure-tls-downstream-client-certificate-authority}
 
 <Tabs>
 <TabItem value="Core" label="Core">
@@ -129,18 +129,18 @@ See Kubernetes [TLS Certificates](/docs/deploy/k8s/ingress#tls-certificates) for
 </TabItem>
 </Tabs>
 
-### Examples
+### Examples {#examples-tls-downstream-client-certificate-authority}
 
 ```yaml
 tls_downstream_client_ca: base64-encoded-client-ca
 tls_downstream_client_ca_file: /relative/file/location
 ```
 
-## TLS Downstream Server Name
+## TLS Downstream Server Name {#tls-downstream-server-name}
 
 **TLS Downstream Server Name** overrides the hostname specified in the `from` field. When a connection to Pomerium is made via TLS the `tls_downstream_server_name` will be used as the expected Server Name Indication, whereas the host part of the `from` field, will be expected to match the `Host` or `:authority` headers of the HTTP request.
 
-### How to configure
+### How to configure {#how-to-configure-tls-downstream-server-name}
 
 <Tabs>
 <TabItem value="Core" label="Core">
@@ -164,7 +164,7 @@ Kubernetes does not support `tls_downstream_server_name`
 </TabItem>
 </Tabs>
 
-## TLS Skip Verification
+## TLS Skip Verification {#tls-skip-verification}
 
 TLS Skip Verification controls whether the Pomerium Proxy Service verifies the upstream server's certificate chain and host name.
 
@@ -172,7 +172,7 @@ If enabled, Pomerium accepts any certificate presented by the upstream server an
 
 In this mode, TLS is susceptible to man-in-the-middle attacks. This should be used only for testing.
 
-### How to configure
+### How to configure {#how-to-configure-tls-skip-verification}
 
 <Tabs>
 <TabItem value="Core" label="Core">
@@ -200,13 +200,13 @@ See Kubernetes [Ingress](/docs/deploy/k8s/ingress#annotations) for more informat
 </TabItem>
 </Tabs>
 
-### Examples
+### Examples {#examples-tls-skip-verification}
 
 ```yaml
 tls_skip_verify: true
 ```
 
-## TLS Upstream Allow Renegotiation
+## TLS Upstream Allow Renegotiation {#tls-upstream-allow-renegotiation}
 
 **TLS Upstream Allow Renegotiation** controls whether server-initiated TLS renegotiation is allowed for upstream servers. For more details, see Envoy's documentation on [`allow_renegotiation`](https://www.envoyproxy.io/docs/envoy/latest/api-v3/extensions/transport_sockets/tls/v3/tls.proto).
 
@@ -216,7 +216,7 @@ TLS renegotiation is considered insecure and shouldn’t be used unless absolute
 
 :::
 
-### How to configure
+### How to configure {#how-to-configure-tls-upstream-allow-renegotiation}
 
 <Tabs>
 <TabItem value="Core" label="Core">
@@ -240,17 +240,17 @@ Kubernetes does not support **TLS Upstream Allow Renegotiation**
 </TabItem>
 </Tabs>
 
-### Examples
+### Examples {#examples-tls-upstream-allow-renegotiation}
 
 ```yaml
 tls_upstream_allow_renegotiation: true
 ```
 
-## TLS Upstream Server Name
+## TLS Upstream Server Name {#tls-upstream-server-name}
 
 **TLS Upstream Server Name** overrides the hostname specified in the `to` field. If set, this server name will be used to verify the certificate name. This is useful when the backend of your service is a TLS server with a valid certificate, but mismatched name.
 
-### How to configure
+### How to configure {#how-to-configure-tls-upstream-server-name}
 
 <Tabs>
 <TabItem value="Core" label="Core">
