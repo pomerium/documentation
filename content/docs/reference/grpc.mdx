@@ -1,0 +1,162 @@
+---
+title: gRPC Settings
+sidebar_label: gRPC Settings
+keywords: [grpc]
+description: Configure gRPC configuration settings in Pomerium.
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# gRPC Settings
+
+This reference covers all of Pomerium's **gRPC Settings**:
+
+- [gRPC Address](#grpc-address)
+- [gRPC Client DNS RoundRobin](#grpc-client-dns-roundrobin)
+- [gRPC Client Timeout](#grpc-client-timeout)
+- [gRPC Insecure](#grpc-insecure)
+
+## gRPC Address {#grpc-address}
+
+**gRPC Address** specifies the host and port to serve gRPC requests from.
+
+### How to configure {#how-to-configure-grpc-address}
+
+<Tabs>
+<TabItem value="Core" label="Core">
+
+| **Config file keys** | **Environment variables** | **Type** | **Default** |
+| :-- | :-- | :-- | :-- |
+| `grpc_address` | `GRPC_ADDRESS` | `string` | `:443` (`:5443` if in [all-in-one](/docs/internals/configuration#all-in-one-vs-split-service-mode) mode) |
+
+</TabItem>
+<TabItem value="Enterprise" label="Enterprise">
+
+`grpc_address` is a bootstrap configuration setting and is not configurable in the Console.
+
+</TabItem>
+<TabItem value="Kubernetes" label="Kubernetes">
+
+**gRPC Address** is not customizable with Kubernetes
+
+</TabItem>
+</Tabs>
+
+### Examples {#examples-grpc-address}
+
+```yaml
+# config file key
+grpc_address: :8443
+
+# environment variable
+GRPC_ADDRESS=:8443
+```
+
+## gRPC Client DNS RoundRobin {#grpc-client-dns-roundrobin}
+
+**gRPC Client DNS RoundRobin** enables DNS-based round-robin load balancing. This method uses DNS to resolve endpoints and distributes load balancing of _all_ addresses returned by the DNS record client side. **Do not disable** unless you have a specific use case.
+
+### How to configure {#how-to-configure-grpc-client-dns-roundrobin}
+
+<Tabs>
+<TabItem value="Core" label="Core">
+
+| **Config file keys** | **Environment variables** | **Type** | **Default** |
+| :-- | :-- | :-- | :-- |
+| `grpc_client_dns_roundrobin` | `GRPC_CLIENT_DNS_ROUNDROBIN` | `boolean` | `true` |
+
+</TabItem>
+<TabItem value="Enterprise" label="Enterprise">
+
+`grpc_client_dns_roundrobin` is a bootstrap configuration setting and is not configurable in the Console.
+
+</TabItem>
+<TabItem value="Kubernetes" label="Kubernetes">
+
+Kubernetes does not support **gRPC Client DNS RoundRobin**
+
+</TabItem>
+</Tabs>
+
+### Examples {#examples-grpc-client-dns-roundrobin}
+
+```yaml
+# config file key
+grpc_client_dns_roundrobin: false
+
+# environment variable
+GRPC_CLIENT_DNS_ROUNDROBIN=false
+```
+
+## gRPC Client Timeout {#grpc-client-timeout}
+
+**gRPC Client Timeout** sets the maximum time before canceling an upstream gRPC request. During transient failures, the proxy will retry upstream servers for this duration. You should leave this high enough to handle backend service restart and rediscovery so that client requests do not fail.
+
+### How to configure {#how-to-configure-grpc-client-timeout}
+
+<Tabs>
+<TabItem value="Core" label="Core">
+
+| **Config file keys** | **Environment variables** | **Type** | **Default** |
+| :-- | :-- | :-- | :-- |
+| `grpc_client_timeout` | `GRPC_CLIENT_TIMEOUT` | `string` ([Go Duration](https://golang.org/pkg/time/#Duration.String) formatting) | `10s` |
+
+</TabItem>
+<TabItem value="Enterprise" label="Enterprise">
+
+`grpc_client_timeout` is a bootstrap configuration setting and is not configurable in the Console.
+
+</TabItem>
+<TabItem value="Kubernetes" label="Kubernetes">
+
+Kubernetes does not support **gRPC Client Timeout**
+
+</TabItem>
+</Tabs>
+
+### Examples {#examples-grpc-client-timeout}
+
+```yaml
+# config file key
+grpc_client_timeout: 15s
+
+# environment variable
+GRPC_CLIENT_TIMEOUT=15s
+```
+
+## gRPC Insecure {#grpc-insecure}
+
+**gRPC Insecure** disables transport security for gRPC communication. If running in [all-in-one](/docs/internals/configuration#all-in-one-vs-split-service-mode) mode, defaults to true as communication will run over localhost's own socket.
+
+### How to configure {#how-to-configure-grpc-insecure}
+
+<Tabs>
+<TabItem value="Core" label="Core">
+
+| **Config file keys** | **Environment variables** | **Type** | **Default** |
+| :-- | :-- | :-- | :-- |
+| `grpc_insecure` | `GRPC_INSECURE` | `boolean` | `true` (If in [all-in-one](/docs/internals/configuration#all-in-one-vs-split-service-mode) mode) |
+
+</TabItem>
+<TabItem value="Enterprise" label="Enterprise">
+
+`grpc_insecure` is a bootstrap configuration setting and is not configurable in the Console.
+
+</TabItem>
+<TabItem value="Kubernetes" label="Kubernetes">
+
+**gRPC Insecure** is not customizable in Kubernetes
+
+</TabItem>
+</Tabs>
+
+### Examples {#examples-grpc-insecure}
+
+```yaml
+# config file key
+grpc_insecure: false
+
+# environment variable
+GRPC_INSECURE=false
+```
