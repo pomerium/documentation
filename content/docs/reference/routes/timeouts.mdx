@@ -1,0 +1,173 @@
+---
+title: Timeouts Settings
+sidebar_label: Timeouts Settings
+description: Configure Timeouts settings in Pomerium.
+keywords: [websocket connections, spdy, route timeout, route idle timeout]
+---
+
+# Timeouts Settings
+
+This reference covers all of Pomerium's **Timeouts Settings**:
+
+- [Allow Websockets](#websocket-connections)
+- [SPDY](#spdy)
+- [Route Timeout](#route-timeout)
+- [Idle Timeout](#idle-timeout)
+
+## Websocket Connections {#websocket-connections}
+
+If set, enables proxying of websocket connections.
+
+:::warning
+
+**Use with caution:** websockets are long-lived connections, so [global timeouts](/docs/reference/global-timeouts) are not enforced (though the policy-specific `timeout` is enforced). Allowing websocket connections to the proxy could result in abuse via [DOS attacks](https://www.cloudflare.com/learning/ddos/ddos-attack-tools/slowloris/).
+
+:::
+
+### How to configure {#how-to-configure-websocket-connections}
+
+<Tabs>
+<TabItem value="Core" label="Core">
+
+| **YAML**/**JSON** setting | **Type**  | **Default** |
+| :------------------------ | :-------- | :---------- |
+| `allow_websockets`        | `boolean` | `false`     |
+
+</TabItem>
+<TabItem value="Enterprise" label="Enterprise">
+
+Enable **Allow Websockets** in the Console:
+
+![Enable allow websockets in the console](../img/routes/timeouts/allow-websockets.png)
+
+</TabItem>
+<TabItem value="Kubernetes" label="Kubernetes">
+
+| **Name**           | **Type**  | **Default** |
+| :----------------- | :-------- | :---------- |
+| `allow_websockets` | `boolean` | `false`     |
+
+See Kubernetes [Ingress](/docs/deploy/k8s/ingress#annotations) for more information
+
+</TabItem>
+</Tabs>
+
+### Examples {#examples-websocket-connections}
+
+```yaml
+allow_websockets: true
+```
+
+## SPDY {#spdy}
+
+If set, **SPDY** enables proxying of SPDY protocol upgrades.
+
+### How to configure {#how-to-configure-spdy}
+
+<Tabs>
+<TabItem value="Core" label="Core">
+
+| **YAML**/**JSON** setting | **Type**  | **Default** |
+| :------------------------ | :-------- | :---------- |
+| `allow_spdy`              | `boolean` | `false`     |
+
+</TabItem>
+<TabItem value="Enterprise" label="Enterprise">
+
+Enable **SPDY** in the Console:
+
+![Enable SPDY in the console](../img/routes/timeouts/spdy.png)
+
+</TabItem>
+<TabItem value="Kubernetes" label="Kubernetes">
+
+| **Name**     | **Type**  | **Default** |
+| :----------- | :-------- | :---------- |
+| `allow_spdy` | `boolean` | `false`     |
+
+See Kubernetes [Ingress](/docs/deploy/k8s/ingress#annotations) for information
+
+</TabItem>
+</Tabs>
+
+### Examples {#examples-spdy}
+
+```YAML
+allow_spdy: true
+```
+
+## Route Timeout {#route-timeout}
+
+**Route Timeout** establishes the per-route timeout value. Cannot exceed [global timeout](/docs/reference/global-timeouts) values.
+
+### How to configure {#how-to-configure-route-timeout}
+
+<Tabs>
+<TabItem value="Core" label="Core">
+
+| **YAML**/**JSON** setting | **Type** | **Usage** | **Default** |
+| :-- | :-- | :-- | :-- |
+| `timeout` | `string` ([Go Duration](https://golang.org/pkg/time/#Duration.String) formatting) | **optional** | `30s` |
+
+</TabItem>
+<TabItem value="Enterprise" label="Enterprise">
+
+Set the **Route Timeout** in the Console:
+
+![Set route timeout in the console](../img/routes/timeouts/idle-and-route-timeouts.png)
+
+</TabItem>
+<TabItem value="Kubernetes" label="Kubernetes">
+
+| **Name** | **Type** | **Usage** | **Default** |
+| :-- | :-- | :-- | :-- |
+| `timeout` | `string` ([Go Duration](https://golang.org/pkg/time/#Duration.String) formatting) | **optional** | `30s` |
+
+See Kubernetes [Ingress](/docs/deploy/k8s/ingress#annotations) for more information
+
+</TabItem>
+</Tabs>
+
+### Examples {#examples-route-timeout}
+
+```yaml
+timeout: 30s
+```
+
+## Idle Timeout {#idle-timeout}
+
+If you are proxying long-lived requests that employ streaming calls such as websockets or gRPC, set **Idle Timeout** to either a maximum value there may be no data exchange over a connection (recommended), or set it to unlimited (`0s`).
+
+If `idle_timeout` is specified, and [route timeout](/docs/reference/routes/route-timeout) is not explicitly set, then the route timeout would be unlimited (`0s`). You still may specify maximum lifetime of the connection using the route timeout value (i.e. to 1 day).
+
+### How to configure {#how-to-configure-idle-timeout}
+
+<Tabs>
+<TabItem value="Core" label="Core">
+
+| **YAML**/**JSON** setting | **Type** | **Usage** | **Default** |
+| :-- | :-- | :-- | :-- |
+| `idle_timeout` | `string` ([Go Duration](https://golang.org/pkg/time/#Duration.String) formatting) | **optional** | `5m` |
+
+</TabItem>
+<TabItem value="Enterprise" label="Enterprise">
+
+Set **Idle Timeout** under route **Timeouts** settings in the Console:
+
+![Set idle timeout in the Console](../img/routes/timeouts/idle-and-route-timeouts.png)
+
+</TabItem>
+<TabItem value="Kubernetes" label="Kubernetes">
+
+See the Kubernetes [Ingress - Pomerium Standard Annotations](/docs/deploy/k8s/ingress) section for more information.
+
+</TabItem>
+</Tabs>
+
+```yaml
+routes:
+  - from: https://verify.localhost.pomerium.io
+    to: http://verify:8000
+    timeout: 1m
+    idle_timeout: 5m
+```
