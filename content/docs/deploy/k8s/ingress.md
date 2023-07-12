@@ -1,8 +1,8 @@
 ---
 # cSpell:ignore exampledomain ingressnamespace ingressname
 
-title: Ingress Configuration
-sidebar_label: Ingress
+title: Pomerium Ingress Controller for Kubernetes
+sidebar_label: Ingress Configuration
 lang: en-US
 keywords:
   [
@@ -17,11 +17,30 @@ keywords:
 pagination_next: null
 ---
 
-If you've tested Pomerium using the [all-in-one binary](/docs/deploy/core), you're probably familiar with configuring routes in Pomerium's [`config.yaml`](/docs/deploy/core#configuration-file). When using the Pomerium Ingress Controller, each route is defined as an Ingress resource in the Kubernetes API.
+The [Pomerium Kubernetes Ingress Controller](https://github.com/pomerium/ingress-controller) is Pomerium’s official, open-source controller for Kubernetes environments. Pomerium's Ingress Controller builds secure access to Kubernetes Services by enforcing access control policies based on user identity, device, location, and other contextual factors.
 
-## Ingress
+## How Pomerium Ingress Controller works
 
-The Pomerium Ingress Controller will monitor Ingress resources in the cluster.
+Pomerium’s Ingress Controller for Kubernetes enables you to dynamically provision routes from Ingress resources and set authorization policy on those routes with Ingress annotations. By defining routes as Ingress resources in the Kubernetes API, you can easily create and remove those routes from your Pomerium configuration.
+
+If you've tested Pomerium using the [all-in-one binary](/docs/deploy/core), you're probably familiar with configuring routes in Pomerium's [`config.yaml`](/docs/deploy/core#configuration-file) file. When using the Pomerium Ingress Controller, each route is defined as an Ingress resource in the Kubernetes API.
+
+This document shows you how to configure an Ingress resource that’s compatible with the Pomerium Ingress Controller.
+
+**Before you start:**
+
+This document assumes you've installed the Pomerium Ingress Controller and added global configuration settings with the [Pomerium CRD](/docs/deploy/k8s/reference).
+
+If you haven't completed these steps, see the following docs:
+
+- [Install Pomerium Ingress Controller](/docs/deploy/k8s/install)
+- [Global Configuration](/docs/deploy/k8s/configure)
+
+## Configure an Ingress resource
+
+The Pomerium Ingress Controller monitors Ingress resources in the cluster.
+
+Keep the following items in mind:
 
 - By default, Ingress resources in all namespaces are watched.
 - Only resources with a matching `spec.ingressClassName` would be served.
@@ -64,13 +83,13 @@ spec:
 </div>
 </details>
 
-### Ingress Class
+### Set the Ingress class
 
 The default installation adds `pomerium` [IngressClass](https://kubernetes.io/docs/concepts/services-networking/ingress/#ingress-class) to your cluster. In order for Pomerium to service your Ingress objects, please set `spec.ingressClassName` to `pomerium`.
 
 It is also possible to [set Pomerium to be a default ingress controller](/docs/deploy/k8s/install#set-pomerium-as-default-ingressclass) cluster-wide.
 
-### Annotations
+### Set Ingress annotations
 
 Most configuration keys in non-Kubernetes deployments can be specified as annotation in an Ingress Resource definition. The format is `ingress.pomerium.io/${OPTION_NAME}`.
 
@@ -164,9 +183,11 @@ The remaining annotations are specific to or behave differently than they do whe
 | `ingress.pomerium.io/allow_any_authenticated_user` | When set to `"true"`, allows access to any user that was successfully authenticated with your Identity Provider. |
 | `ingress.pomerium.io/allow_public_unauthenticated_access` | When set to `"true"`, does not require authentication, grants public access |
 
-### Access Policy Examples
+### Set authorization policy
 
-The access policy is applied by adding `ingress.pomerium.io/policy` annotation, containing [Pomerium Policy Language](/docs/capabilities/ppl) YAML or JSON block (as string). Below are some (non-exhaustive) examples.
+The `ingress.pomerium.io/policy` annotation allows you to build an authorization policy and apply it to a route. To build your authorization policy, apply [Pomerium Policy Language (PPL)](https://www.pomerium.com/docs/capabilities/ppl) inside a YAML or JSON block (as strings).
+
+#### Ingress authorization policy examples
 
 <table>
 <thead>
