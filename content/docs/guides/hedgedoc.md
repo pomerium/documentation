@@ -93,7 +93,7 @@ cookie_secret: <cookie secret>
 signing_key: <signing key>
 ```
 
-Then, enable Pomerium to allow [Websocket Connections](https://www.pomerium.com/docs/reference/routes/websocket-connections):
+Then, enable Pomerium to allow [Websocket Connections](https://www.pomerium.com/docs/reference/routes/timeouts#websocket-connections):
 
 ```yaml
 allow_websockets: true
