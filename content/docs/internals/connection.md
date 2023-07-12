@@ -64,11 +64,11 @@ Different timeouts apply at various stages of the connection lifecycle:
 
 - **Upstream Connection timeout**: This timeout is applicable when Pomerium is attempting to establish a connection with an upstream service. If the connection cannot be established within the specified timeout, Pomerium will return an error to the client. This timeout, which defaults to 10s and cannot be configured, includes the TLS handshake.
 
-- **Stream idle timeout**: This timeout applies to periods of inactivity between the downstream client and Pomerium, or between Pomerium and the upstream service. If no requests are received within the specified timeout, the connection is terminated. This timeout can be configured via the [`timeout_idle`](/docs/reference/global-timeouts) global parameter and can be disabled (but not exceeded) for a specific route using the [`idle_timeout`](/docs/reference/routes/idle-timeout) value.
+- **Stream idle timeout**: This timeout applies to periods of inactivity between the downstream client and Pomerium, or between Pomerium and the upstream service. If no requests are received within the specified timeout, the connection is terminated. This timeout can be configured via the [`timeout_idle`](/docs/reference/global-timeouts) global parameter and can be disabled (but not exceeded) for a specific route using the [`idle_timeout`](/docs/reference/routes/timeouts#idle-timeout) value.
 
 - **Request timeout**: This timeout applies to the total time a request can take, which includes connection establishment, request forwarding, processing at the upstream service, and response forwarding. If a complete response is not received within the set timeout, Pomerium will return an error to the client. This timeout can be configured via the [`timeout_write`](/docs/reference/global-timeouts) parameter. It may need adjustment, for instance, when handling large uploads.
 
-- **Upstream timeout**: This timeout applies to the time a request takes to travel from Pomerium to the upstream service and back. It can be configured per-route via the [`timeout`](/docs/reference/routes/route-timeout) parameter and is considered part of the request timeout. By default, it aligns with the global [`default_upstream_timeout`](docs/reference/default-upstream-timeout) setting.
+- **Upstream timeout**: This timeout applies to the time a request takes to travel from Pomerium to the upstream service and back. It can be configured per-route via the [`timeout`](/docs/reference/routes/timeouts#route-timeout) parameter and is considered part of the request timeout. By default, it aligns with the global [`default_upstream_timeout`](docs/reference/default-upstream-timeout) setting.
 
 ![Example of HTTP request lifecycle and timeout settings](./img/timeouts-http-request/timeouts-http-diagram.png)
 
@@ -76,7 +76,7 @@ Different timeouts apply at various stages of the connection lifecycle:
 
 Most browser HTTP requests are relatively short-lived. However, certain upstream applications may require long-lived connections that span hours or even days. Examples include Websockets, gRPC streaming, and proxied TCP connections.
 
-From the perspective of HTTP request management, once such a request is initiated, timeouts will apply, potentially terminating the long-lived request. For [TCP routes](/docs/capabilities/tcp) and HTTP routes marked for [`allow_websockets`](/docs/reference/routes/websocket-connections), timeouts adjust automatically. For connections involving long-lived requests, such as gRPC streaming API or server-sent events, you need to set the route [`idle_timeout`](/docs/reference/routes/idle-timeout) to `0` to disable it.
+From the perspective of HTTP request management, once such a request is initiated, timeouts will apply, potentially terminating the long-lived request. For [TCP routes](/docs/capabilities/tcp) and HTTP routes marked for [`allow_websockets`](/docs/reference/routes/timeouts#websocket-connections), timeouts adjust automatically. For connections involving long-lived requests, such as gRPC streaming API or server-sent events, you need to set the route [`idle_timeout`](/docs/reference/routes/timeouts#idle-timeout) to `0` to disable it.
 
 ## Draining connections
 
