@@ -400,8 +400,8 @@ ingress.pomerium.io/secure_upstream: 'true'
 
 Additional TLS certificates may be supplied by creating a Kubernetes secret(s) in the same namespaces as the Ingress resource. Please note that we do not support file paths or embedded secret references.
 
-- [`ingress.pomerium.io/tls_client_secret`](/docs/reference/routes/tls-client-certificate)
-- [`ingress.pomerium.io/tls_custom_ca_secret`](/docs/reference/routes/tls-custom-certificate-authority)
+- [`ingress.pomerium.io/tls_client_secret`](/docs/reference/routes/tls#tls-client-certificate)
+- [`ingress.pomerium.io/tls_custom_ca_secret`](/docs/reference/routes/tls#tls-custom-certificate-authority)
 - [`ingress.pomerium.io/tls_downstream_client_ca_secret`](#supported-annotations)
 
 Please note that the referenced `tls_client_secret` must be a [TLS Kubernetes secret](https://kubernetes.io/docs/concepts/configuration/secret/#tls-secrets). `tls_custom_ca_secret` and `tls_downstream_client_ca_secret` referenced Secrets must contain `ca.crt` key containing a .PEM encoded (base64-encoded DER format) public certificate.
@@ -640,21 +640,21 @@ For more information on the Pomerium Ingress Controller or the Kubernetes concep
 [`ingress.pomerium.io/outlier_detection`]: /docs/reference/routes/outlier-detection
 [`ingress.pomerium.io/pass_identity_headers`]: /docs/reference/routes/pass-identity-headers
 [`ingress.pomerium.io/policy`]: /docs/reference/routes/policy
-[`ingress.pomerium.io/prefix_rewrite`]: /docs/reference/routes/prefix-rewrite
+[`ingress.pomerium.io/prefix_rewrite`]: /docs/reference/routes/path-rewriting#prefix-rewrite
 [`ingress.pomerium.io/preserve_host_header`]: /docs/reference/routes/host-rewrite
-[`ingress.pomerium.io/regex_rewrite_pattern`]: /docs/reference/routes/regex-rewrite
-[`ingress.pomerium.io/regex_rewrite_substitution`]: /docs/reference/routes/regex-rewrite
+[`ingress.pomerium.io/regex_rewrite_pattern`]: /docs/reference/routes/path-rewriting#regex-rewrite
+[`ingress.pomerium.io/regex_rewrite_substitution`]: /docs/reference/routes/path-rewriting#regex-rewrite
 [`ingress.pomerium.io/remove_request_headers`]: /docs/reference/routes/remove-request-headers
 [`ingress.pomerium.io/rewrite_response_headers`]: /docs/reference/routes/rewrite-response-headers
 [`ingress.pomerium.io/set_request_headers`]: /docs/reference/routes/set-request-headers
 [`ingress.pomerium.io/set_response_headers`]: /docs/reference/set-response-headers
 [`ingress.pomerium.io/timeout`]: /docs/reference/routes/route-timeout
-[`ingress.pomerium.io/tls_upstream_server_name`]: /docs/reference/routes/tls-upstream-server-name
+[`ingress.pomerium.io/tls_upstream_server_name`]: /docs/reference/routes/tls#tls-upstream-server-name
 [`ingress.pomerium.io/tls_downstream_server_name`]: /docs/reference/routes/tls-downstream-server-name
-[`ingress.pomerium.io/tls_skip_verify`]: /docs/reference/routes/tls-skip-verification
-[`tls_custom_ca_secret`]: /docs/reference/routes/tls-custom-certificate-authority
+[`ingress.pomerium.io/tls_skip_verify`]: /docs/reference/routes/tls#tls-skip-verification
+[`tls_custom_ca_secret`]: /docs/reference/routes/tls#tls-custom-certificate-authority
 [client-certificate-authority]: /docs/reference/certificates
 [hsts]: https://en.wikipedia.org/wiki/HTTP_Strict_Transport_Security
 [re2 regular expression]: https://github.com/google/re2/wiki/Syntax
 [regex101.com]: https://regex101.com
-[tls_client_certificate]: /docs/reference/routes/tls-client-certificate
+[tls_client_certificate]: /docs/reference/routes/tls#tls-client-certificate
