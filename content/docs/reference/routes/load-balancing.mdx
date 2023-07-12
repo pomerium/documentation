@@ -1,27 +1,29 @@
 ---
-id: load-balancing-policy
-title: Load Balancing Policy
-keywords:
-  - reference
-  - Load Balancing Policy
-pagination_prev: null
-pagination_next: null
+title: Load Balancing Settings
+sidebar_label: Load Balancing Settings
+description: Configure Load Balancer settings in Pomerium.
+keywords: [load balancing policy, health checks]
 ---
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-# Load Balancing Policy
+# Load Balancing Settings
 
-## Summary
+This reference covers all of Pomerium's **Load Balancer Settings**:
+
+- [Load Balancing Policy](#load-balancing-policy)
+- [Health Checks](#health-checks)
+
+## Load Balancing Policy {#load-balancing-policy}
 
 **Load Balancing Policy** defines the load balancing strategy between multiple upstream servers.
 
 See [Envoy documentation](https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/cluster/v3/cluster.proto#envoy-v3-api-enum-config-cluster-v3-cluster-lbpolicy) for more details.
 
-## How to configure
+### How to configure {#how-to-configure-load-balancing-policy}
 
-Some policy types support additional [configuration](/docs/reference/routes/load-balancing-policy-config).
+Some policy types support additional [configuration](/docs/reference/routes/load-balancing#load-balancing-policy-config).
 
 <Tabs>
 <TabItem value="Core" label="Core">
@@ -49,7 +51,7 @@ See Kubernetes [Ingress](/docs/deploy/k8s/ingress#load-balancing) for more infor
 </TabItem>
 </Tabs>
 
-### Load Balancing Policy options
+### Load Balancing Policy options {#load-balancing-policy-options}
 
 | **Load Balancer Policy options** |
 | :-- |
@@ -59,7 +61,7 @@ See Kubernetes [Ingress](/docs/deploy/k8s/ingress#load-balancing) for more infor
 | [`RANDOM`](https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/upstream/load_balancing/load_balancers#random) |
 | [`MAGLEV`](https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/upstream/load_balancing/load_balancers#maglev) (may be further configured using [`maglev_lb_config`](https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/cluster/v3/cluster.proto#envoy-v3-api-msg-config-cluster-v3-cluster-maglevlbconfig) option) |
 
-### Examples
+### Examples {#examples-load-balancing-policy}
 
 ```yaml
 routes:
@@ -74,3 +76,39 @@ routes:
     least_request_lb_config:
       choice_count: 2 # current envoy default
 ```
+
+## Health Checks {#health-checks}
+
+When defined, **Health Checks** will issue periodic health check requests to upstream servers and unhealthy upstream servers won't serve traffic.
+
+See Envoy's [`outlier_detection`](https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/upstream/outlier) for automatic upstream server health detection. In the presence of multiple upstream servers, it is recommended to set up either `health_checks`, `outlier_detection`, or both.
+
+See the [Envoy documentation](https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/upstream/health_checking) for a list of [supported parameters](https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/core/v3/health_check.proto#envoy-v3-api-msg-config-core-v3-healthcheck).
+
+### How to configure {#how-to-configure-health-checks}
+
+Only one of [`http_health_check`](https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/core/v3/health_check.proto#envoy-v3-api-msg-config-core-v3-healthcheck-httphealthcheck), [`tcp_health_check`](https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/core/v3/health_check.proto#envoy-v3-api-msg-config-core-v3-healthcheck-tcphealthcheck), or [`grpc_health_check`](https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/core/v3/health_check.proto#envoy-v3-api-msg-config-core-v3-healthcheck-grpchealthcheck) may be configured per `health_check` object definition.
+
+See [Load Balancing](/docs/capabilities/load-balancing.md) for example [configurations](/docs/capabilities/load-balancing.md#active-health-checks).
+
+<Tabs>
+<TabItem value="Core" label="Core">
+
+| **Config file keys** | **Type**           | **Usage**    |
+| :------------------- | :----------------- | :----------- |
+| `health_checks`      | `array of objects` | **optional** |
+
+</TabItem>
+<TabItem value="Enterprise" label="Enterprise">
+
+Configure **Health Checks** under **Load Balancing** settings in the Console:
+
+![Configure health checks in the console](../img/routes/health-checks/health-checks.gif)
+
+</TabItem>
+<TabItem value="Kubernetes" label="Kubernetes">
+
+See Kubernetes [Ingress - load balancing](/docs/deploy/k8s/ingress#load-balancing) for more information.
+
+</TabItem>
+</Tabs>
