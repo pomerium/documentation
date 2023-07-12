@@ -8,6 +8,7 @@ Pomerium-specific parameters should be configured via the `ingress.pomerium.io/P
 
 Pomerium posts updates to the CRD <a href="#status">`/status`</a>:
 
+
 ```shell
 kubectl describe pomerium
 ```
@@ -194,6 +195,39 @@ PomeriumSpec defines Pomerium-specific configuration parameters.
             </td>
         </tr>
     
+        <tr>
+            <td>
+                <p>
+                <code>timeouts</code>&#160;&#160;
+                
+                    <strong>object</strong>&#160;
+                    (<a href="#timeouts">timeouts</a>)
+                
+                </p>
+                <p>
+                    
+                    Timeout specifies the <a href="https://www.pomerium.com/docs/reference/global-timeouts">global timeouts</a> for all routes.
+                </p>
+                
+            </td>
+        </tr>
+    
+        <tr>
+            <td>
+                <p>
+                <code>useProxyProtocol</code>&#160;&#160;
+                
+                    <strong>boolean</strong>&#160;
+                
+                </p>
+                <p>
+                    
+                    UseProxyProtocol enables <a href="https://www.pomerium.com/docs/reference/use-proxy-protocol">Proxy Protocol</a> support.
+                </p>
+                
+            </td>
+        </tr>
+    
     </tbody>
 </table>
 
@@ -317,6 +351,22 @@ Cookie defines Pomerium session cookie options.
                 <p>
                     
                     Name sets the Pomerium session cookie name. Defaults to <code>_pomerium</code>
+                </p>
+                
+            </td>
+        </tr>
+    
+        <tr>
+            <td>
+                <p>
+                <code>sameSite</code>&#160;&#160;
+                
+                    <strong>string</strong>&#160;
+                
+                </p>
+                <p>
+                    
+                    SameSite sets the SameSite option for cookies. Defaults to <code></code>.
                 </p>
                 
             </td>

@@ -135,15 +135,6 @@
     "type": "string",
     "short_description": "Base64-encoded string or relative file location"
   },
-  "certificate-authority": {
-    "id": "certificate-authority",
-    "title": "Certificate Authority",
-    "path": "/certificates",
-    "description": "Certificate Authority is set when behind-the-ingress service communication uses self-signed certificates.",
-    "services": [],
-    "type": "string",
-    "short_description": "Base64 encoded string or relative file location"
-  },
   "identity-provider-settings": {
     "id": "identity-provider-settings",
     "title": "Identity Provider Settings",
@@ -151,64 +142,176 @@
     "description": "Configure and self-host your own Identity Provider with Pomerium's Identity Provider settings.",
     "type": "string"
   },
+  "cookie-secure": {
+    "id": "cookie-secure",
+    "title": "Secure Cookie",
+    "path": "/cookies#cookie-secure",
+    "description": " If true, instructs browsers to only send user session cookies over HTTPS.",
+    "services": [],
+    "type": "bool"
+  },
+  "https-only": {
+    "id": "https-only",
+    "title": "HTTPS only",
+    "path": "/cookies#cookie-secure",
+    "description": "If true, instructs browsers to only send user session cookies over HTTPS.",
+    "services": [],
+    "type": "bool"
+  },
+  "identity-provider": {
+    "id": "identity-provider",
+    "title": "Identity Provider",
+    "path": "/../identity-providers",
+    "description": "Choose from a list of supported IDPs.",
+    "type": "string",
+    "enterpriseOnly": true
+  },
+  "idp-options-auth0": {
+    "id": "idp-options-auth0",
+    "path": "/../identity-providers/auth0",
+    "title": "Identity Provider Auth0",
+    "description": "Click for information on Auth0",
+    "type": "string",
+    "enterpriseOnly": true
+  },
+  "idp-options-azure": {
+    "id": "idp-options-azure",
+    "path": "/../identity-providers/azure",
+    "title": "Identity Provider Azure",
+    "description": "Click for information on Azure",
+    "type": "string",
+    "enterpriseOnly": true
+  },
+  "idp-options-github": {
+    "id": "idp-options-github",
+    "path": "/../identity-providers/github",
+    "title": "Identity Provider Github",
+    "description": "Click for information on Github",
+    "type": "string",
+    "enterpriseOnly": true
+  },
+  "idp-options-gitlab": {
+    "id": "idp-options-gitlab",
+    "title": "Identity Provider Gitlab",
+    "path": "/../identity-providers/gitlab",
+    "description": "Click for information on Gitlab",
+    "type": "string",
+    "enterpriseOnly": true
+  },
+  "idp-options-google": {
+    "id": "idp-options-google",
+    "path": "/../identity-providers/google",
+    "title": "Identity Provider Google",
+    "description": "Click for information on getting a service account from Google.",
+    "type": "string",
+    "enterpriseOnly": true
+  },
+  "idp-options-okta": {
+    "id": "idp-options-okta",
+    "path": "/../identity-providers/okta",
+    "title": "Identity Provider Okta",
+    "description": "Click for information on Okta.",
+    "type": "string",
+    "enterpriseOnly": true
+  },
+  "idp-options-onelogin": {
+    "id": "idp-options-onelogin",
+    "path": "/../identity-providers/one-login",
+    "title": "Identity Provider Onelogin",
+    "description": "Click for information on Onelogin.",
+    "type": "string",
+    "enterpriseOnly": true
+  },
+  "idp-options-ping": {
+    "id": "idp-options-ping",
+    "path": "/../identity-providers/ping",
+    "title": "Identity Provider Ping",
+    "description": "Click for information on Ping.",
+    "type": "string",
+    "enterpriseOnly": true
+  },
   "polling-min-delay": {
     "id": "polling-min-delay",
     "title": "Min Polling Delay",
-    "path": "/../enterprise/reference/configure#polling-minmax-delay",
+    "path": "/identity-provider-settings#identity-provider-polling-minmax-delay",
     "description": "Minimum delay between requests to the IdP Directory.",
     "type": "string"
   },
   "polling-max-delay": {
     "id": "polling-max-delay",
     "title": "Max Polling Delay",
-    "path": "/../enterprise/reference/configure#polling-minmax-delay",
+    "path": "/identity-provider-settings#identity-provider-polling-minmax-delay",
     "description": "Minimum delay between requests to the IdP Directory.",
+    "type": "string"
+  },
+  "javascript-security": {
+    "id": "javascript-security",
+    "title": "Javascript Security",
+    "path": "/cookies#cookie-http-only",
+    "description": "If true, prevents javascript in browsers from reading user session cookies.",
+    "services": [],
+    "type": "bool"
+  },
+  "expires": {
+    "id": "expiration",
+    "title": "Expiration",
+    "path": "/cookies#cookie-expiration",
+    "description": "Sets the lifetime of session cookies. After this interval, users must reauthenticate.",
+    "services": [],
+    "type": "datetime"
+  },
+  "cookie-same-site": {
+    "id": "cookie-same-site",
+    "title": "Same Site",
+    "path": "/cookies#cookie-samesite",
+    "description": "Sets the SameSite Cookie Option.",
+    "services": [],
     "type": "string"
   },
   "ext-data-url": {
     "id": "ext-data-url",
     "title": "External Data URL",
     "short_description": "URL to the external dataset",
-    "path": "/../enterprise/reference/configure#url",
+    "path": "/../integrations#url",
     "enterpriseOnly": true
   },
   "ext-data-record-type": {
     "id": "ext-data-record-type",
     "title": "External Data Record Type",
     "short_description": "Overridden by the directory structure of an archive file dataset",
-    "path": "/../enterprise/reference/configure#record-type",
+    "path": "/../integrations#record-type",
     "enterpriseOnly": true
   },
   "ext-data-foreign-key": {
     "id": "ext-data-foreign-key",
     "title": "Foreign Key",
     "short_description": "Associates this key from a request to the external data",
-    "path": "/../enterprise/reference/configure#foreign-key",
+    "path": "/../integrations#foreign-key",
     "enterpriseOnly": true
   },
   "ext-data-headers": {
     "id": "ext-data-headers",
     "title": "External Data Request Headers",
     "short_description": "Used when requesting the external dataset",
-    "path": "/../enterprise/reference/configure#headers",
+    "path": "/../integrations#headers",
     "enterpriseOnly": true
   },
   "ext-data-insecure-tls": {
     "id": "ext-data-insecure-tls",
     "title": "Allow Insecure TLS",
-    "path": "/../enterprise/reference/configure#allow-insecure-tls",
+    "path": "/../integrations#allow-insecure-tls",
     "enterpriseOnly": true
   },
   "ext-data-client-tls-key": {
     "id": "ext-data-client-tls-key",
     "title": "Client TLS Key",
-    "path": "/../enterprise/reference/configure#client-tls-key",
+    "path": "/../integrations#client-tls-key",
     "enterpriseOnly": true
   },
   "ext-data-polling": {
     "id": "ext-data-polling",
     "title": "Polling Min / Max Delay",
-    "path": "/../enterprise/reference/configure#polling-minmax-delay",
+    "path": "/../integrations#polling-minmax-delay",
     "enterpriseOnly": true
   },
   "data-broker-service": {
@@ -437,8 +540,9 @@
   "identity-provider-scopes": {
     "id": "identity-provider-scopes",
     "title": "Identity Provider Scopes",
-    "path": "/identity-provider-settings",
+    "path": "/identity-provider-settings#identity-provider-scopes",
     "description": "Identity provider scopes correspond to access privilege scopes as defined in Section 33 of OAuth 20 RFC6749.",
+    "short_description": "e.g. openid, profile, email, offline_access",
     "services": [],
     "type": "comma separated strings"
   },
@@ -450,13 +554,21 @@
     "services": [],
     "type": "string"
   },
-  "identity-provider-request-params": {
+  "request-parameters": {
     "id": "identity-provider-request-params",
     "title": "Identity Provider Request Params",
-    "path": "/identity-provider-settings",
+    "path": "/identity-provider-settings#identity-provider-request-params",
     "description": "Headers specifies a mapping of HTTP Header to be added to proxied  requests. Nota bene Downstream application headers will be overwritten by Pomerium's headers on conflict.",
     "services": [],
     "type": "map of strings key value pairs"
+  },
+  "identity-provider-polling-min-max-delay": {
+    "id": "identity-provider-min-max-delay",
+    "title": "Identity Provider Min/Max Delay",
+    "path": "/identity-provider-settings",
+    "description": "Sets the minimum and maximum delay times between requests to the identity provider directory.",
+    "services": [],
+    "type": "string"
   },
   "authorize-service-url": {
     "id": "authorize-service-url",
@@ -473,6 +585,15 @@
     "services": [],
     "type": "URL"
   },
+  "certificate-authority": {
+    "id": "certificate-authority",
+    "title": "Certificate Authority",
+    "path": "/certificates#certificate-authority",
+    "description": "Certificate Authority is set when behind-the-ingress service communication uses self-signed certificates.",
+    "services": [],
+    "type": "string",
+    "short_description": "Base64 encoded string or relative file location"
+  },
   "default-upstream-timeout": {
     "id": "default-upstream-timeout",
     "title": "Default Upstream Timeout",
@@ -481,7 +602,7 @@
     "services": [],
     "type": ""
   },
-  "set-response-headers": {
+  "response-headers": {
     "id": "set-response-headers",
     "title": "Set Response Headers",
     "path": "/set-response-headers",
@@ -665,7 +786,7 @@
     "services": ["proxy"],
     "type": "string"
   },
-  "idle-timeout": {
+  "route-idle-timeout": {
     "id": "idle-timeout",
     "title": "Idle Timeout",
     "path": "/routes/idle-timeout",
@@ -738,6 +859,30 @@
     "services": ["proxy"],
     "short_description": "Only match requests with an exact match for this path",
     "type": "string"
+  },
+  "policy-inheritance": {
+    "id": "policy-inheritance",
+    "title": "Enforcement",
+    "path": "/../capabilities/namespacing#hierarchical-policy-enforcement",
+    "services": [],
+    "type": "string",
+    "enterpriseOnly": "true"
+  },
+  "policy-explanation": {
+    "id": "policy-explanation",
+    "title": "Explanation",
+    "description": "Adds an explanation to the user when they hit a 403 Unauthorized Endpoint that has this policy.",
+    "services": [],
+    "type": "string",
+    "enterpriseOnly": "true"
+  },
+  "policy-remediation": {
+    "description": "Adds an optional next steps section to cover how the user can self-remediate their state.",
+    "id": "policy-remediation",
+    "title": "Remediation",
+    "services": [],
+    "type": "string",
+    "enterpriseOnly": "true"
   },
   "prefix": {
     "id": "prefix",
@@ -870,6 +1015,7 @@
     "path": "/routes/set-authorization-header",
     "services": ["proxy"],
     "type": "enum",
+    "description": "DEPRECATED! Will be removed in future versions in favor of using set_request_headers",
     "short_description": "pass_through, access_token or id_token"
   },
   "set-request-headers": {
@@ -877,7 +1023,9 @@
     "title": "Set Request Headers",
     "path": "/routes/set-request-headers",
     "services": ["proxy"],
-    "type": "map of strings key value pairs"
+    "type": "map of strings key value pairs",
+    "description": "Map of key value pairs. Using $pomerium.id_token or $pomerium.access_token for the value will autopopulate the correct token.",
+    "short_description": "Value should be a string or use $pomerium.id_token and $pomerium.access_token to auto-populate"
   },
   "show-error-details": {
     "id": "show-error-details",
@@ -886,6 +1034,13 @@
     "path": "/routes/show-error-details",
     "services": [],
     "type": "bool"
+  },
+  "signout-redirect-url": {
+    "id": "signout-redirect-url",
+    "title": "Signout Redirect URL",
+    "path": "/signout-redirect-url",
+    "services": ["proxy"],
+    "type": "URL"
   },
   "tls-client-certificate": {
     "id": "tls-client-certificate",
@@ -983,13 +1138,6 @@
     "type": "string",
     "short_description": "File path containing a Base64 encoded string"
   },
-  "signout-redirect-url": {
-    "id": "signout-redirect-url",
-    "title": "Signout Redirect URL",
-    "path": "/signout-redirect-url",
-    "services": ["proxy"],
-    "type": "URL"
-  },
   "devices": {
     "id": "devices",
     "title": "Devices",
@@ -1035,5 +1183,11 @@
     "description": "Specify if the user can enroll any device identity, or restrict it to a secure enclave.",
     "path": "/../capabilities/device-identity#new-enrollment",
     "enterpriseOnly": true
+  },
+  "databroker-settings": {
+    "id": "databroker",
+    "title": "Databroker Settings",
+    "path": "/databroker",
+    "services": ["databroker"]
   }
 }
