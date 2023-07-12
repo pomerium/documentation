@@ -640,10 +640,10 @@ For more information on the Pomerium Ingress Controller or the Kubernetes concep
 [`ingress.pomerium.io/outlier_detection`]: /docs/reference/routes/outlier-detection
 [`ingress.pomerium.io/pass_identity_headers`]: /docs/reference/routes/pass-identity-headers
 [`ingress.pomerium.io/policy`]: /docs/reference/routes/policy
-[`ingress.pomerium.io/prefix_rewrite`]: /docs/reference/routes/prefix-rewrite
+[`ingress.pomerium.io/prefix_rewrite`]: /docs/reference/routes/path-rewriting#prefix-rewrite
 [`ingress.pomerium.io/preserve_host_header`]: /docs/reference/routes/host-rewrite
-[`ingress.pomerium.io/regex_rewrite_pattern`]: /docs/reference/routes/regex-rewrite
-[`ingress.pomerium.io/regex_rewrite_substitution`]: /docs/reference/routes/regex-rewrite
+[`ingress.pomerium.io/regex_rewrite_pattern`]: /docs/reference/routes/path-rewriting#regex-rewrite
+[`ingress.pomerium.io/regex_rewrite_substitution`]: /docs/reference/routes/path-rewriting#regex-rewrite
 [`ingress.pomerium.io/remove_request_headers`]: /docs/reference/routes/remove-request-headers
 [`ingress.pomerium.io/rewrite_response_headers`]: /docs/reference/routes/rewrite-response-headers
 [`ingress.pomerium.io/set_request_headers`]: /docs/reference/routes/set-request-headers
