@@ -63,7 +63,11 @@ const sidebars = {
         'docs/capabilities/ppl',
         'docs/capabilities/routing',
         // secondary capabilities
-        'docs/capabilities/audit-logs',
+        {
+          type: 'doc',
+          label: 'Audit Logs',
+          id: 'docs/capabilities/audit-logs'
+        },
         'docs/capabilities/hosted-authenticate-service',
         'docs/capabilities/self-hosted-authenticate-service',
         'docs/capabilities/jwt-verification',
