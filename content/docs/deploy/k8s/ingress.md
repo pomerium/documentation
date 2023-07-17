@@ -29,7 +29,7 @@ This document shows you how to configure an Ingress resource that’s compatible
 
 **Before you start:**
 
-This document assumes you've installed the Pomerium Ingress Controller and added global configuration settings with the [Pomerium CRD](/docs/deploy/k8s/reference).
+This document assumes you've installed the Pomerium Ingress Controller and added global configuration settings with the [Pomerium CRD](/docs/deploy/k8s/configure).
 
 If you haven't completed these steps, see the following docs:
 
