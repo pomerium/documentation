@@ -33,7 +33,7 @@ To prevent early session loss in production deployments, persistent storage back
 
 Configuration options for each backend are detailed in [databroker configuration reference](/docs/reference/databroker).
 
-In all backends, Pomerium encrypts record values. This ensures security of all records at rest, regardless of data store capabilities. While this prevents many classes of attack vector, additional security measures should always be taken to secure data in transit and minimize access to the backends themselves.
+Pomerium encrypts values for the Redis implementation of the Databroker service; we do not do this for Postgres. Users must configure the Postgres Databroker to encrypt data at rest. Record encryption ensures security of all records at rest, regardless of data store capabilities. While this prevents many classes of attack vector, additional security measures should always be taken to secure data in transit and minimize access to the backends themselves.
 
 Please see Pomerium backend and upstream storage system documentation for best practices.
 
