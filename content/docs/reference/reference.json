@@ -785,7 +785,7 @@
   "health-checks": {
     "id": "health-checks",
     "title": "Health Checks",
-    "path": "/routes/health-checks",
+    "path": "/routes/load-balancing#health-checks",
     "services": ["proxy"],
     "type": "array of objects"
   },
@@ -801,10 +801,15 @@
     "services": ["proxy"],
     "type": "string"
   },
+  "timeouts": {
+    "id": "timeouts",
+    "title": "Timeouts Settings",
+    "path": "/routes/timeouts"
+  },
   "route-idle-timeout": {
     "id": "idle-timeout",
     "title": "Idle Timeout",
-    "path": "/routes/idle-timeout",
+    "path": "/routes/timeouts#idle-timeout",
     "services": ["proxy"],
     "type": "duration"
   },
@@ -830,10 +835,15 @@
     "short_description": "string or relative file location containing a Kubernetes bearer token",
     "type": "string"
   },
+  "load-balancing-settings": {
+    "id": "load-balancing-settings",
+    "title": "Load Balancing Settings",
+    "path": "/routes/load-balancing"
+  },
   "load-balancing-policy": {
     "id": "load-balancing-policy",
     "title": "Load Balancing Policy",
-    "path": "/routes/load-balancing-policy",
+    "path": "/routes/load-balancing#load-balancing-policy",
     "services": ["proxy"],
     "type": "enum"
   },
@@ -1010,7 +1020,7 @@
   "route-timeout": {
     "id": "route-timeout",
     "title": "Route Timeout",
-    "path": "/routes/route-timeout",
+    "path": "/routes/timeouts#route-timeout",
     "services": ["proxy"],
     "type": "duration"
   },
@@ -1131,14 +1141,14 @@
   "spdy": {
     "id": "spdy",
     "title": "SPDY",
-    "path": "/routes/spdy",
+    "path": "/routes/timeouts#spdy",
     "services": ["proxy"],
     "type": "bool"
   },
   "websocket-connections": {
     "id": "websocket-connections",
     "title": "Websocket Connections",
-    "path": "/routes/websocket-connections",
+    "path": "/routes/timeouts#websocket-connections",
     "services": ["proxy"],
     "type": "bool"
   },
