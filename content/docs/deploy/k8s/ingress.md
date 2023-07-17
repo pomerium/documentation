@@ -627,15 +627,15 @@ For more information on the Pomerium Ingress Controller or the Kubernetes concep
 
 [`ingress.pomerium.io/allow_any_authenticated_user`]: /docs/reference/routes/allow-any-authenticated-user
 [`ingress.pomerium.io/allow_public_unauthenticated_access`]: /docs/reference/routes/public-access
-[`ingress.pomerium.io/allow_spdy`]: /docs/reference/routes/spdy
-[`ingress.pomerium.io/allow_websockets`]: /docs/reference/routes/websocket-connections
+[`ingress.pomerium.io/allow_spdy`]: /docs/reference/routes/timeouts#spdy
+[`ingress.pomerium.io/allow_websockets`]: /docs/reference/routes/timeouts#websocket-connections
 [`ingress.pomerium.io/cors_allow_preflight`]: /docs/reference/routes/cors-preflight
 [`ingress.pomerium.io/health_checks`]: /docs/reference/health-checks
+[`ingress.pomerium.io/idle_timeout`]: /docs/reference/routes/timeouts#idle-timeout
 [`ingress.pomerium.io/host_path_regex_rewrite_pattern`]: /docs/reference/routes/headers#host-rewrite
 [`ingress.pomerium.io/host_path_regex_rewrite_substitution`]: /docs/reference/routes/headers#host-rewrite
 [`ingress.pomerium.io/host_rewrite_header`]: /docs/reference/routes/headers#host-rewrite
 [`ingress.pomerium.io/host_rewrite`]: /docs/reference/routes/headers#host-rewrite
-[`ingress.pomerium.io/idle_timeout`]: /docs/reference/routes/idle-timeout
 [`ingress.pomerium.io/lb_config`]: /docs/reference/load-balancing-policy-config
 [`ingress.pomerium.io/outlier_detection`]: /docs/reference/routes/outlier-detection
 [`ingress.pomerium.io/pass_identity_headers`]: /docs/reference/routes/pass-identity-headers
@@ -648,7 +648,7 @@ For more information on the Pomerium Ingress Controller or the Kubernetes concep
 [`ingress.pomerium.io/rewrite_response_headers`]: /docs/reference/routes/headers#rewrite-response-headers
 [`ingress.pomerium.io/set_request_headers`]: /docs/reference/routes/headers#set-request-headers
 [`ingress.pomerium.io/set_response_headers`]: /docs/reference/set-response-headers
-[`ingress.pomerium.io/timeout`]: /docs/reference/routes/route-timeout
+[`ingress.pomerium.io/timeout`]: /docs/reference/routes/timeouts#route-timeout
 [`ingress.pomerium.io/tls_upstream_server_name`]: /docs/reference/routes/tls#tls-upstream-server-name
 [`ingress.pomerium.io/tls_downstream_server_name`]: /docs/reference/routes/tls-downstream-server-name
 [`ingress.pomerium.io/tls_skip_verify`]: /docs/reference/routes/tls#tls-skip-verification
