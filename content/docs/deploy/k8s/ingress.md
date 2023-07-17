@@ -635,7 +635,7 @@ For more information on the Pomerium Ingress Controller or the Kubernetes concep
 [`ingress.pomerium.io/host_path_regex_rewrite_substitution`]: /docs/reference/routes/headers#host-rewrite
 [`ingress.pomerium.io/host_rewrite_header`]: /docs/reference/routes/headers#host-rewrite
 [`ingress.pomerium.io/host_rewrite`]: /docs/reference/routes/headers#host-rewrite
-[`ingress.pomerium.io/idle_timeout`]: /docs/reference/routes/timeouts#idle-timeout
+[`ingress.pomerium.io/idle_timeout`]: /docs/reference/routes/idle-timeout
 [`ingress.pomerium.io/lb_config`]: /docs/reference/load-balancing-policy-config
 [`ingress.pomerium.io/outlier_detection`]: /docs/reference/routes/outlier-detection
 [`ingress.pomerium.io/pass_identity_headers`]: /docs/reference/routes/pass-identity-headers
