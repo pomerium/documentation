@@ -17,7 +17,7 @@ keywords:
 pagination_next: null
 ---
 
-The [Pomerium Kubernetes Ingress Controller](https://github.com/pomerium/ingress-controller) is Pomerium’s official, open-source controller for Kubernetes environments. Pomerium's Ingress Controller builds secure access to Kubernetes Services by enforcing access control policies based on user identity, device, location, and other contextual factors.
+The [Pomerium Kubernetes Ingress Controller](https://github.com/pomerium/ingress-controller) is Pomerium’s official, open-source controller for Kubernetes environments. Pomerium's Ingress Controller builds secure access to Kubernetes Services by enforcing access control policies based on location and other contextual factors.
 
 ## How Pomerium Ingress Controller works
 
