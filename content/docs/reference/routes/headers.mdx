@@ -1,0 +1,367 @@
+---
+title: Headers Settings
+sidebar_label: Headers Settings
+description: Configure Headers settings in Pomerium.
+keywords:
+  [
+    host rewrite,
+    set request headers,
+    remove request headers,
+    set response headers,
+    rewrite response headers,
+    set authorization header,
+  ]
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Headers Settings
+
+This reference covers all of Pomerium's **Headers Settings**:
+
+- [Host Rewrite](#host-rewrite)
+- [Set Request Headers](#set-request-headers)
+- [Remove Request Headers](#remove-request-headers)
+- [Set Response Headers](#set-response-headers)
+- [Rewrite Response Headers](#rewrite-response-headers)
+- [Set Authorization Header](#set-authorization-header)
+
+## Host Rewrite {#host-rewrite}
+
+The **Host Rewrite** setting preserves the **Host** header with the `preserve_host_header` setting. You can customize the Host Rewrite setting with the following options:
+
+- [Preserve Host Header](#1-preserve-host-header)
+- [Host Rewrite](#2-host-rewrite)
+- [Host Rewrite Header](#3-host-rewrite-header)
+- [Host Path Regex Rewrite Pattern](#4-host-path-regex-rewrite-patternsubstitution)
+
+### How to configure {#how-to-configure-host-rewrite}
+
+<Tabs>
+<TabItem value="Core" label="Core">
+
+| **YAML**/**JSON** settings             | **Type** | **Usage**    |
+| :------------------------------------- | :------- | :----------- |
+| `host_rewrite`                         | `string` | **optional** |
+| `host_rewrite_header`                  | `string` | **optional** |
+| `host_path_regex_rewrite_pattern`      | `string` | **optional** |
+| `host_path_regex_rewrite_substitution` | `string` | **optional** |
+
+</TabItem>
+<TabItem value="Enterprise" label="Enterprise">
+
+Configure **Host Rewrite** settings in the route **Headers** settings in the Console:
+
+![Configure host rewrite in the console](../img/routes/headers/rewrite-host-header.gif)
+
+</TabItem>
+<TabItem value="Kubernetes" label="Kubernetes">
+
+**Host Rewrite** settings are not supported in Kubernetes
+
+</TabItem>
+</Tabs>
+
+### Host Rewrite options {#host-rewrite-options}
+
+#### 1. Preserve Host Header {#1-preserve-host-header}
+
+`preserve_host_header` passes the Host header from the incoming request to the proxied host, instead of the destination hostname. It's an optional parameter of type `boolean` that defaults to `false`.
+
+See [ProxyPreserveHost](http://httpd.apache.org/docs/2.0/mod/mod_proxy.html#proxypreservehost).
+
+#### 2. Host Rewrite {#2-host-rewrite}
+
+`host_rewrite` rewrites the Host to a new literal value.
+
+#### 3. Host Rewrite Header {#3-host-rewrite-header}
+
+`host_rewrite_header` rewrites the Host to match an incoming header value.
+
+#### 4. Host Path Regex Rewrite Pattern/Substitution {#4-host-path-regex-rewrite-patternsubstitution}
+
+`host_path_regex_rewrite_pattern` and `host_path_regex_rewrite_substitution` rewrite the Host according to a regex matching the path. For example:
+
+```yaml
+host_path_regex_rewrite_pattern: '^/(.+)/.+$'
+host_path_regex_rewrite_substitution: \1
+```
+
+This configuration would rewrite the Host header to `example.com` given the path `/example.com/some/path`.
+
+The 2nd, 3rd and 4th options correspond to the Envoy [route action host](https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/route/v3/route_components.proto.html#config-route-v3-routeaction) related options.
+
+### Examples {#examples-host-rewrite}
+
+```yaml
+host_rewrite: 'example.com'
+```
+
+## Set Request Headers {#set-request-headers}
+
+**Set Request Headers** allows you to set both static and dynamic values for given request headers. Static values can be useful if you want to pass along additional information to upstream applications as headers, or to set a fixed authentication header on the request.
+
+The dynamic values enable you to pass ID and Access tokens from your identity provider to upstream applications.
+
+To pass dynamic values from the user's OIDC claim to an upstream service, see [JWT Claim Headers](../jwt-claim-headers).
+
+:::caution
+
+Neither HTTP/2 [pseudo-headers](https://www.rfc-editor.org/rfc/rfc9113.html#PseudoHeaderFields) (for example, `:authority`) nor the `Host:` header may be modified via this mechanism. Those headers may instead be modified via [`prefix_rewrite`](/docs/reference/routes/path-rewriting#prefix-rewrite), [`regex_rewrite`](/docs/reference/routes/path-rewriting#regex-rewrite), and [`host_rewrite`](/docs/reference/routes/headers#host-rewrite).
+
+:::
+
+### How to configure {#how-to-configure-set-request-headers}
+
+<Tabs>
+<TabItem value="Core" label="Core">
+
+| **YAML**/**JSON** setting | **Type**               | **Usage**    |
+| :------------------------ | :--------------------- | :----------- |
+| `set_request_headers`     | map of key-value pairs | **optional** |
+
+</TabItem>
+<TabItem value="Enterprise" label="Enterprise">
+
+Configure **Set Request Headers** in the Console:
+
+![Set request headers in the console](../img/routes/headers/set-request-headers.png)
+
+</TabItem>
+<TabItem value="Kubernetes" label="Kubernetes">
+
+| **Name** | **Type** | **Usage** |
+| :-- | :-- | :-- |
+| `ingress.pomerium.io/set_request_headers` | map of key-value pairs | **optional** |
+
+See Kubernetes [Ingress](/docs/deploy/k8s/ingress#annotations) for more information
+
+</TabItem>
+</Tabs>
+
+### Pass dynamic tokens in headers {#pass-dynamic-tokens-in-headers}
+
+| **Token**                | **Value**                                     |
+| :----------------------- | :-------------------------------------------- |
+| `$pomerium.id_token`     | OIDC ID token from the identity provider      |
+| `$pomerium.access_token` | OAuth access token from the identity provider |
+
+**Note:** Token values must use the `$pomerium.<token>` syntax.
+
+:::warning
+
+Be very careful when passing access tokens to an upstream application. This may allow the application to make other authenticated requests on behalf of the user.
+
+:::
+
+### Examples {#examples-set-request-headers}
+
+Pass static header values in the request:
+
+```yaml
+- from: https://verify.corp.example.com
+  to: https://verify.pomerium.com
+  policy:
+    - allow:
+        or:
+          - email:
+              is: user@example.com
+  set_request_headers:
+    # Set a fixed Basic Auth username and password (root:hunter42)
+    Authorization: Basic cm9vdDpodW50ZXI0Mg==
+    # Set a custom header
+    X-Your-favorite-authenticating-Proxy: 'Pomerium'
+```
+
+Pass ID and Access tokens as dynamic headers in the request:
+
+```yaml
+- from: https://verify.corp.example.com
+  to: https://verify.pomerium.com
+  policy:
+    - allow:
+        or:
+          - email:
+              is: user@example.com
+  set_request_headers:
+    x-pomerium-idp-id-token: $pomerium.id_token
+    x-pomerium-idp-access-token: $pomerium.access_token
+```
+
+## Remove Request Headers {#remove-request-headers}
+
+**Remove Request Headers** allows you to remove given request headers. This can be useful if you want to prevent privacy information from being passed to downstream applications.
+
+### How to configure {#how-to-configure-remove-request-headers}
+
+<Tabs>
+<TabItem value="Core" label="Core">
+
+| **YAML**/**JSON** setting | **Type** | **Usage**    |
+| :------------------------ | :------- | :----------- |
+| `remove_request_headers`  | `string` | **optional** |
+
+</TabItem>
+<TabItem value="Enterprise" label="Enterprise">
+
+Set **Remove Request Headers** in the Console:
+
+![Set remove request headers in the console](../img/routes/headers/remove-request-headers.png)
+
+</TabItem>
+<TabItem value="Kubernetes" label="Kubernetes">
+
+| **Name**                 | **Type** | **Usage**    |
+| :----------------------- | :------- | :----------- |
+| `remove_request_headers` | `string` | **optional** |
+
+See Kubernetes [Ingress](/docs/deploy/k8s/ingress#annotations) for more information
+
+</TabItem>
+</Tabs>
+
+### Examples {#examples-remove-request-headers}
+
+```yaml
+- from: https://verify.corp.example.com
+  to: https://verify.pomerium.com
+  policy:
+    - allow:
+        or:
+          - email:
+              is: user@example.com
+  remove_request_headers:
+    - X-Email
+    - X-Username
+
+# ingress
+ingress.pomerium.io/remove_request_headers: |
+  - X-Email
+  - X-User
+```
+
+## Set Response Headers {#set-response-headers}
+
+**Set Response Headers** allows you to set static values for the given response headers. These headers will take precedence over the global [`set_response_headers`](/docs/reference/set-response-headers).
+
+### How to configure {#how-to-configure-set-response-headers}
+
+<Tabs>
+<TabItem value="Core" label="Core">
+
+| **YAML**/**JSON** setting | **Type** | **Usage**    |
+| :------------------------ | :------- | :----------- |
+| `set_response_headers`    | `string` | **optional** |
+
+</TabItem>
+<TabItem value="Enterprise" label="Enterprise">
+
+Configure **Set Response Headers** in the Console:
+
+![Configure set response headers in the console](../img/routes/headers/set-response-headers-route.png)
+
+</TabItem>
+<TabItem value="Kubernetes" label="Kubernetes">
+
+| **Name**               | **Type** | **Usage**    |
+| :--------------------- | :------- | :----------- |
+| `set_response_headers` | `string` | **optional** |
+
+See Kubernetes [Ingress](/docs/deploy/k8s/ingress#annotations) for more information
+
+</TabItem>
+</Tabs>
+
+## Rewrite Response Headers {#rewrite-response-headers}
+
+**Rewrite Response Headers** allows you to modify response headers before they are returned to the client. The `header` field will match the HTTP header name, and `prefix` will be replaced with `value`.
+
+### How to configure {#how-to-configure-rewrite-response-headers}
+
+<Tabs>
+<TabItem value="Core" label="Core">
+
+| **YAML**/**JSON** setting  | **Type** | **Usage**    |
+| :------------------------- | :------- | :----------- |
+| `rewrite_response_headers` | `object` | **optional** |
+
+</TabItem>
+<TabItem value="Enterprise" label="Enterprise">
+
+Configure **Rewrite Response Headers** in the Console:
+
+![Configure rewrite response headers in the console](../img/routes/headers/rewrite-response-header.png)
+
+</TabItem>
+<TabItem value="Kubernetes" label="Kubernetes">
+
+| **Name**                   | **Type** | **Usage**    |
+| :------------------------- | :------- | :----------- |
+| `rewrite_response_headers` | `object` | **optional** |
+
+See Kubernetes [Ingress](/docs/deploy/k8s/ingress#annotations) for more information
+
+</TabItem>
+</Tabs>
+
+### Examples {#examples-rewrite-response-headers}
+
+If the downstream server returns a header:
+
+```text
+Location: http://localhost:8000/two/some/path/
+```
+
+And the policy has this config:
+
+```yaml
+rewrite_response_headers:
+  - header: Location
+    prefix: http://localhost:8000/two/
+    value: http://frontend/one/
+```
+
+The browser would be redirected to: `http://frontend/one/some/path/`. This is similar to nginx's [`proxy_redirect` option](http://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_redirect), but can be used for any header.
+
+## Set Authorization Header {#set-authorization-header}
+
+**Set Authorization Header** allows you to send a user's identity token through as a bearer token in the Authorization header.
+
+### How to configure {#how-to-configure-set-authorization-header}
+
+<Tabs>
+<TabItem value="Core" label="Core">
+
+| **YAML**/**JSON** setting  | **Type** | **Default**    | **Usage**    |
+| :------------------------- | :------- | :------------- | :----------- |
+| `set_authorization_header` | `string` | `pass_through` | **optional** |
+
+</TabItem>
+<TabItem value="Enterprise" label="Enterprise">
+
+Configure **Set Authorization Header** in the Console:
+
+![Configure set authorization header in the console](../img/routes/headers/set-authorization-header.gif)
+
+</TabItem>
+<TabItem value="Kubernetes" label="Kubernetes">
+
+Kubernetes does not support **Set Authorization Header**
+
+</TabItem>
+</Tabs>
+
+### Options {#options-set-authorization-header}
+
+| **Option** | **Definition** |
+| :-- | :-- |
+| `access_token` | Send the OAuth access token |
+| `id_token` | Send the OIDC ID token |
+| `pass_through` | Leave the Authorization header unchanged from the client when it's not used for Pomerium authentication |
+
+### Examples {#examples-set-authorization-header}
+
+```yaml
+set_authorization_header: pass_through
+```
