@@ -17,6 +17,20 @@ By tunneling SSH connections through your Pomerium service:
  - The SSH service can remain closed to the internet, or even restricted to only accept connections from the Pomerium Proxy service
  - Authentication and authorization is managed by Pomerium, using your IdP for identity, and can be easily managed at scale.
 
+:::info long-running socket connection behavior
+
+**When you open long-running socket connections in Pomerium, the connections aren’t terminated with the user session.**
+
+Socket connections include **TCP connections** and long-running **Websocket** and  **gRPC connections** (HTTP streams).
+
+When you offboard a user and remove them from your identity provider directory, Pomerium stops refreshing the user’s HTTP sessions. As a result, their requests will no longer be authorized.
+
+However, Pomerium doesn’t terminate a user’s long-running, streaming connections when you remove them from your identity provider directory.
+
+At the moment, the best way to terminate these connections is to restart your Pomerium proxy service.
+
+:::
+
 :::tip
 This example assumes you've already [created a TCP route](/docs/capabilities/tcp#configure-routes) for this service.
 :::

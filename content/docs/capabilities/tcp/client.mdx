@@ -122,6 +122,20 @@ KDE's documentation covers auto-starting applications well: see [System Settings
 
 ![A new connection to an SSH gateway](examples/img/desktop/demo-new-connection.png)
 
+:::info long-running socket connection behavior
+
+**When you open long-running socket connections in Pomerium, the connections aren’t terminated with the user session.**
+
+Socket connections include **TCP connections** and long-running **Websocket** and  **gRPC connections** (HTTP streams).
+
+When you offboard a user and remove them from your identity provider directory, Pomerium stops refreshing the user’s HTTP sessions. As a result, their requests will no longer be authorized.
+
+However, Pomerium doesn’t terminate a user’s long-running, streaming connections when you remove them from your identity provider directory.
+
+At the moment, the best way to terminate these connections is to restart your Pomerium proxy service.
+
+:::
+
 **Name**: A local name for the route.
 
 **Destination**: Matches the [From](/docs/reference/routes/from) value of the route, without the protocol. Always include the port specified in the route, and do not include the `https://` protocol.

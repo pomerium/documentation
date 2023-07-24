@@ -12,6 +12,20 @@ import TabItem from '@theme/TabItem';
 
 This document explains how to connect to a Microsoft SQL database through an encrypted TCP tunnel. We use the `sqlcmd` command line utility, but the same tunnel can be used by GUI tools.
 
+:::info long-running socket connection behavior
+
+**When you open long-running socket connections in Pomerium, the connections aren’t terminated with the user session.**
+
+Socket connections include **TCP connections** and long-running **Websocket** and  **gRPC connections** (HTTP streams).
+
+When you offboard a user and remove them from your identity provider directory, Pomerium stops refreshing the user’s HTTP sessions. As a result, their requests will no longer be authorized.
+
+However, Pomerium doesn’t terminate a user’s long-running, streaming connections when you remove them from your identity provider directory.
+
+At the moment, the best way to terminate these connections is to restart your Pomerium proxy service.
+
+:::
+
 :::tip
 This example assumes you've already [created a TCP route](/docs/capabilities/tcp#configure-routes) for this service.
 :::
