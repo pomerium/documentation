@@ -78,6 +78,14 @@ Most browser HTTP requests are relatively short-lived. However, certain upstream
 
 From the perspective of HTTP request management, once such a request is initiated, timeouts will apply, potentially terminating the long-lived request. For [TCP routes](/docs/capabilities/tcp) and HTTP routes marked for [`allow_websockets`](/docs/reference/routes/timeouts#websocket-connections), timeouts adjust automatically. For connections involving long-lived requests, such as gRPC streaming API or server-sent events, you need to set the route [`idle_timeout`](/docs/reference/routes/timeouts#idle-timeout) to `0` to disable it.
 
+:::note Long-lived connections behavior
+
+When you create a [TCP](/docs/capabilities/tcp#connect-to-tcp-routes) or [Websocket](/docs/reference/routes/timeouts#websocket-connections) connection, Pomerium validates the access policy at the time the connection is made. 
+
+Currently, there is no mechanism in place to terminate long-running connections if a policy becomes invalid.  
+
+:::
+
 ## Draining connections
 
 Most configuration changes (for example, adding or editing a route) are handled seamlessly and do not impact long-lived connections.
