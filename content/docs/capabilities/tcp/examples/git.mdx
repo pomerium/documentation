@@ -10,6 +10,14 @@ import TabItem from '@theme/TabItem';
 
 When hosting a self-hosted Git server like [GitLab](/docs/guides/gitlab) behind Pomerium, you can protect desktop client access to the source code with the same identity-aware access as the web interface using an encrypted TCP tunnel.
 
+:::note Long-lived connections behavior
+
+When you create a [TCP](/docs/capabilities/tcp#connect-to-tcp-routes) or [Websocket](/docs/reference/routes/timeouts#websocket-connections) connection, Pomerium validates the access policy at the time the connection is made.
+
+Currently, there is no mechanism in place to terminate long-running connections if a policy becomes invalid.
+
+:::
+
 :::tip
 This example assumes you've already [created a TCP route](/docs/capabilities/tcp#configure-routes) for this service.
 :::

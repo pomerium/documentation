@@ -17,6 +17,14 @@ By tunneling SSH connections through your Pomerium service:
  - The SSH service can remain closed to the internet, or even restricted to only accept connections from the Pomerium Proxy service
  - Authentication and authorization is managed by Pomerium, using your IdP for identity, and can be easily managed at scale.
 
+:::note Long-lived connections behavior
+
+When you create a [TCP](/docs/capabilities/tcp#connect-to-tcp-routes) or [Websocket](/docs/reference/routes/timeouts#websocket-connections) connection, Pomerium validates the access policy at the time the connection is made.
+
+Currently, there is no mechanism in place to terminate long-running connections if a policy becomes invalid.
+
+:::
+
 :::tip
 This example assumes you've already [created a TCP route](/docs/capabilities/tcp#configure-routes) for this service.
 :::
