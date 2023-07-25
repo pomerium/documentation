@@ -80,9 +80,9 @@ From the perspective of HTTP request management, once such a request is initiate
 
 :::note Long-lived connections behavior
 
-When you create a [TCP](/docs/capabilities/tcp#connect-to-tcp-routes) or [Websocket](/docs/reference/routes/timeouts#websocket-connections) connection, Pomerium validates the access policy at the time the connection is made. 
+When you create a [TCP](/docs/capabilities/tcp#connect-to-tcp-routes) or [Websocket](/docs/reference/routes/timeouts#websocket-connections) connection, Pomerium validates the access policy at the time the connection is made.
 
-Currently, there is no mechanism in place to terminate long-running connections if a policy becomes invalid.  
+Currently, there is no mechanism in place to terminate long-running connections if a policy becomes invalid.
 
 :::
 
