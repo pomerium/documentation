@@ -6,6 +6,8 @@ description: This document outlines the lifecycle of connections managed by Pome
 keywords: [pomerium, architecture]
 ---
 
+import LongLivedConnections from '@site/content/docs/admonitions/_long-lived-connections.mdx';
+
 # Connection Lifecycle
 
 Pomerium enables proxying of HTTP and TCP connections, uniformly applying [access policies](/docs/capabilities/authorization) across these connections.
@@ -80,9 +82,7 @@ From the perspective of HTTP request management, once such a request is initiate
 
 :::note Long-lived connections behavior
 
-When you create a [TCP](/docs/capabilities/tcp#connect-to-tcp-routes) or [Websocket](/docs/reference/routes/timeouts#websocket-connections) connection, Pomerium validates the access policy at the time the connection is made.
-
-Currently, there is no mechanism in place to terminate long-running connections if a policy becomes invalid.
+<LongLivedConnections />
 
 :::
 
