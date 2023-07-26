@@ -52,7 +52,7 @@ The `issuer` and `audience` parameters are optional. If you don’t define them,
 
 If you define the `issuer` and `audience` parameters, `PomeriumVerifier` verifies their values against the claims provided by the identity provider.
 
-The `issuer` is your **authenticate service URL** without the prefixed protocol (for example, `authenticate.corp.example`). The `audience` is the URL of the upstream application without the prefixed protocol (for example, `httpbin.corp.example.com`).
+The `issuer` and `audience` claims should both be set to the domain of the **upstream application** without the prefixed protocol (for example, `httpbin.corp.example.com`).
 
   </div>
 </details>
@@ -65,8 +65,8 @@ The `PomeriumVerifier` class is the easiest way to verify JWTs. See the referenc
 
 | Parameters | Description | Value |
 | :-- | :-- | --- |
-| issuer | The URL of your authentication domain e.g. `authenticate.corp.example`. | String |
-| audience | The client's final domain e.g. `httpbin.corp.example.com`. | String |
+| issuer | The domain of the upstream application (for example, `httpbin.corp.example.com`). | String |
+| audience | The same value as `issuer`. | String |
 | expirationBuffer | Adds padding in seconds to prevent throwing errors for expired JWTs that may have differing server times. Defaults to `0` | Integer |
 | firstUse | Decides whether or not to trust the first JWT. | Boolean |
 | jwtData | The JSON payload containing JWT claims. | Object |
