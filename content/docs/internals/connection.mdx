@@ -6,6 +6,8 @@ description: This document outlines the lifecycle of connections managed by Pome
 keywords: [pomerium, architecture]
 ---
 
+import LongLivedConnections from '@site/content/docs/admonitions/_long-lived-connections.mdx';
+
 # Connection Lifecycle
 
 Pomerium enables proxying of HTTP and TCP connections, uniformly applying [access policies](/docs/capabilities/authorization) across these connections.
@@ -77,6 +79,12 @@ Different timeouts apply at various stages of the connection lifecycle:
 Most browser HTTP requests are relatively short-lived. However, certain upstream applications may require long-lived connections that span hours or even days. Examples include Websockets, gRPC streaming, and proxied TCP connections.
 
 From the perspective of HTTP request management, once such a request is initiated, timeouts will apply, potentially terminating the long-lived request. For [TCP routes](/docs/capabilities/tcp) and HTTP routes marked for [`allow_websockets`](/docs/reference/routes/timeouts#websocket-connections), timeouts adjust automatically. For connections involving long-lived requests, such as gRPC streaming API or server-sent events, you need to set the route [`idle_timeout`](/docs/reference/routes/timeouts#idle-timeout) to `0` to disable it.
+
+:::note Long-lived connections behavior
+
+<LongLivedConnections />
+
+:::
 
 ## Draining connections
 
