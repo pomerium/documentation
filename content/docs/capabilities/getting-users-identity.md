@@ -12,6 +12,15 @@ import ReactApp from '../../examples/js-sdk/react-app.md';
 
 # Identity Verification (from your app)
 
+<iframe
+  width="100%"
+  height="415"
+  src="https://www.youtube.com/embed/mc9USXDiCmk"
+  title="YouTube video player"
+  frameborder="0"
+  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+  allowfullscreen></iframe>
+
 This article describes how to retrieve a user's identity from a Pomerium-managed application. Pomerium uses JSON web tokens (**[JWT]**) to attest that a given request was handled by Pomerium's authorization service.
 
 ## Prerequisites
