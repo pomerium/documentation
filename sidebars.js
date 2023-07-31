@@ -66,7 +66,7 @@ const sidebars = {
         {
           type: 'doc',
           label: 'Audit Logs',
-          id: 'docs/capabilities/audit-logs'
+          id: 'docs/capabilities/audit-logs',
         },
         'docs/capabilities/hosted-authenticate-service',
         'docs/capabilities/self-hosted-authenticate-service',
