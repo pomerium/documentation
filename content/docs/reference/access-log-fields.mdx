@@ -23,7 +23,13 @@ The **Access Log Fields** setting displays HTTP request logs from the proxy serv
 
 </TabItem>
 <TabItem label="Enterprise" value="Enterprise"></TabItem>
-<TabItem label="Kubernetes" value="Kubernetes"></TabItem>
+<TabItem label="Kubernetes" value="Kubernetes">
+
+| **Name** | **Type** | **Default** |
+| :--- | :--- | :--- |
+| `accessLogFields` | Array of strings | See [Access Fields and Defaults](#access-fields-and-defaults) |
+
+</TabItem>
 </Tabs>
 
 ## Access Log Fields and Defaults
@@ -86,7 +92,7 @@ For example, if you add the following fields to `access_log_fields`:
 ```yaml
 access_log_fields:
   - authority
-  - user-agent
+  - path
 ```
 
 Your logs would look similar to the below example:
@@ -97,8 +103,7 @@ Your logs would look similar to the below example:
   "service":"envoy",
   "authority":"verify.pomerium.com",
   "path":"/img/json.svg",
-  "method":"GET",
-  "time":"2023-08-04T10:50:51-04:00",
+  "time":"2023-08-04T12:12:35-04:00",
   "message":"http-request"
 }
 ```
