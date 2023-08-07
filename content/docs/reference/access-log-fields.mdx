@@ -19,7 +19,7 @@ The **Access Log Fields** setting displays HTTP request logs from the proxy serv
 <TabItem label="Core" value="Core">
 
 | **Config file key** | **Environment variable** | **Type** | **Default** |
-| :--- | :--- | :--- | :--- |
+| :-- | :-- | :-- | :-- |
 | `access_log_fields` | `ACCESS_LOG_FIELDS` | Array of strings | See [Access Fields and Defaults](#access-fields-and-defaults) |
 
 </TabItem>
@@ -29,7 +29,6 @@ Configure **Access Log Fields** in the Console:
 
 ![Add access log fields in the Console](./img/http-logs/access-custom-logged-fields.gif)
 
-
 Add **Custom Headers** in the Console:
 
 ![Add custom headers in the Console](./img/http-logs/access-custom-headers.gif)
@@ -38,7 +37,7 @@ Add **Custom Headers** in the Console:
 <TabItem label="Kubernetes" value="Kubernetes">
 
 | **Name** | **Type** | **Default** |
-| :--- | :--- | :--- |
+| :-- | :-- | :-- |
 | `accessLogFields` | Array of strings | See [Access Fields and Defaults](#access-fields-and-defaults) |
 
 </TabItem>
@@ -49,8 +48,8 @@ Add **Custom Headers** in the Console:
 The table below lists all available access log fields:
 
 | **Field name** | **Description** | **Default field** |
-| :--- | :--- | :--- |
-| `authority` |  The HTTP Authority. Can be a hostname, domain name, or IP address and may contain a port number (for example, `www.example.com`) | Yes |
+| :-- | :-- | :-- |
+| `authority` | The HTTP Authority. Can be a hostname, domain name, or IP address and may contain a port number (for example, `www.example.com`) | Yes |
 | `duration` | The amount of time the request takes to complete in seconds | Yes |
 | `forwarded-for` | Identifies the originating IP address of the client | Yes |
 | `method` | The HTTP method, such as `GET`, `POST`, or `PUT` | Yes |
@@ -63,7 +62,7 @@ The table below lists all available access log fields:
 | `upstream-cluster` | The cluster the request was sent to | Yes |
 | `user-agent` | The User-Agent field sent by the user's browser | Yes |
 | `query` | The HTTP query (for example, `?test=one&other=13`) | No |
-| * [`headers.{CustomHeaderName}`](#custom-headers-fields) | An HTTP Request Header identified by the `HeaderName` (for example, `headers.X-Amzn-Trace-Id` might return `Root=1-64c03960-37809588421513e42f260f56`) | No |
+| \* [`headers.{CustomHeaderName}`](#custom-headers-fields) | An HTTP Request Header identified by the `HeaderName` (for example, `headers.X-Amzn-Trace-Id` might return `Root=1-64c03960-37809588421513e42f260f56`) | No |
 
 \* The `headers.{CustomHeaderName}` field is only available in **Core** and **Enterprise**, not Kubernetes.
 
@@ -75,21 +74,22 @@ To find access logs, in your terminal search for `"message":"http-request"`:
 
 ```json
 {
-  "level":"info",
-  "service":"envoy",
-  "upstream-cluster":"route-6f431f0be965b608",
-  "method":"GET",
-  "authority":"verify.pomerium.com",
-  "path":"/img/json.svg",
-  "user-agent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36",
-  "referer":"https://verify.localhost.pomerium.io/index.css",
-  "forwarded-for":"XXX.XXX.X.XXX",
-  "request-id":"6f3ad640-cb15-48b4-b79f-9adb94dd654c",
-  "duration":224.860959,
-  "size":5127,
-  "response-code":200,
-  "response-code-details":"via_upstream","time":"2023-08-03T16:55:14-04:00",
-  "message":"http-request"
+  "level": "info",
+  "service": "envoy",
+  "upstream-cluster": "route-6f431f0be965b608",
+  "method": "GET",
+  "authority": "verify.pomerium.com",
+  "path": "/img/json.svg",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36",
+  "referer": "https://verify.localhost.pomerium.io/index.css",
+  "forwarded-for": "XXX.XXX.X.XXX",
+  "request-id": "6f3ad640-cb15-48b4-b79f-9adb94dd654c",
+  "duration": 224.860959,
+  "size": 5127,
+  "response-code": 200,
+  "response-code-details": "via_upstream",
+  "time": "2023-08-03T16:55:14-04:00",
+  "message": "http-request"
 }
 ```
 
@@ -111,12 +111,12 @@ Your logs would look similar to the below example:
 
 ```json
 {
-  "level":"info",
-  "service":"envoy",
-  "authority":"verify.pomerium.com",
-  "path":"/img/json.svg",
-  "time":"2023-08-04T12:12:35-04:00",
-  "message":"http-request"
+  "level": "info",
+  "service": "envoy",
+  "authority": "verify.pomerium.com",
+  "path": "/img/json.svg",
+  "time": "2023-08-04T12:12:35-04:00",
+  "message": "http-request"
 }
 ```
 
@@ -136,14 +136,14 @@ The custom headers will appear in the `headers` field:
 
 ```json
 {
-  "level":"info",
-  "service":"envoy",
-  "headers":{
-    "content-type":"application/json",
-    "user-agent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36"
-    },
-  "time":"2023-08-04T11:37:01-04:00",
-  "message":"http-request"
+  "level": "info",
+  "service": "envoy",
+  "headers": {
+    "content-type": "application/json",
+    "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36"
+  },
+  "time": "2023-08-04T11:37:01-04:00",
+  "message": "http-request"
 }
 ```
 
