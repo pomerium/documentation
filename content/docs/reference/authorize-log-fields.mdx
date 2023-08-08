@@ -54,17 +54,17 @@ The table below lists all available authorize log fields:
 | `email` | The logged-in user's email address | Yes |
 | `headers` | The complete set of HTTP request headers | No |
 | \* `headers.{CustomHeaderName}` | An HTTP Request Header identified by the `HeaderName` | No |
-| `host` | The HTTP Authority. Can be a hostname, domain name, or IP address and may contain a port number (for example, `www.example.com`) | Yes |
+| `host` | The HTTP request `:authority` or `Host` header value. Can be a domain name or IP address and may contain a port number (for example, `www.example.com`) | Yes |
 | `id-token` | The user's ID token | No |
 | `id-token-claims` | The user's ID token claims | No |
 | `impersonate-email` | If [impersonating](/docs/capabilities/impersonation), the impersonated email | Yes |
 | `impersonate-session-id` | If [impersonating](/docs/capabilities/impersonation), the impersonated session ID | Yes |
 | `impersonate-user-id` | If [impersonating](/docs/capabilities/impersonation), the impersonated user ID | Yes |
 | `ip` | The user's IP address | Yes |
-| `method` | The HTTP method, such as `GET`, `POST`, or `PUT` | Yes |
-| `path` | The HTTP path (for example, `/some/path`) | Yes |
-| `query` | The HTTP query (for example, `?test=one&other=13`) | No |
-| `request-id` | The request's unique identifier | Yes |
+| `method` | The HTTP request method, such as `GET`, `POST`, or `PUT` | Yes |
+| `path` | The HTTP request path (for example, `/some/path`) | Yes |
+| `query` | The HTTP request query (for example, `?test=one&other=13`) | No |
+| `request-id` | The request's unique identifier as assigned by Pomerium | Yes |
 | `service-account-id` | if using a service account, the service account ID | Yes |
 | `session-id` | the session ID | Yes |
 | `user` | The user's ID | Yes |
@@ -75,7 +75,7 @@ The table below lists all available authorize log fields:
 
 ### Find authorize logs
 
-To find authorize logs, in your terminal search for `"message":"authorize check"`:
+To find authorize logs logged by the authorize service, filter your Pomerium logs for entries containing `"message": "authorize check"`:
 
 ```json
 {
@@ -99,7 +99,7 @@ To find authorize logs, in your terminal search for `"message":"authorize check"
 
 ### Display specific logs
 
-If `authorize_log_fields` is not defined, all the available default fields will be displayed.
+If `authorize_log_fields` is not defined, all the available default fields will be logged.
 
 To display only a specific field, or multiple fields, add the desired field(s) to your configuration file.
 

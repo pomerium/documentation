@@ -51,17 +51,17 @@ The table below lists all available access log fields:
 | :-- | :-- | :-- |
 | `authority` | The HTTP request `:authority` or `Host` header value. Can be a domain name or IP address and may contain a port number (for example, `www.example.com`) | Yes |
 | `duration` | The amount of time the request takes to complete in seconds | Yes |
-| `forwarded-for` | Identifies the originating IP address of the client | Yes |
-| `method` | The HTTP method, such as `GET`, `POST`, or `PUT` | Yes |
-| `path` | The HTTP path (for example, `/some/path`) | Yes |
-| `referer` | The HTTP Referer, or the address of the web page from which the resource has been requested | Yes |
-| `request-id` | The request's unique identifier | Yes |
+| `forwarded-for` | Identifies the originating IP address of the client (this field is the value of the [`X-Forwarded-For`](/docs/reference/x-forwarded-for-http-header) header as sent by the upstream service) | Yes |
+| `method` | The HTTP request method, such as `GET`, `POST`, or `PUT` | Yes |
+| `path` | The HTTP request path (for example, `/some/path`) | Yes |
+| `referer` | The HTTP request referer, or the address of the web page from which the resource has been requested | Yes |
+| `request-id` | The request's unique identifier as assigned by Pomerium | Yes |
 | `response-code` | The HTTP Response Code (for example `200` or `500`) | Yes |
-| `response-code-details` | The HTTP Response Code Details (for example, `File not found` or `404`) | Yes |
-| `size` | The HTTP Response size | Yes |
-| `upstream-cluster` | The cluster the request was sent to | Yes |
+| `response-code-details` | The HTTP Response Code Details set by Envoy (for example, `File not found` or `404`; see [Envoy docs](https://www.envoyproxy.io/docs/envoy/latest/configuration/http/http_conn_man/response_code_details) for more information) | Yes |
+| `size` | The HTTP Response size in bytes | Yes |
+| `upstream-cluster` | The cluster the request was sent to (the cluster name is assigned by Pomerium, for example `route-3bb74f76f9d71f9c` or `pomerium-control-plane-http`) | Yes |
 | `user-agent` | The User-Agent field sent by the user's browser | Yes |
-| `query` | The HTTP query (for example, `?test=one&other=13`) | No |
+| `query` | The HTTP request query (for example, `?test=one&other=13`) | No |
 | \* [`headers.{CustomHeaderName}`](#custom-headers-fields) | An HTTP Request Header identified by the `HeaderName` (for example, `headers.X-Amzn-Trace-Id` might return `Root=1-64c03960-37809588421513e42f260f56`) | No |
 
 \* The `headers.{CustomHeaderName}` field is only available in **Core** and **Enterprise**, not Kubernetes.
@@ -70,7 +70,7 @@ The table below lists all available access log fields:
 
 ### Find access logs
 
-To find access logs, in your terminal search for `"message":"http-request"`:
+To find access logs logged by the proxy service, filter your Pomerium logs for entries containing `"message": "http-request"`:
 
 ```json
 {
@@ -95,7 +95,7 @@ To find access logs, in your terminal search for `"message":"http-request"`:
 
 ### Display specific logs
 
-If `access_log_fields` is not defined, all the available default fields will be displayed.
+If `access_log_fields` is not defined, all the available default fields will be logged.
 
 To display only a specific field, or multiple fields, add the desired field(s) to your configuration file.
 
