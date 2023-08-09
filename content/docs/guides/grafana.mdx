@@ -58,6 +58,7 @@ In your `config.yaml` file, add the following Grafana route:
 - from: https://grafana.localhost.pomerium.io
   to: http://grafana:3000
   host_rewrite_header: true
+  pass_identity_headers: true
   policy:
     - allow:
         or:
@@ -89,7 +90,7 @@ grafana:
   environment:
     - GF_AUTH_SIGNOUT_REDIRECT_URL=https://grafana.localhost.pomerium.io/.pomerium/sign_out
     - GF_AUTH_JWT_ENABLED=true
-    - GF_AUTH_JWT_HEADER_NAME=X_POMERIUM_JWT_ASSERTION
+    - GF_AUTH_JWT_HEADER_NAME=X-Pomerium-Jwt-Assertion
     - GF_AUTH_JWT_EMAIL_CLAIM=email
     - GF_AUTH_JWT_JWK_SET_URL=https://grafana.localhost.pomerium.io/.well-known/pomerium/jwks.json
     - GF_AUTH_JWT_CACHE_TTL=60m
