@@ -54,7 +54,7 @@ The table below lists all available authorize log fields:
 | `email` | The logged-in user's email address | Yes |
 | `headers` | The complete set of HTTP request headers | No |
 | \* `headers.{CustomHeaderName}` | An HTTP Request Header identified by the `HeaderName` | No |
-| `host` | The HTTP request `:authority` or `Host` header value. Can be a domain name or IP address and may contain a port number (for example, `www.example.com`) | Yes |
+| \* `host` | The HTTP request `:authority` or `Host` header value. Can be a domain name or IP address and may contain a port number (for example, `www.example.com`) | Yes |
 | `id-token` | The user's ID token | No |
 | `id-token-claims` | The user's ID token claims | No |
 | `impersonate-email` | If [impersonating](/docs/capabilities/impersonation), the impersonated email | Yes |
@@ -68,6 +68,8 @@ The table below lists all available authorize log fields:
 | `service-account-id` | if using a service account, the service account ID | Yes |
 | `session-id` | the session ID | Yes |
 | `user` | The user's ID | Yes |
+
+\* The actual value of the `:authority` or `Host` header may vary depending on the [`xff_num_trusted_hops`](/docs/reference/the-number-of-trusted-hops) setting.
 
 \* The `headers.{CustomHeaderName}` field is only available in **Core** and **Enterprise**, not Kubernetes.
 
