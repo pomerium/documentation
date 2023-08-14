@@ -24,6 +24,10 @@ These settings are grouped in the YAML configuration file under the key `downstr
 
 **CA** is a bundle of PEM-encoded X.509 certificates that will be treated as trust anchors when verifying client certificates. Both root and intermediate CA certificates can be used as trust anchors.
 
+Any per-route certificate authorities set using the (deprecated) [TLS Downstream Client CA](/docs/reference/routes/tls#tls-downstream-client-certificate-authority) option will be added to this CA bundle.
+
+The Subject Name of all configured CA certificates will be advertised in the initial TLS handshake, and so should not include any sensitive information.
+
 The CA setting is **required** for downstream mTLS.
 
 :::info
@@ -249,7 +253,7 @@ downstream_mtls:
 
 ## Max Verify Depth
 
-**Max Verify Depth** sets a limit on the depth of a certificate chain presented by the client. The depth is defined as the number of certificates in the verified trust chain, _excluding_ the trust anchor. (The trust anchor can be any root or intermediate CA certificate included in the trusted [**CA**](#ca) bundle.)
+**Max Verify Depth** sets a limit on the depth of a certificate chain presented by the client. The depth is defined as the number of certificates in the verified trust chain, _excluding_ the trust anchor. (The trust anchor can be any root or intermediate CA certificate included in the trusted [**CA**](#ca) bundle.) This limit does not override any `pathlen` constraints set within the CA certificates themselves.
 
 When set to 0, no specific limit is enforced.
 
@@ -260,6 +264,25 @@ For compatibility with previous Pomerium releases, the default is 1. That is, on
 The default value for this setting may change in a future Pomerium release.
 
 :::
+
+The following diagram illustrates a CA setup with a root CA, an intermediate CA, and a second intermediate CA issued by the first intermediate CA:
+
+```mermaid
+flowchart BT
+    subgraph CA bundle
+    R1[Root CA]
+    end
+    R1 --> I1[Intermediate CA 1]
+    R1 --> LA(Certificate A):::leaf
+    I1 --> I2[Intermediate CA 2]
+    I1 --> LB(Certificate B):::leaf
+    I2 --> LC(Certificate C):::leaf
+    classDef leaf fill:mintcream,stroke:lightgreen
+```
+
+In this scenario, with **Max Verify Depth** set to 1, only "Certificate A" would be allowed (as it is issued directly by the root CA). When set to 2, then both "Certificate A" and "Certificate B" would be allowed, but not "Certificate C." When set to 3 or greater, then all of "Certificate A," "Certificate B," and "Certificate C" would be allowed.
+
+Note that a client presenting "Certificate B" must also include the "Intermediate CA 1" certificate, as it is not part of the trusted CA bundle. Likewise, a client presenting "Certificate C" must also include both the "Intermediate CA 1" and "Intermediate CA 2" certificates.
 
 ### How to configure {#max-verify-depth-how-to-configure}
 
