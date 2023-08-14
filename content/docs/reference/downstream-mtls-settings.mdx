@@ -259,7 +259,7 @@ When set to 0, no specific limit is enforced.
 
 For compatibility with previous Pomerium releases, the default is 1. That is, only certificates _directly_ issued by a CA included in the trusted CA bundle are allowed.
 
-:::note
+:::caution
 
 The default value for this setting may change in a future Pomerium release.
 
@@ -280,7 +280,7 @@ flowchart BT
     classDef leaf fill:mintcream,stroke:lightgreen
 ```
 
-In this scenario, with **Max Verify Depth** set to 1, only "Certificate A" would be allowed (as it is issued directly by the root CA). When set to 2, then both "Certificate A" and "Certificate B" would be allowed, but not "Certificate C." When set to 3 or greater, then all of "Certificate A," "Certificate B," and "Certificate C" would be allowed.
+In this scenario, with **Max Verify Depth** set to 1, only "Certificate A" would be allowed (as it is issued directly by the root CA). When set to 2, both "Certificate A" and "Certificate B" would be allowed, but not "Certificate C." When set to 3 or greater, then all of "Certificate A," "Certificate B," and "Certificate C" would be allowed.
 
 Note that a client presenting "Certificate B" must also include the "Intermediate CA 1" certificate, as it is not part of the trusted CA bundle. Likewise, a client presenting "Certificate C" must also include both the "Intermediate CA 1" and "Intermediate CA 2" certificates.
 
