@@ -1,5 +1,5 @@
 ---
-# cSpell:ignore doqu
+# cSpell:ignore doqu outform pkey pubin
 
 title: Policy Language
 sidebar_label: Policy Language
@@ -91,6 +91,7 @@ PPL supports many different criteria:
 | `accept` | Anything. Typically `true`. | Always returns true, thus always allowing access. Equivalent to the [`allow_public_unauthenticated_access`] option. |
 | `authenticated_user` | Anything. Typically `true`. | Always returns true for logged-in users. Equivalent to the [`allow_any_authenticated_user`] option. |
 | `claim` | Anything. Typically a string. | Returns true if a token claim matches the supplied value **exactly**. The claim to check is determined via the sub-path. <br/> For example, `claim/family_name: Smith` matches if the user's `family_name` claim is `Smith`. |
+| `client_certificate` | [Certificate matcher] | Returns true if a client presented a TLS certificate matching the provided condition. |
 | `cors_preflight` | Anything. Typically `true`. | Returns true if the incoming request uses the `OPTIONS` method and has both the `Access-Control-Request-Method` and `Origin` headers. Used to allow [CORS pre-flight requests]. |
 | `device` | [Device matcher] | Returns true if the incoming request includes a valid device ID or type. |
 | `domain` | [String Matcher] | Returns true if the logged-in user's email address domain (the part after `@`) matches the given value. |
@@ -112,6 +113,73 @@ PPL supports many different criteria:
 | `record` | variable | Allows policies to be extended using data from [external data sources](/docs/integrations) |
 
 ## Matchers
+
+### Certificate Matcher
+
+A certificate matcher can be used to allow or deny specific TLS certificates, based on either the certificate fingerprint or Subject Public Key Info (SPKI) hash. This matcher is represented as an object that may have the following key/value entries:
+
+| Key Name | Value Type | Description |
+| --- | --- | --- |
+| `fingerprint` | string or array of strings | The certificate's SHA-256 fingerprint must match one of the provided values. |
+| `spki_hash` | string or array of strings | The base64-encoded SHA-256 hash of the certificate's Subject Public Key Info must match one of the provided values. |
+
+<details><summary>Notes on certificate fingerprint</summary>
+
+The certificate fingerprint is a SHA-256 hash of the entire certificate. You can compute a certificate's fingerprint using the `openssl` command:
+
+```shell-session
+$ openssl x509 -in path/to/certificate.pem -noout -fingerprint -sha256
+sha256 Fingerprint=17:85:92:73:E8:A9:80:63:1D:36:7B:2D:5A:6A:66:35:41:2B:0F:22:83:5F:69:E4:7B:3F:65:62:45:46:A7:04
+```
+
+This is the "long" form of a certificate fingerprint (32 uppercase hexadecimal bytes separated by colons). A "short" form is also acceptable (32 lowercase hexadecimal bytes, without colons). You can also compute this form using the `openssl` command:
+
+```shell-session
+$ openssl x509 -in path/to/certificate.pem -outform DER | openssl dgst -sha256
+SHA2-256(stdin)= 17859273e8a980631d367b2d5a6a6635412b0f22835f69e47b3f65624546a704
+```
+
+</details>
+
+<details><summary>Notes on SPKI hash</summary>
+
+The SPKI hash is a base64-encoded SHA-256 hash of the Subject Public Key Info section of the certificate. You can compute a certificate's SPKI hash using a sequence of `openssl` commands:
+
+```shell-session
+$ openssl x509 -in path/to/certificate.pem -noout -pubkey \
+  | openssl pkey -pubin -outform DER \
+  | openssl dgst -sha256 -binary \
+  | openssl enc -base64
+FsDbM0rUYIiL3V339eIKqiz6HPSB+Pz2WeAWhqlqh8U=
+```
+
+The advantage of using the SPKI hash rather than the certificate fingerprint is that the SPKI hash may be stable across certificate renewals (if the public/private key pair is the same).
+
+</details>
+
+For example, to allow only one specific trusted certificate (while still requiring the user to sign in with the configured identity provider):
+
+```yaml
+allow:
+  and:
+    - authenticated_user: true
+    - client_certificate:
+        fingerprint: '17859273e8a980631d367b2d5a6a6635412b0f22835f69e47b3f65624546a704'
+```
+
+Or, to enforce an allowlist of trusted certificate key pairs (again, while still requiring users to sign in with the configured identity provider):
+
+```yaml
+allow:
+  and:
+    - authenticated_user: true
+    - client_certificate:
+        spki_hash:
+          - 'FsDbM0rUYIiL3V339eIKqiz6HPSB+Pz2WeAWhqlqh8U='
+          - 'pbdFxDXEtpabt3MZiik71farokMg6ZIn2azvsdXtZYA='
+          - 'WTu9ETBS1/v/ll20erWcf+TAj7rzrJix/oCUv5GMPtg='
+            ...
+```
 
 ### Day of Week Matcher
 
@@ -215,4 +283,5 @@ allow:
 [day of week matcher]: #day-of-week-matcher
 [time of day matcher]: #time-of-day-matcher
 [list matcher]: #list-matcher
+[certificate matcher]: #certificate-matcher
 [device matcher]: #device-matcher
