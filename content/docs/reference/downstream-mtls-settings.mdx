@@ -138,7 +138,7 @@ DOWNSTREAM_MTLS_CRL_FILE=/path/to/CRLs.pem
 
    ![Screenshot of invalid client certificate error page](./img/495-error-page.png)
 
-   Note that in this mode, client certificates are not required for internal Pomerium routes, such as the authenticate URL (if using the self-hosted authenticate service) or the /.pomerium/ details page.
+   Note that in this mode, client certificates are not required for internal Pomerium routes, such as the authenticate URL (if using the self-hosted authenticate service) or the /.pomerium/ page (the page showing details of a user's current login session).
 
    Any requests without a trusted client certificate will be logged by the authorize service, with the deny reason `client-certificate-required` (if no certificate was presented) or `invalid-client-certificate` (if an untrusted or invalid certificate was presented).
 
@@ -156,7 +156,7 @@ DOWNSTREAM_MTLS_CRL_FILE=/path/to/CRLs.pem
 
    This matches the default behavior of many popular reverse proxies, such as Apache httpd and Caddy.
 
-   Note that in this mode, client certificates will be required even for internal Pomerium routes, such as the authenticate URL (if using the self-hosted authenticate service) and the /.pomerium/ details page. In particular, any upstream services that perform [JWT verification](/docs/capabilities/getting-users-identity) will not be able to access the default JWKS endpoint. You may need to host your own JWKS endpoint, or provide some other means of distributing the JWT verification key.
+   Note that in this mode, client certificates will be required even for internal Pomerium routes, such as the authenticate URL (if using the self-hosted authenticate service) and the /.pomerium/ page (the page showing details of a user's current login session). In particular, any upstream services that perform [JWT verification](/docs/capabilities/getting-users-identity) will not be able to access the default [JWKS endpoint](/docs/reference/signing-key#how-to-use-signing-key). You may need to host your own JWKS endpoint, or provide some other means of distributing the JWT verification key(s).
 
    Also note that in this mode, requests without a trusted client certificate will never reach the Pomerium authorize service, and so no record of these requests will be logged.
 
