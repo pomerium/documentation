@@ -179,7 +179,7 @@ Pass static header values in the request:
     X-Hello: $$world # header value is set to "$world"
 ```
 
-Pass ID and Access tokens as dynamic headers in the request:
+Pass ID token, access token, and client certificate fingerprint (if present) as dynamic headers in the request:
 
 ```yaml
 - from: https://verify.corp.example.com
@@ -192,6 +192,7 @@ Pass ID and Access tokens as dynamic headers in the request:
   set_request_headers:
     x-pomerium-idp-id-token: ${pomerium.id_token}
     x-pomerium-idp-access-token: ${pomerium.access_token}
+    x-pomerium-client-cert-fingerprint: ${pomerium.client_cert_fingerprint}
 ```
 
 ## Remove Request Headers {#remove-request-headers}
