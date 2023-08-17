@@ -142,12 +142,15 @@ See Kubernetes [Ingress](/docs/deploy/k8s/ingress#annotations) for more informat
 
 ### Pass dynamic tokens in headers {#pass-dynamic-tokens-in-headers}
 
-| **Token**                | **Value**                                     |
-| :----------------------- | :-------------------------------------------- |
-| `$pomerium.id_token`     | OIDC ID token from the identity provider      |
-| `$pomerium.access_token` | OAuth access token from the identity provider |
+The following token substitutions are available:
 
-**Note:** Token values must use the `$pomerium.<token>` syntax.
+| **Token** | **Value** |
+| :-- | :-- |
+| `${pomerium.id_token}` | OIDC ID token from the identity provider |
+| `${pomerium.access_token}` | OAuth access token from the identity provider |
+| `${pomerium.client_cert_fingerprint}` | Short form SHA-256 fingerprint of the presented client certificate (if [downstream mTLS](/docs/capabilities/mtls-clients) is enabled) |
+
+**Note:** Token values must use the `${pomerium.<token>}` syntax. To include a literal `$` character in a header value, use `$$`.
 
 :::warning
 
@@ -172,9 +175,11 @@ Pass static header values in the request:
     Authorization: Basic cm9vdDpodW50ZXI0Mg==
     # Set a custom header
     X-Your-favorite-authenticating-Proxy: 'Pomerium'
+    # To include a '$' character in a header value:
+    X-Hello: $$world # header value is set to "$world"
 ```
 
-Pass ID and Access tokens as dynamic headers in the request:
+Pass ID token, access token, and client certificate fingerprint (if present) as dynamic headers in the request:
 
 ```yaml
 - from: https://verify.corp.example.com
@@ -185,8 +190,9 @@ Pass ID and Access tokens as dynamic headers in the request:
           - email:
               is: user@example.com
   set_request_headers:
-    x-pomerium-idp-id-token: $pomerium.id_token
-    x-pomerium-idp-access-token: $pomerium.access_token
+    x-pomerium-idp-id-token: ${pomerium.id_token}
+    x-pomerium-idp-access-token: ${pomerium.access_token}
+    x-pomerium-client-cert-fingerprint: ${pomerium.client_cert_fingerprint}
 ```
 
 ## Remove Request Headers {#remove-request-headers}
