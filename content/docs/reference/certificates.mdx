@@ -18,7 +18,6 @@ This reference covers all of Pomerium's **Certificates Settings**:
 - [Certificates](#certificates)
 - [Certificate Authority](#certificate-authority)
 - [Client Certificate Authority](#client-certificate-authority)
-- [Client CRL](#client-crl)
 
 :::tip **Note**
 
@@ -190,45 +189,4 @@ client_ca_file: base64-encoded-string
 
 CLIENT_CA=/relative/file/location
 CLIENT_CA_FILE=/relative/file/location
-```
-
-## Client CRL {#client-crl}
-
-**Client CRL** is the [certificate revocation list](https://en.wikipedia.org/wiki/Certificate_revocation_list) (in **PEM** format) for client certificates.
-
-If not set, no CRL will be used.
-
-### How to configure {#client-crl-how-to-configure}
-
-<Tabs>
-<TabItem value="Core" label="Core">
-
-| **Config file keys** | **Environment variables** | **Type** | **Usage**    |
-| :------------------- | :------------------------ | :------- | :----------- |
-| `client_crl`         | `CLIENT_CRL`              | `string` | **optional** |
-| `client_crl_file`    | `CLIENT_CRL_FILE`         | `string` | **optional** |
-
-</TabItem>
-<TabItem value="Enterprise" label="Enterprise">
-
-`client_crl` and `client_crl_file` are bootstrap configuration settings and are not configurable in the Console.
-
-</TabItem>
-<TabItem value="Kubernetes" label="Kubernetes">
-
-Kubernetes does not support `client_crl`
-
-</TabItem>
-</Tabs>
-
-### Examples {#client-crl-examples}
-
-```yaml
-# config file key
-client_crl: base64-encoded-string
-client_crl_file: base64-encoded-string
-
-# environment variable
-CLIENT_CRL=/relative/file/location
-CLIENT_CRL_FILE=/relative/file/location
 ```
