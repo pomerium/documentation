@@ -1,0 +1,291 @@
+---
+# cSpell:ignore XVCJ, Nlcn, Imlhd, Miwian, Ijoi, Iiwic, Mnwx, Tszex, Ijoz, Zlcl, Wnmn, WUUZF
+title: Authorize Log Fields
+description: Use Authorize Log Fields to display HTTP request logs from the authorize service.
+keywords: [authorize logs, authorize service, pomerium, http]
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Authorize Log Fields
+
+## Summary
+
+The **Authorize Log Fields** setting displays HTTP request logs from the authorize service with a message of the type `authorize check`.
+
+## How to Configure
+
+<Tabs>
+<TabItem label="Core" value="Core">
+
+| **Config file key** | **Environment variable** | **Type** | **Default** |
+| :-- | :-- | :-- | :-- |
+| `authorize_log_fields` | `AUTHORIZE_LOG_FIELDS` | Array of strings | See [Authorize Fields and Defaults](#authorize-log-fields-and-defaults) |
+
+</TabItem>
+<TabItem label="Enterprise" value="Enterprise">
+
+Configure **Authorize Log Fields** in the Console:
+
+![Add authorize log fields in the Console](./img/http-logs/authorize-custom-logged-fields.gif)
+
+Add **Custom Headers** in the Console:
+
+![Add custom headers in the Console](./img/http-logs/authorize-custom-headers.gif)
+
+</TabItem>
+<TabItem label="Kubernetes" value="Kubernetes">
+
+| **Name** | **Type** | **Default** |
+| :-- | :-- | :-- |
+| `authorizeLogFields` | Array of strings | See [Authorize Fields and Defaults](#authorize-log-fields-and-defaults) |
+
+</TabItem>
+</Tabs>
+
+## Authorize Log Fields and Defaults
+
+The table below lists all available authorize log fields:
+
+| **Field name** | **Description** | **Default field** |
+| :-- | :-- | :-- |
+| `check-request-id` | The request ID of the gRPC check call | Yes |
+| `email` | The logged-in user's email address | Yes |
+| `headers` | The complete set of HTTP request headers | No |
+| \* `headers.{CustomHeaderName}` | An HTTP Request Header identified by the `HeaderName` | No |
+| \* `host` | The HTTP request `:authority` or `Host` header value. Can be a domain name or IP address and may contain a port number (for example, `www.example.com`) | Yes |
+| `id-token` | The user's ID token | No |
+| `id-token-claims` | The user's ID token claims | No |
+| `impersonate-email` | If [impersonating](/docs/capabilities/impersonation), the impersonated email | Yes |
+| `impersonate-session-id` | If [impersonating](/docs/capabilities/impersonation), the impersonated session ID | Yes |
+| `impersonate-user-id` | If [impersonating](/docs/capabilities/impersonation), the impersonated user ID | Yes |
+| `ip` | The user's IP address | Yes |
+| `method` | The HTTP request method, such as `GET`, `POST`, or `PUT` | Yes |
+| `path` | The HTTP request path (for example, `/some/path`) | Yes |
+| `query` | The HTTP request query (for example, `?test=one&other=13`) | No |
+| `request-id` | The request's unique identifier as assigned by Pomerium | Yes |
+| `service-account-id` | if using a service account, the service account ID | Yes |
+| `session-id` | the session ID | Yes |
+| `user` | The user's ID | Yes |
+
+\* The actual value of the `:authority` or `Host` header may vary depending on the [`xff_num_trusted_hops`](/docs/reference/the-number-of-trusted-hops) setting.
+
+\* The `headers.{CustomHeaderName}` field is only available in **Core** and **Enterprise**, not Kubernetes.
+
+## Authorize log behavior
+
+### Find authorize logs
+
+To find logs from the authorize service, filter your Pomerium logs for entries containing `"message": "authorize check"`:
+
+```json
+{
+  "level":"info",
+  "service":"authorize",
+  "request-id":"f55d5fd5-2d6c-42d1-a7f6-007ad7ec3a85",
+  "check-request-id":"f55d5fd5-2d6c-42d1-a7f6-007ad7ec3a85",
+  "method":"POST","path":"/pomerium.dashboard.KeyChainService/ListKeyPairs",
+  "host":"console.localhost.pomerium.io",
+  "ip":"127.0.0.1",
+  "session-id":"45445311-b287-4476-b17e-d5a8965ff3f4",
+  "user":"google-oauth2|XXXXXXXXXXXXXXXXXXXXX",\
+  "email":"example@pomerium.com",
+  "allow":true,
+  "allow-why-true":["domain-ok"],
+  "deny":false,"deny-why-false":[],
+  "time":"2023-08-07T09:48:03-04:00",
+  "message":"authorize check"
+}
+```
+
+### Display specific logs
+
+If `authorize_log_fields` is not defined, all the available default fields will be logged.
+
+To log only a specific field, or multiple fields, add the desired field(s) to your configuration file.
+
+For example, if you add the following fields to `authorize_log_fields`:
+
+```yaml
+authorize_log_fields:
+  - request-id
+  - method
+  - path
+```
+
+Your logs would look similar to the below example:
+
+```json
+{
+  "level": "info",
+  "service": "authorize",
+  "request-id": "c9afae5a-ec5a-4242-864f-df4189f20e99",
+  "method": "GET",
+  "path": "/index.css",
+  "allow": true,
+  "allow-why-true": ["domain-ok"],
+  "deny": false,
+  "deny-why-false": [],
+  "time": "2023-08-07T10:26:33-04:00",
+  "message": "authorize check"
+}
+```
+
+### Log authorize HTTP headers
+
+To get a list of all authorize HTTP headers, add the `headers` option:
+
+```yaml
+authorize_log_fields:
+  - headers
+```
+
+Your logs would look similar to the example below:
+
+```json
+{
+  "level": "info",
+  "service": "authorize",
+  "headers": {
+    ":authority": "verify.localhost.pomerium.io",
+    ":method": "GET",
+    ":path": "/api/verify-info",
+    ":scheme": "https",
+    "Accept": "*/*",
+    "Accept-Encoding": "gzip, deflate, br",
+    "Accept-Language": "en-US,en;q=0.9",
+    "Content-Type": "application/json",
+    "Cookie": "_pomerium=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhYnJva2VyX3JlY29yZF92ZXJzaW9uIjozMTQwLCJkYXRhYnJva2VyX3NlcnZlcl92ZXJzaW9uIjo3OTM4MDg0ODcsImlhdCI6MTY5MTQxODM5MiwianRpIjoiMTcyZTQ1NTEtZTllYi00ZmUwLWE2Y2UtMjQ0NWM3NjA0MGJkIiwic3ViIjoiZ29vZ2xlLW9hdXRoMnwxMTU0MjA2NjQ3MjYxODMzMjM3NTgifQ.ktq6oFtiBiGwNsU-5DQzLNTszexFhyNl1Iz4kc_Uq2M",
+    "Referer": "https://verify.localhost.pomerium.io/",
+    "Sec-Ch-Ua": "\"Not/A)Brand\";v=\"99\", \"Google Chrome\";v=\"115\", \"Chromium\";v=\"115\"",
+    "Sec-Ch-Ua-Mobile": "?0",
+    "Sec-Ch-Ua-Platform": "\"macOS\"",
+    "Sec-Fetch-Dest": "empty",
+    "Sec-Fetch-Mode": "cors",
+    "Sec-Fetch-Site": "same-origin",
+    "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36",
+    "X-Envoy-Internal": "true",
+    "X-Forwarded-For": "XXX.XXX.X.XXX",
+    "X-Forwarded-Proto": "https",
+    "X-Request-Id": "d6c95dd6-9f3c-4653-94d1-62ea54b11328"
+  },
+  "allow": true,
+  "allow-why-true": ["domain-ok"],
+  "deny": false,
+  "deny-why-false": [],
+  "time": "2023-08-07T10:32:03-04:00",
+  "message": "authorize check"
+}
+```
+
+### Log Custom Headers Fields
+
+The `headers.{CustomHeaderName}` field allows you to enter custom headers. Adding one or multiple custom headers will display only those headers.
+
+For example, if you add the following custom headers to `authorize_field_logs`:
+
+```yaml
+authorize_log_fields:
+  - headers.Cookie
+  - headers.content-type
+```
+
+The custom headers will appear in the `headers` field:
+
+```json
+{
+  "level": "info",
+  "service": "authorize",
+  "headers": {
+    "Content-Type": "application/json",
+    "Cookie": "_pomerium=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhYnJva2VyX3JlY29yZF92ZXJzaW9uIjozMTQwLCJkYXRhYnJva2VyX3NlcnZlcl92ZXJzaW9uIjo3OTM4MDg0ODcsImlhdCI6MTY5MTQxODM5MiwianRpIjoiMTcyZTQ1NTEtZTllYi00ZmUwLWE2Y2UtMjQ0NWM3NjA0MGJkIiwic3ViIjoiZ29vZ2xlLW9hdXRoMnwxMTU0MjA2NjQ3MjYxODMzMjM3NTgifQ.ktq6oFtiBiGwNsU-5DQzLNTszexFhyNl1Iz4kc_Uq2M"
+  },
+  "allow": true,
+  "allow-why-true": ["domain-ok"],
+  "deny": false,
+  "deny-why-false": [],
+  "time": "2023-08-07T10:40:38-04:00",
+  "message": "authorize check"
+}
+```
+
+### Log ID tokens and claims
+
+:::caution
+
+Adding `id-token` or `id-token-claims` will print these values to stdout.
+
+:::
+
+If specified, the `id-token` option displays the user's ID token received from the identity provider. `id-token-claims` displays the claims contained in the ID token.
+
+For example, if you add `id-token` and `id-token-claims`:
+
+```yaml
+authorize_log_fields:
+  - id-token
+  - id-token-claims
+```
+
+Your logs would look similar to the below example:
+
+```json
+{
+  "level": "info",
+  "service": "authorize",
+  "id-token": "<ID-TOKEN>",
+  "id-token-claims": {
+    "aud": "XmDTct9PHNsMRxKxCIObqWnmnEJLguPQ",
+    "email": "example@pomerium.com",
+    "email_verified": true,
+    "exp": 1691452058,
+    "family_name": "Painter",
+    "given_name": "Zachary",
+    "iat": 1691416058,
+    "iss": "https://dev-XXXXXXXXXXXXXXXX.us.auth0.com/",
+    "locale": "en",
+    "name": "Zachary Painter",
+    "nickname": "XXXXXXXX",
+    "picture": "https://lh3.googleusercontent.com/a/XXX=s96-c",
+    "pomerium.io/groups": ["admin"],
+    "sid": "L_tMPjzHdHKd6q1NjGdHERgSdWUUZF1b",
+    "sub": "google-oauth2|XXXXXXXXXXXXXXXXXXXXX",
+    "updated_at": "2023-08-03T17:44:00.171Z"
+  },
+  "allow": true,
+  "allow-why-true": ["domain-ok"],
+  "deny": false,
+  "deny-why-false": [],
+  "time": "2023-08-07T10:43:36-04:00",
+  "message": "authorize check"
+}
+```
+
+### Examples
+
+```yaml
+authorize_log_fields:
+  - request-id
+  - path
+  - ip
+
+AUTHORIZE_LOG_FIELDS:request-id,path,ip
+```
+
+**Headers examples:**
+
+```yaml
+# List all HTTP headers
+authorize_log_fields:
+  - headers
+
+AUTHORIZE_LOG_FIELDS:headers
+
+# List custom HTTP headers
+authorize_log_fields:
+  - headers.cookie
+  - headers.content-type
+
+AUTHORIZE_LOG_FIELDS:headers.cookie,headers.content-type
+```
