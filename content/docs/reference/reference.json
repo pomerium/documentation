@@ -137,6 +137,46 @@
     "short_description": "[base64 encoded] string or relative file location",
     "type": "string"
   },
+  "downstream-mtls-client-certificate-authority": {
+    "id": "downstream-mtls-client-certificate-authority",
+    "title": "Downstream mTLS Certificate Authority",
+    "path": "/downstream-mtls-settings#ca",
+    "description": "A bundle of PEM-encoded X.509 certificates that will be treated as trust anchors when verifying client certificates",
+    "short_description": "[base64-encoded] PEM certificate bundle",
+    "type": "string"
+  },
+  "downstream-mtls-crl": {
+    "id": "downstream-mtls-crl",
+    "title": "Downstream mTLS Certificate Revocation List",
+    "path": "/downstream-mtls-settings#crl",
+    "description": "A bundle of PEM-encoded certificate revocation lists to be consulted during certificate validation.",
+    "short_description": "[base64-encoded] PEM CRL bundle",
+    "type": "string"
+  },
+  "downstream-mtls-enforcement": {
+    "id": "downstream-mtls-enforcement",
+    "title": "Downstream mTLS Enforcement Mode",
+    "path": "/downstream-mtls-settings#enforcement-mode",
+    "description": "Controls Pomerium's behavior when a client does not present a trusted client certificate.",
+    "short_description": "string (one of `policy_with_default_deny`, `policy`, or `reject_connection`)",
+    "type": "string"
+  },
+  "downstream-mtls-match-subject-alt-names": {
+    "id": "downstream-mtls-match-subject-alt-names",
+    "title": "Downstream mTLS Match SANs",
+    "path": "/downstream-mtls-settings#match-sans",
+    "description": "Require that each certificate contain a certain type of SAN.",
+    "short_description": "Array of mappings from SAN type to regular expression",
+    "type": "string"
+  },
+  "downstream-mtls-max-verify-depth": {
+    "id": "downstream-mtls-max-verify-depth",
+    "title": "Downstream mTLS Max Verify Depth",
+    "path": "/downstream-mtls-settings#max-verify-depth",
+    "description": "Sets a limit on the depth of a certificate chain presented by the client.",
+    "short_description": "Unsigned integer that defines client certificate chain depth",
+    "type": "string"
+  },
   "cookies-settings": {
     "id": "cookies",
     "title": "Cookies Settings",
@@ -144,14 +184,6 @@
     "services": [],
     "type": "string",
     "short_description": "Learn how to configure Pomerium's cookies settings."
-  },
-  "client-crl": {
-    "id": "client-crl",
-    "title": "Client CRL",
-    "path": "/certificates",
-    "services": [],
-    "type": "string",
-    "short_description": "Base64-encoded string or relative file location"
   },
   "identity-provider-settings": {
     "id": "identity-provider-settings",
@@ -167,6 +199,12 @@
     "description": " If true, instructs browsers to only send user session cookies over HTTPS.",
     "services": [],
     "type": "bool"
+  },
+  "downstream-mtls-settings": {
+    "id": "downstream-mtls-settings",
+    "title": "Downstream mTLS Settings",
+    "path": "/downstream-mtls-settings",
+    "description": "Manage client certificate requirements for end users connecting to Pomerium-managed routes with downstream mTLS settings."
   },
   "https-only": {
     "id": "https-only",
