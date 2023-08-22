@@ -6,7 +6,50 @@ lang: en-US
 
 # Core Changelog
 
-Please refer to the [upgrade guide](https://www.pomerium.com/docs/deploy/core/upgrading#since-0190) before upgrading.
+Please refer to the [upgrade guide](/docs/deploy/core/upgrading) before upgrading.
+
+## [v0.22.3](https://github.com/pomerium/pomerium/tree/v0.22.3) (2023-08-21)
+
+[Full Changelog](https://github.com/pomerium/pomerium/compare/v0.22.2...v0.22.3)
+
+### Changed
+
+- add integration test for https IP address route [\#4477](https://github.com/pomerium/pomerium/pull/4477) (@kenjenkins)
+- add integration test for Pomerium JWT [\#4473](https://github.com/pomerium/pomerium/pull/4473) (@kenjenkins)
+- add JWT timestamp formatting workaround [\#4309](https://github.com/pomerium/pomerium/pull/4309) (@backport-actions-token[bot])
+- authorize: populate issuer even when policy is nil [\#4213](https://github.com/pomerium/pomerium/pull/4213) (@backport-actions-token[bot])
+- autocert: suppress OCSP stapling errors [\#4373](https://github.com/pomerium/pomerium/pull/4373) (@backport-actions-token[bot])
+- backport [\#4368](https://github.com/pomerium/pomerium/pull/4368) (@calebdoxsey)
+- ci: fix lint workflow \(\#4229\) [\#4311](https://github.com/pomerium/pomerium/pull/4311) (@kenjenkins)
+- config: update logic for checking overlapping certificates \(\#4216\) [\#4217](https://github.com/pomerium/pomerium/pull/4217) (@calebdoxsey)
+- config: simplify default set response headers [\#4212](https://github.com/pomerium/pomerium/pull/4212) (@backport-actions-token[bot])
+- envoy: configure upstream IP SAN match as needed [\#4382](https://github.com/pomerium/pomerium/pull/4382) (@backport-actions-token[bot])
+- github-actions: remove license check [\#4475](https://github.com/pomerium/pomerium/pull/4475) (@kenjenkins)
+- pin to a debian:latest image for casource base image \(\#4250\) [\#4310](https://github.com/pomerium/pomerium/pull/4310) (@kenjenkins)
+
+## [v0.22.2](https://github.com/pomerium/pomerium/tree/v0.22.2) (2023-05-26)
+
+[Full Changelog](https://github.com/pomerium/pomerium/compare/v0.22.1...v0.22.2)
+
+### Security
+
+- This release fixes a bug whereby specially crafted requests could result in incorrect authorization decisions made by Pomerium. [CVE-2023-33189](https://github.com/pomerium/pomerium/security/advisories/GHSA-pvrc-wvj2-f59p).
+
+### Changed
+
+- databroker: sort configs by @backport-actions-token in https://github.com/pomerium/pomerium/pull/4191
+- databroker: fix fast forward by @backport-actions-token in https://github.com/pomerium/pomerium/pull/4194
+- envoy: set re2 limits very high by @backport-actions-token in https://github.com/pomerium/pomerium/pull/4189
+- fix WillHaveCertificateForServerName check to be strict match for derived cert name by @backport-actions-token in https://github.com/pomerium/pomerium/pull/4169
+- improve certificate matching performance by @backport-actions-token in https://github.com/pomerium/pomerium/pull/4188
+
+## [v0.22.1](https://github.com/pomerium/pomerium/tree/v0.22.1) (2023-05-04)
+
+[Full Changelog](https://github.com/pomerium/pomerium/compare/v0.22.0...v0.22.1)
+
+### Changed
+
+- envoyconfig: disable validation context when no client certificates are required by @calebdoxsey in https://github.com/pomerium/pomerium/pull/4152
 
 ## [v0.22.0](https://github.com/pomerium/pomerium/tree/v0.22.0) (2023-05-01)
 
@@ -175,14 +218,27 @@ Please refer to the [upgrade guide](https://www.pomerium.com/docs/deploy/core/up
 - chore\(deps\): bump tibdex/github-app-token from 1.7.0 to 1.8.0 [\#3922](https://github.com/pomerium/pomerium/pull/3922) (@dependabot[bot])
 - dependencies: upgrade go and envoy [\#4116](https://github.com/pomerium/pomerium/pull/4116) (@calebdoxsey)
 
+## [v0.21.4](https://github.com/pomerium/pomerium/tree/v0.21.4) (2023-05-26)
+
+### Security
+
+[Full Changelog](https://github.com/pomerium/pomerium/compare/v0.21.3...v0.21.4)
+
+- This release fixes a bug whereby specially crafted requests could result in incorrect authorization decisions made by Pomerium. [CVE-2023-33189](https://github.com/pomerium/pomerium/security/advisories/GHSA-pvrc-wvj2-f59p).
+
+### Changed
+
+- authorize: fix IsInternal check by @calebdoxsey in https://github.com/pomerium/pomerium/pull/4199
+- autocert: fix certmagic cache logging by @backport-actions-token in https://github.com/pomerium/pomerium/pull/4135
+
 ## [v0.21.3](https://github.com/pomerium/pomerium/tree/v0.21.3) (2023-03-23)
 
 [Full Changelog](https://github.com/pomerium/pomerium/compare/v0.21.2...v0.21.3)
 
 ### Changed
 
-- ci: build version branch images [\#4062](https://github.com/pomerium/pomerium/pull/4062) (@backport-actions-token[bot])
 - authorize: move sign out and jwks urls to route, update issuer for JWT [\#4049](https://github.com/pomerium/pomerium/pull/4049) (@backport-actions-token[bot])
+- ci: build version branch images [\#4062](https://github.com/pomerium/pomerium/pull/4062) (@backport-actions-token[bot])
 - hpke: move published public keys to a new endpoint [\#4048](https://github.com/pomerium/pomerium/pull/4048) (@backport-actions-token[bot])
 
 ## [v0.21.2](https://github.com/pomerium/pomerium/tree/v0.21.2) (2023-02-23)
@@ -214,15 +270,15 @@ Please refer to the [upgrade guide](https://www.pomerium.com/docs/deploy/core/up
 
 ### Changed
 
-- docker: switch to debian [\#3939](https://github.com/pomerium/pomerium/pull/3939) (@backport-actions-token[bot])
-- identity: fix nil reference error when there is no authenticator [\#3933](https://github.com/pomerium/pomerium/pull/3933) (@backport-actions-token[bot])
-- authenticate: always trust the passed in idp [\#3931](https://github.com/pomerium/pomerium/pull/3931) (@backport-actions-token[bot])
 - add google cloud creds to ignore [\#3907](https://github.com/pomerium/pomerium/pull/3907) (@backport-actions-token[bot])
-- tls_derive: rename for consistency [\#3905](https://github.com/pomerium/pomerium/pull/3905) (@wasaga)
-- envoyconfig: clean up filter chain construction [\#3844](https://github.com/pomerium/pomerium/pull/3844) (@calebdoxsey)
-- use tlsClientConfig instead of custom dialer [\#3830](https://github.com/pomerium/pomerium/pull/3830) (@wasaga)
+- authenticate: always trust the passed in idp [\#3931](https://github.com/pomerium/pomerium/pull/3931) (@backport-actions-token[bot])
 - controlplane: remove gorilla handlers dependency [\#3813](https://github.com/pomerium/pomerium/pull/3813) (@calebdoxsey)
+- docker: switch to debian [\#3939](https://github.com/pomerium/pomerium/pull/3939) (@backport-actions-token[bot])
+- envoyconfig: clean up filter chain construction [\#3844](https://github.com/pomerium/pomerium/pull/3844) (@calebdoxsey)
 - events: remove xds configuraton update [\#3792](https://github.com/pomerium/pomerium/pull/3792) (@wasaga)
+- identity: fix nil reference error when there is no authenticator [\#3933](https://github.com/pomerium/pomerium/pull/3933) (@backport-actions-token[bot])
+- tls_derive: rename for consistency [\#3905](https://github.com/pomerium/pomerium/pull/3905) (@wasaga)
+- use tlsClientConfig instead of custom dialer [\#3830](https://github.com/pomerium/pomerium/pull/3830) (@wasaga)
 
 ### Breaking
 
@@ -350,6 +406,24 @@ Please refer to the [upgrade guide](https://www.pomerium.com/docs/deploy/core/up
 - postgres: upgrade to pgx v5 [\#3826](https://github.com/pomerium/pomerium/pull/3826) (@calebdoxsey)
 - upgrade to golang-lru v2 [\#3771](https://github.com/pomerium/pomerium/pull/3771) (@calebdoxsey)
 
+## [v0.20.1](https://github.com/pomerium/pomerium/tree/v0.20.1) (2023-05-26)
+
+[Full Changelog](https://github.com/pomerium/pomerium/compare/v0.20.0...v0.20.1)
+
+### Security
+
+- This release fixes a bug whereby specially crafted requests could result in incorrect authorization decisions made by Pomerium. [CVE-2023-33189](https://github.com/pomerium/pomerium/security/advisories/GHSA-pvrc-wvj2-f59p).
+
+### Changed
+
+- autocert: use atomic pointer to allow nil by @backport-actions-token in https://github.com/pomerium/pomerium/pull/3817
+- identity: fix expired session deletion by @backport-actions-token in https://github.com/pomerium/pomerium/pull/3857
+- identity: fix nil reference error when there is no authenticator by @backport-actions-token in https://github.com/pomerium/pomerium/pull/3932
+- jwt: require logged in user to return .pomerium/jwt by @backport-actions-token in https://github.com/pomerium/pomerium/pull/3809
+- oidc: fix token revocation by @backport-actions-token in https://github.com/pomerium/pomerium/pull/3818
+- postgres: return unknown records instead of skipping them (#3876) by @calebdoxsey in https://github.com/pomerium/pomerium/pull/3877
+- storage: ignore removed fields when deserializing the data by @backport-actions-token in https://github.com/pomerium/pomerium/pull/3772
+
 ## [v0.20.0](https://github.com/pomerium/pomerium/tree/v0.20.0) (2022-11-14)
 
 [Full Changelog](https://github.com/pomerium/pomerium/compare/v0.19.1...v0.20.0)
@@ -365,14 +439,14 @@ Please refer to the [upgrade guide](https://www.pomerium.com/docs/deploy/core/up
 
 ### New
 
-- config: disable Strict-Transport-Security when using a self-signed certificate [\#3743](https://github.com/pomerium/pomerium/pull/3743) (@calebdoxsey)
-- config: generate cookie secret if not set in all-in-one mode [\#3742](https://github.com/pomerium/pomerium/pull/3742) (@calebdoxsey)
 - authorize: fix user caching [\#3734](https://github.com/pomerium/pomerium/pull/3734) (@calebdoxsey)
 - authorize: performance improvements [\#3723](https://github.com/pomerium/pomerium/pull/3723) (@calebdoxsey)
+- config: disable Strict-Transport-Security when using a self-signed certificate [\#3743](https://github.com/pomerium/pomerium/pull/3743) (@calebdoxsey)
+- config: generate cookie secret if not set in all-in-one mode [\#3742](https://github.com/pomerium/pomerium/pull/3742) (@calebdoxsey)
+- config: default to http2 [\#3660](https://github.com/pomerium/pomerium/pull/3660) (@calebdoxsey)
+- controlplane: move jwks.json endpoint to control plane [\#3691](https://github.com/pomerium/pomerium/pull/3691) (@calebdoxsey)
 - postgres: increase record batch size [\#3708](https://github.com/pomerium/pomerium/pull/3708) (@calebdoxsey)
 - sessions: check idp id to detect provider changes to force session invalidation [\#3707](https://github.com/pomerium/pomerium/pull/3707) (@calebdoxsey)
-- controlplane: move jwks.json endpoint to control plane [\#3691](https://github.com/pomerium/pomerium/pull/3691) (@calebdoxsey)
-- config: default to http2 [\#3660](https://github.com/pomerium/pomerium/pull/3660) (@calebdoxsey)
 
 ### Fixed
 
@@ -484,6 +558,39 @@ Please refer to the [upgrade guide](https://www.pomerium.com/docs/deploy/core/up
 - chore\(deps\): bump stefanzweifel/git-auto-commit-action from 4.15.2 to 4.15.3 [\#3716](https://github.com/pomerium/pomerium/pull/3716) (@dependabot[bot])
 - chore\(deps\): bump stefanzweifel/git-auto-commit-action from 4.15.3 to 4.15.4 [\#3726](https://github.com/pomerium/pomerium/pull/3726) (@dependabot[bot])
 
+## [v0.19.2](https://github.com/pomerium/pomerium/tree/v0.19.2) (2023-05-26)
+
+[Full Changelog](https://github.com/pomerium/pomerium/compare/v0.19.1...v0.19.2)
+
+### Security
+
+- This release fixes a bug whereby specially crafted requests could result in incorrect authorization decisions made by Pomerium. [CVE-2023-33189](https://github.com/pomerium/pomerium/security/advisories/GHSA-pvrc-wvj2-f59p).
+
+### Changed
+
+- authorize: enforce service account expiration by @backport-actions-token in https://github.com/pomerium/pomerium/pull/3662
+- config: disable envoy admin by default, expose stats via envoy route by @backport-actions-token in https://github.com/pomerium/pomerium/pull/3684
+- fileutil: update watcher to use fsnotify and polling (#3663) by @calebdoxsey in https://github.com/pomerium/pomerium/pull/3685
+- httputil: remove error details by @backport-actions-token in https://github.com/pomerium/pomerium/pull/3705
+- postgres: return an empty list of addresses on dns errors by @backport-actions-token in https://github.com/pomerium/pomerium/pull/3638
+- ppl: support special characters in claim keys by @backport-actions-token in https://github.com/pomerium/pomerium/pull/3640
+
+## [v0.19.1](https://github.com/pomerium/pomerium/tree/v0.19.1) (2022-09-08)
+
+[Full Changelog](https://github.com/pomerium/pomerium/compare/v0.19.0...v0.19.1)
+
+### Changed
+
+- [`c0a88707`](https://github.com/pomerium/pomerium/commit/c0a8870717ffc02f3083cdb191faa43c74077288) authenticate: get/set identity provider id for all sessions (#3608)
+- [`c3ef43cd`](https://github.com/pomerium/pomerium/commit/c3ef43cdeda9a3dda88b82d69fc6c69059a71c5f) upgrade envoy to v1.23.1 (#3600)
+
+### Docker images
+
+- `docker pull pomerium/pomerium:v0.19.1`
+- `docker pull pomerium/pomerium:nonroot-v0.19.1`
+- `docker pull pomerium/pomerium:debug-v0.19.1`
+- `docker pull pomerium/pomerium:debug-nonroot-v0.19.1`
+
 ## [v0.19.0](https://github.com/pomerium/pomerium/tree/v0.19.0) (2022-09-01)
 
 [Full Changelog](https://github.com/pomerium/pomerium/compare/v0.18.0...v0.19.0)
@@ -565,6 +672,19 @@ Please refer to the [upgrade guide](https://www.pomerium.com/docs/deploy/core/up
 - chore(deps): bump pre-commit/action from 876132a3c26aa072b09eab6c5395b4749eeb2435 to 3.0.0 [#3567](https://github.com/pomerium/pomerium/pull/3567) (@dependabot[bot])
 - chore(deps): bump tibdex/github-app-token from 1.5.1 to 1.6 [#3566](https://github.com/pomerium/pomerium/pull/3566) (@dependabot[bot])
 - deployment: update RELEASING.md [#3503](https://github.com/pomerium/pomerium/pull/3503) (@desimone)
+
+## [v0.18.1](https://github.com/pomerium/pomerium/tree/v0.18.1) (2023-05-26)
+
+[Full Changelog](https://github.com/pomerium/pomerium/compare/v0.18.0...v0.18.1)
+
+### Security
+
+- This release fixes a bug whereby specially crafted requests could result in incorrect authorization decisions made by Pomerium. [CVE-2023-33189](https://github.com/pomerium/pomerium/security/advisories/GHSA-pvrc-wvj2-f59p).
+
+### Changed
+
+- publish to any-distro (#3570) by @calebdoxsey in https://github.com/pomerium/pomerium/pull/3571
+- postgres: remove not null constraint on data column of record changes table by @backport-actions-token in https://github.com/pomerium/pomerium/pull/3595
 
 ## [v0.18.0](https://github.com/pomerium/pomerium/tree/v0.18.0) (2022-07-27)
 
@@ -770,7 +890,15 @@ Please refer to the [upgrade guide](https://www.pomerium.com/docs/deploy/core/up
 - Revert "databroker: add support for field masks on Put" [#3217](https://github.com/pomerium/pomerium/pull/3217) (@calebdoxsey)
 - Revert "userinfo: embed assets as data URLs for forward auth" [#3474](https://github.com/pomerium/pomerium/pull/3474) (@calebdoxsey)
 
-## [v0.17.3](https://github.com/pomerium/pomerium/tree/v0.17.3)
+## [v0.17.4](https://github.com/pomerium/pomerium/tree/v0.17.4) (2023-05-26)
+
+[Full Changelog](https://github.com/pomerium/pomerium/compare/v0.17.3...v0.17.4)
+
+### Security
+
+- This release fixes a bug whereby specially crafted requests could result in incorrect authorization decisions made by Pomerium. [CVE-2023-33189](https://github.com/pomerium/pomerium/security/advisories/GHSA-pvrc-wvj2-f59p).
+
+## [v0.17.3](https://github.com/pomerium/pomerium/tree/v0.17.3) (2023-05-05)
 
 [Full Changelog](https://github.com/pomerium/pomerium/compare/v0.17.2...v0.17.3)
 
@@ -793,9 +921,9 @@ Please refer to the [upgrade guide](https://www.pomerium.com/docs/deploy/core/up
 
 ### Fixed
 
+- Add UUID to docs yaml blocks (#3251) [#3259] (@alexfornuto)
 - authorize: pass idp id for webauthn url, allow unauthenticated access to static files [#3284] (@calebdoxsey)
 - config: fix DefaultTransport so it is still a \*http.Transport [#3260] (@calebdoxsey)
-- Add UUID to docs yaml blocks (#3251) [#3259] (@alexfornuto)
 
 ### Dependency
 
