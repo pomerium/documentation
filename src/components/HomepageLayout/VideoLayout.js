@@ -4,17 +4,17 @@ import styles from './video.module.css';
 const data = [
   {
     title: "Pomerium Demo",
-    text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Amet facilisis magna etiam tempor orci eu lobortis.",
+    text: "Learn how Pomerium secures your apps and services in this 2-minute demo.",
     video: <iframe frameBorder="0" title="YouTube video player" width="100%" height="350" src="https://www.youtube.com/embed/WGwC9ULDnAY?rel=0"></iframe>
   },
   {
     title: "Clientless Access",
-    text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Amet facilisis magna etiam tempor orci eu lobortis.",
+    text: "Learn how Pomerium simplifies access control by providing clientless access to users within your organization.",
     video: <iframe frameBorder="0" title="YouTube video player" width="100%" height="350" src="https://www.youtube.com/embed/bUZUg0e3A1Y"></iframe>
   },
   {
     title: "Continuous Verification",
-    text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Amet facilisis magna etiam tempor orci eu lobortis.",
+    text: "Learn what Continuous Verification is, how it works with Pomerium, and why it's important for building a Zero Trust Architecture.",
     video: <iframe frameBorder="0" title="YouTube video player" width="100%" height="350" src="https://www.youtube.com/embed/3MJrNvQ7aIE"></iframe>
   }
 ]
