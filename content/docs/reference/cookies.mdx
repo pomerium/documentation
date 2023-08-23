@@ -18,7 +18,7 @@ This reference covers all of Pomerium's **Cookies Settings**:
 - [Cookie Secure](#cookie-secure)
 - [Cookie HTTP Only](#cookie-http-only)
 - [Cookie Expiration](#cookie-expiration)
-- [Cookie Same Site](#cookie-samesite)
+- [Cookie SameSite](#cookie-samesite)
 - [Cookie Secret File](#cookie-secret-file)
 
 ## Cookie Name {#cookie-name}
@@ -300,7 +300,7 @@ cookie.expiration: 13h15m0.5s
 
 ## Cookie SameSite {#cookie-samesite}
 
-**Cookie SameSite** sets the [SameSite](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie#samesitesamesite-value) option for cookies.
+**Cookie SameSite** sets the [SameSite](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie#samesitesamesite-value) option for cookies, which determines whether or not a cookie is sent with cross-site requests.
 
 ### How to configure {#cookie-samesite-how-to-configure}
 
@@ -309,26 +309,34 @@ cookie.expiration: 13h15m0.5s
 
 | **Config file keys** | **Environment variables** | **Type** | **Usage** | **Default** | **Options** |
 | :-- | :-- | :-- | :-- | :-- | :-- |
-| `cookie_same_site` | `COOKIE_SAME_SITE` | `string` | **optional** | ` Lax` (unset) | `None` |
-|  |  |  |  |  | `Lax` |
-|  |  |  |  |  | `Strict` |
+| `cookie_same_site` | `COOKIE_SAME_SITE` | `string` | **optional** | ` Lax` (if unset) | See [Cookie SameSite Options](#cookie-samesite-options) |
 
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
 
-`cookie_same_site` is a bootstrap configuration setting and is not configurable in the Console.
+Set the **Cookie SameSite** attribute in the Console:
+
+![Set the cookies samesite attribute in the Console](./img/cookies/cookie-samesite.gif)
+
+See [Cookie SameSite Options](#cookie-samesite-options) for more information.
 
 </TabItem>
 <TabItem value="Kubernetes" label="Kubernetes">
 
-| **Name**          | **Type** | **Usage**    | **Default**    | **Options** |
-| :---------------- | :------- | :----------- | :------------- | :---------- |
-| `cookie.sameSite` | `string` | **optional** | ` Lax` (unset) | `None`      |
-|                   |          |              |                | `Lax`       |
-|                   |          |              |                | `Strict`    |
+| **Name** | **Type** | **Usage** | **Default** | **Options** |
+| :-- | :-- | :-- | :-- | :-- |
+| `cookie.sameSite` | `string` | **optional** | ` Lax` (if unset) | See [Cookie SameSite Options](#cookie-samesite-options) |
 
 </TabItem>
 </Tabs>
+
+### Cookie SameSite options
+
+| **Attribute** | **Value** |
+| :-- | :-- | --- |
+| `Lax` | The cookie is _not_ sent on cross-site requests, such as on requests to load images or frames, but is sent when a user is navigating to the origin site from an external site (for example, when following a link). |
+| `Strict` | The browser sends the cookie only for same-site requests, that is, requests originating from the same site that set the cookie. |
+| `None` | The browser sends the cookie with both cross-site and same-site requests. If you set `SameSite=none`, the [HTTPS only](/docs/reference/cookies#cookie-secure) setting must be set to `true`. |  |
 
 ### Examples {#cookie-samesite-examples}
 
