@@ -78,27 +78,56 @@ After you access a route, filter your logs by searching for `“http-request”`
   </div>
 </details>
 
-#### Downstream mTLS Settings
-The new [downstream mTLS settings](/docs/reference/downstream-mtls-settings) control the client certificate requirements for end users connecting to Pomerium-managed routes.
+#### New Downstream mTLS Settings
 
-This new suite of mTLS settings replaces previous certificate-related options (like **Client CRL** and **Client Certificate Authority**) and introduces new options, which are all grouped under the `downstream_mtls` configuration file key.
+Downstream mTLS refers to the requirement that end users connecting to Pomerium-managed routes must present a trusted client certificate. The options for configuring downstream mTLS have been expanded and moved to a new settings group, under a new `downstream_mtls` configuration file key.
 
-The new settings include:
-- Client Certificate Authority (`downstream_mtls.ca`)
-- Certificate Revocation List (`downstream_mtls.crl`)
-- Enforcement Mode (`downstream_mtls.enforcement`)
-- Match Subject Alt Names (`downstream_mtls.match_subject_alt_names`)
-- Max Verify Depth (`downstream_mtls.max_verify_depth`)
+The existing [Certificate Authority](/docs/reference/downstream-mtls-settings#ca) setting has moved from `client_ca` to `downstream_mtls.ca`. The `client_ca` configuration file key will continue to function as an alias for the new setting (but will be removed in a future release).
+
+Support for certificate revocation via CRLs is newly introduced. Please see the [CRL](/docs/reference/downstream-mtls-settings#crl) reference for more information and some important limitations.
+
+A new [Enforcement Mode](/docs/reference/downstream-mtls-settings#enforcement-mode) option has been added, to control the behavior when a client does not present a trusted certificate. The default setting preserves the behavior of previous Pomerium releases: client certificates are required only for user-configured Pomerium routes, and Pomerium will serve an HTML error page for requests without a trusted certificate. The new `reject_connection` setting allows for stricter client certificate enforcement: in this mode any attempt to make a TLS connection without a trusted client certificate will be rejected. Naturally, this means that client certificates will be required not only for user-configured Pomerium routes, but also for internal Pomerium routes. This mode allows you to use mTLS as an isolated security layer, entirely separate from Pomerium policy enforcement. Please review the [reference page](/docs/reference/downstream-mtls-settings#enforcement-mode) carefully before enabling this mode.
+
+To give further control over which specific client certificates are allowed, Pomerium now also offers a [Match Subject Alt Names](/docs/reference/downstream-mtls-settings#match-sans) setting. This allows you to trust only those client certificates containing a Subject Alternative Name (SAN) of a specific type, matching a particular regular expression.
+
+When the new [Max Verify Depth](/docs/reference/downstream-mtls-settings#max-verify-depth) option is set, Pomerium will consider client-supplied intermediate CA certificates when verifying a client certificate. The default setting preserves the behavior of previous Pomerium releases: all client certificates must be issued directly by a certificate authority included in the CA setting (no client-supplied intermediate CA certificates are allowed). This default behavior may change in a future release.
 
 #### Certificate Matcher PPL Criteria (beta)
-The new [Certificate Matcher](/docs/capabilities/ppl#certificate-matcher) criteria for PPL allows you to build policies that grant or deny access based on the client certificate’s fingerprint or Subject Public Key Info (SPKI) hash. The two options give you flexibility in how you want to manage access control with certificates: A certificate fingerprint will only allow a specific client certificate, whereas the SPKI hash can be used to create an allowlist of trusted certificate key pairs.
+
+The new [Certificate Matcher](/docs/capabilities/ppl#certificate-matcher) can be used with the new PPL criterion `client_certificate` to build policies that grant or deny access based on the client certificate’s fingerprint or Subject Public Key Info (SPKI) hash. Both of these options allow you to create an allowlist or denylist of specific certificates.
 
 See the [Certificate Matcher](/docs/capabilities/ppl#certificate-matcher) policy page for more information and examples.
 
 #### Set Request Headers options
-You can configure the [Set Request Headers](/docs/reference/routes/headers#pass-dynamic-tokens-in-headers) setting to send the client certificate fingerprint (downstream mTLS must be enabled) to the upstream application or service. The fingerprint can be built into your authorization policy with the new [Certificate Matcher](/docs/deploy/core/upgrading#certificate-matcher-ppl-criteria-beta) (beta) PPL criteria to grant or deny users based on the fingerprint’s value.
+
+You can configure the [Set Request Headers](/docs/reference/routes/headers#pass-dynamic-tokens-in-headers) setting to send the client certificate fingerprint (downstream mTLS must be enabled) to the upstream application or service. The fingerprint can be built into your authorization policy with the new Certificate Matcher (beta) PPL criteria to grant or deny users based on the fingerprint’s value.
 
 See the [Set Request Headers](/docs/reference/routes/headers#pass-dynamic-tokens-in-headers) settings page for more information and examples.
+
+### Deprecated
+
+#### Set Authorization Header
+
+The [Set Authorization Header](/docs/reference/routes/headers#set-authorization-header) option is deprecated in favor of the new variable substitution support in the Set Request Headers option. This new support allows you to pass IdP tokens to upstream services in any header, not just the `Authorization` header.
+
+The Set Authorization Header option will be removed in a future release.
+
+#### TLS Downstream Client Certificate Authority
+
+The [TLS Downstream Client Certificate Authority](/docs/reference/routes/tls#tls-downstream-client-certificate-authority) option is deprecated, and will be removed in a future release.
+
+If you previously used this setting to require client certificates only on certain routes, you can achieve this same behavior by setting the new downstream mTLS [Enforcement Mode](/docs/reference/downstream-mtls-settings#enforcement-mode) option to the value `policy` and adding a policy deny rule with the `invalid_client_certificate` criterion on all routes that should require client certificates.
+
+If you want to enforce an allowlist or denylist of specific certificates on a particular route, you can use the new [`client_certificate`](/docs/capabilities/ppl#certificate-matcher) policy criterion.
+
+If you do need to set completely different trusted client CAs for different routes, we recommend running separate Pomerium clusters for each set of trusted client CAs.
+
+### Breaking
+
+#### Set Request Headers options
+
+To prevent a ‘$’ character from being treated as the start of a variable substitution, you may need to replace it with ‘$$’.
+
 
 ## Since 0.21.0
 
