@@ -13,6 +13,93 @@ sidebar_position: 10
 
 # Upgrade guide
 
+## 0.23.0
+### New
+#### Logging Configurations
+The new [Access Log Fields](/docs/reference/access-log-fields) and [Authorize Log Fields](/docs/reference/authorize-log-fields) settings allow you to review HTTP request logs from the Proxy and Authorize services. Each setting allows you to log all default fields, only specific fields, and custom headers. With authorize log fields, you can also log ID tokens and claims received from your identity provider.
+
+<details>
+  <summary>How the new Logging Configurations work</summary>
+  <div>
+
+  **1. Configure logs**<br/>
+Specify which fields you want to log (omitting the setting will display all the default fields):
+
+```yaml
+# Access logs from Proxy service
+access_log_fields:
+  - authority
+  - path
+
+# Authorize logs from Authorize service
+authorize_log_fields:
+  - request-id
+  - method
+  - path
+```
+
+**2. Access a route**<br/>
+For example, Pomerium’s Verify service:
+
+```yaml
+routes:
+- from: https://verify.localhost.pomerium.io
+  to: http://verify:8000
+```
+
+**3. Find logs**<br/>
+After you access a route, filter your logs by searching for `“http-request”` and `“authorize check”`:
+
+```json
+// Search for “message”: “http-request”
+{
+  "level": "info",
+  "service": "envoy",
+  "authority": "verify.pomerium.com",
+  "path": "/img/json.svg",
+  "time": "2023-08-04T12:12:35-04:00",
+  "message": "http-request"
+}
+// Search for “message”: “authorize check”
+{
+  "level": "info",
+  "service": "authorize",
+  "request-id": "c9afae5a-ec5a-4242-864f-df4189f20e99",
+  "method": "GET",
+  "path": "/index.css",
+  "allow": true,
+  "allow-why-true": ["domain-ok"],
+  "deny": false,
+  "deny-why-false": [],
+  "time": "2023-08-07T10:26:33-04:00",
+  "message": "authorize check"
+}
+```
+  </div>
+</details>
+
+#### Downstream mTLS Settings
+The new [downstream mTLS settings](/docs/reference/downstream-mtls-settings) control the client certificate requirements for end users connecting to Pomerium-managed routes.
+
+This new suite of mTLS settings replaces previous certificate-related options (like **Client CRL** and **Client Certificate Authority**) and introduces new options, which are all grouped under the `downstream_mtls` configuration file key.
+
+The new settings include:
+- Client Certificate Authority (`downstream_mtls.ca`)
+- Certificate Revocation List (`downstream_mtls.crl`)
+- Enforcement Mode (`downstream_mtls.enforcement`)
+- Match Subject Alt Names (`downstream_mtls.match_subject_alt_names`)
+- Max Verify Depth (`downstream_mtls.max_verify_depth`)
+
+#### Certificate Matcher PPL Criteria (beta)
+The new [Certificate Matcher](/docs/capabilities/ppl#certificate-matcher) criteria for PPL allows you to build policies that grant or deny access based on the client certificate’s fingerprint or Subject Public Key Info (SPKI) hash. The two options give you flexibility in how you want to manage access control with certificates: A certificate fingerprint will only allow a specific client certificate, whereas the SPKI hash can be used to create an allowlist of trusted certificate key pairs.
+
+See the [Certificate Matcher](/docs/capabilities/ppl#certificate-matcher) policy page for more information and examples.
+
+#### Set Request Headers options
+You can configure the [Set Request Headers](/docs/reference/routes/headers#pass-dynamic-tokens-in-headers) setting to send the client certificate fingerprint (downstream mTLS must be enabled) to the upstream application or service. The fingerprint can be built into your authorization policy with the new [Certificate Matcher](/docs/deploy/core/upgrading#certificate-matcher-ppl-criteria-beta) (beta) PPL criteria to grant or deny users based on the fingerprint’s value.
+
+See the [Set Request Headers](/docs/reference/routes/headers#pass-dynamic-tokens-in-headers) settings page for more information and examples.
+
 ## Since 0.21.0
 
 ### New
