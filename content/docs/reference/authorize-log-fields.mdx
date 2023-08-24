@@ -12,7 +12,9 @@ import TabItem from '@theme/TabItem';
 
 ## Summary
 
-The **Authorize Log Fields** setting displays HTTP request logs from the authorize service with a message of the type `authorize check`.
+The **Authorize Log Fields** setting controls which fields will be included in the authorize logs. For each incoming request, the authorize service will emit a log entry with the message `authorize check` containing the policy evaluation result and these additional log fields.
+
+The default log fields should be appropriate for most deployments.
 
 ## How to Configure
 
@@ -54,13 +56,13 @@ The table below lists all available authorize log fields:
 | `email` | The logged-in user's email address | Yes |
 | `headers` | The complete set of HTTP request headers | No |
 | \* `headers.{CustomHeaderName}` | An HTTP Request Header identified by the `HeaderName` | No |
-| \* `host` | The HTTP request `:authority` or `Host` header value. Can be a domain name or IP address and may contain a port number (for example, `www.example.com`) | Yes |
+| `host` | The HTTP request `:authority` or `Host` header value. Can be a domain name or IP address and may contain a port number (for example, `www.example.com`) | Yes |
 | `id-token` | The user's ID token | No |
 | `id-token-claims` | The user's ID token claims | No |
 | `impersonate-email` | If [impersonating](/docs/capabilities/impersonation), the impersonated email | Yes |
 | `impersonate-session-id` | If [impersonating](/docs/capabilities/impersonation), the impersonated session ID | Yes |
 | `impersonate-user-id` | If [impersonating](/docs/capabilities/impersonation), the impersonated user ID | Yes |
-| `ip` | The user's IP address | Yes |
+| `ip` | The user's IP address. Note that this depends on setting the [`xff_num_trusted_hops`](/docs/reference/the-number-of-trusted-hops) option appropriately. | Yes |
 | `method` | The HTTP request method, such as `GET`, `POST`, or `PUT` | Yes |
 | `path` | The HTTP request path (for example, `/some/path`) | Yes |
 | `query` | The HTTP request query (for example, `?test=one&other=13`) | No |
@@ -69,9 +71,13 @@ The table below lists all available authorize log fields:
 | `session-id` | the session ID | Yes |
 | `user` | The user's ID | Yes |
 
-\* The actual value of the `:authority` or `Host` header may vary depending on the [`xff_num_trusted_hops`](/docs/reference/the-number-of-trusted-hops) setting.
-
 \* The `headers.{CustomHeaderName}` field is only available in **Core** and **Enterprise**, not Kubernetes.
+
+:::danger
+
+Query parameters often contain sensitive information. Do not enable the `query` log field without careful consideration.
+
+:::
 
 ## Authorize log behavior
 
