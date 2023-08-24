@@ -7,6 +7,34 @@ description: This page contains the list of deprecations and important or breaki
 
 Review the upgrade guide below before upgrading to the latest version of Pomerium Enterprise.
 
+## 0.23.0
+
+### Before you upgrade
+
+#### New
+
+**Set Request Headers**<br/>
+
+[Set Request Headers](/docs/reference/routes/headers#set-request-headers) has a new token substitution value that sends the client certificate fingerprint (downstream mTLS must be enabled) to the upstream application or service.
+
+![Set client certificate fingerprint with the new set request headers option](./img/upgrading/v23/set-request-headers-fingerprint.png)
+
+**Logging Configurations**<br/>
+
+[Access Log Fields](/docs/reference/access-log-fields) and [Authorize Log Fields](/docs/reference/authorize-log-fields) settings allow you to easily review HTTP request logs from the Proxy and Authorize services.
+
+![Configure logging fields in the Console](./img/upgrading/v23/logging-configs.gif)
+
+**Cookies SameSite**<br/>
+
+[Cookies SameSite](/docs/reference/cookies#cookie-samesite) is now configurable in the Enterprise Console.
+
+![Configure Cookies SameSite in the Console](./img/upgrading/v23/cookie-samesite.gif)
+
+#### Breaking
+
+- When using `set_request_headers`, to prevent a ‘$’ character from being treated as the start of a variable substitution, you may need to replace it with ‘$$’.
+
 ## 0.22.0
 
 ### Before you upgrade
