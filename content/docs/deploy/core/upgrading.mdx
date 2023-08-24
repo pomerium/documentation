@@ -14,16 +14,18 @@ sidebar_position: 10
 # Upgrade guide
 
 ## 0.23.0
+
 ### New
+
 #### Logging Configurations
+
 The new [Access Log Fields](/docs/reference/access-log-fields) and [Authorize Log Fields](/docs/reference/authorize-log-fields) settings allow you to review HTTP request logs from the Proxy and Authorize services. Each setting allows you to log all default fields, only specific fields, and custom headers. With authorize log fields, you can also log ID tokens and claims received from your identity provider.
 
 <details>
   <summary>How the new Logging Configurations work</summary>
   <div>
 
-  **1. Configure logs**<br/>
-Specify which fields you want to log (omitting the setting will display all the default fields):
+**1. Configure logs**<br/> Specify which fields you want to log (omitting the setting will display all the default fields):
 
 ```yaml
 # Access logs from Proxy service
@@ -38,17 +40,15 @@ authorize_log_fields:
   - path
 ```
 
-**2. Access a route**<br/>
-For example, Pomerium’s Verify service:
+**2. Access a route**<br/> For example, Pomerium’s Verify service:
 
 ```yaml
 routes:
-- from: https://verify.localhost.pomerium.io
-  to: http://verify:8000
+  - from: https://verify.localhost.pomerium.io
+    to: http://verify:8000
 ```
 
-**3. Find logs**<br/>
-After you access a route, filter your logs by searching for `“http-request”` and `“authorize check”`:
+**3. Find logs**<br/> After you access a route, filter your logs by searching for `“http-request”` and `“authorize check”`:
 
 ```json
 // Search for “message”: “http-request”
@@ -75,6 +75,7 @@ After you access a route, filter your logs by searching for `“http-request”`
   "message": "authorize check"
 }
 ```
+
   </div>
 </details>
 
@@ -127,7 +128,6 @@ If you do need to set completely different trusted client CAs for different rout
 #### Set Request Headers options
 
 To prevent a ‘$’ character from being treated as the start of a variable substitution, you may need to replace it with ‘$$’.
-
 
 ## Since 0.21.0
 
