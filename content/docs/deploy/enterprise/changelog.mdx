@@ -7,6 +7,21 @@ toc_max_heading_level: 5
 
 # Changelog
 
+## 0.23.0
+
+### New
+
+- [Set Request Headers](/docs/reference/routes/headers#set-request-headers) has three new new token substitution values that it can send to upstream apps or services:
+  - **Client certificate fingerprint** (the short-form SHA-256 fingerprint of the presented client certificate)
+  - **ID token** (the OIDC ID token from the identity provider)
+  - **Access token** (the OAuth access token from the identity provider)
+- [Access Log Fields](/docs/reference/access-log-fields) and [Authorize Log Fields](/docs/reference/authorize-log-fields) settings allow you to customize the values that are logged in the access and authorize logs.
+- [Cookies SameSite](/docs/reference/cookies#cookie-samesite) is now configurable in the Enterprise Console.
+
+### Breaking
+
+- When using `set_request_headers`, to prevent a ‘$’ character from being treated as the start of a variable substitution, you may need to replace it with ‘$$’.
+
 ## 0.22.0
 
 ### Security patch
