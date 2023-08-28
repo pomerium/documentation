@@ -3,7 +3,6 @@
 # It's hardcoded to point to 127.0.0.1
 authenticate_service_url: https://authenticate.localhost.pomerium.io
 
-
 ##################################################################################
 # Identity provider settings : https://www.pomerium.com/docs/identity-providers/ #
 # The keys required in this section vary depending on your IdP. See the          #
