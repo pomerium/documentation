@@ -50,7 +50,11 @@ Let's do a simple route to test out how you can set one up. For the purpose of t
               is: user@example.com
 ```
 
-Remember to replace the email with your own! It is the email you are telling Pomerium to `allow` to pass. If you forget, Pomerium will go "YOU SHALL NOT PASS!" (doing its job).
+Remember to replace the email with your own! It is the email you are telling Pomerium to `allow` to pass. If you forget, Pomerium will go "YOU SHALL NOT PASS!" (so, doing its job).
+
+At this point, you've created a route with a policy! Make sure you save, then let's fire up Pomerium from scratch and test it out.
+
+<!---I have no idea what to do about docker compose, leaving this section for you Zach--->
 
 ### Docker-compose
 
@@ -73,16 +77,31 @@ adguard:
   restart: always
 ```
 
-### Router
+### Test the route!
 
-![adguard router setup](img/adguard/adguard-router-setup.png)
+Once you ensure that Pomerium is up and running, go to your browser and try out the route!
+The process should look like:
+- You type `https://wikipedia.loicalhost.pomerum.io` into the browser
+- Pomerium authenticates you via the email you provided
+- Once you are authenticated, you are redirected to `https://www.wikipedia.org/`
 
-Set your router to use your new host as the primary DNS server.
+Here are some common mistakes that may show up:
+
+<!---Zach This section should be for troubleshooting. Let's screengrab common mistakes, such as if the cert was not configured, the route was not set properly, the email was not set properly, or maybe policies incorrect--->
+
 
 ### That's it!
 
-Simply navigate to your new adguard instance (e.g. `https://adguard.domain.example`) and behold all of the malware you and your family are no longer subjected to.
+Now that you've set up your first route, the process is largely the same for creating new routes and policies. Remember to always create a new route section in the config.yaml file each time! If there are any questions or something did not work out, please reach out to us on our [Discuss forums] and we'll be happy to address it.
 
-![adguard dashboard](img/adguard/adguard-dashboard.png)
+### Next Steps
+If you feel comfortable setting up routes, check out our [Guides](/docs/guides) for securing popular tools and applications.
+
+Want something more advanced? Here are some options:
+
+- Set up your [identity provider for single-sign on](/content/docs/capabilities/authentication.mdx)
+- Setting up [Downstream mTLS](/content/docs/capabilities/mtls-clients.mdx) or [Upstream mTLS](/content/docs/capabilities/mtls-services.mdx)
+- Understanding our [Audit Logs](/content/docs/capabilities/audit-logs.mdx)
+
 
 [quick start]: /docs/quickstart
