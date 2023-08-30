@@ -1,47 +1,56 @@
 ---
-# cSpell:ignore piehole dXNlcjpwYXNzd29yZA workdir adguardhome confdir
+# cSpell:ignore piehole dXNlcjpwYXNzd29yZA workdir first-route confdir
+<!--- I have no idea what this is for --->
 
-title: Securing AdGuard Home
-sidebar_label: AdGuard
+title: Tour First Pomerium Route
+sidebar_label: First Route
 lang: en-US
-keywords: [pomerium, identity access proxy, adguard, ad guard, pi hole, piehole]
-description: This guide covers how to add authentication and authorization to a hosted, fully online instance of Adguard.
+keywords: [pomerium, identity access proxy, context aware proxy]
+description: This guide covers how to set up your first route in Pomerium.
 ---
 
-This guide covers how to add authentication and authorization to an instance of AdGuard while giving us a great excuse to demonstrate how to use Pomerium's [add headers](/docs/reference) functionality to **transparently pass along basic authentication credentials to a downstream app**.
+<!---I'm going to sort of draft what I think is useful but acnkowledge this is your territory, zach. Also, this is purely for setting up a route - we still need to add in the bit where certs are set up so this would work.--->
 
-## What is AdGuard?
-
-[AdGuard](https://adguard.com/en/adguard-home/overview.html) Home operates as a DNS server that re-routes tracking domains to a "black hole", thus preventing your devices from connecting to those servers. Instead of browser plugins or other software on each computer, you can install AdGuard in one place and your entire network is protected. AdGuard is very similar to [Pi-hole](https://pi-hole.net) but has some [marked advantages](https://github.com/AdguardTeam/AdGuardHome#comparison).
-
-## Where Pomerium fits
-
-AdGuard is a great candidate for protecting with pomerium as it it does not currently support any authentication or authorization capabilities beyond a single set of [HTTP Basic Access Authentication](https://en.wikipedia.org/wiki/Basic_access_authentication) credentials.
+This guide covers how to add a route to your Pomerium configuration. The goals are:
+ - Understand how routes and their policies are set
+ - Create a route with a policy
+ - Test that route!
 
 ## Pre-requisites
 
-This guide assumes you have already completed one of the [quick start] guides, and have a working instance of Pomerium up and running. For purpose of this guide, I'm going to use docker-compose, though any other deployment method would work equally well.
+This guide assumes you have already completed our [quick start] guide and have a working instance of Pomerium up and running. For purpose of this guide, I'm going to use docker-compose, though any other deployment method would work equally well.
 
 ## Configure
 
 ### Pomerium Config
 
+If you finished quick start, you should have a `config.yaml` file in your Pomerium directory. This is the file we use to add, delete, or modify Pomerium routes. Luckily, you already have one! Navigate to that file, open it up, and you should see the default route of Pomerium.
+
+<ConfigDocker />
+
+This is actually a route! It routes access from one address to another, following the policies that are set. Just in case, let's go through each of these settings one by one:
+- `from`: This is the public address you are redirecting. When the user types in this address, Pomerium processes all of the policies you set before allowing them to reach their destination.
+- `to`: This is where the traffic is routed to. In many cases, Pomerium is used to route to an internal web application, so this is where you'd input that address.
+- `policy`: You guessed it -- this is where the policy can begin to be set. For more information about policies, please refer to the guide on [Policy Language](/content/docs/capabilities/ppl.mdx)
+
+
+## Create a Route!
+
+Let's do a simple route to test out how you can set one up. For the purpose of this guide, we'll write an internal route to `https://www.wikipedia.org/`. Go to Wikipedia first to make sure the site is up; if they are not, you may have five minutes to mourn the loss of Wikipedia. Then, replace all instances of `https://www.wikipedia.org/` in the rest of this guide with a public address you know works.
+
+
 ```yaml
 # config.yaml
-- from: https://adguard.domain.example
-  to: http://adguard
+- from: https://wikipedia.localhost.pomerium.io
+  to: https://www.wikipedia.org/
   policy:
     - allow:
         or:
           - email:
               is: user@example.com
-  set_request_headers:
-    # https://www.blitter.se/utils/basic-authentication-header-generator/
-    Authorization: Basic dXNlcjpwYXNzd29yZA===
-  allow_websockets: true
 ```
 
-Here's the important bit. If you don't add the `set_request_headers` line above, you will be prompted for a basic login on each visit.
+Remember to replace the email with your own! It is the email you are telling Pomerium to `allow` to pass. If you forget, Pomerium will go "YOU SHALL NOT PASS!" (doing its job).
 
 ### Docker-compose
 
