@@ -163,6 +163,7 @@ const sidebars = {
         'docs/identity-providers/github',
         'docs/identity-providers/gitlab',
         'docs/identity-providers/google',
+        'docs/identity-providers/oidc',
         'docs/identity-providers/okta',
         'docs/identity-providers/one-login',
         'docs/identity-providers/ping',
