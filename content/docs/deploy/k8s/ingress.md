@@ -212,11 +212,11 @@ Users with matching email domains would be allowed.
 ```yaml
 ingress.pomerium.io/policy: |
   allow:
-  and:
-    - user:
-        is: user1@example.com
-    - user:
-        is: user2@example.com
+    or:
+      - user:
+          is: user1@example.com
+      - user:
+          is: user2@example.com
 ```
 
 Users with matching emails would be allowed.
