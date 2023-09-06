@@ -20,7 +20,7 @@ To learn how a generic [OIDC](https://openid.net/specs/openid-connect-core-1_0.h
 
 ## Before you start
 
-This guide requires you to self-host Keycloak. To minimize set up time, you will deploy Pomerium, Keycloak, and the Pomerium Verify service in Docker containers.
+This guide requires you to self-host the Keycloak server. To minimize set up time, you will deploy Pomerium, Keycloak, and the Pomerium Verify service in Docker containers.
 
 To complete this guide, you need:
 - [Docker](https://docs.docker.com/install/)
@@ -64,7 +64,7 @@ Note the following points about this configuration:
 
 - `start-dev` runs the Keycloak server in Development mode
 - The admin console username and password are both `admin`
-- The Keycloak server is assigned a network alias (`keycloak.localhost.pomerium.io`) so Pomerium can connect with a sign-in request
+- The Keycloak server is assigned a network alias (`keycloak.localhost.pomerium.io`) so Pomerium can generate a sign-in redirect URL that resolves to the Keycloak container on the host machine
 
 
 ## Set up Keycloak
@@ -165,7 +165,7 @@ Note the following points:
 
 ### Add a signing key
 
-Because this example secures Pomerium's Verify app, you should add a signing key so Pomerium can sign the Pomerium JWT. This will allow you to review a user's JWT claims.
+Because this example secures Pomerium's Verify app, you should add a signing key so Pomerium can sign the Pomerium JWT.
 
 Generate a **signing key** with the following command:
 
@@ -194,14 +194,10 @@ Access the Verify URL in your configuration file.
 
 :::
 
-Pomerium should redirect you to the Keycloak realm you created. Sign in with your user's credentials.
+Pomerium should redirect you to the sign-in page of the Keycloak realm you created. Sign in with your user's credentials.
 
 ![Sign in to Keycloak Realm](./img/oidc/keycloak-login.png)
 
 Once you sign in, you can verify that Pomerium handled the JWT and included the OIDC claims from Keycloak:
 
 ![Access Verify app](./img/oidc/keycloak-verify-app.png)
-
-## Next steps: Add groups and roles (Enterprise)
-
-TODO
