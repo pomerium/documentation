@@ -1,4 +1,5 @@
 ---
+# cSpell:ignore keycloak
 id: oidc
 title: OIDC
 description: Learn how integrate a generic OIDC provider with Pomerium.
@@ -23,6 +24,7 @@ To learn how a generic [OIDC](https://openid.net/specs/openid-connect-core-1_0.h
 This guide requires you to self-host the Keycloak server. To minimize set up time, you will deploy Pomerium, Keycloak, and the Pomerium Verify service in Docker containers.
 
 To complete this guide, you need:
+
 - [Docker](https://docs.docker.com/install/)
 - [Docker Compose](https://docs.docker.com/compose/install/)
 
@@ -65,7 +67,6 @@ Note the following points about this configuration:
 - `start-dev` runs the Keycloak server in Development mode
 - The admin console username and password are both `admin`
 - The Keycloak server is assigned a network alias (`keycloak.localhost.pomerium.io`) so Pomerium can generate a sign-in redirect URL that resolves to the Keycloak container on the host machine
-
 
 ## Set up Keycloak
 
@@ -158,10 +159,10 @@ routes:
 ```
 
 Note the following points:
+
 - The value of `idp_client_id` should be `account` — not the client ID you assigned the client when you created it
 - The `idp_provider_url` should match the Keycloak network alias in your Docker Compose file. So that it's valid, add the protocol (`http://`) and the correct path (`/realms/<your_realm>`) to the URL.
 - The [`pass_identity_headers`](/docs/reference/routes/pass-identity-headers) setting forwards the JWT Assertion Header to the upstream application
-
 
 ### Add a signing key
 
