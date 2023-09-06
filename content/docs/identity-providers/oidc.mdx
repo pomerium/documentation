@@ -6,19 +6,21 @@ keywords: [keycloak, pomerium, oidc, generic oidc]
 lang: en-US
 ---
 
+import SelfSignedCertWarning from '@site/content/docs/admonitions/_handle-self-signed-certificate-warning.mdx';
+
 # Generic OIDC
 
 This guide covers how to configure a generic OpenID Connect (**OIDC**) provider to work with Pomerium.
 
 ## Background
 
-Pomerium provides default [identity provider settings](/docs/reference/identity-provider-settings) that allow you to seamlessly connect with a number of well-known identity provider (**IdP**) solutions. However, Pomerium can also connect with any OIDC-compliant provider if both Pomerium and the IdP are properly configured.
+Pomerium provides default [identity provider settings](/docs/reference/identity-provider-settings) that allow you to seamlessly connect with a number of well-known identity provider (**IdP**) solutions. However, Pomerium can also connect with any generic OIDC provider if both Pomerium and the OIDC provider are properly configured.
 
-To demonstrate how a generic [OIDC](https://openid.net/specs/openid-connect-core-1_0.html) implementation would work with Pomerium, you will configure [Keycloak](https://www.keycloak.org/) to authenticate your users.
+To learn how a generic [OIDC](https://openid.net/specs/openid-connect-core-1_0.html) implementation works with Pomerium, you will configure [Keycloak](https://www.keycloak.org/) as your OIDC provider.
 
 ## Before you start
 
-This implementation requires you to self-host Keycloak. To minimize set up time, you will deploy Pomerium, Keycloak, and the Pomerium Verify service in Docker containers.
+This guide requires you to self-host Keycloak. To minimize set up time, you will deploy Pomerium, Keycloak, and the Pomerium Verify service in Docker containers.
 
 To complete this guide, you need:
 - [Docker](https://docs.docker.com/install/)
@@ -73,7 +75,7 @@ In your terminal, run Docker Compose:
 docker compose up
 ```
 
-When Keycloak is ready, navigate to `0.0.0.0:8080` to access the **Administration Console:**
+When Keycloak is ready, navigate to `http://0.0.0.0:8080` to access the **Administration Console:**
 
 ![Access the Keycloak admin console](./img/oidc/keycloak-admin-console.png)
 
@@ -86,19 +88,54 @@ Keycloak uses realms to manage sets of users, credentials, roles, and groups. Wh
 To create a new non-admin group, create a new realm in the admin dashboard:
 
 1. Select the **master** dropdown
-2. Select **Create Realm**
-3. In the **Realm name** field, enter a name
-4. Select **Create**
+1. Select **Create Realm**
+1. In the **Realm name** field, enter a name
+1. Select **Create**
 
 ![Create a new realm](./img/oidc/keycloak-realm.gif)
 
 ### Create a user
 
-Your realm starts out with no users. To create a user:
+Your realm has no users at first. To add a user:
 
-1.
+1. Go to the admin console (`0.0.0.0:8080/admin`)
+1. Select **Users**
+1. Select **Add users**
+1. Enter a **Username**, a **First name**, and **Last name**
+1. Select **Create**
 
+![Create a user](./img/oidc/keycloak-create-a-user.gif)
 
+Now, assign the user a password:
+
+1. Select the **Credentials** tab
+1. Select **Set password**
+1. Enter a password and confirm it
+1. Set **Temporary** to **Off** so the user doesn't have to reset the password at the first login
+1. Select **Save**
+
+![Set the user's password](./img/oidc/keycloak-set-password.png)
+
+### Create a client
+
+Lastly, you need to create a **Client** for the realm you just created:
+
+1. Go to the admin console (`0.0.0.0:8080/admin`)
+1. Select **Clients**, then **Create client**
+1. Keep **Client type** as **OpenID Connect**
+1. In the **Client ID** field, enter a name (for example, `myclient`)
+1. In the **Authentication flow** field, select **Standard flow** and **Direct access grants**
+1. Leave **Login settings** empty, and select **Save**
+
+![Create a client](./img/oidc/keycloak-create-client.gif)
+
+Update the client you created:
+
+1. Select **Access settings**
+1. In the **Valid redirect URIs** field, enter `https://authenticate.localhost.pomerium.io/oauth2/callback`
+1. Select **Save**
+
+![Add Keycloak access settings](./img/oidc/keycloak-access-settings.png)
 
 ## Set up Pomerium
 
@@ -111,7 +148,7 @@ idp_provider: oidc
 idp_client_id: 'account'
 idp_provider_url: 'http://keycloak.localhost.pomerium.io:8080/realms/MyRealm'
 
-signing_key: LS0tLS1CRUdJTiBFQyBQUklWQVRFIEtFWS0tLS0tCk1IY0NBUUVFSVA2TUN5UFI5OUNmSEVkU0s4cVdzbk51Q0RyMVZ3ay93RER1RVhyQitELzZvQW9HQ0NxR1NNNDkKQXdFSG9VUURRZ0FFQ0JTK3gyQnJRNVJqNHJFcU5PSEVsUFVESXJiRlNhRitoWEhEL1RYby9rQWVKU1lJSjJHVwpZMnE0a0NPNTU4RmdoYmxDTUplYVdjV1luT3JuZkpxeXRnPT0KLS0tLS1FTkQgRUMgUFJJVkFURSBLRVktLS0tLQo=
+signing_key: <generate_key>
 
 routes:
   - from: https://verify.localhost.pomerium.io
@@ -120,5 +157,51 @@ routes:
     pass_identity_headers: true
 ```
 
+Note the following points:
+- The value of `idp_client_id` should be `account` — not the client ID you assigned the client when you created it
+- The `idp_provider_url` should match the Keycloak network alias in your Docker Compose file. So that it's valid, add the protocol (`http://`) and the correct path (`/realms/<your_realm>`) to the URL.
+- The [`pass_identity_headers`](/docs/reference/routes/pass-identity-headers) setting forwards the JWT Assertion Header to the upstream application
 
 
+### Add a signing key
+
+Because this example secures Pomerium's Verify app, you should add a signing key so Pomerium can sign the Pomerium JWT. This will allow you to review a user's JWT claims.
+
+Generate a **signing key** with the following command:
+
+```
+openssl ecparam  -genkey  -name prime256v1  -noout  -out ec_private.pem
+cat ec_private.pem | base64
+```
+
+Add the value to `signing_key`.
+
+:::note
+
+See [**Identity Verification**](/docs/capabilities/getting-users-identity) for more information on how Pomerium handles identity verification with JWTs.
+
+See [**Signing Keys**](/docs/reference/signing-key) for more information on generating and using signing keys.
+
+:::
+
+### Access the Verify app
+
+Access the Verify URL in your configuration file.
+
+:::tip
+
+<SelfSignedCertWarning />
+
+:::
+
+Pomerium should redirect you to the Keycloak realm you created. Sign in with your user's credentials.
+
+![Sign in to Keycloak Realm](./img/oidc/keycloak-login.png)
+
+Once you sign in, you can verify that Pomerium handled the JWT and included the OIDC claims from Keycloak:
+
+![Access Verify app](./img/oidc/keycloak-verify-app.png)
+
+## Next steps: Add groups and roles (Enterprise)
+
+TODO
