@@ -56,8 +56,6 @@ services:
       - 443:443
   verify:
     image: pomerium/verify:latest
-    expose:
-      - 8000
     environment:
       JWKS_ENDPOINT: https://pomerium/.well-known/pomerium/jwks.json
 ```
@@ -76,7 +74,7 @@ In your terminal, run Docker Compose:
 docker compose up
 ```
 
-When Keycloak is ready, navigate to `http://0.0.0.0:8080` to access the **Administration Console:**
+When Keycloak is ready, navigate to [http://localhost:8080](http://localhost:8080) to access the **Administration Console:**
 
 ![Access the Keycloak admin console](./img/oidc/keycloak-admin-console.png)
 
@@ -90,7 +88,7 @@ To create a new non-admin group, create a new realm in the admin dashboard:
 
 1. Select the **master** dropdown
 1. Select **Create Realm**
-1. In the **Realm name** field, enter a name
+1. In the **Realm name** field, enter a name, like "Pomerium"
 1. Select **Create**
 
 ![Create a new realm](./img/oidc/keycloak-realm.gif)
@@ -99,7 +97,7 @@ To create a new non-admin group, create a new realm in the admin dashboard:
 
 Your realm has no users at first. To add a user:
 
-1. Go to the admin console (`0.0.0.0:8080/admin`)
+1. Go to the admin console ([http://localhost:8080/admin](http://localhost:8080/admin))
 1. Select **Users**
 1. Select **Add users**
 1. Enter a **Username**, a **First name**, and **Last name**
@@ -121,10 +119,10 @@ Now, assign the user a password:
 
 Lastly, you need to create a **Client** for the realm you just created:
 
-1. Go to the admin console (`0.0.0.0:8080/admin`)
+1. Go to the admin console ([http://localhost:8080/admin](http://localhost:8080/admin))
 1. Select **Clients**, then **Create client**
 1. Keep **Client type** as **OpenID Connect**
-1. In the **Client ID** field, enter a name (for example, `myclient`)
+1. In the **Client ID** field, enter a name like `mynewclient`
 1. In the **Authentication flow** field, select **Standard flow** and **Direct access grants**
 1. Leave **Login settings** empty, and select **Save**
 
@@ -132,11 +130,16 @@ Lastly, you need to create a **Client** for the realm you just created:
 
 Update the client you created:
 
-1. Select **Access settings**
-1. In the **Valid redirect URIs** field, enter `https://authenticate.localhost.pomerium.io/oauth2/callback`
+1. Under **General Settings** in the **Name** field, enter your Client ID in template literals (for example, `${mynewclient}`)
+  ![Enter client ID](./img/oidc/keycloak-client-general-settings.png)
+1. Go to **Access settings**
+1. In **Root URL**, enter `${authBaseUrl}`
+1. In **Home URL**, enter `/realms/<your_realm>/<your_client_id>/`
+1. In **Valid redirect URIs**, enter `https://authenticate.localhost.pomerium.io/oauth2/callback`
+1. In **Web Origins**, enter `https://authenticate.localhost.pomerium.io`
 1. Select **Save**
 
-![Add Keycloak access settings](./img/oidc/keycloak-access-settings.png)
+![Add access settings](./img/oidc/keycloak-access-settings.png)
 
 ## Set up Pomerium
 
@@ -146,10 +149,10 @@ Create a YAML file and add the following configuration:
 authenticate_service_url: https://authenticate.localhost.pomerium.io
 
 idp_provider: oidc
-idp_client_id: 'account'
-idp_provider_url: 'http://keycloak.localhost.pomerium.io:8080/realms/MyRealm'
+idp_client_id: 'mynewclient'
+idp_provider_url: 'http://keycloak.localhost.pomerium.io:8080/realms/Pomerium'
 
-signing_key: <generate_key>
+signing_key: LS0tLS1CRUdJTiBFQyBQUklWQVRFIEtFWS0tLS0tCk1IY0NBUUVFSVA2TUN5UFI5OUNmSEVkU0s4cVdzbk51Q0RyMVZ3ay93RER1RVhyQitELzZvQW9HQ0NxR1NNNDkKQXdFSG9VUURRZ0FFQ0JTK3gyQnJRNVJqNHJFcU5PSEVsUFVESXJiRlNhRitoWEhEL1RYby9rQWVKU1lJSjJHVwpZMnE0a0NPNTU4RmdoYmxDTUplYVdjV1luT3JuZkpxeXRnPT0KLS0tLS1FTkQgRUMgUFJJVkFURSBLRVktLS0tLQo=
 
 routes:
   - from: https://verify.localhost.pomerium.io
@@ -160,34 +163,19 @@ routes:
 
 Note the following points:
 
-- The value of `idp_client_id` should be `account` — not the client ID you assigned the client when you created it
 - The `idp_provider_url` should match the Keycloak network alias in your Docker Compose file. So that it's valid, add the protocol (`http://`) and the correct path (`/realms/<your_realm>`) to the URL.
+- The `signing_key` is used by Pomerium to cryptographically sign the user's JWT, and is required for [identity verification](/docs/capabilities/getting-users-identity)
 - The [`pass_identity_headers`](/docs/reference/routes/pass-identity-headers) setting forwards the JWT Assertion Header to the upstream application
 
-### Add a signing key
+:::caution
 
-Because this example secures Pomerium's Verify app, you should add a signing key so Pomerium can sign the Pomerium JWT.
-
-Generate a **signing key** with the following command:
-
-```
-openssl ecparam  -genkey  -name prime256v1  -noout  -out ec_private.pem
-cat ec_private.pem | base64
-```
-
-Add the value to `signing_key`.
-
-:::note
-
-See [**Identity Verification**](/docs/capabilities/getting-users-identity) for more information on how Pomerium handles identity verification with JWTs.
-
-See [**Signing Keys**](/docs/reference/signing-key) for more information on generating and using signing keys.
+Do not use the **signing key** in the example above in a production environment. See [**Signing Keys**](/docs/reference/signing-key) for more information on generating and using signing keys.
 
 :::
 
 ### Access the Verify app
 
-Access the Verify URL in your configuration file.
+Access the **Verify URL** in your configuration file.
 
 :::tip
 
