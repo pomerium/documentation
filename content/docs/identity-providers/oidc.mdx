@@ -136,10 +136,21 @@ Update the client you created:
 1. In **Home URL**, enter `/realms/<your_realm>/<your_client_id>/`
 1. In **Valid redirect URIs**, enter `https://authenticate.localhost.pomerium.io/oauth2/callback`
 1. In **Web Origins**, enter `https://authenticate.localhost.pomerium.io`
-
-![Add access settings](./img/oidc/keycloak-access-settings.png)
+  ![Add access settings](./img/oidc/keycloak-access-settings.png)
+1. Under **Capabilities config**, turn on **Client authentication**
+  ![Turn on client authentication](./img/oidc/keycloak-capability-config.png)
 
 Save your settings.
+
+### Get the client secret
+
+In the client details page:
+
+1. select the **Credentials** tab
+1. Copy the **Client secret**
+  ![Get client secret](./img/oidc/keycloak-client-credentials.png)
+
+You need to include the client secret in your Pomerium configuration file.
 
 ## Set up Pomerium
 
@@ -150,6 +161,7 @@ authenticate_service_url: https://authenticate.localhost.pomerium.io
 
 idp_provider: oidc
 idp_client_id: 'mynewclient'
+idp_client_secret: 'your_client_secret' # enter your client secret here
 idp_provider_url: 'http://keycloak.localhost.pomerium.io:8080/realms/Pomerium'
 
 signing_key: LS0tLS1CRUdJTiBFQyBQUklWQVRFIEtFWS0tLS0tCk1IY0NBUUVFSVA2TUN5UFI5OUNmSEVkU0s4cVdzbk51Q0RyMVZ3ay93RER1RVhyQitELzZvQW9HQ0NxR1NNNDkKQXdFSG9VUURRZ0FFQ0JTK3gyQnJRNVJqNHJFcU5PSEVsUFVESXJiRlNhRitoWEhEL1RYby9rQWVKU1lJSjJHVwpZMnE0a0NPNTU4RmdoYmxDTUplYVdjV1luT3JuZkpxeXRnPT0KLS0tLS1FTkQgRUMgUFJJVkFURSBLRVktLS0tLQo=
@@ -160,6 +172,8 @@ routes:
     allow_any_authenticated_user: true
     pass_identity_headers: true
 ```
+
+First, add your **client secret** to the configuration file.
 
 Note the following points:
 
