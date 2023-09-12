@@ -8,6 +8,7 @@ keywords:
   - Authorize Service URL
 pagination_prev: null
 pagination_next: null
+toc_max_heading_level: 2
 ---
 
 import Tabs from '@theme/Tabs';
@@ -39,6 +40,18 @@ If your load balancer does not support gRPC pass-through, you must set this valu
 | `authorize_service_url` | `AUTHORIZE_SERVICE_URL` | `URL` | **required** (Inferred in all-in-one mode to be localhost) |
 | `authorize_service_urls` | `AUTHORIZE_SERVICE_URLS` | `URL` | **required** (Inferred in all-in-one mode to be localhost) |
 
+### Examples
+
+```yaml
+authorize_service_urls:
+  - https://localhost:5443
+  - https://authorize.corp.example.com
+```
+
+```yaml
+AUTHORIZE_SERVICE_URL=https://pomerium-authorize-service.default.svc.cluster.local
+```
+
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
 
@@ -51,17 +64,3 @@ The `authorize_service_url` is not customizable in all-in-one mode with the CRD
 
 </TabItem>
 </Tabs>
-
-### Examples
-
-**Examples:**
-
-```yaml
-# config file key
-authorize_service_urls:
-  - https://localhost:5443
-  - https://authorize.corp.example.com
-
-# environment variable
-AUTHORIZE_SERVICE_URL=https://pomerium-authorize-service.default.svc.cluster.local
-```
