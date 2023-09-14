@@ -13,7 +13,7 @@ sidebar_position: 10
 
 # Upgrade guide
 
-## Since 0.21.0
+## 0.22.0
 
 ### New
 
@@ -29,7 +29,7 @@ sidebar_position: 10
 
 - Internal [RDS changes](https://github.com/pomerium/pomerium/pull/4098) reduce memory consumption, especially for environments where configuration changes rapidly.
 
-## Since 0.20.0
+## 0.21.0
 
 ### Upgrading
 
@@ -55,7 +55,7 @@ See [Bastion Host](/docs/capabilities/tcp#bastion-host)
 
 If you run Pomerium Enterprise, you may set up a secure HTTPS connection between Pomerium Core and Enterprise without need to explicitly supply certificates. See [`tls_derive`](/docs/reference/tls-derive)
 
-## Since 0.19.0
+## 0.20.0
 
 ### Breaking
 
@@ -102,7 +102,7 @@ Pomerium Core would only perform user authentication and session refresh with th
 
 ![idp_enterprise](../enterprise/img/upgrading/policy_groups_enterprise.png)
 
-## Since 0.16.0
+## 0.17.0
 
 ### New
 
@@ -120,7 +120,7 @@ The `.pomerium` user info page has been redesigned to better structure data arou
 
 Pomerium policy now supports group members from outside of your organization.
 
-## Since 0.15.0
+## 0.16.0
 
 ### New
 
@@ -164,7 +164,7 @@ To improve performance, IdP directory synchronization for GitHub now uses the Gr
 
 Please see the [updated install instructions](/docs/deploy/clients/pomerium-cli) for additional details.
 
-## Since 0.14.0
+## 0.15.0
 
 ### Breaking
 
@@ -189,7 +189,7 @@ Routes and policies may now be configured under a new top level key - `routes`
 
 `pomerium-cli` now respects proxy related environmental variables.
 
-## Since 0.13.0
+## 0.14.0
 
 ### New
 
@@ -221,7 +221,7 @@ When specifying `allowed_users` by ID, the identity provider is no longer part o
 
 To update your policies for v0.14, please remove any identity provider prefix. Example: `okta/00usi7mc8XC8SwFxT4x6` becomes `00usi7mc8XC8SwFxT4x6`.
 
-## Since 0.12.0
+## 0.13.0
 
 ### New
 
@@ -263,7 +263,7 @@ Prior to the v0.13 release, it was possible to create service accounts via Pomer
 
 The `administrators` configuration option has been removed.
 
-## Since 0.11.0
+## 0.12.0
 
 ### New
 
@@ -275,7 +275,7 @@ Pomerium can now be used for non-HTTP services. See [documentation](/docs/capabi
 
 Datadog has been added as a natively supported [tracing backend](/docs/reference/tracing#datadog)
 
-## Since 0.10.0
+## 0.11.0
 
 ### Breaking
 
@@ -293,7 +293,7 @@ The `cache_service_url` parameter has been deprecated since v0.10.0 and is now r
 
 With the v0.11.0 release, Pomerium docker images are multi-arch for `arm64` and `amd64`. Individual images for each architecture will continue to be published.
 
-## Since 0.9.0
+## 0.10.0
 
 ### Breaking
 
@@ -338,7 +338,7 @@ Please see the following interfaces for reference to implement your storage back
 
 With this release, pomerium will not insert identity headers (X-Pomerium-Jwt-Assertion/X-Pomerium-Claim-\*) by default. To get pre 0.9.0 behavior, you can set `pass_identity_headers` to true on a per-policy basis.
 
-## Since 0.8.0
+## 0.9.0
 
 ### Breaking
 
@@ -387,7 +387,7 @@ With this release we now use an embedded [envoy](https://www.envoyproxy.io/) bin
 
 - Due to this change, data plane metric names and labels have changed to adopt envoy's internal data model. [Details](https://www.pomerium.io/configuration/#envoy-proxy-metrics)
 
-## Since 0.7.0
+## 0.8.0
 
 ### Breaking
 
@@ -427,7 +427,7 @@ policy:
     prefix: '/some/path'
 ```
 
-## Since 0.6.0
+## 0.7.0
 
 ### Breaking
 
@@ -447,7 +447,7 @@ If you still rely on individual claim headers, please see the `jwt_claims_header
 
 Non-standard port users (e.g. those not using `443`/`80` where the port _would_ be part of the client's request) will have to clear their user's session before upgrading. Starting with version v0.7.0, audience (`aud`) and issuer (`iss`) claims will be port specific.
 
-## Since 0.5.0
+## 0.6.0
 
 ### Breaking
 
@@ -479,7 +479,7 @@ For a concrete example of the required changes, consider the following changes f
 
 Please see the updated examples, and [cache service docs] as a reference and for the available cache stores. For more details as to why this was necessary, please see [PR438](https://github.com/pomerium/pomerium/pull/438) and [PR457](https://github.com/pomerium/pomerium/pull/457).
 
-## Since 0.4.0
+## 0.5.0
 
 ### Breaking
 
@@ -524,7 +524,7 @@ For example, in nginx this would look like:
 +    nginx.ingress.kubernetes.io/auth-signin: https://forwardauth.corp.example.com?uri=$scheme://$host$request_uri
 ```
 
-## Since 0.3.0
+## 0.4.0
 
 ### Breaking
 
@@ -570,15 +570,15 @@ livenessProbe:
 
 If service mode (`SERVICES`/`services`) is set to `all`, gRPC communication with the Authorize service will by default occur over localhost, on port `:5443`.
 
-## Since 0.2.0
+## 0.3.0
 
 Pomerium `v0.3.0` has no known breaking changes compared to `v0.2.0`.
 
-## Since 0.1.0
+## 0.2.0
 
 Pomerium `v0.2.0` has no known breaking changes compared to `v0.1.0`.
 
-## Since 0.0.5
+## 0.0.6
 
 This page contains the list of deprecations and important or breaking changes for pomerium `v0.1.0` compared to `v0.0.5`. Please read it carefully.
 
@@ -616,7 +616,7 @@ policy:
     allow_public_unauthenticated_access: true
 ```
 
-## Since 0.0.4
+## 0.0.5
 
 This page contains the list of deprecations and important or breaking changes for pomerium `v0.0.5` compared to `v0.0.4`. Please read it carefully.
 
