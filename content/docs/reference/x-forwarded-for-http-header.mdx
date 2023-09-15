@@ -17,9 +17,13 @@ import TabItem from '@theme/TabItem';
 
 ## Summary
 
-**X-Forwarded-For HTTP Header** indicates the IP addresses that a request has flowed through on its way from the client to the server.
+The `X-Forwarded-For` HTTP header can be used to indicate the IP addresses through which a request has flowed on its way from the end user to an upstream service.
 
-Do not append proxy IP addresses to the `x-forwarded-for` HTTP header. See the [Envoy](https://www.envoyproxy.io/docs/envoy/latest/configuration/http/http_conn_man/headers.html?highlight=skip_xff_append#x-forwarded-for) docs for more information.
+By default, when Pomerium receives a request it will append the IP address of its direct downstream peer to this header value, before proxying the request to the upstream service.
+
+However, if you set the `skip_xff_append` option to true, Pomerium will not modify any incoming `X-Forwarded-For` HTTP header. Pomerium will instead pass this incoming header to the upstream service unchanged.
+
+See the [Envoy](https://www.envoyproxy.io/docs/envoy/latest/configuration/http/http_conn_man/headers.html?highlight=skip_xff_append#x-forwarded-for) docs for more information about the `X-Forwarded-For` header.
 
 ## How to configure
 
