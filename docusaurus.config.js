@@ -167,7 +167,7 @@ const config = {
     prism: {
       theme: lightCodeTheme,
       darkTheme: darkCodeTheme,
-      additionalLanguages: ['actionscript', 'log', 'ini', 'nginx', 'rego'],
+      additionalLanguages: ['actionscript', 'log', 'ini', 'nginx', 'rego', 'shell-session'],
     },
   },
   stylesheets: [
@@ -183,6 +183,18 @@ const config = {
     ],
   ],
 };
+
+// The prism-react-renderer themes do not define styles for the 'shell-session'
+// token types, so define our own styles here.
+lightCodeTheme.styles.push(
+  {types: ['shell-symbol'], style: { color: '#5d36c6' }},
+  {types: ['command'], style: { color: '#1c1e21' }},
+  {types: ['output'], style: { color: '#133369' }}
+);
+darkCodeTheme.styles.push(
+  {types: ['shell-symbol'], style: { color: '#c0a9ff' }},
+  {types: ['output'], style: { color: '#e4e4c4' }}
+);
 
 if (!process.env.ALGOLIA_APPID) {
   delete config.themeConfig.algolia;

@@ -61,8 +61,8 @@ This guide uses the `localhost.pomerium.io` domain as the root domain (all subdo
 
 1. Create a certificate and key for your example upstream service, OpenSSL:
 
-   ```bash {1}
-   mkcert openssl.localhost
+   ```shell-session
+   $ mkcert openssl.localhost
 
    Created a new certificate valid for the following names 📜
    - "openssl.localhost"
@@ -74,8 +74,8 @@ This guide uses the `localhost.pomerium.io` domain as the root domain (all subdo
 
 1. Create a client certificate and key for Pomerium to use:
 
-   ```bash {1}
-   mkcert -client 'pomerium@localhost'
+   ```shell-session
+   $ mkcert -client 'pomerium@localhost'
 
    Created a new certificate valid for the following names 📜
    - "pomerium@localhost"
@@ -87,9 +87,9 @@ This guide uses the `localhost.pomerium.io` domain as the root domain (all subdo
 
 1. Change ownership of the client certificate files and move them to Pomerium's configuration directory:
 
-   ```bash
-   sudo chown pomerium:pomerium pomerium@localhost-client*pem /etc/pomerium
-   sudo mv pomerium@localhost-client*pem /etc/pomerium/
+   ```shell-session
+   $ sudo chown pomerium:pomerium pomerium@localhost-client*pem /etc/pomerium
+   $ sudo mv pomerium@localhost-client*pem /etc/pomerium/
    ```
 
 ## Configure OpenSSL server
@@ -98,14 +98,14 @@ OpenSSL is installed or easily available for most 'nix-based operating systems l
 
 1. In a terminal environment and the same directory where you created the certificate files, start an OpenSSL server process. Note that it will run in the foreground until stopped, so you will need another terminal environment to run additional commands:
 
-   ```bash
-   openssl s_server -key ./openssl.localhost-key.pem -cert ./openssl.localhost.pem -accept 44330 -www
+   ```shell-session
+   $ openssl s_server -key ./openssl.localhost-key.pem -cert ./openssl.localhost.pem -accept 44330 -www
    ```
 
    You can confirm that the server is responding using `curl`:
 
-   ```bash {1}
-   curl -k https://localhost:44330
+   ```shell-session
+   $ curl -k https://localhost:44330
    <HTML><BODY BGCOLOR="#ffffff">
    <pre>
 
@@ -152,8 +152,8 @@ OpenSSL is installed or easily available for most 'nix-based operating systems l
 
 1. Stop the OpenSSL server process (**Ctrl+C**) and start a new one with the additional flag `-Verify 1`:
 
-   ```bash
-   openssl s_server -Verify 1 -key ./openssl.localhost-key.pem -cert ./openssl.localhost.pem -accept 44330 -www
+   ```shell-session
+   $ openssl s_server -Verify 1 -key ./openssl.localhost-key.pem -cert ./openssl.localhost.pem -accept 44330 -www
    ```
 
 1. When you refresh <https://openssl.localhost.pomium.io> in your browser, the connection will fail. Back in the terminal, the OpenSSL server should output errors containing:
