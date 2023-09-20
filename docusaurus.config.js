@@ -187,21 +187,17 @@ const config = {
 // The prism-react-renderer themes do not define styles for the 'shell-session'
 // token types, so define our own styles for these types here.
 function lightCodeTheme() {
-  const theme = githubCodeTheme;
-  theme.styles = theme.styles.concat([
+  return {...githubCodeTheme, styles: githubCodeTheme.styles.concat([
     {types: ['shell-symbol'], style: { color: '#5d36c6' }},
     {types: ['command'], style: { color: '#1c1e21' }},
     {types: ['output'], style: { color: '#133369' }}
-  ]);
-  return theme;
+  ])};
 }
 function darkCodeTheme() {
-  const theme = draculaCodeTheme;
-  theme.styles = theme.styles.concat([
+  return {...draculaCodeTheme, styles: draculaCodeTheme.styles.concat([
     {types: ['shell-symbol'], style: { color: '#c0a9ff' }},
     {types: ['output'], style: { color: '#e4e4c4' }}
-  ]);
-  return theme;
+  ])};
 }
 
 if (!process.env.ALGOLIA_APPID) {
