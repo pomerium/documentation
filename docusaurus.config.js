@@ -1,8 +1,8 @@
 // @ts-check
 // Note: type annotations allow type checking and IDEs autocompletion
 
-const lightCodeTheme = require('prism-react-renderer/themes/github');
-const darkCodeTheme = require('prism-react-renderer/themes/dracula');
+const githubCodeTheme = require('prism-react-renderer/themes/github');
+const draculaCodeTheme = require('prism-react-renderer/themes/dracula');
 const dotenv = require('dotenv');
 
 dotenv.config();
@@ -165,9 +165,9 @@ const config = {
       copyright: `Copyright © ${new Date().getFullYear()} Pomerium.`,
     },
     prism: {
-      theme: lightCodeTheme,
-      darkTheme: darkCodeTheme,
-      additionalLanguages: ['actionscript', 'log', 'ini', 'nginx', 'rego'],
+      theme: lightCodeTheme(),
+      darkTheme: darkCodeTheme(),
+      additionalLanguages: ['actionscript', 'log', 'ini', 'nginx', 'rego', 'shell-session'],
     },
   },
   stylesheets: [
@@ -183,6 +183,22 @@ const config = {
     ],
   ],
 };
+
+// The prism-react-renderer themes do not define styles for the 'shell-session'
+// token types, so define our own styles for these types here.
+function lightCodeTheme() {
+  return {...githubCodeTheme, styles: githubCodeTheme.styles.concat([
+    {types: ['shell-symbol'], style: { color: '#5d36c6' }},
+    {types: ['command'], style: { color: '#1c1e21' }},
+    {types: ['output'], style: { color: '#133369' }}
+  ])};
+}
+function darkCodeTheme() {
+  return {...draculaCodeTheme, styles: draculaCodeTheme.styles.concat([
+    {types: ['shell-symbol'], style: { color: '#c0a9ff' }},
+    {types: ['output'], style: { color: '#e4e4c4' }}
+  ])};
+}
 
 if (!process.env.ALGOLIA_APPID) {
   delete config.themeConfig.algolia;
