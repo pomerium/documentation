@@ -70,6 +70,8 @@ Before trusting any user identity information in the JWT, your application shoul
 2. The JWT has not expired.
 3. The JWT audience and issuer match your application's domain.
 
+Signed headers are used to establish an extra layer of authentication. For more information on the benefits, check out our [blog post](https://www.pomerium.com/blog/signed-headers-a-safety-net-for-application-security/) on this topic!
+
 The attestation JWT's signature can be verified using the public key retrieved from Pomerium's `/.well-known/pomerium/jwks.json` endpoint (on any route domain). For example:
 
 ```bash
