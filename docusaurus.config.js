@@ -38,7 +38,10 @@ const config = {
           customCss: require.resolve('./src/css/custom.css'),
         },
         gtag: {
-          trackingID: process.env.GA,
+          trackingID: [
+            `${process.env.GA4}`,
+            `${process.env.GA}`,
+          ]
         },
         sitemap: {
           filename: 'docs/sitemap.xml',
