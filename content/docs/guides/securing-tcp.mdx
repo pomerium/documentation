@@ -105,13 +105,17 @@ pomerium-cli tcp [hostname]:[port]
 
 ## Redis
 
-````bash {2,6}
-# Start a proxy to redis in the background
-pomerium-cli tcp redis.localhost.pomerium.io:6379 --listen localhost:6379 &
-3:01PM INF tcptunnel: listening on 127.0.0.1:6379
+Start a proxy to redis in the background:
 
-# Start the redis client
-redis-cli
+```shell-session
+$ pomerium-cli tcp redis.localhost.pomerium.io:6379 --listen localhost:6379 &
+3:01PM INF tcptunnel: listening on 127.0.0.1:6379
+```
+
+Start the redis client:
+
+```shell-session
+$ redis-cli
 3:01PM INF tcptunnel: opening connection dst=redis.localhost.pomerium.io:6379 proxy=redis.localhost.pomerium.io:443 secure=true
 3:01PM INF tcptunnel: opening connection dst=redis.localhost.pomerium.io:6379 proxy=redis.localhost.pomerium.io:443 secure=true
 3:01PM INF tcptunnel: connection established
@@ -125,20 +129,24 @@ redis-cli
  7) "type.googleapis.com/session.Session_version_set"
  8) "server_version_version_set"
  9) "server_version"
-10) "type.googleapis.com/directory.User_last_version"```
-````
+10) "type.googleapis.com/directory.User_last_version"
+```
 
 ## Postgres
 
 In our example docker-compose, we have configured `supersecret` as the password for the `postgres` user.
 
-```bash {2,6}
-# Start a proxy to postgres in the background
-pomerium-cli tcp pgsql.localhost.pomerium.io:5432 --listen localhost:5432 &
-3:07PM INF tcptunnel: listening on 127.0.0.1:5432
+Start a proxy to postgres in the background:
 
-# Connect and list the schemas after password authentication
-psql -h localhost -W -U postgres -c '\dn'
+```shell-session
+$ pomerium-cli tcp pgsql.localhost.pomerium.io:5432 --listen localhost:5432 &
+3:07PM INF tcptunnel: listening on 127.0.0.1:5432
+```
+
+Connect and list the schemas after password authentication:
+
+```shell-session
+$ psql -h localhost -W -U postgres -c '\dn'
 Password:
 3:06PM INF tcptunnel: opening connection dst=pgsql.localhost.pomerium.io:5432 proxy=pgsql.localhost.pomerium.io:443 secure=true
 3:06PM INF tcptunnel: connection established
@@ -176,8 +184,8 @@ That's it! A Pomerium proxy will be started _automatically_ whenever you ssh to 
 
 In our example docker-compose, we have an SSH server configured with `supersecret` as the password for `myuser`.
 
-```bash {1}
-ssh myuser@ssh.localhost.pomerium.io
+```shell-session
+$ ssh myuser@ssh.localhost.pomerium.io
 3:19PM INF tcptunnel: opening connection dst=ssh.localhost.pomerium.io:22 proxy=ssh.localhost.pomerium.io:443 secure=true
 3:19PM INF tcptunnel: connection established
 myuser@ssh.localhost.pomerium.io's password:
