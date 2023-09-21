@@ -37,8 +37,11 @@ const config = {
         theme: {
           customCss: require.resolve('./src/css/custom.css'),
         },
-        googleAnalytics: {
-          trackingID: process.env.GA,
+        gtag: {
+          trackingID: [
+            `${process.env.GA4}`,
+            `${process.env.GA}`,
+          ]
         },
         sitemap: {
           filename: 'docs/sitemap.xml',
