@@ -65,6 +65,7 @@ const config = {
       logo: {
         alt: 'Pomerium Logo',
         src: 'img/logo.svg',
+        srcDark: 'img/logo-dark.svg',
         href: 'https://www.pomerium.com',
         target: '_self',
       },
