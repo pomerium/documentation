@@ -163,36 +163,31 @@ If you haven't already, install cert-manager and create a CA issuer. You can fol
 
 1.  Create a values file for Helm to use when installing Pomerium. Our example is named `pomerium-values.yaml`.
 
-            {' '}
+    <PomeriumValues />
 
-            {' '}
-            <PomeriumValues />
+    :::tip
 
-            :::tip The options required in the `authenticate.idp` block will vary depending on your [identity provider].
+    The options required in the `authenticate.idp` block will vary depending on your [identity provider].
 
-            If you changed the `*.localhost.pomerium.io` value in `pomerium-certificates.yaml` update `config.rootDomain` to match, omitting the `*`. :::
+    If you changed the `*.localhost.pomerium.io` value in `pomerium-certificates.yaml` update `config.rootDomain` to match, omitting the `*`.
 
-                <details>
+    :::
 
-            <summary>Default Certificate</summary>
-
-        <div>
+    <details><summary>Default Certificate</summary>
 
     If you're using a single wildcard certificate for all routes managed by Pomerium, you can set it in an annotation for the ingress controller.
 
-            Add a block defining the default certificate to `pomerium-values.yaml`:
+    Add a block defining the default certificate to `pomerium-values.yaml`:
 
-            ```yaml
-            ingressController:
-            ingressClassResource:
-              defaultCertSecret: 'namespace/certSecretName'
-            ```
+    ```yaml
+    ingressController:
+    ingressClassResource:
+      defaultCertSecret: 'namespace/certSecretName'
+    ```
 
-            Now when defining ingresses you need not specify individual certificates, as documented in our example service below.
+    Now when defining ingresses you need not specify individual certificates, as documented in our example service below.
 
-                   </div>
-
-             </details>
+    </details>
 
 1.  Add Pomerium's Helm repo:
 
