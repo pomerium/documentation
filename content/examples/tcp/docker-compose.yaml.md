@@ -28,7 +28,9 @@ services:
     image: postgres
     restart: always
     environment:
-      POSTGRES_PASSWORD: supersecret
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=postgres
     expose:
       - 5432
 ```
