@@ -2,7 +2,7 @@
 version: "3"
 services:
   pomerium:
-    image: pomerium/pomerium:main
+    image: pomerium/pomerium:latest
     volumes:
       - ./config.yaml:/pomerium/config.yaml:ro
     ports:
