@@ -115,21 +115,32 @@ $ pomerium-cli tcp redis.localhost.pomerium.io:6379 --listen localhost:6379
 Start the redis client:
 
 ```shell-session
-$ redis-cli
-3:01PM INF tcptunnel: opening connection dst=redis.localhost.pomerium.io:6379 proxy=redis.localhost.pomerium.io:443 secure=true
-3:01PM INF tcptunnel: opening connection dst=redis.localhost.pomerium.io:6379 proxy=redis.localhost.pomerium.io:443 secure=true
-3:01PM INF tcptunnel: connection established
-127.0.0.1:6379> keys *
- 1) "type.googleapis.com/session.Session_last_version"
- 2) "type.googleapis.com/user.User"
- 3) "type.googleapis.com/session.Session"
- 4) "type.googleapis.com/user.User_version_set"
- 5) "type.googleapis.com/user.User_last_version"
- 6) "server_version_last_version"
- 7) "type.googleapis.com/session.Session_version_set"
- 8) "server_version_version_set"
- 9) "server_version"
-10) "type.googleapis.com/directory.User_last_version"
+$ redis-cli info
+# Server
+redis_version:7.0.5
+redis_git_sha1:00000000
+redis_git_dirty:0
+redis_build_id:d9291579292e26e3
+redis_mode:standalone
+os:Linux 6.3.13-linuxkit aarch64
+arch_bits:64
+monotonic_clock:POSIX clock_gettime
+multiplexing_api:epoll
+atomicvar_api:c11-builtin
+gcc_version:10.2.1
+process_id:1
+process_supervised:no
+run_id:e4c843df14511765f0e6284690be2f10c6b39e28
+tcp_port:6379
+server_time_usec:1696349965506132
+uptime_in_seconds:75
+uptime_in_days:0
+hz:10
+configured_hz:10
+lru_clock:1851149
+executable:/data/redis-server
+config_file:
+io_threads_active:0
 ```
 
 ## Postgres
@@ -139,22 +150,21 @@ In our example docker-compose, we have configured `supersecret` as the password 
 Start a proxy to postgres in the background:
 
 ```shell-session
-$ pomerium-cli tcp pgsql.localhost.pomerium.io:5432 --listen localhost:5432 &
-3:07PM INF tcptunnel: listening on 127.0.0.1:5432
+$ pomerium-cli tcp pgsql.localhost.pomerium.io:5432 --listen localhost:5432
+2023/10/03 12:22:08 listening on 127.0.0.1:5432
 ```
 
 Connect and list the schemas after password authentication:
 
 ```shell-session
-$ psql -h localhost -W -U postgres -c '\dn'
+$  psql -h localhost -W -U postgres -c '\dn'
 Password:
-3:06PM INF tcptunnel: opening connection dst=pgsql.localhost.pomerium.io:5432 proxy=pgsql.localhost.pomerium.io:443 secure=true
-3:06PM INF tcptunnel: connection established
-  List of schemas
-  Name  |  Owner
---------+----------
- public | postgres
-(1 row)
+       List of schemas
+   Name   |       Owner
+----------+-------------------
+ pomerium | postgres
+ public   | pg_database_owner
+(2 rows)
 ```
 
 ## SSH
@@ -168,7 +178,7 @@ More Info:
 
 ### Setup
 
-To configure your SSH client to use Pomerium's TCP support for SSH routes, create an entry as follows in your `ssh_config` or `~/.ssh/config`:
+To configure your SSH client to use Pomerium's TCP support for SSH routes, create the following entry in your `ssh_config` or `~/.ssh/config`:
 
 ```
 Host *.localhost.pomerium.io
@@ -180,16 +190,24 @@ Host *.localhost.pomerium.io
 
 ### Connecting
 
-That's it! A Pomerium proxy will be started _automatically_ whenever you ssh to a host under `localhost.pomerium.io`.
-
-In our example docker-compose, we have an SSH server configured with `supersecret` as the password for `myuser`.
+Start a proxy to the SSH client in the background:
 
 ```shell-session
-$ ssh myuser@ssh.localhost.pomerium.io
-3:19PM INF tcptunnel: opening connection dst=ssh.localhost.pomerium.io:22 proxy=ssh.localhost.pomerium.io:443 secure=true
-3:19PM INF tcptunnel: connection established
+$ pomerium-cli tcp ssh.localhost.pomerium.io:22 --listen :2222
+2023/10/03 12:29:17 listening on 127.0.0.1:50741
+```
+
+Initiate the SSH connection:
+
+```shell-session
+$ ssh myuser@ssh.localhost.pomerium.io -p 2222
 myuser@ssh.localhost.pomerium.io's password:
 Welcome to OpenSSH Server
 
-5c9f4fa5f5f7:~$
+4e737e02c43f:~$
 ```
+
+That's it! A Pomerium proxy will be started _automatically_ whenever you ssh to a host under `localhost.pomerium.io`.
+
+In our example Docker-Compose file, we have an SSH server configured with `supersecret` as the password for `myuser`.
+
