@@ -14,7 +14,7 @@ keywords:
 
 ## Service Accounts
 
-[Service accounts](/docs/capabilities/service-accounts.md) offer a protected and standardized method of authenticating machine-to-machine communication between services protected by Pomerium.
+Service accounts offer a protected and standardized method of authenticating machine-to-machine communication between services protected by Pomerium.
 
 :::tip
 
