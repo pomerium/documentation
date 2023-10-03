@@ -1,10 +1,6 @@
 ```yaml title="config.yaml"
 authenticate_service_url: https://authenticate.pomerium.app
 
-certificates:
-  - cert: /pomerium/cert.pem
-    key: /pomerium/key.pem
-
 databroker_storage_type: postgres
 databroker_storage_connection_string: postgresql://postgres:postgres@pgsql:5432
 
