@@ -4,8 +4,6 @@ services:
   pomerium:
     image: pomerium/pomerium:main
     volumes:
-      - ./_wildcard.localhost.pomerium.io.pem:/pomerium/cert.pem:ro
-      - ./_wildcard.localhost.pomerium.io-key.pem:/pomerium/key.pem:ro
       - ./config.yaml:/pomerium/config.yaml:ro
     ports:
       - 443:443
