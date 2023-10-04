@@ -4,6 +4,9 @@ services:
   pomerium:
     image: pomerium/pomerium:latest
     volumes:
+      # Uncomment to mount certificates (optional)
+      # - ./_wildcard.localhost.pomerium.io.pem:/pomerium/cert.pem:ro
+      # - ./_wildcard.localhost.pomerium.io-key.pem:/pomerium/key.pem:ro
       - ./config.yaml:/pomerium/config.yaml:ro
     ports:
       - 443:443

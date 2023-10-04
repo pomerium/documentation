@@ -53,6 +53,21 @@ To complete this guide, you need:
 - [Docker](https://docs.docker.com/install/)
 - [Docker Compose](https://docs.docker.com/compose/install/)
 - [Pomerium CLI](/docs/deploy/clients/pomerium-cli)
+- [mkcert](https://github.com/FiloSottile/mkcert) (optional)
+
+## Certificates (optional)
+
+If you want to generate your own locally trusted certificates with `mkcert`, run the following command:
+
+```bash
+mkcert -install
+   mkcert '*.localhost.pomerium.io'
+```
+
+This will install a trusted CA and generate a new wildcard certificate:
+
+- `_wildcard.localhost.pomerium.io.pem`
+- `_wildcard.localhost.pomerium.io-key.pem`
 
 ## Configure
 
@@ -62,15 +77,21 @@ Add the configuration below to your configuration file:
 
 <PomeriumConfig />
 
+:::note
+
+Make sure you update each `example.com` instance to match the domain of your email address.
+
+:::
+
 ### Docker Compose
 
 Create a `docker-compose.yaml` file to run Pomerium and the services you will connect to over TCP.
 
 The following services are included in the Docker Compose file:
 
+- **Redis**
 - **SSH**
 - **Postgres**
-- **Redis**
 
 <DockerCompose />
 
@@ -181,7 +202,7 @@ SSH clients can use external programs to establish a connection to a host. Most 
 See the following links for more information:
 
 - [OpenBSD Proxy Command](https://man.openbsd.org/ssh_config.5#ProxyCommand)
-- [Proxy Jump with RedHat](https://www.redhat.com/sysadmin/ssh-proxy-bastion-proxyjump)
+- [ProxyJump with RedHat](https://www.redhat.com/sysadmin/ssh-proxy-bastion-proxyjump)
 
 :::
 

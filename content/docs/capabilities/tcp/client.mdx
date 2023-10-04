@@ -174,7 +174,7 @@ See the [Pomerium CLI](/docs/deploy/clients/pomerium-cli) page to learn how to i
 
 1. Connect to your service using the local address and port specified in the output of `pomerium-cli`:
 
-   ```shell-session
+   ```bash
    ssh 127.0.0.1 -p 2222
    ```
 
@@ -182,7 +182,7 @@ See the [Pomerium CLI](/docs/deploy/clients/pomerium-cli) page to learn how to i
 
 1. In this example, since we are using SSH we can consolidate the TCP and SSH connections into a single command:
 
-   ```shell-session
+   ```bash
    ssh -o ProxyCommand='pomerium-cli tcp --listen - %h:%p' ssh.localhost.pomerium.io
    ```
 
@@ -195,6 +195,6 @@ For more examples and detailed usage information, see [TCP Support](/docs/capabi
 
 If Pomerium is listening on a port other than `443` (set with the [`address` key](/docs/reference/address)), the full TCP URL can be specified with a bastion host:
 
-```shell-session
+```bash
 pomerium-cli tcp tcp+https://ssh.localhost:pomerium.io:8443/ssh.localhost.pomerium.io:2222 --listen :2222
 ```
