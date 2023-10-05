@@ -2,10 +2,11 @@
 version: "3"
 services:
   pomerium:
-    image: pomerium/pomerium:main
+    image: pomerium/pomerium:latest
     volumes:
-      - ./_wildcard.localhost.pomerium.io.pem:/pomerium/cert.pem:ro
-      - ./_wildcard.localhost.pomerium.io-key.pem:/pomerium/key.pem:ro
+      # Uncomment to mount certificates (optional)
+      # - ./_wildcard.localhost.pomerium.io.pem:/pomerium/cert.pem:ro
+      # - ./_wildcard.localhost.pomerium.io-key.pem:/pomerium/key.pem:ro
       - ./config.yaml:/pomerium/config.yaml:ro
     ports:
       - 443:443
@@ -28,7 +29,9 @@ services:
     image: postgres
     restart: always
     environment:
-      POSTGRES_PASSWORD: supersecret
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=postgres
     expose:
       - 5432
 ```
