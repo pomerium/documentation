@@ -107,9 +107,11 @@ pomerium-cli tcp [hostname]:[port]
 
 :::caution
 
-This guide uses the `--disable-tls-verification` flag to bypass TLS requirements. Without this flag, TCP connections will fail unless you include a trusted CA and certificate in your configuration.
+If you haven't configured a trusted certificate, you'll need to add the `--disable-tls-verification` flag to the `pomerium-cli` commands below.
 
-In a production environment, you should not use this flag. It's critical that you configure Pomerium to use correct server certificates.
+Without this flag, TCP connections will fail unless you include a trusted CA and certificate in your configuration.
+
+In a production environment, it's critical that you configure Pomerium to use correct server certificates.
 
 - See [**Certificates settings**](/docs/reference/certificates) and [**Upstream mTLS (services)**](/docs/capabilities/mtls-services) for more information on configuring certificates in Pomerium
 
@@ -122,7 +124,7 @@ In a production environment, you should not use this flag. It's critical that yo
 Start a proxy to Redis in the background:
 
 ```shell-session
-$ pomerium-cli tcp redis.localhost.pomerium.io:6379 --listen localhost:6379 --disable-tls-verification
+$ pomerium-cli tcp redis.localhost.pomerium.io:6379 --listen localhost:6379
 2023/10/02 12:20:05 listening on 127.0.0.1:6379
 ```
 
@@ -164,7 +166,7 @@ In your Docker Compose file, `postgres` is the configured password for the `post
 Start a proxy to Postgres in the background:
 
 ```shell-session
-$ pomerium-cli tcp pgsql.localhost.pomerium.io:5432 --listen localhost:5432 --disable-tls-verification
+$ pomerium-cli tcp pgsql.localhost.pomerium.io:5432 --listen localhost:5432
 2023/10/03 12:22:08 listening on 127.0.0.1:5432
 ```
 
@@ -211,7 +213,7 @@ See the following links for more information:
 Start a proxy to the SSH client in the background:
 
 ```shell-session
-$ pomerium-cli tcp ssh.localhost.pomerium.io:22 --listen :2222 --disable-tls-verification
+$ pomerium-cli tcp ssh.localhost.pomerium.io:22 --listen :2222
 2023/10/03 12:29:17 listening on 127.0.0.1:50741
 ```
 
