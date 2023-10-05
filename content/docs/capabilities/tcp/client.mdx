@@ -154,22 +154,22 @@ In most cases, you only need to specify the port (ex: `:2222`), and the client w
 
 ### Install
 
-See [Release](/docs/deploy/clients/pomerium-cli) to learn how to install pomerium-cli in your environment.
+See the [Pomerium CLI](/docs/deploy/clients/pomerium-cli) page to learn how to install `pomerium-cli` in your environment.
 
 ### Connect to a TCP Route
 
 1. Invoke `pomerium-cli` with the `tcp` option, and provide the route to your service (As defined in [`from`](/docs/reference/routes/from) in your Route specification).
 
-   ```bash
-   pomerium-cli tcp ssh.localhost.pomerium.io:22
-   2:06PM INF tcptunnel: listening on 127.0.0.1:36397
+   ```shell-session
+   $ pomerium-cli tcp ssh.localhost.pomerium.io:22
+   2023/10/02 11:29:22 listening on 127.0.0.1:53656
    ```
 
    You can optionally supply an address and/or port to the `listen` flag:
 
-   ```bash
-   pomerium-cli tcp ssh.localhost.pomerium.io:22 --listen :2222
-   2:05PM INF tcptunnel: listening on [::]:2222
+   ```shell-session
+   $ pomerium-cli tcp ssh.localhost.pomerium.io:22 --listen :2222
+   2023/10/02 11:30:03 listening on [::]:2222
    ```
 
 1. Connect to your service using the local address and port specified in the output of `pomerium-cli`:
