@@ -36,6 +36,7 @@ While we do our best to keep our documentation up to date, changes to third-part
    | Name | The name of your application. |
    | Application Login URI | [Authenticate Service URL] (e.g. `https://${authenticate_service_url}`) |
    | Allowed Callback URLs | Redirect URL (e.g. `https://${authenticate_service_url}/oauth2/callback`). |
+   | Allowed Logout URLs | Sign Out URL (e.g. `https://${authenticate_service_url}/.pomerium/signed_out`). |
 
 1. Under **Advanced Settings** → **OAuth**, confirm that **JSON Web Token (JWT) Signature Algorithm** is set to "RS256".
 
@@ -81,7 +82,7 @@ Remember to prepend the provider URL from Auth0 with `https://`.
 
 ### Custom Claim
 
-To authorize users based on their group membership (roles in Auth0), a claim can be added to the identity and access tokens with a [login action](https://auth0.com/docs/customize/actions).
+To authorize users based on their group membership (roles in Auth0), a claim can be added to the identity token with a [login action](https://auth0.com/docs/customize/actions).
 
 1. Create an action named `add groups` with the following code:
 
@@ -89,10 +90,6 @@ To authorize users based on their group membership (roles in Auth0), a claim can
    exports.onExecutePostLogin = async (event, api) => {
      if (event.authorization) {
        api.idToken.setCustomClaim(
-         'pomerium.io/groups',
-         event.authorization.roles,
-       );
-       api.accessToken.setCustomClaim(
          'pomerium.io/groups',
          event.authorization.roles,
        );
