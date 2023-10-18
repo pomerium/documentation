@@ -3,7 +3,7 @@
 
 title: Policy Language
 sidebar_label: Policy Language
-description: This article covers Pomerium Policy Language, used to define secure access policies for routes.
+description: Learn how to use Pomerium Policy Language to build context-aware authorization policies for your services.
 ---
 
 # Pomerium Policy Language
@@ -75,6 +75,41 @@ If `nor` is used, the user will have access if their email address does not end 
 
   </div>
 </details>
+
+### Multiple Operators in an Action
+
+You _can_ add multiple operators under the same Action block, and it would be valid PPL.
+
+For example, this policy would grant access to anyone with an `example<X>.com` domain in their email address:
+
+```yaml
+allow:
+  and:
+    - domain:
+        is: example1.com
+  or:
+    - domain:
+        is: example2.com
+    - domain:
+        is: example3.com
+```
+
+However, you could write an identical policy with multiple `allow` blocks:
+
+```yaml
+allow:
+  and:
+    - domain:
+        is: example1.com
+allow:
+  or:
+    - domain:
+        is: example2.com
+    - domain:
+        is: example3.com
+```
+
+Although these policies are equally effective, the second example using multiple Actions is the intended method to express PPL.
 
 ## Criteria
 
