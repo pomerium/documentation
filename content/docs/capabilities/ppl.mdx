@@ -78,38 +78,36 @@ If `nor` is used, the user will have access if their email address does not end 
 
 ### Multiple Operators in an Action
 
-You _can_ add multiple operators under the same Action block, and it would be valid PPL.
+You _can_ add multiple operators under the same action block, and it would be valid PPL.
 
-For example, this policy would grant access to anyone with an `example<X>.com` domain in their email address:
+For example, this policy would grant access to anyone with a `family_name: Smith` claim, **or** users with email addresses ending in `domain1` or `domain2`:
 
 ```yaml
 allow:
   and:
-    - domain:
-        is: example1.com
+    - claim/family_name: Smith
   or:
     - domain:
-        is: example2.com
+        is: domain2.com
     - domain:
-        is: example3.com
+        is: domain3.com
 ```
 
-However, you could write an identical policy with multiple `allow` blocks:
+However, you could write an equivalent policy with multiple `allow` blocks:
 
 ```yaml
 - allow:
     and:
-      - domain:
-          is: example1.com
+      - claim/family_name: Smith
 - allow:
     or:
       - domain:
-          is: example2.com
+          is: domain1.com
       - domain:
-          is: example3.com
+          is: domain2.com
 ```
 
-Although these policies are equally effective, the second example using multiple Actions is the intended method to express PPL.
+Although these policies are equally effective, the second example using multiple actions is the intended method to express PPL.
 
 ## Criteria
 
