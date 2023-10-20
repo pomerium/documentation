@@ -4,10 +4,11 @@ import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
-import Button from '@mui/material/Button';
-import { capitalize } from '@mui/material';
+import Link from '@docusaurus/Link';
 
-export default function ImgMediaCard() {
+
+export default function VideoMediaCard() {
+
   return (
     <div>
       <div>
@@ -32,15 +33,9 @@ export default function ImgMediaCard() {
           </Typography>
         </CardContent>
         <CardActions>
-          <Button
-            variant="text"
-            size="large"
-            onClick={()=>{
-              window.location.href="https://pomerium.com/docs/quickstart"
-            }}
-            >
-              Try Quickstart
-          </Button>
+          <Link to="/docs/quickstart">
+            Try Quickstart
+          </Link>
         </CardActions>
       </Card>
       </div>
@@ -89,15 +84,9 @@ export default function ImgMediaCard() {
           </Typography>
         </CardContent>
         <CardActions>
-          <Button
-            variant="text"
-            size="large"
-            onClick={()=>{
-              window.location.href="https://www.pomerium.com/docs/capabilities/authorization"
-            }}
-            >
-              See Authorization Docs
-          </Button>
+        <Link to="/docs/capabilities/authorization">
+            Go to Authorization Docs
+          </Link>
         </CardActions>
       </Card>
       </div>
