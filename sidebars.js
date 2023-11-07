@@ -6,6 +6,14 @@ const sidebars = {
     'docs/quickstart',
     {
       type: 'category',
+      label: 'Learn Pomerium',
+      link: {type: 'doc', id: 'docs/learn-pomerium'},
+      items: [
+        'docs/learn-pomerium/get-started'
+      ],
+    },
+    {
+      type: 'category',
       label: 'Deploy',
       items: [
         {
