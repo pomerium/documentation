@@ -12,7 +12,8 @@ const sidebars = {
         'docs/learn-pomerium/get-started',
         'docs/learn-pomerium/build-routes',
         'docs/learn-pomerium/build-policies',
-        'docs/learn-pomerium/jwt-verification'
+        'docs/learn-pomerium/jwt-verification',
+        'docs/learn-pomerium/advanced-policies'
       ],
     },
     {
