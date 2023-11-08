@@ -2,7 +2,7 @@
 id: build-policies
 title: Build a Simple Policy
 description: In lesson 3, you'll learn how to build authorization policies and apply them to your routes.
-keywords: [pomerium, authorization policy, access control, secure access, reverse proxy]
+keywords: [pomerium, authorization policy, access control, secure access, reverse proxy, policy language, pomerium policy language, ppl]
 sidebar_label: 3. Build Policies
 ---
 
@@ -21,8 +21,8 @@ Specifically, we’ll cover:
 
 Make sure you’ve completed the following tutorials:
 
-- [Get Started](/docs/learn-pomerium/get-started)
-- [Build a Simple Route](/docs/learn-pomerium/build-routes)
+- [**Get Started**](/docs/learn-pomerium/get-started)
+- [**Build a Simple Route**](/docs/learn-pomerium/build-routes)
 
 If you completed these tutorials, you should have:
 
@@ -53,19 +53,19 @@ PPL allows administrators to express authorization policy in a high-level, decla
 
 You can think of it as coded instructions to tell Pomerium how authorization decisions are made for capturing all niche and edge-case scenarios. It’s as flexible as you want it to be!
 
-### ### How does PPL work?
+### How does PPL work?
 
 PPL consists of **Rules**, **Actions**, **Logical Operators**, **Criteria**, and **Matchers**.
 
-### #### Rules
+#### Rules
 
 A PPL document is either an object or an array of objects. The object represents a rule where the action is the key and the value is an object containing the logical operators.
 
-### #### Actions
+#### Actions
 
 Only two actions are supported: `allow` and `deny`. `deny` takes precedence over `allow`. More precisely: a user will have access to a route if **at least one** `allow` rule matches and **no** `deny` rules match.
 
-### #### Logical Operators
+#### Logical Operators
 
 A logical operator combines multiple criteria together for the evaluation of a rule.
 
@@ -76,11 +76,11 @@ There are four logical operators:
 - `not`
 - `nor`
 
-### #### Criteria
+#### Criteria
 
 Criteria in PPL are represented as an object where the key is the name and optional sub-path of the criterion, and the value changes depending on which criterion is used.
 
-### #### Matchers
+#### Matchers
 
 Matchers can be used with logical operators like criteria. PPL offers a variety of matchers, like:
 
@@ -93,13 +93,13 @@ Matchers can be used with logical operators like criteria. PPL offers a variety 
 
 For an in-depth look at how PPL works, see the [Policy Language](/docs/capabilities/ppl#at-a-glance) page.
 
-### ### Example Policies with PPL
+## Example Policies with PPL
 
 Now that you’ve briefly covered PPL, let’s jump into some simple examples:
 
-**Example 1**: Allow access based on the username
+**Example 1**: Allow access if the user's `email` address exactly matches the criterion's value
 
-This example instructs Pomerium to only grant a user access if their username is `user1`.
+This example instructs Pomerium to only grant a user access if their email address is `example@domain.com`.
 
 ```markdown
 # This is a PPL Rule 
@@ -112,11 +112,11 @@ policy: # Policy object starts here
 
 **Example 2**: Allow access based on the domain criterion
 
-This example instructs Pomerium to only grant a user access if their email address matches the **domain** criterion’s value.
+Requiring an exact email address is one way to secure an app, but it won't let anyone else in without that specific email address. This obviously won't scale for an organzation where multiple members may require access to the same service.
 
-The **domain** criterion checks for the domain portion of the user’s email address (the part after `@`). So, if your email were `[bob@gmail.com](mailto:bob@gmail.com)`,  Pomerium would deny you access; if your email were `[bob@example.com](mailto:bob@example.com)`, Pomerium would grant you access.
+Instead of specifying the entire email address, you can write a policy that allows access if a user has the required `domain` in their email address (the part after `@`). 
 
-```yaml
+The example below instructs Pomerium to only grant a user access if their email address matches the **domain** criterion’s value.
 
 ```yaml
 policy:
@@ -126,15 +126,13 @@ policy:
           is: example.com
 ```
 
-```
+Again, the domain criterion checks for the domain portion of the user’s email address. Using the example above, if your email were `bob@gmail.com`, Pomerium would deny you access; if your email were `bob@example.com`, Pomerium would grant you access.
 
-**Example 3**: Allow access based on `username` or `domain` criteria
+**Example 3**: Use logical operators to allow access based on `username` _or_ `domain` criteria
 
-This policy uses the **or** operator, which allows access if either of two conditions is true. In this example, Pomerium will grant access if the email address domain is `example.com` _or_ the username is `user2`.
+The policy below uses the **or** operator, which allows access if either of two conditions is true. In this example, Pomerium will grant access if the email address domain is `example.com` _or_ the username is `user2`.
 
 If neither of these conditions is true, the policy will deny a user access.
-
-```yaml
 
 ```yaml
 policy:
@@ -146,11 +144,27 @@ policy:
           is: user2
 ```
 
+:::tip
+
+The example above defines the `user` criterion as `user2`. In a real-world application, an identity provider may not reference the actual "username" value in a JWT; instead, it likely includes the user's unique ID, which is often the value of the `subject` or `user` claim (or both). 
+
+To ensure your policies are enforced correctly, use the unique ID instead of the actual username. For example, if the ID associated with `user2` is `1234567890#$%^`, the policy would look like this:
+
+```yaml
+policy:
+ allow:
+    or:
+      - domain:
+          is: example.com
+      - user:
+          is: "1234567890#$%^"
 ```
+
+:::
 
 Now that we’ve covered some examples, it’s time to attach a policy to a route.
 
-### ### Build Policies for Your Routes
+## Build Policies for Your Routes
 
 By now, your configuration file should have routes for the Verify service and Grafana. You may have noticed that these routes have the `allow_any_authenticated_user` setting attached to them.
 
@@ -163,15 +177,11 @@ In your Pomerium configuration file:
 - Add this policy block below each route (and update the `example.com` domain with your domain):
 
 ```yaml
-
-```yaml
 policy:
   allow:
     and:
       - domain:
         is: example.com
-```
-
 ```
 
 Now, access the route.
@@ -180,7 +190,7 @@ Pomerium will grant you access to either service if your email address contains 
 
 Great job!
 
-## ## Summary
+## Summary
 
 Now that you’ve built a route and policy to control access, you have the basic building blocks in place to start using Pomerium.
 
@@ -195,13 +205,13 @@ These are the basics for a reverse proxy, which is intended to act as a public f
 - What are they allowed to do?
 - Should Pomerium let it happen?
 
-We start with the first question by setting up ****Identity Verification****.
+We start with the first question by setting up **Identity Verification**.
 
 ### Configuration File State
 
 By now, your configuration files should look similar to this:
 
-```markdown
+```yaml
 authenticate_service_url: https://authenticate.pomerium.app
 
 routes:
@@ -223,7 +233,7 @@ routes:
 
 Docker Compose:
 
-```markdown
+```yaml
 version: "3"
 services:
   pomerium:

@@ -10,7 +10,8 @@ const sidebars = {
       link: {type: 'doc', id: 'docs/learn-pomerium'},
       items: [
         'docs/learn-pomerium/get-started',
-        'docs/learn-pomerium/build-routes'
+        'docs/learn-pomerium/build-routes',
+        'docs/learn-pomerium/build-policies'
       ],
     },
     {
