@@ -9,7 +9,8 @@ const sidebars = {
       label: 'Learn Pomerium',
       link: {type: 'doc', id: 'docs/learn-pomerium'},
       items: [
-        'docs/learn-pomerium/get-started'
+        'docs/learn-pomerium/get-started',
+        'docs/learn-pomerium/build-routes'
       ],
     },
     {

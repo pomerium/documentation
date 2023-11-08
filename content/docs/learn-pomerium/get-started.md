@@ -2,7 +2,7 @@
 id: get-started
 title: Get Started With Pomerium
 description: In lesson 1 of Learn Pomerium, you'll configure and run a Pomerium instance with Docker.
-keywords: [pomerium, docker, docker compose, configuration file]
+keywords: [pomerium, docker, docker compose, configuration file, reverse proxy]
 sidebar_label: 1. Get Started
 ---
 
@@ -152,13 +152,13 @@ In a later tutorial, you will configure Pomerium and the Verify service to succe
 
 Great job! If you got this far, then you have everything you need to run Pomerium and continue on with our guided tutorials.
 
-In the next section, we will dive deeper into **Routes** with Pomerium.
+In the next section, we will dive deeper into [**Routes**](/docs/learn-pomerium/build-routes) with Pomerium.
 
 ### Configuration File State:
 
 By now, your configuration files should look similar to this:
 
-```markdown
+```yaml
 authenticate_service_url: https://authenticate.pomerium.app
 
 routes:
@@ -173,7 +173,7 @@ routes:
 
 Docker Compose:
 
-```markdown
+```yaml
 version: "3"
 services:
   pomerium:
