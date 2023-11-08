@@ -15,7 +15,8 @@ const sidebars = {
         'docs/learn-pomerium/jwt-verification',
         'docs/learn-pomerium/advanced-policies',
         'docs/learn-pomerium/advanced-routes',
-        'docs/learn-pomerium/tcp-routes'
+        'docs/learn-pomerium/tcp-routes',
+        'docs/learn-pomerium/self-hosted-pomerium'
       ],
     },
     {

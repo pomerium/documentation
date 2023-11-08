@@ -3,7 +3,7 @@ id: advanced-policies
 title: Build Advanced Policies
 description: In lesson 5, you'll learn how to build advanced policies.
 keywords: [pomerium, reverse proxy, authorization policy, advanced policies]
-sidebar_label: 6. Advanced Policies
+sidebar_label: 5. Advanced Policies
 ---
 
 # Build Advanced Policies
