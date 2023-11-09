@@ -25,8 +25,8 @@ To do this, you must:
 Make sure you’ve completed the following tutorials:
 
 - [**Get Started**](/docs/learn-pomerium/get-started)
-- [**Build a Simple Route**](/docs/learn-pomerium/simple-routes)
-- [**Build a Simple Policy**](/docs/learn-pomerium/simple-policies)
+- [**Build a Simple Route**](/docs/learn-pomerium/build-routes)
+- [**Build a Simple Policy**](/docs/learn-pomerium/build-policies)
 - [**Identity Verification with JWTs**](/docs/learn-pomerium/jwt-verification)
 - [**Build Advanced Policies**](/docs/learn-pomerium/advanced-policies)
 - [**Build Advanced Routes**](/docs/learn-pomerium/advanced-routes)
