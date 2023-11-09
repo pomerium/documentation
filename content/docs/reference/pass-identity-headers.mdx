@@ -1,0 +1,67 @@
+---
+id: global-pass-identity-headers
+title: (Global) Pass Identity Headers
+description: The global Pass Identity Headers setting passes identity headers to all routes by default.
+keywords: [identity headers, reverse proxy]
+sidebar_label: (Global) Pass Identity Headers
+---
+
+# (Global) Pass Identity Headers
+
+## Summary
+
+When set to true, the **Global Pass Identity Headers** setting sends identity headers to all routes defined in your configuration file.
+
+If a route already has the route-level `pass_identity_headers` setting configured, the route option will take precedence over the global setting.
+
+Identity headers include:
+
+- `X-Pomerium-Jwt-Assertion`
+- `X-Pomerium-Claim-*` (see [JWT Claim Headers](/docs/reference/jwt-claim-headers) for more information)
+
+:::info
+
+If you only want to send identity headers to a specific route, see the route-level [**Pass Identity Headers**](/docs/reference/routes/pass-identity-headers) setting.
+
+:::
+
+## How to configure
+
+<Tabs>
+<TabItem value="Core" label="Core">
+
+| **YAML**/**JSON** setting | **Type**  | **Usage**    | **Default** |
+| :------------------------ | :-------- | :----------- | :---------- |
+| `pass_identity_headers`   | `boolean` | **optional** | *`false`     |
+
+\* If neither the **global** _nor_ **route-level** `pass_identity_headers` settings are defined, both settings will default to `false`.
+
+:::note
+
+You **must** include a [**Signing Key**](/docs/reference/signing-key) with this setting. Without a signing key, Pomerium can't sign the `X-Pomerium-Jwt-Assertion` header, which will result in an empty keyset at the JWKS endpoint.
+
+:::
+
+</TabItem>
+<TabItem value="Enterprise" label="Enterprise">
+
+TODO: Get screenshot for this
+
+</TabItem>
+<TabItem value="Kubernetes" label="Kubernetes">
+
+TODO: Get details for K8s
+
+</TabItem>
+</Tabs>
+
+### Examples
+
+```yaml
+
+pass_identity_headers: true
+
+routes:
+  - from: https://service.corp.example.io
+    to: http://localhost:3000
+```
