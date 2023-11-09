@@ -1,5 +1,5 @@
 ---
-# cSpell:ignore Dockerized
+# cSpell:ignore Dockerized, linuxkit, aarch, gettime, epoll, atomicvar
 id: tcp-routes
 title: Build TCP Routes
 description: In this lesson, you'll secure TCP connections to SSH, Postgres, and Redis services with Pomerium.
