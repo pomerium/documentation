@@ -51,7 +51,7 @@ But, managing your own certificates can be tedious and difficult to maintain (es
 
 **The Solution:**
 
-Fortunately, Pomerium has an Autocert setting that, when enabled, allows Pomerium to automatically retrieve, manage, and renew public-facing TLS certificates from [Let's Encrypt](<[https://letsencrypt.org/](https://letsencrypt.org/)>).
+Fortunately, Pomerium has an Autocert setting that, when enabled, allows Pomerium to automatically retrieve, manage, and renew public-facing TLS certificates from [Let's Encrypt](https://letsencrypt.org/).
 
 (If your OS trusts the [ISRG Root X1](https://letsencrypt.org/docs/certificate-compatibility/) certificate, it will validate Let’s Encrypt certificates, too.)
 

@@ -76,7 +76,7 @@ Certain steps will vary depending on your VM and Cloud provider.
 
 If you set up a VM using Debian, you can use Pomerium’s Debian OS package to install the latest version:
 
-1. Go to [Cloudsmith.io](<[https://cloudsmith.io/~pomerium/repos/pomerium/groups/](https://cloudsmith.io/~pomerium/repos/pomerium/groups/)>) and select the **Set Me Up** dropdown menu
+1. Go to [Cloudsmith.io](https://cloudsmith.io/~pomerium/repos/pomerium/groups/) and select the **Set Me Up** dropdown menu
 
 2. Select **Debian**
 
