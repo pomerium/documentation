@@ -154,7 +154,7 @@ Great job! If you got this far, then you have everything you need to run Pomeriu
 
 In the next section, we will dive deeper into [**Routes**](/docs/learn-pomerium/build-routes) with Pomerium.
 
-### Configuration File State:
+### Configuration file state:
 
 By now, your configuration files should look similar to this:
 

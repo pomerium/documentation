@@ -242,16 +242,18 @@ $ sudo systemctl daemon-reload && sudo systemctl restart pomerium.service
 
 If you access your authenticate service URL, Pomerium will redirect you to your IdP (GitHub) to sign in.
 
-Now, access the Verify service.
+After signing in, Pomerium will redirect you to the **User Details** page:
 
-![Verify that your self-hosted domain works](./img/self-hosted-pomerium/self-hosted-url.png)
+![The User Details page](./img/self-hosted-pomerium/user-details-page.png)
 
 Awesome! You’ve successfully configured Pomerium to run in a Compute Engine VM instance running Debian.
 
 ## Summary
 
-If you got this far, then you learned how to successfully run Pomerium in a Virtual Machine!
+If you got this far, then you learned how to successfully run Pomerium in a VM!
 
 This means your Pomerium instance is hosted in a private network. Because you have a domain with a wildcard DNS record that points to your VM’s _public_ IPv4 address, you can now configure Pomerium to run an **automated certificate management environment** (ACME) with Autocert.
 
 This setting will secure connections between Pomerium and the upstream service, and it’s the final piece you need to self-host a production-ready Pomerium deployment.
+
+**Next up**: Production Certificates With Autocert

@@ -16,7 +16,9 @@ const sidebars = {
         'docs/learn-pomerium/advanced-policies',
         'docs/learn-pomerium/advanced-routes',
         'docs/learn-pomerium/tcp-routes',
-        'docs/learn-pomerium/self-hosted-pomerium'
+        'docs/learn-pomerium/self-hosted-pomerium',
+        'docs/learn-pomerium/production-certificates',
+        'docs/learn-pomerium/conclusion'
       ],
     },
     {
