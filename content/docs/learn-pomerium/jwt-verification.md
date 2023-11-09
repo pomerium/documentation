@@ -1,4 +1,5 @@
 ---
+# cSpell:ignore ecparam, pubout, mypomerium
 id: jwt-verification
 title: Identity Verification with JWTs
 description: In lesson 4, you’ll learn how to set up Pomerium to verify a user’s identity with JSON Web Tokens (JWTs).
@@ -213,7 +214,7 @@ verify:
     - JWKS_ENDPOINT=https://pomerium/.well-known/pomerium/jwks.json
 ```
 
-:::note **Understadning the JWKS endpoint**
+:::note **Understanding the JWKS endpoint**
 
 Because we're powering our services with Docker, the value of the **hostname** (`pomerium`) in the `JWKS_ENDPOINT` URL above must match the name of your Pomerium container.
 

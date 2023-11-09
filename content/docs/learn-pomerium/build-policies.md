@@ -119,7 +119,7 @@ policy: # Policy object starts here allow: # At least one action and: # Logical 
 
 **Example 2**: Allow access based on the domain criterion
 
-Requiring an exact email address is one way to secure an app, but it won't let anyone else in without that specific email address. This obviously won't scale for an organzation where multiple members may require access to the same service.
+Requiring an exact email address is one way to secure an app, but it won't let anyone else in without that specific email address. This obviously won't scale for an organization where multiple members may require access to the same service.
 
 Instead of specifying the entire email address, you can write a policy that allows access if a user has the required `domain` in their email address (the part after `@`).
 

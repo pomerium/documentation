@@ -1,4 +1,5 @@
 ---
+# cSpell:ignore Referer, KHTML, WORKDIR, workdir, nodeserver
 id: advanced-routes
 title: Build Advanced Routes
 description: In this lesson, you'll learn how to build advanced routes.

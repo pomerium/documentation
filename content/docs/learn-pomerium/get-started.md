@@ -1,4 +1,5 @@
 ---
+# cSpell:ignore preconfigured
 id: get-started
 title: Get Started With Pomerium
 description: In lesson 1 of Learn Pomerium, you'll configure and run a Pomerium instance with Docker.

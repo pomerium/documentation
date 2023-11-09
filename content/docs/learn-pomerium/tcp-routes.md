@@ -1,4 +1,5 @@
 ---
+# cSpell:ignore Dockerized
 id: tcp-routes
 title: Build TCP Routes
 description: In this lesson, you'll secure TCP connections to SSH, Postgres, and Redis services with Pomerium.
