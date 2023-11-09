@@ -2,7 +2,17 @@
 id: jwt-verification
 title: Identity Verification with JWTs
 description: In lesson 4, you’ll learn how to set up Pomerium to verify a user’s identity with JSON Web Tokens (JWTs).
-keywords: [reverse proxy, identity verification, jwt, json web token, pomerium, assertion header, signed header, signing key]
+keywords:
+  [
+    reverse proxy,
+    identity verification,
+    jwt,
+    json web token,
+    pomerium,
+    assertion header,
+    signed header,
+    signing key,
+  ]
 sidebar_label: 4. JWT Verification
 ---
 
@@ -47,7 +57,7 @@ A user’s signed JWT acts as the stamp: In the event of other network configura
 
 ## What is a JWT?
 
-If you’re unfamiliar with JWTs, here’s a quick definition sourced from [JWT.io]([https://jwt.io/](https://jwt.io/)):
+If you’re unfamiliar with JWTs, here’s a quick definition sourced from [JWT.io](<[https://jwt.io/](https://jwt.io/)>):
 
 “JSON Web Tokens are an open, industry standard [RFC 7519](https://tools.ietf.org/html/rfc7519) method for representing claims securely between two parties.”
 
@@ -55,7 +65,7 @@ Just remember: JWTs are the stamps on an entry ticket which give it more legitim
 
 :::info
 
-Check out [**this article**]([https://jwt.io/introduction](https://jwt.io/introduction)) to learn more about the anatomy of a JWT, how they are used in modern applications for SSO and information exchange, and how signatures work with a public/private key pair.
+Check out [**this article**](<[https://jwt.io/introduction](https://jwt.io/introduction)>) to learn more about the anatomy of a JWT, how they are used in modern applications for SSO and information exchange, and how signatures work with a public/private key pair.
 
 :::
 
@@ -70,8 +80,9 @@ Here’s how the JWT authentication flow looks at a high level:
 2. Pomerium redirects the client to the IdP, the client signs in, and Pomerium gets the user’s ID, Access, and Refresh tokens
 
 3. Two important actions happen here:
-     1. Pomerium mints a new **Pomerium JWT**, which includes the original ID token claims and additional Pomerium-based claims (we never leak the original ID token)
-     2. Pomerium checks if the user is authorized to access the upstream service, inserts the Pomerium JWT in the JWT Assertion Header, cryptographically signs the header, and then sends the request to the upstream service
+
+   1. Pomerium mints a new **Pomerium JWT**, which includes the original ID token claims and additional Pomerium-based claims (we never leak the original ID token)
+   2. Pomerium checks if the user is authorized to access the upstream service, inserts the Pomerium JWT in the JWT Assertion Header, cryptographically signs the header, and then sends the request to the upstream service
 
 4. The upstream service receives the request, fetches the public key from the JWKS endpoint, verifies and validates the signature, and grants the user access
 
@@ -135,7 +146,7 @@ You **must** add `pass_identity_headers` to a route for identity verification to
 
 <summary><b>Public/Private Key Pairs</b></summary>
 
-You might be asking, “What exactly is a signing key?” Put simply, a signing key is the private key counterpart in a public/private key pair. These keys correspond to one another cryptographically. See SmallStep’s [PKI blog post]([https://smallstep.com/blog/everything-pki/](https://smallstep.com/blog/everything-pki/)) for more information on the technologies that power public/private key pairs.
+You might be asking, “What exactly is a signing key?” Put simply, a signing key is the private key counterpart in a public/private key pair. These keys correspond to one another cryptographically. See SmallStep’s [PKI blog post](<[https://smallstep.com/blog/everything-pki/](https://smallstep.com/blog/everything-pki/)>) for more information on the technologies that power public/private key pairs.
 
 Here’s a few things to keep in mind:
 
@@ -195,16 +206,16 @@ In your Docker Compose file, add the following environment variable to your Veri
 
 ```yaml title="docker-compose"
 verify:
-    image: pomerium/verify:latest
-    expose:
-      - 8000
-    environment:
-      - JWKS_ENDPOINT=https://pomerium/.well-known/pomerium/jwks.json
+  image: pomerium/verify:latest
+  expose:
+    - 8000
+  environment:
+    - JWKS_ENDPOINT=https://pomerium/.well-known/pomerium/jwks.json
 ```
 
 :::note **Understadning the JWKS endpoint**
 
-Because we're powering our services with Docker, the value of the **hostname** (`pomerium`) in the `JWKS_ENDPOINT` URL above must match the name of your Pomerium container. 
+Because we're powering our services with Docker, the value of the **hostname** (`pomerium`) in the `JWKS_ENDPOINT` URL above must match the name of your Pomerium container.
 
 For example, if you called the Pomerium service `mypomerium`, the hostname would be `mypomerium` and the URL would look like this: `https://mypomerium/.well-known/pomerium/jwks.json`
 
@@ -255,7 +266,7 @@ From this JWT, we can see that Pomerium issued the JWT based on the `iss` and `a
 
 ### Verify the signature
 
-To verify the signature, copy the value of `ec_public.pem`. 
+To verify the signature, copy the value of `ec_public.pem`.
 
 For example:
 
@@ -323,7 +334,7 @@ routes:
 Docker Compose
 
 ```yaml
-version: "3"
+version: '3'
 services:
   pomerium:
     image: pomerium/pomerium:latest
@@ -340,5 +351,5 @@ services:
   grafana:
     image: grafana/grafana:latest
     ports:
-    - 3000:3000
+      - 3000:3000
 ```

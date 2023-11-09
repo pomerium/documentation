@@ -1,10 +1,12 @@
 ---
 id: tcp-routes
 title: Build TCP Routes
-description: In this lesson, you'll secure TCP connections to SSH, Postgres, and Redis services with Pomerium. 
-keywords: [tcp, connection, ssh, postgres, redis, reverse proxy, certificates, pomerium]
+description: In this lesson, you'll secure TCP connections to SSH, Postgres, and Redis services with Pomerium.
+keywords:
+  [tcp, connection, ssh, postgres, redis, reverse proxy, certificates, pomerium]
 sidebar_label: 7. TCP Routes
 ---
+
 # Build TCP Routes
 
 Now that you’ve built several routes, it’s time to configure a few more services to see how Pomerium proxies TCP connections.
@@ -114,12 +116,12 @@ certificates:
 In your Docker Compose file, bind mount your wildcard certificates as a volume in the Pomerium service:
 
 ```yaml title="docker-compose.yaml"
-version: "3"
+version: '3'
 services:
   pomerium:
     image: pomerium/pomerium:latest
     volumes:
-    # Mount your wildcard certificates:
+      # Mount your wildcard certificates:
       - ./_wildcard.localhost.pomerium.io-key.pem:/pomerium/key.pem:ro
       - ./_wildcard.localhost.pomerium.io.pem:/pomerium/cert.pem:ro
       - ./config.yaml:/pomerium/config.yaml:ro
@@ -294,7 +296,7 @@ And just like that, you’re done! You now have a TCP connection proxied over HT
 
 ## Summary
 
-In this tutorial, you secured TCP connections to Redis, SSH, and Postgres services. To secure the connection, you used the `pomerium-cli` `tcp` command. 
+In this tutorial, you secured TCP connections to Redis, SSH, and Postgres services. To secure the connection, you used the `pomerium-cli` `tcp` command.
 
 At this point, we’ve done all we can do with a hosted Pomerium instance in a Dockerized environment. You now know all the necessary basics for running Pomerium itself, so let’s take it out of Docker and into the wild!
 

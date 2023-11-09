@@ -44,9 +44,9 @@ Add the `httpbin` service to your Docker Compose file:
 
 ```yaml title="docker-compose.yaml"
 httpbin:
-    image: kennethreitz/httpbin
-    ports:
-      - 80:80
+  image: kennethreitz/httpbin
+  ports:
+    - 80:80
 ```
 
 Add the `httpbin` route in your Pomerium configuration file:
@@ -104,7 +104,7 @@ Now, scroll down to **Response body**. You should see a payload like this:
     "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36",
     "X-Envoy-Expected-Rq-Timeout-Ms": "30000",
     "X-Envoy-Internal": "true",
-    "X-Pomerium-Jwt-Assertion": "...",
+    "X-Pomerium-Jwt-Assertion": "..."
   }
 }
 ```
@@ -117,9 +117,9 @@ Since we’re forwarding the JWT, let’s try adding the JWT Claims Headers glob
 signing_key: LS0tLS1CRUdJTiBFQyBQUklWQVRFIEtFWS0tLS0tCk1IY0NBUUVFSUVSNThaeDA2SHJXTW9PUTRaNjlMaDdMZUtFZW5TSmJZcHJvZ3V3TEl0blNvQW9HQ0NxR1NNNDkKQXdFSG9VUURRZ0FFK1FtamZKQ2ovdzkrOUhrRDVlbTlIZFhRM3ViUEhIdWNOMTlNOXJxR05PeEpTRmR3VHgvaAphdVkvcVFSWWR0YVpnVEpEUWZSYVQ2Q1pPYndSYTl2TXNnPT0KLS0tLS1FTkQgRUMgUFJJVkFURSBLRVktLS0tLQo=
 
 jwt_claims_headers:
-    X-Pomerium-Claim-Email: email
-    X-Pomerium-Claim-User: user
-    X-Pomerium-Claim-Name: name
+  X-Pomerium-Claim-Email: email
+  X-Pomerium-Claim-User: user
+  X-Pomerium-Claim-Name: name
 ```
 
 This setting sends JWT claims as _unsigned_ headers to the upstream application (unlike the _signed_ JWT assertion header). If you restart the Pomerium Docker instance and send another request to HTTPBin, you’ll notice these claims are included in the request:
@@ -137,14 +137,14 @@ Under your `httpbin` route, add the following settings:
 ```yaml
 - from: https://httpbin.localhost.pomerium.io
     to: http://httpbin:80
-    set_request_headers: 
+    set_request_headers:
       X-SET-REQUEST-HEADERS: X-VALUE
     remove_request_headers:
       - X-Pomerium-Claim-User
       - X-Pomerium-Claim-Name
 ```
 
-We’re telling Pomerium to add a header to the request called `X-Set-Request-Headers` with a value of `X-Value`. We’re also telling Pomerium to remove the `User` and `Name` claims that are included as unsigned claims headers. This ensures that these specific headers do *not* reach the upstream application.
+We’re telling Pomerium to add a header to the request called `X-Set-Request-Headers` with a value of `X-Value`. We’re also telling Pomerium to remove the `User` and `Name` claims that are included as unsigned claims headers. This ensures that these specific headers do _not_ reach the upstream application.
 
 If you run `docker compose up` and check HTTPBin again, you’ll notice both the claims headers have been removed, and the test `X-Set-Request-Headers` header is there, too.
 
@@ -157,7 +157,7 @@ Similarly, you can configure responses as well:
     to: http://httpbin:80
     set_response_headers:
       X-SET-RESPONSE-HEADERS: X-VALUE
-    set_request_headers: 
+    set_request_headers:
       X-SET-REQUEST-HEADERS: X-VALUE
     remove_request_headers:
       - X-Pomerium-Claim-User
@@ -170,7 +170,7 @@ If you go HTTPBin’s **Response inspection** row and test a request, you’ll n
 
 ### Set the Host header
 
-You can also control the `Host:` header’s behavior, which is useful if your upstream server expects a certain value for this header.  
+You can also control the `Host:` header’s behavior, which is useful if your upstream server expects a certain value for this header.
 
 For example, the value of the Host header is currently `httpbin`.
 
@@ -181,7 +181,7 @@ However, if you add `preserve_host_header` and set it to `true`, you’ll notice
     to: https://httpbin:80
     set_response_headers:
       X-SET-RESPONSE-HEADERS: X-VALUE
-    set_request_headers: 
+    set_request_headers:
       X-SET-REQUEST-HEADERS: X-VALUE
     remove_request_headers:
       - X-Pomerium-Claim-User
@@ -198,7 +198,7 @@ Alternatively, you can also use `host_rewrite_header` to change the Host header�
     to: https://httpbin:80
     set_response_headers:
       X-SET-RESPONSE-HEADERS: X-VALUE
-    set_request_headers: 
+    set_request_headers:
       X-SET-REQUEST-HEADERS: X-VALUE
     remove_request_headers:
       - X-Pomerium-Claim-User
@@ -247,13 +247,13 @@ const express = require('express');
 const app = express();
 
 app.get('/', (req, res) => {
-  console.log(req)
-  res.send('Hello World!')
-})
+  console.log(req);
+  res.send('Hello World!');
+});
 
 app.get('/admin', (req, res) => {
-  res.send('This is an admin only page')
-})
+  res.send('This is an admin only page');
+});
 
 app.listen(5001, () => console.log('Server is up and running'));
 ```
@@ -314,18 +314,17 @@ CMD ["node", "index.js"]
 In `.dockerignore`, add:
 
 ```yaml title=".dockerignore"
-node_modules
-npm-debug.log
+node_modules npm-debug.log
 ```
 
 In Docker Compose, add your Node server:
 
 ```yaml title="docker-compose.yaml"
 nodeserver:
-    build:
-        context: ./app
-    ports:
-        - "5001:5001"
+  build:
+    context: ./app
+  ports:
+    - '5001:5001'
 ```
 
 In your configuration file, add a route to the Node server:
@@ -439,7 +438,7 @@ routes:
 Docker Compose
 
 ```yaml
-version: "3"
+version: '3'
 services:
   pomerium:
     image: pomerium/pomerium:latest
@@ -456,5 +455,5 @@ services:
   grafana:
     image: grafana/grafana:latest
     ports:
-    - 3000:3000
+      - 3000:3000
 ```

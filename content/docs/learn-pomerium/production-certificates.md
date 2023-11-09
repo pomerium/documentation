@@ -2,7 +2,15 @@
 id: production-certificates
 title: Production Certificates with Autocert
 description: Learn how to add production certificates to your Pomerium instance with Autocert.
-keywords: [acme, automatic certificate management environment, autocert, pomerium, reverse proxy, pomerium]
+keywords:
+  [
+    acme,
+    automatic certificate management environment,
+    autocert,
+    pomerium,
+    reverse proxy,
+    pomerium,
+  ]
 sidebar_label: 9. Production Certificates
 ---
 
@@ -43,15 +51,15 @@ But, managing your own certificates can be tedious and difficult to maintain (es
 
 **The Solution:**
 
-Fortunately, Pomerium has an Autocert setting that, when enabled, allows Pomerium to automatically retrieve, manage, and renew public-facing TLS certificates from [Let's Encrypt]([https://letsencrypt.org/](https://letsencrypt.org/)).
+Fortunately, Pomerium has an Autocert setting that, when enabled, allows Pomerium to automatically retrieve, manage, and renew public-facing TLS certificates from [Let's Encrypt](<[https://letsencrypt.org/](https://letsencrypt.org/)>).
 
 (If your OS trusts the [ISRG Root X1](https://letsencrypt.org/docs/certificate-compatibility/) certificate, it will validate Let’s Encrypt certificates, too.)
 
 :::note
 
-To be clear, Autocert enables Pomerium to generate _per-route_ certificates that authenticate the _upstream_ server and secure the *upstream* connection. This means you won’t encounter the self-signed certificate warning when you access a route.
+To be clear, Autocert enables Pomerium to generate _per-route_ certificates that authenticate the _upstream_ server and secure the _upstream_ connection. This means you won’t encounter the self-signed certificate warning when you access a route.
 
-Autocert *does not* secure the downstream connection (that is, the connection between the client and Pomerium).
+Autocert _does not_ secure the downstream connection (that is, the connection between the client and Pomerium).
 
 :::
 
@@ -90,7 +98,7 @@ autocert: true
 
 Now, run Pomerium to see if Autocert worked.
 
-Select the Verify route. Now, click the **padlock** icon and view the certificate. 
+Select the Verify route. Now, click the **padlock** icon and view the certificate.
 
 You should see your domain in the **Issued To > Common Name (CN)** field (the UI will vary depending on your browser, but you get the idea):
 

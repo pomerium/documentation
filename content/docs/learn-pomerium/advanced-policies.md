@@ -68,10 +68,10 @@ Change `and` to `or`.
 
 ```yaml
 policy:
-    allow:
-      or:
-        - domain:
-            is: example.com
+  allow:
+    or:
+      - domain:
+          is: example.com
 ```
 
 The `or` operator grants access if either of two criteria are true.
@@ -82,11 +82,11 @@ Let’s add a second criterion, `claim`, and add it to the same policy block:
 
 ```yaml
 policy:
-    allow:
-      or:
-        - domain:
-            is: example.com
-        - claim/Name: <"Your Name">
+  allow:
+    or:
+      - domain:
+          is: example.com
+      - claim/Name: <"Your Name">
 ```
 
 The `claim` operator requires a sub-path and the value of a JWT claim.
@@ -103,18 +103,18 @@ Now, let’s add a second `deny` block to this policy. We will write a policy th
 
 ```yaml
 policy:
-      allow:
-        or:
-          - domain:
-              is: example.com
-          - claim/Name: <"Your Name">
-      deny:
-        and:
-          - email:
-              starts_with: admin
+  allow:
+    or:
+      - domain:
+          is: example.com
+      - claim/Name: <"Your Name">
+  deny:
+    and:
+      - email:
+          starts_with: admin
 ```
 
-As is, this policy will deny access if a user’s email starts with `admin` (of course, you can change this value to whatever you want). 
+As is, this policy will deny access if a user’s email starts with `admin` (of course, you can change this value to whatever you want).
 
 Swap out the value with the beginning of your email address to test it out. This policy will still deny you access, even if your email’s domain and your JWT claim satisfy the `allow` block’s criteria.
 
@@ -164,7 +164,7 @@ routes:
 Docker Compose:
 
 ```yaml
-version: "3"
+version: '3'
 services:
   pomerium:
     image: pomerium/pomerium:latest
@@ -181,5 +181,5 @@ services:
   grafana:
     image: grafana/grafana:latest
     ports:
-    - 3000:3000
+      - 3000:3000
 ```

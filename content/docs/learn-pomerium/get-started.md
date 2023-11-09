@@ -10,7 +10,7 @@ sidebar_label: 1. Get Started
 
 Welcome to **Get Started With Pomerium**! This is your starting point to learning the fundamentals of how Pomerium works so you can use it effectively to secure your own web apps and services.
 
-This tutorial teaches you how to set up Pomerium using [Docker](https://docs.docker.com/install/) and [Docker Compose](https://docs.docker.com/compose/install/). 
+This tutorial teaches you how to set up Pomerium using [Docker](https://docs.docker.com/install/) and [Docker Compose](https://docs.docker.com/compose/install/).
 
 In a later tutorial, we will cover how to self-host and run Pomerium in a virtual machine environment. For now, we will work in containerized environments so we can easily configure Pomerium and run it alongside other services, which you can access behind Pomerium.
 
@@ -18,7 +18,7 @@ In a later tutorial, we will cover how to self-host and run Pomerium in a virtua
 
 For the purposes of this guide, we’ll call this project `pomerium_quickstart` (but name it whatever you want).
 
-Your project will contain all the files and configurations you need to run ****Pomerium Core****.
+Your project will contain all the files and configurations you need to run \***\*Pomerium Core\*\***.
 
 The directory structure will look like this:
 
@@ -34,7 +34,7 @@ We’ll configure these files together in the next section.
 [**Pomerium Core**](/docs/deploy/core) is our open-source, identity-aware reverse proxy. The proxy server consists of **4 services**:
 
 - The **Proxy** service — the waiter
-- The **Authentication** service —  the waiter checking users in
+- The **Authentication** service — the waiter checking users in
 - The **Authorization** service — the waiter checking if users can do that
 - The **Databroker** service — the waiter remembering the user’s current session to offer the best user experience
 
@@ -68,27 +68,30 @@ Update `user@example.com` to use your desired email address – otherwise, the e
   <div>
   <b>The Authenticate Service URL</b>
 
-  The `authenticate_service_url` setting provides an externally accessible URL that Pomerium’s **Authentication Service** uses to manage client authentication. It works like this:
+The `authenticate_service_url` setting provides an externally accessible URL that Pomerium’s **Authentication Service** uses to manage client authentication. It works like this:
+
   <ol>
     <li>You request to access an app protected behind Pomerium</li>
     <li>The Authentication Service receives the request, and uses the `authenticate_service_url` to redirect you to the <b>Identity Provider</b> to sign in</li>
   </ol>
 
-  (If it helps to understand why, it’s because our waiter, Pomerium, needs to cross-reference with a list of users to go, “Ah, I see you’re on our list. Right this way, please.”)
+(If it helps to understand why, it’s because our waiter, Pomerium, needs to cross-reference with a list of users to go, “Ah, I see you’re on our list. Right this way, please.”)
+
   </div>
   <div>
   <b>What Identity Provider?</b>
 
-  Pomerium relies on an Identity Provider (IdP) to authenticate users and authorize requests (it’s the list we just mentioned, except the IdP gives you a token badge so Pomerium recognizes you).
+Pomerium relies on an Identity Provider (IdP) to authenticate users and authorize requests (it’s the list we just mentioned, except the IdP gives you a token badge so Pomerium recognizes you).
 
-  You probably noticed this configuration file doesn’t include an Identity Provider – that’s because you’re using Pomerium’s <b>Hosted Authentication Service</b>, which provides a preconfigured identity provider for you.
+You probably noticed this configuration file doesn’t include an Identity Provider – that’s because you’re using Pomerium’s <b>Hosted Authentication Service</b>, which provides a preconfigured identity provider for you.
 
-  This way, you can just plug and play. (Don’t worry; we’ll show you how to configure your own identity provider later!)
+This way, you can just plug and play. (Don’t worry; we’ll show you how to configure your own identity provider later!)
+
   </div>
   <div>
   <b>What about the routes?</b>
 
-  We’ll learn more about routes in the next section, but for now, just know that the `from` route is the externally accessible URL that Pomerium will redirect you to after authenticating with your identity provider.
+We’ll learn more about routes in the next section, but for now, just know that the `from` route is the externally accessible URL that Pomerium will redirect you to after authenticating with your identity provider.
 
   </div>
 </details>
@@ -100,7 +103,7 @@ Create a YAML file called `docker-compose.yaml`.
 Add the following configuration settings to `docker-compose.yaml`:
 
 ```yaml title="docker-compose.yaml"
-version: "3"
+version: '3'
 services:
   pomerium:
     image: pomerium/pomerium:latest
@@ -132,12 +135,12 @@ You may have some questions, like:
 
 **Why is the URL insecure?**
 
-If you don’t provide certificates to verify the upstream service, Pomerium will generate self-signed certificates for you. Because the certificates are self-signed, your browser will throw a self-signed certificate warning. 
+If you don’t provide certificates to verify the upstream service, Pomerium will generate self-signed certificates for you. Because the certificates are self-signed, your browser will throw a self-signed certificate warning.
 
 To bypass this warning:
 
 1. Click anywhere in the browser window
-2. Enter `thisisunsafe` (no spaces) and hit enter 
+2. Enter `thisisunsafe` (no spaces) and hit enter
 3. Repeat step 2 if you’re prompted with the same error
 
 Later, we will cover how to self-host Pomerium using Autocert, which will automate the process of managing certificates for your upstream services.
@@ -146,7 +149,7 @@ Later, we will cover how to self-host Pomerium using Autocert, which will automa
 
 The simple answer is: You haven't configured Pomerium to handle JWTs yet. The Verify service expects a _cryptographically signed_ JWT, which contains identifying information about the user in the form of JWT claims. Without the JWT itself (and a way to verify the signature), the Verify service can't identity the user.
 
-In a later tutorial, you will configure Pomerium and the Verify service to successfully verify a user’s identity. 
+In a later tutorial, you will configure Pomerium and the Verify service to successfully verify a user’s identity.
 
 ## Summary
 
@@ -174,7 +177,7 @@ routes:
 Docker Compose:
 
 ```yaml
-version: "3"
+version: '3'
 services:
   pomerium:
     image: pomerium/pomerium:latest

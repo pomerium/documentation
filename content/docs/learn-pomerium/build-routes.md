@@ -1,7 +1,7 @@
 ---
 id: build-routes
 title: Build Simple Routes
-description: In lesson 2, you'll learn how to define routes in your Pomerium configuration file. 
+description: In lesson 2, you'll learn how to define routes in your Pomerium configuration file.
 keywords: [routing, pomerium, external route, internal route, reverse proxy]
 sidebar_label: 2. Build Routes
 ---
@@ -58,7 +58,7 @@ routes:
             - email:
                 is: user@example.com
     pass_identity_headers: true
-# Add Grafana route here: 
+# Add Grafana route here:
 	- from: https://grafana.localhost.pomerium.io
 	  to: http://grafana:3000
 	  allow_any_authenticated_user: true
@@ -67,7 +67,7 @@ routes:
 In your `docker-compose.yaml` file, add Grafana as a service:
 
 ```yaml title="docker-compose.yaml"
-version: "3"
+version: '3'
 services:
   pomerium:
     image: pomerium/pomerium:latest
@@ -82,7 +82,7 @@ services:
   grafana:
     image: grafana/grafana:latest
     ports:
-    - 3000:3000
+      - 3000:3000
 ```
 
 ### Understanding your route
@@ -133,11 +133,11 @@ And access your route: https://grafana.localhost.pomerium.io
 
 ![The Grafana login screen](./img/build-routes/grafana-login-screen.png)
 
-If you reach this after the authentication step, you’ve succeeded in setting up a route to Grafana! 
+If you reach this after the authentication step, you’ve succeeded in setting up a route to Grafana!
 
 Awesome!
 
-:::info 
+:::info
 
 In this tutorial, we won’t configure Grafana any further. But, if you’re curious how to set it up in a local testing environment, see our [**Grafana guide**](https://www.pomerium.com/docs/guides/grafana).
 
@@ -181,7 +181,7 @@ routes:
 Docker Compose:
 
 ```yaml
-version: "3"
+version: '3'
 services:
   pomerium:
     image: pomerium/pomerium:latest
@@ -196,5 +196,5 @@ services:
   grafana:
     image: grafana/grafana:latest
     ports:
-    - 3000:3000
+      - 3000:3000
 ```

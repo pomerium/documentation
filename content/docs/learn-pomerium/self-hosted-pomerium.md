@@ -12,7 +12,7 @@ So far, you’ve been using the Hosted Authenticate service, which provides an a
 
 We’ve also used the `*.localhost.pomerium.io` URL to host our services locally. (This wildcard domain points to `127.0.0.1`.)
 
-In this tutorial, you’ll replace the Hosted Authenticate service with your own self-hosted authenticate service. 
+In this tutorial, you’ll replace the Hosted Authenticate service with your own self-hosted authenticate service.
 
 To do this, you must:
 
@@ -38,7 +38,7 @@ Each tutorial builds on the same configuration files. In this tutorial, you’ll
 
 ## Self-host Pomerium
 
-This next step requires you to set up a VM instance where you will configure and run Pomerium. If you already have a VM instance, or you already know how to set one up, then you can skip this step. 
+This next step requires you to set up a VM instance where you will configure and run Pomerium. If you already have a VM instance, or you already know how to set one up, then you can skip this step.
 
 ### Create a Virtual Machine Instance
 
@@ -64,11 +64,11 @@ After you’re in the VM, it’s time to set up Pomerium.
 
 :::note **Your VM Setup**
 
-This tutorial will be using a Compute Engine VM instance running Debian 11 (”bullseye”) to self-host Pomerium. 
+This tutorial will be using a Compute Engine VM instance running Debian 11 (”bullseye”) to self-host Pomerium.
 
-You don’t have to use this environment if you don’t want to, but we will assume you’re running a VM to self-host Pomerium — and that you have a domain you registered and own — going forward.  
+You don’t have to use this environment if you don’t want to, but we will assume you’re running a VM to self-host Pomerium — and that you have a domain you registered and own — going forward.
 
-Certain steps will vary depending on your VM and Cloud provider. 
+Certain steps will vary depending on your VM and Cloud provider.
 
 :::
 
@@ -76,7 +76,7 @@ Certain steps will vary depending on your VM and Cloud provider.
 
 If you set up a VM using Debian, you can use Pomerium’s Debian OS package to install the latest version:
 
-1. Go to [Cloudsmith.io]([https://cloudsmith.io/~pomerium/repos/pomerium/groups/](https://cloudsmith.io/~pomerium/repos/pomerium/groups/)) and select the **Set Me Up** dropdown menu
+1. Go to [Cloudsmith.io](<[https://cloudsmith.io/~pomerium/repos/pomerium/groups/](https://cloudsmith.io/~pomerium/repos/pomerium/groups/)>) and select the **Set Me Up** dropdown menu
 
 2. Select **Debian**
 
@@ -122,7 +122,7 @@ For example, if your domain is `authenticate.domain.com`, the callback URL would
 
 ### Configure Pomerium
 
-Now that you’ve configured your IdP, you can update your Pomerium configuration file. 
+Now that you’ve configured your IdP, you can update your Pomerium configuration file.
 
 We will configure Pomerium in a Vim text editor. To do that, run this command:
 
@@ -134,101 +134,101 @@ In your Vim editor:
 
 1. **Update the `address:` field**
 
-  Update `address:` so it specifies port `:443`:
+Update `address:` so it specifies port `:443`:
 
-  ```yaml title="config.yaml"
-  address: :443
-  ```
+```yaml title="config.yaml"
+address: :443
+```
 
-1. **Redirect traffic from port** `:80` **to port** `:443`**:
+1. **Redirect traffic from port** `:80` **to port** `:443`\*\*:
 
-  ```yaml title="config.yaml"
-  http_redirect_addr: :80
-  ```
+```yaml title="config.yaml"
+http_redirect_addr: :80
+```
 
 1. **Set the authenticate service URL**
 
-  In your configuration file, replace `https://authenticate.pomerium.app` with your authenticate service URL:
+In your configuration file, replace `https://authenticate.pomerium.app` with your authenticate service URL:
 
-  ```yaml title="config.yaml"
-  authenticate_service_url: `https://authenticate.domain.com`
-  ```
+```yaml title="config.yaml"
+authenticate_service_url: `https://authenticate.domain.com`
+```
 
 1. **Remove certificates settings**
 
-  In the next tutorial you will add **Autocert** to manage production certificates for your upstream services. For now, comment out or remove these lines.
+In the next tutorial you will add **Autocert** to manage production certificates for your upstream services. For now, comment out or remove these lines.
 
-  ```yaml title="config.yaml"
-  # certificates:
-  #  - cert: /etc/pomerium/cert.pem
-  #  - key: /etc/pomerium/key.pem
-  ```
+```yaml title="config.yaml"
+# certificates:
+#  - cert: /etc/pomerium/cert.pem
+#  - key: /etc/pomerium/key.pem
+```
 
 1. **Remove cookie secret and shared secret settings**
 
-  You only need these settings if you’re setting up the Enterprise Console.  For now, it’s safe to remove them.
+You only need these settings if you’re setting up the Enterprise Console.  For now, it’s safe to remove them.
 
 1. **Add IdP configuration keys**
 
-  If you’re using GitHub as the IdP, you only need the following IdP keys:
+If you’re using GitHub as the IdP, you only need the following IdP keys:
 
-  ```yaml title="config.yaml"
-  idp_provider: 'github'
-  idp_client_id: <your_id>
-  idp_client_secret: <your_secret>
-  ```
+```yaml title="config.yaml"
+idp_provider: 'github'
+idp_client_id: <your_id>
+idp_client_secret: <your_secret>
+```
 
 1. **Add a signing key**
 
-  Copy the signing key from your Docker configuration file and use it in your new configuration, or generate a new one.
+Copy the signing key from your Docker configuration file and use it in your new configuration, or generate a new one.
 
 1. **Update your routes**
 
-  The default configuration has placeholder routes. Update the Verify route here with your new domain.
+The default configuration has placeholder routes. Update the Verify route here with your new domain.
 
-  For example:
+For example:
 
-  ```yaml title="config.yaml"
-    - from: https://verify.domain.com
-      to: https://verify.pomerium.com
-  ```
+```yaml title="config.yaml"
+- from: https://verify.domain.com
+  to: https://verify.pomerium.com
+```
 
-  :::note **About the Verify `to:` URL**
+:::note **About the Verify `to:` URL**
 
-  In the route above, the internal `to:` URL points to `verify.pomerium.com`. This domain is hosted by Pomerium. While you can deploy your own Verify instance, we will use the hosted instance in this tutorial so you don’t have to configure one yourself.
+In the route above, the internal `to:` URL points to `verify.pomerium.com`. This domain is hosted by Pomerium. While you can deploy your own Verify instance, we will use the hosted instance in this tutorial so you don’t have to configure one yourself.
 
-  :::
+:::
 
 1. **Update your policy**
 
-  Add a simple policy so you can test your configuration:
+Add a simple policy so you can test your configuration:
 
-  ```yaml title="config.yaml"
-  policy:
-    allow:
-      or:
-        - email:
-          is: user@example.com
-  ```
+```yaml title="config.yaml"
+policy:
+  allow:
+    or:
+      - email:
+        is: user@example.com
+```
 
-  Save and quit the Vim editor (run `:wq` if you’re not familiar). 
+Save and quit the Vim editor (run `:wq` if you’re not familiar).
 
 1. **Edit Pomerium service file**
 
-  You need to adjust the Pomerium service file so Linux will allow you to use port 443 without root.
+You need to adjust the Pomerium service file so Linux will allow you to use port 443 without root.
 
-  Edit the service file:
+Edit the service file:
 
-  ```sh
-  sudo systemctl edit pomerium.service
-  ```
+```sh
+sudo systemctl edit pomerium.service
+```
 
-  Add the following lines:
+Add the following lines:
 
-  ```sh
-  [Service]
-  AmbientCapabilities=CAP_NET_BIND_SERVICE
-  ```
+```sh
+[Service]
+AmbientCapabilities=CAP_NET_BIND_SERVICE
+```
 
 Save and leave the file.
 

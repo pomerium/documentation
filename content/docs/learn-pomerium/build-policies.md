@@ -2,7 +2,17 @@
 id: build-policies
 title: Build a Simple Policy
 description: In lesson 3, you'll learn how to build authorization policies and apply them to your routes.
-keywords: [pomerium, authorization policy, access control, secure access, reverse proxy, policy language, pomerium policy language, ppl]
+keywords:
+  [
+    pomerium,
+    authorization policy,
+    access control,
+    secure access,
+    reverse proxy,
+    policy language,
+    pomerium policy language,
+    ppl,
+  ]
 sidebar_label: 3. Build Policies
 ---
 
@@ -102,19 +112,16 @@ Now that you’ve briefly covered PPL, let’s jump into some simple examples:
 This example instructs Pomerium to only grant a user access if their email address is `example@domain.com`.
 
 ```markdown
-# This is a PPL Rule 
-policy: # Policy object starts here
-   allow: # At least one action
-     and:  # Logical operator
-        - email: # Criterion
-              is: example@domain.com # Value
+# This is a PPL Rule
+
+policy: # Policy object starts here allow: # At least one action and: # Logical operator - email: # Criterion is: example@domain.com # Value
 ```
 
 **Example 2**: Allow access based on the domain criterion
 
 Requiring an exact email address is one way to secure an app, but it won't let anyone else in without that specific email address. This obviously won't scale for an organzation where multiple members may require access to the same service.
 
-Instead of specifying the entire email address, you can write a policy that allows access if a user has the required `domain` in their email address (the part after `@`). 
+Instead of specifying the entire email address, you can write a policy that allows access if a user has the required `domain` in their email address (the part after `@`).
 
 The example below instructs Pomerium to only grant a user access if their email address matches the **domain** criterion’s value.
 
@@ -136,7 +143,7 @@ If neither of these conditions is true, the policy will deny a user access.
 
 ```yaml
 policy:
- allow:
+  allow:
     or:
       - domain:
           is: example.com
@@ -146,18 +153,18 @@ policy:
 
 :::tip
 
-The example above defines the `user` criterion as `user2`. In a real-world application, an identity provider may not reference the actual "username" value in a JWT; instead, it likely includes the user's unique ID, which is often the value of the `subject` or `user` claim (or both). 
+The example above defines the `user` criterion as `user2`. In a real-world application, an identity provider may not reference the actual "username" value in a JWT; instead, it likely includes the user's unique ID, which is often the value of the `subject` or `user` claim (or both).
 
 To ensure your policies are enforced correctly, use the unique ID instead of the actual username. For example, if the ID associated with `user2` is `1234567890#$%^`, the policy would look like this:
 
 ```yaml
 policy:
- allow:
+  allow:
     or:
       - domain:
           is: example.com
       - user:
-          is: "1234567890#$%^"
+          is: '1234567890#$%^'
 ```
 
 :::
@@ -234,7 +241,7 @@ routes:
 Docker Compose:
 
 ```yaml
-version: "3"
+version: '3'
 services:
   pomerium:
     image: pomerium/pomerium:latest
@@ -249,7 +256,7 @@ services:
   grafana:
     image: grafana/grafana:latest
     ports:
-    - 3000:3000
+      - 3000:3000
     volumes:
       - grafana-storage:/var/lib/grafana
 volumes:
