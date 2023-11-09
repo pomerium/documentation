@@ -23,7 +23,7 @@ Each tutorial builds on the same configuration files. In this tutorial, you’ll
 
 :::
 
-## What’s an Advanced Policy?
+## What’s an advanced policy?
 
 An “advanced policy” usually means the policy includes:
 
@@ -48,7 +48,7 @@ Think of it like this: you have a dog, and obviously you normally let your dog i
 
 :::
 
-### Evaluate Claims
+### Evaluate claims
 
 Let’s extend the policy above to include a claim from your JWT. If a user doesn’t have the matching claim in their JWT, Pomerium will deny the user access.
 
@@ -97,7 +97,7 @@ Replace `Your Name` with the value in your JWT.
 
 Now, if a user’s email address includes `example.com` _or_ their claim matches the `Name` claim, Pomerium will grant the user access.
 
-### Add a Deny Rule
+### Add a deny rule
 
 Now, let’s add a second `deny` block to this policy. We will write a policy that denies access if a user’s email starts with `admin`.
 
@@ -128,7 +128,7 @@ Organizations with multiple applications and services will want to know how they
 
 In the next tutorial, you’ll learn how to build more complex routes!
 
-### Configuration File State
+### Configuration file state
 
 By now, your configuration files should look similar to this:
 

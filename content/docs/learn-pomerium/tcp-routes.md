@@ -38,7 +38,7 @@ In this tutorial, you’ll secure several backend services behind Pomerium and a
 
 Pomerium’s CLI client comes with a `tcp` command that you can use to secure these connections.
 
-## Before you start
+## Prerequisites
 
 To complete this tutorial, you need:
 
@@ -57,35 +57,26 @@ Once you’ve installed Pomerium CLI, test the installation by running `pomerium
 
 ```shell-session
 $ pomerium-cli
-
 Usage:
-
-pomerium-cli [command]
+  pomerium-cli [command]
 
 Available Commands:
-
-completion  Generate the autocompletion script for the specified shell
-
-help        Help about any command
-
-k8s         commands for the kubernetes credential plugin
-
-tcp         creates a TCP tunnel through Pomerium
-
-version     version
+  completion  Generate the autocompletion script for the specified shell
+  help        Help about any command
+  k8s         commands for the kubernetes credential plugin
+  tcp         creates a TCP tunnel through Pomerium
+  version     version
 
 Flags:
-
--h, --help      help for pomerium-cli
-
--v, --version   version for pomerium-cli
+  -h, --help      help for pomerium-cli
+  -v, --version   version for pomerium-cli
 
 Use "pomerium-cli [command] --help" for more information about a command.
 ```
 
 If you see this output, success!
 
-### Configure Locally Trusted Certificates
+### Configure locally-trusted certificates
 
 Next, you will generate locally trusted certificates with `mkcert`.
 
@@ -108,7 +99,7 @@ This command will generate the following certificates in your project’s root d
 - `_wildcard.localhost.pomerium.io.pem`
 - `_wildcard.localhost.pomerium.io-key.pem`
 
-#### Update Pomerium Configuration
+#### Update Pomerium configuration
 
 In your Pomerium configuration file, add the `certificates` key:
 
@@ -118,11 +109,11 @@ certificates:
     key: /pomerium/key.pem
 ```
 
-#### Mount Wildcard Certificates
+#### Mount wildcard certificates
 
 In your Docker Compose file, bind mount your wildcard certificates as a volume in the Pomerium service:
 
-```yaml
+```yaml title="docker-compose.yaml"
 version: "3"
 services:
   pomerium:
@@ -136,9 +127,9 @@ services:
       - 443:443
 ```
 
-### Add TCP Connections
+### Add TCP connections
 
-#### Add Services to Docker Compose
+#### Add services to Docker Compose
 
 Next, add your services in Docker Compose:
 
@@ -166,7 +157,7 @@ pgsql:
       USER_NAME: user
 ```
 
-#### Configure TCP Routes
+#### Configure TCP routes
 
 Add the routes to these services in your Pomerium configuration file using the `tcp` syntax:
 
@@ -201,11 +192,11 @@ databroker_storage_type: postgres
 databroker_storage_connection_string: postgresql://postgres:postgres@pgsql:5432
 ```
 
-### Connect With Pomerium CLI
+### Connect with Pomerium CLI
 
 Now, use Pomerium CLI’s `tcp` command to connect the services and routes we defined in the previous steps.
 
-#### Connect to Postgres Databroker Service
+#### Connect to Postgres Databroker service
 
 First, let’s connect to our Postgres Databroker service using the `tcp` command:
 

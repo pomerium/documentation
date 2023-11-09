@@ -45,7 +45,7 @@ A user’s signed JWT acts as the stamp: In the event of other network configura
 
 :::
 
-## What Is a JWT?
+## What is a JWT?
 
 If you’re unfamiliar with JWTs, here’s a quick definition sourced from [JWT.io]([https://jwt.io/](https://jwt.io/)):
 
@@ -59,7 +59,7 @@ Check out [**this article**]([https://jwt.io/introduction](https://jwt.io/introd
 
 :::
 
-## How Do JWTs Work With Pomerium?
+## How do JWTs work with Pomerium?
 
 You can configure Pomerium to send the user’s JWT as a signed HTTP header in the request to access a service behind Pomerium.
 
@@ -79,7 +79,7 @@ Here’s how the JWT authentication flow looks at a high level:
 
 If that’s a lot to take in, don’t worry, Pomerium handles a lot of it for you! This is just for those that are interested in what’s happening behind the scenes.
 
-## Configure Identity Verification With JWTs
+## Configure identity verification with JWTs
 
 There are two settings that you need to configure to implement identity verification with signed headers:
 
@@ -103,7 +103,7 @@ In this way, global and route level settings allow you to fine tune your configu
 
 :::
 
-### Add Pass Identity Headers
+### Add pass identity headers
 
 In your Pomerium configuration file, add Pass Identity Headers to your routes:
 
@@ -129,7 +129,7 @@ routes:
 
 You **must** add `pass_identity_headers` to a route for identity verification to work. Otherwise, Pomerium won’t forward the signed JWT Assertion Header in the request.
 
-### Add a Signing Key
+### Add a signing key
 
 <details>
 
@@ -233,7 +233,7 @@ But, how does the upstream service verify the JWT?
 
 Let’s walk through the steps of manually verifying a JWT below.
 
-## Manually Verify the JWT
+## Manually verify the JWT
 
 ### Get the X-Pomerium-Jwt-Assertion header
 
@@ -253,7 +253,7 @@ You can see the Payload with the claims listed on the Verify page.
 
 From this JWT, we can see that Pomerium issued the JWT based on the `iss` and `aud` claims.
 
-### Verify the Signature
+### Verify the signature
 
 To verify the signature, copy the value of `ec_public.pem`. 
 
@@ -292,7 +292,7 @@ In this tutorial You learned how to:
 
 Now, you can verify the identities of your users using Pomerium. And, if your upstream service relies on JWTs for authentication or some other use case, you can easily set that flow up with Pomerium.
 
-### Configuration File State
+### Configuration file state
 
 By now, your configuration files should look similar to this:
 

@@ -31,7 +31,7 @@ Put simply, routing makes it possible for Pomerium to manage requests and respon
 
 Continuing our waiter-kitchen analogy, routing is when the client tells Pomerium, “Get me butter cookies. Topped with meringue, tastefully burnt.” and Pomerium forwards that to the kitchen, telling them, “Burnt meringue-topped butter cookies, table 5.” The client gets what they want without entering the kitchen, the kitchen knows what and where to send it, everyone’s happy.
 
-### How Routing Works in Pomerium
+### How routing works in Pomerium
 
 Each Pomerium route consists of a **From** and **To** field:
 
@@ -40,7 +40,7 @@ Each Pomerium route consists of a **From** and **To** field:
 
 When someone sends a request to access an upstream service, they are accessing the **From** URL. Pomerium receives the request and redirects the origin server’s response to its destination – the value of the **To** URL.
 
-## Define a Route in Pomerium
+## Define a route in Pomerium
 
 Now that you know how Routes work, let’s define one in your Pomerium configuration file. We will build a route to Grafana, an open-source analytics and monitoring tool.
 
@@ -85,7 +85,7 @@ services:
     - 3000:3000
 ```
 
-### Understanding Your Route
+### Understanding your route
 
 Now, go back to your Pomerium configuration file. Let’s quickly discuss your new Grafana route:
 
@@ -121,7 +121,7 @@ Again, this is because we’re using Docker Compose to power our services. `graf
 
 Within our Docker environment, Pomerium knows exactly where to send the response to.
 
-### Access Your New Route
+### Access your new route
 
 Now that you understand more about routing, run your containers:
 
@@ -157,7 +157,7 @@ Right now, the security is pretty lax; if you can authenticate, you’re in. So,
 
 **Next up**: Build a Simple Policy
 
-### Configuration File State
+### Configuration file state
 
 By now, your configuration files should look similar to this:
 

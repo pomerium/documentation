@@ -33,7 +33,7 @@ Each tutorial builds on the same configuration files. In this tutorial, you’ll
 
 :::
 
-## What Is an Authorization Policy?
+## What is an Authorization Policy?
 
 An **Authorization Policy** defines what resources a user (or group of users) can access within an organization. It’s the logic that tells Pomerium, “this HR employee isn’t authorized to access the engineering staging app.”
 
@@ -93,7 +93,7 @@ Matchers can be used with logical operators like criteria. PPL offers a variety 
 
 For an in-depth look at how PPL works, see the [Policy Language](/docs/capabilities/ppl#at-a-glance) page.
 
-## Example Policies with PPL
+## Example policies with PPL
 
 Now that you’ve briefly covered PPL, let’s jump into some simple examples:
 
@@ -164,7 +164,7 @@ policy:
 
 Now that we’ve covered some examples, it’s time to attach a policy to a route.
 
-## Build Policies for Your Routes
+## Build policies for your routes
 
 By now, your configuration file should have routes for the Verify service and Grafana. You may have noticed that these routes have the `allow_any_authenticated_user` setting attached to them.
 
@@ -207,7 +207,7 @@ These are the basics for a reverse proxy, which is intended to act as a public f
 
 We start with the first question by setting up **Identity Verification**.
 
-### Configuration File State
+### Configuration file state
 
 By now, your configuration files should look similar to this:
 

@@ -6,7 +6,7 @@ keywords: [acme, automatic certificate management environment, autocert, pomeriu
 sidebar_label: 9. Production Certificates
 ---
 
-# Production Certificates with Autocert
+# Production Certificates With Autocert
 
 In this tutorial, you’ll add production certificates with Autocert to your Pomerium instance.
 
@@ -55,7 +55,7 @@ Autocert *does not* secure the downstream connection (that is, the connection be
 
 :::
 
-### How Autocert Works With Pomerium
+### How Autocert works with Pomerium
 
 The Autocert setting relies on the **[Automatic Certificate Management Environment](https://datatracker.ietf.org/doc/html/rfc8555)** (ACME) protocol to automate the issuance and verification of certificates between a Certificate Authority (CA) and a user’s server (also known as the “applicant”).
 

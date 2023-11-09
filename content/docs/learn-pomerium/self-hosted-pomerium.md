@@ -38,6 +38,8 @@ Each tutorial builds on the same configuration files. In this tutorial, you’ll
 
 ## Self-host Pomerium
 
+This next step requires you to set up a VM instance where you will configure and run Pomerium. If you already have a VM instance, or you already know how to set one up, then you can skip this step. 
+
 ### Create a Virtual Machine Instance
 
 To self-host the authenticate service, you need a domain that you own. You also need to point your domain’s DNS servers to your VM’s public IP address.
@@ -46,19 +48,17 @@ One straightforward way to do this is to use Google’s Compute Engine API to sp
 
 1. Use Google’s Cloud Domains service to register a domain (the cost varies depending on the domain)
 
-2. Create a VM instance with Google’s Compute Engine service (for this tutorial, choose Debian Bullseye)
+1. Create a VM instance with Google’s Compute Engine service (for this tutorial, choose Debian Bullseye)
 
-1. Enable HTTP and HTTPS traffic and save
+1. Enable HTTP and HTTPS traffic as part of your Firewall rules
 
-4. Use Google’s Cloud DNS service to set up a DNS zone with a DNS name
+1. Use Google’s Cloud DNS service to set up a DNS zone with a DNS name
 
-5. In the DNS zone, create a wildcard DNS type A record (for example, `*.example.sandbox.com`)
+1. In the DNS zone, create a wildcard DNS type A record (for example, `*.example.sandbox.com`)
 
-6. In the **IPv4 Address 1** field, enter your VM’s **External IPv4 Address** (a publicly routable IP)
+1. In the **IPv4 Address 1** field, enter your VM’s **External IPv4 Address** (a publicly routable IP)
 
 If set up correctly, you can SSH into the VM and configure Pomerium.
-
-Once you have your VM running, you can tunnel into it with SSH (Google has a convenient **SSH** button next to the VM instance that allows you to authorize SSH keys and access your VM with SSH in the browser.)
 
 After you’re in the VM, it’s time to set up Pomerium.
 
@@ -256,4 +256,4 @@ This means your Pomerium instance is hosted in a private network. Because you ha
 
 This setting will secure connections between Pomerium and the upstream service, and it’s the final piece you need to self-host a production-ready Pomerium deployment.
 
-**Next up**: Production Certificates With Autocert
+**Next up**: [Production Certificates With Autocert](/docs/learn-pomerium/production-certificates)

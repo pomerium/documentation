@@ -24,7 +24,7 @@ Each tutorial builds on the same configuration files. In this tutorial, you’ll
 
 :::
 
-## Advanced Route Configuration Settings
+## Advanced route configuration settings
 
 Pomerium provides route-level settings that allow you to customize how the proxy service handles requests. More advanced configurations allow identity header pass-through, path and prefix rewrites, and request and response header modifications.
 
@@ -42,7 +42,7 @@ To see how some of these settings work, we will configure Pomerium and Docker Co
 
 Add the `httpbin` service to your Docker Compose file:
 
-```yaml
+```yaml title="docker-compose.yaml"
 httpbin:
     image: kennethreitz/httpbin
     ports:
@@ -88,42 +88,24 @@ Now, scroll down to **Response body**. You should see a payload like this:
 
 ```json
 {
-
-"headers": {
-
-"Accept": "application/json",
-
-"Accept-Encoding": "gzip, deflate, br",
-
-"Accept-Language": "en-US,en;q=0.9",
-
-"Cookie": "",
-
-"Host": "httpbin",
-
-"Referrer": "https://httpbin.localhost.pomerium.io/",
-
-"Sec-Ch-Ua": "\"Google Chrome\";v=\"117\", \"Not;A=Brand\";v=\"8\", \"Chromium\";v=\"117\"",
-
-"Sec-Ch-Ua-Mobile": "?0",
-
-"Sec-Ch-Ua-Platform": "\"macOS\"",
-
-"Sec-Fetch-Dest": "empty",
-
-"Sec-Fetch-Mode": "cors",
-
-"Sec-Fetch-Site": "same-origin",
-
-"User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36",
-
-"X-Envoy-Expected-Rq-Timeout-Ms": "30000",
-
-"X-Envoy-Internal": "true",
-
-"X-Pomerium-Jwt-Assertion": "..."
-
-	}
+  "headers": {
+    "Accept": "application/json",
+    "Accept-Encoding": "gzip, deflate, br",
+    "Accept-Language": "en-US,en;q=0.9",
+    "Cookie": "",
+    "Host": "httpbin",
+    "Referer": "https://httpbin.localhost.pomerium.io/",
+    "Sec-Ch-Ua": "\"Google Chrome\";v=\"119\", \"Chromium\";v=\"119\", \"Not?A_Brand\";v=\"24\"",
+    "Sec-Ch-Ua-Mobile": "?0",
+    "Sec-Ch-Ua-Platform": "\"macOS\"",
+    "Sec-Fetch-Dest": "empty",
+    "Sec-Fetch-Mode": "cors",
+    "Sec-Fetch-Site": "same-origin",
+    "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36",
+    "X-Envoy-Expected-Rq-Timeout-Ms": "30000",
+    "X-Envoy-Internal": "true",
+    "X-Pomerium-Jwt-Assertion": "...",
+  }
 }
 ```
 
@@ -148,7 +130,7 @@ So, this adds headers from the JWT to our request, but what if you wanted to rem
 
 This is where Pomerium’s flexibility comes in! Let’s try a few examples using our header settings.
 
-### Set and Remove Request Headers
+### Set and remove request headers
 
 Under your `httpbin` route, add the following settings:
 
@@ -166,7 +148,7 @@ We’re telling Pomerium to add a header to the request called `X-Set-Request-He
 
 If you run `docker compose up` and check HTTPBin again, you’ll notice both the claims headers have been removed, and the test `X-Set-Request-Headers` header is there, too.
 
-### Set Response Headers
+### Set response headers
 
 Similarly, you can configure responses as well:
 
@@ -186,7 +168,7 @@ If you go HTTPBin’s **Response inspection** row and test a request, you’ll n
 
 ![View response headers](./img/advanced-routes/response-header.png)
 
-### Set the Host Header
+### Set the Host header
 
 You can also control the `Host:` header’s behavior, which is useful if your upstream server expects a certain value for this header.  
 
@@ -211,7 +193,7 @@ That’s because this setting preserves the Host header from the proxied request
 
 Alternatively, you can also use `host_rewrite_header` to change the Host header’s value to that of any incoming request (in this case, it would still be `httpbin.localhost.pomerium.io`).
 
-```yaml
+```yaml title="config.yaml"
 - from: https://httpbin.localhost.pomerium.io
     to: https://httpbin:80
     set_response_headers:
@@ -225,22 +207,22 @@ Alternatively, you can also use `host_rewrite_header` to change the Host header�
 		host_rewrite_header: true
 ```
 
-### Configure Redirects
+### Configure redirects
 
 What if you wanted to redirect users?
 
 Pomerium makes this simple to implement. Just swap out `to:` with the `redirect:` syntax:
 
 ```yaml title="config.yaml"
--from: https://httpbin.localhost.pomerium.io
-redirect: {'host_redirect': 'verify.localhost.pomerium.io'}
+- from: https://httpbin.localhost.pomerium.io
+  redirect: {'host_redirect': 'verify.localhost.pomerium.io'}
 ```
 
 Now, when you access `httpbin`, Pomerium will redirect you to the Verify service.
 
-### Configure Prefix and Path Settings
+### Configure prefix and path settings
 
-#### Configure Node Server
+#### Configure Node server
 
 To demonstrate these settings, we must add one more service to our configuration: A simple Node HTTP server.
 
@@ -297,7 +279,7 @@ Similarly, if you go to `localhost:5001/admin`, you should see `This is an admin
 
 ![The 'Admin only' page from our Node server](./img/advanced-routes/node-admin-only.png)
 
-#### Dockerize Node Server
+#### Dockerize Node server
 
 Next, we will Dockerize our Node server. In the `./app` directory, create the following files:
 
@@ -308,31 +290,24 @@ In `Dockerfile`, add the following instructions:
 
 ```yaml title="Dockerfile"
 # pull the Node.js Docker image
-
 FROM node:alpine
 
 # create the directory inside the container
-
 WORKDIR /usr/src/app
 
 # copy the package.json files from local machine to the workdir in container
-
 COPY package*.json ./
 
 # run npm install in our local machine
-
 RUN npm install
 
 # copy the generated modules and all other files to the container
-
 COPY . .
 
 # our app is running on port 5001 within the container, so need to expose it
-
 EXPOSE 5001
 
 # the command that starts our app
-
 CMD ["node", "index.js"]
 ```
 
@@ -340,13 +315,12 @@ In `.dockerignore`, add:
 
 ```yaml title=".dockerignore"
 node_modules
-
 npm-debug.log
 ```
 
 In Docker Compose, add your Node server:
 
-```yaml
+```yaml title="docker-compose.yaml"
 nodeserver:
     build:
         context: ./app
@@ -356,7 +330,7 @@ nodeserver:
 
 In your configuration file, add a route to the Node server:
 
-```yaml
+```yaml title="config.yaml"
 routes:
   - from: https://nodeserver.localhost.pomerium.io
     to: http://nodeserver:5001
@@ -404,7 +378,7 @@ Now, if you navigate to `https://nodeserver.localhost.pomerium.io/admin`, Pomeri
 
 If you don’t include the `/admin` prefix, the request will `404`.
 
-## Clean Up
+## Clean up
 
 This was just to show you Pomerium’s flexibility when it comes to advanced routes. We won’t be using the HTTPbin or Node server services going forward. To keep your configuration files clean and easy to manage, remove the following services and routes:
 
@@ -429,7 +403,7 @@ You also added per-route settings that handle redirects _and_ modify requests, r
 
 Now that you’ve seen what you can do with routes, it’s time to learn how to proxy TCP connections with Pomerium!
 
-### Configuration File State
+### Configuration file state
 
 After cleaning up your files, your configuration should look similar to this:
 
@@ -439,8 +413,8 @@ authenticate_service_url: https://authenticate.pomerium.app
 signing_key: LS0tLS1CRUdJTiBFQyBQUklWQVRFIEtFWS0tLS0tCk1IY0NBUUVFSUVSNThaeDA2SHJXTW9PUTRaNjlMaDdMZUtFZW5TSmJZcHJvZ3V3TEl0blNvQW9HQ0NxR1NNNDkKQXdFSG9VUURRZ0FFK1FtamZKQ2ovdzkrOUhrRDVlbTlIZFhRM3ViUEhIdWNOMTlNOXJxR05PeEpTRmR3VHgvaAphdVkvcVFSWWR0YVpnVEpEUWZSYVQ2Q1pPYndSYTl2TXNnPT0KLS0tLS1FTkQgRUMgUFJJVkFURSBLRVktLS0tLQo=
 
 routes:
-  - from: https://verify.localhost.pomerium.io # Host header of incoming request
-    to: http://verify:8000 # Destination host
+  - from: https://verify.localhost.pomerium.io
+    to: http://verify:8000
     pass_identity_headers: true
     policy:
       allow:
