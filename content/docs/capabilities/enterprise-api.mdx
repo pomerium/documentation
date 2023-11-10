@@ -14,29 +14,29 @@ import TabItem from '@theme/TabItem';
 
 The Pomerium Enterprise Console supports programmatic interaction through a gRPC API. This page covers enabling and authenticating to the API.
 
-## Before You Begin
+## Before you begin
 
 This doc assumes:
 
-- You already have installed Pomerium and Pomerium Enterprise,
-- The connection to the enterprise console service is encrypted.
+- You've installed [Pomerium Core](/docs/deploy/core) and [Pomerium Enterprise](/docs/deploy/enterprise/install)
+- The connection to the Enterprise Console service is encrypted
 
-## Configure a New Route
+## Configure a new route
 
 1. We suggest configuring the route for API access in the open-source Pomerium. That way changes made through the API that might break access to the console GUI will not break access to the API route.
 
    ```yaml
-   - from: https://console-api.pomerium.localhost.io
+   - from: https://console-api.localhost.pomerium.io
      to: https://pomerium-console-domain-name:8702
      pass_identity_headers: true
      allow_any_authenticated_user: true
      tls_custom_ca_file: /path/to/rootCA.pem # See https://www.pomerium.com/reference/#tls-custom-certificate-authority
    ```
 
-1. You must also update the `audience` key to include the new route's `from` value:
+1. In your Enterprise Console configuration file, update the `audience` key to include the new route's `from` value:
 
    ```yaml
-   audience: 'console.pomerium.localhost.io,console-api.pomerium.localhost.io'
+   audience: 'console.localhost.pomerium.io,console-api.localhost.pomerium.io'
    ```
 
    If you're running Pomerium Enterprise as a system service, restart the daemon.
@@ -55,7 +55,7 @@ Service accounts created in any Namespace other than **Global** will include a r
 
 :::
 
-## Install The Library
+## Install the library
 
 <Tabs>
 <TabItem value="Python" label="Python">
@@ -74,7 +74,7 @@ go get github.com/pomerium/enterprise-client-go
 </TabItem>
 </Tabs>
 
-## Test the API Connection
+## Test the API connection
 
 The repositories for our [Python][client-py] and [Go][client-go] implementations include example scripts:
 
