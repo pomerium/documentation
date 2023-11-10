@@ -6,11 +6,14 @@ keywords: [identity headers, reverse proxy]
 sidebar_label: (Global) Pass Identity Headers
 ---
 
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
 # (Global) Pass Identity Headers
 
 ## Summary
 
-When set to true, the **Global Pass Identity Headers** setting sends identity headers to all routes defined in your configuration file.
+When set to true, the **Global Pass Identity Headers** setting sends identity headers to all upstream applications.
 
 If a route already has the route-level `pass_identity_headers` setting configured, the route option will take precedence over the global setting.
 
@@ -21,7 +24,7 @@ Identity headers include:
 
 :::info
 
-If you only want to send identity headers to a specific route, see the route-level [**Pass Identity Headers**](/docs/reference/routes/pass-identity-headers) setting.
+To only send identity headers to a specific upstream application, see the route-level [**Pass Identity Headers**](/docs/reference/routes/pass-identity-headers) setting.
 
 :::
 
@@ -32,36 +35,45 @@ If you only want to send identity headers to a specific route, see the route-lev
 
 | **YAML**/**JSON** setting | **Type**  | **Usage**    | **Default** |
 | :------------------------ | :-------- | :----------- | :---------- |
-| `pass_identity_headers`   | `boolean` | **optional** | *`false`     |
-
-\* If neither the **global** _nor_ **route-level** `pass_identity_headers` settings are defined, both settings will default to `false`.
-
-:::note
-
-You **must** include a [**Signing Key**](/docs/reference/signing-key) with this setting. Without a signing key, Pomerium can't sign the `X-Pomerium-Jwt-Assertion` header, which will result in an empty keyset at the JWKS endpoint.
-
-:::
+| `pass_identity_headers`   | `boolean` | **optional** | \*`false`     |
 
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
 
-TODO: Get screenshot for this
+Configure **(Global) Pass Identity Headers** in the Console with the **Pass Identity Headers** toggle button.
+
+The button has three states:
+
+- **Unset** ("-") uses the value in your configuration file
+- **Checkmark** sets `pass_identity_headers` to `true`
+- **Empty** sets `pass_identity_headers` to `false`
+
+![Configure Global Pass Identity Headers setting in the console](./img/pass-identity-headers/global-pass-identity-headers.gif)
 
 </TabItem>
 <TabItem value="Kubernetes" label="Kubernetes">
 
-TODO: Get details for K8s
+| **Name**      | **Type** | **Usage** | **Default** |
+| :------------ | :------- | :--- |:---------- |
+| `passIdentityHeaders` | `boolean` | **optional** | \*`false` |
 
 </TabItem>
 </Tabs>
 
+\* If neither the **global** _nor_ **route-level** `pass_identity_headers` settings are defined, both settings will default to `false`.
+
 ### Examples
 
 ```yaml
-
+# config file key
 pass_identity_headers: true
 
 routes:
   - from: https://service.corp.example.io
     to: http://localhost:3000
+```
+
+```yaml
+# ingress controller
+passIdentityHeaders: 'true'
 ```
