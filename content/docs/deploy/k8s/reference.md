@@ -4,10 +4,10 @@ sidebar_label: Reference
 description: Reference for Pomerium settings in Kubernetes deployments.
 ---
 
-Pomerium-specific parameters should be configured via the `ingress.pomerium.io/Pomerium` CRD. The default Pomerium deployment is listening to the CRD `global`, that may be customized via command line parameters.
+Pomerium-specific parameters should be configured via the `ingress.pomerium.io/Pomerium` CRD.
+The default Pomerium deployment is listening to the CRD `global`, that may be customized via command line parameters.
 
 Pomerium posts updates to the CRD <a href="#status">`/status`</a>:
-
 ```shell
 kubectl describe pomerium
 ```
@@ -160,6 +160,22 @@ PomeriumSpec defines Pomerium-specific configuration parameters.
         <tr>
             <td>
                 <p>
+                <code>passIdentityHeaders</code>&#160;&#160;
+                
+                    <strong>boolean</strong>&#160;
+                
+                </p>
+                <p>
+                    
+                    PassIdentityHeaders sets the <a href="https://www.pomerium.com/docs/reference/routes/pass-identity-headers">pass identity headers</a> option.
+                </p>
+                
+            </td>
+        </tr>
+    
+        <tr>
+            <td>
+                <p>
                 <code>programmaticRedirectDomains</code>&#160;&#160;
                 
                     <strong>[]string</strong>&#160;
@@ -262,6 +278,8 @@ PomeriumSpec defines Pomerium-specific configuration parameters.
     </tbody>
 </table>
 
+
+
 ### `authenticate`
 
 Authenticate sets authenticate service parameters. If not specified, a Pomerium-hosted authenticate service would be used.
@@ -310,6 +328,8 @@ Authenticate sets authenticate service parameters. If not specified, a Pomerium-
     
     </tbody>
 </table>
+
+
 
 ### `cookie`
 
@@ -421,6 +441,8 @@ Cookie defines Pomerium session cookie options.
     
     </tbody>
 </table>
+
+
 
 ### `identityProvider`
 
@@ -572,6 +594,8 @@ IdentityProvider configure single-sign-on authentication and user identity detai
     </tbody>
 </table>
 
+
+
 ### `postgres`
 
 Postgres specifies PostgreSQL database connection parameters
@@ -640,6 +664,8 @@ Postgres specifies PostgreSQL database connection parameters
     
     </tbody>
 </table>
+
+
 
 ### `redis`
 
@@ -726,6 +752,8 @@ Redis defines REDIS connection parameters
     </tbody>
 </table>
 
+
+
 ### `refreshDirectory`
 
 RefreshDirectory is no longer supported, please see <a href="https://docs.pomerium.com/docs/overview/upgrading#idp-directory-sync">Upgrade Guide</a>.
@@ -776,6 +804,8 @@ RefreshDirectory is no longer supported, please see <a href="https://docs.pomeri
     </tbody>
 </table>
 
+
+
 ### `storage`
 
 Storage defines persistent storage for sessions and other data. See <a href="https://www.pomerium.com/docs/topics/data-storage">Storage</a> for details. If no storage is specified, Pomerium would use a transient in-memory storage (not recommended for production).
@@ -821,6 +851,8 @@ Storage defines persistent storage for sessions and other data. See <a href="htt
     
     </tbody>
 </table>
+
+
 
 ### `timeouts`
 
@@ -891,6 +923,8 @@ Timeout specifies the <a href="https://www.pomerium.com/docs/reference/global-ti
     </tbody>
 </table>
 
+
+
 ## Status
 
 PomeriumStatus represents configuration and Ingress status.
@@ -936,6 +970,8 @@ PomeriumStatus represents configuration and Ingress status.
     
     </tbody>
 </table>
+
+
 
 ### `ingress`
 
@@ -1032,6 +1068,8 @@ ResourceStatus represents the outcome of the latest attempt to reconcile relevan
     </tbody>
 </table>
 
+
+
 ### `settingsStatus`
 
 SettingsStatus represent most recent main configuration reconciliation status.
@@ -1126,3 +1164,6 @@ SettingsStatus represent most recent main configuration reconciliation status.
     
     </tbody>
 </table>
+
+
+
