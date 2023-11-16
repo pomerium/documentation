@@ -23,7 +23,9 @@ The deprecated `set_authorization_header` configuration setting has been removed
 
 #### Base64-encoded Certificates
 
-Previously, the `certificates` key supported base64-encoded certificates as a value. We've removed support for base64-encoded certificates for this setting and now require that you only use the relative file location.
+Previously, the `certificates` key supported base64-encoded certificates as a value (this option was not documented). We've removed support for base64-encoded certificates for this setting and now require that you only use the relative file location.
+
+**Note:** The `certificates` key is distinct from the `certificate` key. The `certificate` key setting still supports base64-encoded certificates; the `certificates` _list_ does not.
 
 See [Certificates](/docs/reference/certificates#certificates) for more information.
 
@@ -36,12 +38,6 @@ See [Persistence](/docs/internals/data-storage#postgres) for more information.
 ### Performance
 
 v0.24.0 includes several performance enhancements for Pomerium Core. See the sections below for more information.
-
-#### Smaller configuration chunks
-
-Previously, on each configuration change, Console would send the entire configuration to Core in a number of large chunks. Console would avoid sending any unchanged chunks, but due to the order of configuration objects within these chunks, a change affecting one chunk could “spill” over into all subsequent chunks, and so on average each update would still send a significant portion of the entire configuration.
-
-Now, Console will send each settings, route, or certificate update to Core as a single record.
 
 #### Databroker state sync
 
