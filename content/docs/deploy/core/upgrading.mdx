@@ -13,6 +13,52 @@ sidebar_position: 10
 
 # Upgrade guide
 
+## 0.24.0
+
+### Breaking
+
+#### Set Authorization Header
+
+The deprecated `set_authorization_header` configuration setting has been removed. You can use the [Set Request Headers](/docs/reference/routes/headers#set-request-headers) setting to pass IdP tokens to upstream services in any header.
+
+#### Base64-encoded Certificates
+
+Previously, the `certificates` key supported base64-encoded certificates as a value. We've removed support for base64-encoded certificates for this setting and now require that you only use the relative file location.
+
+See [Certificates](/docs/reference/certificates#certificates) for more information.
+
+#### Remove Redis Storage Backend
+
+Support for Redis as a storage backend for Pomerium has been completely removed. We recommend a dedicated Postgres instance for Pomerium to provide the strongest security and performance guarantees.
+
+See [Persistence](/docs/internals/data-storage#postgres) for more information.
+
+### Performance
+
+v0.24.0 includes several performance enhancements for Pomerium Core. See the sections below for more information.
+
+#### Smaller configuration chunks
+
+Previously, on each configuration change, Console would send the entire configuration to Core in a number of large chunks. Console would avoid sending any unchanged chunks, but due to the order of configuration objects within these chunks, a change affecting one chunk could “spill” over into all subsequent chunks, and so on average each update would still send a significant portion of the entire configuration.
+
+Now, Console will send each settings, route, or certificate update to Core as a single record.
+
+#### Databroker state sync
+
+Previously, on every sync tick we would request all configuration chunks one by one in order to detect what need be changed (and what has to be deleted). In v24 we have a single databroker syncer.
+
+#### Policy evaluator reuse
+
+The authorize service maintains one policy evaluator object for each route, which is responsible for all authorization decisions for that route.
+
+Previously, the authorize service would recreate all policy evaluator objects in response to a configuration change.
+
+Now, it will avoid recreating policy evaluator objects for any policies that have not changed, provided that the overall settings are compatible between the old and new configuration. (Some settings affect all routes, e.g. the [downstream_mtls](https://www.pomerium.com/docs/reference/downstream-mtls-settings) options, and changes to these options will still require all policy evaluators to be recreated.)
+
+#### Parallelization
+
+Core will now build route configuration objects and policy evaluator objects in parallel, each using up to half the number of available CPU cores.
+
 ## 0.23.0
 
 ### New
@@ -153,7 +199,7 @@ There are several data model changes in this release that are not backward compa
 
 ### Breaking
 
-#### Devices need be re-enrolled
+#### Devices need to be re-enrolled
 
 The [Device Identity (beta)](/docs/capabilities/device-identity) data model had an internal change that is not forward compatible. Your enrolled devices will need be re-registered. Your existing policies may need to be updated.
 
