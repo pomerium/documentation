@@ -2,6 +2,7 @@
 title: Learn Pomerium
 id: learn-pomerium
 label: Learn Pomerium
+description: Welcome to Learn Pomerium, a series of guided tutorials designed to teach you the fundamentals of Pomerium so you can secure your applications with confidence.
 ---
 
 ## Learn Pomerium
@@ -12,25 +13,20 @@ These tutorials provide a structured approach to learning how Pomerium works. Th
 
 Head to [**Get Started**](/docs/learn-pomerium/get-started) to get a Pomerium instance up and running. From there, you'll add on to your configuration file in each tutorial.
 
-Below, we’ve included some background information about Pomerium and reverse proxies (if you're unfamiliar).
+Below, we’ve included some background information about Pomerium and reverse proxies (if you're not unfamiliar).
 
 ## Reverse Proxies: a Primer
 
 ### What is a Reverse Proxy?
 
-A reverse proxy is a server that sits between a client (like your browser) and a web application’s origin server. The reverse proxy functions as an intermediary between the client and the origin server. If it helps, think of a waiter that brings your order to the kitchen to translate customer orders into kitchen-speak and protect the kitchen from customer contamination.
-
-For example, when you send a request to visit a website that sits behind a reverse proxy:
-
-- The reverse proxy receives the request before forwarding it to the origin server
-- The origin server receives the request and sends the appropriate response
-- The reverse proxy receives the response and forwards it to the client
+A reverse proxy is a server that sits between a client (like your browser) and an application’s origin server. When a client sends a request to an application behind a reverse proxy, the proxy receives the request before forwarding it to the origin server. When the origin server responds, the reverse proxy receives the request before sending it back to the client.
 
 This model affords several benefits:
 
+
 #### **Security**
 
-Because reverse proxies sit in front of an application’s origin server, the origin server’s IP is hidden. If a malicious attacker attempts to overload or compromise the origin server, the reverse proxy would receive the request.
+Because reverse proxies sit in front of an application’s origin server, the origin server’s IP address is hidden. If a malicious attacker attempts to overload or compromise the origin server, the reverse proxy would be targeted instead.
 
 #### **Load Balancing**
 
@@ -40,15 +36,29 @@ You can use reverse proxies in your load balancing strategy to distribute traffi
 
 TLS encryption is computationally expensive for an origin server. A reverse proxy relieves the burden on the origin server because it can decrypt incoming requests and encrypt outgoing responses.
 
+Check out these posts to learn more:
+- [Proxy vs. Reverse Proxy](https://www.pomerium.com/blog/proxy-vs-reverse-proxy/)
+- [Zert Trust](/docs/concepts/zero-trust)
+
 ## Pomerium Architecture
 
-Head to our [Architecture](/docs/internals/architecture) page for a quick rundown of how Pomerium works.
+To use Pomerium effectively, it helps to understand how Pomerium communicates with clients, identity providers, and upstream applications.
+
+### Request Lifecycle
+
+This diagram illustrates how Pomerium handles client requests to access upstream applications:
+
+![The request lifecyle](./internals/img/architecture/pomerium-request-flow.svg)
+
+Head to our [Architecture](/docs/internals/architecture) page to see these steps in detail and to learn more about how Pomerium at a system and component level.
 
 ## Pomerium Terminology
 
 You’ll come across a lot of reverse proxy terminology in our documentation and guided tutorials that may not be intuitive or understandable at first.
 
-Below is are a few terms you should know:
+Below are are a few terms you should know:
 
-- **Resource**, **Asset**, **App**, or **Service**: These all essentially represent the same thing: a sensitive destination within your private network that you want to secure behind Pomerium. We typically try not to use “resource” or “asset” because, well, they can mean different things depending on the context.
+- **Resource**, **Asset**, **Application**, or **Service**: These terms all essentially represent the same thing: a sensitive destination within your private network that you want to secure behind Pomerium. We typically try not to use “resource” or “asset” because, well, they can mean different things depending on the context.
 - **Downstream** and **Upstream**: Pomerium sits between a client and a web app or service. If Pomerium is in the middle, then the client is “downstream” of Pomerium, and the protected app or service is “upstream” of Pomerium.
+
+See our [Glossary](/docs/internals/glossary) to review more terms.
