@@ -4,6 +4,7 @@ title: Self-Host Pomerium
 description: In this tutorial, you'll learn how to self-host Pomerium.
 keywords: [authenticate service url, pomerium, self-hosted, reverse proxy]
 sidebar_label: 8. Self-Host Pomerium
+sidebar_position: 8
 ---
 
 # Self-Hosted Authenticate Service and Identity Provider

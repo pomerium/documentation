@@ -14,6 +14,7 @@ keywords:
     ppl,
   ]
 sidebar_label: 3. Build Policies
+sidebar_position: 3
 ---
 
 # Build a Simple Policy

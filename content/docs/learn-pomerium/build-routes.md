@@ -4,6 +4,7 @@ title: Build Simple Routes
 description: In lesson 2, you'll learn how to define routes in your Pomerium configuration file.
 keywords: [routing, pomerium, external route, internal route, reverse proxy]
 sidebar_label: 2. Build Routes
+sidebar_position: 2
 ---
 
 # Build a Simple Route

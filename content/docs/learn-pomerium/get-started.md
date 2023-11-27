@@ -5,6 +5,7 @@ title: Get Started With Pomerium
 description: In lesson 1 of Learn Pomerium, you'll configure and run a Pomerium instance with Docker.
 keywords: [pomerium, docker, docker compose, configuration file, reverse proxy]
 sidebar_label: 1. Get Started
+sidebar_position: 1
 ---
 
 # Get Started With Pomerium

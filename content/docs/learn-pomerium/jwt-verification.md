@@ -15,6 +15,7 @@ keywords:
     signing key,
   ]
 sidebar_label: 4. JWT Verification
+sidebar_position: 4
 ---
 
 # Identity Verification With JWTs

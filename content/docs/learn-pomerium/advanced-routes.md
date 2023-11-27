@@ -5,6 +5,7 @@ title: Build Advanced Routes
 description: In this lesson, you'll learn how to build advanced routes.
 keywords: [reverse proxy, routes, advanced routing, routing]
 sidebar_label: 6. Advanced Routes
+sidebar_position: 6
 ---
 
 # Build Advanced Routes

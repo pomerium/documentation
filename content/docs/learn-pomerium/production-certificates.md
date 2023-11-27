@@ -12,6 +12,7 @@ keywords:
     pomerium,
   ]
 sidebar_label: 9. Production Certificates
+sidebar_position: 9
 ---
 
 # Production Certificates With Autocert

@@ -4,6 +4,7 @@ title: Putting It All Together
 description: This tutorial summarizes all that you've learned with suggestions on what to do next.
 keywords: [reverse proxy, pomerium, production]
 sidebar_label: 10. Conclusion
+sidebar_position: 10
 ---
 
 # Putting It All Together

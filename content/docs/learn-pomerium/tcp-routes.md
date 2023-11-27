@@ -6,6 +6,7 @@ description: In this lesson, you'll secure TCP connections to SSH, Postgres, and
 keywords:
   [tcp, connection, ssh, postgres, redis, reverse proxy, certificates, pomerium]
 sidebar_label: 7. TCP Routes
+sidebar_position: 7
 ---
 
 # Build TCP Routes
