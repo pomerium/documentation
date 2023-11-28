@@ -23,7 +23,7 @@ Specifying `tcp+https` for the scheme enables [TCP proxying](/docs/capabilities/
 
 The `URL` must contain a **scheme** and **hostname** and cannot contain a path.
 
-:::warning
+:::note
 
 Only secure schemes (`https` and `tcp+https`) are supported.
 
@@ -63,6 +63,14 @@ routes:
   - from: tcp+https://ssh.corp.example.com:22
   - to: tcp://example.com:22
 ```
+
+:::note
+
+If your configuration includes multiple routes with identical definitions, Pomerium will process these routes in the order they are defined in your configuration file.
+
+See [**Routing - Route matching order** ](/docs/capabilities/routing#route-matching-order) for more information.
+
+:::
 
 ## Wildcard From Routes
 
