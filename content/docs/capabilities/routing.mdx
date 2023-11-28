@@ -407,6 +407,23 @@ routes:
       - http://myapp-srv-5:8080,10
 ```
 
+## Route matching order
+
+If your configuration includes multiple routes with identical definitions, Pomerium will process these routes in the order they are defined in your configuration file.
+
+In the example below, if Pomerium receives a request to access `https://a.example.com:8080`, Pomerium will first check `https://a.example.com:8080/api` before matching the request with `https://a.example.com:8080`.
+
+```yaml title="config.yaml"
+- from: https://a.example.com:8080
+  to: http://example:8080
+  prefix: /api
+  allow_any_authenticated_user: true
+
+- from: https://a.example.com:8080
+  to: http://example:8080
+  allow_any_authenticated_user: true
+```
+
 ## Further reading
 
 - [Introduction to modern network load balancing and proxying](https://blog.envoyproxy.io/introduction-to-modern-network-load-balancing-and-proxying-a57f6ff80236)
