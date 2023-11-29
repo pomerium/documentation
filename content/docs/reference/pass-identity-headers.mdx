@@ -1,32 +1,26 @@
 ---
-id: global-pass-identity-headers
-title: (Global) Pass Identity Headers
+id: pass-identity-headers
+title: Pass Identity Headers
 description: The global Pass Identity Headers setting passes identity headers to all routes by default.
 keywords: [identity headers, reverse proxy]
-sidebar_label: (Global) Pass Identity Headers
+sidebar_label: Pass Identity Headers
 ---
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-# (Global) Pass Identity Headers
+# Pass Identity Headers
 
 ## Summary
 
-When set to true, the **Global Pass Identity Headers** setting sends identity headers to all upstream applications.
+When set to true, the **Pass Identity Headers** setting sends identity headers to all upstream applications.
 
-If a route already has the route-level `pass_identity_headers` setting configured, the route option will take precedence over the global setting.
+If a route already has the [route-level Pass Identity Headers](/docs/reference/routes/pass-identity-headers) setting set, the route setting will take precedence over the global setting.
 
 Identity headers include:
 
 - `X-Pomerium-Jwt-Assertion`
 - `X-Pomerium-Claim-*` (see [JWT Claim Headers](/docs/reference/jwt-claim-headers) for more information)
-
-:::info
-
-To only send identity headers to a specific upstream application, see the route-level [**Pass Identity Headers**](/docs/reference/routes/pass-identity-headers) setting.
-
-:::
 
 ## How to configure
 
@@ -40,7 +34,7 @@ To only send identity headers to a specific upstream application, see the route-
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
 
-Configure **(Global) Pass Identity Headers** in the Console with the **Pass Identity Headers** toggle button.
+Configure **Pass Identity Headers** in the Console with the **Pass Identity Headers** toggle button.
 
 The button has three states:
 
@@ -65,7 +59,6 @@ The button has three states:
 ### Examples
 
 ```yaml
-# config file key
 pass_identity_headers: true
 
 routes:
@@ -74,6 +67,5 @@ routes:
 ```
 
 ```yaml
-# ingress controller
 passIdentityHeaders: 'true'
 ```
