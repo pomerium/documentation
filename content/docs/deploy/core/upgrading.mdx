@@ -13,6 +13,46 @@ sidebar_position: 10
 
 # Upgrade guide
 
+## 0.24.0
+
+### Breaking
+
+#### Set Authorization Header
+
+The deprecated `set_authorization_header` configuration setting has been removed. You can use the [Set Request Headers](/docs/reference/routes/headers#set-request-headers) setting to pass IdP tokens to upstream services in any header.
+
+#### Base64-encoded Certificates
+
+Previously, the `certificates` key supported base64-encoded certificates as a value (this option was not documented). We've removed support for base64-encoded certificates for this setting and now require that you only use the relative file location.
+
+**Note:** The `certificates` key is distinct from the `certificate` key. The `certificate` key setting still supports base64-encoded certificates; the `certificates` _list_ does not.
+
+See [Certificates](/docs/reference/certificates#certificates) for more information.
+
+#### Redis Storage Backend
+
+PostgreSQL has been the recommended databroker storage backend since v0.18. Support for Redis has now been removed.
+
+See [Persistence](/docs/internals/data-storage#postgres) for more information.
+
+### Performance
+
+v0.24.0 includes several performance enhancements for Pomerium Core. See the sections below for more information.
+
+
+
+#### Policy evaluator reuse
+
+The authorize service maintains one policy evaluator object for each route, which is responsible for all authorization decisions for that route.
+
+Previously, the authorize service would recreate all policy evaluator objects in response to a configuration change.
+
+Now, it will avoid recreating policy evaluator objects for any policies that have not changed, provided that the overall settings are compatible between the old and new configuration. (Some settings affect all routes, e.g. the [downstream_mtls](https://www.pomerium.com/docs/reference/downstream-mtls-settings) options, and changes to these options will still require all policy evaluators to be recreated.)
+
+#### Parallelization
+
+Core will now build route configuration objects and policy evaluator objects in parallel, each using up to half the number of available CPU cores.
+
 ## 0.23.0
 
 ### New
@@ -153,7 +193,7 @@ There are several data model changes in this release that are not backward compa
 
 ### Breaking
 
-#### Devices need be re-enrolled
+#### Devices need to be re-enrolled
 
 The [Device Identity (beta)](/docs/capabilities/device-identity) data model had an internal change that is not forward compatible. Your enrolled devices will need be re-registered. Your existing policies may need to be updated.
 
@@ -217,6 +257,18 @@ Setting the below options in Pomerium config file would now result in an error. 
 Pomerium Core would only perform user authentication and session refresh with the IdP provider, and would not try to synchronize user details and groups, which is now part of [External Data Sources](/docs/integrations/).
 
 ![idp_enterprise](../enterprise/img/upgrading/policy_groups_enterprise.png)
+
+## 0.19.0
+
+### No changes required to upgrade
+
+- This release has no breaking changes. Review the [v19 Changelog](/docs/deploy/core/changelog#v0190-2022-09-01) for more information.
+
+## 0.18.0
+
+### No changes required to upgrade
+
+- This release has no breaking changes. Review the [v18 Changelog](/docs/deploy/core/changelog#v0180-2022-07-27) for more information.
 
 ## 0.17.0
 

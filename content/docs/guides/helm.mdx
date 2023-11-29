@@ -92,8 +92,8 @@ If you haven't already, install cert-manager and create a CA issuer. You can fol
 
 1. Confirm deployment with `kubectl get pods --namespace cert-manager`:
 
-   ```bash {1}
-   kubectl get pods --namespace cert-manager
+   ```shell-session
+   $ kubectl get pods --namespace cert-manager
    NAME                                       READY   STATUS    RESTARTS   AGE
    cert-manager-5d7f97b46d-8g942              1/1     Running   0          33s
    cert-manager-cainjector-69d885bf55-6x5v2   1/1     Running   0          33s
@@ -122,8 +122,8 @@ If you haven't already, install cert-manager and create a CA issuer. You can fol
 
 1. Apply and confirm:
 
-   ```bash {1}
-   kubectl apply -f issuer.yaml
+   ```shell-session
+   $ kubectl apply -f issuer.yaml
    issuer.cert-manager.io/pomerium-issuer created
 
    kubectl get issuers.cert-manager.io --namespace pomerium
@@ -155,44 +155,39 @@ If you haven't already, install cert-manager and create a CA issuer. You can fol
     kubectl apply -f pomerium-certificates.yaml
     ```
 
-    ```bash {1}
-    kubectl get certificate
+    ```shell-session
+    $ kubectl get certificate
     NAME                    READY   SECRET                 AGE
     pomerium-cert           True    pomerium-tls           10s
     ```
 
 1.  Create a values file for Helm to use when installing Pomerium. Our example is named `pomerium-values.yaml`.
 
-            {' '}
+    <PomeriumValues />
 
-            {' '}
-            <PomeriumValues />
+    :::tip
 
-            :::tip The options required in the `authenticate.idp` block will vary depending on your [identity provider].
+    The options required in the `authenticate.idp` block will vary depending on your [identity provider].
 
-            If you changed the `*.localhost.pomerium.io` value in `pomerium-certificates.yaml` update `config.rootDomain` to match, omitting the `*`. :::
+    If you changed the `*.localhost.pomerium.io` value in `pomerium-certificates.yaml` update `config.rootDomain` to match, omitting the `*`.
 
-                <details>
+    :::
 
-            <summary>Default Certificate</summary>
-
-        <div>
+    <details><summary>Default Certificate</summary>
 
     If you're using a single wildcard certificate for all routes managed by Pomerium, you can set it in an annotation for the ingress controller.
 
-            Add a block defining the default certificate to `pomerium-values.yaml`:
+    Add a block defining the default certificate to `pomerium-values.yaml`:
 
-            ```yaml
-            ingressController:
-            ingressClassResource:
-              defaultCertSecret: 'namespace/certSecretName'
-            ```
+    ```yaml
+    ingressController:
+    ingressClassResource:
+      defaultCertSecret: 'namespace/certSecretName'
+    ```
 
-            Now when defining ingresses you need not specify individual certificates, as documented in our example service below.
+    Now when defining ingresses you need not specify individual certificates, as documented in our example service below.
 
-                   </div>
-
-             </details>
+    </details>
 
 1.  Add Pomerium's Helm repo:
 

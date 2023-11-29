@@ -6,12 +6,12 @@ If you haven't, install `mkcert` following these [GitHub instructions](https://g
 
 Create a trusted **root CA** and confirm the presence and names of your local CA files:
 
-```bash
-mkcert -install
+```shell-session
+$ mkcert -install
 The local CA is already installed in the system trust store! 👍
 The local CA is already installed in the Firefox and/or Chrome/Chromium trust store! 👍
 
-ls "$(mkcert -CAROOT)"
+$ ls "$(mkcert -CAROOT)"
 rootCA-key.pem  rootCA.pem
 ```
 

@@ -160,6 +160,22 @@ PomeriumSpec defines Pomerium-specific configuration parameters.
         <tr>
             <td>
                 <p>
+                <code>passIdentityHeaders</code>&#160;&#160;
+                
+                    <strong>boolean</strong>&#160;
+                
+                </p>
+                <p>
+                    
+                    PassIdentityHeaders sets the <a href="https://www.pomerium.com/docs/reference/routes/pass-identity-headers">pass identity headers</a> option.
+                </p>
+                
+            </td>
+        </tr>
+    
+        <tr>
+            <td>
+                <p>
                 <code>programmaticRedirectDomains</code>&#160;&#160;
                 
                     <strong>[]string</strong>&#160;
