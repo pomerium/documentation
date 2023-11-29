@@ -8,6 +8,7 @@ keywords:
   - Signing Key File
 pagination_prev: null
 pagination_next: null
+toc_max_heading_level: 2
 ---
 
 import Tabs from '@theme/Tabs';
@@ -30,7 +31,21 @@ See [Signing Key](./signing-key) for more information.
 
 | **Config file keys** | **Environment variables** | **Type** | **Usage**    |
 | :------------------- | :------------------------ | :------- | :----------- |
-| `signing_key_file`   | `signing_key_file`        | `string` | **optional** |
+| `signing_key_file`   | `SIGNING_KEY_FILE`        | `string` | **optional** |
+
+### Examples
+
+Signing Key File is useful when deploying in environments that provide secret management like [Docker Swarm](https://docs.docker.com/engine/swarm/secrets/).
+
+For example:
+
+```yaml
+signing_key_file: '/run/secrets/POMERIUM_SIGNING_KEY'
+```
+
+```bash
+SIGNING_KEY_FILE='/run/secrets/POMERIUM_SIGNING_KEY'
+```
 
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
@@ -48,13 +63,3 @@ See Kubernetes [bootstrap secrets](/docs/deploy/k8s/reference#spec) for more inf
 
 </TabItem>
 </Tabs>
-
-### Examples
-
-Signing Key File is useful when deploying in environments that provide secret management like [Docker Swarm](https://docs.docker.com/engine/swarm/secrets/).
-
-For example:
-
-```yaml
-signing_key_file: '/run/secrets/POMERIUM_SIGNING_KEY'
-```

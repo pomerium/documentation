@@ -65,13 +65,13 @@ See [`identityProvider.secret`](/docs/deploy/k8s/reference#identityprovider)
 </TabItem>
 </Tabs>
 
-### Examples {#identity-provider-client-id-examples}
+#### Examples {#identity-provider-client-id-examples}
 
 ```yaml
-# config file key
 idp_client_id: idp_client_id
+```
 
-# environment variable
+```bash
 IDP_CLIENT_ID=idp_client_id
 ```
 
@@ -103,13 +103,13 @@ See [`identityProvider.secret`](/docs/deploy/k8s/reference#identityprovider) for
 </TabItem>
 </Tabs>
 
-### Examples {#identity-provider-client-secret-examples}
+#### Examples {#identity-provider-client-secret-examples}
 
 ```yaml
-# config file key
 idp_client_secret: idp_client_secret
+```
 
-# environment variable
+```bash
 IDP_CLIENT_SECRET=idp_client_secret
 ```
 
@@ -128,6 +128,16 @@ The identity provider client secret file points to a file containing the secret.
 | :-- | :-- | :-- | :-- |
 | `idp_client_secret_file` | `IDP_CLIENT_SECRET_FILE` | `string` | **required** (unless using [identity_provider_client_secret](#identity-provider-client-secret)) |
 
+#### Examples {#identity-provider-client-secret-file-examples}
+
+```yaml
+idp_client_secret_file: '/run/secrets/POMERIUM_CLIENT_SECRET'
+```
+
+```bash
+IDP_CLIENT_SECRET_FILE='/run/secrets/POMERIUM_CLIENT_SECRET'
+```
+
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
 
@@ -140,16 +150,6 @@ See [`identityProvider.secret`](/docs/deploy/k8s/reference#identityprovider) for
 
 </TabItem>
 </Tabs>
-
-### Examples {#identity-provider-client-secret-file-examples}
-
-```yaml
-# config file key
-idp_client_secret_file: '/run/secrets/POMERIUM_CLIENT_SECRET'
-
-# environment variable
-IDP_CLIENT_SECRET_FILE='/run/secrets/POMERIUM_CLIENT_SECRET'
-```
 
 ## Identity Provider Name {#identity-provider-name}
 
@@ -195,13 +195,13 @@ See [`identityProvider.provider`](/docs/deploy/k8s/reference#identityprovider) f
 </TabItem>
 </Tabs>
 
-### Examples {#identity-provider-name-examples}
+#### Examples {#identity-provider-name-examples}
 
 ```yaml
-# config file key
 idp_provider: auth0
+```
 
-# environment variable
+```bash
 IDP_PROVIDER=github
 ```
 
@@ -249,18 +249,16 @@ Pomerium includes some default parameters for specific identity providers. Setti
 
 :::
 
-### Examples {#identity-provider-request-params-examples}
+#### Examples {#identity-provider-request-params-examples}
 
 ```yaml
-# config file key
 idp_request_params:
   client_id: client_id
   response_type: response_type
   redirect_uri: redirect_uri
 ```
 
-```yaml
-# environment variable
+```bash
 IDP_REQUEST_PARAMS='{"client_id":"client_id", "response_type":"response_type", "redirect_uri":"redirect_uri"}'
 ```
 
@@ -318,13 +316,13 @@ See Kubernetes [`identityProvider.scopes`](/docs/deploy/k8s/reference#identitypr
 | `email`          |
 | `offline_access` |
 
-### Examples {#identity-provider-scopes-examples}
+#### Examples {#identity-provider-scopes-examples}
 
 ```yaml
-# config file key
 idp_scopes: openid, profile, offline_access, email
+```
 
-# environment variable
+```bash
 IDP_SCOPES=openid, profile, offline_access, email
 ```
 
@@ -358,13 +356,13 @@ See Kubernetes [`identityProvider.url`](/docs/deploy/k8s/reference#identityprovi
 </TabItem>
 </Tabs>
 
-### Examples {#identity-provider-url-examples}
+#### Examples {#identity-provider-url-examples}
 
 ```yaml
-# config file key
 idp_provider_url: 'https://awesome-company.auth0.com'
+```
 
-# environment variable
+```bash
 IDP_PROVIDER_URL='https://awesome-company.auth0.com'
 ```
 
@@ -374,17 +372,17 @@ Identity provider **Polling Minimum Delay** and **Polling Maximum Delay** settin
 
 A job starts with the **minimum delay** intervals. If the job fails to complete within the minimum delay period, it will be interrupted and the job will restart. If the job is interrupted due to timeout or an error, it will restart with increasing intervals up to the **maximum delay** period.
 
+:::note
+
+The `minimum_delay` and `maximum_delay` settings are an [**Enterprise Console**](https://www.pomerium.com/enterprise-sales/) feature, and are not configurable in Pomerium Core.
+
+:::
+
 ### How to configure {#identity-provider-polling-minmax-delay-how-to-configure}
 
 Set the **Identity Provider Max/Min Delay** settings in the Console:
 
 ![Set IdP minimum and maximum polling delay settings in the console](./img/idp_options/idp-polling-min-max-delay.png)
-
-:::note
-
-The `minimum_delay` and `maximum_delay` settings are an [Enterprise Console](https://www.pomerium.com/enterprise-sales/) feature, and are not configurable in Pomerium Core.
-
-:::
 
 ### Defaults {#identity-provider-polling-minmax-delay-defaults}
 

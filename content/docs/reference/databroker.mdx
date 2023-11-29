@@ -2,6 +2,8 @@
 id: databroker
 title: Databroker Settings
 sidebar_label: Databroker Settings
+pagination_prev: null
+pagination_next: null
 ---
 
 import Tabs from '@theme/Tabs';
@@ -49,6 +51,18 @@ For an example implementation, see the in-memory database used by the databroker
 | `databroker_service_url` | `DATABROKER_SERVICE_URL` | `URL` | `http://localhost:5443` (In all-in-one mode) |
 | `databroker_service_urls` | `DATABROKER_SERVICE_URLS` | `URL` | `http://localhost:5443` (In all-in-one mode) |
 
+#### Examples {#databroker-service-url-examples}
+
+```yaml
+databroker_service_urls:
+  - http://databroker.corp.example1.com
+  - https://databroker.corp.example2.com
+```
+
+```yaml
+DATABROKER_SERVICE_URL=https://databroker.corp.example.com
+```
+
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
 
@@ -61,16 +75,6 @@ For an example implementation, see the in-memory database used by the databroker
 
 </TabItem>
 </Tabs>
-
-### Examples {#databroker-service-url-examples}
-
-```yaml
-databroker_service_urls:
-  - http://databroker.corp.example1.com
-  - https://databroker.corp.example2.com
-
-DATABROKER_SERVICE_URL=https://databroker.corp.example.com
-```
 
 ## Databroker Internal Service URL {#databroker-internal-service-url}
 
@@ -86,6 +90,18 @@ DATABROKER_SERVICE_URL=https://databroker.corp.example.com
 | `databroker_internal_service_url` | `DATABROKER_INTERNAL_SERVICE_URL` | `URL` | `http://localhost:5443` (In all-in-one mode) |
 | `databroker_internal_service_urls` | `DATABROKER_INTERNAL_SERVICE_URLS` | `URL` | `http://localhost:5443` (In all-in-one mode) |
 
+#### Examples {#databroker-internal-service-url-examples}
+
+```yaml
+databroker_internal_service_urls:
+  - http://localhost:5443
+  - http://service_url.com
+```
+
+```yaml
+DATABROKER_INTERNAL_SERVICE_URL=http://localhost:5443
+```
+
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
 
@@ -98,16 +114,6 @@ DATABROKER_SERVICE_URL=https://databroker.corp.example.com
 
 </TabItem>
 </Tabs>
-
-### Examples {#databroker-internal-service-url-examples}
-
-```yaml
-databroker_internal_service_urls:
-              - http://localhost:5443
-              - http://service_url.com
-
-DATABROKER_INTERNAL_SERVICE_URL=http://localhost:5443
-```
 
 ## Databroker Storage Certificate Authority {#databroker-storage-certificate-authority}
 
@@ -122,6 +128,16 @@ DATABROKER_INTERNAL_SERVICE_URL=http://localhost:5443
 | :-- | :-- | :-- | :-- |
 | `databroker_storage_ca_file` | `DATABROKER_STORAGE_CA_FILE` | `string` | **optional** |
 
+#### Examples {#databroker-storage-certificate-authority-examples}
+
+```yaml
+databroker_storage_ca_file: /relative/file/location
+```
+
+```yaml
+DATABROKER_STORAGE_CA_FILE=/relative/file/location
+```
+
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
 
@@ -134,14 +150,6 @@ See Kubernetes [Storage reference](/docs/deploy/k8s/reference#storage) for more 
 
 </TabItem>
 </Tabs>
-
-### Examples {#databroker-storage-certificate-authority-examples}
-
-```yaml
-databroker_storage_ca_file: /relative/file/location
-
-DATABROKER_STORAGE_CA_FILE=/relative/file/location
-```
 
 ## Databroker Storage Certificate File {#databroker-storage-certificate-file}
 
@@ -156,6 +164,16 @@ DATABROKER_STORAGE_CA_FILE=/relative/file/location
 | :-- | :-- | :-- | :-- |
 | `databroker_storage_cert_file` | `DATABROKER_STORAGE_CERT_FILE` | `string` | **optional** |
 
+#### Examples {#databroker-storage-certificate-file-examples}
+
+```yaml
+databroker_storage_cert_file: /relative/file/location
+```
+
+```yaml
+DATABROKER_STORAGE_CERT_FILE=/relative/file/location
+```
+
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
 
@@ -168,14 +186,6 @@ See Kubernetes [Storage reference](/docs/deploy/k8s/reference#storage) for more 
 
 </TabItem>
 </Tabs>
-
-### Examples {#databroker-storage-certificate-file-examples}
-
-```yaml
-databroker_storage_cert_file: /relative/file/location
-
-DATABROKER_STORAGE_CERT_FILE=/relative/file/location
-```
 
 ## Databroker Storage Certificate Key File {#databroker-storage-certificate-key-file}
 
@@ -190,6 +200,16 @@ DATABROKER_STORAGE_CERT_FILE=/relative/file/location
 | :-- | :-- | :-- | :-- |
 | `databroker_storage_key_file` | `DATABROKER_STORAGE_KEY_FILE` | `string` | **optional** |
 
+#### Examples {#databroker-storage-certificate-key-file-examples}
+
+```yaml
+databroker_storage_key_file: /relative/file/location
+```
+
+```yaml
+DATABROKER_STORAGE_KEY_FILE=/relative/file/location
+```
+
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
 
@@ -202,13 +222,6 @@ See Kubernetes [Storage reference](/docs/deploy/k8s/reference#storage) for more 
 
 </TabItem>
 </Tabs>
-
-### Examples {#databroker-storage-certificate-key-file-examples}
-
-```yaml
-databroker_storage_key_file: /relative/file/location
-DATABROKER_STORAGE_KEY_FILE=/relative/file/location
-```
 
 ## Databroker Storage Connection String {#databroker-storage-connection-string}
 
@@ -230,6 +243,16 @@ See the [PostgreSQL connection URI docs](https://www.postgresql.org/docs/current
 | :-- | :-- | :-- | :-- |
 | `databroker_storage_connection_string` | `DATABROKER_STORAGE_CONNECTION_STRING` | `string` | **required** |
 
+#### Examples {#databroker-storage-connection-string-examples}
+
+```yaml
+databroker_storage_connection_string: postgresql://postgres:postgres@database/postgres?sslmode=disable
+```
+
+```yaml
+DATABROKER_STORAGE_CONNECTION_STRING=postgresql://postgres:postgres@database/postgres?sslmode=disable
+```
+
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
 
@@ -242,14 +265,6 @@ See Kubernetes [Storage reference](/docs/deploy/k8s/reference#storage) for more 
 
 </TabItem>
 </Tabs>
-
-### Examples {#databroker-storage-connection-string-examples}
-
-```yaml
-databroker_storage_connection_string: postgresql://postgres:postgres@database/postgres?sslmode=disable
-
-DATABROKER_STORAGE_CONNECTION_STRING=postgresql://postgres:postgres@database/postgres?sslmode=disable
-```
 
 :::tip
 
@@ -270,6 +285,16 @@ If **Databroker Storage TLS Skip Verify** is set, the TLS connection to the stor
 | :-- | :-- | :-- | :-- |
 | `databroker_storage_tls_skip_verify` | `DATABROKER_STORAGE_TLS_SKIP_VERIFY` | `string` | **optional** |
 
+#### Examples {#databroker-storage-tls-skip-verify-examples}
+
+```yaml
+databroker_storage_tls_skip_verify: /relative/file/location
+```
+
+```yaml
+DATABROKER_STORAGE_TLS_SKIP_VERIFY=/relative/file/location
+```
+
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
 
@@ -282,14 +307,6 @@ See Kubernetes [Storage reference](/docs/deploy/k8s/reference#storage) for more 
 
 </TabItem>
 </Tabs>
-
-### Examples {#databroker-storage-tls-skip-verify-examples}
-
-```yaml
-databroker_storage_tls_skip_verify: /relative/file/location
-
-DATABROKER_STORAGE_TLS_SKIP_VERIFY=/relative/file/location
-```
 
 ## Databroker Storage Type {#databroker-storage-type}
 
@@ -306,6 +323,16 @@ Only `memory` and `postgres` are supported.
 | :-- | :-- | :-- | :-- | :-- |
 | `databroker_storage_type` | `DATABROKER_STORAGE_TYPE` | `string` | **required** | **memory** |
 
+### Example {#databroker-storage-type-example}
+
+```yaml
+databroker_storage_type: postgres
+```
+
+```yaml
+DATABROKER_STORAGE_TYPE=postgres
+```
+
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
 
@@ -318,11 +345,3 @@ See Kubernetes [Storage reference](/docs/deploy/k8s/reference#storage) for more 
 
 </TabItem>
 </Tabs>
-
-### Example {#databroker-storage-type-example}
-
-```yaml
-databroker_storage_type: postgres
-
-DATABROKER_STORAGE_TYPE=postgres
-```
