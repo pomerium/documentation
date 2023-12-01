@@ -409,20 +409,15 @@ routes:
 
 ## Route matching order
 
-If your configuration includes multiple routes with identical definitions, Pomerium will process these routes in the order they are defined in your configuration file.
+Pomerium processes routes in the order they are defined in its configuration. If you’re using Pomerium Core, then Pomerium will source its configuration from a configuration file.
 
-In the example below, if Pomerium receives a request to access `https://a.example.com:8080`, Pomerium will first check `https://a.example.com:8080/api` before matching the request with `https://a.example.com:8080`.
+In Enterprise Console and Ingress Controller deployments, routes are defined in Pomerium’s Databroker service. In this case, Pomerium sorts routes deterministically in the following order:
 
-```yaml title="config.yaml"
-- from: https://a.example.com:8080
-  to: http://example:8080
-  prefix: /api
-  allow_any_authenticated_user: true
+1. Ascending by `host`.
+1. Descending by `path`.
+1. Descending by `regex`.
+1. Descending by `prefix`.
 
-- from: https://a.example.com:8080
-  to: http://example:8080
-  allow_any_authenticated_user: true
-```
 
 ## Further reading
 
