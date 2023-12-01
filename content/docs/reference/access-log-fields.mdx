@@ -27,6 +27,31 @@ The default log fields should be appropriate for most deployments.
 | :-- | :-- | :-- | :-- |
 | `access_log_fields` | `ACCESS_LOG_FIELDS` | Array of strings | See [Access Fields and Defaults](#access-fields-and-defaults) |
 
+### Examples
+
+```yaml
+access_log_fields:
+  - authority
+  - duration
+  - path
+```
+
+```bash
+ACCESS_LOG_FIELDS=authority,duration,path
+```
+
+**Custom headers example:**
+
+```yaml
+access_log_fields:
+  - headers.user-agent
+  - headers.content-type
+```
+
+```bash
+ACCESS_LOG_FIELDS=headers.user-agent,headers.content-type
+```
+
 </TabItem>
 <TabItem label="Enterprise" value="Enterprise">
 
@@ -44,6 +69,12 @@ Add **Custom Headers** in the Console:
 | **Name** | **Type** | **Default** |
 | :-- | :-- | :-- |
 | `accessLogFields` | Array of strings | See [Access Fields and Defaults](#access-fields-and-defaults) |
+
+### Examples
+
+```yaml
+accessLogFields: '[{"authority"},{"duration"},{"path"}]'
+```
 
 </TabItem>
 </Tabs>
@@ -157,29 +188,4 @@ The custom headers will appear in the `headers` field:
   "time": "2023-08-04T11:37:01-04:00",
   "message": "http-request"
 }
-```
-
-### Examples
-
-```yaml
-access_log_fields:
-  - authority
-  - duration
-  - path
-```
-
-```bash
-ACCESS_LOG_FIELDS=authority,duration,path
-```
-
-**Custom headers example:**
-
-```yaml
-access_log_fields:
-  - headers.user-agent
-  - headers.content-type
-```
-
-```bash
-ACCESS_LOG_FIELDS=headers.user-agent,headers.content-type
 ```

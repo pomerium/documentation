@@ -49,6 +49,29 @@ Pomerium will check your system's trust/key store for valid certificates first. 
 | `certificate` and `certificate_key` | `CERTIFICATE` and `CERTIFICATE_KEY` | `string` (base64-encoded string) | **required** (if insecure not set) |
 | `certificate_file` and `certificate_key_file` | `CERTIFICATE_FILE` and `CERTIFICATE_KEY_FILE` | `string` (Relative file location for a single certificate) | **required** (if insecure not set) |
 
+### Examples {#certificates-examples}
+
+Specify multiple certificates at once:
+
+```yaml
+# Array of relative file locations for multiple certs
+certificates:
+  - cert: '$HOME/.acme.sh/authenticate.example.com_ecc/fullchain.cer'
+    key: '$HOME/.acme.sh/authenticate.example.com_ecc/authenticate.example.com.key'
+  - cert: '$HOME/.acme.sh/verify.example.com_ecc/fullchain.cer'
+    key: '$HOME/.acme.sh/verify.example.com_ecc/verify.example.com.key'
+  - cert: '$HOME/.acme.sh/prometheus.example.com_ecc/fullchain.cer'
+    key: '$HOME/.acme.sh/prometheus.example.com_ecc/prometheus.example.com.key'
+```
+
+Set a single certificate and key covering multiple domains and/or a wildcard subdomain:
+
+```yaml
+# Relative file location for a single cert
+certificate_file: '$HOME/.acme.sh/*.example.com/fullchain.crt'
+certificate_key_file: '$HOME/.acme.sh/*.example.com/*.example.com.key'
+```
+
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
 
@@ -73,36 +96,13 @@ See Kubernetes [Ingress Configuration](/docs/deploy/k8s/reference#spec) for more
 </TabItem>
 </Tabs>
 
-### Examples {#certificates-examples}
-
-Specify multiple certificates at once:
-
-```yaml
-# Array of relative file locations for multiple certs
-certificates:
-  - cert: '$HOME/.acme.sh/authenticate.example.com_ecc/fullchain.cer'
-    key: '$HOME/.acme.sh/authenticate.example.com_ecc/authenticate.example.com.key'
-  - cert: '$HOME/.acme.sh/verify.example.com_ecc/fullchain.cer'
-    key: '$HOME/.acme.sh/verify.example.com_ecc/verify.example.com.key'
-  - cert: '$HOME/.acme.sh/prometheus.example.com_ecc/fullchain.cer'
-    key: '$HOME/.acme.sh/prometheus.example.com_ecc/prometheus.example.com.key'
-```
-
-Set a single certificate and key covering multiple domains and/or a wildcard subdomain:
-
-```yaml
-# Relative file location for a single cert
-certificate_file: '$HOME/.acme.sh/*.example.com/fullchain.crt'
-certificate_key_file: '$HOME/.acme.sh/*.example.com/*.example.com.key'
-```
-
-:::tip **Note:**
+:::note
 
 All certificates supplied to Pomerium must be in **PEM** format.
 
 :::
 
-## Certificate Authority {#certificate-authority}
+## Certificate Authority (CA) {#certificate-authority}
 
 **Certificate Authority** defines a set of root certificate authorities (CAs) that Pomerium uses when communicating with other TLS-protected services.
 
@@ -128,6 +128,16 @@ Be sure to include the intermediary certificate.
 | `certificate_authority` | `CERTIFICATE_AUTHORITY` | `string` | **optional** |
 | `certificate_authority_file` | `CERTIFICATE_AUTHORITY_FILE` | `string` | **optional** |
 
+### Examples {#certificate-authority-examples}
+
+```yaml
+certificate_authority: 'base64-encoded-string'
+```
+
+```bash
+CERTIFICATE_AUTHORITY_FILE=/relative/file/location
+```
+
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
 
@@ -142,16 +152,6 @@ Kubernetes does not support `certificate_authority`
 
 </TabItem>
 </Tabs>
-
-### Examples {#certificate-authority-examples}
-
-```yaml
-certificate_authority: 'base64-encoded-string'
-```
-
-```bash
-CERTIFICATE_AUTHORITY_FILE=/relative/file/location
-```
 
 ## Client Certificate Authority {#client-certificate-authority}
 
@@ -177,6 +177,19 @@ If not set, no client certificate will be required.
 | `client_ca`          | `CLIENT_CA`               | `string` | **optional** |
 | `client_ca_file`     | `CLIENT_CA_FILE`          | `string` | **optional** |
 
+### Examples {#client-certificate-authority-examples}
+
+```yaml
+client_ca: base64-encoded-string
+client_ca_file: base64-encoded-string
+```
+
+```bash
+CLIENT_CA=/relative/file/location
+
+CLIENT_CA_FILE=/relative/file/location
+```
+
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
 
@@ -189,14 +202,3 @@ Kubernetes does not support `client_certificate_ca`
 
 </TabItem>
 </Tabs>
-
-### Examples {#client-certificate-authority-examples}
-
-```yaml
-client_ca: base64-encoded-string
-client_ca_file: base64-encoded-string
-```
-
-```bash
-CLIENT_CA=/relative/file/location CLIENT_CA_FILE=/relative/file/location
-```

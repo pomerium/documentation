@@ -28,6 +28,42 @@ The default log fields should be appropriate for most deployments.
 | :-- | :-- | :-- | :-- |
 | `authorize_log_fields` | `AUTHORIZE_LOG_FIELDS` | Array of strings | See [Authorize Fields and Defaults](#authorize-log-fields-and-defaults) |
 
+### Examples
+
+```yaml
+authorize_log_fields:
+  - request-id
+  - path
+  - ip
+```
+
+```bash
+AUTHORIZE_LOG_FIELDS=request-id,path,ip
+```
+
+**Headers examples:**
+
+```yaml
+# List all HTTP headers
+authorize_log_fields:
+  - headers
+```
+
+```bash
+AUTHORIZE_LOG_FIELDS=headers
+```
+
+```yaml
+# List custom HTTP headers
+authorize_log_fields:
+  - headers.cookie
+  - headers.content-type
+```
+
+```bash
+AUTHORIZE_LOG_FIELDS=headers.cookie,headers.content-type
+```
+
 </TabItem>
 <TabItem label="Enterprise" value="Enterprise">
 
@@ -45,6 +81,12 @@ Add **Custom Headers** in the Console:
 | **Name** | **Type** | **Default** |
 | :-- | :-- | :-- |
 | `authorizeLogFields` | Array of strings | See [Authorize Fields and Defaults](#authorize-log-fields-and-defaults) |
+
+### Examples
+
+```yaml
+authorizeLogFields: '[{"request-id"},{"path"},{"ip"}]'
+```
 
 </TabItem>
 </Tabs>
@@ -269,40 +311,4 @@ Your logs would look similar to the below example:
   "time": "2023-08-07T10:43:36-04:00",
   "message": "authorize check"
 }
-```
-
-### Examples
-
-```yaml
-authorize_log_fields:
-  - request-id
-  - path
-  - ip
-```
-
-```bash
-AUTHORIZE_LOG_FIELDS:request-id,path,ip
-```
-
-**Headers examples:**
-
-```yaml
-# List all HTTP headers
-authorize_log_fields:
-  - headers
-```
-
-```bash
-AUTHORIZE_LOG_FIELDS:headers
-```
-
-```yaml
-# List custom HTTP headers
-authorize_log_fields:
-  - headers.cookie
-  - headers.content-type
-```
-
-```bash
-AUTHORIZE_LOG_FIELDS:headers.cookie,headers.content-type
 ```

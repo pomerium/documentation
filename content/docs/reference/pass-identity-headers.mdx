@@ -40,6 +40,16 @@ To only send identity headers to a specific upstream application, see the route-
 | :------------------------ | :-------- | :----------- | :---------- |
 | `pass_identity_headers`   | `boolean` | **optional** | \*`false`   |
 
+### Examples
+
+```yaml
+pass_identity_headers: true
+
+routes:
+  - from: https://service.corp.example.io
+    to: http://localhost:3000
+```
+
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
 
@@ -60,22 +70,14 @@ The button has three states:
 | :-------------------- | :-------- | :----------- | :---------- |
 | `passIdentityHeaders` | `boolean` | **optional** | \*`false`   |
 
-</TabItem>
-</Tabs>
-
-\* If neither the **global** _nor_ **route-level** `pass_identity_headers` settings are defined, both settings will default to `false`.
-
 ### Examples
-
-```yaml
-pass_identity_headers: true
-
-routes:
-  - from: https://service.corp.example.io
-    to: http://localhost:3000
-```
 
 ```yaml
 # ingress controller
 passIdentityHeaders: 'true'
 ```
+
+</TabItem>
+</Tabs>
+
+\* If neither the **global** _nor_ **route-level** `pass_identity_headers` settings are defined, both settings will default to `false`.
