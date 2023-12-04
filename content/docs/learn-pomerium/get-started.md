@@ -33,7 +33,7 @@ We’ll configure these files together in the next section.
 
 :::info What is **Pomerium Core**?
 
-[**Pomerium Core**](/docs/deploy/core) is our open-source, identity-aware reverse proxy. The proxy server consists of **4 services**:
+[**Pomerium Core**](/docs/deploy/core) is our open-source, identity-aware reverse gateway. Pomerium consists of **4 service** identities (that can be deployed together or indepedently), including the:
 
 - **Proxy** service — the red-linen rope
 - The **Authentication** service — the waiter checking users in
