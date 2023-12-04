@@ -36,7 +36,7 @@ We’ll configure these files together in the next section.
 [**Pomerium Core**](/docs/deploy/core) is our open-source, identity-aware reverse gateway. Pomerium consists of **4 service** identities (that can be deployed together or indepedently), including the:
 
 - **Proxy** service — the red-linen rope
-- The **Authentication** service — the waiter checking users in
+-  **Authentication** service — the bouncer checking users IDs to see if they are who they say they are
 - The **Authorization** service — the waiter checking if users can do that
 - The **Databroker** service — the waiter remembering the user’s current session to offer the best user experience
 
