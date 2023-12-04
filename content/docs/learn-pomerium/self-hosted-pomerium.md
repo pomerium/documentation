@@ -7,7 +7,7 @@ sidebar_label: 8. Self-Host Pomerium
 sidebar_position: 8
 ---
 
-# Self-Hosted Authenticate Service and Identity Provider
+# Self-Hosted Authenticate Service
 
 So far, you’ve been using the Hosted Authenticate service, which provides an authenticate service URL (`authenticate.pomerium.app`) and a hosted identity provider (Cognito) to authenticate users.
 
