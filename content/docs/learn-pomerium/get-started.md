@@ -37,7 +37,7 @@ We’ll configure these files together in the next section.
 
 - **Proxy** service — the red-linen rope
 -  **Authentication** service — the bouncer checking users IDs to see if they are who they say they are
-- The **Authorization** service — the waiter checking if users can do that
+-  **Authorization** service — the bouncer checking if users can do that
 - The **Databroker** service — the waiter remembering the user’s current session to offer the best user experience
 
 When you run Core, these services work together to secure your apps and connect your users to them.
