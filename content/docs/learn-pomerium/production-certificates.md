@@ -50,7 +50,7 @@ However, a self-signed certificate will prompt your browser to throw a self-sign
 
 But, managing your own certificates can be tedious and difficult to maintain (especially as your services and routes scale).
 
-**The Solution:**
+**The Solution**
 
 Fortunately, Pomerium has an Autocert setting that, when enabled, allows Pomerium to automatically retrieve, manage, and renew public-facing TLS certificates from [Let's Encrypt](https://letsencrypt.org/).
 
