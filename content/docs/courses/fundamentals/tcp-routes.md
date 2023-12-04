@@ -134,10 +134,10 @@ services:
 Next, add your services in Docker Compose:
 
 ```yaml title="docker-compose.yaml"
-  redis:
-    image: redis:latest
-    expose:
-      - 6379
+redis:
+  image: redis:latest
+  expose:
+    - 6379
 ```
 
 #### Configure a TCP route
@@ -145,13 +145,13 @@ Next, add your services in Docker Compose:
 Add the Redis route to your service in your Pomerium configuration file using the `tcp` syntax:
 
 ```yaml title="config.yaml"
-  - from: tcp+https://redis.localhost.pomerium.io:6379
-    to: tcp://redis:6379
-    policy:
-      - allow:
-          or:
-            - domain:
-                is: example.com
+- from: tcp+https://redis.localhost.pomerium.io:6379
+  to: tcp://redis:6379
+  policy:
+    - allow:
+        or:
+          - domain:
+              is: example.com
 ```
 
 ### Connect with Pomerium CLI
@@ -197,7 +197,7 @@ io_threads_active:0
 
 ## Summary
 
-In this tutorial, you secured a TCP connection to Redis. To secure the connection, you used the `pomerium-cli` `tcp` command. 
+In this tutorial, you secured a TCP connection to Redis. To secure the connection, you used the `pomerium-cli` `tcp` command.
 
 At this point, we’ve done all we can do with a hosted Pomerium instance in a Dockerized environment. You now know all the necessary basics for running Pomerium itself, so let’s take it out of Docker and into the wild!
 
