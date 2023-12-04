@@ -11,13 +11,9 @@ sidebar_position: 7
 
 # Build TCP Routes
 
-Now that you’ve built several routes, it’s time to configure a few more services to see how Pomerium proxies TCP connections.
+Now that you’ve built several routes, it's time to proxy TCP connections with Pomerium.
 
-Specifically,  we’ll create the following services and route users to them with TCP connections:
-
-- SSH
-- PostgreSQL
-- Redis
+Specifically,  we’ll create a [Redis](https://redis.io/) service and route users to it with a TCP connection.
 
 :::note **Before You Start**
 
@@ -38,9 +34,9 @@ Each tutorial builds on the same configuration files. In this tutorial, you’ll
 
 When replacing a traditional VPN, there are often non-HTTP based applications you still need to reach. Pomerium can provide the same type of protection to these services with [Pomerium CLI](/docs/deploy/clients/pomerium-cli), a client-side application to proxy TCP connections.
 
-In this tutorial, you’ll secure several backend services behind Pomerium and access these services by connecting to them with a TCP route.
+In this tutorial, you’ll secure a backend Redis service behind Pomerium and access it by connecting to it with a TCP route.
 
-Pomerium’s CLI client comes with a `tcp` command that you can use to secure these connections.
+Pomerium’s CLI client comes with a `tcp` command that you can use to secure this connection.
 
 ## Prerequisites
 
@@ -133,46 +129,22 @@ services:
 
 ### Add TCP connections
 
-#### Add services to Docker Compose
+#### Add Redis to Docker Compose
 
 Next, add your services in Docker Compose:
 
 ```yaml title="docker-compose.yaml"
-pgsql:
-      image: postgres
-      restart: always
-      environment:
-        - POSTGRES_PASSWORD=postgres
-        - POSTGRES_USER=postgres
-        - POSTGRES_DB=postgres
-      expose:
-        - 5432
   redis:
     image: redis:latest
     expose:
       - 6379
-  ssh:
-    image: linuxserver/openssh-server:latest
-    expose:
-      - 2222
-    environment:
-      PASSWORD_ACCESS: "true"
-      USER_PASSWORD: password
-      USER_NAME: user
 ```
 
-#### Configure TCP routes
+#### Configure a TCP route
 
-Add the routes to these services in your Pomerium configuration file using the `tcp` syntax:
+Add the Redis route to your service in your Pomerium configuration file using the `tcp` syntax:
 
 ```yaml title="config.yaml"
-- from: tcp+https://pgsql.localhost.pomerium.io:5432
-    to: tcp://pgsql:5432
-    policy:
-      - allow:
-          or:
-            - domain:
-                is: example.com
   - from: tcp+https://redis.localhost.pomerium.io:6379
     to: tcp://redis:6379
     policy:
@@ -180,54 +152,11 @@ Add the routes to these services in your Pomerium configuration file using the `
           or:
             - domain:
                 is: example.com
-  - from: tcp+https://ssh.localhost.pomerium.io:22
-    to: tcp://ssh:2222
-    policy:
-      - allow:
-          or:
-            - domain:
-                is: example.com
-```
-
-Add the Databroker configuration keys to set up Postgres as the back-end Databroker service:
-
-```yaml title="config.yaml"
-databroker_storage_type: postgres
-databroker_storage_connection_string: postgresql://postgres:postgres@pgsql:5432
 ```
 
 ### Connect with Pomerium CLI
 
-Now, use Pomerium CLI’s `tcp` command to connect the services and routes we defined in the previous steps.
-
-#### Connect to Postgres Databroker service
-
-First, let’s connect to our Postgres Databroker service using the `tcp` command:
-
-```shell-session
-$ pomerium-cli tcp pgsql.localhost.pomerium.io:5432 --listen localhost:5432
-
-2023/10/03 12:22:08 listening on 127.0.0.1:5432
-```
-
-After password authentication (in your Docker Compose file, `postgres` is the configured password for the `postgres` user and database), connect and list the schemas:
-
-```shell-session
-$  psql -h localhost -W -U postgres -c '\dn'
-Password:
-       List of schemas
-   Name   |       Owner
-----------+-------------------
- pomerium | postgres
- public   | pg_database_owner
-(2 rows)
-```
-
-Kill the TCP connection.
-
-#### Connect to Redis
-
-Connect to Redis:
+Now, use Pomerium CLI’s `tcp` command to connect to the Redis service
 
 ```shell-session
 $ pomerium-cli tcp redis.localhost.pomerium.io:6379 --listen localhost:6379
@@ -266,39 +195,9 @@ config_file:
 io_threads_active:0
 ```
 
-#### Connect to SSH
-
-To configure your SSH client to use Pomerium's TCP support for SSH routes, create an `ssh_config` file in your root directory and add the following entry:
-
-```sh title="ssh_config"
-Host *.localhost.pomerium.io
-  ProxyCommand pomerium-cli tcp --listen - %h:%p
-```
-
-Start an SSH proxy in the background:
-
-```shell-session
-$ pomerium-cli tcp ssh.localhost.pomerium.io:22 --listen :2222
-
-2023/10/03 12:29:17 listening on 127.0.0.1:2222
-```
-
-Initiate the SSH connection (the username and password credentials are included in your Docker Compose file):
-
-```shell-session
-# USER_NAME: user USER_PASSWORD: password
-$ ssh user@ssh.localhost.pomerium.io -p 2222
-user@ssh.localhost.pomerium.io's password:
-Welcome to OpenSSH Server
-
-4e737e02c43f:~$
-```
-
-And just like that, you’re done! You now have a TCP connection proxied over HTTPS!
-
 ## Summary
 
-In this tutorial, you secured TCP connections to Redis, SSH, and Postgres services. To secure the connection, you used the `pomerium-cli` `tcp` command.
+In this tutorial, you secured a TCP connection to Redis. To secure the connection, you used the `pomerium-cli` `tcp` command. 
 
 At this point, we’ve done all we can do with a hosted Pomerium instance in a Dockerized environment. You now know all the necessary basics for running Pomerium itself, so let’s take it out of Docker and into the wild!
 

@@ -37,12 +37,12 @@ const config = {
         theme: {
           customCss: require.resolve('./src/css/custom.css'),
         },
-        // gtag: {
-        //   trackingID: [
-        //     `${process.env.GA4}`,
-        //     `${process.env.GA}`,
-        //   ]
-        // },
+        gtag: {
+          trackingID: [
+            `${process.env.GA4}`,
+            `${process.env.GA}`,
+          ]
+        },
         sitemap: {
           filename: 'docs/sitemap.xml',
           ignorePatterns: ['/docs/examples/**'],
