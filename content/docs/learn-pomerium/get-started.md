@@ -10,7 +10,7 @@ sidebar_position: 1
 
 # Get Started With Pomerium
 
-Welcome to **Get Started With Pomerium**! This is your starting point to learning the fundamentals of how Pomerium works so you can use it effectively to secure your own web apps and services.
+Welcome to the **Pomerium fundamentals course**! This is your starting point to learning the essentials of how Pomerium works so you can use it effectively to secure your own web apps and services.
 
 This tutorial teaches you how to set up Pomerium using [Docker](https://docs.docker.com/install/) and [Docker Compose](https://docs.docker.com/compose/install/).
 
