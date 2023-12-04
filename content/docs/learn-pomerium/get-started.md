@@ -35,7 +35,7 @@ We’ll configure these files together in the next section.
 
 [**Pomerium Core**](/docs/deploy/core) is our open-source, identity-aware reverse proxy. The proxy server consists of **4 services**:
 
-- The **Proxy** service — the waiter
+- **Proxy** service — the red-linen rope
 - The **Authentication** service — the waiter checking users in
 - The **Authorization** service — the waiter checking if users can do that
 - The **Databroker** service — the waiter remembering the user’s current session to offer the best user experience
