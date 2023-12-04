@@ -15,10 +15,10 @@ In this guide, you’ll learn how to build **Advanced Policies** with Pomerium.
 
 Make sure you’ve completed the following tutorials:
 
-- [**Get Started**](/docs/learn-pomerium/get-started)
-- [**Build a Simple Route**](/docs/learn-pomerium/build-routes)
-- [**Build a Simple Policy**](/docs/learn-pomerium/build-policies)
-- [**Identity Verification with JWTs**](/docs/learn-pomerium/jwt-verification)
+- [**Get Started**](/docs/courses/fundamentals/get-started)
+- [**Build a Simple Route**](/docs/courses/fundamentals/build-routes)
+- [**Build a Simple Policy**](/docs/courses/fundamentals/build-policies)
+- [**Identity Verification with JWTs**](/docs/courses/fundamentals/jwt-verification)
 
 Each tutorial builds on the same configuration files. In this tutorial, you’ll add complexity to your authorization policy.
 
