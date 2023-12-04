@@ -88,7 +88,7 @@ Here’s how the JWT authentication flow looks at a high level:
 
 4. The upstream service receives the request, fetches the public key from the JWKS endpoint, verifies and validates the signature, and grants the user access
 
-![Diagram of JWT flow in Pomerium](./img/jwt-verification/jwt-verification-diagram.svg)
+![Diagram of JWT flow in Pomerium](../img/jwt-verification/jwt-verification-diagram.svg)
 
 If that’s a lot to take in, don’t worry, Pomerium handles a lot of it for you! This is just for those that are interested in what’s happening behind the scenes.
 
@@ -172,7 +172,7 @@ openssl ec -in ec_private.pem -pubout -out ec_public.pem
 
 This command generates a public/private key pair in your project:
 
-![Public and private keys in the root project directory](./img/jwt-verification/00-root-project-files.png)
+![Public and private keys in the root project directory](../img/jwt-verification/00-root-project-files.png)
 
 2. Next, convert the signing key to a Base64-encoded format:
 
@@ -231,7 +231,7 @@ Run Docker Compose and access the [Verify](https://verify.localhost.pomerium.io/
 
 Under **Signed Identity Token**, you should see a list claims:
 
-![The claims as defined in the JWT displayed in the Verify app](./img/jwt-verification/01-jwt-claims.png)
+![The claims as defined in the JWT displayed in the Verify app](../img/jwt-verification/01-jwt-claims.png)
 
 Pomerium sources these claims from the ID token it gets from your identity provider and uses them to generate a new “Pomerium” JWT. This ensures the original ID token is never leaked.
 
@@ -254,13 +254,13 @@ With your containers still running, enter `https://verify.localhost.pomerium.io/
 
 This web page shows you the contents of the HTTP request to the Verify service. Search for a header labeled `X-Pomerium-Jwt-Assertion`:
 
-![The JWT payload](./img/jwt-verification/02-jwt-payload.png)
+![The JWT payload](../img/jwt-verification/02-jwt-payload.png)
 
 The value of the header is the JWT.
 
 Copy and paste the JWT. Then, head to JWT.io to decode it:
 
-![Decoding the JWT](./img/jwt-verification/03-jwt-decoded.png)
+![Decoding the JWT](../img/jwt-verification/03-jwt-decoded.png)
 
 You can see the Payload with the claims listed on the Verify page.
 
@@ -284,7 +284,7 @@ HHucN19M9rqGNOxJSFdwTx/hauY/qQRYdtaZgTJDQfRaT6CZObwRa9vMsg==
 
 In JWT.io under **VERIFY SIGNATURE**, enter the public key. The “Invalid Signature” message should change to “Signature Verified” if done correctly:
 
-![JWT signature verification](./img/jwt-verification/04-jwt-signature-verified.png)
+![JWT signature verification](../img/jwt-verification/04-jwt-signature-verified.png)
 
 Great! With these steps, you can manually verify the JWT’s signature and that the request was handled by Pomerium.
 

@@ -57,7 +57,7 @@ Let’s extend the policy above to include a claim from your JWT. If a user does
 
 While running your Docker containers, access the Verify service. Under **Signed Identity Token**, you’ll see a list of claims:
 
-![JWT claims listed on a web page from the Verify service](./img/jwt-verification/01-jwt-claims.png)
+![JWT claims listed on a web page from the Verify service](../img/jwt-verification/01-jwt-claims.png)
 
 Find the **Name** claim and copy the value.
 

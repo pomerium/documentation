@@ -40,7 +40,7 @@ For the purposes of this tutorial, we will only review the following settings to
 
 ### Configure HTTPBin
 
-To see how some of these settings work, we will configure Pomerium and Docker Compose to host an HTTPBin server. If you’re not familiar with HTTPBin, it’s a call-and-response HTTP server you can use to test (you guessed it) HTTP requests and responses.
+To see how some of these settings work, we will configure Pomerium and Docker Compose to host an HTTPBin server. If you’re not familiar with [HTTPBin](https://httpbin.org/), it’s a call-and-response HTTP server you can use to test (you guessed it) HTTP requests and responses.
 
 Add the `httpbin` service to your Docker Compose file:
 
@@ -126,7 +126,7 @@ jwt_claims_headers:
 
 This setting sends JWT claims as _unsigned_ headers to the upstream application (unlike the _signed_ JWT assertion header). If you restart the Pomerium Docker instance and send another request to HTTPBin, you’ll notice these claims are included in the request:
 
-![View JWT claims as unsigned headers in the request](./img/advanced-routes/httpbin-jwt-claims-headers.png)
+![View JWT claims as unsigned headers in the request](../img/advanced-routes/httpbin-jwt-claims-headers.png)
 
 So, this adds headers from the JWT to our request, but what if you wanted to remove them for privacy or security reasons? Or what if you wanted to add other headers to your request?
 
@@ -168,7 +168,7 @@ Similarly, you can configure responses as well:
 
 If you go HTTPBin’s **Response inspection** row and test a request, you’ll notice the test `X-Set-Response-Headers` header is included in the response.
 
-![View response headers](./img/advanced-routes/response-header.png)
+![View response headers](../img/advanced-routes/response-header.png)
 
 ### Set the Host header
 
@@ -275,11 +275,11 @@ node index.js
 
 Navigate to `localhost:5001` to see if your server serves the `Hello World!` message.
 
-![The 'Hello World' page from our Node server](./img/advanced-routes/node-hello-world.png)
+![The 'Hello World' page from our Node server](../img/advanced-routes/node-hello-world.png)
 
 Similarly, if you go to `localhost:5001/admin`, you should see `This is an admin only page`.
 
-![The 'Admin only' page from our Node server](./img/advanced-routes/node-admin-only.png)
+![The 'Admin only' page from our Node server](../img/advanced-routes/node-admin-only.png)
 
 #### Dockerize Node server
 

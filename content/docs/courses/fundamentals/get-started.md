@@ -2,7 +2,7 @@
 # cSpell:ignore preconfigured
 id: get-started
 title: Get Started With Pomerium
-description: In lesson 1 of Learn Pomerium, you'll configure and run a Pomerium instance with Docker.
+description: In lesson 1 of Pomerium Fundamentals, you'll configure and run a Pomerium instance with Docker.
 keywords: [pomerium, docker, docker compose, configuration file, reverse proxy]
 sidebar_label: 1. Get Started
 sidebar_position: 1
@@ -10,7 +10,7 @@ sidebar_position: 1
 
 # Get Started With Pomerium
 
-Welcome to the **Pomerium fundamentals course**! This is your starting point to learning the essentials of how Pomerium works so you can use it effectively to secure your own web apps and services.
+Welcome to **Pomerium Fundamentals - Get Started**! This is your starting point to learning the essentials of how Pomerium works so you can use it effectively to secure your own web apps and services.
 
 This tutorial teaches you how to set up Pomerium using [Docker](https://docs.docker.com/install/) and [Docker Compose](https://docs.docker.com/compose/install/).
 
@@ -24,7 +24,7 @@ Your project will contain all the files and configurations you need to run \***\
 
 The directory structure will look like this:
 
-![Your project's file structure](./img/get-started/pomerium-file-structure.png)
+![Your project's file structure](../img/get-started/pomerium-file-structure.png)
 
 - The `config.yaml` file configures Pomerium itself
 - The `docker-compose.yaml` file configures and runs your Docker containers
@@ -131,7 +131,7 @@ docker compose up
 
 Now, go to the [Verify service](https://verify.localhost.pomerium.io/) in your browser.
 
-![Image of the Verify service web page](./img/get-started/verify-state.png)
+![Image of the Verify service web page](../img/get-started/verify-state.png)
 
 You may have some questions, like:
 
