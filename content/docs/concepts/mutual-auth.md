@@ -177,7 +177,7 @@ In this example:
 [grafana]: /docs/guides/grafana
 [jwt verification]: /docs/guides/jwt-verification.md
 [jwt-rfc]: https://datatracker.ietf.org/doc/html/rfc7519
-[`pass_identity_headers`]: /docs/reference/routes/pass-identity-headers
+[`pass_identity_headers`]: /docs/reference/routes/pass-identity-headers-per-route
 [quickstart]: /docs/quickstart
 [transport layer security]: https://en.wikipedia.org/wiki/Transport_Layer_Security
 [zero trust]: https://www.pomerium.com/docs/background.html
