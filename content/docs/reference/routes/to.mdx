@@ -6,6 +6,7 @@ keywords:
   - To
 pagination_prev: null
 pagination_next: null
+toc_max_heading_level: 2
 ---
 
 import Tabs from '@theme/Tabs';
@@ -25,6 +26,22 @@ import TabItem from '@theme/TabItem';
 | **YAML**/**JSON** setting | **Type** | **Usage**    | **Schemes**            |
 | :------------------------ | :------- | :----------- | :--------------------- |
 | `to`                      | `URL`    | **optional** | `http`, `https`, `tcp` |
+
+### Examples
+
+```yaml
+- from: https://example.com
+  to: http://verify
+
+- from: https://example.com
+  to: https://192.1.20.12:8080
+
+- from: https://example.com
+  to: http://neverssl.com
+
+- from: https://example.com
+  to: https://verify.pomerium.com/anything/
+```
 
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
@@ -65,22 +82,6 @@ A load balancing weight may be associated with a particular upstream by appendin
 ```
 
 Must be `tcp` if `from` is `tcp+https`.
-
-### Examples
-
-```yaml
-- from: https://example.com
-  to: http://verify
-
-- from: https://example.com
-  to: https://192.1.20.12:8080
-
-- from: https://example.com
-  to: http://neverssl.com
-
-- from: https://example.com
-  to: https://verify.pomerium.com/anything/
-```
 
 :::warning
 
