@@ -27,6 +27,27 @@ import TabItem from '@theme/TabItem';
 | :-- | :-- | :-- | :-- |
 | `set_response_headers` | `SET_RESPONSE_HEADERS` | `string` | see [Default headers](#default) |
 
+### Examples
+
+#### Comma separated values (CSV):
+
+```csv
+X-Content-Type-Options:nosniff,X-Frame-Options:SAMEORIGIN
+```
+
+#### JSON
+
+```json
+ '{"X-Test": "X-Value"}'
+```
+
+#### YAML
+
+```yaml
+set_response_headers:
+  X-Test: X-Value
+```
+
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
 
@@ -40,6 +61,13 @@ Configure **Response Headers** under **Proxy** settings in the Console:
 | **Name**               | **Type** | **Default**                     |
 | :--------------------- | :------- | :------------------------------ |
 | `set_response_headers` | `string` | see [Default headers](#default) |
+
+### Examples
+
+```yaml
+set_response_headers:
+  X-Test: X-Value
+```
 
 Set per [Ingress](/docs/deploy/k8s/ingress).
 
@@ -78,25 +106,4 @@ To disable `set_response_headers`:
 ```yaml
 set_response_headers:
   disable: true
-```
-
-### Examples
-
-#### Comma separated values (CSV):
-
-```csv
-X-Content-Type-Options:nosniff,X-Frame-Options:SAMEORIGIN
-```
-
-#### JSON
-
-```JSON
- '{"X-Test": "X-Value"}'
-```
-
-#### YAML
-
-```yaml
-set_response_headers:
-  X-Test: X-Value
 ```
