@@ -96,7 +96,7 @@ If that’s a lot to take in, don’t worry, Pomerium handles a lot of it for yo
 
 There are two settings that you need to configure to implement identity verification with signed headers:
 
-- [Pass Identity Headers](/docs/reference/routes/pass-identity-headers-per-route)
+- [Pass Identity Headers](/docs/reference/routes/pass-identity-headers)
 - [Signing Key](/docs/reference/signing-key)
 
 :::info **Global and Route Settings**
