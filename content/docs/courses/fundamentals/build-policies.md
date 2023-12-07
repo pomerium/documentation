@@ -112,10 +112,12 @@ Now that you’ve briefly covered PPL, let’s jump into some simple examples:
 
 This example instructs Pomerium to only grant a user access if their email address is `example@domain.com`.
 
-```markdown
-# This is a PPL Rule
-
-policy: # Policy object starts here allow: # At least one action and: # Logical operator - email: # Criterion is: example@domain.com # Value
+```yaml title="PPL rule"
+policy: # Policy object starts here
+  allow: # At least one action
+    and: # Logical operator
+      - email: # Criterion
+        is: example@domain.com # Value
 ```
 
 **Example 2**: Allow access based on the domain criterion

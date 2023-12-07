@@ -20,7 +20,7 @@ In a later tutorial, we will cover how to self-host and run Pomerium in a virtua
 
 For the purposes of this guide, we’ll call this project `pomerium_quickstart` (but name it whatever you want).
 
-Your project will contain all the files and configurations you need to run \***\*Pomerium Core\*\***.
+Your project will contain all the files and configurations you need to run **Pomerium Core**.
 
 The directory structure will look like this:
 
@@ -38,7 +38,7 @@ We’ll configure these files together in the next section.
 - **Proxy** service — the red-linen rope
 - **Authentication** service — the bouncer checking the user's ID to see if they are who they say they are
 - **Authorization** service — the bouncer checking if the user is authorized to do what they want to do
-- The **Databroker** service — the waiter remembering the user’s current session to offer the best user experience
+- **Databroker** service — the waiter remembering the user’s current session to offer the best user experience
 
 When you run Core, these services work together to secure your apps and connect your users to them.
 
