@@ -409,9 +409,7 @@ routes:
 
 ## Route matching order
 
-Pomerium processes routes in the order they are defined in its configuration. If you’re using Pomerium Core, then Pomerium will source its configuration from a configuration file.
-
-In Enterprise Console and Ingress Controller deployments, routes are defined in Pomerium’s Databroker service. In this case, Pomerium sorts routes deterministically in the following order:
+Routes are matched in a specific order; an incoming request will be sent to the first route that matches. Routes defined in a configuration file are considered first, in the order in which they appear in the configuration file, followed by any routes defined in the Enterprise Console or by the Ingress Controller. Routes from the Enterprise Console or Ingress Controller are sorted in the following order:
 
 1. Ascending by `host`.
 1. Descending by `path`.
