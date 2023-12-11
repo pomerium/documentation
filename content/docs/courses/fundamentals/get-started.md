@@ -10,7 +10,7 @@ sidebar_position: 1
 
 # Get Started With Pomerium
 
-Welcome to **Pomerium Fundamentals - Get Started**! This is your starting point to learning the essentials of how Pomerium works so you can use it effectively to secure your own web apps and services. 
+Welcome to **Pomerium Fundamentals - Get Started**! This is your starting point to learning the essentials of how Pomerium works so you can use it effectively to secure your own web apps and services.
 
 To set expectations, we estimate the full Fundamentals course will take more or less an hour of your time, resulting in a fully deployed, production-level Pomerium instance.
 
