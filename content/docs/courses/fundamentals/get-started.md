@@ -12,6 +12,8 @@ sidebar_position: 1
 
 Welcome to **Pomerium Fundamentals - Get Started**! This is your starting point to learning the essentials of how Pomerium works so you can use it effectively to secure your own web apps and services.
 
+To set expectations, we estimate the full Fundamentals course will take more or less an hour of your time, resulting in a fully deployed, production-level Pomerium instance.
+
 This tutorial teaches you how to set up Pomerium using [Docker](https://docs.docker.com/install/) and [Docker Compose](https://docs.docker.com/compose/install/).
 
 In a later tutorial, we will cover how to self-host and run Pomerium in a virtual machine environment. For now, we will work in containerized environments so we can easily configure Pomerium and run it alongside other services, which you can access behind Pomerium.
