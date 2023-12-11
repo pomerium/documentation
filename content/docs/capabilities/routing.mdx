@@ -409,12 +409,31 @@ routes:
 
 ## Route matching order
 
-Routes are matched in a specific order; an incoming request will be sent to the first route that matches. Routes defined in a configuration file are considered first, in the order in which they appear in the configuration file, followed by any routes defined in the Enterprise Console or by the Ingress Controller. Routes from the Enterprise Console or Ingress Controller are sorted in the following order:
+Pomerium matches routes in a specific order; an incoming request will be sent to the first route that matches.
 
-1. Ascending by `host`.
-1. Descending by `path`.
-1. Descending by `regex`.
-1. Descending by `prefix`.
+Pomerium considers routes defined in a configuration file first, in the order in which they appear in the configuration file, followed by any routes defined in the Enterprise Console or by the Ingress Controller.
+
+Routes from the Enterprise Console or Ingress Controller are sorted in the following order:
+
+1. Ascending by `host`
+1. Descending by `path`
+1. Descending by `regex`
+1. Descending by `prefix`
+
+The example below defines two routes in a configuration file that both point to the same domain. The first route contains a prefix (`api`).
+
+If Pomerium receives a request to access `https://a.example.com:8080`, Pomerium will first check `https://a.example.com:8080/api` before matching the request with `https://a.example.com:8080`.
+
+```yaml title="config.yaml"
+- from: https://a.example.com:8080
+  to: http://example:8080
+  prefix: /api
+  allow_any_authenticated_user: true
+
+- from: https://a.example.com:8080
+  to: http://example:8080
+  allow_any_authenticated_user: true
+```
 
 ## Further reading
 
