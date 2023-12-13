@@ -22,7 +22,7 @@
     "title": "Address",
     "path": "/address",
     "description": "Address specifies the host and port to serve HTTP requests from.",
-    "short_description": "",
+    "short_description": "Specify host and port to serve HTTP requests from",
     "type": "string",
     "services": ["proxy"]
   },
@@ -40,7 +40,7 @@
     "path": "/autocert",
     "title": "Autocert",
     "description": "Turning on autocert allows Pomerium to automatically retrieve, manage, and renew public facing TLS certificates from Lets Encrypt.",
-    "short_description": "Retrieve, manage, and renew public facing TLS certificates from Lets Encrypt.",
+    "short_description": "Retrieve, manage, and renew public-facing TLS certificates from Let's Encrypt.",
     "services": ["authenticate", "proxy"],
     "type": "bool"
   },
@@ -49,7 +49,7 @@
     "title": "Autocert CA",
     "path": "/autocert",
     "description": "Autocert CA is the directory URL of the ACME CA to use when requesting certificates.",
-    "short_description": "Autocert CA is the directory URL of the ACME CA to use when requesting certificates.",
+    "short_description": "The directory URL of the ACME CA to use when requesting certificates.",
     "type": "",
     "services": ["authenticate", "proxy"]
   },
@@ -67,16 +67,16 @@
     "title": "Autocert Must-Staple",
     "path": "/autocert",
     "type": "bool",
-    "short_description": "Forces Autocert to request a certificate with the status_request extension",
+    "short_description": "Force Autocert to request a certificate with the status_request extension",
     "services": ["authenticate", "proxy"]
   },
   "autocert-directory": {
     "id": "autocert-directory",
     "title": "Autocert Directory",
     "path": "/autocert",
-    "description": "Autocert directory is the path which autocert will store x509 certificate data.",
+    "description": "Autocert directory is the path which Autocert will store x509 certificate data.",
     "services": ["authenticate", "proxy"],
-    "short_description": "String pointing to the path of the directory",
+    "short_description": "Path of Autocert directory storing certificate data",
     "type": "string"
   },
   "autocert-use-staging": {
@@ -84,7 +84,7 @@
     "title": "Autocert Use Staging",
     "path": "/autocert",
     "description": "Autocert Use Staging setting allows you to use Let's Encrypt's staging environment, which has more lenient usage limits than the production environment.",
-    "short_description": "Enable this setting to use Let's Encrypt's staging environment.",
+    "short_description": "Use Let's Encrypt's staging environment.",
     "type": "bool",
     "services": ["authenticate", "proxy"]
   },
@@ -101,8 +101,8 @@
     "id": "autocert-eab-mac-key",
     "title": "Autocert EAB MAC Key",
     "path": "/autocert",
-    "description": "Autocert EAB MAC Key is the base64url-encoded secret key corresponding to the Autocert EAB Key ID.",
-    "short_description": "String containing a base64url-encoded secret key",
+    "description": "Autocert EAB MAC Key is the base64, url-encoded secret key corresponding to the Autocert EAB Key ID.",
+    "short_description": "String containing secret key",
     "type": "string",
     "services": ["authenticate", "proxy"]
   },
@@ -112,14 +112,14 @@
     "path": "/autocert",
     "services": ["authenticate", "proxy"],
     "type": "string",
-    "short_description": "Base64-encoded string or relative file location"
+    "short_description": "Certificate Authority relative file location string"
   },
   "branding-settings": {
     "id": "branding",
     "title": "Branding Settings",
     "path": "/branding",
     "type": "string",
-    "short_description": "Customize your Console with Pomerium's branding settings."
+    "short_description": "Customize Pomerium's branding settings."
   },
   "certificates": {
     "id": "certificates",
@@ -134,7 +134,7 @@
     "title": "Client Certificate Authority",
     "path": "/certificates",
     "services": [],
-    "short_description": "[base64 encoded] string or relative file location",
+    "short_description": "Client certificate authority relative file location string",
     "type": "string"
   },
   "downstream-mtls-client-certificate-authority": {
@@ -142,7 +142,7 @@
     "title": "Downstream mTLS Certificate Authority",
     "path": "/downstream-mtls-settings#ca",
     "description": "A bundle of PEM-encoded X.509 certificates that will be treated as trust anchors when verifying client certificates",
-    "short_description": "[base64-encoded] PEM certificate bundle",
+    "short_description": "PEM certificate bundle",
     "type": "string"
   },
   "downstream-mtls-crl": {
@@ -150,7 +150,7 @@
     "title": "Downstream mTLS Certificate Revocation List",
     "path": "/downstream-mtls-settings#crl",
     "description": "A bundle of PEM-encoded certificate revocation lists to be consulted during certificate validation.",
-    "short_description": "[base64-encoded] PEM CRL bundle",
+    "short_description": "PEM CRL bundle",
     "type": "string"
   },
   "downstream-mtls-enforcement": {
@@ -182,8 +182,7 @@
     "title": "Cookies Settings",
     "path": "/cookies",
     "services": [],
-    "type": "string",
-    "short_description": "Learn how to configure Pomerium's cookies settings."
+    "type": "string"
   },
   "identity-provider-settings": {
     "id": "identity-provider-settings",
@@ -196,7 +195,7 @@
     "id": "cookie-secure",
     "title": "Secure Cookie",
     "path": "/cookies#cookie-secure",
-    "description": " If true, instructs browsers to only send user session cookies over HTTPS.",
+    "description": "If true, instructs browsers to only send user session cookies over HTTPS.",
     "services": [],
     "type": "bool"
   },
@@ -211,6 +210,7 @@
     "title": "HTTPS only",
     "path": "/cookies#cookie-secure",
     "description": "If true, instructs browsers to only send user session cookies over HTTPS.",
+    "short_description": "Instruct browsers to only send user session cookies over HTTPS",
     "services": [],
     "type": "bool"
   },
@@ -305,6 +305,7 @@
     "title": "Javascript Security",
     "path": "/cookies#cookie-http-only",
     "description": "If true, prevents javascript in browsers from reading user session cookies.",
+    "short_description": "Prevent JavaScript in browsers from reading user session cookies",
     "services": [],
     "type": "bool"
   },
@@ -313,6 +314,7 @@
     "title": "Expiration",
     "path": "/cookies#cookie-expiration",
     "description": "Sets the lifetime of session cookies. After this interval, users must reauthenticate.",
+    "short_description": "Set session cookie expiration time",
     "services": [],
     "type": "datetime"
   },
@@ -321,6 +323,7 @@
     "title": "Same Site",
     "path": "/cookies#cookie-samesite",
     "description": "Sets the SameSite Cookie Option.",
+    "short_description": "Set the SameSite Cookie option",
     "services": [],
     "type": "string"
   },
@@ -387,7 +390,7 @@
     "id": "debug",
     "title": "Debug",
     "path": "/debug",
-    "description": "Debug enables colored, human-readable logs to be streamed to standard out.",
+    "description": "Enable colored, human-readable logs to be streamed to standard out.",
     "services": [],
     "type": "bool"
   },
@@ -506,7 +509,7 @@
     "path": "/metrics#metrics-client-certificate-authority",
     "services": [],
     "type": "string",
-    "short_description": "Base64-encoded string or relative file location"
+    "short_description": "Client certificate authority relative file location string"
   },
   "proxy-log-level": {
     "id": "proxy-log-level",
@@ -528,19 +531,19 @@
     "id": "shared-secret",
     "title": "Shared Secret",
     "path": "/shared-secret",
-    "description": "Shared Secret is the base64 encoded 256-bit key used to mutually authenticate requests between services.",
+    "description": "Shared Secret is the base64-encoded, 256-bit key used to mutually authenticate requests between services.",
     "services": [],
     "type": "string",
-    "short_description": "Base64 encoded string"
+    "short_description": "Base64-encoded string"
   },
   "shared-secret-file": {
     "id": "shared-secret-file",
     "title": "Shared Secret File",
     "path": "/shared-secret-file",
-    "description": "File path containing base64 encoded shared secret.",
+    "description": "File path containing base64-encoded shared secret.",
     "services": [],
     "type": "string",
-    "short_description": "Path to base64 encoded string"
+    "short_description": "Path to base64-encoded shared secret"
   },
   "tracing": {
     "id": "tracing",
@@ -664,7 +667,7 @@
     "description": "Certificate Authority is set when behind-the-ingress service communication uses self-signed certificates.",
     "services": [],
     "type": "string",
-    "short_description": "Base64 encoded string or relative file location"
+    "short_description": "Certificate authority relative file location string"
   },
   "default-upstream-timeout": {
     "id": "default-upstream-timeout",
@@ -807,7 +810,7 @@
   "enable-google-cloud-serverless-authentication": {
     "id": "enable-google-cloud-serverless-authentication",
     "title": "Enable Google Cloud Serverless Authentication",
-    "short_description": "Enables sending a signed Authorization Header to upstream GCP services",
+    "short_description": "Send a signed Authorization Header to upstream GCP services",
     "path": "/routes/enable-google-cloud-serverless-authentication",
     "services": ["proxy"],
     "type": "bool"
@@ -994,7 +997,7 @@
     "title": "Prefix Rewrite",
     "path": "/routes/path-rewriting#prefix-rewrite",
     "services": ["proxy"],
-    "short_description": "Swaps the matched prefix (previous section) with this value",
+    "short_description": "Swaps the matched prefix with this value",
     "type": "string"
   },
   "primary-color": {
@@ -1056,7 +1059,7 @@
     "id": "regex-rewrite-substitution",
     "title": "Regex Rewrite Substitution",
     "path": "/routes/path-rewriting#regex-rewrite",
-    "short_description": "Paths matching the pattern above will be replaced with this",
+    "short_description": "Paths matching the regex-rewrite pattern will be replaced with this value",
     "enterpriseOnly": true
   },
   "remove-request-headers": {
@@ -1205,7 +1208,7 @@
     "path": "/google-cloud-serverless-authentication-service-account",
     "services": ["authorize"],
     "type": "string",
-    "short_description": "Base64 encoded string"
+    "short_description": "Base64-encoded string containing GCP serverless authentication service account"
   },
   "signing-key": {
     "id": "signing-key",
@@ -1214,7 +1217,7 @@
     "description": "Signing Key is the key used to sign a user's attestation JWT which can be consumed by upstream applications to pass along identifying user information like username, id, and groups.",
     "services": [],
     "type": "string",
-    "short_description": "Base64 encoded string"
+    "short_description": "Base64-encoded string containing signing key"
   },
   "signing-key-file": {
     "id": "signing-key-file",
@@ -1223,7 +1226,7 @@
     "description": "File path to a secret containing the signing key, used to sign a user's attestation JWT which can be consumed by upstream applications to pass along identifying user information like username, id, and groups.",
     "services": [],
     "type": "string",
-    "short_description": "File path containing a Base64 encoded string"
+    "short_description": "File path containing a Base64-encoded string"
   },
   "devices": {
     "id": "devices",
