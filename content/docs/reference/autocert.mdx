@@ -60,6 +60,16 @@ Autocert requires that port `443` be accessible from the internet in order to co
 | :------------------- | :------------------------ | :-------- | :----------- |
 | `autocert`           | `AUTOCERT`                | `boolean` | **optional** |
 
+#### Examples {#autocert-examples}
+
+```yaml
+autocert: true
+```
+
+```bash
+AUTOCERT=TRUE
+```
+
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
 
@@ -72,16 +82,6 @@ Kubernetes users should not use Autocert. See the [cert-manager's guide](https:/
 
 </TabItem>
 </Tabs>
-
-### Examples {#autocert-examples}
-
-```yaml
-# config file key
-autocert: true
-
-# environment variable
-AUTOCERT=TRUE
-```
 
 ## Autocert CA {#autocert-ca}
 
@@ -102,6 +102,16 @@ If set, Autocert CA will override the [**Autocert Use Staging**](/docs/reference
 | :------------------- | :------------------------ | :------- | :----------- |
 | `autocert_ca`        | `AUTOCERT_CA`             | `string` | **optional** |
 
+#### Examples {#autocert-ca-examples}
+
+```yaml
+autocert_ca: https://acme.zerossl.com/v2/DV90
+```
+
+```bash
+AUTOCERT_CA=https://acme.zerossl.com/v2/DV90
+```
+
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
 
@@ -114,16 +124,6 @@ Kubernetes users should not use Autocert. See the [cert-manager's guide](https:/
 
 </TabItem>
 </Tabs>
-
-### Examples {#autocert-ca-examples}
-
-```yaml
-# config file key
-autocert_ca: https://acme.zerossl.com/v2/DV90
-
-# environment variable
-AUTOCERT_CA=https://acme.zerossl.com/v2/DV90
-```
 
 ## Autocert Directory {#autocert-directory}
 
@@ -139,6 +139,28 @@ AUTOCERT_CA=https://acme.zerossl.com/v2/DV90
 | `autocert_dir`       | `AUTOCERT_DIR`            | `string` | **optional** |
 
 **Note**: `string` must point to the path of the directory, or a URL to an S3 or GCS bucket.
+
+#### Examples {#autocert-directory-examples}
+
+##### S3 Bucket
+
+An S3 bucket can be used as storage by using a URL like:
+
+```yaml
+autocert_dir: s3://your-bucket.s3.us-east-1.amazonaws.com/some/prefix
+```
+
+Credentials are sourced from [the environment](https://pkg.go.dev/github.com/aws/aws-sdk-go-v2/config#EnvConfig).
+
+##### GCS Bucket
+
+A Google Cloud Storage bucket can be used as storage by using a URL like:
+
+```yaml
+autocert_dir: gs://your-bucket/some/prefix
+```
+
+Credentials are sourced from [Google Application Default Credentials](https://cloud.google.com/docs/authentication/application-default-credentials).
 
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
@@ -162,28 +184,6 @@ Kubernetes users should not use Autocert. See the [cert-manager's guide](https:/
 | XDG base directories | [$XDG_DATA_HOME](https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html) |
 | Home directories | `$HOME/.local/share/pomerium` |
 
-### Examples {#autocert-directory-examples}
-
-#### S3 Bucket
-
-An S3 bucket can be used as storage by using a URL like:
-
-```yaml
-autocert_dir: s3://your-bucket.s3.us-east-1.amazonaws.com/some/prefix
-```
-
-Credentials are sourced from [the environment](https://pkg.go.dev/github.com/aws/aws-sdk-go-v2/config#EnvConfig).
-
-#### GCS Bucket
-
-A Google Cloud Storage bucket can be used as storage by using a URL like:
-
-```yaml
-autocert_dir: gs://your-bucket/some/prefix
-```
-
-Credentials are sourced from [Google Application Default Credentials](https://cloud.google.com/docs/authentication/application-default-credentials).
-
 ## Autocert EAB Key ID {#autocert-eab-key-id}
 
 **Autocert EAB Key ID** is the key identifier when requesting a certificate from a CA with External Account Binding (EAB) enabled.
@@ -199,6 +199,16 @@ Credentials are sourced from [Google Application Default Credentials](https://cl
 
 See [RFC8555-#7.3.4](https://datatracker.ietf.org/doc/html/rfc8555#section-7.3.4) for more information.
 
+#### Examples {#autocert-eab-key-id-examples}
+
+```yaml
+autocert_eab_key_id: EAB_KID
+```
+
+```bash
+AUTOCERT_EAB_KEY_ID=EAB_KID
+```
+
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
 
@@ -211,16 +221,6 @@ Kubernetes users should not use Autocert. See the [cert-manager's guide](https:/
 
 </TabItem>
 </Tabs>
-
-### Examples {#autocert-eab-key-id-examples}
-
-```yaml
-# config file key
-autocert_eab_key_id: EAB_KID
-
-# environment variable
-AUTOCERT_EAB_KEY_ID=EAB_KID
-```
 
 ## Autocert EAB MAC Key {#autocert-eab-mac-key}
 
@@ -237,6 +237,16 @@ The Autocert EAB MAC Key setting is required when Autocert EAB Key ID is set.
 | :--------------------- | :------------------------ | :------- | :----------- |
 | `autocert_eab_mac_key` | `AUTOCERT_EAB_MAC_KEY`    | `string` | **optional** |
 
+#### Examples {#autocert-eab-mac-key-examples}
+
+```yaml
+autocert_eab_key_id: base64-URL-encoded_secret_key
+```
+
+```bash
+AUTOCERT_EAB_KEY_ID=base64-URL-encoded_secret_key
+```
+
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
 
@@ -249,16 +259,6 @@ Kubernetes users should not use Autocert. See the [cert-manager's guide](https:/
 
 </TabItem>
 </Tabs>
-
-### Examples {#autocert-eab-mac-key-examples}
-
-```yaml
-# config file key
-autocert_eab_key_id: base64-URL-encoded_secret_key
-
-# environment variable
-AUTOCERT_EAB_KEY_ID=base64-URL-encoded_secret_key
-```
 
 ## Autocert Email {#autocert-email}
 
@@ -279,6 +279,16 @@ The CA may contact you at this address when, for example, a certificate expires.
 | :------------------- | :------------------------ | :------- | :----------- |
 | `autocert_email`     | `AUTOCERT_EMAIL`          | `string` | **optional** |
 
+#### Examples {#autocert-email-examples}
+
+```yaml
+autocert_email: example@domain.com
+```
+
+```bash
+AUTOCERT_EMAIL=example@domain.com
+```
+
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
 
@@ -291,16 +301,6 @@ Kubernetes users should not use Autocert. See the [cert-manager's guide](https:/
 
 </TabItem>
 </Tabs>
-
-### Examples {#autocert-email-examples}
-
-```yaml
-# config file key
-autocert_email: example@domain.com
-
-# environment variable
-AUTOCERT_EMAIL=example@domain.com
-```
 
 ## Autocert Must Staple {#autocert-must-staple}
 
@@ -327,6 +327,16 @@ The Autocert Must Staple setting will only take effect when you request or renew
 
 See [RFC7633](https://tools.ietf.org/html/rfc7633) for more information.
 
+#### Examples {#autocert-must-staple-examples}
+
+```yaml
+autocert_must_staple: true
+```
+
+```bash
+AUTOCERT_MUST_STAPLE=true
+```
+
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
 
@@ -339,16 +349,6 @@ Kubernetes users should not use Autocert. See the [cert-manager's guide](https:/
 
 </TabItem>
 </Tabs>
-
-### Examples {#autocert-must-staple-examples}
-
-```yaml
-# config file key
-autocert_must_staple: true
-
-# environment variable
-AUTOCERT_MUST_STAPLE=true
-```
 
 ## Autocert Trusted Certificate Authority {#autocert-trusted-certificate-authority}
 
@@ -366,6 +366,24 @@ If not set, the system trusted roots will be used to verify TLS connections to t
 | `autocert_trusted_ca` | `AUTOCERT_TRUSTED_CA` | `string` | **optional** |
 | `autocert_trusted_ca_file` | `AUTOCERT_TRUSTED_CA_FILE` | `string` | **optional** |
 
+#### Examples {#autocert-trusted-certificate-authority-examples}
+
+```yaml
+autocert_trusted_ca: base64-encoded-string
+```
+
+```yaml
+autocert_trusted_ca_file: /relative/file/location
+```
+
+```bash
+AUTOCERT_TRUSTED_CA=base64-encoded-string
+```
+
+```bash
+AUTOCERT_TRUSTED_CA_FILE=/relative/file/location
+```
+
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
 
@@ -378,18 +396,6 @@ Kubernetes users should not use Autocert. See the [cert-manager's guide](https:/
 
 </TabItem>
 </Tabs>
-
-### Examples {#autocert-trusted-certificate-authority-examples}
-
-```yaml
-# config file key
-autocert_trusted_ca: base64-encoded-string
-autocert_trusted_ca_file: /relative/file/location
-
-# environment variable
-AUTOCERT_TRUSTED_CA=base64-encoded-string
-AUTOCERT_TRUSTED_CA_FILE=/relative/file/location
-```
 
 ## Autocert Use Staging {#autocert-use-staging}
 
@@ -404,6 +410,16 @@ AUTOCERT_TRUSTED_CA_FILE=/relative/file/location
 | :-- | :-- | :-- | :-- |
 | `autocert_use_staging` | `AUTOCERT_USE_STAGING` | `boolean` | **optional** |
 
+#### Examples {#autocert-use-staging-examples}
+
+```yaml
+autocert_use_staging: true
+```
+
+```bash
+AUTOCERT_USE_STAGING=true
+```
+
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
 
@@ -416,13 +432,3 @@ Kubernetes users should not use Autocert. See the [cert-manager's guide](https:/
 
 </TabItem>
 </Tabs>
-
-### Examples {#autocert-use-staging-examples}
-
-```yaml
-# config file key
-autocert_use_staging: true
-
-# environment variable
-AUTOCERT_USE_STAGING=true
-```
