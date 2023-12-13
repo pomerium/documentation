@@ -10,6 +10,7 @@ keywords:
   - mTLS
 pagination_prev: null
 pagination_next: null
+toc_max_heading_level: 2
 ---
 
 import Tabs from '@theme/Tabs';
@@ -49,19 +50,6 @@ The CA bundle can be specified inline (with the `ca` key or the `DOWNSTREAM_MTLS
 | `downstream_mtls.ca` | `DOWNSTREAM_MTLS_CA` | string (base64-encoded PEM certificate bundle) |
 | `downstream_mtls.ca_file` | `DOWNSTREAM_MTLS_CA_FILE` | string (path to PEM certificate bundle) |
 
-</TabItem>
-<TabItem value="Enterprise" label="Enterprise">
-
-These settings are not configurable in the Enterprise Console.
-
-</TabItem>
-<TabItem value="Kubernetes" label="Kubernetes">
-
-The Ingress Controller does not support these settings.
-
-</TabItem>
-</Tabs>
-
 ### Examples {#ca-examples}
 
 ```yaml
@@ -81,6 +69,19 @@ DOWNSTREAM_MTLS_CA=LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk...
 ```bash
 DOWNSTREAM_MTLS_CA_FILE=/path/to/trusted/CAs.pem
 ```
+
+</TabItem>
+<TabItem value="Enterprise" label="Enterprise">
+
+These settings are not configurable in the Enterprise Console.
+
+</TabItem>
+<TabItem value="Kubernetes" label="Kubernetes">
+
+The Ingress Controller does not support these settings.
+
+</TabItem>
+</Tabs>
 
 ## Certificate Revocation List (CRL) {#crl}
 
@@ -108,19 +109,6 @@ A CRL bundle can be specified inline (with the `crl` key or the `DOWNSTREAM_MTLS
 | `downstream_mtls.crl` | `DOWNSTREAM_MTLS_CRL` | string (base64-encoded PEM CRL bundle) |
 | `downstream_mtls.crl_file` | `DOWNSTREAM_MTLS_CRL_FILE` | string (path to PEM CRL bundle) |
 
-</TabItem>
-<TabItem value="Enterprise" label="Enterprise">
-
-These settings are not configurable in the Enterprise Console.
-
-</TabItem>
-<TabItem value="Kubernetes" label="Kubernetes">
-
-The Ingress Controller does not support these settings.
-
-</TabItem>
-</Tabs>
-
 ### Examples {#crl-examples}
 
 ```yaml
@@ -140,6 +128,19 @@ DOWNSTREAM_MTLS_CRL=LS0tLS1CRUdJTiBYNTA5IENSTC0tLS0tCk...
 ```bash
 DOWNSTREAM_MTLS_CRL_FILE=/path/to/CRLs.pem
 ```
+
+</TabItem>
+<TabItem value="Enterprise" label="Enterprise">
+
+These settings are not configurable in the Enterprise Console.
+
+</TabItem>
+<TabItem value="Kubernetes" label="Kubernetes">
+
+The Ingress Controller does not support these settings.
+
+</TabItem>
+</Tabs>
 
 ## Enforcement Mode
 
@@ -182,6 +183,17 @@ DOWNSTREAM_MTLS_CRL_FILE=/path/to/CRLs.pem
 | :-- | :-- | :-- |
 | `downstream_mtls.enforcement` | `DOWNSTREAM_MTLS_ENFORCEMENT` | string (one of `policy_with_default_deny`, `policy`, or `reject_connection`) |
 
+### Examples {#enforcement-mode-examples}
+
+```yaml
+downstream_mtls:
+  enforcement: reject_connection
+```
+
+```bash
+DOWNSTREAM_MTLS_ENFORCEMENT=reject_connection
+```
+
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
 
@@ -194,17 +206,6 @@ The Ingress Controller does not support this setting.
 
 </TabItem>
 </Tabs>
-
-### Examples {#enforcement-mode-examples}
-
-```yaml
-downstream_mtls:
-  enforcement: reject_connection
-```
-
-```bash
-DOWNSTREAM_MTLS_ENFORCEMENT=reject_connection
-```
 
 ## Match Subject Alt Names {#match-sans}
 
@@ -232,19 +233,6 @@ SAN IPv4 addresses will be expressed in dotted decimal notation (e.g. "127.0.0.1
 | :-- | :-- | :-- |
 | `downstream_mtls.match_subject_alt_names` | n/a | array of mappings from SAN type to regular expression |
 
-</TabItem>
-<TabItem value="Enterprise" label="Enterprise">
-
-This setting is not configurable in the Enterprise Console.
-
-</TabItem>
-<TabItem value="Kubernetes" label="Kubernetes">
-
-The Ingress Controller does not support this setting.
-
-</TabItem>
-</Tabs>
-
 ### Examples {#match-sans-examples}
 
 To require that all client certificates have a DNS SAN with a domain name ending in ".corp.example.com":
@@ -263,6 +251,19 @@ downstream_mtls:
     - dns: '.*beyondcorp.*'
     - email: '.*@example\.com'
 ```
+
+</TabItem>
+<TabItem value="Enterprise" label="Enterprise">
+
+This setting is not configurable in the Enterprise Console.
+
+</TabItem>
+<TabItem value="Kubernetes" label="Kubernetes">
+
+The Ingress Controller does not support this setting.
+
+</TabItem>
+</Tabs>
 
 ## Max Verify Depth
 
@@ -306,19 +307,6 @@ Note that a client presenting "Certificate B" must also include the "Intermediat
 | :-- | :-- | :-- |
 | `downstream_mtls.max_verify_depth` | `DOWNSTREAM_MTLS_MAX_VERIFY_DEPTH` | unsigned integer |
 
-</TabItem>
-<TabItem value="Enterprise" label="Enterprise">
-
-This setting is not configurable in the Enterprise Console.
-
-</TabItem>
-<TabItem value="Kubernetes" label="Kubernetes">
-
-The Ingress Controller does not support this setting.
-
-</TabItem>
-</Tabs>
-
 ### Examples {#max-verify-depth-examples}
 
 To allow client certificate chains including the leaf certificate and at most one client-supplied intermediate CA certificate (before a trusted root or intermediate CA):
@@ -342,3 +330,16 @@ downstream_mtls:
 ```bash
 DOWNSTREAM_MTLS_MAX_VERIFY_DEPTH=0
 ```
+
+</TabItem>
+<TabItem value="Enterprise" label="Enterprise">
+
+This setting is not configurable in the Enterprise Console.
+
+</TabItem>
+<TabItem value="Kubernetes" label="Kubernetes">
+
+The Ingress Controller does not support this setting.
+
+</TabItem>
+</Tabs>

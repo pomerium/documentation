@@ -8,6 +8,7 @@ keywords:
   - Global Timeouts
 pagination_prev: null
 pagination_next: null
+toc_max_heading_level: 2
 ---
 
 import Tabs from '@theme/Tabs';
@@ -30,6 +31,16 @@ import TabItem from '@theme/TabItem';
 | `timeout_write` | `TIMEOUT_WRITE` | `string` ([Go Duration](https://golang.org/pkg/time/#Duration.String) formatting) | `0` | The max stream duration is the maximum time that a stream’s lifetime will span. An HTTP request/response exchange fully consumes a single stream. Therefore, this value must be greater than `read_timeout` as it covers both request and response time. |
 | `timeout_idle` | `TIMEOUT_IDLE` | `string` ([Go Duration](https://golang.org/pkg/time/#Duration.String) formatting) | `5m` | The idle timeout is the time at which a downstream or upstream connection will be terminated if there are no active streams. |
 
+### Examples
+
+```yaml
+timeout_read: 30s
+```
+
+```bash
+TIMEOUT_WRITE=0
+```
+
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
 
@@ -38,17 +49,30 @@ Set **Global Timeouts** in the Console: ![Global timeouts in Console](./img/time
 </TabItem>
 <TabItem value="Kubernetes" label="Kubernetes">
 
-See [`timeouts`](/docs/deploy/k8s/reference#timeouts) section of the global configuration CRD.
-
-</TabItem>
-</Tabs>
+| **Annotation name** | **Type** | **Defaults** | **Definition** |
+| :-- | :-- | :-- | :-- |
+| `timeouts.read` | `string` ([Go Duration](https://golang.org/pkg/time/#Duration.String) formatting) | `30s` | The amount of time for the entire request stream to be received from the client. |
+| `timeouts.write` | `string` ([Go Duration](https://golang.org/pkg/time/#Duration.String) formatting) | `0` | The max stream duration is the maximum time that a stream’s lifetime will span. An HTTP request/response exchange fully consumes a single stream. Therefore, this value must be greater than `read_timeout` as it covers both request and response time. |
+| `timeouts.idle` | `string` ([Go Duration](https://golang.org/pkg/time/#Duration.String) formatting) | `5m` | The idle timeout is the time at which a downstream or upstream connection will be terminated if there are no active streams. |
 
 ### Examples
 
 ```yaml
-timeout_read: 30s
-
-# Or
-
-TIMEOUT_WRITE=0
+timeouts:
+  read: 30s
 ```
+
+```yaml
+timeouts:
+  write: 0
+```
+
+```yaml
+timeouts:
+  idle: 5m
+```
+
+See [`timeouts`](/docs/deploy/k8s/reference#timeouts) section of the global configuration CRD.
+
+</TabItem>
+</Tabs>
