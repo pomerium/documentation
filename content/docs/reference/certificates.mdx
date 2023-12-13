@@ -6,6 +6,7 @@ keywords:
   - Certificates
 pagination_prev: null
 pagination_next: null
+toc_max_heading_level: 2
 ---
 
 import Tabs from '@theme/Tabs';
@@ -48,30 +49,6 @@ Pomerium will check your system's trust/key store for valid certificates first. 
 | `certificate` and `certificate_key` | `CERTIFICATE` and `CERTIFICATE_KEY` | `string` (base64-encoded string) | **required** (if insecure not set) |
 | `certificate_file` and `certificate_key_file` | `CERTIFICATE_FILE` and `CERTIFICATE_KEY_FILE` | `string` (Relative file location for a single certificate) | **required** (if insecure not set) |
 
-</TabItem>
-<TabItem value="Enterprise" label="Enterprise">
-
-Add **Certificates** in the Enterprise Console:
-
-![Add Certificates in the Enterprise Console](./img/certificates/certs-console.png)
-
-View **Certificates**:
-
-![See your Certificates in the Enterprise Console](./img/certificates/certs-console-list.png)
-
-</TabItem>
-<TabItem value="Kubernetes" label="Kubernetes">
-
-```yaml
-Spec:
-  Certificates: pomerium/wildcard-localhost
-```
-
-See Kubernetes [Ingress Configuration](/docs/deploy/k8s/reference#spec) for more information.
-
-</TabItem>
-</Tabs>
-
 ### Examples {#certificates-examples}
 
 Specify multiple certificates at once:
@@ -95,13 +72,36 @@ certificate_file: '$HOME/.acme.sh/*.example.com/fullchain.crt'
 certificate_key_file: '$HOME/.acme.sh/*.example.com/*.example.com.key'
 ```
 
-:::tip **Note:**
+</TabItem>
+<TabItem value="Enterprise" label="Enterprise">
+
+Add **Certificates** in the Enterprise Console:
+
+![Add Certificates in the Enterprise Console](./img/certificates/certs-console.png)
+
+View **Certificates**:
+
+![See your Certificates in the Enterprise Console](./img/certificates/certs-console-list.png)
+
+</TabItem>
+<TabItem value="Kubernetes" label="Kubernetes">
+
+```yaml
+certificates: pomerium/wildcard-localhost
+```
+
+See Kubernetes [TLS Certificates](/docs/deploy/k8s/ingress#tls-certificates) for more information.
+
+</TabItem>
+</Tabs>
+
+:::note
 
 All certificates supplied to Pomerium must be in **PEM** format.
 
 :::
 
-## Certificate Authority {#certificate-authority}
+## Certificate Authority (CA) {#certificate-authority}
 
 **Certificate Authority** defines a set of root certificate authorities (CAs) that Pomerium uses when communicating with other TLS-protected services.
 
@@ -127,6 +127,16 @@ Be sure to include the intermediary certificate.
 | `certificate_authority` | `CERTIFICATE_AUTHORITY` | `string` | **optional** |
 | `certificate_authority_file` | `CERTIFICATE_AUTHORITY_FILE` | `string` | **optional** |
 
+### Examples {#certificate-authority-examples}
+
+```yaml
+certificate_authority: 'base64-encoded-string'
+```
+
+```bash
+CERTIFICATE_AUTHORITY_FILE=/relative/file/location
+```
+
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
 
@@ -141,16 +151,6 @@ Kubernetes does not support `certificate_authority`
 
 </TabItem>
 </Tabs>
-
-### Examples {#certificate-authority-examples}
-
-```yaml
-# config file key
-certificate_authority: base64-encoded-string
-
-# environment variable
-CERTIFICATE_AUTHORITY_FILE=/relative/file/location
-```
 
 ## Client Certificate Authority {#client-certificate-authority}
 
@@ -176,6 +176,19 @@ If not set, no client certificate will be required.
 | `client_ca`          | `CLIENT_CA`               | `string` | **optional** |
 | `client_ca_file`     | `CLIENT_CA_FILE`          | `string` | **optional** |
 
+### Examples {#client-certificate-authority-examples}
+
+```yaml
+client_ca: base64-encoded-string
+client_ca_file: base64-encoded-string
+```
+
+```bash
+CLIENT_CA=/relative/file/location
+
+CLIENT_CA_FILE=/relative/file/location
+```
+
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
 
@@ -188,13 +201,3 @@ Kubernetes does not support `client_certificate_ca`
 
 </TabItem>
 </Tabs>
-
-### Examples {#client-certificate-authority-examples}
-
-```yaml
-client_ca: base64-encoded-string
-client_ca_file: base64-encoded-string
-
-CLIENT_CA=/relative/file/location
-CLIENT_CA_FILE=/relative/file/location
-```
