@@ -7,6 +7,7 @@ keywords:
   - reference
 pagination_prev: null
 pagination_next: null
+toc_max_heading_level: 2
 ---
 
 import Tabs from '@theme/Tabs';
@@ -29,6 +30,16 @@ Auto TLS secures HTTPS and gRPC/TLS endpoints connecting the Console to the Data
 | :-- | :-- | :-- | :-- | :-- |
 | `tls_derive` | `TLS_DERIVE` | `FQDL` (fully qualified domain name) | **optional** | none |
 
+### Examples
+
+```yaml
+tls_derive: www.example.domain.com
+```
+
+```bash
+TLS_DERIVE=www.example.domain.com
+```
+
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
 
@@ -49,13 +60,3 @@ When you set `tls_derive`:
 - A CA is derived from the `shared_secret` and is added to the list of system default CAs
 - An upstream route (`to`) server certificate signed by such a derived CA would be trusted
 - The Databroker gRPC server would use a server certificate with a provided domain name and signed by a derived CA
-
-### Examples
-
-```yaml
-# config file key
-tls_derive: www.example.domain.com
-
-# environment variable
-TLS_DERIVE=www.example.domain.com
-```
