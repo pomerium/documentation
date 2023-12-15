@@ -56,7 +56,15 @@ Configure **Host Rewrite** settings in the route **Headers** settings in the Con
 </TabItem>
 <TabItem value="Kubernetes" label="Kubernetes">
 
-**Host Rewrite** settings are not supported in Kubernetes
+| **[Annotation name](/docs/deploy/k8s/ingress#set-ingress-annotations)** | **Type** | **Usage** |
+| :-- | :-- | :-- |
+| `host_rewrite` | `string` | **optional** |
+
+### Examples
+
+```yaml
+ingress.pomerium.io/host_rewrite: 'example.com'
+```
 
 </TabItem>
 </Tabs>
@@ -195,6 +203,48 @@ Pass ID token, access token, and client certificate fingerprint (if present) as 
     x-pomerium-client-cert-fingerprint: ${pomerium.client_cert_fingerprint}
 ```
 
+</TabItem>
+<TabItem value="Enterprise" label="Enterprise">
+
+Configure **Set Request Headers** in the Console:
+
+![Set request headers in the console](../img/routes/headers/set-request-headers.png)
+
+</TabItem>
+<TabItem value="Kubernetes" label="Kubernetes">
+
+| **[Annotation name](/docs/deploy/k8s/ingress#set-ingress-annotations)** | **Type** | **Usage** |
+| :-- | :-- | :-- |
+| `set_request_headers` | map of key-value pairs | **optional** |
+
+```yaml
+ingress.pomerium.io/set_request_headers: |
+  X-Test: X-Value
+```
+
+</TabItem>
+</Tabs>
+
+### Pass dynamic tokens in headers {#pass-dynamic-tokens-in-headers}
+
+The following token substitutions are available:
+
+| **Token** | **Value** |
+| :-- | :-- |
+| `${pomerium.id_token}` | OIDC ID token from the identity provider\* |
+| `${pomerium.access_token}` | OAuth access token from the identity provider\* |
+| `${pomerium.client_cert_fingerprint}` | Short form SHA-256 fingerprint of the presented client certificate (if [downstream mTLS](/docs/capabilities/mtls-clients) is enabled) |
+
+\*The ID token and access token are not available when using the [Hosted Authenticate](/docs/capabilities/hosted-authenticate-service) service.
+
+**Note:** Token values must use the `${pomerium.<token>}` syntax. To include a literal `$` character in a header value, use `$$`.
+
+:::warning
+
+Be very careful when passing access tokens to an upstream application. This may allow the application to make other authenticated requests on behalf of the user.
+
+:::
+
 ## Remove Request Headers {#remove-request-headers}
 
 **Remove Request Headers** allows you to remove given request headers. This can be useful if you want to prevent privacy information from being passed to downstream applications.
@@ -218,11 +268,15 @@ Set **Remove Request Headers** in the Console:
 </TabItem>
 <TabItem value="Kubernetes" label="Kubernetes">
 
-| **Name**                 | **Type** | **Usage**    |
-| :----------------------- | :------- | :----------- |
+| **[Annotation name](/docs/deploy/k8s/ingress#set-ingress-annotations)** | **Type** | **Usage** |
+| :-- | :-- | :-- |
 | `remove_request_headers` | `string` | **optional** |
 
-See Kubernetes [Ingress](/docs/deploy/k8s/ingress#annotations) for more information
+```yaml
+ingress.pomerium.io/remove_request_headers: |
+  - X-Email
+  - X-User
+```
 
 </TabItem>
 </Tabs>
@@ -270,11 +324,14 @@ Configure **Set Response Headers** in the Console:
 </TabItem>
 <TabItem value="Kubernetes" label="Kubernetes">
 
-| **Name**               | **Type** | **Usage**    |
-| :--------------------- | :------- | :----------- |
+| **[Annotation name](/docs/deploy/k8s/ingress#set-ingress-annotations)** | **Type** | **Usage** |
+| :-- | :-- | :-- |
 | `set_response_headers` | `string` | **optional** |
 
-See Kubernetes [Ingress](/docs/deploy/k8s/ingress#annotations) for more information
+```yaml
+ingress.pomerium.io/set_response_headers: |
+  X-Test: X-Value
+```
 
 </TabItem>
 </Tabs>
@@ -329,3 +386,39 @@ rewrite_response_headers:
 ```
 
 The browser would be redirected to: `http://frontend/one/some/path/`. This is similar to nginx's [`proxy_redirect` option](http://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_redirect), but can be used for any header.
+
+</TabItem>
+<TabItem value="Enterprise" label="Enterprise">
+
+Configure **Rewrite Response Headers** in the Console:
+
+![Configure rewrite response headers in the console](../img/routes/headers/rewrite-response-header.png)
+
+</TabItem>
+<TabItem value="Kubernetes" label="Kubernetes">
+
+| **[Annotation name](/docs/deploy/k8s/ingress#set-ingress-annotations)** | **Type** | **Usage** |
+| :-- | :-- | :-- |
+| `rewrite_response_headers` | `object` | **optional** |
+
+### Examples
+
+If the downstream server returns a header:
+
+```text
+Location: http://localhost:8000/two/some/path/
+```
+
+And the Ingress object has this annotation:
+
+```yaml
+ingress.pomerium.io/rewrite_response_headers: |
+  - header: Location
+    prefix: http://localhost:8000/two/
+    value: http://frontend/one/
+```
+
+The browser would be redirected to: `http://frontend/one/some/path/`. This is similar to nginx's [`proxy_redirect` option](http://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_redirect), but can be used for any header.
+
+</TabItem>
+</Tabs>

@@ -43,11 +43,15 @@ Enable **Allow Websockets** in the Console:
 </TabItem>
 <TabItem value="Kubernetes" label="Kubernetes">
 
-| **Name**           | **Type**  | **Default** |
-| :----------------- | :-------- | :---------- |
-| `allow_websockets` | `boolean` | `false`     |
+| **[Annotation name](/docs/deploy/k8s/ingress#set-ingress-annotations)** | **Type** | **Default** |
+| :-- | :-- | :-- |
+| `allow_websockets` | `boolean`, `string` | `false` |
 
-See Kubernetes [Ingress](/docs/deploy/k8s/ingress#annotations) for more information
+### Examples
+
+```yaml
+ingress.pomerium.io/allow_websockets: 'true'
+```
 
 </TabItem>
 </Tabs>
@@ -81,11 +85,17 @@ Enable **SPDY** in the Console:
 </TabItem>
 <TabItem value="Kubernetes" label="Kubernetes">
 
-| **Name**     | **Type**  | **Default** |
-| :----------- | :-------- | :---------- |
-| `allow_spdy` | `boolean` | `false`     |
+| **[Annotation name](/docs/deploy/k8s/ingress#set-ingress-annotations)** | **Type** | **Default** |
+| :-- | :-- | :-- |
+| `allow_spdy` | `boolean` | `false` |
 
-See Kubernetes [Ingress](/docs/deploy/k8s/ingress#annotations) for information
+### Examples
+
+```yaml
+ingress.pomerium.io/allow_spdy: 'true'
+```
+
+See [Kubernetes - Ingress Configuration](/docs/deploy/k8s/ingress) for more information.
 
 </TabItem>
 </Tabs>
@@ -119,11 +129,15 @@ Set the **Route Timeout** in the Console:
 </TabItem>
 <TabItem value="Kubernetes" label="Kubernetes">
 
-| **Name** | **Type** | **Usage** | **Default** |
+| **[Annotation name](/docs/deploy/k8s/ingress#set-ingress-annotations)** | **Type** | **Usage** | **Default** |
 | :-- | :-- | :-- | :-- |
 | `timeout` | `string` ([Go Duration](https://golang.org/pkg/time/#Duration.String) formatting) | **optional** | `30s` |
 
-See Kubernetes [Ingress](/docs/deploy/k8s/ingress#annotations) for more information
+### Examples
+
+```yaml
+ingress.pomerium.io/timeout: '30s'
+```
 
 </TabItem>
 </Tabs>
@@ -149,6 +163,14 @@ If `idle_timeout` is specified, and [route timeout](/docs/reference/routes/timeo
 | :-- | :-- | :-- | :-- |
 | `idle_timeout` | `string` ([Go Duration](https://golang.org/pkg/time/#Duration.String) formatting) | **optional** | `5m` |
 
+```yaml
+routes:
+  - from: https://verify.localhost.pomerium.io
+    to: http://verify:8000
+    timeout: 1m
+    idle_timeout: 5m
+```
+
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
 
@@ -159,15 +181,16 @@ Set **Idle Timeout** under route **Timeouts** settings in the Console:
 </TabItem>
 <TabItem value="Kubernetes" label="Kubernetes">
 
-See the Kubernetes [Ingress - Pomerium Standard Annotations](/docs/deploy/k8s/ingress) section for more information.
+| **[Annotation name](/docs/deploy/k8s/ingress#set-ingress-annotations)** | **Type** | **Usage** | **Default** |
+| :-- | :-- | :-- | :-- |
+| `idle_timeout` | `string` ([Go Duration](https://golang.org/pkg/time/#Duration.String) formatting) | **optional** | `5m` |
+
+### Examples
+
+```yaml
+ingress.pomerium.io/timeout: '1m'
+ingress.pomerium.io/idle_timeout: '5m'
+```
 
 </TabItem>
 </Tabs>
-
-```yaml
-routes:
-  - from: https://verify.localhost.pomerium.io
-    to: http://verify:8000
-    timeout: 1m
-    idle_timeout: 5m
-```
