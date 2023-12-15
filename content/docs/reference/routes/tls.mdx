@@ -3,6 +3,9 @@ title: TLS Settings
 sidebar_label: TLS Settings
 description: Configure TLS route settings in Pomerium.
 keywords: [tls]
+pagination_prev: null
+pagination_next: null
+toc_max_heading_level: 2
 ---
 
 import Tabs from '@theme/Tabs';
@@ -36,6 +39,17 @@ For more details, see our [mTLS example repository](https://github.com/pomerium/
 | `tls_client_cert` and `tls_client_key` | `string` (base64-encoded) | **optional** |
 | `tls_client_cert_file` and `tls_client_key_file` | `string` (base64-encoded) | **optional** |
 
+### Examples {#examples-tls-client-certificate}
+
+```yaml
+tls_client_cert: base64-encoded-certificate
+tls_client_key: base64-encoded-keywords
+
+# or
+tls_client_cert_file: /relative/file/location
+tls_client_key_file: /relative/file/location
+```
+
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
 
@@ -50,17 +64,6 @@ See Kubernetes [TLS Certificates](/docs/deploy/k8s/ingress#tls-certificates) for
 
 </TabItem>
 </Tabs>
-
-### Examples {#examples-tls-client-certificate}
-
-```yaml
-tls_client_cert: base64-encoded-certificate
-tls_client_key: base64-encoded-keywords
-
-# or
-tls_client_cert_file: /relative/file/location
-tls_client_key_file: /relative/file/location
-```
 
 ## TLS Custom Certificate Authority {#tls-custom-certificate-authority}
 
@@ -77,6 +80,13 @@ tls_client_key_file: /relative/file/location
 | :-------------------------------------- | :------- | :----------- |
 | `tls_custom_ca` or `tls_custom_ca_file` | `string` | **optional** |
 
+### Examples {#examples-tls-custom-certificate-authority}
+
+```yaml
+tls_custom_ca: base64-encoded-custom-ca
+tls_custom_ca_file: /relative/file/location
+```
+
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
 
@@ -91,13 +101,6 @@ See Kubernetes [TLS Certificates](/docs/deploy/k8s/ingress#tls-certificates) for
 
 </TabItem>
 </Tabs>
-
-### Examples {#examples-tls-custom-certificate-authority}
-
-```yaml
-tls_custom_ca: base64-encoded-custom-ca
-tls_custom_ca_file: /relative/file/location
-```
 
 ## TLS Downstream Client Certificate Authority {#tls-downstream-client-certificate-authority}
 
@@ -126,6 +129,13 @@ See [Client-Side mTLS With Pomerium](/docs/concepts/mutual-auth.md) for more inf
 | :-- | :-- | :-- |
 | `tls_downstream_client_ca` or `tls_downstream_client_ca_file` | `string` | **optional** |
 
+### Examples {#examples-tls-downstream-client-certificate-authority}
+
+```yaml
+tls_downstream_client_ca: base64-encoded-client-ca
+tls_downstream_client_ca_file: /relative/file/location
+```
+
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
 
@@ -140,13 +150,6 @@ See Kubernetes [TLS Certificates](/docs/deploy/k8s/ingress#tls-certificates) for
 
 </TabItem>
 </Tabs>
-
-### Examples {#examples-tls-downstream-client-certificate-authority}
-
-```yaml
-tls_downstream_client_ca: base64-encoded-client-ca
-tls_downstream_client_ca_file: /relative/file/location
-```
 
 ## TLS Downstream Server Name {#tls-downstream-server-name}
 
@@ -193,6 +196,12 @@ In this mode, TLS is susceptible to man-in-the-middle attacks. This should be us
 | :------------------------ | :-------- | :---------- |
 | `tls_skip_verify`         | `boolean` | `false`     |
 
+### Examples {#examples-tls-skip-verification}
+
+```yaml
+tls_skip_verify: true
+```
+
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
 
@@ -216,12 +225,6 @@ ingress.pomerium.io/tls_skip_verify: 'true'
 </TabItem>
 </Tabs>
 
-### Examples {#examples-tls-skip-verification}
-
-```yaml
-tls_skip_verify: true
-```
-
 ## TLS Upstream Allow Renegotiation {#tls-upstream-allow-renegotiation}
 
 **TLS Upstream Allow Renegotiation** controls whether server-initiated TLS renegotiation is allowed for upstream servers. For more details, see Envoy's documentation on [`allow_renegotiation`](https://www.envoyproxy.io/docs/envoy/latest/api-v3/extensions/transport_sockets/tls/v3/tls.proto).
@@ -241,6 +244,12 @@ TLS renegotiation is considered insecure and shouldn’t be used unless absolute
 | :--------------------------------- | :-------- | :---------- |
 | `tls_upstream_allow_renegotiation` | `boolean` | `false`     |
 
+### Examples {#examples-tls-upstream-allow-renegotiation}
+
+```yaml
+tls_upstream_allow_renegotiation: true
+```
+
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
 
@@ -255,12 +264,6 @@ Kubernetes does not support **TLS Upstream Allow Renegotiation**
 
 </TabItem>
 </Tabs>
-
-### Examples {#examples-tls-upstream-allow-renegotiation}
-
-```yaml
-tls_upstream_allow_renegotiation: true
-```
 
 ## TLS Upstream Server Name {#tls-upstream-server-name}
 

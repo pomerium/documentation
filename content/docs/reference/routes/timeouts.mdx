@@ -3,7 +3,13 @@ title: Timeouts Settings
 sidebar_label: Timeouts Settings
 description: Configure Timeouts settings in Pomerium.
 keywords: [websocket connections, spdy, route timeout, route idle timeout]
+pagination_prev: null
+pagination_next: null
+toc_max_heading_level: 2
 ---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
 
 # Timeouts Settings
 
@@ -33,6 +39,12 @@ If set, enables proxying of websocket connections.
 | :------------------------ | :-------- | :---------- |
 | `allow_websockets`        | `boolean` | `false`     |
 
+### Examples {#examples-websocket-connections}
+
+```yaml
+allow_websockets: true
+```
+
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
 
@@ -56,12 +68,6 @@ ingress.pomerium.io/allow_websockets: 'true'
 </TabItem>
 </Tabs>
 
-### Examples {#examples-websocket-connections}
-
-```yaml
-allow_websockets: true
-```
-
 ## SPDY {#spdy}
 
 If set, **SPDY** enables proxying of SPDY protocol upgrades.
@@ -74,6 +80,12 @@ If set, **SPDY** enables proxying of SPDY protocol upgrades.
 | **YAML**/**JSON** setting | **Type**  | **Default** |
 | :------------------------ | :-------- | :---------- |
 | `allow_spdy`              | `boolean` | `false`     |
+
+### Examples {#examples-spdy}
+
+```YAML
+allow_spdy: true
+```
 
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
@@ -95,16 +107,8 @@ Enable **SPDY** in the Console:
 ingress.pomerium.io/allow_spdy: 'true'
 ```
 
-See [Kubernetes - Ingress Configuration](/docs/deploy/k8s/ingress) for more information.
-
 </TabItem>
 </Tabs>
-
-### Examples {#examples-spdy}
-
-```YAML
-allow_spdy: true
-```
 
 ## Route Timeout {#route-timeout}
 
@@ -118,6 +122,12 @@ allow_spdy: true
 | **YAML**/**JSON** setting | **Type** | **Usage** | **Default** |
 | :-- | :-- | :-- | :-- |
 | `timeout` | `string` ([Go Duration](https://golang.org/pkg/time/#Duration.String) formatting) | **optional** | `30s` |
+
+### Examples {#examples-route-timeout}
+
+```yaml
+timeout: 30s
+```
 
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
@@ -142,12 +152,6 @@ ingress.pomerium.io/timeout: '30s'
 </TabItem>
 </Tabs>
 
-### Examples {#examples-route-timeout}
-
-```yaml
-timeout: 30s
-```
-
 ## Idle Timeout {#idle-timeout}
 
 If you are proxying long-lived requests that employ streaming calls such as websockets or gRPC, set **Idle Timeout** to either a maximum value there may be no data exchange over a connection (recommended), or set it to unlimited (`0s`).
@@ -162,6 +166,8 @@ If `idle_timeout` is specified, and [route timeout](/docs/reference/routes/timeo
 | **YAML**/**JSON** setting | **Type** | **Usage** | **Default** |
 | :-- | :-- | :-- | :-- |
 | `idle_timeout` | `string` ([Go Duration](https://golang.org/pkg/time/#Duration.String) formatting) | **optional** | `5m` |
+
+### Examples
 
 ```yaml
 routes:

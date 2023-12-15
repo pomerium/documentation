@@ -8,6 +8,7 @@ keywords:
   - Override Certificate Name
 pagination_prev: null
 pagination_next: null
+toc_max_heading_level: 2
 ---
 
 import Tabs from '@theme/Tabs';
@@ -30,6 +31,21 @@ Secure service communication can fail if the external certificate does not match
 | :-- | :-- | :-- | :-- |
 | `override_certificate_name` | `OVERRIDE_CERTIFICATE_NAME` | `string` | **optional** |
 
+### Examples
+
+```yaml
+override_certificate_name: authorize.corp.example.com
+```
+
+```bash
+OVERRIDE_CERTIFICATE_NAME=authenticate.corp.example.com
+```
+
+```yaml
+# wildcard support
+override_certificate_name: *.corp.example.com
+```
+
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
 
@@ -42,16 +58,3 @@ Kubernetes does not support **Override Certificate Name**
 
 </TabItem>
 </Tabs>
-
-### Examples
-
-```yaml
-# wildcard support
-override_certificate_name: *.corp.example.com
-
-# domain
-OVERRIDE_CERTIFICATE_NAME=authenticate.corp.example.com
-
-# or
-override_certificate_name: authorize.corp.example.com
-```

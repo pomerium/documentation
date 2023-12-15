@@ -3,6 +3,9 @@ title: Load Balancing Settings
 sidebar_label: Load Balancing Settings
 description: Configure Load Balancer settings in Pomerium.
 keywords: [load balancing policy, health checks]
+pagination_prev: null
+pagination_next: null
+toc_max_heading_level: 2
 ---
 
 import Tabs from '@theme/Tabs';
@@ -10,7 +13,7 @@ import TabItem from '@theme/TabItem';
 
 # Load Balancing Settings
 
-This reference covers all of Pomerium's **Load Balancer Settings**:
+This reference covers all of Pomerium's **Load Balancing Settings**:
 
 - [Load Balancing Policy](#load-balancing-policy)
 - [Health Checks](#health-checks)
@@ -53,8 +56,6 @@ ingress.pomerium.io/lb_policy: LEAST_REQUEST
 ingress.pomerium.io/least_request_lb_config: '{"choice_count": 2}'
 ```
 
-See [Kubernetes - Ingress Configuration](/docs/deploy/k8s/ingress) for more information.
-
 </TabItem>
 </Tabs>
 
@@ -83,6 +84,40 @@ routes:
     least_request_lb_config:
       choice_count: 2 # current envoy default
 ```
+
+</TabItem>
+<TabItem value="Enterprise" label="Enterprise">
+
+Set the **Load Balancing Policy** in the Console:
+
+![Set load balancing policy in the console](../img/routes/load-balancing/load-balancing-config.gif)
+
+</TabItem>
+<TabItem value="Kubernetes" label="Kubernetes">
+
+| **[Annotation name](/docs/deploy/k8s/ingress#set-ingress-annotations)** | **Type** | **Usage**    | **Default**   |
+| :------------------------------ | :------- | :----------- | :------------ |
+| `lb_policy` | `enum`   | **optional** | `ROUND_ROBIN` |
+
+### Examples
+
+```yaml
+ingress.pomerium.io/lb_policy: LEAST_REQUEST
+ingress.pomerium.io/least_request_lb_config: '{"choice_count": 2}'
+```
+
+</TabItem>
+</Tabs>
+
+### Load Balancing Policy options {#load-balancing-policy-options}
+
+| **Load Balancer Policy options** |
+| :-- |
+| [`ROUND_ROBIN`](https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/upstream/load_balancing/load_balancers#weighted-round-robin) |
+| [`RING_HASH`](https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/upstream/load_balancing/load_balancers#ring-hash) (may be further configured using [`ring_hash_lb_config`](https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/cluster/v3/cluster.proto#config-cluster-v3-cluster-ringhashlbconfig) option) |
+| [`LEAST_REQUEST`](https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/upstream/load_balancing/load_balancers#weighted-least-request) (may be further configured using [`least_request_lb_config`](https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/cluster/v3/cluster.proto#envoy-v3-api-msg-config-cluster-v3-cluster-leastrequestlbconfig)) |
+| [`RANDOM`](https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/upstream/load_balancing/load_balancers#random) |
+| [`MAGLEV`](https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/upstream/load_balancing/load_balancers#maglev) (may be further configured using [`maglev_lb_config`](https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/cluster/v3/cluster.proto#envoy-v3-api-msg-config-cluster-v3-cluster-maglevlbconfig) option) |
 
 ## Health Checks {#health-checks}
 

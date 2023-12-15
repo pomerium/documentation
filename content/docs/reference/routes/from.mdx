@@ -6,6 +6,7 @@ keywords:
   - From
 pagination_prev: null
 pagination_next: null
+toc_max_heading_level: 2
 ---
 
 import Tabs from '@theme/Tabs';
@@ -23,7 +24,7 @@ Specifying `tcp+https` for the scheme enables [TCP proxying](/docs/capabilities/
 
 The `URL` must contain a **scheme** and **hostname** and cannot contain a path.
 
-:::warning
+:::note
 
 Only secure schemes (`https` and `tcp+https`) are supported.
 
@@ -35,6 +36,21 @@ Only secure schemes (`https` and `tcp+https`) are supported.
 | **YAML**/**JSON** setting | **Type** | **Schemes**          | **Usage**    |
 | :------------------------ | :------- | :------------------- | :----------- |
 | `from`                    | `URL`    | `https`, `tcp+https` | **required** |
+
+### Examples
+
+```yaml
+routes:
+  - from: https://verify.corp.example.com
+  - to: https://example.com
+```
+
+```yaml
+# TCP
+routes:
+  - from: tcp+https://ssh.corp.example.com:22
+  - to: tcp://example.com:22
+```
 
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
@@ -51,18 +67,17 @@ See Kubernetes [Ingress](/docs/deploy/k8s/ingress) for more information.
 </TabItem>
 </Tabs>
 
-### Examples
+:::note
 
-```yaml
-routes:
-  - from: https://verify.corp.example.com
-  - to: https://example.com
+See [**Routing - Route matching order**](/docs/capabilities/routing#route-matching-order) for more information on how Pomerium processes and matches routes.
 
-# TCP
-routes:
-  - from: tcp+https://ssh.corp.example.com:22
-  - to: tcp://example.com:22
-```
+:::
+
+:::note
+
+See [**Routing - Route matching order**](/docs/capabilities/routing#route-matching-order) for more information on how Pomerium processes and matches routes.
+
+:::
 
 ## Wildcard From Routes
 

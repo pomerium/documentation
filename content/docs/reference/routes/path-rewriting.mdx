@@ -3,6 +3,9 @@ title: Path Rewriting Settings
 sidebar_label: Path Rewriting Settings
 description: Configure Path Rewriting settings in Pomerium.
 keywords: [prefix rewrite, regex rewrite pattern, regex rewrite substitution]
+pagination_prev: null
+pagination_next: null
+toc_max_heading_level: 2
 ---
 
 import Tabs from '@theme/Tabs';
@@ -29,6 +32,15 @@ If set, **Prefix Rewrite** indicates that during forwarding, the matched prefix 
 | :------------------------ | :------- | :----------- |
 | `prefix_rewrite`          | `string` | **optional** |
 
+### Examples {#examples-prefix-rewrite}
+
+```yaml
+from: https://from.example.com
+to: https://to.example.com
+prefix: /admin
+prefix_rewrite: /
+```
+
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
 
@@ -52,15 +64,6 @@ Configure **Prefix Rewrite** in the Console:
 </TabItem>
 </Tabs>
 
-### Examples {#examples-prefix-rewrite}
-
-```yaml
-from: https://from.example.com
-to: https://to.example.com
-prefix: /admin
-prefix_rewrite: /
-```
-
 A request to `https://from.example.com/admin` would be forwarded to `https://to.example.com/`.
 
 ## Regex Rewrite {#regex-rewrite}
@@ -77,6 +80,13 @@ If **Regex Rewrite** or **Regex Rewrite Substitution** are set, the URL path wil
 | `regex_rewrite_pattern`      | `string` | **optional** |
 | `regex_rewrite_substitution` | `string` | **optional** |
 
+### Examples {#examples-regex-rewrite}
+
+```yaml
+regex_rewrite_pattern: '^/service/([^/]+)(/.*)$'
+regex_rewrite_substitution: "\\2/instance/\\1"
+```
+
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
 
@@ -91,10 +101,3 @@ Kubernetes does not support **Regex Rewrite**
 
 </TabItem>
 </Tabs>
-
-### Examples {#examples-regex-rewrite}
-
-```yaml
-regex_rewrite_pattern: '^/service/([^/]+)(/.*)$'
-regex_rewrite_substitution: "\\2/instance/\\1"
-```

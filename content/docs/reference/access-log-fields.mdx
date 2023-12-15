@@ -2,6 +2,9 @@
 title: Access Log Fields
 description: Use Access Log Fields to display HTTP request logs from the proxy service.
 keywords: [access logs, proxy service, pomerium, http]
+pagination_prev: null
+pagination_next: null
+toc_max_heading_level: 2
 ---
 
 import Tabs from '@theme/Tabs';
@@ -15,7 +18,7 @@ The **Access Log Fields** setting controls which fields will be included in the 
 
 The default log fields should be appropriate for most deployments.
 
-## How to Configure
+## How to configure
 
 <Tabs>
 <TabItem label="Core" value="Core">
@@ -23,6 +26,31 @@ The default log fields should be appropriate for most deployments.
 | **Config file key** | **Environment variable** | **Type** | **Default** |
 | :-- | :-- | :-- | :-- |
 | `access_log_fields` | `ACCESS_LOG_FIELDS` | Array of strings | See [Access Fields and Defaults](#access-fields-and-defaults) |
+
+### Examples
+
+```yaml
+access_log_fields:
+  - authority
+  - duration
+  - path
+```
+
+```bash
+ACCESS_LOG_FIELDS=authority,duration,path
+```
+
+**Custom headers example:**
+
+```yaml
+access_log_fields:
+  - headers.user-agent
+  - headers.content-type
+```
+
+```bash
+ACCESS_LOG_FIELDS=headers.user-agent,headers.content-type
+```
 
 </TabItem>
 <TabItem label="Enterprise" value="Enterprise">
@@ -62,7 +90,7 @@ accessLogFields:
 </TabItem>
 </Tabs>
 
-## Access Log Fields and Defaults
+## Access log fields and defaults
 
 The table below lists all available access log fields:
 
@@ -146,7 +174,7 @@ Your logs would look similar to the below example:
 }
 ```
 
-### Log Custom Headers Fields
+### Log custom headers fields
 
 The `headers.{CustomHeaderName}` field allows you to enter custom headers. Adding one or multiple custom headers will display only those headers.
 
@@ -171,25 +199,4 @@ The custom headers will appear in the `headers` field:
   "time": "2023-08-04T11:37:01-04:00",
   "message": "http-request"
 }
-```
-
-### Examples
-
-```yaml
-access_log_fields:
-  - authority
-  - duration
-  - path
-
-ACCESS_LOG_FIELDS=authority,duration,path
-```
-
-**`headers.{CustomHeaderName}` example:**
-
-```yaml
-access_log_fields:
-  - headers.user-agent
-  - headers.content-type
-
-ACCESS_LOG_FIELDS=headers.user-agent,headers.content-type
 ```
