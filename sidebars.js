@@ -79,6 +79,7 @@ const sidebars = {
         'docs/capabilities/programmatic-access',
         'docs/capabilities/load-balancing',
         'docs/capabilities/kubernetes-access',
+        'docs/capabilities/high-availability',
         {
           type: 'category',
           label: 'TCP over HTTP',
@@ -134,12 +135,6 @@ const sidebars = {
           className: 'enterprise',
           type: 'doc',
           label: 'Service Accounts',
-        },
-        {
-          id: 'docs/capabilities/high-availability',
-          className: 'enterprise',
-          type: 'doc',
-          label: 'High Availability',
         },
         {
           id: 'docs/capabilities/namespacing',

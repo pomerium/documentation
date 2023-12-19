@@ -10,7 +10,7 @@ import InstallMkcert from '@site/content/_install-mkcert.md';
 
 Pomerium is designed to be run in two modes: All-In-One or Split Service. These modes are not mutually exclusive, meaning you can run one or multiple instances of Pomerium in all-in-one mode, and spin up additional instances for specific components as needed.
 
-Each instance of Pomerium runs in all-in-one mode unless specified to run as a specific component by the `services` key. See [All-In-One vs Split Service mode](/docs/reference#all-in-one-vs-split-service-mode) for more details.
+Each instance of Pomerium runs in all-in-one mode unless specified to run as a specific component by the `services` key. See [All-In-One vs Split Service mode](/docs/internals/configuration#all-in-one-vs-split-service-mode) and the [Service Mode](/docs/reference/service-mode#how-to-configure) reference page for more details.
 
 :::caution
 
@@ -20,13 +20,25 @@ Any production deployment with more than one instance of Pomerium (in any combin
 
 ### All-in-One
 
-It may be desirable to run in "all-in-one" mode in smaller deployments or while testing. This reduces the resource footprint and simplifies DNS configuration. An all-in-one instances may also be scaled for better performance. All URLs point at the same Pomerium service instance.
+It may be desirable to run in **all-in-one** (AIO) mode in smaller deployments or while testing. This reduces the resource footprint and simplifies DNS configuration. An AIO instance may also be scaled for better performance. All URLs point at the same Pomerium service instance.
+
+:::tip
+
+If your use case requires you to deploy multiple instances of a Pomerium service(s), we suggest deploying multiple replicas of an AIO configuration rather than deploying multiple instances in split-service mode.
+
+:::
 
 ### Discrete Services
 
 In larger footprints, it is recommended to run Pomerium as a collection of discrete service clusters. This limits blast radius in the event of vulnerabilities and allows for per-service [scaling](#scaling) and monitoring.
 
 Please also see [Architecture](/docs/internals/architecture) for information on component interactions.
+
+### Core and Enterprise Support
+
+High Availability is supported in both [Pomerium Core](/docs/deploy/core) and [Pomerium Enterprise](/docs/deploy/enterprise) deployments.
+
+Enterprise users can use the [Management GUI](/docs/deploy/enterprise#management-gui) as the centralized control plane to manage and monitor Pomerium services.
 
 ## Scaling
 
@@ -36,7 +48,7 @@ All of Pomerium's components are designed to be [stateless](/docs/internals/glos
 
 The Databroker service, which is responsible for session and identity related data, must be [configured for external persistence](/docs/internals/data-storage) to be fully stateless.
 
-Pomerium's individual components can be divided into two categories; the data plane and control plane. Regardless of which mode you run Pomerium in, we strongly recommend multiple instances of each service for fault tolerance.
+Pomerium's individual components can be divided into two categories: the **Data Plane** and **Control Plane**. Regardless of which mode you run Pomerium in, we strongly recommend multiple instances of each service for fault tolerance.
 
 :::tip
 
@@ -122,19 +134,24 @@ Multiple replicas of Databroker or all-in-one service are only supported with [e
 
 :::
 
-## Example
+## Example: Split-Service Mode
 
-The following setup would demonstrate a minimum configuration for the split-service mode, using docker compose on a local host.
+The following configuration demonstrates a minimum configuration for the split-service mode, using Docker Compose on a local host.
 
-This guide intentionally omits provisioning certificates for internal Pomerium interaction for simplicity.
+This guide intentionally omits provisioning certificates for internal Pomerium interactions for simplicity.
 
 <InstallMkcert />
 
-Generate a wildcard certificate and key for Pomerium to use. You should get two files `_wildcard.localhost.pomerium.io-key.pem` and `_wildcard.localhost.pomerium.io.pem`. This is a special domain that always resolves to `127.0.0.1`.
+Generate a wildcard certificate and key for Pomerium to use:
 
 ```sh
 mkcert "*.localhost.pomerium.io"
 ```
+
+This should output two files:
+
+- `_wildcard.localhost.pomerium.io-key.pem`
+- `_wildcard.localhost.pomerium.io.pem` (This is a special domain that always resolves to `127.0.0.1`.)
 
 Copy the certificate authority cert:
 
@@ -144,7 +161,7 @@ Copy the certificate authority cert:
 cp "$(mkcert --CAROOT)"/rootCA.pem .
 ```
 
-Create minimum Pomerium configuration file, filling in your identity provider parameters:
+Create a minimum Pomerium configuration file, filling in your identity provider parameters:
 
 ```yaml title="config.yaml"
 idp_provider: ***FILL IN***
@@ -169,7 +186,7 @@ routes:
     pass_identity_headers: true
 ```
 
-Create docker compose configuration
+Create Docker Compose configuration
 
 ```yaml title="docker-compose.yaml"
 version: '3.8'
@@ -243,7 +260,7 @@ secrets:
     file: ./rootCA.pem
 ```
 
-Now you may bring up your deployment and visit a test route https://httpbin.localhost.pomerium.io
+Now you may bring up your deployment and visit a test route: https://httpbin.localhost.pomerium.io
 
 ```sh
 docker compose up
