@@ -72,7 +72,7 @@ While researching, we'd like you to refrain from:
 - Social engineering or phishing of Pomerium employees or contractors
 - Any attacks against Pomerium's physical property or data centers
 
-We may revise these guidelines from time to time. The most current version of the guidelines will be available at <https://pomerium.com/docs/community/security>.
+We may revise these guidelines from time to time. The most current version of the guidelines will be available at [https://pomerium.com/docs/community/security](https://pomerium.com/docs/community/security).
 
 Though we accept PGP-encrypted email, please only use it for critical security reports.
 
