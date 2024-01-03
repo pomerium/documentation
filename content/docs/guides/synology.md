@@ -15,7 +15,7 @@ Using Pomerium on your Synology DSM device enables:
 - Access to services by sub-domain (e.g. `plex.int.nas.example` or `wiki.int.nas.example`)
 - TLS everywhere.
 
-Pomerium is lightweight, can easily handle hundreds of concurrent requests, and a single instance typically uses <20MB of memory and very little CPU.
+Pomerium is lightweight, can easily handle hundreds of concurrent requests, and a single instance typically uses less than 20MB of memory and very little CPU.
 
 ## Prerequisites
 
