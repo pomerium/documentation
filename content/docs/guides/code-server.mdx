@@ -132,14 +132,14 @@ However, remembering passwords is tedious. Let's disable the password requiremen
 In `docker-compose.yaml`, add the following `command` to your code-server container:
 
 ```yaml title="docker-compose.yaml"
-  codeserver:
-    image: codercom/code-server:latest
-    ports:
-      - 8080:8080
-    volumes:
-      - ./code-server:/home/coder/project
-      - ./code-server-config/.config:/home/coder/.config
-    command: --auth none --disable-telemetry /home/coder/project
+codeserver:
+  image: codercom/code-server:latest
+  ports:
+    - 8080:8080
+  volumes:
+    - ./code-server:/home/coder/project
+    - ./code-server-config/.config:/home/coder/.config
+  command: --auth none --disable-telemetry /home/coder/project
 ```
 
 This will disable the password prompt (and prevents code-server from collecting telemetry data from your project). Now, restart Docker Compose and access code-server using the route defined in `config.yaml`:
