@@ -3,6 +3,8 @@ id: cookies
 title: Cookies Settings
 sidebar_label: Cookies Settings
 description: Learn how to configure Pomerium's cookies settings.
+pagination_prev: null
+pagination_next: null
 ---
 
 import Tabs from '@theme/Tabs';
@@ -34,6 +36,16 @@ This reference covers all of Pomerium's **Cookies Settings**:
 | :------------------- | :------------------------ | :------- | :---------- |
 | `cookie_name`        | `COOKIE_NAME`             | `string` | `_pomerium` |
 
+#### Examples {#cookie-name-examples}
+
+```yaml
+cookie_name: cookie_name
+```
+
+```bash
+COOKIE_NAME=cookie_name
+```
+
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
 
@@ -42,27 +54,19 @@ This reference covers all of Pomerium's **Cookies Settings**:
 </TabItem>
 <TabItem value="Kubernetes" label="Kubernetes">
 
-| **Name**      | **Type** | **Default** |
-| :------------ | :------- | :---------- |
+| **[Parameter name](/docs/deploy/k8s/reference#cookie)** | **Type** | **Default** |
+| :-- | :-- | :-- |
 | `cookie.name` | `string` | `_pomerium` |
 
-See Kubernetes [Cookie Reference](/docs/deploy/k8s/reference#cookie) for more information.
+#### Examples {#cookie-name-examples}
+
+```yaml
+cookie:
+  name: cookie_name
+```
 
 </TabItem>
 </Tabs>
-
-### Examples {#cookie-name-examples}
-
-```yaml
-# config file key
-cookie_name: cookie_name
-
-# environment variable
-COOKIE_NAME=cookie_name
-
-# ingress
-cookie.name: cookie_name
-```
 
 ## Cookie Secret {#cookie-secret}
 
@@ -77,6 +81,24 @@ cookie.name: cookie_name
 | :------------------- | :------------------------ | :------- | :----------- |
 | `cookie_secret`      | `COOKIE_SECRET`           | `string` | **optional** |
 
+#### Examples {#cookie-secret-examples}
+
+Generate a random, base64-encoded key:
+
+```shell
+head -c32 /dev/urandom | base64
+```
+
+Add the value to your configuration:
+
+```yaml
+cookie_secret: tdkuWzUelRukP/6VYzopfh6kis7y5u5Ldl3MrIq9ZR0=
+```
+
+```bash
+COOKIE_SECRET=tdkuWzUelRukP/6VYzopfh6kis7y5u5Ldl3MrIq9ZR0=
+```
+
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
 
@@ -89,22 +111,6 @@ See Kubernetes [bootstrap secrets](/docs/deploy/k8s/configure#bootstrap-secrets)
 
 </TabItem>
 </Tabs>
-
-### Examples {#cookie-secret-examples}
-
-Generate a random, base64-encoded key:
-
-```shell
-head -c32 /dev/urandom | base64
-```
-
-Add the value to your configuration:
-
-```yaml
-cookie_secret: tdkuWzUelRukP/6VYzopfh6kis7y5u5Ldl3MrIq9ZR0=
-
-COOKIE_SECRET=tdkuWzUelRukP/6VYzopfh6kis7y5u5Ldl3MrIq9ZR0=
-```
 
 ## Cookie Domain {#cookie-domain}
 
@@ -121,6 +127,16 @@ If you specify the domain explicitly, then subdomains would also be included.
 | :-- | :-- | :-- | :-- | :-- |
 | `cookie_domain` | `COOKIE_DOMAIN` | `string` | **optional** | The host that set the cookie |
 
+#### Examples {#cookie-domain-examples}
+
+```yaml
+cookie_domain: localhost.pomerium.io
+```
+
+```bash
+COOKIE_DOMAIN=localhost.pomerium.io
+```
+
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
 
@@ -129,27 +145,19 @@ If you specify the domain explicitly, then subdomains would also be included.
 </TabItem>
 <TabItem value="Kubernetes" label="Kubernetes">
 
-| **Name**        | **Type** | **Usage**    | **Default**                  |
-| :-------------- | :------- | :----------- | :--------------------------- |
+| **[Parameter name](/docs/deploy/k8s/reference#cookie)** | **Type** | **Usage** | **Default** |
+| :-- | :-- | :-- | :-- |
 | `cookie.domain` | `string` | **optional** | The host that set the cookie |
 
-See Kubernetes [Cookie Reference](/docs/deploy/k8s/reference#cookie) for more information.
+#### Examples {#cookie-domain-examples}
+
+```yaml
+cookie:
+  domain: localhost.pomerium.io
+```
 
 </TabItem>
 </Tabs>
-
-### Examples {#cookie-domain-examples}
-
-```yaml
-# config file key
-cookie_domain: localhost.pomerium.io
-
-# environment variable
-COOKIE_DOMAIN=localhost.pomerium.io
-
-# ingress
-cookie.domain: localhost.pomerium.io
-```
 
 ## Cookie Secure {#cookie-secure}
 
@@ -172,6 +180,16 @@ Note: this cannot be set to `false` if [**Cookie SameSite**](#cookie-samesite) i
 | :------------------- | :------------------------ | :-------- | :---------- |
 | `cookie_secure`      | `COOKIE_SECURE`           | `boolean` | `true`      |
 
+#### Examples {#cookie-secure-examples}
+
+```yaml
+cookie_secure: false
+```
+
+```bash
+COOKIE_SECURE=false
+```
+
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
 
@@ -186,27 +204,19 @@ Configure **Cookie Secure** with the **HTTPS only** toggle button in the Console
 </TabItem>
 <TabItem value="Kubernetes" label="Kubernetes">
 
-| **Name**        | **Type**  | **Default** |
-| :-------------- | :-------- | :---------- |
-| `cookie.secure` | `boolean` | `true`      |
+| **[Parameter name](/docs/deploy/k8s/reference#cookie)** | **Type** | **Default** |
+| :-- | :-- | :-- |
+| `cookie.secure` | `boolean` | `true` |
 
-See Kubernetes [Cookie Reference](/docs/deploy/k8s/reference#cookie) for more information.
+#### Examples {#cookie-secure-examples}
+
+```yaml
+cookie:
+  secure: false
+```
 
 </TabItem>
 </Tabs>
-
-### Examples {#cookie-secure-examples}
-
-```yaml
-# config file key
-cookie_secure: false
-
-# environment variable
-COOKIE_SECURE=false
-
-# ingress
-cookie.secure: false
-```
 
 ## Cookie HTTP Only {#cookie-http-only}
 
@@ -220,6 +230,16 @@ If true, **Cookie HTTP Only** forbids JavaScript from accessing the cookie.
 | **Config file keys** | **Environment variables** | **Type**  | **Default** |
 | :------------------- | :------------------------ | :-------- | :---------- |
 | `cookie_http_only`   | `COOKIE_HTTP_ONLY`        | `boolean` | `true`      |
+
+#### Examples {#cookie-http-only-examples}
+
+```yaml
+cookie_http_only: false
+```
+
+```bash
+COOKIE_HTTP_ONLY=false
+```
 
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
@@ -235,27 +255,19 @@ Configure **Cookie HTTP Only** with the **Javascript Security** toggle button in
 </TabItem>
 <TabItem value="Kubernetes" label="Kubernetes">
 
-| **Name**          | **Type**  | **Default** |
-| :---------------- | :-------- | :---------- |
-| `cookie.httpOnly` | `boolean` | `true`      |
+| **[Parameter name](/docs/deploy/k8s/reference#cookie)** | **Type** | **Default** |
+| :-- | :-- | :-- |
+| `cookie.httpOnly` | `boolean` | `true` |
 
-See Kubernetes [Cookie Reference](/docs/deploy/k8s/reference#cookie) for more information.
+#### Examples {#cookie-http-only-examples}
+
+```yaml
+cookie:
+  httpOnly: false
+```
 
 </TabItem>
 </Tabs>
-
-### Examples {#cookie-http-only-examples}
-
-```yaml
-# config file key
-cookie_http_only: false
-
-# environment variable
-COOKIE_HTTP_ONLY=false
-
-# ingress
-cookie.httpOnly: false
-```
 
 ## Cookie Expiration {#cookie-expiration}
 
@@ -270,6 +282,16 @@ cookie.httpOnly: false
 | :-- | :-- | :-- | :-- |
 | `cookie_expiration` | `COOKIE_EXPIRATION` | `string` ([Go Duration](https://golang.org/pkg/time/#Duration.String) formatting) | `14h` |
 
+#### Examples {#cookie-expiration-examples}
+
+```yaml
+cookie_expiration: 13h15m0.5s
+```
+
+```bash
+COOKIE_EXPIRATION=13h15m0.5s
+```
+
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
 
@@ -278,27 +300,19 @@ Set **Cookie Expiration** in the Console: ![Setting the cookie expiration time i
 </TabItem>
 <TabItem value="Kubernetes" label="Kubernetes">
 
-| **Name** | **Type** | **Default** |
+| **[Parameter name](/docs/deploy/k8s/reference#cookie)** | **Type** | **Default** |
 | :-- | :-- | :-- |
-| `authenticate.expiration` | `string` ([Go Duration](https://golang.org/pkg/time/#Duration.String) formatting) | `14h` |
+| `cookie.expire` | `string` ([Go Duration](https://golang.org/pkg/time/#Duration.String) formatting) | `14h` |
 
-See Kubernetes [Cookie Reference](/docs/deploy/k8s/reference#cookie) for more information.
+#### Examples {#cookie-expiration-examples}
+
+```yaml
+cookie:
+  expire: 13h15m0.5s
+```
 
 </TabItem>
 </Tabs>
-
-### Examples {#cookie-expiration-examples}
-
-```yaml
-# config file key
-cookie_expiration: 13h15m0.5s
-
-# environment variable
-COOKIE_EXPIRATION=13h15m0.5s
-
-# ingress
-cookie.expiration: 13h15m0.5s
-```
 
 ## Cookie SameSite {#cookie-samesite}
 
@@ -313,6 +327,16 @@ cookie.expiration: 13h15m0.5s
 | :-- | :-- | :-- | :-- | :-- | :-- |
 | `cookie_same_site` | `COOKIE_SAME_SITE` | `string` | **optional** | ` Lax` (if unset) | See [Cookie SameSite Options](#cookie-samesite-options) |
 
+#### Examples {#cookie-samesite-examples}
+
+```yaml
+cookie_same_site: Lax
+```
+
+```bash
+COOKIE_SAME_SITE=Strict
+```
+
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
 
@@ -325,9 +349,16 @@ See [Cookie SameSite Options](#cookie-samesite-options) for more information.
 </TabItem>
 <TabItem value="Kubernetes" label="Kubernetes">
 
-| **Name** | **Type** | **Usage** | **Default** | **Options** |
+| **[Parameter name](/docs/deploy/k8s/reference#cookie)** | **Type** | **Usage** | **Default** | **Options** |
 | :-- | :-- | :-- | :-- | :-- |
 | `cookie.sameSite` | `string` | **optional** | ` Lax` (if unset) | See [Cookie SameSite Options](#cookie-samesite-options) |
+
+#### Examples {#cookie-samesite-examples}
+
+```yaml
+cookie:
+  sameSite: None
+```
 
 </TabItem>
 </Tabs>
@@ -339,19 +370,6 @@ See [Cookie SameSite Options](#cookie-samesite-options) for more information.
 | `Lax` | The cookie is _not_ sent on cross-site requests, such as on requests to load images or frames, but is sent when a user is navigating to the origin site from an external site (for example, when following a link). |
 | `Strict` | The browser sends the cookie only for same-site requests, that is, requests originating from the same site that set the cookie. |
 | `None` | The browser sends the cookie with both cross-site and same-site requests. If you set `SameSite=none`, the [HTTPS only](/docs/reference/cookies#cookie-secure) setting must be set to `true`. |  |
-
-### Examples {#cookie-samesite-examples}
-
-```yaml
-# config file key
-cookie_same_site: Lax
-
-# environment variable
-COOKIE_SAME_SITE=Strict
-
-# ingress
-cookie.sameSite: None
-```
 
 ## Cookie Secret File {#cookie-secret-file}
 
@@ -366,6 +384,26 @@ cookie.sameSite: None
 | :-- | :-- | :-- | :-- |
 | `cookie_secret_file` | `COOKIE_SECRET_FILE` | `string` | **required** (for proxy service) |
 
+#### Examples {#cookie-secret-file-examples}
+
+Generate a random, base64-encoded key:
+
+```shell
+head -c32 /dev/urandom | base64
+```
+
+Add the value to your configuration:
+
+```yaml
+cookie_secret_file: '/run/secrets/POMERIUM_COOKIE_SECRET'
+```
+
+```bash
+COOKIE_SECRET_FILE='/run/secrets/POMERIUM_COOKIE_SECRET'
+```
+
+This is useful when deploying in environments that provide secret management like [Docker Swarm](https://docs.docker.com/engine/swarm/secrets/).
+
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
 
@@ -378,21 +416,3 @@ See Kubernetes [Secrets reference](/docs/deploy/k8s/reference#spec) for more inf
 
 </TabItem>
 </Tabs>
-
-### Examples {#cookie-secret-file-examples}
-
-Generate a random, base64-encoded key:
-
-```shell
-head -c32 /dev/urandom | base64
-```
-
-Add the value to your configuration:
-
-```yaml
-cookie_secret_file: '/run/secrets/POMERIUM_COOKIE_SECRET'
-
-COOKIE_SECRET_FILE='/run/secrets/POMERIUM_COOKIE_SECRET'
-```
-
-This is useful when deploying in environments that provide secret management like [Docker Swarm](https://docs.docker.com/engine/swarm/secrets/).

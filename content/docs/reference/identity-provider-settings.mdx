@@ -50,6 +50,16 @@ Pomerium can also integrate with any identity provider that supports OAuth 2.0 a
 | :-- | :-- | :-- | :-- |
 | `idp_client_id` | `IDP_CLIENT_ID` | `string` | **required** (if self-hosting) |
 
+#### Examples {#identity-provider-client-id-examples}
+
+```yaml
+idp_client_id: idp_client_id
+```
+
+```bash
+IDP_CLIENT_ID=idp_client_id
+```
+
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
 
@@ -65,16 +75,6 @@ See [`identityProvider.secret`](/docs/deploy/k8s/reference#identityprovider)
 </TabItem>
 </Tabs>
 
-### Examples {#identity-provider-client-id-examples}
-
-```yaml
-# config file key
-idp_client_id: idp_client_id
-
-# environment variable
-IDP_CLIENT_ID=idp_client_id
-```
-
 ## Identity Provider Client Secret {#identity-provider-client-secret}
 
 **Identity Provider Client Secret** is the OAuth 2.0 Secret Identifier retrieved from your identity provider. See your identity provider's documentation, and Pomerium's [identity provider](/docs/identity-providers/) docs for details.
@@ -87,6 +87,16 @@ IDP_CLIENT_ID=idp_client_id
 | **Config file keys** | **Environment variables** | **Type** | **Usage** |
 | :-- | :-- | :-- | :-- |
 | `idp_client_secret` | `IDP_CLIENT_SECRET` | `string` | **required** (unless using [idp_client_secret_file](#identity-provider-client-secret-file)) |
+
+#### Examples {#identity-provider-client-secret-examples}
+
+```yaml
+idp_client_secret: idp_client_secret
+```
+
+```bash
+IDP_CLIENT_SECRET=idp_client_secret
+```
 
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
@@ -103,16 +113,6 @@ See [`identityProvider.secret`](/docs/deploy/k8s/reference#identityprovider) for
 </TabItem>
 </Tabs>
 
-### Examples {#identity-provider-client-secret-examples}
-
-```yaml
-# config file key
-idp_client_secret: idp_client_secret
-
-# environment variable
-IDP_CLIENT_SECRET=idp_client_secret
-```
-
 ## Identity Provider Client Secret File {#identity-provider-client-secret-file}
 
 **Identity Provider Client Secret File** is the OAuth 2.0 Secret Identifier retrieved from your identity provider. See your identity provider's documentation, and Pomerium's [identity provider](/docs/identity-providers/) docs for details.
@@ -128,6 +128,16 @@ The identity provider client secret file points to a file containing the secret.
 | :-- | :-- | :-- | :-- |
 | `idp_client_secret_file` | `IDP_CLIENT_SECRET_FILE` | `string` | **required** (unless using [identity_provider_client_secret](#identity-provider-client-secret)) |
 
+#### Examples {#identity-provider-client-secret-file-examples}
+
+```yaml
+idp_client_secret_file: '/run/secrets/POMERIUM_CLIENT_SECRET'
+```
+
+```bash
+IDP_CLIENT_SECRET_FILE='/run/secrets/POMERIUM_CLIENT_SECRET'
+```
+
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
 
@@ -140,16 +150,6 @@ See [`identityProvider.secret`](/docs/deploy/k8s/reference#identityprovider) for
 
 </TabItem>
 </Tabs>
-
-### Examples {#identity-provider-client-secret-file-examples}
-
-```yaml
-# config file key
-idp_client_secret_file: '/run/secrets/POMERIUM_CLIENT_SECRET'
-
-# environment variable
-IDP_CLIENT_SECRET_FILE='/run/secrets/POMERIUM_CLIENT_SECRET'
-```
 
 ## Identity Provider Name {#identity-provider-name}
 
@@ -180,6 +180,16 @@ The supported values for this setting are:
 | :-- | :-- | :-- | :-- |
 | `idp_provider` | `IDP_PROVIDER` | `string` | **required** (if [self-hosting](/docs/capabilities/self-hosted-authenticate-service)) |
 
+#### Examples {#identity-provider-name-examples}
+
+```yaml
+idp_provider: auth0
+```
+
+```bash
+IDP_PROVIDER=github
+```
+
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
 
@@ -195,16 +205,6 @@ See [`identityProvider.provider`](/docs/deploy/k8s/reference#identityprovider) f
 </TabItem>
 </Tabs>
 
-### Examples {#identity-provider-name-examples}
-
-```yaml
-# config file key
-idp_provider: auth0
-
-# environment variable
-IDP_PROVIDER=github
-```
-
 ## Identity Provider Request Params {#identity-provider-request-params}
 
 **Identity Provider Request Params** lists the parameters you want to include as part of a sign-in request using the OAuth 2.0 code flow.
@@ -216,7 +216,20 @@ IDP_PROVIDER=github
 
 | **Config file keys** | **Environment variables** | **Type** | **Usage** |
 | :-- | :-- | :-- | :-- |
-| `idp_request_params` | `n/a` | `string` (map of key-value pairs) | **optional** |
+| `idp_request_params` | `IDP_REQUEST_PARAMS` | `string` (map of key-value pairs) | **optional** |
+
+#### Examples {#identity-provider-request-params-examples}
+
+```yaml
+idp_request_params:
+  client_id: client_id
+  response_type: response_type
+  redirect_uri: redirect_uri
+```
+
+```bash
+IDP_REQUEST_PARAMS='{"client_id":"client_id", "response_type":"response_type", "redirect_uri":"redirect_uri"}'
+```
 
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
@@ -249,16 +262,6 @@ Pomerium includes some default parameters for specific identity providers. Setti
 
 :::
 
-### Examples {#identity-provider-request-params-examples}
-
-```yaml
-# config file key
-idp_request_params:
-  client_id: client_id
-  response_type: response_type
-  redirect_uri: redirect_uri
-```
-
 For more information, see:
 
 - [OIDC Request Parameters](https://openid.net/specs/openid-connect-basic-1_0.html#RequestParameters)
@@ -289,6 +292,16 @@ Some providers, like Amazon Cognito, _do not_ support the `offline_access` scope
 | :-- | :-- | :-- | :-- |
 | `idp_scopes` | `IDP_SCOPES` | `string` (list) | **optional** (for built-in identity providers) |
 
+#### Examples {#identity-provider-scopes-examples}
+
+```yaml
+idp_scopes: openid, profile, offline_access, email
+```
+
+```bash
+IDP_SCOPES=openid, profile, offline_access, email
+```
+
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
 
@@ -313,16 +326,6 @@ See Kubernetes [`identityProvider.scopes`](/docs/deploy/k8s/reference#identitypr
 | `email`          |
 | `offline_access` |
 
-### Examples {#identity-provider-scopes-examples}
-
-```yaml
-# config file key
-idp_scopes: openid, profile, offline_access, email
-
-# environment variable
-IDP_SCOPES=openid, profile, offline_access, email
-```
-
 ## Identity Provider URL {#identity-provider-url}
 
 **Identity Provider URL** is the base path to an identity provider's [OpenID connect discovery document](https://openid.net/specs/openid-connect-discovery-1_0.html). An example Azure URL would be `https://login.microsoftonline.com/common/v2.0` for [their discovery document](https://login.microsoftonline.com/common/v2.0/.well-known/openid-configuration).
@@ -337,6 +340,16 @@ IDP_SCOPES=openid, profile, offline_access, email
 | **Config file keys** | **Environment variables** | **Type** | **Usage** |
 | :-- | :-- | :-- | :-- |
 | `idp_provider_url` | `IDP_PROVIDER_URL` | `string` | **required** (depending on identity provider) |
+
+#### Examples {#identity-provider-url-examples}
+
+```yaml
+idp_provider_url: 'https://awesome-company.auth0.com'
+```
+
+```bash
+IDP_PROVIDER_URL='https://awesome-company.auth0.com'
+```
 
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
@@ -353,33 +366,23 @@ See Kubernetes [`identityProvider.url`](/docs/deploy/k8s/reference#identityprovi
 </TabItem>
 </Tabs>
 
-### Examples {#identity-provider-url-examples}
-
-```yaml
-# config file key
-idp_provider_url: 'https://awesome-company.auth0.com'
-
-# environment variable
-IDP_PROVIDER_URL='https://awesome-company.auth0.com'
-```
-
 ## Identity Provider Polling Min/Max Delay {#identity-provider-polling-minmax-delay}
 
 Identity provider **Polling Minimum Delay** and **Polling Maximum Delay** settings define the minimum and maximum delay times between requests to the identity provider data source.
 
 A job starts with the **minimum delay** intervals. If the job fails to complete within the minimum delay period, it will be interrupted and the job will restart. If the job is interrupted due to timeout or an error, it will restart with increasing intervals up to the **maximum delay** period.
 
+:::note
+
+The `minimum_delay` and `maximum_delay` settings are an [**Enterprise Console**](https://www.pomerium.com/enterprise-sales/) feature, and are not configurable in Pomerium Core.
+
+:::
+
 ### How to configure {#identity-provider-polling-minmax-delay-how-to-configure}
 
 Set the **Identity Provider Max/Min Delay** settings in the Console:
 
 ![Set IdP minimum and maximum polling delay settings in the console](./img/idp_options/idp-polling-min-max-delay.png)
-
-:::note
-
-The `minimum_delay` and `maximum_delay` settings are an [Enterprise Console](https://www.pomerium.com/enterprise-sales/) feature, and are not configurable in Pomerium Core.
-
-:::
 
 ### Defaults {#identity-provider-polling-minmax-delay-defaults}
 

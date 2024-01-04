@@ -1,17 +1,18 @@
 ---
-id: pass-identity-headers
-title: Pass Identity Headers
+id: pass-identity-headers-per-route
+title: Pass Identity Headers (per route)
 keywords:
   - reference
   - Pass Identity Headers
 pagination_prev: null
 pagination_next: null
+toc_max_heading_level: 2
 ---
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-# Pass Identity Headers
+# Pass Identity Headers (per route)
 
 ## Summary
 
@@ -31,6 +32,15 @@ These headers include:
 | :------------------------ | :-------- | :----------- | :---------- |
 | `pass_identity_headers`   | `boolean` | **optional** | `false`     |
 
+### Examples
+
+```yaml
+routes:
+  - from: https://verify.localhost.pomerium.io
+    to: http://verify:8000
+    pass_identity_headers: true
+```
+
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
 
@@ -41,16 +51,13 @@ Set **Pass Identity Headers** under **General** route settings in the Console:
 </TabItem>
 <TabItem value="Kubernetes" label="Kubernetes">
 
-See Kubernetes [Ingress](/docs/deploy/k8s/ingress#annotations) for more information
+| **[Annotation name](/docs/deploy/k8s/ingress#set-ingress-annotations)** | **Type** | **Usage** | **Default** |
+| :-- | :-- | :-- | :-- |
+| `pass_identity_headers` | `boolean` | **optional** | `false` |
+
+```yaml
+ingress.pomerium.io/pass_identity_headers: 'true'
+```
 
 </TabItem>
 </Tabs>
-
-### Examples
-
-```yaml
-routes:
-  - from: https://verify.localhost.pomerium.io
-    to: http://verify:8000
-    pass_identity_headers: true
-```

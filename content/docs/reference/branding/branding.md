@@ -3,6 +3,9 @@ id: branding
 title: Branding Settings
 sidebar_label: Branding Settings
 description: Customize your Console with Pomerium's branding settings.
+pagination_prev: null
+pagination_next: null
+toc_max_heading_level: 2
 ---
 
 # Branding Settings

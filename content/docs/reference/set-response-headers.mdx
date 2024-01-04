@@ -6,6 +6,7 @@ keywords:
   - Set Response Headers
 pagination_prev: null
 pagination_next: null
+toc_max_heading_level: 2
 ---
 
 import Tabs from '@theme/Tabs';
@@ -26,6 +27,25 @@ import TabItem from '@theme/TabItem';
 | :-- | :-- | :-- | :-- |
 | `set_response_headers` | `SET_RESPONSE_HEADERS` | `string` | see [Default headers](#default) |
 
+### Examples
+
+#### JSON
+
+```json
+{
+  "set_response_headers": {
+    "X-Test": "X-Value"
+  }
+}
+```
+
+#### YAML
+
+```yaml
+set_response_headers:
+  X-Test: X-Value
+```
+
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
 
@@ -36,11 +56,16 @@ Configure **Response Headers** under **Proxy** settings in the Console:
 </TabItem>
 <TabItem value="Kubernetes" label="Kubernetes">
 
-| **Name**               | **Type** | **Default**                     |
-| :--------------------- | :------- | :------------------------------ |
+| **[Annotation name](/docs/deploy/k8s/ingress#set-ingress-annotations)** | **Type** | **Default** |
+| :-- | :-- | :-- |
 | `set_response_headers` | `string` | see [Default headers](#default) |
 
-Set per [Ingress](/docs/deploy/k8s/ingress).
+### Examples
+
+```yaml
+ingress.pomerium.io/set_response_headers: |
+  X-Test: X-Value
+```
 
 </TabItem>
 </Tabs>
@@ -77,25 +102,4 @@ To disable `set_response_headers`:
 ```yaml
 set_response_headers:
   disable: true
-```
-
-### Examples
-
-#### Comma separated values (CSV):
-
-```csv
-X-Content-Type-Options:nosniff,X-Frame-Options:SAMEORIGIN
-```
-
-#### JSON
-
-```JSON
- '{"X-Test": "X-Value"}'
-```
-
-#### YAML
-
-```yaml
-set_response_headers:
-  X-Test: X-Value
 ```

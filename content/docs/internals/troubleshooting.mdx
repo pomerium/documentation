@@ -138,14 +138,6 @@ And Pomerium Enterprise will log the error with:
 
 Update the [shared secret](/docs/reference/shared-secret) across all Pomerium services to match the one set for the Databroker.
 
-#### Redis Secret Mismatch
-
-:::caution
-
-The use of Redis as the databroker storage type has been deprecated in favor of Postgres. See [Previous Versions](https://v17.docs.pomerium.com/docs/internals/troubleshooting#redis-secret-mismatch) of this page for information regarding Redis.
-
-:::
-
 ### RPC Errors
 
 #### certificate signed by unknown authority
@@ -189,9 +181,7 @@ When authenticating and authorizing a user for the first time, you may get the f
 {"level":"error",..."error":"rpc error: code = DeadlineExceeded desc = context deadline exceeded","http-message":"rpc error: code = DeadlineExceeded desc = context deadline exceeded","http-code":500,"message":"http-error"}
 ```
 
-**Why**
-
-The Proxy service is not able to create a connection with the authorization service to validate a user.
+**Why** de The Proxy service is not able to create a connection with the authorization service to validate a user.
 
 **Solution**
 
@@ -266,8 +256,8 @@ We've repurposed a truncated version of the Response Code Details list in the ta
 | upgrade_failed | The request was rejected because it attempted an unsupported upgrade. |
 | upstream_max_stream_duration_reached | The request was destroyed because of it exceeded the configured max stream duration. |
 | upstream_per_try_timeout | The final upstream try timed out. |
-| upstream_reset_after_response_started{details} | The upstream connection was reset after a response was started. This may include further details about the cause of the disconnect. |
-| upstream_reset_before_response_started{details} | The upstream connection was reset before a response was started This may include further details about the cause of the disconnect. |
+| upstream_reset_after_response_started | The upstream connection was reset after a response was started. This may include further details about the cause of the disconnect. |
+| upstream_reset_before_response_started | The upstream connection was reset before a response was started This may include further details about the cause of the disconnect. |
 | upstream_response_timeout | The upstream response timed out. |
 | via_upstream | The response code was set by the upstream. |
 

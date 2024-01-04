@@ -3,6 +3,9 @@
 title: Authorize Log Fields
 description: Use Authorize Log Fields to display HTTP request logs from the authorize service.
 keywords: [authorize logs, authorize service, pomerium, http]
+pagination_prev: null
+pagination_next: null
+toc_max_heading_level: 2
 ---
 
 import Tabs from '@theme/Tabs';
@@ -16,7 +19,7 @@ The **Authorize Log Fields** setting controls which fields will be included in t
 
 The default log fields should be appropriate for most deployments.
 
-## How to Configure
+## How to configure
 
 <Tabs>
 <TabItem label="Core" value="Core">
@@ -24,6 +27,42 @@ The default log fields should be appropriate for most deployments.
 | **Config file key** | **Environment variable** | **Type** | **Default** |
 | :-- | :-- | :-- | :-- |
 | `authorize_log_fields` | `AUTHORIZE_LOG_FIELDS` | Array of strings | See [Authorize Fields and Defaults](#authorize-log-fields-and-defaults) |
+
+### Examples
+
+```yaml
+authorize_log_fields:
+  - request-id
+  - path
+  - ip
+```
+
+```bash
+AUTHORIZE_LOG_FIELDS=request-id,path,ip
+```
+
+**Headers examples:**
+
+```yaml
+# List all HTTP headers
+authorize_log_fields:
+  - headers
+```
+
+```bash
+AUTHORIZE_LOG_FIELDS=headers
+```
+
+```yaml
+# List custom HTTP headers
+authorize_log_fields:
+  - headers.cookie
+  - headers.content-type
+```
+
+```bash
+AUTHORIZE_LOG_FIELDS=headers.cookie,headers.content-type
+```
 
 </TabItem>
 <TabItem label="Enterprise" value="Enterprise">
@@ -39,14 +78,23 @@ Add **Custom Headers** in the Console:
 </TabItem>
 <TabItem label="Kubernetes" value="Kubernetes">
 
-| **Name** | **Type** | **Default** |
+| **[Parameter name](/docs/deploy/k8s/reference#spec)** | **Type** | **Default** |
 | :-- | :-- | :-- |
 | `authorizeLogFields` | Array of strings | See [Authorize Fields and Defaults](#authorize-log-fields-and-defaults) |
+
+### Examples
+
+```yaml
+authorizeLogFields:
+  - request-id
+  - path
+  - ip
+```
 
 </TabItem>
 </Tabs>
 
-## Authorize Log Fields and Defaults
+## Authorize log fields and defaults
 
 The table below lists all available authorize log fields:
 
@@ -185,7 +233,7 @@ Your logs would look similar to the example below:
 }
 ```
 
-### Log Custom Headers Fields
+### Log custom headers fields
 
 The `headers.{CustomHeaderName}` field allows you to enter custom headers. Adding one or multiple custom headers will display only those headers.
 
@@ -266,32 +314,4 @@ Your logs would look similar to the below example:
   "time": "2023-08-07T10:43:36-04:00",
   "message": "authorize check"
 }
-```
-
-### Examples
-
-```yaml
-authorize_log_fields:
-  - request-id
-  - path
-  - ip
-
-AUTHORIZE_LOG_FIELDS:request-id,path,ip
-```
-
-**Headers examples:**
-
-```yaml
-# List all HTTP headers
-authorize_log_fields:
-  - headers
-
-AUTHORIZE_LOG_FIELDS:headers
-
-# List custom HTTP headers
-authorize_log_fields:
-  - headers.cookie
-  - headers.content-type
-
-AUTHORIZE_LOG_FIELDS:headers.cookie,headers.content-type
 ```

@@ -3,7 +3,7 @@
 
 title: Policy Language
 sidebar_label: Policy Language
-description: This article covers Pomerium Policy Language, used to define secure access policies for routes.
+description: Learn how to use Pomerium Policy Language to build context-aware authorization policies for routes.
 ---
 
 # Pomerium Policy Language
@@ -69,12 +69,45 @@ If `and` is used, the user will have access if their email address ends in `exam
 
 If `or` is used, the user will have access if their email address ends in `example.com` **or** they are a member of the admin group. **(A ∨ B)**
 
-If `not` is used, the user will have access if their email address does not end in `example.com` **and** they are not a member of the `admin` group. **(¬A ∧ ¬B)**
+If `not` is used, the user will have access if their email address does not end in `example.com` **and** they are not a member of the `admin` group. **(¬A ∧ ¬B) = ¬(A ∨ B)** (This operation is traditionally called **NOR** in the Boolean algebra.)
 
-If `nor` is used, the user will have access if their email address does not end in `example.com` **or** they are not a member of the admin group. **(¬A ∨ ¬B)**
+If `nor` is used, the user will have access if their email address does not end in `example.com` **or** they are not a member of the admin group. **(¬A ∨ ¬B) = ¬(A ∧ B)** (This operation is traditionally called **NAND** in the Boolean algebra.)
 
   </div>
 </details>
+
+### Multiple Operators in a Rule
+
+You _can_ add multiple operators under the same rule, and it would be valid PPL.
+
+For example, this policy would grant access to anyone with a `family_name: Smith` claim, **or** users with email addresses ending in `domain1` or `domain2`:
+
+```yaml
+allow:
+  and:
+    - claim/family_name: Smith
+  or:
+    - domain:
+        is: domain1.com
+    - domain:
+        is: domain2.com
+```
+
+However, you could write an equivalent policy with multiple `allow` blocks:
+
+```yaml
+- allow:
+    and:
+      - claim/family_name: Smith
+- allow:
+    or:
+      - domain:
+          is: domain1.com
+      - domain:
+          is: domain2.com
+```
+
+Although these policies are equally effective, we recommend using just one operator per rule.
 
 ## Criteria
 
@@ -104,7 +137,7 @@ PPL supports many different criteria:
 | `email` | [String Matcher] | Returns true if the logged-in user's email address matches the given value. |
 | `http_method` | [String Matcher] | Returns true if the HTTP method matches the given value. |
 | `http_path` | [String Matcher] | Returns true if the HTTP path matches the given value. |
-| `invalid_client_certificate` | Anything. Typically `true`. | Returns true if the incoming request has an invalid client certificate. A default `deny` rule using this criterion is added to all Pomerium policies when an mTLS [client certificate authority] is set. |
+| `invalid_client_certificate` | Anything. Typically `true`. | Returns true if the incoming request does not have a trusted client certificate. By default, a `deny` rule using this criterion is added to all Pomerium policies when [downstream mTLS] is configured (but this default can be changed using the [Enforcement Mode](/docs/reference/downstream-mtls-settings#enforcement-mode) setting.) |
 | `pomerium_routes` | Anything. Typically `true`. | Returns true if the incoming request is for the special `.pomerium` routes. A default `allow` rule using this criterion is added to all Pomerium policies. |
 | `reject` | Anything. Typically `true`. | Always returns false. The opposite of `accept`. |
 | `user` | [String Matcher] | Returns true if the logged-in user's id matches the given value. |
@@ -135,7 +168,8 @@ A certificate matcher can be used to allow or deny specific TLS certificates, ba
 | `fingerprint` | string or array of strings | The certificate's SHA-256 fingerprint must match one of the provided values. |
 | `spki_hash` | string or array of strings | The base64-encoded SHA-256 hash of the certificate's Subject Public Key Info must match one of the provided values. |
 
-<details><summary>Notes on certificate fingerprint</summary>
+<details>
+<summary>Notes on certificate fingerprint</summary>
 
 The certificate fingerprint is a SHA-256 hash of the entire certificate. You can compute a certificate's fingerprint using the `openssl` command:
 
@@ -153,7 +187,8 @@ SHA2-256(stdin)= 17859273e8a980631d367b2d5a6a6635412b0f22835f69e47b3f65624546a70
 
 </details>
 
-<details><summary>Notes on SPKI hash</summary>
+<details>
+<summary>Notes on SPKI hash</summary>
 
 The SPKI hash is a base64-encoded SHA-256 hash of the Subject Public Key Info section of the certificate. You can compute a certificate's SPKI hash using a sequence of `openssl` commands:
 
@@ -287,7 +322,7 @@ allow:
 [`allow_public_unauthenticated_access`]: /docs/reference/routes/public-access
 [`allow_any_authenticated_user`]: /docs/reference/routes/allow-any-authenticated-user
 [cors pre-flight requests]: https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS#preflighted_requests
-[client certificate authority]: /docs/reference/certificates
+[downstream mtls]: /docs/reference/downstream-mtls-settings
 [pomerium enterprise]: /docs/deploy/enterprise/install
 [yaml]: https://en.wikipedia.org/wiki/YAML
 [string matcher]: #string-matcher

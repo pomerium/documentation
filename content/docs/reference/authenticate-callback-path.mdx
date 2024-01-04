@@ -8,6 +8,7 @@ keywords:
   - Authenticate Callback Path
 pagination_prev: null
 pagination_next: null
+toc_max_heading_level: 2
 ---
 
 import Tabs from '@theme/Tabs';
@@ -45,6 +46,16 @@ See [**Self-Hosted Authenticate Service**](/docs/capabilities/self-hosted-authen
 | :-- | :-- | :-- | :-- | :-- |
 | `authenticate_callback_path` | `AUTHENTICATE_CALLBACK_PATH` | `string` | **optional** | `/oauth2/callback` |
 
+### Examples
+
+```yaml
+authenticate_callback_path: '/custom/callback'
+```
+
+```bash
+AUTHENTICATE_CALLBACK_PATH=/custom/callback
+```
+
 </TabItem>
 <TabItem label="Enterprise" value="Enterprise">
 
@@ -53,24 +64,16 @@ See [**Self-Hosted Authenticate Service**](/docs/capabilities/self-hosted-authen
 </TabItem>
 <TabItem label="Kubernetes" value="Kubernetes">
 
-| **Name**                    | **Type** | **Usage**    | **Default**        |
-| :-------------------------- | :------- | :----------- | :----------------- |
+| **[Parameter name](/docs/deploy/k8s/reference#authenticate)** | **Type** | **Usage** | **Default** |
+| :-- | :-- | :-- | :-- |
 | `authenticate.callbackPath` | `string` | **optional** | `/oauth2/callback` |
-
-See the [Kubernetes Deployment Reference](/docs/deploy/k8s/reference#authenticate) for more information.
-
-</TabItem>
-</Tabs>
 
 ### Examples
 
 ```yaml
-# config file key
-authenticate_callback_path: "/custom/callback"
-
-# environment variable
-AUTHENTICATE_CALLBACK_PATH=/custom/callback
-
-# ingress
-authenticate.callbackPath: /custom/callback
+authenticate:
+  callbackPath: /custom/callback
 ```
+
+</TabItem>
+</Tabs>

@@ -3,6 +3,9 @@ title: Path Matching Settings
 sidebar_label: Path Matching Settings
 description: Configure Path Matching settings in Pomerium.
 keywords: [path, prefix, regex]
+pagination_prev: null
+pagination_next: null
+toc_max_heading_level: 2
 ---
 
 import Tabs from '@theme/Tabs';
@@ -29,6 +32,15 @@ If **Path** is set, the route will only match incoming requests with a path that
 | :------------------------ | :------- | :----------- |
 | `path`                    | `string` | **optional** |
 
+### Examples {#examples-path}
+
+```yaml
+routes:
+  - from: https://verify.localhost.pomerium.io
+    to: http://verify:8000
+    path: /admin/some/exact/path
+```
+
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
 
@@ -44,15 +56,6 @@ See Kubernetes [Ingress](/docs/deploy/k8s/ingress#regular-expressions-path-match
 </TabItem>
 </Tabs>
 
-### Examples {#examples-path}
-
-```yaml
-routes:
-  - from: https://verify.localhost.pomerium.io
-    to: http://verify:8000
-    path: /admin/some/exact/path
-```
-
 ## Prefix {#prefix}
 
 If **Prefix** is set, the route will only match incoming requests with a path that begins with the specified prefix.
@@ -65,6 +68,14 @@ If **Prefix** is set, the route will only match incoming requests with a path th
 | **YAML**/**JSON** setting | **Type** | **Usage**    |
 | :------------------------ | :------- | :----------- |
 | `prefix`                  | `string` | **optional** |
+
+### Examples {#examples-prefix}
+
+```yaml
+from: https://from.example.com
+to: https://to.example.com
+prefix: /admin
+```
 
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
@@ -80,19 +91,7 @@ Set the **Prefix** in **Path Matching** settings:
 | :------- | :------- | :----------- |
 | `Prefix` | `string` | **optional** |
 
-See Kubernetes [Ingress](/docs/deploy/k8s/ingress#annotations) for more information
-
-</TabItem>
-</Tabs>
-
-### Examples {#examples-prefix}
-
 ```yaml
-from: https://from.example.com
-to: https://to.example.com
-prefix: /admin
-
-# ingress
 spec:
   ingressClassName: pomerium
   rules:
@@ -108,6 +107,11 @@ spec:
             pathType: Prefix
 ```
 
+See Kubernetes [Ingress](/docs/deploy/k8s/ingress#annotations) for more information
+
+</TabItem>
+</Tabs>
+
 ## Regex {#regex}
 
 If **Regex** is set, the route will only match incoming requests with a path that matches the specified regular expression. The supported syntax is the same as the Go [regexp package](https://golang.org/pkg/regexp/) which is based on [re2](https://github.com/google/re2/wiki/Syntax).
@@ -120,6 +124,12 @@ If **Regex** is set, the route will only match incoming requests with a path tha
 | **YAML**/**JSON** setting | **Type** | **Usage**    |
 | :------------------------ | :------- | :----------- |
 | `regex`                   | `string` | **optional** |
+
+### Examples {#examples-regex}
+
+```yaml
+regex: '^/(admin|superuser)/.*$'
+```
 
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
@@ -135,15 +145,9 @@ Set **Regex** in the Console:
 | :----------- | :------- | :----------- |
 | `path_regex` | `string` | **optional** |
 
-</TabItem>
-</Tabs>
-
 ### Examples {#examples-regex}
 
 ```yaml
-regex: "^/(admin|superuser)/.*$"
-
-# ingress
     ingress.pomerium.io/path_regex: 'true'
   name: example
 spec:
@@ -160,3 +164,6 @@ spec:
             path: ^/(admin|superuser)/.*$
             pathType: ImplementationSpecific
 ```
+
+</TabItem>
+</Tabs>

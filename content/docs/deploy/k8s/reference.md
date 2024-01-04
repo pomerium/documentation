@@ -160,6 +160,22 @@ PomeriumSpec defines Pomerium-specific configuration parameters.
         <tr>
             <td>
                 <p>
+                <code>passIdentityHeaders</code>&#160;&#160;
+                
+                    <strong>boolean</strong>&#160;
+                
+                </p>
+                <p>
+                    
+                    PassIdentityHeaders sets the <a href="https://www.pomerium.com/docs/reference/pass-identity-headers">pass identity headers</a> option.
+                </p>
+                
+            </td>
+        </tr>
+    
+        <tr>
+            <td>
+                <p>
                 <code>programmaticRedirectDomains</code>&#160;&#160;
                 
                     <strong>[]string</strong>&#160;
@@ -651,93 +667,6 @@ Postgres specifies PostgreSQL database connection parameters
 
 
 
-### `redis`
-
-Redis defines REDIS connection parameters
-
-<table>
-    <thead>
-    </thead>
-    <tbody>
-    
-        <tr>
-            <td>
-                <p>
-                <code>caSecret</code>&#160;&#160;
-                
-                    <strong>string</strong>&#160;
-                    (namespace/name)
-                
-                </p>
-                <p>
-                    
-                    CASecret should refer to a k8s secret with key <code>ca.crt</code> that must be a PEM-encoded certificate authority to use when connecting to the databroker storage engine.
-                </p>
-                
-                    Format: reference to Kubernetes resource with namespace prefix: <code>namespace/name</code> format.
-                
-            </td>
-        </tr>
-    
-        <tr>
-            <td>
-                <p>
-                <code>secret</code>&#160;&#160;
-                
-                    <strong>string</strong>&#160;
-                    (namespace/name)
-                
-                </p>
-                <p>
-                    <strong>Required.</strong>&#160;
-                    Secret specifies a name of a Secret that must contain <code>connection</code> key.
-                </p>
-                
-                    Format: reference to Kubernetes resource with namespace prefix: <code>namespace/name</code> format.
-                
-            </td>
-        </tr>
-    
-        <tr>
-            <td>
-                <p>
-                <code>tlsSecret</code>&#160;&#160;
-                
-                    <strong>string</strong>&#160;
-                    (namespace/name)
-                
-                </p>
-                <p>
-                    
-                    TLSSecret should refer to a k8s secret of type <code>kubernetes.io/tls</code> that would be used to perform TLS connection to REDIS.
-                </p>
-                
-                    Format: reference to Kubernetes resource with namespace prefix: <code>namespace/name</code> format.
-                
-            </td>
-        </tr>
-    
-        <tr>
-            <td>
-                <p>
-                <code>tlsSkipVerify</code>&#160;&#160;
-                
-                    <strong>boolean</strong>&#160;
-                
-                </p>
-                <p>
-                    
-                    TLSSkipVerify disables TLS certificate chain validation.
-                </p>
-                
-            </td>
-        </tr>
-    
-    </tbody>
-</table>
-
-
-
 ### `refreshDirectory`
 
 RefreshDirectory is no longer supported, please see <a href="https://docs.pomerium.com/docs/overview/upgrading#idp-directory-sync">Upgrade Guide</a>.
@@ -811,23 +740,6 @@ Storage defines persistent storage for sessions and other data. See <a href="htt
                 <p>
                     
                     Postgres specifies PostgreSQL database connection parameters
-                </p>
-                
-            </td>
-        </tr>
-    
-        <tr>
-            <td>
-                <p>
-                <code>redis</code>&#160;&#160;
-                
-                    <strong>object</strong>&#160;
-                    (<a href="#redis">redis</a>)
-                
-                </p>
-                <p>
-                    
-                    Redis defines REDIS connection parameters
                 </p>
                 
             </td>

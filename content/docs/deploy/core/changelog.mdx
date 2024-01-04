@@ -8,6 +8,138 @@ lang: en-US
 
 Please refer to the [upgrade guide](/docs/deploy/core/upgrading) before upgrading.
 
+## [v0.24.0](https://github.com/pomerium/pomerium/tree/v0.24.0) (2023-11-16)
+
+[Full Changelog](https://github.com/pomerium/pomerium/compare/v0.23.0...v0.24.0)
+
+### Breaking
+
+- config: remove set_authorization_header option by @kenjenkins in https://github.com/pomerium/pomerium/pull/4489
+- core/config: remove support for base64 encoded certificates by @backport-actions-token in https://github.com/pomerium/pomerium/pull/4725
+- databroker: remove redis storage backend by @kenjenkins in https://github.com/pomerium/pomerium/pull/4699
+
+### New
+
+- databroker: build config concurrently, option to bypass validation by @wasaga in https://github.com/pomerium/pomerium/pull/4655
+
+### Fixed
+
+- core/authenticate: refactor idp sign out by @calebdoxsey in https://github.com/pomerium/pomerium/pull/4582
+- core/authenticate: validate the identity profile by @calebdoxsey in https://github.com/pomerium/pomerium/pull/4545
+- core/authorize: check for expired tokens by @calebdoxsey in https://github.com/pomerium/pomerium/pull/4543
+- core/identity: fix slow restart by @calebdoxsey in https://github.com/pomerium/pomerium/pull/4542
+- core/storage: fix nil data unmarshal by @backport-actions-token in https://github.com/pomerium/pomerium/pull/4739
+
+### Changed
+
+- Add metric request error in log by @sylr in https://github.com/pomerium/pomerium/pull/4585
+- authorize: build evaluators cache in parallel by @backport-actions-token in https://github.com/pomerium/pomerium/pull/4731
+- authorize: reuse policy evaluators where possible by @kenjenkins in https://github.com/pomerium/pomerium/pull/4710
+- config: do not add route headers to global map by @kenjenkins in https://github.com/pomerium/pomerium/pull/4629
+- core/config: add config version, additional telemetry by @calebdoxsey in https://github.com/pomerium/pomerium/pull/4645
+- core/config: add support for maps in environments by @backport-actions-token in https://github.com/pomerium/pomerium/pull/4728
+- core/config: refactor change dispatcher by @calebdoxsey in https://github.com/pomerium/pomerium/pull/4657
+- core/config: refactor file watcher by @calebdoxsey in https://github.com/pomerium/pomerium/pull/4702
+- core/config: remove version by @calebdoxsey in https://github.com/pomerium/pomerium/pull/4653
+- core/controlplane: apply configuration changes in a background thread by @calebdoxsey in https://github.com/pomerium/pomerium/pull/4649
+- core/envoy: fix remove cookie lua script by @backport-actions-token in https://github.com/pomerium/pomerium/pull/4732
+- core/events: refactor the events.Target to use mutexes instead of a background goroutine by @calebdoxsey in https://github.com/pomerium/pomerium/pull/4700
+- core/filemgr: use xxhash instead of sha512 for filenames by @calebdoxsey in https://github.com/pomerium/pomerium/pull/4697
+- core/hpke: reduce memory usage from zstd by @calebdoxsey in https://github.com/pomerium/pomerium/pull/4650
+- cryptutil: remove unused functions by @kenjenkins in https://github.com/pomerium/pomerium/pull/4541
+- databroker: add patch method by @kenjenkins in https://github.com/pomerium/pomerium/pull/4704
+- databroker: add reconciler by @wasaga in https://github.com/pomerium/pomerium/pull/4709
+- databroker: add utility recordset and changeset by @wasaga in https://github.com/pomerium/pomerium/pull/4701
+- databroker: changeset: prevent nil data in the deleted records by @backport-actions-token in https://github.com/pomerium/pomerium/pull/4737
+- Docs: remove tcp example by @ZPain8464 in https://github.com/pomerium/pomerium/pull/4616
+- identity: override TokenSource expiry behavior by @kenjenkins in https://github.com/pomerium/pomerium/pull/4632
+- identity: preserve session refresh schedule by @kenjenkins in https://github.com/pomerium/pomerium/pull/4633
+- identity: rework session refresh error handling by @kenjenkins in https://github.com/pomerium/pomerium/pull/4638
+- integration: renew test certs by @backport-actions-token in https://github.com/pomerium/pomerium/pull/4740
+- proto: add id to certificate by @wasaga in https://github.com/pomerium/pomerium/pull/4706
+- protoutil: add OverwriteMasked method by @kenjenkins in https://github.com/pomerium/pomerium/pull/4651
+- reconciler: allow custom comparison function by @backport-actions-token in https://github.com/pomerium/pomerium/pull/4727
+- rework session updates to use new patch method by @kenjenkins in https://github.com/pomerium/pomerium/pull/4705
+- storage/inmemory: implement patch operation by @kenjenkins in https://github.com/pomerium/pomerium/pull/4654
+- storage/postgres: implement patch operation by @kenjenkins in https://github.com/pomerium/pomerium/pull/4656
+- upgrade envoy to v1.28.0 by @kenjenkins in https://github.com/pomerium/pomerium/pull/4635
+- xds: add type url to log by @wasaga in https://github.com/pomerium/pomerium/pull/4696
+
+### Dependency
+
+- chore(deps): bump actions/checkout from 3.5.3 to 3.6.0 by @dependabot in https://github.com/pomerium/pomerium/pull/4496
+- chore(deps): bump actions/checkout from 3.6.0 to 4.0.0 by @dependabot in https://github.com/pomerium/pomerium/pull/4562
+- chore(deps): bump actions/checkout from 4.0.0 to 4.1.0 by @dependabot in https://github.com/pomerium/pomerium/pull/4611
+- chore(deps): bump actions/setup-go from 4.0.1 to 4.1.0 by @dependabot in https://github.com/pomerium/pomerium/pull/4497
+- chore(deps): bump actions/setup-node from 3.7.0 to 3.8.1 by @dependabot in https://github.com/pomerium/pomerium/pull/4501
+- chore(deps): bump actions/upload-artifact from 3.1.2 to 3.1.3 by @dependabot in https://github.com/pomerium/pomerium/pull/4557
+- chore(deps): bump busybox from `caa382c` to `3fbc632` in /.github by @dependabot in https://github.com/pomerium/pomerium/pull/4549
+- chore(deps): bump cloud.google.com/go/storage from 1.31.0 to 1.32.0 by @dependabot in https://github.com/pomerium/pomerium/pull/4518
+- chore(deps): bump cloud.google.com/go/storage from 1.32.0 to 1.33.0 by @dependabot in https://github.com/pomerium/pomerium/pull/4579
+- chore(deps): bump coverallsapp/github-action from 2.2.1 to 2.2.3 by @dependabot in https://github.com/pomerium/pomerium/pull/4560
+- chore(deps): bump distroless/base from `b0216a3` to `46c5b9b` in /.github by @dependabot in https://github.com/pomerium/pomerium/pull/4550
+- chore(deps): bump docker/build-push-action from 4.1.1 to 5.0.0 by @dependabot in https://github.com/pomerium/pomerium/pull/4554
+- chore(deps): bump docker/login-action from 2.2.0 to 3.0.0 by @dependabot in https://github.com/pomerium/pomerium/pull/4552
+- chore(deps): bump docker/metadata-action from 4.6.0 to 5.0.0 by @dependabot in https://github.com/pomerium/pomerium/pull/4553
+- chore(deps): bump docker/setup-buildx-action from 2.9.1 to 2.10.0 by @dependabot in https://github.com/pomerium/pomerium/pull/4498
+- chore(deps): bump docker/setup-buildx-action from 2.10.0 to 3.0.0 by @dependabot in https://github.com/pomerium/pomerium/pull/4555
+- chore(deps): bump docker/setup-qemu-action from 2.2.0 to 3.0.0 by @dependabot in https://github.com/pomerium/pomerium/pull/4559
+- chore(deps): bump github.com/aws/aws-sdk-go-v2/config from 1.18.32 to 1.18.38 by @dependabot in https://github.com/pomerium/pomerium/pull/4522
+- chore(deps): bump github.com/aws/aws-sdk-go-v2/config from 1.18.38 to 1.18.40 by @dependabot in https://github.com/pomerium/pomerium/pull/4581
+- chore(deps): bump github.com/aws/aws-sdk-go-v2/config from 1.18.40 to 1.18.42 by @dependabot in https://github.com/pomerium/pomerium/pull/4599
+- chore(deps): bump github.com/aws/aws-sdk-go-v2 from 1.20.0 to 1.21.0 by @dependabot in https://github.com/pomerium/pomerium/pull/4524
+- chore(deps): bump github.com/aws/aws-sdk-go-v2/service/s3 from 1.38.1 to 1.38.5 by @dependabot in https://github.com/pomerium/pomerium/pull/4521
+- chore(deps): bump github.com/aws/aws-sdk-go-v2/service/s3 from 1.38.5 to 1.40.0 by @dependabot in https://github.com/pomerium/pomerium/pull/4600
+- chore(deps): bump github.com/caddyserver/certmagic from 0.19.1 to 0.19.2 by @dependabot in https://github.com/pomerium/pomerium/pull/4526
+- chore(deps): bump github.com/CAFxX/httpcompression from 0.0.8 to 0.0.9 by @dependabot in https://github.com/pomerium/pomerium/pull/4572
+- chore(deps): bump github.com/docker/docker from 24.0.2+incompatible to 24.0.6+incompatible by @dependabot in https://github.com/pomerium/pomerium/pull/4570
+- chore(deps): bump github.com/docker/docker from 24.0.6+incompatible to 24.0.7+incompatible by @dependabot in https://github.com/pomerium/pomerium/pull/4646
+- chore(deps): bump github.com/google/uuid from 1.3.0 to 1.3.1 by @dependabot in https://github.com/pomerium/pomerium/pull/4517
+- chore(deps): bump github.com/hashicorp/golang-lru/v2 from 2.0.4 to 2.0.6 by @dependabot in https://github.com/pomerium/pomerium/pull/4528
+- chore(deps): bump github.com/hashicorp/golang-lru/v2 from 2.0.6 to 2.0.7 by @dependabot in https://github.com/pomerium/pomerium/pull/4607
+- chore(deps): bump github.com/jackc/pgx/v5 from 5.4.2 to 5.4.3 by @dependabot in https://github.com/pomerium/pomerium/pull/4531
+- chore(deps): bump github.com/klauspost/compress from 1.16.7 to 1.17.0 by @dependabot in https://github.com/pomerium/pomerium/pull/4566
+- chore(deps): bump github.com/minio/minio-go/v7 from 7.0.61 to 7.0.63 by @dependabot in https://github.com/pomerium/pomerium/pull/4527
+- chore(deps): bump github.com/open-policy-agent/opa from 0.55.0 to 0.56.0 by @dependabot in https://github.com/pomerium/pomerium/pull/4530
+- chore(deps): bump github.com/open-policy-agent/opa from 0.56.0 to 0.57.0 by @dependabot in https://github.com/pomerium/pomerium/pull/4606
+- chore(deps): bump github.com/openzipkin/zipkin-go from 0.4.1 to 0.4.2 by @dependabot in https://github.com/pomerium/pomerium/pull/4523
+- chore(deps): bump github.com/prometheus/client_golang from 1.16.0 to 1.17.0 by @dependabot in https://github.com/pomerium/pomerium/pull/4603
+- chore(deps): bump github.com/prometheus/procfs from 0.11.1 to 0.12.0 by @dependabot in https://github.com/pomerium/pomerium/pull/4602
+- chore(deps): bump github.com/rs/cors from 1.9.0 to 1.10.0 by @dependabot in https://github.com/pomerium/pomerium/pull/4574
+- chore(deps): bump github.com/rs/cors from 1.10.0 to 1.10.1 by @dependabot in https://github.com/pomerium/pomerium/pull/4601
+- chore(deps): bump github.com/rs/zerolog from 1.30.0 to 1.31.0 by @dependabot in https://github.com/pomerium/pomerium/pull/4598
+- chore(deps): bump github.com/shirou/gopsutil/v3 from 3.23.7 to 3.23.8 by @dependabot in https://github.com/pomerium/pomerium/pull/4519
+- chore(deps): bump github.com/shirou/gopsutil/v3 from 3.23.8 to 3.23.9 by @dependabot in https://github.com/pomerium/pomerium/pull/4605
+- chore(deps): bump golangci/golangci-lint-action from 3.6.0 to 3.7.0 by @dependabot in https://github.com/pomerium/pomerium/pull/4499
+- chore(deps): bump google.golang.org/api from 0.134.0 to 0.138.0 by @dependabot in https://github.com/pomerium/pomerium/pull/4532
+- chore(deps): bump google.golang.org/api from 0.138.0 to 0.141.0 by @dependabot in https://github.com/pomerium/pomerium/pull/4578
+- chore(deps): bump google.golang.org/api from 0.141.0 to 0.143.0 by @dependabot in https://github.com/pomerium/pomerium/pull/4608
+- chore(deps): bump google.golang.org/grpc from 1.57.0 to 1.58.1 by @dependabot in https://github.com/pomerium/pomerium/pull/4575
+- chore(deps): bump google.golang.org/grpc from 1.58.2 to 1.58.3 by @dependabot in https://github.com/pomerium/pomerium/pull/4640
+- chore(deps): bump golang.org/x/net from 0.15.0 to 0.17.0 by @dependabot in https://github.com/pomerium/pomerium/pull/4626
+- chore(deps): bump golang.org/x/oauth2 from 0.11.0 to 0.12.0 by @dependabot in https://github.com/pomerium/pomerium/pull/4580
+- chore(deps): bump goreleaser/goreleaser-action from 4.3.0 to 4.4.0 by @dependabot in https://github.com/pomerium/pomerium/pull/4502
+- chore(deps): bump goreleaser/goreleaser-action from 4.4.0 to 5.0.0 by @dependabot in https://github.com/pomerium/pomerium/pull/4563
+- chore(deps): bump go.uber.org/zap from 1.24.0 to 1.25.0 by @dependabot in https://github.com/pomerium/pomerium/pull/4516
+- chore(deps): bump go.uber.org/zap from 1.25.0 to 1.26.0 by @dependabot in https://github.com/pomerium/pomerium/pull/4577
+- chore(deps): bump mikefarah/yq from 4.34.2 to 4.35.1 by @dependabot in https://github.com/pomerium/pomerium/pull/4503
+- chore(deps): bump mikefarah/yq from 4.35.1 to 4.35.2 by @dependabot in https://github.com/pomerium/pomerium/pull/4610
+- chore(deps): bump node from `f41231b` to `7923c64` by @dependabot in https://github.com/pomerium/pomerium/pull/4551
+- chore(deps): bump node from `7923c64` to `2daec43` by @dependabot in https://github.com/pomerium/pomerium/pull/4609
+- chore(deps): bump node from `850d8e1` to `f41231b` by @dependabot in https://github.com/pomerium/pomerium/pull/4533
+- chore(deps): bump tibdex/github-app-token from 1.8.0 to 1.8.2 by @dependabot in https://github.com/pomerium/pomerium/pull/4505
+- chore(deps): bump tibdex/github-app-token from 1.8.2 to 2.0.0 by @dependabot in https://github.com/pomerium/pomerium/pull/4556
+- chore(deps): bump tibdex/github-app-token from 2.0.0 to 2.1.0 by @dependabot in https://github.com/pomerium/pomerium/pull/4612
+- chore(deps): bump @fontsource/dm-mono from 4.5.2 to 5.0.11 in /ui by @dependabot in https://github.com/pomerium/pomerium/pull/4515
+- chore(deps): bump @fontsource/dm-mono from 5.0.11 to 5.0.12 in /ui by @dependabot in https://github.com/pomerium/pomerium/pull/4573
+- chore(deps): bump @fontsource/dm-mono from 5.0.12 to 5.0.14 in /ui by @dependabot in https://github.com/pomerium/pomerium/pull/4619
+- chore(deps): bump @fontsource/dm-sans from 5.0.3 to 5.0.11 in /ui by @dependabot in https://github.com/pomerium/pomerium/pull/4508
+- chore(deps): bump @fontsource/dm-sans from 5.0.11 to 5.0.12 in /ui by @dependabot in https://github.com/pomerium/pomerium/pull/4561
+- chore(deps): bump @fontsource/dm-sans from 5.0.12 to 5.0.13 in /ui by @dependabot in https://github.com/pomerium/pomerium/pull/4593
+- chore(deps): bump @mui/icons-material from 5.3.1 to 5.14.9 in /ui by @dependabot in https://github.com/pomerium/pomerium/pull/4567
+- chore(deps-dev): bump ts-node from 10.4.0 to 10.9.1 in /ui by @dependabot in https://github.com/pomerium/pomerium/pull/4279
+- core/go: upgrade go.mod by @calebdoxsey in https://github.com/pomerium/pomerium/pull/4711
+
 ## [v0.23.0](https://github.com/pomerium/pomerium/tree/v0.23.0) (2023-08-24)
 
 [Full Changelog](https://github.com/pomerium/pomerium/compare/v0.22.3...v0.23.0)
@@ -1098,16 +1230,16 @@ Please refer to the [upgrade guide](/docs/deploy/core/upgrading) before upgradin
 
 ### Changes
 
-- authenticate: fix internal service URL CORS check by @calebdoxsey in <https://github.com/pomerium/pomerium/pull/3328>
-- authenticate: fix internal service URL dashboard redirect by @calebdoxsey in <https://github.com/pomerium/pomerium/pull/3306>
-- DOCS: Add device identity video <https://github.com/pomerium/pomerium/pull/3307>
-- DOCS: Update changelog <https://github.com/pomerium/pomerium/pull/3308>
-- DOCS: update helm values file <https://github.com/pomerium/pomerium/pull/3287>
-- fix: close the ticker after opened by @clwluvw <https://github.com/pomerium/pomerium/pull/3323>
-- httputil/reproxy: fix policy transport by @calebdoxsey <https://github.com/pomerium/pomerium/pull/3324>
-- Update docs for supported Ingress annotations <https://github.com/pomerium/pomerium/pull/3325>
+- authenticate: fix internal service URL CORS check by @calebdoxsey in [https://github.com/pomerium/pomerium/pull/3328](https://github.com/pomerium/pomerium/pull/3328)
+- authenticate: fix internal service URL dashboard redirect by @calebdoxsey in [https://github.com/pomerium/pomerium/pull/3306](https://github.com/pomerium/pomerium/pull/3306)
+- DOCS: Add device identity video [https://github.com/pomerium/pomerium/pull/3307](https://github.com/pomerium/pomerium/pull/3307)
+- DOCS: Update changelog [https://github.com/pomerium/pomerium/pull/3308](https://github.com/pomerium/pomerium/pull/3308)
+- DOCS: update helm values file [https://github.com/pomerium/pomerium/pull/3287](https://github.com/pomerium/pomerium/pull/3287)
+- fix: close the ticker after opened by @clwluvw [https://github.com/pomerium/pomerium/pull/3323](https://github.com/pomerium/pomerium/pull/3323)
+- httputil/reproxy: fix policy transport by @calebdoxsey [https://github.com/pomerium/pomerium/pull/3324](https://github.com/pomerium/pomerium/pull/3324)
+- Update docs for supported Ingress annotations [https://github.com/pomerium/pomerium/pull/3325](https://github.com/pomerium/pomerium/pull/3325)
 
-**Full Changelog**: <https://github.com/pomerium/pomerium/compare/v0.17.2...v0.17.3>
+**Full Changelog**: `https://github.com/pomerium/pomerium/compare/v0.17.2...v0.17.3`
 
 ## [v0.17.2](https://github.com/pomerium/pomerium/tree/v0.17.2) (2022-04-22)
 
@@ -3193,7 +3325,7 @@ We recommend that all users upgrade.
 - authorize: add support for service accounts [#1374](https://github.com/pomerium/pomerium/pull/1374) (@calebdoxsey)
 - Cuonglm/improve timeout error message [#1373](https://github.com/pomerium/pomerium/pull/1373) (@cuonglm)
 - internal/directory/okta: remove rate limiter [#1370](https://github.com/pomerium/pomerium/pull/1370) (@cuonglm)
-- {proxy/controlplane}: make health checks debug level [#1368](https://github.com/pomerium/pomerium/pull/1368) (@desimone)
+- proxy/controlplane: make health checks debug level [#1368](https://github.com/pomerium/pomerium/pull/1368) (@desimone)
 - databroker: add tracing for rego evaluation and databroker sync, fix bug in databroker config source [#1367](https://github.com/pomerium/pomerium/pull/1367) (@calebdoxsey)
 - authorize: use impersonate email/groups in JWT [#1364](https://github.com/pomerium/pomerium/pull/1364) (@calebdoxsey)
 - config: support explicit prefix and regex path rewriting [#1363](https://github.com/pomerium/pomerium/pull/1363) (@calebdoxsey)
@@ -3493,7 +3625,7 @@ We recommend that all users upgrade.
 - authorize: add support for service accounts [#1374](https://github.com/pomerium/pomerium/pull/1374) (@calebdoxsey)
 - Cuonglm/improve timeout error message [#1373](https://github.com/pomerium/pomerium/pull/1373) (@cuonglm)
 - internal/directory/okta: remove rate limiter [#1370](https://github.com/pomerium/pomerium/pull/1370) (@cuonglm)
-- {proxy/controlplane}: make health checks debug level [#1368](https://github.com/pomerium/pomerium/pull/1368) (@desimone)
+- proxy/controlplane: make health checks debug level [#1368](https://github.com/pomerium/pomerium/pull/1368) (@desimone)
 - databroker: add tracing for rego evaluation and databroker sync, fix bug in databroker config source [#1367](https://github.com/pomerium/pomerium/pull/1367) (@calebdoxsey)
 - authorize: use impersonate email/groups in JWT [#1364](https://github.com/pomerium/pomerium/pull/1364) (@calebdoxsey)
 - config: support explicit prefix and regex path rewriting [#1363](https://github.com/pomerium/pomerium/pull/1363) (@calebdoxsey)

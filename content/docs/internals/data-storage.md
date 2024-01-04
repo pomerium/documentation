@@ -78,40 +78,6 @@ name=value[&...]
 
 When using multiple hosts make sure to specify `target_session_attrs=read-write` so that the Databroker does not attempt to write to a read-only replica.
 
-### Redis
-
-Previous versions of Pomerium suggested Redis as a databroker back-end. This is no longer recommended for version >=18. You can review [Archived Versions](https://www.pomerium.com/docs/versions) of our docs for more information on Redis as a databroker storage solution.
-
-#### High Availability
-
-Redis should be configured to provide high availability via [replication](https://redis.io/topics/replication) and failover.
-
-#### Security
-
-Pomerium supports and strongly encourages [ACL](https://redis.io/topics/acl) based authentication. To set up an ACL for pomerium, use the following template:
-
-```actionscript
-ACL setuser pomerium on >[PASSWORD] ~* +@all -@scripting -@dangerous -@admin -@connection
-```
-
-Pomerium supports and strongly encourages [TLS](https://redis.io/topics/encryption) support in Redis version 6. Both traditional and mutual TLS are supported.
-
-Example secure configuration:
-
-```yaml
-databroker_storage_type: redis
-databroker_storage_connection_string: rediss://pomerium:PASSWORD@[HOST]:6379/
-databroker_storage_cert_file: /tls/client.pem
-databroker_storage_key_file: /tls/client.key
-databroker_storage_ca_file: /tls/ca.pem
-```
-
-:::tip
-
-the second `s` in `rediss` is intentional and turns on TLS support
-
-:::
-
 ## Troubleshooting
 
 Most issues with the Databroker service are caused by a [`shared_secret`](/docs/reference/shared-secret) mismatch between services. See [Troubleshooting - Shared Secret Mismatch](/docs/reference/shared-secret) for details.

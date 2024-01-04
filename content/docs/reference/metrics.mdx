@@ -3,6 +3,8 @@ title: Metrics Settings
 sidebar_label: Metrics Settings
 description: Configure metrics settings in Pomerium.
 keywords: [metrics]
+pagination_prev: null
+pagination_next: null
 ---
 
 import Tabs from '@theme/Tabs';
@@ -36,6 +38,16 @@ This reference covers all of Pomerium's **Metrics Settings**:
 | :-- | :-- | :-- | :-- | :-- |
 | `metrics_address` | `METRICS_ADDRESS` | `string` | **optional** | `disabled` |
 
+#### Examples {#examples-metrics-address}
+
+```yaml
+metrics_address: :9090
+```
+
+```bash
+METRICS_ADDRESS: 127.0.0.1:9090
+```
+
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
 
@@ -48,16 +60,6 @@ See Kubernetes [Metrics](/docs/deploy/k8s/install#metrics)
 
 </TabItem>
 </Tabs>
-
-### Examples {#examples-metrics-address}
-
-```yaml
-# config file key
-metrics_address: :9090
-
-# environment variable
-METRICS_ADDRESS: 127.0.0.1:9090
-```
 
 ### Pomerium Metrics Tracked
 
@@ -107,7 +109,7 @@ Identity manager metrics have a `pomerium_identity_manager` prefix.
 | user_refresh_success | Counter | User refresh success counter. |
 | user_refresh_success_timestamp | Gauge | Timestamp of last successful user refresh. |
 
-### Envoy Proxy Metrics
+#### Envoy Proxy Metrics
 
 As of `v0.9`, Pomerium uses [Envoy](https://www.envoyproxy.io/) for the data plane. As such, proxy related metrics are sourced from Envoy, and use Envoy's internal [stats data model](https://www.envoyproxy.io/docs/envoy/latest/operations/stats_overview). Please see Envoy's documentation for information about specific metrics.
 
@@ -130,6 +132,18 @@ To support this in Prometheus, consult the `basic_auth` option in the [`scrape_c
 | :-- | :-- | :-- | :-- |
 | `metrics_basic_authentication` | `METRICS_BASIC_AUTHENTICATION` | `string` ([base64 encoded](https://en.wikipedia.org/wiki/Base64)) | **optional** |
 
+#### Examples {#examples-metrics-basic-authentication}
+
+```yaml
+# for username: x and password: y
+metrics_basic_authentication: eDp5
+```
+
+```bash
+# for username: x and password: y
+METRICS_BASIC_AUTHENTICATION=eDp5
+```
+
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
 
@@ -142,15 +156,6 @@ Kubernetes does not support `metrics_basic_authentication`
 
 </TabItem>
 </Tabs>
-
-### Examples {#examples-metrics-basic-authentication}
-
-```yaml
-# for username: x and password: y
-metrics_basic_authentication: eDp5
-
-METRICS_BASIC_AUTHENTICATION=eDp5
-```
 
 ## Metrics Certificate {#metrics-certificate}
 
@@ -174,6 +179,18 @@ All certificates supplied to Pomerium must be in **PEM** format.
 | `metrics_certificate` and `metrics_certificate_key` | `METRICS_CERTIFICATE` and `METRICS_CERTIFICATE_KEY` | `string` | **optional** |
 | `metrics_certificate_file` and `metrics_certificate_key_file` | `METRICS_CERTIFICATE_FILE` and `METRICS_CERTIFICATE_KEY_FILE` | `string` | **optional** |
 
+#### Examples {#examples-metrics-certificate}
+
+```yaml
+metrics_certificate: base64-encoded-string
+metrics_certificate_key: base64-encoded-string
+```
+
+```bash
+METRICS_CERTIFICATE_FILE=/relative/file/location
+METRICS_CERTIFICATE_FILE_KEY=/relative/file/location
+```
+
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
 
@@ -186,18 +203,6 @@ Kubernetes does not support **Metrics Certificate**
 
 </TabItem>
 </Tabs>
-
-### Examples {#examples-metrics-certificate}
-
-```yaml
-# config file key
-metrics_certificate: base64-encoded-string
-metrics_certificate_key: base64-encoded-string
-
-# environment variable
-METRICS_CERTIFICATE_FILE=/relative/file/location
-METRICS_CERTIFICATE_FILE_KEY=/relative/file/location
-```
 
 ## Metrics Client Certificate Authority {#metrics-client-certificate-authority}
 
@@ -212,6 +217,16 @@ METRICS_CERTIFICATE_FILE_KEY=/relative/file/location
 | :-- | :-- | :-- | :-- |
 | `metrics_client_ca` and `metrics_client_ca_file` | `METRICS_CLIENT_CA` and `METRICS_CLIENT_CA_FILE` | `string` | **optional** |
 
+#### Examples {#examples-metrics-client-certificate-authority}
+
+```yaml
+metrics_client_ca: base64-encoded-string
+```
+
+```bash
+METRICS_CLIENT_CA_FILE=/relative/file/location
+```
+
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
 
@@ -224,13 +239,3 @@ Kubernetes does not support **Metrics Client Certificate Authority**
 
 </TabItem>
 </Tabs>
-
-### Examples {#examples-metrics-client-certificate-authority}
-
-```yaml
-# config file key
-metrics_client_ca: base64-encoded-string
-
-# environment variable
-METRICS_CLIENT_CA_FILE=/relative/file/location
-```

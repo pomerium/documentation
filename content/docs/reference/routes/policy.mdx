@@ -5,6 +5,7 @@ keywords:
   - policy
 pagination_prev: null
 pagination_next: null
+toc_max_heading_level: 2
 ---
 
 import Tabs from '@theme/Tabs';
@@ -27,6 +28,21 @@ See [Pomerium Policy Language](/docs/capabilities/ppl) for a full explanation of
 | :------------------------ | :------- | :----------- |
 | `policy`                  | `string` | **optional** |
 
+### Examples
+
+```yaml
+routes:
+  - from: https://verify.localhost.pomerium.io
+    to: http://verify:8000
+    policy:
+      - allow:
+          and:
+            - domain:
+                is: pomerium.com
+            - user:
+                is: user
+```
+
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
 
@@ -47,30 +63,13 @@ Edit your policy:
 </TabItem>
 <TabItem value="Kubernetes" label="Kubernetes">
 
-| **Name** | **Type** | **Usage**    |
-| :------- | :------- | :----------- |
+| **[Annotation name](/docs/deploy/k8s/ingress#set-authorization-policy)** | **Type** | **Usage** |
+| :-- | :-- | :-- |
 | `policy` | `string` | **optional** |
-
-See Kubernetes [Ingress](/docs/deploy/k8s/ingress#access-policy-examples) for more information
-
-</TabItem>
-</Tabs>
 
 ### Examples
 
 ```yaml
-routes:
-  - from: https://verify.localhost.pomerium.io
-    to: http://verify:8000
-    policy:
-      - allow:
-          and:
-            - domain:
-                is: pomerium.com
-            - user:
-                is: user
-
-# ingress
 ingress.pomerium.io/policy: |
   allow:
     and:
@@ -79,3 +78,6 @@ ingress.pomerium.io/policy: |
       - user:
           is: user
 ```
+
+</TabItem>
+</Tabs>
