@@ -34,11 +34,11 @@ VSCode is an open-source code editor by Microsoft that offers features like Inte
 
 ## How to secure code-server with Pomerium
 
-Code-server requires [password authentication](https://coder.com/docs/code-server/latest/guide#expose-code-server) by default. By securing code-server behind Pomerium, you can remove code-server’s password requirement and configure Pomerium to add [authentication](/docs/capabilities/authentication) and [authorization](/docs/capabilities/authorization) to an online instance of VSCode hosted by code-server.
+Code-server requires [password authentication](https://coder.com/docs/code-server/latest/guide#expose-code-server) by default. By securing code-server behind Pomerium, you can remove code-server’s password requirement and configure Pomerium to add [authentication](/docs/capabilities/authentication) and [authorization](/docs/capabilities/authorization) to an online instance of VSCode.
 
 This guide shows you how to secure code-server with Pomerium. Here are the steps you’ll follow:
 
-1. Install and run code-server in a Docker container
+1. Install code-server and run it in a Docker container
 
 1. Access your code-server project in the browser listening on `localhost`
 
@@ -46,7 +46,7 @@ This guide shows you how to secure code-server with Pomerium. Here are the steps
 
 By the end, you will have a minimal, real-world code-server instance that allows developer teams to write code using VSCode in the browser.
 
-![A code-server VSCode project running in the browser behind Pomerium.](img/vscode/vscode-pomerium.png)
+![A code-server VSCode project running in the browser behind Pomerium.](img/code-server/vscode-pomerium.png)
 
 ### Before you start
 
@@ -142,11 +142,9 @@ codeserver:
   command: --auth none --disable-telemetry /home/coder/project
 ```
 
-This will disable the password prompt (and prevents code-server from collecting telemetry data from your project). Now, restart Docker Compose and access code-server using the route defined in `config.yaml`:
+This will disable the password prompt (and prevent code-server from collecting telemetry data from your project). Now, restart Docker Compose and access code-server using the route defined in `config.yaml`:
 
 `https://code.localhost.pomerium.io`
-
-After authenticating against the Cognito identity provider, you will be redirected to the route defined in `config.yaml`:
 
 </TabItem>
 
@@ -164,31 +162,30 @@ To complete this guide, you need:
 In your Console, create a [policy](/docs/concepts/policies) that allows any authenticated user to access the route:
 
 1. Select **New Policy**
-2. Enter a **Name** for your policy (e.g. 'Allow anybody')
+2. Enter a **Name** for your policy, like `any authenticated`
 3. Select **Builder**
 4. Select **Any Authenticated User**
 5. Save your policy
 
-![Edit 'Allow anybody' policy](img/code-server/code-server-edit-policy.png)
+![Enabling the allow anybody policy in the Enterprise Console PPL builder](img/code-server/code-server-edit-policy.png)
 
 Build a route:
 
 1. Select **Routes** and enter a **Name**
-2. In the **From** field, enter the publicly accessible route (e.g. `code.localhost.pomerium.io`)
-3. In the **To** field, enter the local hostname for the server running code-server (e.g. `http://codeserver:8080`)
+1. In the **From** field, enter the publicly accessible route (for example, `code.localhost.pomerium.io`)
+1. In the **To** field, enter the local hostname for the server running code-server (for example, `http://codeserver:8080`)
 
 Allow your route to create [Websocket connections](/docs/reference/routes/timeouts#websocket-connections):
 
 1. Select **Timeouts**
-2. Select **Allow Websockets**
+1. Select **Allow Websockets**
 
-Add a policy and allow your route to [pass identity headers](/docs/reference/routes/pass-identity-headers-per-route):
+Add a policy and save it:
 
-1. Under **General** > **Policies**, select **Allow anybody**
-2. Select **Pass identity headers to upstream applications**
-3. Save your route
+1. Under **General** > **Policies**, select **any authenticated**
+1. Save your route
 
-![Add policy and allow identity headers](img/code-server/code-server-build-route.png)
+![Add an allow any authenticated user authorization policy to the code server route](img/code-server/code-server-build-route.png)
 
 ### Test your routes
 
@@ -200,7 +197,9 @@ To see if your routes are configured correctly, navigate to the externally acces
 
 </Tabs>
 
-![A VSCode project running “Hello World” in the integrated terminal.](img/vscode/vscode-helloworld.png)
+After authenticating against the Cognito identity provider, you will be redirected to the code-server route.
+
+![A VSCode project running “Hello World” in the integrated terminal.](img/code-server/vscode-helloworld.png)
 
 ## Build a project in code-server
 
