@@ -85,6 +85,14 @@ If you need to make changes after creating your pool, be aware that some setting
 
 You can choose whether to use your own **Domain Name**, or use an AWS-provided one. The AWS-provided domain names are in the format `https://${DOMAIN-PREFIX}.auth.${AWS-REGION}.amazoncognito.com`
 
+### Configure allowed sign-out URLs
+
+Add the special Pomerium sign-out URL to Cognito's **Allowed sign-out URLs** list:
+
+`https://{AUTHENTICATE_DOMAIN}/.pomerium/signed-out`
+
+If you don't add the Pomerium sign-out URL to Cognito's allowed list, you will encounter an error when signing out of your application.
+
 ## Pomerium Configuration
 
 Once you have configured AWS Cognito, configure Pomerium to connext to it:
