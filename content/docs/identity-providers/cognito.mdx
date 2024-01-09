@@ -70,12 +70,13 @@ If you need to make changes after creating your pool, be aware that some setting
 
    ![AWS Cognito Side Menu](./img/cognito/cognito-side-menu.png)
 
-   In the settings for **Pomerium** app, put in the following details
+   In the settings for **Pomerium** app, enter the following details (replace `{AUTHENTICATE_DOMAIN}` with the actual domain you will use for the [Authenticate Service URL](/docs/reference/authenticate-service-url))
 
    | **Field** | **Description** |
    | --- | --- |
    | Enabled Identity Providers | Choose **Cognito User Pool**, unless you have set up another **Identity Provider** (eg SAML) |
-   | Callback URL(s) | https://authenticate_service_url/oauth2/callback |
+   | Allowed callback URLs | `https://{AUTHENTICATE_DOMAIN}/oauth2/callback` |
+   | Allowed sign-out URLs | `https://{AUTHENTICATE_DOMAIN}/.pomerium/signed_out` |
    | Allowed OAuth Flows | Authorization code grant |
    | Allowed OAuth Scopes | Email, OpenID, Profile |
 
