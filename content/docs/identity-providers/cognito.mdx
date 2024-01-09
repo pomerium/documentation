@@ -75,6 +75,7 @@ If you need to make changes after creating your pool, be aware that some setting
    | **Field** | **Description** |
    | --- | --- |
    | Enabled Identity Providers | Choose **Cognito User Pool**, unless you have set up another **Identity Provider** (eg SAML) |
+   | Allowed sign-out URLs | https://authenticate_domain/.pomerium/signed_out |
    | Callback URL(s) | https://authenticate_service_url/oauth2/callback |
    | Allowed OAuth Flows | Authorization code grant |
    | Allowed OAuth Scopes | Email, OpenID, Profile |
@@ -84,14 +85,6 @@ If you need to make changes after creating your pool, be aware that some setting
    ![AWS Cognito Domain Name](./img/cognito/cognito-domain-name.png)
 
 You can choose whether to use your own **Domain Name**, or use an AWS-provided one. The AWS-provided domain names are in the format `https://${DOMAIN-PREFIX}.auth.${AWS-REGION}.amazoncognito.com`
-
-### Configure allowed sign-out URLs
-
-Add the special Pomerium sign-out URL to Cognito's **Allowed sign-out URLs** list:
-
-`https://{AUTHENTICATE_DOMAIN}/.pomerium/signed_out`
-
-If you don't add the Pomerium sign-out URL to Cognito's allowed list, you will encounter an error when signing out of Cognito.
 
 ## Pomerium Configuration
 
