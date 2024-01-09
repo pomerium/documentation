@@ -113,21 +113,38 @@ routes:
     to: tcp://example.com:22
 ```
 
-:::tip **Note**
+### Wildcard processing behavior
 
-Wildcard From Routes (`*`) may take precedence over non-wildcard routes regardless of their ordering, and more specific wildcard routes will take precedence over less specific wildcard routes.
+Pomerium processes routes in the order they are defined in the configuration file. This holds true for external wildcard routes, too.
 
-In the example below, **Route C** will take priority over routes **A** or **B**:
+For example, given the wildcard routes below, if you send a request to `bab.example.com`, Pomerium would redirect the request to `internal_1.com`.
+
+This is because `bab.example.com` technically matches the first wildcard route, `b*.example.com`.
 
 ```yaml
-# Route A
-https://*.localhost.pomerium.io
+routes:
+  - from: https://b*.example.com
+    to: http://internal_1.com
+    pass_identity_headers: true
+    allow_any_authenticated_user: true
 
-# Route B
-https://a*.localhost.pomerium.io
-
-# Route C
-https://a*a.localhost.pomerium.io
+  - from: https://b*b.example.com
+    to: http://internal_2.com
+    pass_identity_headers: true
+    allow_any_authenticated_user: true
 ```
 
-:::
+If you send a request to `ab.example.com`, Pomerium would redirect the request to `internal_2.com` because `ab.example.com` only matches `a*.example.com`.
+
+```yaml
+routes:
+  - from: https://b*.example.com
+    to: http://internal_1.com
+    pass_identity_headers: true
+    allow_any_authenticated_user: true
+
+  - from: https://a*.example.com
+    to: http://internal_2.com
+    pass_identity_headers: true
+    allow_any_authenticated_user: true
+```
