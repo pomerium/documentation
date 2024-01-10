@@ -104,21 +104,18 @@ routes:
     to: tcp://example.com:22
 ```
 
-:::tip **Note**
+### Wildcard processing behavior
 
-Wildcard From Routes (`*`) may take precedence over non-wildcard routes regardless of their ordering, and more specific wildcard routes will take precedence over less specific wildcard routes.
+Pomerium processes routes in the order they are defined in the configuration file. However, routes which **don't** contain wildcards (`*`) may take precedence over routes which **do** contain wildcards.
 
-In the example below, **Route C** will take priority over routes **A** or **B**:
+For example, given the routes below, if you send a request to `foo.example.com`, Pomerium would redirect the request to `1.example.com`.
+
+If you send a request to `bar.example.com` (a non-wildcard route), Pomerium would redirect the request to `2.example.com`.
 
 ```yaml
-# Route A
-https://*.localhost.pomerium.io
-
-# Route B
-https://a*.localhost.pomerium.io
-
-# Route C
-https://a*a.localhost.pomerium.io
+routes:
+  - from: https://*.example.com
+    to: http://1.example.com
+  - from: https://bar.example.com
+    to: http://2.example.com
 ```
-
-:::
