@@ -1,7 +1,11 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
 namespace: pomerium-enterprise
-commonLabels:
-  app.kubernetes.io/name: pomerium-console
 resources:
-  - ./namespace.yaml
-  - ./deployment
-  - ./service
+- ./namespace.yaml
+- ./deployment
+- ./service
+labels:
+- includeSelectors: true
+  pairs:
+    app.kubernetes.io/name: pomerium-console
