@@ -115,36 +115,16 @@ routes:
 
 ### Wildcard processing behavior
 
-Pomerium processes routes in the order they are defined in the configuration file. This holds true for external wildcard routes, too.
+Pomerium processes routes in the order they are defined in the configuration file. However, routes which **don't** contain wildcards (*) may take precedence over routes which **do** contain wildcards.
 
-For example, given the wildcard routes below, if you send a request to `bab.example.com`, Pomerium would redirect the request to `internal_1.com`.
+For example, given the routes below, if you send a request to `foo.example.com`, Pomerium would redirect the request to `1.example.com`.
 
-This is because `bab.example.com` technically matches the first wildcard route, `b*.example.com`.
-
-```yaml
-routes:
-  - from: https://b*.example.com
-    to: http://internal_1.com
-    pass_identity_headers: true
-    allow_any_authenticated_user: true
-
-  - from: https://b*b.example.com
-    to: http://internal_2.com
-    pass_identity_headers: true
-    allow_any_authenticated_user: true
-```
-
-If you send a request to `ab.example.com`, Pomerium would redirect the request to `internal_2.com` because `ab.example.com` only matches `a*.example.com`.
+If you send a request to `bar.example.com` (a non-wildcard route), Pomerium would redirect the request to `2.example.com`.
 
 ```yaml
 routes:
-  - from: https://b*.example.com
-    to: http://internal_1.com
-    pass_identity_headers: true
-    allow_any_authenticated_user: true
-
-  - from: https://a*.example.com
-    to: http://internal_2.com
-    pass_identity_headers: true
-    allow_any_authenticated_user: true
+  - from: https://*.example.com
+    to: http://1.example.com
+  - from: https://bar.example.com
+    to: http://2.example.com
 ```
