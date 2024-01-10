@@ -125,7 +125,9 @@ deny:
 
 ### Supported PPL Criteria
 
-Below is an exhaustive list of PPL criteria. Entries marked with `*` denote criteria that are only available in the [Enterprise Console](/docs/deploy/enterprise) PPL builder.
+Below is an exhaustive list of PPL criteria.
+
+Entries marked with `*` denote criteria that are only available in the [Enterprise Console](/docs/deploy/enterprise) PPL builder. All other entries are available in both Pomerium Core and Pomerium Enterprise.
 
 | Criterion Name | Data Format | Description |
 | --- | --- | --- |
@@ -134,21 +136,22 @@ Below is an exhaustive list of PPL criteria. Entries marked with `*` denote crit
 | `claim` | Anything. Typically a string. | Returns true if a token claim matches the supplied value **exactly**. The claim to check is determined via the sub-path. <br/> For example, `claim/family_name: Smith` matches if the user's `family_name` claim is `Smith`. |
 | `client_certificate` | [Certificate matcher] | Returns true if a client presented a TLS certificate matching the provided condition. |
 | `cors_preflight` | Anything. Typically `true`. | Returns true if the incoming request uses the `OPTIONS` method and has both the `Access-Control-Request-Method` and `Origin` headers. Used to allow [CORS pre-flight requests]. |
-| \*`date` | [Date Matcher] | Returns true if the time of the request matches the constraints. |
-| \*`day_of_week` | [Day of Week Matcher] | Returns true if the day of the request matches the constraints. |
+| \* `date` | [Date Matcher] | Returns true if the time of the request matches the constraints. |
+| \* `day_of_week` | [Day of Week Matcher] | Returns true if the day of the request matches the constraints. |
 | `device` | [Device matcher] | Returns true if the incoming request includes a valid device ID or type. |
 | `domain` | [String Matcher] | Returns true if the logged-in user's email address domain (the part after `@`) matches the given value. |
 | `email` | [String Matcher] | Returns true if the logged-in user's email address matches the given value. |
+| \* `groups` | [String Matcher] | Returns true if a user's group ID matches the supplied value **exactly**. `groups` data is only available after a successful directory sync. See [Identity Providers](/docs/identity-providers) for vendor-specific directory sync steps. |
 | `http_method` | [String Matcher] | Returns true if the HTTP method matches the given value. |
 | `http_path` | [String Matcher] | Returns true if the HTTP path matches the given value. |
 | `invalid_client_certificate` | Anything. Typically `true`. | Returns true if the incoming request does not have a trusted client certificate. By default, a `deny` rule using this criterion is added to all Pomerium policies when [downstream mTLS] is configured (but this default can be changed using the [Enforcement Mode](/docs/reference/downstream-mtls-settings#enforcement-mode) setting.) |
 | `pomerium_routes` | Anything. Typically `true`. | Returns true if the incoming request is for the special `.pomerium` routes. A default `allow` rule using this criterion is added to all Pomerium policies. |
-| \*`record` | variable | Allows policies to be extended using data from [external data sources](/docs/integrations) |
+| \* `record` | variable | Allows policies to be extended using data from [external data sources](/docs/integrations) |
 | `reject` | Anything. Typically `true`. | Always returns false. The opposite of `accept`. |
-| \*`time_of_day` | [Time of Day Matcher] | Returns true if the time of the request (for the current day) matches the constraints. |
+| \* `time_of_day` | [Time of Day Matcher] | Returns true if the time of the request (for the current day) matches the constraints. |
 | `user` | [String Matcher] | Returns true if the logged-in user's id matches the given value. |
 
-\* Denotes criteria that are only available in the Enterprise Console PPL builder.
+Entries marked with `*` denote criteria that are only available in the [Enterprise Console](/docs/deploy/enterprise) PPL builder.
 
 ## Matchers
 
