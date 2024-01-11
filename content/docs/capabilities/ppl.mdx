@@ -141,7 +141,7 @@ Entries marked with `*` denote criteria that are only available in the [Enterpri
 | `device` | [Device matcher] | Returns true if the incoming request includes a valid device ID or type. |
 | `domain` | [String Matcher] | Returns true if the logged-in user's email address domain (the part after `@`) matches the given value. |
 | `email` | [String Matcher] | Returns true if the logged-in user's email address matches the given value. |
-| \* `groups` | [String Matcher] | Returns true if a user's group ID matches the supplied value **exactly**. `groups` data is only available after a successful directory sync. See [Identity Providers](/docs/identity-providers) for vendor-specific directory sync steps. |
+| \* `groups` | [String List Matcher] | Returns true if a user's group ID matches the supplied value **exactly**. `groups` data is only available after a successful directory sync. See [Identity Providers](/docs/identity-providers) for vendor-specific directory sync steps. |
 | `http_method` | [String Matcher] | Returns true if the HTTP method matches the given value. |
 | `http_path` | [String Matcher] | Returns true if the HTTP path matches the given value. |
 | `invalid_client_certificate` | Anything. Typically `true`. | Returns true if the incoming request does not have a trusted client certificate. By default, a `deny` rule using this criterion is added to all Pomerium policies when [downstream mTLS] is configured (but this default can be changed using the [Enforcement Mode](/docs/reference/downstream-mtls-settings#enforcement-mode) setting.) |
@@ -151,7 +151,7 @@ Entries marked with `*` denote criteria that are only available in the [Enterpri
 | \* `time_of_day` | [Time of Day Matcher] | Returns true if the time of the request (for the current day) matches the constraints. |
 | `user` | [String Matcher] | Returns true if the logged-in user's id matches the given value. |
 
-Entries marked with `*` denote criteria that are only available in the [Enterprise Console](/docs/deploy/enterprise) PPL builder.
+Entries marked with `*` denote criteria that are only available in the [Enterprise Console](/docs/deploy/enterprise) PPL builder. All other entries are available in both Pomerium Core and Pomerium Enterprise.
 
 ## Matchers
 
@@ -295,13 +295,34 @@ Users can [find their device IDs](/docs/capabilities/device-identity#find-device
 
 ### String Matcher
 
-A string matcher is an object with operators as keys. It supports the following operators: `contains`, `ends_with`, `is` and `starts_with`. For example:
+A string matcher is an object with operators as keys. It supports the following operators: `contains`, `ends_with`, `is` and `starts_with`.
+
+For example:
 
 ```yaml
 allow:
   and:
     - email:
         starts_with: 'admin@'
+```
+
+### String List Matcher
+
+A string list matcher is an object that supports a single `has` operator as a key. The `has` operator checks that a given string is present in a list of strings.
+
+The `groups` and `record` criteria both support the `has` operator.
+
+For example:
+
+```yaml
+allow:
+  or:
+    - groups:
+        has: 00gv40ki4gmtCyl5d4x6
+    - record:
+        type: pomerium.io/ExternalDataSource
+        field: id
+        is: 8e42c7ae-13f6-4d40-8365-f39c1c143074
 ```
 
 ### Time of Day Matcher
@@ -328,6 +349,7 @@ allow:
 [pomerium enterprise]: /docs/deploy/enterprise/install
 [yaml]: https://en.wikipedia.org/wiki/YAML
 [string matcher]: #string-matcher
+[string list matcher]: #string-list-matcher
 [date matcher]: #date-matcher
 [day of week matcher]: #day-of-week-matcher
 [time of day matcher]: #time-of-day-matcher
