@@ -21,19 +21,19 @@ Review the upgrade guide below before upgrading to the latest version of Pomeriu
 
 #### Breaking
 
-#### Base64-encoded Certificates
+##### Base64-encoded Certificates
 
 - Previously, the `certificates` key supported base64-encoded certificates as a value (this option was not documented). We've removed support for base64-encoded certificates for this setting and now require that you only use the certificate file location. To avoid issues between versions, please update these values accordingly.
 
 **Note:** The `certificates` key is distinct from the `certificate` key. The `certificate` key setting still supports base64-encoded certificates; the `certificates` _list_ does not.
 
-#### Remove Debug Option
+##### Remove Debug Option
 
 We've removed support for the Debug setting, which changed the format of logs from JSON to a pretty-print format. If you prefer to review logs in a pretty-print format, you can use a command-line processing tool like `jq`.
 
 #### New
 
-#### Authentication Flows
+##### Authentication Flows
 
 In v0.21, we modified the Core authentication flow to support the [Hosted Authenticate](https://www.pomerium.com/docs/capabilities/hosted-authenticate-service) service. However, this flow posed some limitations for self-hosted deployments (see [#4819](https://github.com/pomerium/pomerium/issues/4819) for more details). In v0.25, we’ve updated the Core authentication flow so that it’s more versatile: Deployments configured to use the Hosted Authenticate service will use the newer authentication flow introduced in v0.21, while self-hosted deployments will use the older flow.
 
