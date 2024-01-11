@@ -306,23 +306,39 @@ allow:
         starts_with: 'admin@'
 ```
 
+Or:
+
+```yaml
+allow:
+  and:
+    - record:
+        type: example.com/geoip
+        field: country
+        is: 'US'
+```
+
 ### String List Matcher
 
 A string list matcher is an object that supports a single `has` operator as a key. The `has` operator checks that a given string is present in a list of strings.
 
 The `groups` and `record` criteria both support the `has` operator.
 
-For example:
+For example, using the `groups` criterion:
 
 ```yaml
 allow:
-  or:
+  and:
     - groups:
-        has: 00gv40ki4gmtCyl5d4x6
+        has: '00gv40ki4gmtCyl5d4x6'
+```
+
+Using the `record` criterion:
+
+```yaml
     - record:
-        type: pomerium.io/ExternalDataSource
-        field: id
-        has: 5baaa83d-c10b-4558-b5b0-355f0f98e324
+        type: example.com/hr_user
+        field: departments
+        has: 'engineering'
 ```
 
 ### Time of Day Matcher
