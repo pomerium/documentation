@@ -59,7 +59,7 @@ A user’s signed JWT acts as the stamp: In the event of other network configura
 
 ## What is a JWT?
 
-If you’re unfamiliar with JWTs, here’s a quick definition sourced from [JWT.io](https://jwt.io/](https://jwt.io):
+If you’re unfamiliar with JWTs, here’s a quick definition sourced from [JWT.io](https://jwt.io/):
 
 “JSON Web Tokens are an open, industry standard [RFC 7519](https://tools.ietf.org/html/rfc7519) method for representing claims securely between two parties.”
 
@@ -67,7 +67,7 @@ Just remember: JWTs are the stamps on an entry ticket which give it more legitim
 
 :::info
 
-Check out [**this article**](https://jwt.io/introduction](https://jwt.io/introduction) to learn more about the anatomy of a JWT, how they are used in modern applications for SSO and information exchange, and how signatures work with a public/private key pair.
+Check out [**this article**](https://jwt.io/introduction) to learn more about the anatomy of a JWT, how they are used in modern applications for SSO and information exchange, and how signatures work with a public/private key pair.
 
 :::
 
