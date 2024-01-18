@@ -1,15 +1,27 @@
 ---
-title: Azure Active Directory
-sidebar_label: Azure AD
+title: Entra ID (Azure Active Directory)
+sidebar_label: Entra ID
 lang: en-US
-keywords: [azure, active directory, ad, microsoft, identity provider, idp]pagination_prev: null
+keywords: [
+  azure,
+  active directory,
+  ad,
+  entra,
+  entra id,
+  microsoft,
+  identity provider,
+  idp
+  ]
+pagination_prev: null
 pagination_next: null
 ---
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-This page will help you configure Pomerium to use your Azure Active Directory as an IdP. It assumes you have already [installed Pomerium](/docs/deploy/)
+# Microsoft Entra ID (Azure Active Directory)
+
+Learn how to configure Pomerium to use **Microsoft Entra ID** (formally Azure Active Directory) as an identity provider.
 
 :::caution
 
@@ -17,9 +29,18 @@ While we do our best to keep our documentation up to date, changes to third-part
 
 :::
 
-If you plan on allowing users to log in using a Microsoft Azure Active Directory account, either from your company or from external directories, you must register your application through the Microsoft Azure portal. If you don't have a Microsoft Azure account, you can [sign up](https://azure.microsoft.com/en-us/free) for free.
+## Before you begin
 
-You can access the Azure management portal from your Microsoft service, or visit [https://portal.azure.com](https://portal.azure.com) and sign in to Azure using the global administrator account used to create the Office 365 organization.
+To complete this guide, you must:
+
+- Install [Pomerium](/docs/deploy/core)
+- Create a free [Microsoft 365 admin account](https://www.microsoft.com/en-us/microsoft-365/business) (or have admin privileges with an existing Microsoft 365 account)
+
+## Access Entra ID
+
+If you want users to sign in to an application using a Microsoft Entra ID account, either from your organization or from external directories, you must register the application through the Microsoft Azure portal.
+
+You can access the Azure management portal from your Microsoft service, or visit [the Azure portal](https://portal.azure.com) and sign in to Azure using the global administrator account used to create the Microsoft 365 (formally Office 365) organization.
 
 :::tip
 
@@ -27,30 +48,33 @@ There is no way to create an application that integrates with Microsoft Azure AD
 
 :::
 
-If you have an Office 365 account, you can use the account's Azure AD instance instead of creating a new one. To find your Office 365 account's Azure AD instance:
+If you have a Microsoft 365 account, you can use the account's Entra ID instance instead of creating a new one. You can access Entra ID from the **Microsoft 365 admin center** or directly from the **Azure portal**.
 
-1. [Sign in](https://portal.office.com) to Office 365.
-1. Navigate to the [Office 365 Admin Center](https://portal.office.com/adminportal/home#/homepage).
-1. Open the **Admin centers** menu drawer located in the left menu.
-1. Click on **Azure AD**.
+To find your Microsoft 365 Entra ID instance from the Microsoft 365 admin center:
 
-This will bring you to the admin center of the Azure AD instance backing your Office 365 account.
+1. [Sign in](https://login.microsoftonline.com/) to Microsoft 365
+1. In the sidebar, select **Admin**
+1. In the **admin center** sidebar, select **Identity**
 
-## Create a New Application
+To find your Microsoft 365 Entra ID instance from the Azure portal:
 
-1. Login to Microsoft Azure and choose **Azure Active Directory**. You may need to click on **More Services** first:
+1. [Sign in](https://azure.microsoft.com/en-us/free) to Azure
+1. Select the sidebar menu to expand It
+1. Select **Microsoft Entra ID**
 
-   ![Select Active Directory](./img/azure/azure-dashboard.png)
+Either of these instructions will take you to the Entra ID backing your Microsoft 365 account.
 
-1. Under **Manage**, select **App registrations**.
+## Create a new application
 
-   ![Select App registrations](./img/azure/azure-app-registrations.png)
+Once you're in the Entra ID dashboard, register an application:
 
-   Then click on the **+ New registration** button to add a new application.
+1. In the Microsoft Entra ID dashboard, register a new app:
 
-1. Enter a name for the application. Under **Redirect URI** select **Web** and set the value to `https://${authenticate_service_url}/oauth2/callback`. You can confirm your authenticate service URL from your Pomerium configuration.
+  ![Register a new app in Entra ID](./img/entra/entra-add-app.png)
 
-   ![Create application form](./img/azure/azure-create-application.png)
+1. Enter a name for the application. Under **Redirect URI**, select **Web** and set the value to `https://${authenticate_service_url}/oauth2/callback`.
+
+  ![Enter your app's details](./img/entra/entra-register-app.png)
 
    After you register the application, note the Application (client) ID, and Directory (tenant) ID.
 
