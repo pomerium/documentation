@@ -34,27 +34,19 @@ While we do our best to keep our documentation up to date, changes to third-part
 To complete this guide, you must:
 
 - Install [Pomerium](/docs/deploy/core)
-- Create a free [Microsoft 365 admin account](https://www.microsoft.com/en-us/microsoft-365/business) (or have admin privileges with an existing Microsoft 365 account)
+- Create a free [Microsoft 365 administration account](https://www.microsoft.com/en-us/microsoft-365/business/office-365-administration) (or have admin privileges with an existing Microsoft 365 account)
 
-## Access Entra ID
+## Access your Entra ID instance
 
 If you want users to sign in to an application using a Microsoft Entra ID account, either from your organization or from external directories, you must register the application through the Microsoft Azure portal.
 
-You can access the Azure management portal from your Microsoft service, or visit [the Azure portal](https://portal.azure.com) and sign in to Azure using the global administrator account used to create the Microsoft 365 (formally Office 365) organization.
-
-:::tip
-
-There is no way to create an application that integrates with Microsoft Azure AD without having **your own** Microsoft Azure AD instance.
-
-:::
-
-If you have a Microsoft 365 account, you can use the account's Entra ID instance instead of creating a new one. You can access Entra ID from the **Microsoft 365 admin center** or directly from the **Azure portal**.
+If you have a Microsoft 365 account (formally Office 365), you can use your account's Entra ID instance instead of creating a new one. You can access Entra ID from the **Microsoft 365 admin center** or directly from the **Azure portal**.
 
 To find your Microsoft 365 Entra ID instance from the Microsoft 365 admin center:
 
 1. [Sign in](https://login.microsoftonline.com/) to Microsoft 365
 1. In the sidebar, select **Admin**
-1. In the **admin center** sidebar, select **Identity**
+1. In the admin center sidebar, select **Identity**
 
 To find your Microsoft 365 Entra ID instance from the Azure portal:
 
@@ -64,39 +56,23 @@ To find your Microsoft 365 Entra ID instance from the Azure portal:
 
 Either of these instructions will take you to the Entra ID backing your Microsoft 365 account.
 
-## Create a new application
+![A screenshot of the Entra ID instance screen](./img/entra/entra-instance.png)
+
+## Register a new application
 
 Once you're in the Entra ID dashboard, register an application:
 
-1. In the Microsoft Entra ID dashboard, register a new app:
-
+1. Select **+ Add** and **App registration**.
   ![Register a new app in Entra ID](./img/entra/entra-add-app.png)
 
-1. Enter a name for the application. Under **Redirect URI**, select **Web** and set the value to `https://${authenticate_service_url}/oauth2/callback`.
-
+1. Enter a name for the application. Under **Redirect URI**, select **Web** and set the value to `https://${authenticate_service_url}/oauth2/callback`. Select **Register**.
   ![Enter your app's details](./img/entra/entra-register-app.png)
 
-   After you register the application, note the Application (client) ID, and Directory (tenant) ID.
+1. After you register the application, save the **Application (client) ID** and **Directory (tenant) ID** for later. Under **Client credentials**, select **Add a certificate or secret**.
+  ![Save your client ID, directory ID, and create a certificate or secret](./img/entra/entra-app-secret-client-id.png)
 
-1. Under Client credentials, click **Add a certificate or secret**. The secret you create will be used as the **[Client Secret]** in Pomerium's configuration settings.
-
-1. Under **Client secrets** click **+ New client secret**. Enter a name for the key and choose the desired duration.
-
-   ![Creating a Key](./img/azure/azure-create-key.png)
-
-   :::tip
-
-   If you choose an expiring key, make sure to record the expiration date in your calendar, as you will need to renew the key (get a new one) before that day to ensure users don't experience a service interruption.
-
-   :::
-
-   Click on **Add** and the key will be displayed. **Make sure to copy the value of this key before leaving this screen**, otherwise you may need to create a new key.
-
-   :::note
-
-   Confirm you are copying the **Value**, and not the **ID**.
-
-   :::
+1. In the **Certificates & secrets** screen, select the **Client secrets** tab, then **+ New client secret**. In the **Add a new client secret** panel, give the key a description and expiry time. (You will use this key as your [Client Secret](/docs/reference/identity-provider-settings#identity-provider-client-secret) later.)
+  ![Create a client secret for your application](./img/entra/entra-create-client-secret.png)
 
 ### API Permissions
 
