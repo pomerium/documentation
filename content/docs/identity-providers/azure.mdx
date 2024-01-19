@@ -76,37 +76,40 @@ Once you're in the Entra ID dashboard, register an application:
 
 ### API Permissions
 
-In order to retrieve group information from Active Directory, we need to enable the necessary permissions for the [Microsoft Graph API](https://docs.microsoft.com/en-us/graph/auth-v2-service#azure-ad-endpoint-considerations).
+To get group information from Entra ID, you must enable the necessary [Microsoft Graph API](https://docs.microsoft.com/en-us/graph/auth-v2-service#azure-ad-endpoint-considerations) permissions.
 
-Please note, [Group ID](https://docs.microsoft.com/en-us/graph/api/group-get?view=graph-rest-1.0&tabs=http) not group name will be used to affirm group membership.
+:::note
 
-1. From the application page, click **API permissions**.
+You will use the [**Group ID**](https://docs.microsoft.com/en-us/graph/api/group-get?view=graph-rest-1.0&tabs=http) (not the [group display name](https://learn.microsoft.com/en-us/graph/api/resources/group?view=graph-rest-1.0#properties)) to affirm group membership.
 
-   - Click the **+ Add a permission** button and select **Microsoft Graph API**.
-   - Select **Application permissions**.
-   - Use the filter to select the checkboxes for **Directory.Read.All**, **Group.Read.All** and **User.Read.All**, then click **Add permissions**.
+:::
 
-   ![Azure add group membership claims](./img/azure/azure-api-permissions.png)
+1. From the **App registrations** page, select **API permissions**:
 
-   You can also optionally select **Grant admin consent for Default Directory** which will suppress the permission screen on first login for users.
+   - Select **+ Add a permission**, then **Microsoft Graph API**
+   - Select **Application permissions**
+   - Use the filter to select the checkboxes for **Directory.Read.All**, **Group.Read.All** and **User.Read.All**, then select **Add permissions**
 
-1. The most unique step to Azure AD provider, is to take note of your specific endpoint. Navigate to **Azure Active Directory** -> **Apps registrations** and select your app.
+   ![Select API permissions for your users in the API Permissions page.](./img/entra/entra-api-permissions.png)
 
-   ![Application dashboard](./img/azure/azure-application-dashboard.png)
+   You can also optionally select **Grant admin consent for Default Directory**, which suppresses the permission screen on first sign-in for users.
 
-   Click on **Endpoints**
+1. Go back to the **App registrations** page and select your app. Select the **Endpoints** tab.
+   ![From the app registration page, select the Endpoints tab](./img/entra/entra-endpoints-tab.png)
 
-   ![Endpoint details](./img/azure/azure-endpoints.png)
+   Copy the value under the **OpenID Connect metadata document** field:
 
-The **OpenID Connect Metadata Document** value will form the basis for Pomerium's **Provider URL** setting.
+   ![The OpenID Connect (OIDC) connection endpoint metadata](./img/entra/entra-endpoint-metadata.png)
 
-For example if the **Azure OpenID Connect** url is:
+The **OpenID Connect metadata document** value will form the basis for Pomerium's **[Provider URL](/docs/reference/identity-provider-settings#identity-provider-url)** setting.
+
+For example, if the **Entra ID OpenID Connect** URL is:
 
 ```bash
 https://login.microsoftonline.com/0303f438-3c5c-4190-9854-08d3eb31bd9f/v2.0/.well-known/openid-configuration`
 ```
 
-**Pomerium Identity Provider URL** would be
+Then the **Pomerium Identity Provider URL** would be:
 
 ```bash
 https://login.microsoftonline.com/0303f438-3c5c-4190-9854-08d3eb31bd9f/v2.0
