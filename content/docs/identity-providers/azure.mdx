@@ -74,13 +74,21 @@ Once you're in the Entra ID dashboard, register an application:
 1. In the **Certificates & secrets** screen, select the **Client secrets** tab, then **+ New client secret**. In the **Add a new client secret** panel, give the key a description and expiry time. (You will use this key as your [Client Secret](/docs/reference/identity-provider-settings#identity-provider-client-secret) later.)
   ![Create a client secret for your application](./img/entra/entra-create-client-secret.png)
 
+    :::note
+
+    Make sure you save the client secret **Value** and not the **Secret ID**. After you generate the secret and leave the screen, you can't view or copy the secret value unless you delete the secret and generate a new one.
+
+    ![Copy the client secret value](./img/entra/entra-client-secret-value.png)
+
+    :::
+
 ### API Permissions
 
 To get group information from Entra ID, you must enable the necessary [Microsoft Graph API](https://docs.microsoft.com/en-us/graph/auth-v2-service#azure-ad-endpoint-considerations) permissions.
 
 :::note
 
-You will use the [**Group ID**](https://docs.microsoft.com/en-us/graph/api/group-get?view=graph-rest-1.0&tabs=http) (not the [group display name](https://learn.microsoft.com/en-us/graph/api/resources/group?view=graph-rest-1.0#properties)) to affirm group membership.
+You will use the [**Group ID**](https://docs.microsoft.com/en-us/graph/api/group-get?view=graph-rest-1.0&tabs=http) to affirm group membership (not the [**Group Display Name**](https://learn.microsoft.com/en-us/graph/api/resources/group?view=graph-rest-1.0#properties)).
 
 :::
 
@@ -157,11 +165,18 @@ This means you **do not** need to update **`azure`** in your configuration file.
 
 ### Custom Claim (Open Source)
 
-To authorize users based on their group membership, Azure supports adding a `group` claim to the identity token:
+To authorize users based on their group membership, add a `group` claim to the identity token:
 
-![Add Groups Claim](./img/azure/groups-claim.png)
+1. Go to **App registrations** and select **Token configuration**, then **+ Add groups claim**.
+  ![Select Token Configuration under the Manage section in the sidebar](./img/entra/entra-token-configuration.png)
+1. In the **Edit groups claim** panel, select the appropriate group types. Under **Customize token properties by type**, select **Group ID** for **ID**, **Access**, and **SAML**.
+![Edit the tokens groups claim in the Edit groups claim panel](./img/entra/entra-edit-groups-claim.png)
 
-Now when users login they will have a claim named `groups` that contains their groups and the `claim` PPL criterion can be used for authorization:
+### Apply custom claims to a policy
+
+You can use the [Claim PPL criterion](/docs/capabilities/ppl#criteria) to factor in the `groups` value in your authorization policy.
+
+For example:
 
 ```yaml
 routes:
@@ -173,9 +188,9 @@ routes:
             - claim/groups: 'e14f56fd-b956-4009-b06c-dc8a5e9207c8'
 ```
 
-:::tip
+:::note
 
-The `groups` claim contains group IDs, not group names.
+The **`groups`** claim contains group IDs, not group names.
 
 :::
 
@@ -184,18 +199,18 @@ The `groups` claim contains group IDs, not group names.
 
 ### Directory Sync (Enterprise)
 
-Azure uses the same Client ID and Client Secret used in [Pomerium Core](/docs/identity-providers).
+Entra ID uses the same Client ID and Client Secret used in [Pomerium Core](/docs/deploy/core).
 
 ### Configure Pomerium Enterprise Console
 
-Under **Settings → Identity Providers**, select "Azure" as the identity provider and set the Client ID, Client Secret and Directory (Tenant) ID.
+Under **Settings > Identity Providers**, select "Azure" as the identity provider and set the Client ID, Client Secret, and Directory (Tenant) ID.
 
-![Azure Settings](./img/azure/azure-idp.png)
+![Configure Entra ID client ID and secret in the Enterprise Console](./img/entra/azure-idp.png)
 
 ## Troubleshooting
 
-- In our testing, we found that users could be created in an Active Directory without an email address as part of their user claim. Pomerium user identity depends largely on the associated email address.
-- If your default user in the Active Directory is unauthorized (403) even when specified as allowed in a policy by user, you can mitigate by creating a group membership and corresponding policy.
+- In our testing, we found that users could be created in an Entra ID directory without an email address as part of their user claim. Pomerium user identity depends largely on the associated email address.
+- If your default user in the Entra ID directory is unauthorized (`403`) even when specified as allowed in a policy by the user claim, you can mitigate this behavior by creating a group membership and corresponding policy.
 
 </TabItem>
 </Tabs>
