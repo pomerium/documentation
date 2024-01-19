@@ -117,30 +117,38 @@ https://login.microsoftonline.com/0303f438-3c5c-4190-9854-08d3eb31bd9f/v2.0
 
 ## Pomerium Configuration
 
-Configure Pomerium with the identity provider settings retrieved in the previous steps.
+Configure Pomerium with the identity provider settings you saved in the previous steps:
 
 <Tabs>
-<TabItem value="config.yaml" label="config.yaml">
+<TabItem value="Config file keys" label="Config file keys">
 
 ```yaml
 idp_provider: 'azure'
-idp_provider_url: 'https://login.microsoftonline.com/{REPLACE-ME-SEE-ABOVE}/v2.0'
-idp_client_id: 'REPLACE-ME'
-idp_client_secret: 'REPLACE-ME'
+idp_provider_url: 'https://login.microsoftonline.com/{REPLACE-WITH-OIDC-METADATA-STRING}/v2.0'
+idp_client_id: 'REPLACE-WITH-CLIENT-ID'
+idp_client_secret: 'REPLACE-WITH-CLIENT-SECRET'
 ```
 
 </TabItem>
-<TabItem value="Environment Variables" label="Environment Variables">
+<TabItem value="Environment variables" label="Environment variables">
 
 ```bash
 IDP_PROVIDER="azure"
-IDP_PROVIDER_URL="https://login.microsoftonline.com/{REPLACE-ME-SEE-ABOVE}/v2.0"
-IDP_CLIENT_ID="REPLACE-ME"
-IDP_CLIENT_SECRET="REPLACE-ME"
+IDP_PROVIDER_URL="https://login.microsoftonline.com/{REPLACE-WITH-OIDC-METADATA-STRING}/v2.0"
+IDP_CLIENT_ID="REPLACE-WITH-CLIENT-ID"
+IDP_CLIENT_SECRET="REPLACE-WITH-CLIENT-SECRET"
 ```
 
 </TabItem>
 </Tabs>
+
+:::note
+
+As of this writing, Pomerium only supports **`azure`** as the valid **`idp_provider`** name to reference Microsoft Entra ID as an identity provider (not **`entra`**).
+
+This means you **do not** need to update **`azure`** in your configuration file. If you update the **`idp_provider`** key to **`entra`**, it will break your configuration.
+
+:::
 
 ## Getting Groups
 
