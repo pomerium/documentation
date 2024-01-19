@@ -1,16 +1,18 @@
 ---
 title: Entra ID (Azure Active Directory)
 sidebar_label: Entra ID
+description: Learn how to configure Microsoft Entra ID (formally Azure AD) as an identity provider that works with Pomerium Core and Enterprise.
 lang: en-US
-keywords: [
-  azure,
-  active directory,
-  ad,
-  entra,
-  entra id,
-  microsoft,
-  identity provider,
-  idp
+keywords:
+  [
+    azure,
+    active directory,
+    ad,
+    entra,
+    entra id,
+    microsoft,
+    identity provider,
+    idp,
   ]
 pagination_prev: null
 pagination_next: null
@@ -62,25 +64,21 @@ Either of these instructions will take you to the Entra ID backing your Microsof
 
 Once you're in the Entra ID dashboard, register an application:
 
-1. Select **+ Add** and **App registration**.
-  ![Register a new app in Entra ID](./img/entra/entra-add-app.png)
+1. Select **+ Add** and **App registration**. ![Register a new app in Entra ID](./img/entra/entra-add-app.png)
 
-1. Enter a name for the application. Under **Redirect URI**, select **Web** and set the value to `https://${authenticate_service_url}/oauth2/callback`. Select **Register**.
-  ![Enter your app's details](./img/entra/entra-register-app.png)
+1. Enter a name for the application. Under **Redirect URI**, select **Web** and set the value to `https://${authenticate_service_url}/oauth2/callback`. Select **Register**. ![Enter your app's details](./img/entra/entra-register-app.png)
 
-1. After you register the application, save the **Application (client) ID** and **Directory (tenant) ID** for later. Under **Client credentials**, select **Add a certificate or secret**.
-  ![Save your client ID, directory ID, and create a certificate or secret](./img/entra/entra-app-secret-client-id.png)
+1. After you register the application, save the **Application (client) ID** and **Directory (tenant) ID** for later. Under **Client credentials**, select **Add a certificate or secret**. ![Save your client ID, directory ID, and create a certificate or secret](./img/entra/entra-app-secret-client-id.png)
 
-1. In the **Certificates & secrets** screen, select the **Client secrets** tab, then **+ New client secret**. In the **Add a new client secret** panel, give the key a description and expiry time. (You will use this key as your [Client Secret](/docs/reference/identity-provider-settings#identity-provider-client-secret) later.)
-  ![Create a client secret for your application](./img/entra/entra-create-client-secret.png)
+1. In the **Certificates & secrets** screen, select the **Client secrets** tab, then **+ New client secret**. In the **Add a new client secret** panel, give the key a description and expiry time. (You will use this key as your [Client Secret](/docs/reference/identity-provider-settings#identity-provider-client-secret) later.) ![Create a client secret for your application](./img/entra/entra-create-client-secret.png)
 
-    :::note
+   :::note
 
-    Make sure you save the client secret **Value** and not the **Secret ID**. After you generate the secret and leave the screen, you can't view or copy the secret value unless you delete the secret and generate a new one.
+   Make sure you save the client secret **Value** and not the **Secret ID**. After you generate the secret and leave the screen, you can't view or copy the secret value unless you delete the secret and generate a new one.
 
-    ![Copy the client secret value](./img/entra/entra-client-secret-value.png)
+   ![Copy the client secret value](./img/entra/entra-client-secret-value.png)
 
-    :::
+   :::
 
 ### API Permissions
 
@@ -102,8 +100,7 @@ You will use the [**Group ID**](https://docs.microsoft.com/en-us/graph/api/group
 
    You can also optionally select **Grant admin consent for Default Directory**, which suppresses the permission screen on first sign-in for users.
 
-1. Go back to the **App registrations** page and select your app. Select the **Endpoints** tab.
-   ![From the app registration page, select the Endpoints tab](./img/entra/entra-endpoints-tab.png)
+1. Go back to the **App registrations** page and select your app. Select the **Endpoints** tab. ![From the app registration page, select the Endpoints tab](./img/entra/entra-endpoints-tab.png)
 
    Copy the value under the **OpenID Connect metadata document** field:
 
@@ -167,10 +164,8 @@ This means you **do not** need to update **`azure`** in your configuration file.
 
 To authorize users based on their group membership, add a `group` claim to the identity token:
 
-1. Go to **App registrations** and select **Token configuration**, then **+ Add groups claim**.
-  ![Select Token Configuration under the Manage section in the sidebar](./img/entra/entra-token-configuration.png)
-1. In the **Edit groups claim** panel, select the appropriate group types. Under **Customize token properties by type**, select **Group ID** for **ID**, **Access**, and **SAML**.
-![Edit the tokens groups claim in the Edit groups claim panel](./img/entra/entra-edit-groups-claim.png)
+1. Go to **App registrations** and select **Token configuration**, then **+ Add groups claim**. ![Select Token Configuration under the Manage section in the sidebar](./img/entra/entra-token-configuration.png)
+1. In the **Edit groups claim** panel, select the appropriate group types. Under **Customize token properties by type**, select **Group ID** for **ID**, **Access**, and **SAML**. ![Edit the tokens groups claim in the Edit groups claim panel](./img/entra/entra-edit-groups-claim.png)
 
 ### Apply custom claims to a policy
 
