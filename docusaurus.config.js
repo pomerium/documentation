@@ -181,6 +181,9 @@ const config = {
         'shell-session',
       ],
     },
+    mermaid: {
+      theme: {light: 'default', dark: 'default'},
+    },
   },
   stylesheets: [
     'https://fonts.googleapis.com/icon?family=Material+Icons',
