@@ -26,7 +26,7 @@ Hardware-backed device identity is becoming more widely discussed as more produc
 
 | ![Verge Article Header and Apple Video Page](./img/verge-apple.png) |
 | :-- |
-| **Sources:**<br />- <https://www.theverge.com/2021/6/25/22550376/microsoft-windows-11-tpm-chips-requirement-security><br/>- <https://developer.apple.com/videos/play/wwdc2021/10106/> |
+| **Sources:**<br />- [https://www.theverge.com/2021/6/25/22550376/microsoft-windows-11-tpm-chips-requirement-security](https://www.theverge.com/2021/6/25/22550376/microsoft-windows-11-tpm-chips-requirement-security)<br/>- [https://developer.apple.com/videos/play/wwdc2021/10106](https://developer.apple.com/videos/play/wwdc2021/10106) |
 
 Device identity protects a trusted user from accessing sensitive data from a potentially unsafe device, like their personal computer or phone. Think of it as similar to multi-factor authentication (**MFA**); where MFA covers "what you know" (password) and "who you are" (biometrics, face recognition, etc), device identity asks "is this device safe?" by confirming that the device you are using to access a system is trusted.
 
