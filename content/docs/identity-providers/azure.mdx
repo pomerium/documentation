@@ -1,15 +1,29 @@
 ---
-title: Azure Active Directory
-sidebar_label: Azure AD
+title: Microsoft Entra ID (formerly Azure Active Directory)
+sidebar_label: Microsoft Entra ID (Azure AD)
+description: Learn how to configure Microsoft Entra ID (formerly known as Azure Active Directory) as an identity provider that works with Pomerium Core and Enterprise.
 lang: en-US
-keywords: [azure, active directory, ad, microsoft, identity provider, idp]pagination_prev: null
+keywords:
+  [
+    azure,
+    active directory,
+    ad,
+    entra,
+    entra id,
+    microsoft,
+    identity provider,
+    idp,
+  ]
+pagination_prev: null
 pagination_next: null
 ---
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-This page will help you configure Pomerium to use your Azure Active Directory as an IdP. It assumes you have already [installed Pomerium](/docs/deploy/)
+# Microsoft Entra ID (formerly Azure Active Directory)
+
+Learn how to configure Pomerium to use **Microsoft Entra ID** (formerly Azure Active Directory) as an identity provider.
 
 :::caution
 
@@ -17,96 +31,90 @@ While we do our best to keep our documentation up to date, changes to third-part
 
 :::
 
-If you plan on allowing users to log in using a Microsoft Azure Active Directory account, either from your company or from external directories, you must register your application through the Microsoft Azure portal. If you don't have a Microsoft Azure account, you can [sign up](https://azure.microsoft.com/en-us/free) for free.
+## Before you begin
 
-You can access the Azure management portal from your Microsoft service, or visit [https://portal.azure.com](https://portal.azure.com) and sign in to Azure using the global administrator account used to create the Office 365 organization.
+To complete this guide, you must:
 
-:::tip
+- Install [Pomerium](/docs/deploy/core)
+- Create a free [Microsoft 365 administration account](https://www.microsoft.com/en-us/microsoft-365/business/office-365-administration) (or have admin privileges with an existing Microsoft 365 account)
 
-There is no way to create an application that integrates with Microsoft Azure AD without having **your own** Microsoft Azure AD instance.
+## Access your Entra ID instance
 
-:::
+If you want users to sign in to an application using a Microsoft Entra ID account, either from your organization or from external directories, you must register the application through the Microsoft Azure portal.
 
-If you have an Office 365 account, you can use the account's Azure AD instance instead of creating a new one. To find your Office 365 account's Azure AD instance:
+If you have a Microsoft 365 account (formerly Office 365), you can use your account's Entra ID instance instead of creating a new one. You can access Entra ID from the **Microsoft 365 admin center** or directly from the **Azure portal**.
 
-1. [Sign in](https://portal.office.com) to Office 365.
-1. Navigate to the [Office 365 Admin Center](https://portal.office.com/adminportal/home#/homepage).
-1. Open the **Admin centers** menu drawer located in the left menu.
-1. Click on **Azure AD**.
+To find your Microsoft 365 Entra ID instance from the Microsoft 365 admin center:
 
-This will bring you to the admin center of the Azure AD instance backing your Office 365 account.
+1. [Sign in](https://login.microsoftonline.com/) to Microsoft 365
+1. In the sidebar, select **Admin**
+1. In the admin center sidebar, select **Identity**
 
-## Create a New Application
+To find your Microsoft 365 Entra ID instance from the Azure portal:
 
-1. Login to Microsoft Azure and choose **Azure Active Directory**. You may need to click on **More Services** first:
+1. [Sign in](https://azure.microsoft.com/en-us/free) to Azure
+1. Select the sidebar menu to expand It
+1. Select **Microsoft Entra ID**
 
-   ![Select Active Directory](./img/azure/azure-dashboard.png)
+Either of these instructions will take you to the Entra ID backing your Microsoft 365 account.
 
-1. Under **Manage**, select **App registrations**.
+![A screenshot of the Entra ID instance screen](./img/entra/entra-instance.png)
 
-   ![Select App registrations](./img/azure/azure-app-registrations.png)
+## Register a new application
 
-   Then click on the **+ New registration** button to add a new application.
+Once you're in the Entra ID dashboard, register an application:
 
-1. Enter a name for the application. Under **Redirect URI** select **Web** and set the value to `https://${authenticate_service_url}/oauth2/callback`. You can confirm your authenticate service URL from your Pomerium configuration.
+1. Select **+ Add** and **App registration**. ![Register a new app in Entra ID](./img/entra/entra-add-app.png)
 
-   ![Create application form](./img/azure/azure-create-application.png)
+1. Enter a name for the application. Under **Redirect URI**, select **Web** and set the value to `https://${authenticate_service_url}/oauth2/callback`. Select **Register**. ![Enter your app's details](./img/entra/entra-register-app.png)
 
-   After you register the application, note the Application (client) ID, and Directory (tenant) ID.
+1. After you register the application, save the **Application (client) ID** and **Directory (tenant) ID** for later. Under **Client credentials**, select **Add a certificate or secret**. ![Save your client ID, directory ID, and create a certificate or secret](./img/entra/entra-app-secret-client-id.png)
 
-1. Under Client credentials, click **Add a certificate or secret**. The secret you create will be used as the **[Client Secret]** in Pomerium's configuration settings.
-
-1. Under **Client secrets** click **+ New client secret**. Enter a name for the key and choose the desired duration.
-
-   ![Creating a Key](./img/azure/azure-create-key.png)
-
-   :::tip
-
-   If you choose an expiring key, make sure to record the expiration date in your calendar, as you will need to renew the key (get a new one) before that day to ensure users don't experience a service interruption.
-
-   :::
-
-   Click on **Add** and the key will be displayed. **Make sure to copy the value of this key before leaving this screen**, otherwise you may need to create a new key.
+1. In the **Certificates & secrets** screen, select the **Client secrets** tab, then **+ New client secret**. In the **Add a new client secret** panel, give the key a description and expiry time. (You will use this key as your [Client Secret](/docs/reference/identity-provider-settings#identity-provider-client-secret) later.) ![Create a client secret for your application](./img/entra/entra-create-client-secret.png)
 
    :::note
 
-   Confirm you are copying the **Value**, and not the **ID**.
+   Make sure you save the client secret **Value** and not the **Secret ID**. After you generate the secret and leave the screen, you can't view or copy the secret value unless you delete the secret and generate a new one.
+
+   ![Copy the client secret value](./img/entra/entra-client-secret-value.png)
 
    :::
 
 ### API Permissions
 
-In order to retrieve group information from Active Directory, we need to enable the necessary permissions for the [Microsoft Graph API](https://docs.microsoft.com/en-us/graph/auth-v2-service#azure-ad-endpoint-considerations).
+To get group information from Entra ID, you must enable the necessary [Microsoft Graph API](https://docs.microsoft.com/en-us/graph/auth-v2-service#azure-ad-endpoint-considerations) permissions.
 
-Please note, [Group ID](https://docs.microsoft.com/en-us/graph/api/group-get?view=graph-rest-1.0&tabs=http) not group name will be used to affirm group membership.
+:::note
 
-1. From the application page, click **API permissions**.
+You will use the [**Group ID**](https://docs.microsoft.com/en-us/graph/api/group-get?view=graph-rest-1.0&tabs=http) to affirm group membership (not the [**Group Display Name**](https://learn.microsoft.com/en-us/graph/api/resources/group?view=graph-rest-1.0#properties)).
 
-   - Click the **+ Add a permission** button and select **Microsoft Graph API**.
-   - Select **Application permissions**.
-   - Use the filter to select the checkboxes for **Directory.Read.All**, **Group.Read.All** and **User.Read.All**, then click **Add permissions**.
+:::
 
-   ![Azure add group membership claims](./img/azure/azure-api-permissions.png)
+1. From the **App registrations** page, select **API permissions**:
 
-   You can also optionally select **Grant admin consent for Default Directory** which will suppress the permission screen on first login for users.
+   - Select **+ Add a permission**, then **Microsoft Graph API**
+   - Select **Application permissions**
+   - Use the filter to select the checkboxes for **Directory.Read.All**, **Group.Read.All** and **User.Read.All**, then select **Add permissions**
 
-1. The most unique step to Azure AD provider, is to take note of your specific endpoint. Navigate to **Azure Active Directory** -> **Apps registrations** and select your app.
+   ![Select API permissions for your users in the API Permissions page.](./img/entra/entra-api-permissions.png)
 
-   ![Application dashboard](./img/azure/azure-application-dashboard.png)
+   You can also optionally select **Grant admin consent for Default Directory**, which suppresses the permission screen on first sign-in for users.
 
-   Click on **Endpoints**
+1. Go back to the **App registrations** page and select your app. Select the **Endpoints** tab. ![From the app registration page, select the Endpoints tab](./img/entra/entra-endpoints-tab.png)
 
-   ![Endpoint details](./img/azure/azure-endpoints.png)
+   Copy the value under the **OpenID Connect metadata document** field:
 
-The **OpenID Connect Metadata Document** value will form the basis for Pomerium's **Provider URL** setting.
+   ![The OpenID Connect (OIDC) connection endpoint metadata](./img/entra/entra-endpoint-metadata.png)
 
-For example if the **Azure OpenID Connect** url is:
+The **OpenID Connect metadata document** value will form the basis for Pomerium's **[Provider URL](/docs/reference/identity-provider-settings#identity-provider-url)** setting.
+
+For example, if the **Entra ID OpenID Connect** URL is:
 
 ```bash
 https://login.microsoftonline.com/0303f438-3c5c-4190-9854-08d3eb31bd9f/v2.0/.well-known/openid-configuration`
 ```
 
-**Pomerium Identity Provider URL** would be
+Then the **Pomerium Identity Provider URL** would be:
 
 ```bash
 https://login.microsoftonline.com/0303f438-3c5c-4190-9854-08d3eb31bd9f/v2.0
@@ -114,30 +122,36 @@ https://login.microsoftonline.com/0303f438-3c5c-4190-9854-08d3eb31bd9f/v2.0
 
 ## Pomerium Configuration
 
-Configure Pomerium with the identity provider settings retrieved in the previous steps.
+Configure Pomerium with the identity provider settings you saved in the previous steps:
 
 <Tabs>
-<TabItem value="config.yaml" label="config.yaml">
+<TabItem value="Config file keys" label="Config file keys">
 
 ```yaml
 idp_provider: 'azure'
-idp_provider_url: 'https://login.microsoftonline.com/{REPLACE-ME-SEE-ABOVE}/v2.0'
-idp_client_id: 'REPLACE-ME'
-idp_client_secret: 'REPLACE-ME'
+idp_provider_url: 'https://login.microsoftonline.com/{REPLACE-WITH-OIDC-METADATA-STRING}/v2.0'
+idp_client_id: 'REPLACE-WITH-CLIENT-ID'
+idp_client_secret: 'REPLACE-WITH-CLIENT-SECRET'
 ```
 
 </TabItem>
-<TabItem value="Environment Variables" label="Environment Variables">
+<TabItem value="Environment variables" label="Environment variables">
 
 ```bash
 IDP_PROVIDER="azure"
-IDP_PROVIDER_URL="https://login.microsoftonline.com/{REPLACE-ME-SEE-ABOVE}/v2.0"
-IDP_CLIENT_ID="REPLACE-ME"
-IDP_CLIENT_SECRET="REPLACE-ME"
+IDP_PROVIDER_URL="https://login.microsoftonline.com/{REPLACE-WITH-OIDC-METADATA-STRING}/v2.0"
+IDP_CLIENT_ID="REPLACE-WITH-CLIENT-ID"
+IDP_CLIENT_SECRET="REPLACE-WITH-CLIENT-SECRET"
 ```
 
 </TabItem>
 </Tabs>
+
+:::note
+
+Pomerium currently uses **`azure`** as the **`idp_provider`** name to refer to Microsoft Entra ID.
+
+:::
 
 ## Getting Groups
 
@@ -146,11 +160,16 @@ IDP_CLIENT_SECRET="REPLACE-ME"
 
 ### Custom Claim (Open Source)
 
-To authorize users based on their group membership, Azure supports adding a `group` claim to the identity token:
+To authorize users based on their group membership, add a `group` claim to the identity token:
 
-![Add Groups Claim](./img/azure/groups-claim.png)
+1. Go to **App registrations** and select **Token configuration**, then **+ Add groups claim**. ![Select Token Configuration under the Manage section in the sidebar](./img/entra/entra-token-configuration.png)
+1. In the **Edit groups claim** panel, select the appropriate group types. Under **Customize token properties by type**, select **Group ID** for **ID**, **Access**, and **SAML**. ![Edit the tokens groups claim in the Edit groups claim panel](./img/entra/entra-edit-groups-claim.png)
 
-Now when users login they will have a claim named `groups` that contains their groups and the `claim` PPL criterion can be used for authorization:
+### Apply custom claims to a policy
+
+You can use the [Claim PPL criterion](/docs/capabilities/ppl#criteria) to factor in the `groups` value in your authorization policy.
+
+For example:
 
 ```yaml
 routes:
@@ -162,9 +181,9 @@ routes:
             - claim/groups: 'e14f56fd-b956-4009-b06c-dc8a5e9207c8'
 ```
 
-:::tip
+:::note
 
-The `groups` claim contains group IDs, not group names.
+The **`groups`** claim contains group IDs, not group names.
 
 :::
 
@@ -173,18 +192,18 @@ The `groups` claim contains group IDs, not group names.
 
 ### Directory Sync (Enterprise)
 
-Azure uses the same Client ID and Client Secret used in [Pomerium Core](/docs/identity-providers).
+Entra ID uses the same Client ID and Client Secret used in [Pomerium Core](/docs/deploy/core).
 
 ### Configure Pomerium Enterprise Console
 
-Under **Settings → Identity Providers**, select "Azure" as the identity provider and set the Client ID, Client Secret and Directory (Tenant) ID.
+Under **Settings > Identity Providers**, select "Azure" as the identity provider and set the Client ID, Client Secret, and Directory (Tenant) ID.
 
-![Azure Settings](./img/azure/azure-idp.png)
+![Configure Entra ID client ID and secret in the Enterprise Console](./img/entra/azure-idp.png)
 
 ## Troubleshooting
 
-- In our testing, we found that users could be created in an Active Directory without an email address as part of their user claim. Pomerium user identity depends largely on the associated email address.
-- If your default user in the Active Directory is unauthorized (403) even when specified as allowed in a policy by user, you can mitigate by creating a group membership and corresponding policy.
+- In our testing, we found that users could be created in an Entra ID directory without an email address as part of their user claim. Pomerium user identity depends largely on the associated email address.
+- If your default user in the Entra ID directory is unauthorized (`403`) even when specified as allowed in a policy by the user claim, you can mitigate this behavior by creating a group membership and corresponding policy.
 
 </TabItem>
 </Tabs>
