@@ -37,6 +37,10 @@ const config = {
           routeBasePath: '/',
           sidebarPath: require.resolve('./sidebars.js'),
           editUrl: 'https://github.com/pomerium/documentation/tree/main',
+          admonitions: {
+            keywords: ['note', 'tip', 'info', 'caution', 'danger', 'enterprise'],
+            extendDefaults: true,
+          },
         },
         theme: {
           customCss: require.resolve('./src/css/custom.css'),
