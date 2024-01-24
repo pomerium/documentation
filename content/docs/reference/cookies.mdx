@@ -17,7 +17,6 @@ This reference covers all of Pomerium's **Cookies Settings**:
 - [Cookie Name](#cookie-name)
 - [Cookie Secret](#cookie-secret)
 - [Cookie Domain](#cookie-domain)
-- [Cookie Secure](#cookie-secure)
 - [Cookie HTTP Only](#cookie-http-only)
 - [Cookie Expiration](#cookie-expiration)
 - [Cookie SameSite](#cookie-samesite)
@@ -154,63 +153,6 @@ COOKIE_DOMAIN=localhost.pomerium.io
 ```yaml
 cookie:
   domain: localhost.pomerium.io
-```
-
-</TabItem>
-</Tabs>
-
-## Cookie Secure {#cookie-secure}
-
-If true, **Cookie Secure** instructs browsers to only send user session cookies over HTTPS.
-
-:::warning
-
-Setting this to `false` may result in session cookies being sent in clear text.
-
-:::
-
-:::note
-
-This setting cannot be set to `false` if [**Cookie SameSite**](#cookie-samesite) is set to `None`.
-
-:::
-
-### How to configure {#cookie-secure-how-to-configure}
-
-<Tabs>
-<TabItem value="Core" label="Core">
-
-| **Config file keys** | **Environment variables** | **Type**  | **Default** |
-| :------------------- | :------------------------ | :-------- | :---------- |
-| `cookie_secure`      | `COOKIE_SECURE`           | `boolean` | `true`      |
-
-#### Examples {#cookie-secure-examples}
-
-```yaml
-cookie_secure: false
-```
-
-```bash
-COOKIE_SECURE=false
-```
-
-</TabItem>
-<TabItem value="Enterprise" label="Enterprise">
-
-As of v0.25, we've removed the **Cookie Secure** setting from the Enterprise Console (in the Console, this setting was called **HTTPS only**).
-
-</TabItem>
-<TabItem value="Kubernetes" label="Kubernetes">
-
-| **[Parameter name](/docs/deploy/k8s/reference#cookie)** | **Type** | **Default** |
-| :-- | :-- | :-- |
-| `cookie.secure` | `boolean` | `true` |
-
-#### Examples {#cookie-secure-examples}
-
-```yaml
-cookie:
-  secure: false
 ```
 
 </TabItem>
