@@ -163,7 +163,7 @@ cookie:
 
 :::caution
 
-As of v0.25, we have deprecated the **Cookie Secure** setting . Pomerium will always set the `Secure` attribute on session cookies going forward. 
+As of **v0.25**, we have deprecated the **Cookie Secure** setting. Pomerium will always set the `Secure` attribute on session cookies going forward.
 
 :::
 
@@ -186,17 +186,38 @@ This setting cannot be set to `false` if [**Cookie SameSite**](#cookie-samesite)
 <Tabs>
 <TabItem value="Core" label="Core">
 
-As of **v0.25.0**, we've deprecated the **Cookie Secure** setting in Pomerium Core and will remove it in **v0.26.0**. Now, this setting will be enabled by default.
+| **Config file keys** | **Environment variables** | **Type**  | **Default** |
+| :------------------- | :------------------------ | :-------- | :---------- |
+| `cookie_secure`      | `COOKIE_SECURE`           | `boolean` | `true`      |
+
+#### Examples {#cookie-secure-examples}
+
+```yaml
+cookie_secure: false
+```
+
+```bash
+COOKIE_SECURE=false
+```
 
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
 
-As of **v0.25**, we've removed the **Cookie Secure** setting from the Enterprise Console (in the Console, this setting was called **HTTPS only**). 
+As of **v0.25**, we've removed the **Cookie Secure** setting from the Enterprise Console (in the Console, this setting was called **HTTPS only**).
 
 </TabItem>
 <TabItem value="Kubernetes" label="Kubernetes">
 
-As of **v0.25.0**, we've deprecated the **Cookie Secure** parameter and will remove it in **v0.26.0**. Now, this setting will be enabled by default.
+| **[Parameter name](/docs/deploy/k8s/reference#cookie)** | **Type** | **Default** |
+| :-- | :-- | :-- |
+| `cookie.secure` | `boolean` | `true` |
+
+#### Examples {#cookie-secure-examples}
+
+```yaml
+cookie:
+  secure: false
+```
 
 </TabItem>
 </Tabs>
