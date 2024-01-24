@@ -19,6 +19,11 @@ const config = {
   projectName: 'documentation',
   trailingSlash: false,
 
+  markdown: {
+    mermaid: true,
+  },
+  themes: ['@docusaurus/theme-mermaid'],
+
   customFields: {
     xgridKey: process.env.XGRID_KEY,
   },
@@ -32,7 +37,6 @@ const config = {
           routeBasePath: '/',
           sidebarPath: require.resolve('./sidebars.js'),
           editUrl: 'https://github.com/pomerium/documentation/tree/main',
-          remarkPlugins: [require('mdx-mermaid')],
         },
         theme: {
           customCss: require.resolve('./src/css/custom.css'),
@@ -95,7 +99,7 @@ const config = {
         },
         {
           type: 'dropdown',
-          label: 'vNext',
+          label: 'v0.25',
           position: 'right',
           items: [
             {
@@ -176,6 +180,9 @@ const config = {
         'rego',
         'shell-session',
       ],
+    },
+    mermaid: {
+      theme: {light: 'default', dark: 'default'},
     },
   },
   stylesheets: [
