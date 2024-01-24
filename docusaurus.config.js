@@ -28,6 +28,13 @@ const config = {
     xgridKey: process.env.XGRID_KEY,
   },
 
+  scripts: [
+    {
+      src: './static/js/syft.js',
+      async: false,
+    },
+  ],
+
   presets: [
     [
       '@docusaurus/preset-classic',
