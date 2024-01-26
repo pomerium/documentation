@@ -5,7 +5,7 @@ description: Add custom colors, logos, and error messages.
 
 # Custom Branding / White Labeling
 
-:::tip
+:::enterprise Pomerium Enterprise
 
 This article describes a use case available to [Pomerium Enterprise](/docs/deploy/enterprise/install) customers.
 
