@@ -6,6 +6,9 @@ description: |
 keywords:
   - reference
   - Global Timeouts
+  - idle timeout
+  - read timeout
+  - write timeout
 pagination_prev: null
 pagination_next: null
 toc_max_heading_level: 2
@@ -16,25 +19,72 @@ import TabItem from '@theme/TabItem';
 
 # Global Timeouts
 
-## Summary
+**Global Timeouts** set the global server timeouts for HTTP request and response streams.
 
-**Global Timeouts** set the global server timeouts. Timeouts can also be set for individual [routes](/docs/reference/routes).
+You can set also set [route-level timeouts](/docs/reference/routes/timeouts).
 
-## How to configure
+## Read Timeout
+
+**Read Timeout** sets the maximum amount of time for the client to receive an entire HTTP request stream.
+
+### How to configure
 
 <Tabs>
 <TabItem value="Core" label="Core">
 
-| **Config file keys** | **Environment variables** | **Type** | **Defaults** | **Definition** |
-| :-- | :-- | :-- | :-- | :-- |
+| **Config file keys** | **Environment variables** | **Type** | **Default** |
+| :-- | :-- | :-- | :-- |
 | `timeout_read` | `TIMEOUT_READ` | `string` ([Go Duration](https://golang.org/pkg/time/#Duration.String) formatting) | `30s` | The amount of time for the entire request stream to be received from the client. |
-| `timeout_write` | `TIMEOUT_WRITE` | `string` ([Go Duration](https://golang.org/pkg/time/#Duration.String) formatting) | `0` | The max stream duration is the maximum time that a stream’s lifetime will span. An HTTP request/response exchange fully consumes a single stream. Therefore, this value must be greater than `read_timeout` as it covers both request and response time. |
-| `timeout_idle` | `TIMEOUT_IDLE` | `string` ([Go Duration](https://golang.org/pkg/time/#Duration.String) formatting) | `5m` | The idle timeout is the time at which a downstream or upstream connection will be terminated if there are no active streams. |
 
 ### Examples
 
 ```yaml
 timeout_read: 30s
+```
+
+```bash
+TIMEOUT_READ=30s
+```
+
+</TabItem>
+<TabItem value="Enterprise" label="Enterprise">
+
+Set **Global Timeouts** in the Console: ![Global timeouts in Console](./img/timeouts/timeouts-default.png)
+
+</TabItem>
+<TabItem value="Kubernetes" label="Kubernetes">
+
+| **[Parameter name](/docs/deploy/k8s/reference#timeouts)** | **Type** | **Defaults** |
+| :-- | :-- | :-- |
+| `timeouts.read` | `string` ([Go Duration](https://golang.org/pkg/time/#Duration.String) formatting) | `30s` |
+
+### Examples
+
+```yaml
+timeouts:
+  read: 30s
+```
+
+</TabItem>
+</Tabs>
+
+## Write Timeout
+
+**Write Timeout** sets the maximum time that a stream’s lifetime will span. An HTTP request/response exchange fully consumes a single stream. So, the `write_timeout` value must be greater than `read_timeout`, as it covers both the HTTP request and response time.
+
+### How to configure
+
+<Tabs>
+<TabItem value="Core" label="Core">
+
+| **Config file keys** | **Environment variables** | **Type** | **Default** |
+| :-- | :-- | :-- | :-- |
+| `timeoute_write` | `TIMEOUTE_WRITE` | `string` ([Go Duration](https://golang.org/pkg/time/#Duration.String) formatting) | `0` |
+
+### Examples
+
+```yaml
+timeout_write: 0
 ```
 
 ```bash
@@ -49,23 +99,56 @@ Set **Global Timeouts** in the Console: ![Global timeouts in Console](./img/time
 </TabItem>
 <TabItem value="Kubernetes" label="Kubernetes">
 
-| **[Parameter name](/docs/deploy/k8s/reference#timeouts)** | **Type** | **Defaults** | **Definition** |
-| :-- | :-- | :-- | :-- |
-| `timeouts.read` | `string` ([Go Duration](https://golang.org/pkg/time/#Duration.String) formatting) | `30s` | The amount of time for the entire request stream to be received from the client. |
-| `timeouts.write` | `string` ([Go Duration](https://golang.org/pkg/time/#Duration.String) formatting) | `0` | The max stream duration is the maximum time that a stream’s lifetime will span. An HTTP request/response exchange fully consumes a single stream. Therefore, this value must be greater than `read_timeout` as it covers both request and response time. |
-| `timeouts.idle` | `string` ([Go Duration](https://golang.org/pkg/time/#Duration.String) formatting) | `5m` | The idle timeout is the time at which a downstream or upstream connection will be terminated if there are no active streams. |
+| **[Parameter name](/docs/deploy/k8s/reference#timeouts)** | **Type** | **Default** |
+| :-- | :-- | :-- |
+| `timeouts.write` | `string` ([Go Duration](https://golang.org/pkg/time/#Duration.String) formatting) | `0` |
 
 ### Examples
 
 ```yaml
 timeouts:
-  read: 30s
-```
-
-```yaml
-timeouts:
   write: 0
 ```
+
+</TabItem>
+</Tabs>
+
+## Idle Timeout
+
+**Idle Timeout** sets the time at which an upstream or downstream connection will be terminated if there are no active streams.
+
+### How to configure
+
+<Tabs>
+<TabItem value="Core" label="Core">
+
+| **Config file keys** | **Environment variables** | **Type** | **Default** |
+| :-- | :-- | :-- | :-- |
+| `timeout_idle` | `TIMEOUT_IDLE` | `string` ([Go Duration](https://golang.org/pkg/time/#Duration.String) formatting) | `5m` | The idle timeout is the time at which a downstream or upstream connection will be terminated if there are no active streams. |
+
+### Examples
+
+```yaml
+timeout_idle: 5m
+```
+
+```bash
+TIMEOUT_IDLE=5m
+```
+
+</TabItem>
+<TabItem value="Enterprise" label="Enterprise">
+
+Set **Global Timeouts** in the Console: ![Global timeouts in Console](./img/timeouts/timeouts-default.png)
+
+</TabItem>
+<TabItem value="Kubernetes" label="Kubernetes">
+
+| **[Parameter name](/docs/deploy/k8s/reference#timeouts)** | **Type** | **Default** |
+| :-- | :-- | :-- |
+| `timeouts.idle` | `string` ([Go Duration](https://golang.org/pkg/time/#Duration.String) formatting) | `5m` |
+
+### Examples
 
 ```yaml
 timeouts:
