@@ -81,6 +81,7 @@ const CustomFormFooter = ({status, message, onValidated}) => {
               height: 48,
               border: 'none',
               borderRadius: '25px',
+              cursor: 'pointer',
             }}
             className="top-0 right-0 bottom-0 w-12 flex hover:text-purple"
             onClick={submit}>

@@ -43,7 +43,7 @@ Here are some of the expectations we have of contributors:
 
 ## Docs
 
-Pomerium's documentation is available at <https://www.pomerium.io/docs>. If you find a typo, feel a section could be better described, or have an idea for a totally new application or section, don't hesitate to make a pull request change. There are few ways you can do this.
+Pomerium's documentation is available at [https://www.pomerium.io/docs](https://www.pomerium.io/docs). If you find a typo, feel a section could be better described, or have an idea for a totally new application or section, don't hesitate to make a pull request change. There are few ways you can do this.
 
 ### Simple edits
 
