@@ -16,9 +16,24 @@ import TabItem from '@theme/TabItem';
 
 ## Summary
 
-**Use with caution:** **Public Access** allows all requests for a given route, bypassing authentication and authorization. Suitable for publicly exposed web services.
+:::caution
 
-If this setting is enabled, no whitelists (for example, Allowed Users) should be provided in this route.
+Because the **Public Access** setting bypasses authentication and authorization checks, you should enable it only for publicly exposed web services.
+
+:::
+
+The **Public Access** setting instructs Pomerium to grant unauthorized and unauthenticated access to all requests to the upstream service. If you enable this setting, no other policy should be provided for the route.
+
+### Robots.txt behavior
+
+By default, Pomerium serves a **robots.txt** response directly, instructing search engines _not_ to crawl the route domain:
+
+```txt
+User-agent: *
+Disallow: /
+```
+
+For routes with `allow_public_unauthenticated_access` enabled, Pomerium will not serve **robots.txt** directly. Instead, requests for `/robots.txt` will be proxied to the upstream service.
 
 ## How to configure
 
