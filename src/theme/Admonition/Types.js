@@ -8,7 +8,7 @@ function EnterpriseAdmonition(props) {
     <div className={styles.enterprise}>
       <div className={styles.enterprise_header}>
         <BusinessIcon />
-        <h5>{props.title}</h5>
+        <h5>{props.title || 'Pomerium Enterprise'}</h5>
       </div>
       {props.children}
     </div>
