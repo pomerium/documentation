@@ -4,29 +4,31 @@ description: Learn what features come with Pomerium Enterprise, including a Cons
 keywords: [Pomerium Enterprise, PPL Builder, Console GUI, namespaces, directory sync, device management, groups, programmatic api, branding]
 ---
 
+import ClearIcon from '@mui/icons-material/Clear';
+
 # Pomerium Enterprise
 
-Pomerium Enterprise is built on Pomerium Core (Open Source). Pomerium Enterprise makes Pomerium easier to manage at scale, and adds additional functionality aimed at organizations with auditing, compliance, governance, and risk management needs.
+Pomerium Enterprise is built on our open-source Pomerium Core offering. Pomerium Enterprise makes Pomerium easier to manage at scale, and adds additional functionality aimed at organizations with auditing, compliance, governance, and risk management needs.
 
-## Features
+## Key Pomerium Enterprise features
 
-In addition to the capabilities provided by open-source Pomerium, Pomerium Enterprise provides:
+Pomerium Enterprise comes with all the capabiltiies in Pomerium Core. In addition to these capabilities, Pomerium Enterprise also provides the following features:
 
-### Management GUI
+### Enterprise Console
 
-Pomerium Enterprise lets you view traffic and logs, define routes and policies, and organize your service access from an intuitive web interface.
+The Enterprise Console dashboard is where you can view traffic and logs, manage routes and policies, import external data, and configure global and namespace settings.
 
-![Overview animation of Pomerium Enterprise](./enterprise/img/console-overview.gif)
+![An overview animation of the Pomerium Enterprise Console](./enterprise/img/enterprise-console-overview.gif)
 
-### Programmatic API
+### Enterprise API
 
-Integrate Pomerium into your workflows by managing configuration from the programming language or infrastructure management tool of your choice. Everything that is manageable in the Management GUI can also be driven programmatically through the API.
+Integrate Pomerium into your workflows by managing configuration from the programming language or infrastructure management tool of your choice. Everything that is manageable in the Enterprise Console can also be driven programmatically through the [Enterprise API](/docs/capabilities/programmatic-access).
 
 ### Session management
 
 Quickly view who is logged in your infrastructure, with easy access to revoke sessions.
 
-![Pomerium Enterprise Session List](./enterprise/img/console-session-list.png)
+![View and manage sessions in the Enterprise Console's Sessions dashboard](./enterprise/img/manage-sessions.png)
 
 ### Self-Service & Governance
 
@@ -36,12 +38,35 @@ Easily define who can control access to what areas of your infrastructure. Our [
 
 Pomerium Enterprise uses teams and groups defined by your identity provider (**IdP**), so you can build stable policies that don't need to be adjusted as your company changes.
 
-See [Concepts: Self-Service Capabilities](/docs/capabilities/namespacing#self-service-capabilities) for more information.
+See [Self-Service Capabilities](/docs/capabilities/namespacing#self-service-capabilities) for more information.
 
-### Deployment History & Audit Logs
+![Manage Namespaces in the Enterprise Console's Namespaces dashboard](./enterprise/img/manage-namespaces.gif)
 
-View and export change and access logs from the web UI. Pomerium Enterprise gives you a complete view of who's using it and how access is adjusted.
+### Deployment History and Audit Logs
 
-## Learn more
+View and export change and access logs from the Enterprise Console. Pomerium Enterprise gives you a complete view of who's using it and how access is adjusted.
 
-For a full breakdown of the difference in the enterprise and open source versions of Pomerium, please see our [Pricing](https://www.pomerium.com/pricing/) page.
+![View deployments in the Enterprise Console's Deployments dashboard](./enterprise/img/view-deployments.png)
+
+![Compare changes in the Enterprise Console's Deployments diff modal](./enterprise/img/compare-changes.png)
+
+## Pomerium Enterprise features comparison
+
+| Features | Pomerium Core | Pomerium Enterprise |
+| :--- | :--- | :--- |
+| Enterprise Console | <ClearIcon /> | ![Pomerium checkmark](./enterprise/img/pomerium-checkmark.svg) |
+| [Enterprise API](/docs/capabilities/programmatic-access) | <ClearIcon /> | ![Pomerium checkmark](./enterprise/img/pomerium-checkmark.svg) |
+| [Session Management](/docs/capabilities/reports#sessions) | <ClearIcon /> | ![Pomerium checkmark](./enterprise/img/pomerium-checkmark.svg) |
+| [Namespaces](/docs/capabilities/namespacing) | <ClearIcon /> | ![Pomerium checkmark](./enterprise/img/pomerium-checkmark.svg) |
+| [Directory Sync](/docs/integrations) | <ClearIcon /> | ![Pomerium checkmark](./enterprise/img/pomerium-checkmark.svg) |
+| [User Impersonation](/docs/capabilities/impersonation) | <ClearIcon /> | ![Pomerium checkmark](./enterprise/img/pomerium-checkmark.svg) |
+| [Deployment History](/docs/capabilities/reports#deployments) | <ClearIcon /> | ![Pomerium checkmark](./enterprise/img/pomerium-checkmark.svg) |
+| [Device Identity](/docs/capabilities/device-identity) | <ClearIcon /> | ![Pomerium checkmark](./enterprise/img/pomerium-checkmark.svg) |
+| [Custom Branding](/docs/capabilities/branding) | <ClearIcon /> | ![Pomerium checkmark](./enterprise/img/pomerium-checkmark.svg) |
+| [Service Accounts](/docs/capabilities/service-accounts) | <ClearIcon /> | ![Pomerium checkmark](./enterprise/img/pomerium-checkmark.svg) |
+| [Metrics](/docs/capabilities/metrics) | <ClearIcon /> | ![Pomerium checkmark](./enterprise/img/pomerium-checkmark.svg) |
+| [External Data Sources](/docs/integrations) | <ClearIcon /> | ![Pomerium checkmark](./enterprise/img/pomerium-checkmark.svg) |
+| Identity-based Access | ![Pomerium checkmark](./enterprise/img/pomerium-checkmark.svg) | ![Pomerium checkmark](./enterprise/img/pomerium-checkmark.svg) |
+| SSO Support | ![Pomerium checkmark](./enterprise/img/pomerium-checkmark.svg) | ![Pomerium checkmark](./enterprise/img/pomerium-checkmark.svg) |
+| Declarative Authorization Policy | ![Pomerium checkmark](./enterprise/img/pomerium-checkmark.svg) | ![Pomerium checkmark](./enterprise/img/pomerium-checkmark.svg) |
+| TCP Support | ![Pomerium checkmark](./enterprise/img/pomerium-checkmark.svg) | ![Pomerium checkmark](./enterprise/img/pomerium-checkmark.svg) |
