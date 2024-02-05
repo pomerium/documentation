@@ -1,6 +1,7 @@
 ---
-title: About
-description: What does the Pomerium Enterprise Console offer?
+title: Pomerium Enterprise
+description: Learn what features come with Pomerium Enterprise, including a Console GUI where you can manage your policies, namespaces, groups, routes, and more.
+keywords: [Pomerium Enterprise, PPL Builder, Console GUI, namespaces, directory sync, device management, groups, programmatic api, branding]
 ---
 
 # Pomerium Enterprise
