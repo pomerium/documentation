@@ -34,7 +34,7 @@ The **Sessions** dashboard allows you to view and manage sessions within your or
 
 :::enterprise
 
-Ready to upgrade to Pomerium Enterprise? [**Sign up**](https://www.pomerium.com/enterprise-sales/) today and get a **free 30-day trial**.
+Ready to upgrade to Pomerium Enterprise? [**Contact us**](https://www.pomerium.com/enterprise-sales/) today to get started.
 
 :::
 
