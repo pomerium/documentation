@@ -78,7 +78,7 @@ In the **External Data** dashboard, you can import, view, and manage [external d
 | Features | Pomerium Core | Pomerium Enterprise |
 | :-- | :-- | :-- |
 | Enterprise Console | <ClearIcon /> | ![Pomerium checkmark](./enterprise/img/pomerium-checkmark.svg) |
-| [Enterprise API](/docs/capabilities/programmatic-access) | <ClearIcon /> | ![Pomerium checkmark](./enterprise/img/pomerium-checkmark.svg) |
+| [Enterprise API](/docs/capabilities/enterprise-api) | <ClearIcon /> | ![Pomerium checkmark](./enterprise/img/pomerium-checkmark.svg) |
 | [Session Management](/docs/capabilities/reports#sessions) | <ClearIcon /> | ![Pomerium checkmark](./enterprise/img/pomerium-checkmark.svg) |
 | [Namespaces](/docs/capabilities/namespacing) | <ClearIcon /> | ![Pomerium checkmark](./enterprise/img/pomerium-checkmark.svg) |
 | [Directory Sync](/docs/integrations) | <ClearIcon /> | ![Pomerium checkmark](./enterprise/img/pomerium-checkmark.svg) |
