@@ -1,7 +1,18 @@
 ---
 title: Pomerium Enterprise
 description: Learn what features come with Pomerium Enterprise, including a Console GUI where you can manage your policies, namespaces, groups, routes, and more.
-keywords: [Pomerium Enterprise, PPL Builder, Console GUI, namespaces, directory sync, device management, groups, programmatic api, branding]
+keywords:
+  [
+    Pomerium Enterprise,
+    PPL Builder,
+    Console GUI,
+    namespaces,
+    directory sync,
+    device management,
+    groups,
+    programmatic api,
+    branding,
+  ]
 ---
 
 import ClearIcon from '@mui/icons-material/Clear';
@@ -22,7 +33,7 @@ The **Enterprise Console** provides a dashboard where you can view traffic and l
 
 ### Enterprise API
 
-The **Enterprise API** helps you manage your configuration with your preferred programming language or infrastructure management tool. 
+The **Enterprise API** helps you manage your configuration with your preferred programming language or infrastructure management tool.
 
 Everything that is manageable in the Enterprise Console can also be driven programmatically through the [Enterprise API](/docs/capabilities/enterprise-api).
 
@@ -48,27 +59,24 @@ Pomerium Enterprise allows you to import groups defined by your identity provide
 
 ### Deployment History and Audit Logs
 
-The **Deployments** dashboard allows you to view and export change and access logs from the Enterprise Console. Within the Deployments dashboard, you can select a change to view its logs. 
+The **Deployments** dashboard allows you to view and export change and access logs from the Enterprise Console. Within the Deployments dashboard, you can select a change to view its logs.
 
 This way, you can review which users applied a change and when.
 
 ![View deployments in the Enterprise Console's Deployments dashboard](./enterprise/img/deployments-dashboard.gif)
 
-
 ### Directory Sync
 
-Pomerium Enterprise's **Directory Sync** feature allows you to import your identity provider's directory data. After a successful sync, you can use your internal groups and teams data when building policies.
-  ![Viewing the Identity Providers settings for a directory sync in the Enterprise Console](./enterprise/img/directory-sync-2.png)
+Pomerium Enterprise's **Directory Sync** feature allows you to import your identity provider's directory data. After a successful sync, you can use your internal groups and teams data when building policies. ![Viewing the Identity Providers settings for a directory sync in the Enterprise Console](./enterprise/img/directory-sync-2.png)
 
 ### External Data Sources
 
-In the **External Data** dashboard, you can import, view, and manage [external data sources](/docs/integrations). After a successful sync, you can use data unique to your organization to serve as context in your authorization policies.
-  ![Using the External Data Source Record type in a policy](./enterprise/img/external-data-as-context.gif)
+In the **External Data** dashboard, you can import, view, and manage [external data sources](/docs/integrations). After a successful sync, you can use data unique to your organization to serve as context in your authorization policies. ![Using the External Data Source Record type in a policy](./enterprise/img/external-data-as-context.gif)
 
 ## Pomerium Enterprise features comparison
 
 | Features | Pomerium Core | Pomerium Enterprise |
-| :--- | :--- | :--- |
+| :-- | :-- | :-- |
 | Enterprise Console | <ClearIcon /> | ![Pomerium checkmark](./enterprise/img/pomerium-checkmark.svg) |
 | [Enterprise API](/docs/capabilities/programmatic-access) | <ClearIcon /> | ![Pomerium checkmark](./enterprise/img/pomerium-checkmark.svg) |
 | [Session Management](/docs/capabilities/reports#sessions) | <ClearIcon /> | ![Pomerium checkmark](./enterprise/img/pomerium-checkmark.svg) |
@@ -90,12 +98,12 @@ In the **External Data** dashboard, you can import, view, and manage [external d
 
 :::enterprise
 
-Already upgraded to Pomerium Enterprise, but need some help setting up the Enterprise Console? 
+Already upgraded to Pomerium Enterprise, but need some help setting up the Enterprise Console?
 
 The following docs can help:
 
 - [**Install Pomerium Enterprise**](/docs/deploy/enterprise/install)
-- [**Pomerium Enterprise Configuration**](/docs/deploy/enterprise/configure) 
+- [**Pomerium Enterprise Configuration**](/docs/deploy/enterprise/configure)
 - [**Pomerium Enterprise Quickstart**](/docs/deploy/enterprise/quickstart)
 
 :::
