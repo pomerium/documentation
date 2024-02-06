@@ -168,6 +168,9 @@ A certificate matcher can be used to allow or deny specific TLS certificates, ba
 | Key Name | Value Type | Description |
 | --- | --- | --- |
 | `fingerprint` | string or array of strings | The certificate's SHA-256 fingerprint must match one of the provided values. |
+| `san_dns` | [String Matcher] | The certificate must contain a Subject Alternative Name with a DNS name satisfying the provided condition. |
+| `san_email` | [String Matcher] | The certificate must contain a Subject Alternative Name with an email address satisfying the provided condition. |
+| `san_uri` | [String Matcher] | The certificate must contain a Subject Alternative Name with a URI satisfying the provided condition. |
 | `spki_hash` | string or array of strings | The base64-encoded SHA-256 hash of the certificate's Subject Public Key Info must match one of the provided values. |
 
 <details>
@@ -206,7 +209,18 @@ The advantage of using the SPKI hash rather than the certificate fingerprint is 
 
 </details>
 
-For example, to allow only one specific trusted certificate (while still requiring the user to sign in with the configured identity provider):
+For example, to allow only certificates containing a Subject Alternative Name with an email address ending in `@yourdomain.com` (while also requiring the user to sign in with the configured identity provider):
+
+```yaml
+allow:
+  and:
+    - authenticated_user: true
+    - client_certificate:
+        san_email:
+          ends_with: '@yourdomain.com'
+```
+
+Or, to allow only one specific trusted certificate (again, while still requiring the user to sign in with the configured identity provider):
 
 ```yaml
 allow:
@@ -216,7 +230,7 @@ allow:
         fingerprint: '17859273e8a980631d367b2d5a6a6635412b0f22835f69e47b3f65624546a704'
 ```
 
-Or, to enforce an allowlist of trusted certificate key pairs (again, while still requiring users to sign in with the configured identity provider):
+Or, to enforce an allowlist of trusted certificate key pairs:
 
 ```yaml
 allow:
