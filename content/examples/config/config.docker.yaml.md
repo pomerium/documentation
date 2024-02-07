@@ -1,20 +1,6 @@
-```yaml
-# See detailed configuration settings: https://www.pomerium.com/docs/reference/
+```yaml title="config.yaml"
+signing_key: LS0tLS1CRUdJTiBFQyBQUklWQVRFIEtFWS0tLS0tCk1IY0NBUUVFSURMV3Q3ZkczV2ZkYjk5elFHQTJObEJXcCt3d0c1aGJoR3MzY29JUlo2SjRvQW9HQ0NxR1NNNDkKQXdFSG9VUURRZ0FFcGtRRktLUUdqcVdzbDlYYkUwWmZLL2ZhbHJ2NENWSWtqSTlydXlCbHdOeDYzNmhZRnBtKwpNM0llTXNUKzRreExidVlZSGZDeUtjQzFnZ1BjSWpCYktRPT0KLS0tLS1FTkQgRUMgUFJJVkFURSBLRVktLS0tLQo=
 
-#####################################################################
-# If self-hosting, use the localhost authenticate service URL below #
-# and remove the hosted URL.                                        #
-#####################################################################
-# authenticate_service_url: https://authenticate.localhost.pomerium.io
-
-authenticate_service_url: https://authenticate.pomerium.app
-
-####################################################################################
-# If self-hosting, you must configure an identity provider.                        #
-# See identity provider settings: https://www.pomerium.com/docs/identity-providers/#
-####################################################################################
-
-# https://pomerium.com/reference/#routes
 routes:
   - from: https://verify.localhost.pomerium.io
     to: http://verify:8000
@@ -22,6 +8,7 @@ routes:
       - allow:
           or:
             - email:
+                # Replace user@example.com with your email address
                 is: user@example.com
     pass_identity_headers: true
 ```

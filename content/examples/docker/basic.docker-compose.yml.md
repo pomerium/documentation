@@ -1,4 +1,4 @@
-```yaml
+```yaml title="docker-compose.yaml"
 version: "3"
 services:
   pomerium:
@@ -11,6 +11,6 @@ services:
   ## https://verify.localhost.pomerium.io --> Pomerium --> http://verify
   verify:
     image: pomerium/verify:latest
-    expose:
-      - 8000
+    environment:
+      - JWKS_ENDPOINT=https://pomerium/.well-known/pomerium/jwks.json
 ```
