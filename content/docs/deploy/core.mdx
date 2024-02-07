@@ -1,5 +1,5 @@
 ---
-# cSpell:ignore nonroot dockerhub gpgcheck sslverify gpgkey abnf
+# cSpell:ignore nonroot gpgcheck sslverify gpgkey abnf
 
 title: Pomerium Core (server)
 lang: en-US
@@ -7,7 +7,7 @@ id: core
 sidebar_label: Pomerium Core
 pagination_prev: null
 pagination_next: null
-description: How to get Pomerium's CLI which be used to proxy TCP services and kubernetes commands
+description: How to get the open-source core component of Pomerium
 keywords: [pomerium, server, proxy, context-aware proxy, open source]
 sidebar_position: 1
 ---
@@ -17,20 +17,23 @@ import TabItem from '@theme/TabItem';
 
 # Pomerium Core (Server)
 
-:::tip
+:::note
 
 If you are new to Pomerium, this is probably what you are looking for.
 
 :::
 
-Pomerium Core (sometimes referred to as _Pomerium Open Source_) is the primary server component. Pomerium core is open source, and all other components build on top of it. It is a monolithic binary that can perform the function of any [services mode](/docs/reference/service-mode).
+Pomerium Core (sometimes referred to as _Pomerium Open Source_) is the primary server component. Pomerium Core is open source, and all other components build on top of it.
 
-- Supported Operating Systems: `linux`, `darwin`
+- Supported Operating Systems: Linux and macOS
 - Supported Architectures: `amd64`, `arm64`
 
 ### Binaries
 
 Official binaries can be found on our [GitHub Releases](https://github.com/pomerium/pomerium/releases) page.
+
+- The Linux binaries require glibc 2.30 or later.
+- The macOS binaries require macOS 12 (Monterey) or later.
 
 ```shell
 ARCH=[your arch]
@@ -40,7 +43,7 @@ curl -L https://github.com/pomerium/pomerium/releases/download/${VERSION}/pomeri
     | tar -z -x
 ```
 
-### Packages
+### Linux Packages {#packages}
 
 - Supported formats: `rpm`, `deb`
 - Requires `systemd` support
@@ -79,61 +82,58 @@ echo "deb https://dl.cloudsmith.io/public/pomerium/pomerium/deb/debian buster ma
 
 ### Docker Image
 
-Pomerium utilizes a [minimal](https://github.com/GoogleContainerTools/distroless) [docker container](https://www.docker.com/resources/what-container). You can find Pomerium's images on [dockerhub](https://hub.docker.com/r/pomerium/pomerium). Pomerium can be pulled in several flavors and architectures.
+Pomerium also provides [Docker container images](https://www.docker.com/resources/what-container). You can find Pomerium's images on [Docker Hub](https://hub.docker.com/r/pomerium/pomerium). Pomerium can be pulled in several flavors and architectures.
 
-- `:vX.Y.Z`: which will pull the a [specific tagged release](https://github.com/pomerium/pomerium/tags).
-
-  ```shell-session
-  $ docker run pomerium/pomerium:v0.1.0 --version
-  v0.1.0+53bfa4e
-  ```
-
-- `:latest`: which will pull the [most recent tagged release](https://github.com/pomerium/pomerium/releases).
+- `:vX.Y.Z` corresponds to a [specific tagged release](https://github.com/pomerium/pomerium/tags).
 
   ```shell-session
-  $ docker pull pomerium/pomerium:latest && docker run pomerium/pomerium:latest --version
-  v0.2.0+87e214b
+  $ docker run pomerium/pomerium:v0.25.0 --version
+  pomerium: 0.25.0-1704902203+e6ed4d53
+  envoy: 1.28.0+eb930e32ab5555643e09d11d490e392d0a790c5a80eb0b0ebacb1046bdbb114d
   ```
 
-- `:main` : which will pull an image in sync with git's [main](https://github.com/pomerium/pomerium/tree/main) branch.
+- `:vX.Y` corresponds to the latest patch release for a specific minor version (starting with v0.25).
+
+  ```shell-session
+  $ docker pull pomerium/pomerium:v0.25
+  ```
+
+- `:latest` corresponds to the [most recent tagged release](https://github.com/pomerium/pomerium/releases/latest).
+
+  ```shell-session
+  $ docker pull pomerium/pomerium:latest
+  ```
+
+- `:main` corresponds to the most recent development build from the [main](https://github.com/pomerium/pomerium/tree/main) git branch.
 
   ```shell-session
   $ docker pull pomerium/pomerium:main
   ```
 
-Rootless images for official releases are also published to provide additional security. In these images, Pomerium runs as the `nonroot` user. Depending on your deployment environment, you may need to grant the container additional [capabilities](https://linux-audit.com/linux-capabilities-hardening-linux-binaries-by-removing-setuid/) or change the listening port from `443`.
+Rootless images for official releases are also published to provide additional security. In these images, Pomerium runs as the `nonroot` user. Depending on your deployment environment, you may need to grant the container additional [capabilities](https://linux-audit.com/linux-capabilities-hardening-linux-binaries-by-removing-setuid/) or change the [listen address](/docs/reference/address) to use a port number other than 443.
 
-- `:nonroot-vX.Y.Z`: the rootless image for a specific release.
-- `:nonroot`: rootless equivalent to the `latest` tag.
+- `:nonroot-vX.Y.Z` is the rootless image for a specific release.
+- `:nonroot` is the rootless equivalent to the `:latest` tag.
 
-Debug images are also available. These include shell environments to allow operators to perform debugging steps from inside the container. If the image you are using already has a tag, prepend `debug-` for the debug image. For example:
+All of the above images use a [minimal base image](https://github.com/GoogleContainerTools/distroless#readme), but "debug" images are also available. Debug images include a shell environment, to allow operators to perform debugging steps from inside the container. Prepend `debug-` to any other image tag to obtain the corresponding debug image. For example:
 
-- `:debug-vX.Y.Z`: the debug image for a specific release.
-- `:debug-nonroot`: the debug image for the latest `nonroot` image.
-- `:debug`: debug equivalent of the `latest` tag.
+- `:debug-vX.Y.Z` is the debug image for a specific release.
+- `:debug-nonroot` is the debug image for the latest `:nonroot` image.
+- `:debug` is the debug equivalent of the `:latest` tag.
 
-### Helm
+### Kubernetes
 
 :::warning
 
 As of v0.19.0, Pomerium no longer supports Helm for Kubernetes deployments.
 
-We recommend following the steps in the Kubernetes [Installation](/docs/deploy/k8s/install) guide to deploy Pomerium with Kubernetes, or see the Kubernetes [Quickstart](/docs/deploy/k8s/quickstart) for a proof of concept of how to configure and deploy Pomerium with Kubernetes.
-
 :::
 
-Pomerium maintains a [helm](https://helm.sh) chart for easy Kubernetes deployment with best practices [https://helm.pomerium.io](https://helm.pomerium.io)
-
-```bash
-helm repo add pomerium https://helm.pomerium.io
-helm install pomerium/pomerium
-```
-
-See the [README](https://github.com/pomerium/pomerium-helm/blob/main/charts/pomerium/README.md) for up to date install options.
+We recommend following the steps in the Kubernetes [Installation](/docs/deploy/k8s/install) guide to deploy Pomerium with Kubernetes, or see the Kubernetes [Quickstart](/docs/deploy/k8s/quickstart) for a proof of concept of how to configure and deploy Pomerium with Kubernetes.
 
 ### Source
 
-:::tip
+:::note
 
 Officially supported build platforms are limited by [envoy proxy](https://www.envoyproxy.io/).
 
