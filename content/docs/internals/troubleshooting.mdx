@@ -187,6 +187,31 @@ When authenticating and authorizing a user for the first time, you may get the f
 
 Usually, this is the result of either a routing issue or a configuration error. Make sure that you are using the _internally_ routable URL for the Authorize service. Many cloud loud balancers _do not_ yet support gRPC transposing the ingress. So while your authenticate service url will probably look like `https://authenticate.corp.example.com`, your authorizer service url will likely be more like `https://pomerium-authorize-service.default.svc.cluster.local` or `https://localhost:5443`.
 
+### Pomerium exits on startup
+
+**Problem**
+
+If you first run the Pomerium process as one Unix user (e.g. `root`), and then later attempt to run Pomerium as a different user, Pomerium may refuse to start.
+
+Look for a log entry containing an error message like the following:
+
+> cannot open shared memory region /envoy_shared_memory_2068293160 check user permissions. Error: File exists
+
+Or a log entry with an error message like this:
+
+> cannot bind '/tmp/pomerium-envoy-admin.sock': Address already in use
+
+**Solution**
+
+Remove the files created while Pomerium was running as the other user:
+
+```shell-session
+$ sudo rm /dev/shm/envoy_shared_memory_*
+$ sudo rm /tmp/pomerium-envoy-admin.sock
+```
+
+Then start Pomerium again.
+
 ## Pomerium Enterprise
 
 ### Generate Recovery Token
