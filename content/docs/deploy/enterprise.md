@@ -59,9 +59,7 @@ Pomerium Enterprise allows you to import groups defined by your identity provide
 
 ### Deployment History and Audit Logs
 
-The **Deployments** dashboard allows you to view and export change and access logs from the Enterprise Console. Within the Deployments dashboard, you can select a change to view its logs.
-
-This way, you can review which users applied a change and when.
+The **Deployments** dashboard allows you to view and export change logs from the Enterprise Console. Select a change to review which user applied it and when.
 
 ![View deployments in the Enterprise Console's Deployments dashboard](./enterprise/img/deployments-dashboard.gif)
 
@@ -77,6 +75,10 @@ In the **External Data** dashboard, you can import, view, and manage [external d
 
 | Features | Pomerium Core | Pomerium Enterprise |
 | :-- | :-- | :-- |
+| Identity-based Access | ![Pomerium checkmark](./enterprise/img/pomerium-checkmark.svg) | ![Pomerium checkmark](./enterprise/img/pomerium-checkmark.svg) |
+| SSO Support | ![Pomerium checkmark](./enterprise/img/pomerium-checkmark.svg) | ![Pomerium checkmark](./enterprise/img/pomerium-checkmark.svg) |
+| Declarative Authorization Policy | ![Pomerium checkmark](./enterprise/img/pomerium-checkmark.svg) | ![Pomerium checkmark](./enterprise/img/pomerium-checkmark.svg) |
+| TCP Support | ![Pomerium checkmark](./enterprise/img/pomerium-checkmark.svg) | ![Pomerium checkmark](./enterprise/img/pomerium-checkmark.svg) |
 | Enterprise Console | <ClearIcon /> | ![Pomerium checkmark](./enterprise/img/pomerium-checkmark.svg) |
 | [Enterprise API](/docs/capabilities/enterprise-api) | <ClearIcon /> | ![Pomerium checkmark](./enterprise/img/pomerium-checkmark.svg) |
 | [Session Management](/docs/capabilities/reports#sessions) | <ClearIcon /> | ![Pomerium checkmark](./enterprise/img/pomerium-checkmark.svg) |
@@ -89,10 +91,6 @@ In the **External Data** dashboard, you can import, view, and manage [external d
 | [Service Accounts](/docs/capabilities/service-accounts) | <ClearIcon /> | ![Pomerium checkmark](./enterprise/img/pomerium-checkmark.svg) |
 | [Metrics](/docs/capabilities/metrics) | <ClearIcon /> | ![Pomerium checkmark](./enterprise/img/pomerium-checkmark.svg) |
 | [External Data Sources](/docs/integrations) | <ClearIcon /> | ![Pomerium checkmark](./enterprise/img/pomerium-checkmark.svg) |
-| Identity-based Access | ![Pomerium checkmark](./enterprise/img/pomerium-checkmark.svg) | ![Pomerium checkmark](./enterprise/img/pomerium-checkmark.svg) |
-| SSO Support | ![Pomerium checkmark](./enterprise/img/pomerium-checkmark.svg) | ![Pomerium checkmark](./enterprise/img/pomerium-checkmark.svg) |
-| Declarative Authorization Policy | ![Pomerium checkmark](./enterprise/img/pomerium-checkmark.svg) | ![Pomerium checkmark](./enterprise/img/pomerium-checkmark.svg) |
-| TCP Support | ![Pomerium checkmark](./enterprise/img/pomerium-checkmark.svg) | ![Pomerium checkmark](./enterprise/img/pomerium-checkmark.svg) |
 
 ## Next Steps
 
