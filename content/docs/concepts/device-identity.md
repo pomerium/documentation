@@ -16,7 +16,7 @@ keywords:
   ]
 ---
 
-One of the core components of the zero trust security model is **device identity**, which is the ability for a device to have a unique, unclonable identity string that can be authenticated and factored into access control decisions. This topic page covers the concept of device identity, and how it applies to the zero trust model.
+A core component of Pomerium's zero trust security model is **device identity**, which is the ability for a device to have a unique, unclonable identity string that can be authenticated and factored into access control decisions. This topic page covers the concept of device identity, and how it applies to the zero trust model. To understand how Pomerium's device identity feature works, see our [documentation here](/docs/capabilities/device-identity).
 
 ## Why Device Identity Is Important
 
