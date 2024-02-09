@@ -2,16 +2,16 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 namespace: pomerium
 resources:
-  - github.com/pomerium/ingress-controller/config/default?ref=v0.25.0
-  - service.yaml
+- github.com/pomerium/ingress-controller/config/default?ref=v0.25.0
+- service.yaml
 patches:
-  - patch: |-
-      - op: add
-        path: /spec/template/spec/containers/0/args/-
-        value: '--databroker-auto-tls=pomerium-databroker.$(POMERIUM_NAMESPACE).svc.cluster.local'
-    target:
-      group: apps
-      kind: Deployment
-      name: pomerium
-      version: v1
-  - path: ./deployment.yaml
+- patch: |-
+    - op: add
+      path: /spec/template/spec/containers/0/args/-
+      value: '--databroker-auto-tls=pomerium-databroker.$(POMERIUM_NAMESPACE).svc.cluster.local'
+  target:
+    group: apps
+    kind: Deployment
+    name: pomerium
+    version: v1
+- path: ./deployment.yaml
