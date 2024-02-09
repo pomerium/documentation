@@ -94,6 +94,12 @@ const sidebars = {
           label: 'User Impersonation',
         },
         {
+          id: 'docs/capabilities/directory-sync',
+          className: 'enterprise',
+          type: 'doc',
+          label: 'Directory Sync',
+        },
+        {
           id: 'docs/capabilities/device-identity',
           className: 'enterprise',
           type: 'doc',
