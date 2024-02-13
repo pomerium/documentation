@@ -196,9 +196,22 @@ This example pulls session data from the Databroker service using `type.googleap
 
 Pomerium Core and Enterprise offer the following options for overriding your authorization policy:
 
-- **Any Authenticated User**: Allows access to a route with this policy attached to any user who can authenticate to your identity provider
-- **CORS Preflight**: Allows unauthenticated HTTP OPTIONS requests as per the CORS spec
-- **Public Access**: Allows complete, unrestricted access to an associated route (use this setting with caution)
+- [**Any Authenticated User**](/docs/reference/routes/allow-any-authenticated-user): Allows access to a route with this policy attached to any user who can authenticate to your identity provider
+- [**CORS Preflight**](/docs/reference/routes/cors-preflight): Allows unauthenticated HTTP OPTIONS requests as per the CORS spec
+- [**Public Access**](/docs/reference/routes/public-access): Allows complete, unrestricted access to an associated route (use this setting with caution)
+
+:::note robots.txt behavior
+
+By default, Pomerium serves a **robots.txt** response directly, instructing search engines _not_ to crawl the route domain:
+
+```txt
+User-agent: *
+Disallow: /
+```
+
+For routes with policies that allow public, unauthenticated access, Pomerium _will not_ serve **robots.txt** directly. Instead, Pomerium will proxy requests for `/robots.txt` to the upstream service.
+
+:::
 
 ## Manage devices
 
