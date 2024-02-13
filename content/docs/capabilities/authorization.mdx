@@ -200,6 +200,19 @@ Pomerium Core and Enterprise offer the following options for overriding your aut
 - **CORS Preflight**: Allows unauthenticated HTTP OPTIONS requests as per the CORS spec
 - **Public Access**: Allows complete, unrestricted access to an associated route (use this setting with caution)
 
+:::note robots.txt behavior
+
+By default, Pomerium serves a **robots.txt** response directly, instructing search engines _not_ to crawl the route domain:
+
+```txt
+User-agent: *
+Disallow: /
+```
+
+For routes with policies that allow public, unauthenticated access, Pomerium _will not_ serve **robots.txt** directly. Instead, Pomerium will proxy requests for `/robots.txt` to the upstream service.
+
+:::
+
 ## Manage devices
 
 :::enterprise
