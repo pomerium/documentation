@@ -65,7 +65,7 @@ The **Deployments** dashboard allows you to view and export change logs from the
 
 ### Directory Sync
 
-Pomerium Enterprise's **Directory Sync** feature allows you to import your identity provider's directory data. After a successful sync, you can use your internal groups and teams data when building policies. ![Viewing the Identity Providers settings for a directory sync in the Enterprise Console](./enterprise/img/directory-sync-2.png)
+Pomerium Enterprise's [**Directory Sync**](/docs/capabilities/directory-sync) feature allows you to import your identity provider's directory data. After a successful sync, you can use your internal groups and teams data when building policies. ![Viewing the Identity Providers settings for a directory sync in the Enterprise Console](./enterprise/img/directory-sync-2.png)
 
 ### External Data Sources
 
@@ -83,7 +83,7 @@ In the **External Data** dashboard, you can import, view, and manage [external d
 | [Enterprise API](/docs/capabilities/enterprise-api) | <ClearIcon /> | ![Pomerium checkmark](./enterprise/img/pomerium-checkmark.svg) |
 | [Session Management](/docs/capabilities/reports#sessions) | <ClearIcon /> | ![Pomerium checkmark](./enterprise/img/pomerium-checkmark.svg) |
 | [Namespaces](/docs/capabilities/namespacing) | <ClearIcon /> | ![Pomerium checkmark](./enterprise/img/pomerium-checkmark.svg) |
-| [Directory Sync](/docs/integrations) | <ClearIcon /> | ![Pomerium checkmark](./enterprise/img/pomerium-checkmark.svg) |
+| [Directory Sync](/docs/capabilities/directory-sync) | <ClearIcon /> | ![Pomerium checkmark](./enterprise/img/pomerium-checkmark.svg) |
 | [User Impersonation](/docs/capabilities/impersonation) | <ClearIcon /> | ![Pomerium checkmark](./enterprise/img/pomerium-checkmark.svg) |
 | [Deployment History](/docs/capabilities/reports#deployments) | <ClearIcon /> | ![Pomerium checkmark](./enterprise/img/pomerium-checkmark.svg) |
 | [Device Identity](/docs/capabilities/device-identity) | <ClearIcon /> | ![Pomerium checkmark](./enterprise/img/pomerium-checkmark.svg) |
