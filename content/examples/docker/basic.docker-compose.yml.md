@@ -1,10 +1,13 @@
 ```yaml title="docker-compose.yaml"
-version: "3"
 services:
   pomerium:
     image: pomerium/pomerium:latest
     volumes:
-      ## Mount your config file: https://www.pomerium.com/docs/reference/
+    ## Mount your domain's certificates
+      - ./_wildcard.localhost.pomerium.io.pem:/pomerium/cert.pem:ro
+      - ./_wildcard.localhost.pomerium.io-key.pem:/pomerium/privkey.pem:ro
+
+      ## Mount your config file
       - ./config.yaml:/pomerium/config.yaml:ro
     ports:
       - 443:443

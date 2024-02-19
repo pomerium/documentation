@@ -34,7 +34,8 @@ Welcome to Pomerium! This quickstart shows you how to set up Pomerium Core to pr
 **Steps to complete**:
 
 1. Configure [Pomerium Core](/docs/deploy/core) and the [Verify](https://verify.pomerium.com/) web app to run in Docker containers
-2. Access the Verify web app behind Pomerium
+1. Generate certificates and secrets
+1. Access the Verify web app behind Pomerium
 
 **Time to complete:** 5 minutes
 
@@ -46,7 +47,10 @@ Check out [**Pomerium Fundamentals**](/docs/courses/fundamentals/get-started) fo
 
 ## Before you start
 
-This quickstart requires [Docker] and [Docker Compose].
+To complete this guide, you need:
+
+- [Docker] and [Docker Compose]
+- [mkcert](https://mkcert.dev/)
 
 :::info
 
@@ -62,15 +66,46 @@ Add the configuration below to `config.yaml`:
 
 <ConfigDocker />
 
-:::caution
+### Add a signing key
 
-The `signing_key` above is intended to be used for testing purposes. Do not use this signing key in a production environment.
+Pomerium requires a [signing key](/docs/reference/signing-key) to cryptographically sign a user's JWT for identity verification:
 
-See the [**Signing Key**](/docs/reference/signing-key) reference page for instructions on how to generate your own secure signing key.
+```bash
+openssl ecparam  -genkey  -name prime256v1  -noout  -out ec_private.pem
+cat ec_private.pem | base64
+```
 
-:::
+Replace `signing_key` in `config.yaml` with the ouput of these commands.
 
-## Set up Docker Compose
+For example:
+
+```yaml title="config.yaml"
+signing_key: LS0tLS1CRUdJTiBFQyBQUklWQVRFIEtFWS0tLS0tCk1IY0NBUUVFSUFsSEdxZnFYYzVFTDUwSE1hbUFyOGdJckVYZ0cxaXI5NkQyb1o3aXVxTDlvQW9HQ0NxR1NNNDkKQXdFSG9VUURRZ0FFN0lSWWtFR1k0YjRjRHRvbXlWaVVlL3RrVVlseGZ4SFZLMUx0R0FHWWN0NEcvbTA1TkpBRwpxZWFBRDdmN3pwMEloeGFNRThEdGVoZHNrQXNKNFIxSG1RPT0KLS0tLS1FTkQgRUMgUFJJVkFURSBLRVktLS0tLQo=
+```
+
+### Create a wildcard TLS certificate
+
+Generate locally trusted certificates with [mkcert](https://github.com/FiloSottile/mkcert):
+
+1. Install [mkcert](https://github.com/FiloSottile/mkcert?tab=readme-ov-file#installation)
+2. Create a trusted root certificate authority:
+
+```bash
+mkcert -install
+```
+
+3. Create a wildcard server certificate for `*.localhost.pomerium.io`:
+
+```bash
+mkcert "*.localhost.pomerium.io"
+```
+
+This creates two files in the current working directory:
+
+- `_wildcard.localhost.pomerium.io.pem`
+- `_wildcard.localhost.pomerium.io-key.pem`
+
+## Run Pomerium and the Verify application
 
 Create a `docker-compose.yaml` file in the root of your project.
 
@@ -78,7 +113,7 @@ Add the configuration below to `docker-compose.yaml`:
 
 <DockerCompose />
 
-## Run Docker Compose
+**Run Docker Compose:**
 
 ```bash
 docker compose up
@@ -88,46 +123,17 @@ docker compose up
 
 Go to the [Verify URL](https://verify.localhost.pomerium.io) you defined in `config.yaml`.
 
-### Self-signed certificate warning
-
-Because you don't have a valid certificate, Pomerium generates a self-signed one for you. This will prompt your browser to throw a self-signed certificate warning.
-
-To bypass the warning:
-
-<Tabs>
-<TabItem value="Chrome" label="Chrome">
-
-1. Select **Advanced**
-1. Select **Proceed to verify.localhost.pomerium.io (unsafe)**
-
-If you don't see an **Advanced** option:
-
-1. Click anywhere in the window
-1. Type "thisisunsafe" (no spaces)
-1. Make sure **Reload** is selected
-1. Select **Enter**
-
-</TabItem>
-<TabItem value="Safari" label="Safari">
-
-1. Select **Show Details**
-1. Select **visit this website**
-1. In the confirmation popup, select **Visit Website**
-
-</TabItem>
-<TabItem value="Firefox" label="Firefox">
-
-1. Select **Advanced**
-1. Select **Accept the Risk and Continue**
-
-</TabItem>
-</Tabs>
-
 Pomerium will redirect you to our hosted identity provider to authenticate.
 
 Then, it will redirect you to the **Verify** service. You'll see a page like this:
 
 ![Accessing the Verify web app behind Pomerium](./img/quickstart/identity-verified.png)
+
+Identity verification was successful!
+
+Let's check the certificate, too:
+
+![Browser showing that the locally trusted domain certificate is valid](./img/quickstart/valid-certificate.png)
 
 Congratulations! You successfully installed Pomerium and accessed your protected web app.
 
