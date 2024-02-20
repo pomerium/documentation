@@ -161,7 +161,6 @@ Zero trust is a philosophy and/or framework for security models that includes se
 [policies]: #policy
 [pomerium enterprise]: /docs/deploy/enterprise/install
 [pom-namespace]: /docs/internals/glossary
-[pom-routes]: /docs/concepts/routes
 [route]: #route
 [routes]: #route
 [secure enclave]: #secure-enclave
