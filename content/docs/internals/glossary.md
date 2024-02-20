@@ -1,4 +1,6 @@
 ---
+# cSpell:ignore localdomain
+
 title: Glossary
 lang: en-US
 keywords:
