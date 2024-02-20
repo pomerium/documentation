@@ -74,16 +74,13 @@ More advanced configurations allow identity header pass-through, path and prefix
 
 For more information, see the [Routing Capabilities])(/docs/capabilities/routing) page.
 
-## Protected Endpoints
+### Service Account
 
-This term refers to the system or service the route provides or restricts access to.
+A service account provides bearer token based authentication for machine-to-machine communication through Pomerium to your protected endpoints. A service account can provide authentication for monitoring services, create API integrations, and other non-human driven scripts or services.
 
-## Moving Routes
+A service account identity can either be based on a user entry in your IdP Directory, or exist as a custom identity managed in a Pomerium Console [Namespace](/docs/capabilities/namespacing).
 
-When moving a Route from one [Namespace](#namespace) to another, enforced policies will automatically be removed or applied. Optional policies available in the source Namespace but not the target will prevent the move. This is intentional to prevent unassociated policies.
-
-[namespace]: /docs/concepts/namespacing
-[reference-routes]: /docs/reference/routes
+See the [Service Accounts](/docs/capabilities/service-accounts) capabilities page for more information on how to use service accounts in Pomerium.
 
 ### Single Sign-On
 
