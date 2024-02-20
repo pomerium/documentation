@@ -66,7 +66,24 @@ Policies can be applied to [Routes](/docs/capabilities/routing) directly, or enf
 
 ### Route
 
-Specific to Pomerium, a route is a defined path from outside the network (via a public domain) to an internal service. Routes can be defined in the [configuration](/docs/reference/routes) for open-source Pomerium or the [Pomerium Enterprise Console][pom-routes].
+Specific to Pomerium, a route is a defined path from outside the network (through a public domain) to an internal service. At a very basic level, a route sends traffic from `external-address.company.com` to `internalService-address.localdomain`; a route is restricted by its associated policies and encrypted by your TLS certificates.
+
+Routes can be defined in the [configuration](/docs/reference/routes) for open-source Pomerium or the [Pomerium Enterprise Console][/docs/deploy/enterprise].
+
+More advanced configurations allow identity header pass-through, path and prefix rewrites, request and response header modification, load balancer services, and other full featured ingress capabilities.
+
+For more information, see the [Routing Capabilities])(/docs/capabilities/routing) page.
+
+## Protected Endpoints
+
+This term refers to the system or service the route provides or restricts access to.
+
+## Moving Routes
+
+When moving a Route from one [Namespace](#namespace) to another, enforced policies will automatically be removed or applied. Optional policies available in the source Namespace but not the target will prevent the move. This is intentional to prevent unassociated policies.
+
+[namespace]: /docs/concepts/namespacing
+[reference-routes]: /docs/reference/routes
 
 ### Single Sign-On
 
