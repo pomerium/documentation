@@ -60,7 +60,9 @@ The term "Perimeter" in the context of Pomerium and general networking usually r
 
 ### Policy
 
-Pomerium allows administrators to define authorization policies dictating what combination of users, groups, devices, etc, have access to protected services. Open-source Pomerium defines a unique policy to every [route], while Pomerium Enterprise can define reusable policies at the global and [namespace] level.
+A Policy defines what services behind Pomerium a user is authorized to access based on policy criteria, such as user identity and device identity, and the associated request context.
+
+Policies can be applied to [Routes](/docs/capabilities/routing) directly, or enforced within a [Namespace](/docs/capabilities/namespacing). Policies allow operators to add authorization and access control to a single route or collection of routes.
 
 ### Route
 
