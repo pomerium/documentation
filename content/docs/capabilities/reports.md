@@ -35,4 +35,3 @@ The default view shows all changes made through Pomerium Enterprise. Use the **C
 [namespace-concept]: /docs/concepts/namespacing
 [namespace-reference]: /docs/enterprise/reference/configure#namespaces
 [service-accounts-concept]: /docs/capabilities/service-accounts.md
-[policy-reference]: /docs/concepts/policies
