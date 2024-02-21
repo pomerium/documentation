@@ -1,4 +1,6 @@
 ---
+# cSpell:ignore localdomain
+
 title: Glossary
 lang: en-US
 keywords:
@@ -60,11 +62,27 @@ The term "Perimeter" in the context of Pomerium and general networking usually r
 
 ### Policy
 
-Pomerium allows administrators to define authorization policies dictating what combination of users, groups, devices, etc, have access to protected services. Open-source Pomerium defines a unique policy to every [route], while Pomerium Enterprise can define reusable policies at the global and [namespace] level.
+A Policy defines what services behind Pomerium a user is authorized to access based on policy criteria, such as user identity and device identity, and the associated request context.
+
+Policies can be applied to [Routes](/docs/capabilities/routing) directly, or enforced within a [Namespace](/docs/capabilities/namespacing). Policies allow operators to add authorization and access control to a single route or collection of routes.
 
 ### Route
 
-Specific to Pomerium, a route is a defined path from outside the network (via a public domain) to an internal service. Routes can be defined in the [configuration](/docs/reference/routes) for open-source Pomerium or the [Pomerium Enterprise Console][pom-routes].
+Specific to Pomerium, a route is a defined path from outside the network (through a public domain) to an internal service. At a very basic level, a route sends traffic from `external-address.company.com` to `internalService-address.localdomain`; a route is restricted by its associated policies and encrypted by your TLS certificates.
+
+Routes can be defined in the [configuration](/docs/reference/routes) for open-source Pomerium or the [Pomerium Enterprise Console][/docs/deploy/enterprise].
+
+More advanced configurations allow identity header pass-through, path and prefix rewrites, request and response header modification, load balancer services, and other full featured ingress capabilities.
+
+For more information, see the [Routing Capabilities])(/docs/capabilities/routing) page.
+
+### Service Account
+
+A service account provides bearer token based authentication for machine-to-machine communication through Pomerium to your protected endpoints. A service account can provide authentication for monitoring services, create API integrations, and other non-human driven scripts or services.
+
+A service account identity can either be based on a user entry in your IdP Directory, or exist as a custom identity managed in a Pomerium Console [Namespace](/docs/capabilities/namespacing).
+
+See the [Service Accounts](/docs/capabilities/service-accounts) capabilities page for more information on how to use service accounts in Pomerium.
 
 ### Single Sign-On
 
@@ -145,7 +163,6 @@ Zero trust is a philosophy and/or framework for security models that includes se
 [policies]: #policy
 [pomerium enterprise]: /docs/deploy/enterprise/install
 [pom-namespace]: /docs/internals/glossary
-[pom-routes]: /docs/concepts/routes
 [route]: #route
 [routes]: #route
 [secure enclave]: #secure-enclave
