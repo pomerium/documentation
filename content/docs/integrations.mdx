@@ -33,7 +33,7 @@ See the pages in this section for more information on our example data sources, 
 
 Any external data source integration requires the following settings:
 
-### **URL**
+### URL
 
 The path to the external data.
 
@@ -78,11 +78,11 @@ The Pomerium Databroker would be updated with types `example.com/geoip`, `device
 
 Compressed versions are supported using `gz` format.
 
-### **Record Type**
+### Record Type
 
 Unless defined by the directory structure of a supplied archive file, the Record Type field defines how the records will be stored and accessed in the Databroker.
 
-### **Foreign Key**
+### Foreign Key
 
 **Foreign Key** is used to map an authorization evaluation to the corresponding record. The supported values are:
 
@@ -91,15 +91,15 @@ Unless defined by the directory structure of a supplied archive file, the Record
 - `request.ip`,
 - `device.id`.
 
-### **Headers**
+### Headers
 
 Headers defined here will be used when connecting to the external data source.
 
-### **Allow Insecure TLS**
+### Allow Insecure TLS
 
 If set, allows the import of external data from sources using untrusted TLS certificates.
 
-### **Polling Min/Max Delay**
+### Polling Min/Max Delay
 
 Defines the minimum and maximum delay times between requests to the external data source. The job would be scheduled to run within `min delay` intervals.
 
@@ -109,6 +109,20 @@ If a job may not complete within the `min delay` period, it would be interrupted
 
 :::
 
-### **Client TLS Key**
+### Client TLS Key
 
 For data sources using mTLS, you can select a [client certificate](/docs/concepts/certificates) (added under **Manage** → **Certificates**) to provide to the data source.
+
+## IP range lookup support
+
+Pomerium supports Classless Inter-Domain Routing (CIDR) indexing to improve database performance. This is useful if you're importing a list of records containing IP ranges.
+
+CIDR indexing follows this format:
+
+```json
+{
+  "$index": {"cidr":"1.2.3.4/5"}
+}
+```
+
+See the [GeoIP Ranges](/docs/integrations/geoip) and [Well-Known IP Ranges](/docs/integrations/ip-ranges) guides for specific examples.
