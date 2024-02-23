@@ -7,141 +7,109 @@ lang: en-US
 keywords:
   [
     pomerium,
-    identity access proxy,
-    data,
-    logging,
-    graphing,
     HedgeDoc,
     authentication,
     authorization,
   ]
-description: This guide covers how to use Pomerium to authenticate and authorize users of HedgeDoc.
+description: Learn how to control access to your HedgeDoc web application behind Pomerium.
 ---
 
 # HedgeDoc
 
-Use Pomerium to secure access to HedgeDoc by providing identity and context.
+In this guide, you'll learn how to run a HedgeDoc web application behind Pomerium. You'll also add an authorization policy that enables Pomerium to gran or deny access based on policy criteria.
 
 ## What is HedgeDoc?
 
-[HedgeDoc](https://hedgedoc.org/) is a collaborative, web-based Markdown editor that allows you to create notes, graphs, and diagrams in your browser.
+[HedgeDoc](https://hedgedoc.org/) is a collaborative, web-based Markdown editor that allows you to create notes, graphs, and diagrams in your browser. You can share a link to your documents with other members of your organization so you can collaborate in real time.
 
-You can share a link to your document with other members of your organization so you can collaborate in real time.
+## How to secure HedgeDoc with Pomerium
 
-## Integrate Pomerium with HedgeDoc
+HedgeDoc is an open-source project that you can serve behind a [reverse proxy](https://docs.hedgedoc.org/guides/reverse-proxy/).
 
-HedgeDoc is an open-source, self-hosted software that allows you to configure authentication and authorization with a [reverse proxy](https://docs.hedgedoc.org/guides/reverse-proxy/).
+In this guide, you'll configure Pomerium to authenticate and authorize users. To do this, you'll add an authorization policy that grants or denies access based on the policy criteria.
 
-You can configure Pomerium so that it authenticates and authorizes users against an Identity Provider (IdP) before users can access HedgeDoc's services.
+### Before you start
 
-The flow looks like this:
+To complete this guide, you need: 
 
-1. User requests to access the secured app
-2. Pomerium identifies user
-3. Pomerium checks if user is authorized to access routes defined in the authorization [`policy`](https://www.pomerium.com/docs/reference/routes/policy)
-4. If authorized, Pomerium authenticates user against IdP
-5. After IdP establishes user's identity, Pomerium checks permissions against the secured app
-6. User can make authorized requests in the secured app
-
-![Pomerium IAP flow](./img/hedgedoc/pom-auth-flow.png)
-
-### Set up your environment
-
-This guide uses Docker containers to create the minimal development environment required to run Pomerium with another service. Visit the [Pomerium using Docker](https://www.pomerium.com/docs/quickstart) quickstart for more information.
-
-To complete this guide, you need:
-
-- [Docker](https://www.docker.com/)
+- [Docker](https://www.docker.com/) 
 - [Docker Compose](https://docs.docker.com/compose/install/)
-- A running Pomerium instance
-- A [pre-configured IdP](https://www.pomerium.com/docs/identity-providers)
+- [mkcert](https://github.com/FiloSottile/mkcert#installation)
 
-:::tip
+:::note
 
-**Note**
+If you completed our [**Quickstart guide**](/docs/quickstart), you should have a working Pomerium project with the following YAML files:
 
-This guide uses [GitHub](https://www.pomerium.com/docs/identity-providers/github) as the pre-configured IdP.
+- `config.yaml`
+- `docker-compose.yaml`
 
-:::
+If you haven't completed the Quickstart:
 
-### Pomerium configuration
-
-Your Pomerium configuration file must include a [Cookie Secret](https://www.pomerium.com/docs/reference/cookie-secret) and a [Secret Key](https://www.pomerium.com/docs/reference/signing-key).
-
-To create a Cookie Secret, run the following command in your terminal:
-
-```bash
-head -c32 /dev/urandom | base64
-```
-
-To create a Secret Key, run the following command:
-
-```bash
-cat ec_private.pem | base64
-```
-
-:::tip **Note**
-
-This guide assumes you've generated self-signed wildcard certificates. Check [Certificates](https://www.pomerium.com/docs/topics/certificates#self-signed-wildcard-certificate) for more information.
+- Create a `config.yaml` file for your Pomerium configuration
+- Create a `docker-compose.yaml` file for your Docker configuration
 
 :::
 
-Place your `cookie_secret` and `secret_key` in your `config.yaml` file:
+### Set up Pomerium
+
+Add the following configuration to `config.yaml`:
 
 ```yaml
-cookie_secret: <cookie secret>
-signing_key: <signing key>
-```
+authenticate_service_url: https://authenticate.pomerium.app
 
-Then, enable Pomerium to allow [Websocket Connections](https://www.pomerium.com/docs/reference/routes/timeouts#websocket-connections):
+certificate_file: /pomerium/cert.pem
+certificate_key_file: /pomerium/privkey.pem
 
-```yaml
-allow_websockets: true
-```
-
-Lastly, define your routes:
-
-```yaml
 routes:
-  - from: https://verify.localhost.pomerium.io
-    to: http://verify:8000
-    pass_identity_headers: true
-    allow_any_authenticated_user: true
-
   - from: https://hedgedoc.localhost.pomerium.io
-    to: http://app:3000
-    pass_identity_headers: true
-    allow_any_authenticated_user: true
+    to: http://hedgedoc:3000
+    allow_websockets: true
+    policy:
+      - allow:
+          or:
+            - email:
+                # Replace with your email address
+                is: user@example.com
 ```
 
-To see if Pomerium is configured correctly, run the following command in your terminal:
+#### Create a wildcard TLS certificate
 
-```bash
-docker-compose up
-```
+HedgeDoc requires an encrypted TLS connection to add and manage users. For the purposes of this guide, you will use `mkcert` to generate local development certificates:
 
-Navigate to `https://authenticate.localhost.pomerium.io`. Pomerium will redirect you to your GitHub OAuth app, where you can authorize the OAuth app to access your GitHub account.
+1. Install `mkcert` with these [instructions](https://github.com/FiloSottile/mkcert#installation)
+1. Create a trusted **rootCA**:
+  ```bash
+  mkcert -install
+  ```
+1. Create a wildcard certificate for `*.localhost.pomerium.io`:
+  ```bash
+  mkcert '*.localhost.pomerium.io'
+  ```
+This creates two files in your working directory:
 
-![GitHub IdP sign-in prompt](./img/hedgedoc/gh-idp-hedgedoc.png)
+- `_wildcard.localhost.pomerium.io.pem`
+- `_wildcard.localhost.pomerium.io-key.pem`
 
-Navigate to `https://authenticate.localhost.pomerium.io/.pomerium/` to see your User Details:
+In the next section, you'll notice these certificates are mounted in a Docker Compose file. 
 
-![Pomerium User Details](./img/hedgedoc/user-details-page.png)
+### Set up HedgeDoc
 
-Congratulations! You've successfully configured and run Pomerium.
-
-### Secure HedgeDoc
-
-In your `docker-compose.yaml` file, add the following code under your Pomerium services:
+In your `docker-compose.yaml` file, add the following services:
 
 ```yaml
-# verify:
-#     image: pomerium/verify:latest
-#     expose:
-#       - 8000
----
-
-database:
+version: '3'
+services:
+  pomerium:
+    image: cr.pomerium.com/pomerium/pomerium:latest
+    volumes:
+      # Mount your certificates
+      - ./_wildcard.localhost.pomerium.io.pem:/pomerium/cert.pem:ro
+      - ./_wildcard.localhost.pomerium.io-key.pem:/pomerium/privkey.pem:ro
+      # Mount your config file: https://www.pomerium.com/docs/reference/
+      - ./config.yaml:/pomerium/config.yaml:ro
+    ports:
+      - 443:443
+  database:
     image: postgres:13.4-alpine
     environment:
       - POSTGRES_USER=hedgedoc
@@ -150,16 +118,18 @@ database:
     volumes:
       - database:/var/lib/postgresql/data
     restart: always
-  app:
+  hedgedoc:
     # Make sure to use the latest release from https://hedgedoc.org/latest-release
-    image: quay.io/hedgedoc/hedgedoc:1.9.4
+    image: quay.io/hedgedoc/hedgedoc:1.9.9
     environment:
       - CMD_DB_URL=postgres://hedgedoc:password@database:5432/hedgedoc
       - CMD_DOMAIN=hedgedoc.localhost.pomerium.io
       - CMD_URL_ADDPORT=false
       - CMD_EMAIL=true
       - CMD_ALLOW_EMAIL_REGISTER=true
-      - CMD_SESSION_SECRET=<session secret>
+      # Replace cookie session secret
+      - CMD_SESSION_SECRET=<replace_session_secret>
+      - CMD_PROTOCOL_USESSL=true
     volumes:
       - uploads:/hedgedoc/public/uploads
     ports:
@@ -172,34 +142,59 @@ volumes:
   uploads:
 ```
 
-Update your environment variables with the following values:
+> See the [HedgeDoc - Configuration](https://docs.hedgedoc.org/configuration/#configuration) page for more information on configuration keys and environment variables.
+
+#### Generate a session secret
+
+HedgeDoc requires a session secret to sign session cookies. If you don't add a session secret, HedgeDoc generates a random one for you upon startup, which will end any active sessions and sign out your users.
+
+Adding a session secret will allow you to resume a session even if you stop your Docker services. 
+
+To generate a secret, run:
+
+```shell-session
+$ head -c32 /dev/urandom | base64
+  MPGHgArlo81ohUoMtDtv8qCBLJu0lwXDCPcrml0wF2Q=
+```
+
+Replace the value of `CMD_SESSION_SECRET` with the output:
 
 ```yaml
-- CMD_DOMAIN=hedgedoc.localhost.pomerium.io
+- CMD_SESSION_SECRET=MPGHgArlo81ohUoMtDtv8qCBLJu0lwXDCPcrml0wF2Q=
 ```
 
-:::caution
+#### TLS in HedgeDoc
 
-You must add a session secret. If you don't, HedgeDoc will randomly generate a secret, which will log out all users.
+To access HedgeDoc over HTTPS, you must set `CMD_PROTOCOL_USESSL` and `CMD_ADDPORT` to `false`.
 
-:::
+## Run HedgeDoc and Pomerium
 
-To generate a session secret, run the following command in your terminal:
+Run Docker Compose:
 
 ```bash
-head -c32 /dev/urandom | base64
+docker compose up
 ```
 
-Now, run `docker-compose up`
+Navigate to `https://hedgedoc.localhost.pomerium.io/` to access HedgeDoc. 
 
-Navigate to `https://hedgedoc.localhost.pomerium.io/` to access HedgeDoc:
+Pomerium will prompt you to authenticate:
 
-![HedgeDoc service](./img/hedgedoc/hedgedoc.png)
+![Signing in to Pomerium's identity provider](./img/hedgedoc/cognito-idp.png)
 
-Great job! You've secured HedgeDoc using Pomerium's identity-aware proxy.
+After successful authentication, Pomerium will redirect you to your HedgeDoc URL:
 
-#### Resources:
+![The HedgeDoc homepage](./img/hedgedoc/hedgedoc-homepage.png)
 
-- [Pomerium documentation](https://www.pomerium.com/docs)
-- [Pomerium reference doc](https://www.pomerium.com/docs/reference)
-- [HedgeDoc documentation](https://docs.hedgedoc.org/)
+## Add a user
+
+1. Select **Sign In**
+1. Enter an **E-Mail** and **Password**
+1. Select **Register**
+
+When you sign in, HedgeDoc will take you to your user dashboard: 
+
+![Secured HedgeDoc user dashboard page](./img/hedgedoc/user-dashboard.png)
+
+If you check the connection, you'll notice it's secure. Now, you can write your first note and share it with users within your network:
+
+![Adding a note in HedgeDoc](./img/hedgedoc/hedgedoc-note.png)
