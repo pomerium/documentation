@@ -90,7 +90,7 @@ This creates two files in your working directory:
 - `_wildcard.localhost.pomerium.io.pem`
 - `_wildcard.localhost.pomerium.io-key.pem`
 
-In the next section, you'll notice these certificates are mounted in a Docker Compose file. 
+In the next section, you'll bind mount these certificates in a Docker Compose file. 
 
 ### Set up HedgeDoc
 
@@ -165,7 +165,10 @@ Replace the value of `CMD_SESSION_SECRET` with the output:
 
 #### TLS in HedgeDoc
 
-To access HedgeDoc over HTTPS, you must set `CMD_PROTOCOL_USESSL` and `CMD_ADDPORT` to `false`.
+To configure HedgeDoc to use HTTPS:
+
+- Set `CMD_PROTOCOL_USESSL` to `true` 
+- Set `CMD_ADDPORT` to `false`
 
 ## Run HedgeDoc and Pomerium
 
