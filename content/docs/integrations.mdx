@@ -86,10 +86,24 @@ Unless defined by the directory structure of a supplied archive file, the Record
 
 **Foreign Key** is used to map an authorization evaluation to the corresponding record. The supported values are:
 
-- `user.id` (Also the default if no value is provided),
-- `user.email`,
-- `request.ip`,
-- `device.id`.
+- `user.id` (Also the default if no value is provided)
+- `user.email`
+- `request.ip`
+- `device.id`
+
+#### IP range lookup support
+
+Pomerium supports Classless Inter-Domain Routing (CIDR) indexing when filtering a list of records with the `request.ip` foreign key. This allows you to match against IP address ranges instead of manually importing records for individual IP addresses.
+
+To filter with CIDR indexing, add a special `$index` key to your external data source records. For example:
+
+```json
+{
+  "$index": {"cidr": "1.2.3.4/5"}
+}
+```
+
+See the [GeoIP Ranges](/docs/integrations/geoip) and [Well-Known IP Ranges](/docs/integrations/ip-ranges) guides for specific examples.
 
 ### Headers
 
@@ -112,17 +126,3 @@ If a job may not complete within the `min delay` period, it would be interrupted
 ### Client TLS Key
 
 For data sources using mTLS, you can select a [client certificate](/docs/concepts/certificates) (added under **Manage** → **Certificates**) to provide to the data source.
-
-## IP range lookup support
-
-Pomerium supports Classless Inter-Domain Routing (CIDR) indexing to improve database querying performance. This is useful if you're importing a list of records containing IP ranges.
-
-CIDR indexing follows this format:
-
-```json
-{
-  "$index": {"cidr": "1.2.3.4/5"}
-}
-```
-
-See the [GeoIP Ranges](/docs/integrations/geoip) and [Well-Known IP Ranges](/docs/integrations/ip-ranges) guides for specific examples.
