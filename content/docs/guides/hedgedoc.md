@@ -1,16 +1,10 @@
 ---
-# cSpell:ignore hedgedoc addport
+# cSpell:ignore hedgedoc addport privkey USESSL
 
 title: Securing HedgeDoc with Pomerium
 sidebar_label: HedgeDoc
 lang: en-US
-keywords:
-  [
-    pomerium,
-    HedgeDoc,
-    authentication,
-    authorization,
-  ]
+keywords: [pomerium, HedgeDoc, authentication, authorization]
 description: Learn how to control access to your HedgeDoc web application behind Pomerium.
 ---
 
@@ -30,9 +24,9 @@ In this guide, you'll configure Pomerium to authenticate and authorize users. To
 
 ### Before you start
 
-To complete this guide, you need: 
+To complete this guide, you need:
 
-- [Docker](https://www.docker.com/) 
+- [Docker](https://www.docker.com/)
 - [Docker Compose](https://docs.docker.com/compose/install/)
 - [mkcert](https://github.com/FiloSottile/mkcert#installation)
 
@@ -78,19 +72,23 @@ HedgeDoc requires an encrypted TLS connection to add and manage users. For the p
 
 1. Install `mkcert` with these [instructions](https://github.com/FiloSottile/mkcert#installation)
 1. Create a trusted **rootCA**:
-  ```bash
-  mkcert -install
-  ```
+
+```bash
+mkcert -install
+```
+
 1. Create a wildcard certificate for `*.localhost.pomerium.io`:
-  ```bash
-  mkcert '*.localhost.pomerium.io'
-  ```
+
+```bash
+mkcert '*.localhost.pomerium.io'
+```
+
 This creates two files in your working directory:
 
 - `_wildcard.localhost.pomerium.io.pem`
 - `_wildcard.localhost.pomerium.io-key.pem`
 
-In the next section, you'll bind mount these certificates in a Docker Compose file. 
+In the next section, you'll bind mount these certificates in a Docker Compose file.
 
 ### Set up HedgeDoc
 
@@ -133,7 +131,7 @@ services:
     volumes:
       - uploads:/hedgedoc/public/uploads
     ports:
-      - "3000:3000"
+      - '3000:3000'
     restart: always
     depends_on:
       - database
@@ -148,7 +146,7 @@ volumes:
 
 HedgeDoc requires a session secret to sign session cookies. If you don't add a session secret, HedgeDoc generates a random one for you upon startup, which will end any active sessions and sign out your users.
 
-Adding a session secret will allow you to resume a session even if you stop your Docker services. 
+Adding a session secret will allow you to resume a session even if you stop your Docker services.
 
 To generate a secret, run:
 
@@ -167,7 +165,7 @@ Replace the value of `CMD_SESSION_SECRET` with the output:
 
 To configure HedgeDoc to use HTTPS:
 
-- Set `CMD_PROTOCOL_USESSL` to `true` 
+- Set `CMD_PROTOCOL_USESSL` to `true`
 - Set `CMD_ADDPORT` to `false`
 
 ## Run HedgeDoc and Pomerium
@@ -178,7 +176,7 @@ Run Docker Compose:
 docker compose up
 ```
 
-Navigate to `https://hedgedoc.localhost.pomerium.io/` to access HedgeDoc. 
+Navigate to `https://hedgedoc.localhost.pomerium.io/` to access HedgeDoc.
 
 Pomerium will prompt you to authenticate:
 
@@ -194,7 +192,7 @@ After successful authentication, Pomerium will redirect you to your HedgeDoc URL
 1. Enter an **E-Mail** and **Password**
 1. Select **Register**
 
-When you sign in, HedgeDoc will take you to your user dashboard: 
+When you sign in, HedgeDoc will take you to your user dashboard:
 
 ![Secured HedgeDoc user dashboard page](./img/hedgedoc/user-dashboard.png)
 
