@@ -10,7 +10,7 @@ description: Learn how to control access to your HedgeDoc web application behind
 
 # HedgeDoc
 
-In this guide, you'll learn how to run a HedgeDoc web application behind Pomerium. You'll also add an authorization policy that enables Pomerium to gran or deny access based on policy criteria.
+In this guide, you'll learn how to run a HedgeDoc web application behind Pomerium. You'll also add an authorization policy that enables Pomerium to grant or deny access based on policy criteria.
 
 ## What is HedgeDoc?
 
