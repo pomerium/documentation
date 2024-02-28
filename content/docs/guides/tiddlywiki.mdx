@@ -6,7 +6,6 @@ keywords: [pomerium, identity access proxy, wiki, tiddlywiki]
 description: This guide shows you how to configure an authorization policy and SSO to control access to an online instance of Tiddlywiki with Pomerium.
 ---
 
-import DockerCompose from '../../examples/tiddlywiki/docker-compose.yaml.md';
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
@@ -16,117 +15,197 @@ Learn how to add authentication and authorization to an instance of [TiddlyWiki 
 
 ## What is TiddlyWiki on Node.js
 
-TiddlyWiki is a personal wiki and a non-linear notebook for organizing and sharing complex information. It is available in two forms:
+TiddlyWiki is a personal wiki and a non-linear web notebook for organizing and sharing information.
 
-- a single HTML page
-- [a Node.js application](https://www.npmjs.com/package/tiddlywiki)
+It is available in two forms:
 
-You will use the Node.js application in this guide.
+- As a single HTML page
+- As a [Node.js application](https://www.npmjs.com/package/tiddlywiki)
 
-## Authentication flow
+In this guide, you will run Pomerium and your TiddlyWiki Node.js application in Docker containers.
 
-In this guide, you'll configure Pomerium to forward a user's email address in an unsigned header to the upstream application, TiddlyWiki. You'll configure TiddlyWiki to expect a header in a request using the `authenticated-user-header` parameter. (See the [ListenCommand](https://tiddlywiki.com/static/ListenCommand.html) documentation for more information.)
+## How you will secure TiddlyWiki
 
-With this configuration, if an authorized user authenticates against Pomerium's hosted identity provider successfully, they won't have to enter their credentials again to access TiddlyWiki.
+Securing access to TiddlyWiki involves two steps:
 
-## Set up your environment
+- Configuring Pomerium to forward specific user session data in an unsigned header to TiddlyWiki
+- Configuring TiddlyWiki to accept a special request header for trusted authentication
+
+In this way, you can implement single sign-on (SSO) for your TiddlyWiki instance, which means an authorized user only needs to authenticate once to access the application.
+
+To configure TiddlyWiki, you'll set its [ListenCommand](https://tiddlywiki.com/static/ListenCommand.html) to use the `authenticated-user-header` parameter. You'll configure Pomerium to forward the user's `email` claim in an unsigned header to TiddlyWiki.
+
+### Before you start
 
 <Tabs>
+<TabItem label="Core" value="Core">
 
-<TabItem value="Core" label="Core">
+If you completed our [Quickstart guide](/docs/quickstart), you should have a working Pomerium project with the following YAML files:
 
-To complete this guide, you need:
+- `config.yaml`
+- `docker-compose.yaml`
 
-- [Docker](https://www.docker.com/)
-- [Docker Compose](https://docs.docker.com/compose/install/)
+If you haven't completed the Quickstart:
 
-Refer to the [quick-start] guide for more information on how to run Pomerium Core with Docker and Docker Compose.
+- Install [Docker](https://www.docker.com/) and [Docker Compose](https://docs.docker.com/compose/install/)
+- Create a `config.yaml` file for your Pomerium configuration
+- Create a `docker-compose.yaml` file for your Docker configuration
 
-### Configure Pomerium
+### Set up Pomerium
 
 Add the following code in your `config.yaml` file:
 
 ```yaml title="config.yaml"
-jwt_claims_headers: email
+authenticate_service_url: https://authenticate.pomerium.app
+
+jwt_claims_headers:
+  X-Pomerium-Claim-Email: email
+
 routes:
-  - from: https://wiki.example.local
+  - from: https://wiki.localhost.pomerium.io
     to: http://tiddlywiki:8080
+    pass_identity_headers: true
     policy:
       - allow:
-          or:
+          and:
             - email:
-                is: reader@example.com
-            - email:
-                is: writer@example.com
+                # Replace with your email address
+                is: user@example.com
 ```
 
-The [`jwt_claims_header`](/docs/reference/jwt-claim-headers) forwards the email associated with your IdP in the HTTP request header to TiddlyWiki.
+Let's review the configuration file:
 
-In the policy above, the emails specified (`reader@example.com` and `writer@example.com`) will be forwarded to TiddlyWiki.
+- The [`jwt_claims_headers`](/docs/reference/jwt-claim-headers) setting will forward the user's email address in an unsigned, HTTP request header. The header follows the custom format specified in the file (in this case, `X-Pomerium-Claim-Email`).
+- The [`pass_identity_headers`](/docs/reference/routes/pass-identity-headers-per-route) setting tells Pomerium to forward all identity headers to the upstream application
+- The attached policy authorizes users with a matching email address to access TiddlyWiki. Pomerium will forward these email addresses to TiddlyWiki as unsigned identity headers.
 
-### Configure Docker-Compose
+### Set up Docker Compose services
 
 Add the following code in your `docker-compose.yaml` file:
 
-<DockerCompose />
+```yaml title="docker-compose.yaml"
+version: "3"
+services:
+  pomerium:
+    image: cr.pomerium.com/pomerium/pomerium:latest
+    volumes:
+      - ./config.yaml:/pomerium/config.yaml:ro
+    ports:
+      - 443:443
 
-Here is what the code is doing:
+  tiddlywiki_init:
+    image: elasticdog/tiddlywiki:latest
+    volumes:
+      - ./wiki:/tiddlywiki
+    command: ['mywiki', '--init', 'server']
 
-- `mywiki --listen host=0.0.0.0` starts the TiddlyWiki server, and maps ports `0.0.0.0` and `8080`
-- `authenticated-user-header=x-pomerium-claim-email` enables Tiddlywiki to receive the user's email address from Pomerium
-- `readers` and `writers` authorizes users to read and/or write to the TiddlyWiki server
-- `username` and `password` specify which user can access TiddlyWiki in a session; excluding these variables will result in a `401` error
+  tiddlywiki:
+    image: elasticdog/tiddlywiki:latest
+    ports:
+      - 8080:8080
+    volumes:
+      - ./wiki:/tiddlywiki
+    command:
+      - mywiki
+      - --listen
+      - host=0.0.0.0
+      - authenticated-user-header=X-Pomerium-Claim-Email
+    depends_on:
+      - tiddlywiki_init
+```
 
-Run `docker-compose up`.
+Before you test your services, make sure the value of `authenticated-user-header` matches the value of the custom header defined in `config.yaml`.
+
+**Run Docker Compose:**
+
+```bash
+docker compose up
+```
 
 </TabItem>
-<TabItem value="Enterprise" label="Enterprise">
+<TabItem label="Enterprise" value="Enterprise">
 
-In your Console, create a policy:
+The Enterprise path to this guide requires a **Pomerium Enterprise** account and administrator access to an Enterprise Console instance.
 
-1. Enter a **Name** (e.g. 'Allow Authenticated Users')
-2. Select **Builder**, **ADD ALLOW BLOCK**
-3. Select **+** and add an **OR** operator
-4. Under the **Criteria** dropdown, select **Email**
-5. In the **Value** field, enter **reader@example.com**
-6. Select **+** and repeat step 5, but enter **writer@example.com** instead.
+It also assumes you are using [Docker](https://www.docker.com/) and [Docker Compose](https://docs.docker.com/compose/install/) to run your services.
+
+## Set up TiddlyWiki
+
+:::enterprise
+
+The Docker Compose example below contains the minimal configuration required to run TiddlyWiki. It does not include the configuration for Pomerium Enterprise.
+
+For an example Pomerium Enterprise configuration using Docker Compose, see the [**Enterprise Quickstart**](/docs/deploy/enterprise/quickstart) guide.
+
+:::
+
+In your `docker-compose.yaml` file, add the TiddlyWiki configuration:
+
+```yaml title="docker-compose.yaml"
+services:
+  tiddlywiki_init:
+    image: elasticdog/tiddlywiki:latest
+    volumes:
+      - ./wiki:/tiddlywiki
+    command: ['mywiki', '--init', 'server']
+
+  tiddlywiki:
+    image: elasticdog/tiddlywiki:latest
+    ports:
+      - 8080:8080
+    volumes:
+      - ./wiki:/tiddlywiki
+    command:
+      - mywiki
+      - --listen
+      - host=0.0.0.0
+      - authenticated-user-header=X-Pomerium-Claim-Email
+    depends_on:
+      - tiddlywiki_init
+```
+
+## Create a policy
+
+1. In the **Builder** tab, select **ADD ALLOW BLOCK**
+1. Select the **AND** operator
+1. Select **Email** as the criteria and **Is** as the operator
+1. Enter the email address you will authenticate with as the value
 
 Save your policy.
 
-![Build TiddlyWiki policy](img/tiddlywiki/tiddlywiki-policy-builder.png)
+![Building a policy for TiddlyWiki in the Enterprise  Console](./img/tiddlywiki/tiddlywiki-enterprise-policy.png)
 
-Create a route:
+## Create a route
 
-1. Enter a **Name** (e.g. 'TiddlyWiki')
-2. In the **From** field, enter the externally accessible URL (e.g. `https://wiki.localhost.pomerium.io`)
-3. In the **To** field, enter the host name (e.g. `http://tiddlywiki:8080`)
-4. Under **Policies**, select **Add Authenticated Users**
-5. Select **Pass Identity Headers**
+1. Add a new route and enter a **Name**
+1. In **From**, enter the externally accessible URL
+1. In **To**, enter the internally accessible URL
+1. Add the policy for this route (for example, `TiddlyWiki`)
+1. Enable **Pass Identity Headers**
 
 Save your route.
 
-![Create TiddlyWiki route](img/tiddlywiki/tiddlywiki-route.png)
+![Adding the TiddlyWiki route and attaching its policy in the Enterprise Console](./img/tiddlywiki/tiddlywiki-enterprise-route.png)
 
-Configure your settings to send JWT claims headers to the upstream application:
+## Set identity headers
 
-1. Under **Settings**, select **Proxy**
-2. In the **Header Key** field, enter **X-Pomerium-Claim**
-3. In the **JWT Claim** field, enter **Email**
+1. In the sidebar under **CONFIGURE**, select **Settings**
+1. Select the **Proxy** tab
+1. In **JWT Claim Headers**, enter the header and expected claim
 
 Save your settings.
 
-![Configure settings](img/tiddlywiki/tiddlywiki-settings.png)
+![Configuring JWT Claim Headers to forward the email claim as an identity header in the Enterprise Console](./img/tiddlywiki/enterprise-tiddlywiki-jwt-headers.png)
 
 </TabItem>
-
 </Tabs>
 
-### Test your routes
+## Test TiddlyWiki
 
-Navigate to your TiddlyWiki instance (e.g. `https://wiki.example.local`) and log in using the following usernames:
+In your browser, navigate to your TiddlyWiki instance. Pomerium will prompt you to authenticate against its hosted identity provider.
 
-- If you log in as `reader@example.com`, you can only read tiddlers
-- If you log in as `writer@example.com`, you can read and write tiddlers
-- If you log in as `user@example.com`, you will receive a 401 error
+After successful authentication, Pomerium will redirect you to your TiddlyWiki instance:
 
-[quick-start]: /docs/quickstart
+![Adding a note in the TiddlyWiki dashboard](./img/tiddlywiki/tiddlywiki-first-note.png)
+
+Great job! You successfully secured TiddlyWiki behind Pomerium.
