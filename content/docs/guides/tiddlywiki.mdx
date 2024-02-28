@@ -3,7 +3,7 @@ title: Securing TiddlyWiki on Node.js
 sidebar_label: TiddlyWiki
 lang: en-US
 keywords: [pomerium, identity access proxy, wiki, tiddlywiki]
-description: This guide covers how to add authentication and authorization to a hosted online instance of TiddlyWiki.
+description: This guide shows you how to configure an authorization policy and SSO to control access to an online instance of Tiddlywiki with Pomerium.
 ---
 
 import DockerCompose from '../../examples/tiddlywiki/docker-compose.yaml.md';
@@ -23,11 +23,11 @@ TiddlyWiki is a personal wiki and a non-linear notebook for organizing and shari
 
 You will use the Node.js application in this guide.
 
-## Authentication with Pomerium
+## Authentication flow
 
-TiddlyWiki allows you to authenticate users with the authenticated-user-header parameter of [listen command](https://tiddlywiki.com/static/ListenCommand.html). Pomerium provides the ability to login with well-known [identity providers](/docs/identity-providers#identity-provider-configuration) (IdP).
+In this guide, you'll configure Pomerium to forward a user's email address in an unsigned header to the upstream application, TiddlyWiki. You'll configure TiddlyWiki to expect a header in a request using the `authenticated-user-header` parameter. (See the [ListenCommand](https://tiddlywiki.com/static/ListenCommand.html) documentation for more information.)
 
-Pomerium can forward specific user session data to upstream applications. In the case of this guide, Pomerium will forward the email associated with your IdP to TiddlyWiki.
+With this configuration, if an authorized user authenticates against Pomerium's hosted identity provider successfully, they won't have to enter their credentials again to access TiddlyWiki.
 
 ## Set up your environment
 
