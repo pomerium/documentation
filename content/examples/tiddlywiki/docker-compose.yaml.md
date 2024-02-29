@@ -3,7 +3,7 @@ version: "3"
 
 services:
   pomerium:
-    image: pomerium/pomerium:latest
+    image: cr.pomerium.com/pomerium/pomerium:latest
     volumes:
       # Use a volume to store ACME certificates
       - ./config.yaml:/pomerium/config.yaml:ro
