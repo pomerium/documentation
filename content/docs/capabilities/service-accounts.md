@@ -62,7 +62,7 @@ Before you begin, confirm you are in the correct Namespace. You can only use a s
 
    ![An example policy for a service account in the policy builder](./img/service-accounts/create-policy-2.png)
 
-#### Service Account JWT authentication
+### Authenticate with the Service Account JWT
 
 Pomerium provides three methods to authenticate with a Service Account JWT:
 
