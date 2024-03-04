@@ -1,4 +1,5 @@
 ---
+#cSpell:ignore etag
 title: Service Accounts
 lang: en-US
 keywords:
@@ -18,7 +19,7 @@ Service accounts offer a protected and standardized method of authenticating mac
 
 :::enterprise
 
-Service Accounts are a Pomerium Enterprise feature. The steps below show you how to create and use a Service Account in the Enterprise Console. See our [Pomerium Enterprise](/docs/deploy/enterprise) page for more information. 
+Service Accounts are a Pomerium Enterprise feature. The steps below show you how to create and use a Service Account in the Enterprise Console. See our [Pomerium Enterprise](/docs/deploy/enterprise) page for more information.
 
 :::
 
@@ -40,16 +41,16 @@ Before you begin, confirm you are in the correct Namespace. You can only use a s
 
    :::info
 
-   Service accounts can be unique and exist only for Pomerium, or impersonate directory users from your identity provider. 
+   Service accounts can be unique and exist only for Pomerium, or impersonate directory users from your identity provider.
 
    See the following pages for more information:
 
    - [**Directory Sync**](/docs/capabilities/directory-sync)
-   - [**User Impersonation**](/docs/capabilities/impersonation) 
+   - [**User Impersonation**](/docs/capabilities/impersonation)
 
    :::
 
-### Save the service account JWT 
+### Save the service account JWT
 
 1. After you select **Submit**, the modal presents the JSON web token (**JWT**) to authenticate the service account. Save it somewhere secure, as you won't be able to view it again:
 
