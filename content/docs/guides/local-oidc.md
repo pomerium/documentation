@@ -17,7 +17,7 @@ You can use the same configuration examples below for other supported [identity 
 version: '3'
 services:
   pomerium:
-    image: pomerium/pomerium:latest
+    image: cr.pomerium.com/pomerium/pomerium:latest
     environment:
       # Generate new secret keys. e.g. `head -c32 /dev/urandom | base64`
       - COOKIE_SECRET=<redacted>
@@ -36,7 +36,7 @@ services:
       - identityprovider
 
   verify:
-    image: pomerium/verify
+    image: cr.pomerium.com/pomerium/verify:latest
     expose:
       - 8000
 
