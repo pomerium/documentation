@@ -110,13 +110,13 @@ Add the following configuration settings to `docker-compose.yaml`:
 version: '3'
 services:
   pomerium:
-    image: pomerium/pomerium:latest
+    image: cr.pomerium.com/pomerium/pomerium:latest
     volumes:
       - ./config.yaml:/pomerium/config.yaml:ro
     ports:
       - 443:443
   verify:
-    image: pomerium/verify:latest
+    image: cr.pomerium.com/pomerium/verify:latest
     expose:
       - 8000
 ```
@@ -184,13 +184,13 @@ Docker Compose:
 version: '3'
 services:
   pomerium:
-    image: pomerium/pomerium:latest
+    image: cr.pomerium.com/pomerium/pomerium:latest
     volumes:
       - ./config.yaml:/pomerium/config.yaml:ro
     ports:
       - 443:443
   verify:
-    image: pomerium/verify:latest
+    image: cr.pomerium.com/pomerium/verify:latest
     expose:
       - 8000
 ```

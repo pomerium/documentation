@@ -59,7 +59,7 @@ Mac and Linux users can use DNSMasq to map the `*.localhost.pomerium.io` domain 
        driver: 'bridge'
    services:
      pomerium:
-       image: pomerium/pomerium:latest
+       image: cr.pomerium.com/pomerium/pomerium:latest
        ports:
          - '443:443'
        volumes:
