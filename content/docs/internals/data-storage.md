@@ -86,7 +86,7 @@ name=value[&...]
 
 When using multiple hosts make sure to specify `target_session_attrs=read-write` so that the Databroker does not attempt to write to a read-only replica.
 
-:::note 
+:::note
 
 Configuration options for each backend are detailed in the [**databroker configuration reference**](/docs/reference/databroker) page.
 
