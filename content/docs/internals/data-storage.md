@@ -31,9 +31,17 @@ To prevent early session loss in production deployments, persistent storage back
 
 ## Backends
 
-Configuration options for each backend are detailed in [databroker configuration reference](/docs/reference/databroker).
+The **Databroker Service** stores user session data, and uses an in-memory databroker by default.
 
 Pomerium encrypts record values only for the Redis storage backend (not for the in-memory or Postgres storage backends). When using the Postgres backend we recommend that users configure their own encryption at rest, for example by using full-disk encryption on the volume where Postgres data is stored.
+
+:::tip
+
+You can create your own databroker by implementing Pomerium's [**databroker gRPC interface**](https://github.com/pomerium/pomerium/blob/main/pkg/grpc/databroker/databroker.proto). For an example implementation, see the in-memory database used by the databroker service:
+
+- [pkg/storage](https://github.com/pomerium/pomerium/tree/main/pkg/storage/inmemory)
+
+:::
 
 ### In-Memory
 
@@ -77,6 +85,12 @@ name=value[&...]
 ```
 
 When using multiple hosts make sure to specify `target_session_attrs=read-write` so that the Databroker does not attempt to write to a read-only replica.
+
+:::note
+
+Configuration options for each backend are detailed in the [**databroker configuration reference**](/docs/reference/databroker) page.
+
+:::
 
 ## Troubleshooting
 
