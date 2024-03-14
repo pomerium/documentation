@@ -61,6 +61,17 @@ const config = {
         },
       },
     ],
+    [
+      'redocusaurus',
+      {
+        specs: [
+          {
+            spec: 'https://console.pomerium.app/openapi.yaml',
+            route: '/docs/api'
+          }
+        ]
+      }
+    ]
   ],
 
   themeConfig: {
@@ -207,6 +218,7 @@ const config = {
         id: process.env.GTM,
       },
     ],
+    './docusaurus-plugins/src/webpackDebugFix.js',
   ],
 };
 
