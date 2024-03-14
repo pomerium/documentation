@@ -919,7 +919,7 @@
   "pass-identity-headers-per-route": {
     "id": "pass-identity-headers-per-route",
     "title": "Pass Identity Headers (per route)",
-    "description": "When set, Pass Identity Headers passes identity headers to the upstream application.",
+    "description": "If applied, passes X-Pomerium-Jwt-Assertion header and JWT Claims Headers to the upstream application.",
     "short_description": "Pass identity headers to the upstream application",
     "path": "/routes/pass-identity-headers-per-route",
     "services": ["proxy"],
@@ -947,6 +947,7 @@
     "title": "Path",
     "path": "/routes/path-matching#path",
     "services": ["proxy"],
+    "description": "Matches incoming requests with a path that is an exact match for the specified path.",
     "short_description": "Only match requests with an exact match for this path",
     "type": "string"
   },
@@ -979,6 +980,7 @@
     "title": "Prefix",
     "path": "/routes/path-matching#prefix",
     "services": ["proxy"],
+    "description": "Matches incoming requests with a path that begins with the specified prefix.",
     "short_description": "Only match requests with paths starting with this prefix",
     "type": "string"
   },
@@ -995,6 +997,7 @@
     "title": "Prefix Rewrite",
     "path": "/routes/path-rewriting#prefix-rewrite",
     "services": ["proxy"],
+    "description": "While forwarding a request, Prefix Rewrite swaps the matched prefix (or path) with the specified value.",
     "short_description": "Swaps the matched prefix with this value",
     "type": "string"
   },
@@ -1035,6 +1038,7 @@
     "title": "Regex",
     "path": "/routes/path-matching#regex",
     "services": ["proxy"],
+    "description": "Matches incoming requests with a path that matches the specified regular expression.",
     "type": "regular expression"
   },
   "regex-priority-order": {
@@ -1050,6 +1054,7 @@
     "title": "Regex Rewrite",
     "path": "/routes/path-rewriting#regex-rewrite",
     "services": ["proxy"],
+    "description": "Rewrites the URL path according to the regex rewrite pattern.",
     "short_description": "Rewrites the URL path according to this pattern",
     "type": "string"
   },
@@ -1057,6 +1062,7 @@
     "id": "regex-rewrite-substitution",
     "title": "Regex Rewrite Substitution",
     "path": "/routes/path-rewriting#regex-rewrite",
+    "description": "Rewrites the URL path according to the regex rewrite substitution.",
     "short_description": "Paths matching the regex-rewrite pattern will be replaced with this value",
     "enterpriseOnly": true
   },
@@ -1111,7 +1117,7 @@
   "show-error-details": {
     "id": "show-error-details",
     "title": "Show Error Details",
-    "description": "If set, will show error details including policies explanations and remediation on the 403 unauthorized page.",
+    "description": "If applied, shows error details, including policy explanation and remediation for 403 Forbidden responses.",
     "path": "/routes/show-error-details",
     "services": [],
     "type": "bool"
@@ -1174,6 +1180,7 @@
     "id": "tls-downstream-server-name",
     "title": "TLS Downstream Server Name",
     "path": "/routes/tls#tls-downstream-server-name",
+    "description": "This server name overrides the Hostname in the 'From:' field, and serves as the Server Name Indication when establishing a TLS connection with Pomerium.",
     "services": [],
     "type": "string"
   },
