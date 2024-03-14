@@ -67,7 +67,7 @@ const config = {
         specs: [
           {
             spec: 'https://console.pomerium.app/openapi.yaml',
-            route: '/docs/api'
+            route: '/docs/api/'
           }
         ]
       }
@@ -106,6 +106,23 @@ const config = {
           position: 'right',
           label: 'Reference',
           to: '/docs/reference/',
+        },
+        {
+          type: 'dropdown',
+          position: 'right',
+          label: 'APIs',
+          items: [
+            {
+              docId: 'docs/api',
+              label: 'Zero API',
+              to: '/docs/api/',
+            },
+            {
+              docId: 'docs/capabilities/enterprise-api',
+              label: 'Enterprise API',
+              to: 'docs/capabilities/enterprise-api',
+            }
+          ]
         },
         {
           type: 'docSidebar',
