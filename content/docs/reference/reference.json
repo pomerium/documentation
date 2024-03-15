@@ -666,7 +666,7 @@
     "id": "set-response-headers",
     "title": "Set Response Headers",
     "path": "/set-response-headers",
-    "description": "Set static HTTP Response Header values for all managed routes",
+    "description": "Sets static HTTP Response Header values for all managed routes",
     "services": [],
     "type": "map of strings key value pairs"
   },
@@ -674,7 +674,7 @@
     "id": "set-response-headers-route",
     "title": "Set Response Headers (Per Route)",
     "path": "/routes/headers#set-response-headers",
-    "description": "Set static HTTP Response Header values for a route",
+    "description": "Sets static response header values for a route. These headers take precedence over globally set response headers.",
     "services": [],
     "type": "map of strings key value pairs"
   },
@@ -827,7 +827,7 @@
     "services": ["proxy"],
     "short_description": "The externally accessible URL for the proxied request",
     "type": "URL",
-    "description": "URL (must contain a scheme and hostname, must not contain a path)"
+    "description": "The external URL for a proxied request. Must contain a scheme and Hostname, must not contain a path."
   },
   "health-checks": {
     "id": "health-checks",
@@ -844,8 +844,25 @@
   "host-rewrite": {
     "id": "host-rewrite",
     "title": "Host Rewrite",
-    "path": "/routes/headers#host-rewrite",
+    "path": "/routes/headers#2-host-rewrite",
     "services": ["proxy"],
+    "description": "Rewrites the Host header to a new literal value.",
+    "type": "string"
+  },
+  "host-rewrite-header": {
+    "id": "host-rewrite-header",
+    "title": "Host Rewrite Header",
+    "path": "/routes/headers#3-host-rewrite-header",
+    "services": ["proxy"],
+    "description": "Rewrites the Host header to match an incoming header value.",
+    "type": "string"
+  },
+  "host-path-rewrite-header": {
+    "id": "host-path-rewrite-header",
+    "title": "Host Path Rewrite Header",
+    "path": "/routes/headers#4-host-path-regex-rewrite-patternsubstitution",
+    "services": ["proxy"],
+    "description": "Rewrites the Host header according to a regular expression matching the path.",
     "type": "string"
   },
   "timeouts": {
@@ -858,6 +875,7 @@
     "title": "Idle Timeout",
     "path": "/routes/timeouts#idle-timeout",
     "services": ["proxy"],
+    "description": "Sets the time to terminate the upstream connection if there are no active streams. Defaults to 5min.",
     "type": "duration"
   },
   "identity-provider-client-id-per-route": {
@@ -1031,6 +1049,7 @@
     "title": "Redirect",
     "path": "/routes/redirect",
     "services": ["proxy"],
+    "description": "Redirects incoming requests to a new URL.",
     "type": "object"
   },
   "regex": {
@@ -1070,6 +1089,7 @@
     "id": "remove-request-headers",
     "title": "Remove Request Headers",
     "path": "/routes/headers#remove-request-headers",
+    "description": "Removes given request headers so they do not reach the upstream server.",
     "services": ["proxy"],
     "type": "array of strings"
   },
@@ -1077,6 +1097,7 @@
     "id": "rewrite-response-headers",
     "title": "Rewrite Response Headers",
     "path": "/routes/headers#rewrite-response-headers",
+    "description": "Modifies response headers before they are returned to the client. 'Header' matches the HTTP header name; 'prefix' will be replaced with 'value'.",
     "services": ["proxy"],
     "type": "object"
   },
@@ -1085,6 +1106,7 @@
     "title": "Route Timeout",
     "path": "/routes/timeouts#route-timeout",
     "services": ["proxy"],
+    "description": "Sets the per-route timeout value. Cannot exceed global timeout values. Defaults to 30s.",
     "type": "duration"
   },
   "secondary-color": {
@@ -1111,7 +1133,7 @@
     "path": "/routes/headers#set-request-headers",
     "services": ["proxy"],
     "type": "map of strings key value pairs",
-    "description": "Map of key value pairs. Use ${pomerium.id_token} or ${pomerium.access_token} within a value to substitute the corresponding token.",
+    "description": "Sets static and dynamic values for given request headers. Available substitutions: ${pomerium.id_token}, ${pomerium.access_token}, ${pomerium.client_cert_fingerprint}.",
     "short_description": "Value should be a string. Available substitutions: ${pomerium.id_token}, ${pomerium.access_token}, ${pomerium.client_cert_fingerprint}."
   },
   "show-error-details": {
@@ -1140,6 +1162,7 @@
     "id": "tls-client-certificate",
     "title": "TLS Client Certificate",
     "path": "/routes/tls#tls-client-certificate",
+    "description": "Pomerium presents this client certificate to upstream services when requested to enforce mTLS.",
     "services": ["proxy"],
     "type": "string"
   },
@@ -1147,6 +1170,7 @@
     "id": "tls-custom-certificate-authority",
     "title": "TLS Custom Certificate Authority",
     "path": "/routes/tls#tls-custom-certificate-authority",
+    "description": "Defines a set of root certificate authorities that Pomerium uses when verifying upstream server certificates.",
     "services": ["proxy"]
   },
   "tls-downstream-client-certificate-authority": {
@@ -1159,6 +1183,7 @@
     "id": "tls-skip-verification",
     "title": "TLS Skip Verification",
     "path": "/routes/tls#tls-skip-verification",
+    "description": "If applied, Pomerium accepts any certificate presented by the upstream server and any Hostname in that certificate. Use for testing only.",
     "services": ["proxy"],
     "type": "bool"
   },
@@ -1167,12 +1192,14 @@
     "title": "TLS Upstream Allow Renegotiation",
     "path": "/routes/tls#tls-upstream-allow-renegotiation",
     "services": ["proxy"],
+    "description": "If applied, this setting allows server-initiated TLS renegotiation for upstream servers.",
     "type": "bool"
   },
   "tls-upstream-server-name": {
     "id": "tls-upstream-server-name",
     "title": "TLS Upstream Server Name",
     "path": "/routes/tls#tls-upstream-server-name",
+    "description": "This server name overrides the Hostname in the 'To:' field, and will be used to verify the certificate name.",
     "services": [],
     "type": "string"
   },
@@ -1189,7 +1216,7 @@
     "title": "To",
     "path": "/routes/to",
     "services": ["proxy"],
-    "description": "The destination(s) of a proxied request",
+    "description": "The destination(s) of a proxied request. Must contain a scheme and Hostname, with an optional weight.",
     "type": "URL(s)",
     "short_description": "URL(s) must contain a scheme and hostname, with an optional weight"
   },
@@ -1198,6 +1225,7 @@
     "title": "SPDY",
     "path": "/routes/timeouts#spdy",
     "services": ["proxy"],
+    "description": "If applied, this setting enables Pomerium to proxy SPDY protocol upgrades.",
     "type": "bool"
   },
   "websocket-connections": {
@@ -1205,6 +1233,7 @@
     "title": "Websocket Connections",
     "path": "/routes/timeouts#websocket-connections",
     "services": ["proxy"],
+    "description": "If applied, this setting enables Pomerium to proxy websocket connections.",
     "type": "bool"
   },
   "google-cloud-serverless-authentication-service-account": {
