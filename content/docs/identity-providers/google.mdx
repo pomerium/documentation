@@ -67,7 +67,7 @@ Click **Create** once complete.
 
 Edit `config.yaml` or set your [environment variables] to connect Pomerium to Google:
 
-<Tabs queryString="configuration-settings">
+<Tabs>
 <TabItem value="config-file-keys" label="config.yaml">
 
 ```yaml title=/etc/pomerium/config.yaml
@@ -90,38 +90,40 @@ IDP_CLIENT_SECRET="xxxxxx"
 
 ## Getting Groups
 
-<Tabs queryString="get-groups">
-<TabItem value="custom-claim" label="Custom Claim (Open Source)">
+### Custom claims
 
-Unfortunately, Google does not yet support getting groups data using a custom claim. Groups must be loaded by using a plugin to fetch directory information (see Enterprise's Directory Sync).
+Unfortunately, Google doesn't support getting groups data with a custom claim. To get and use groups data from your Google directory, you must conduct a directory sync in the Enterprise Console.
 
-</TabItem>
+:::enterprise
 
-<TabItem value="directory-sync" label="Directory Sync (Enterprise)">
+See the [**Directory Sync**](/docs/capabilities/directory-sync) page for more information about syncing directory data in the Enterprise Console.
 
-## Setting Up Directory Sync
+Or, [contact sales](https://www.pomerium.com/enterprise-sales/) if you want to learn more about Pomerium Enterprise.
+
+:::
+
+## Set Up Directory Sync
 
 ### Create a service account
 
-In order for Pomerium to validate group membership, we'll also need to configure a [service account](https://console.cloud.google.com/iam-admin/serviceaccounts) with [G-suite domain-wide delegation](https://developers.google.com/admin-sdk/directory/v1/guides/delegation) enabled.
+In order for Pomerium to validate group membership, you must configure a [service account](https://console.cloud.google.com/iam-admin/serviceaccounts) with [G-suite domain-wide delegation](https://developers.google.com/admin-sdk/directory/v1/guides/delegation) enabled:
 
-1. Open the [**Service accounts** page](https://console.developers.google.com/iam-admin/serviceaccounts). If prompted, select a project.
+  1. Open the [**Service accounts** page](https://console.developers.google.com/iam-admin/serviceaccounts). If prompted, select a project.
 
-1. Click **+ Create Service Account**, enter a name and description for the service account. You can use the default service account ID, or choose a different, unique one. When done click **Create and continue**.
+  1. Click **+ Create Service Account**, enter a name and description for the service account. You can use the default service account ID, or choose a different, unique one. When done click **Create and continue**.
 
-1. The next sections, labeled **Grant this service account access to project** and **Grant users access to this service account**, are not required. Click **Continue** to both, and then **Create**.
+  1. The next sections, labeled **Grant this service account access to project** and **Grant users access to this service account**, are not required. Click **Continue** to both, and then **Create**.
 
-1. Select your new service account, and click on the **KEYS** tab. Select **Add key**, then **Create new key**:
+  1. Select your new service account, and click on the **KEYS** tab. Select **Add key**, then **Create new key**. In the side panel, select the **JSON** format for your key:
+    ![Creating a new key for a Google service account](./img/google/google-service-account-create-key.png)
 
-![Creating a new key for a Google service account](./img/google/google-service-account-create-key.png)
+  1. Click **Create**. Your new public/private key pair is generated and downloaded to your machine; it serves as the only copy of this key. For information on how to store it securely, see [Managing service account keys](https://cloud.google.com/iam/docs/understanding-service-accounts#managing_service_account_keys).
 
-In the side panel that appears, select the format for your key: **JSON**.
+  1. Click **Close** on the **Private key saved to your computer** dialog, then click **←** to return to the table of your service accounts.
 
-1. Click **Create**. Your new public/private key pair is generated and downloaded to your machine; it serves as the only copy of this key. For information on how to store it securely, see [Managing service account keys](https://cloud.google.com/iam/docs/understanding-service-accounts#managing_service_account_keys).
+### Enable domain-wide delegation
 
-1. Click **Close** on the **Private key saved to your computer** dialog, then click **←** to return to the table of your service accounts.
-
-Next, we need to enable enable G Suite domain-wide delegation:
+Next, we need to enable **domain-wide delegation**:
 
 1. Locate the newly-created service account in the table. Under **Actions**, click **Manage Details**.
 
@@ -139,7 +141,7 @@ Next, we need to enable enable G Suite domain-wide delegation:
 
 ### Set directory permissions for Workspaces
 
-Next, we need to give that service account permissions on the GSuite / Workspace side of the house.
+Next, we need to give that service account permissions on the G Suite / Workspace side of the house.
 
 1. From your Google Workspace domain's [Admin console](http://admin.google.com/) Main menu, go to **Security** > **Access and data control** > **API controls**.
 
@@ -149,12 +151,10 @@ Next, we need to give that service account permissions on the GSuite / Workspace
 
 1. In the **Client ID** field, enter the client ID obtained from the service account creation steps above.
 
-1. In the **OAuth Scopes** field, enter a comma-delimited list of the scopes required for your application (for a list of possible scopes, see [Authorize requests](https://developers.google.com/admin-sdk/directory/v1/guides/authorizing)).
+1. In the **OAuth Scopes** field, enter a comma-delimited list of the scopes required for your application (for a list of possible scopes, see [Authorize requests](https://developers.google.com/admin-sdk/directory/v1/guides/authorizing)). At a minimum, include the following scopes:
 
-Include at a minimum the following list of scopes:
-
-- `https://www.googleapis.com/auth/admin.directory.group.readonly`
-- `https://www.googleapis.com/auth/admin.directory.user.readonly`
+    - `https://www.googleapis.com/auth/admin.directory.group.readonly`
+    - `https://www.googleapis.com/auth/admin.directory.user.readonly`
 
 1. Click the **Authorize** button.
 
@@ -165,9 +165,6 @@ Include at a minimum the following list of scopes:
 Under **Settings → Identity Providers**, select "Google" as the identity provider and set the Impersonate User and JSON file.
 
 ![Google Settings](./img/google/google-idp.png)
-
-</TabItem>
-</Tabs>
 
 [client id]: /docs/reference/identity-provider-settings#identity-provider-client-id
 [client secret]: /docs/reference/identity-provider-settings#identity-provider-client-secret
