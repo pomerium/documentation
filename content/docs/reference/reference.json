@@ -833,6 +833,7 @@
     "id": "health-checks",
     "title": "Health Checks",
     "path": "/routes/load-balancing#health-checks",
+    "description": "Issues periodic health check requests to upstream servers. Unhealthy servers won't serve traffic.",
     "services": ["proxy"],
     "type": "array of objects"
   },
@@ -909,6 +910,7 @@
     "id": "load-balancing-policy",
     "title": "Load Balancing Policy",
     "path": "/routes/load-balancing#load-balancing-policy",
+    "description": "Defines the Load Balancing strategy for multiple upstream servers.",
     "services": ["proxy"],
     "type": "enum"
   },
@@ -1051,6 +1053,62 @@
     "services": ["proxy"],
     "description": "Redirects incoming requests to a new URL.",
     "type": "object"
+  },
+  "https-redirect": {
+    "id": "https-redirect",
+    "title": "HTTPS Redirect",
+    "path": "/routes/redirect#redirect-options",
+    "type": "Boolean",
+    "description": "Swaps the incoming Scheme with 'https'."
+  },
+  "scheme-redirect": {
+    "id": "scheme-redirect",
+    "title": "Scheme Redirect",
+    "path": "/routes/redirect#redirect-options",
+    "type": "String",
+    "description": "Swaps the incoming Scheme with the specified value."
+  },
+  "host-redirect": {
+    "id": "host-redirect",
+    "title": "Host Redirect",
+    "path": "/routes/redirect#redirect-options",
+    "type": "String",
+    "description": "Swaps the incoming Host with the specified value."
+  },
+  "port-redirect": {
+    "id": "port-redirect",
+    "title": "Port Redirect",
+    "path": "/routes/redirect#redirect-options",
+    "type": "Integer",
+    "description": "Swaps the incoming Port with the specified value. Type: Integer."
+  },
+  "path-redirect": {
+    "id": "path-redirect",
+    "title": "Path Redirect",
+    "path": "/routes/redirect#redirect-options",
+    "type": "String",
+    "description": "Swaps the incoming Path portion of the URL with the specified value."
+  },
+  "prefix-rewrite-redirect": {
+    "id": "path-rewrite-redirect",
+    "title": "Prefix Rewrite Redirect",
+    "path": "/routes/redirect#redirect-options",
+    "type": "String",
+    "description": "Swaps the incoming Matched Prefix with the specified value."
+  },
+  "response-code": {
+    "id": "response-code",
+    "title": "Response Code",
+    "path": "/routes/redirect#redirect-options",
+    "type": "String",
+    "description": "Sets the Response Code to use for the redirect. Defaults to 301. Type: Integer."
+  },
+  "strip-query": {
+    "id": "strip-query",
+    "title": "Strip Query",
+    "path": "/routes/redirect#redirect-options",
+    "type": "Boolean",
+    "description": "Indicates that during redirection, the Query portion of the URL will be removed. Defaults to false."
   },
   "regex": {
     "id": "regex",
