@@ -16,19 +16,53 @@ import TabItem from '@theme/TabItem';
 
 ## Summary
 
-TODO
+**Direct Response** instructs Pomerium to send a static HTTP response to the downstream client for a managed route.
 
 ## How to configure
 
 <Tabs>
 <TabItem value="Core" label="Core">
 
-TODO
+| **Config file keys** | **Type** | **Usage**    |
+| :------------------- | :------- | :----------- |
+| `response`          | `object`   | **optional** |
+| `status` | `integer` | **optional** |
+| `body` | `string` | **optional** |
+
+### Example
+
+The `response` configuration key must replace the `to:` destination URL in a route block:
+
+```yaml
+routes:
+ - from: https://example.com
+   response:
+    status: 200
+    body: "plain text"
+```
+
+Additional HTTP response headers, such as **Content-Type**, can be defined with the [`set_response_headers`](/docs/reference/routes/headers#set-response-headers) setting:
+
+```yaml
+routes:
+ - from: https://example.com
+   response:
+    status: 200
+    body: "text"
+  set_response_headers:
+   Content-Type: "text/plain; charset=us-ascii"
+```
 
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
 
-TODO
+Configure **Direct Response** in the Enterprise Console:
+
+![Configure Direct Response in the Enterprise Console](../img/routes/direct-response/enterprise-direct-response.png)
+
+Additional HTTP response headers, such as **Content-Type**, can be defined with the [`set_response_headers`](/docs/reference/routes/headers#set-response-headers) setting.
+
+![Define additional HTTP response headers as a direct response in the Enterprise Console](../img/routes/direct-response/enterprise-direct-response-content-type.png)
 
 </TabItem>
 <TabItem value="Kubernetes" label="Kubernetes">
