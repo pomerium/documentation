@@ -88,6 +88,15 @@ When defined, **Health Checks** will issue periodic health check requests to ups
 
 See Envoy's [`outlier_detection`](https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/upstream/outlier) for automatic upstream server health detection. In the presence of multiple upstream servers, it is recommended to set up either `health_checks`, `outlier_detection`, or both.
 
+### Supported health checks parameters
+
+| **Config file keys** | **Definition** | **Type** | **Usage** |
+| :--- | :--- | :--- | :--- |
+| `timeout` | The total time to wait for a health check response. | [`Duration`](https://developers.google.com/protocol-buffers/docs/reference/google.protobuf#duration) | **required** |
+| `interval` | The interval between health checks. | [`Duration`](https://developers.google.com/protocol-buffers/docs/reference/google.protobuf#duration) | **required** |
+| `unhealthy_threshold` | The number of unhealthy health checks required before a host is marked unhealthy. | [`UInt32Value`](https://developers.google.com/protocol-buffers/docs/reference/google.protobuf#uint32value) | **required** |
+| `healthy_threshold` | The number of healthy health checks required before a host is marked healthy. | [`UInt32Value`](https://developers.google.com/protocol-buffers/docs/reference/google.protobuf#uint32value) | **required** |
+
 See the [Envoy documentation](https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/upstream/health_checking) for a list of [supported parameters](https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/core/v3/health_check.proto#envoy-v3-api-msg-config-core-v3-healthcheck).
 
 ### How to configure {#how-to-configure-health-checks}
@@ -114,7 +123,7 @@ See the [Envoy HTTP health checks documentation](https://www.envoyproxy.io/docs/
 | **Config file keys** | **Definition** | **Type** | **Usage** |
 | :--- | :--- | :--- | :--- |
 | `send` | Defines the payload, which must be one of [text](https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/core/v3/health_check.proto#envoy-v3-api-field-config-core-v3-healthcheck-payload-text) or [binary](https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/core/v3/health_check.proto#envoy-v3-api-field-config-core-v3-healthcheck-payload-binary). An empty payload results in a connect-only health check. | [`Payload`](https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/core/v3/health_check.proto#envoy-v3-api-msg-config-core-v3-healthcheck-payload) | **optional** |
-| `receive` | When checking a response, approximate string matching ("fuzzy" matching) is performed to the extent that each payload block must be found, and in the specified order, but not necessarily contiguous. | [`Payload`](https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/core/v3/health_check.proto#envoy-v3-api-msg-config-core-v3-healthcheck-payload) | **optional** |
+| `receive` | Checks a response with 'fuzzy' matching to the extent that each payload block must be found, and in the specified order, but not necessarily contiguous. | [`Payload`](https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/core/v3/health_check.proto#envoy-v3-api-msg-config-core-v3-healthcheck-payload) | **optional** |
 
 See the [Envoy TCP health checks documentation](https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/core/v3/health_check.proto#config-core-v3-healthcheck-tcphealthcheck) for more information.
 
