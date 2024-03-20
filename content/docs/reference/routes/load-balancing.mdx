@@ -13,11 +13,6 @@ import TabItem from '@theme/TabItem';
 
 # Load Balancing Settings
 
-This reference covers all of Pomerium's **Load Balancing Settings**:
-
-- [Load Balancing Policy](#load-balancing-policy)
-- [Health Checks](#health-checks)
-
 ## Load Balancing Policy {#load-balancing-policy}
 
 **Load Balancing Policy** defines the load balancing strategy between multiple upstream servers.
@@ -97,9 +92,40 @@ See the [Envoy documentation](https://www.envoyproxy.io/docs/envoy/latest/intro/
 
 ### How to configure {#how-to-configure-health-checks}
 
-Only one of [`http_health_check`](https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/core/v3/health_check.proto#envoy-v3-api-msg-config-core-v3-healthcheck-httphealthcheck), [`tcp_health_check`](https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/core/v3/health_check.proto#envoy-v3-api-msg-config-core-v3-healthcheck-tcphealthcheck), or [`grpc_health_check`](https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/core/v3/health_check.proto#envoy-v3-api-msg-config-core-v3-healthcheck-grpchealthcheck) may be configured per `health_check` object definition.
+You may configure only one of the following options per `health_check` object definition:
 
-See [Load Balancing](/docs/capabilities/load-balancing.md) for example [configurations](/docs/capabilities/load-balancing.md#active-health-checks).
+- `http_health_check`
+- `tcp_health_check`
+- `grpc_health_check`
+
+#### HTTP health check {#http-healthcheck-overview}
+
+| **Config file keys** | **Definition** | **Type** | **Usage** |
+| :--- | :--- | :--- | :--- |
+| `host` | The Host header value in the HTTP health check request. If empty (default value), the name of the cluster this health check is associated with will be used. | `string` | **optional** |
+| `path` | Specifies the HTTP path requested during a health check. For example, `/healthcheck`. | `string` | **required** |
+| `expected_statuses` | Defines a range of HTTP response statuses that are considered healthy. | [`Int64Range`](https://www.envoyproxy.io/docs/envoy/latest/api-v3/type/v3/range.proto#envoy-v3-api-msg-type-v3-int64range) | **optional** |
+| `codec_client_type` | Specifies which application protocol to use: `HTTP1` or `HTTP2`. | [`CodeClientType`](https://www.envoyproxy.io/docs/envoy/latest/api-v3/type/v3/http.proto#envoy-v3-api-enum-type-v3-codecclienttype) | **optional** |
+
+See the [Envoy HTTP health checks documentation](https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/core/v3/health_check.proto#envoy-v3-api-msg-config-core-v3-healthcheck-httphealthcheck) for more information.
+
+#### TCP health check {#tcp-healthcheck-overview}
+
+| **Config file keys** | **Definition** | **Type** | **Usage** |
+| :--- | :--- | :--- | :--- |
+| `send` | Defines the payload, which must be one of [text](https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/core/v3/health_check.proto#envoy-v3-api-field-config-core-v3-healthcheck-payload-text) or [binary](https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/core/v3/health_check.proto#envoy-v3-api-field-config-core-v3-healthcheck-payload-binary). An empty payload results in a connect-only health check. | [`Payload`](https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/core/v3/health_check.proto#envoy-v3-api-msg-config-core-v3-healthcheck-payload) | **optional** |
+| `receive` | When checking a response, approximate string matching ("fuzzy" matching) is performed to the extent that each payload block must be found, and in the specified order, but not necessarily contiguous. | [`Payload`](https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/core/v3/health_check.proto#envoy-v3-api-msg-config-core-v3-healthcheck-payload) | **optional** |
+
+See the [Envoy TCP health checks documentation](https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/core/v3/health_check.proto#config-core-v3-healthcheck-tcphealthcheck) for more information.
+
+#### gRPC health check {#grpc-healthcheck-overview}
+
+| **Config file keys** | **Definition** | **Type** | **Usage** |
+| :--- | :--- | :--- | :--- |
+| `authority` | The `:authority` header value in a gRPC health check request. | `string` | **optional** |
+| `service_name` | A service name parameter sent to the gRPC service. See [gRPC health checking](https://github.com/grpc/grpc/blob/master/doc/health-checking.md) for more information.| `string` | **optional** |
+
+See the [Envoy gRPC health checks documentation](https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/core/v3/health_check.proto#config-core-v3-healthcheck-grpchealthcheck) for more information.
 
 <Tabs>
 <TabItem value="Core" label="Core">
@@ -107,6 +133,8 @@ See [Load Balancing](/docs/capabilities/load-balancing.md) for example [configur
 | **Config file keys** | **Type**           | **Usage**    |
 | :------------------- | :----------------- | :----------- |
 | `health_checks`      | `array of objects` | **optional** |
+
+See [Load Balancing](/docs/capabilities/load-balancing.md) for example [configurations](/docs/capabilities/load-balancing.md#active-health-checks).
 
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
