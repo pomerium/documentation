@@ -28,7 +28,9 @@ In the presence of multiple upstream servers, make sure to specify either an act
 
 ## Active Health Checks
 
-Active health checks issue periodic requests to each upstream to determine its health. See [Health Checking](https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/upstream/health_checking) for a comprehensive overview.
+Active health checks issue periodic requests to each upstream to determine its health. See the [Envoy Health Checking documentation](https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/upstream/health_checking) for a comprehensive overview.
+
+For example configurations in Pomerium, see the [Load Balancing](/docs/reference/routes/load-balancing#health-checks) reference page.
 
 ## Passive Health Checks
 
