@@ -30,43 +30,6 @@ In the presence of multiple upstream servers, make sure to specify either an act
 
 Active health checks issue periodic requests to each upstream to determine its health. See [Health Checking](https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/upstream/health_checking) for a comprehensive overview.
 
-### HTTP Example
-
-```yaml
-routes:
-  - from: https://myapp.localhost.pomerium.io
-    to:
-      - http://myapp-srv-1:8080
-      - http://myapp-srv-2:8080
-    health_checks:
-      - timeout: 10s
-        interval: 60s
-        healthy_threshold: 1
-        unhealthy_threshold: 2
-        http_health_check:
-          path: '/'
-```
-
-### TCP Example
-
-```yaml
-routes:
-  - from: tcp+https://tcp-service.localhost.pomerium.io
-    to:
-      - tcp://tcp-1.local
-      - tcp://tcp-2.local
-    health_checks:
-      - timeout: 1s
-        interval: 5s
-        unhealthy_threshold: 3
-        healthy_threshold: 1
-        tcp_health_check:
-          send:
-            text: '50494E47' #PING
-          receive:
-            text: '504F4E47' #PONG
-```
-
 ## Passive Health Checks
 
 Passive health check tries to deduce upstream server health based on recent observed responses. See [Outlier Detection](https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/upstream/outlier) for comprehensive overview.

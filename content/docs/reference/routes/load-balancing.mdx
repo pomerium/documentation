@@ -143,7 +143,42 @@ See the [Envoy gRPC health checks documentation](https://www.envoyproxy.io/docs/
 | :------------------- | :----------------- | :----------- |
 | `health_checks`      | `array of objects` | **optional** |
 
-See [Load Balancing](/docs/capabilities/load-balancing.md) for example [configurations](/docs/capabilities/load-balancing.md#active-health-checks).
+### HTTP example configuration
+
+```yaml
+routes:
+  - from: https://myapp.localhost.pomerium.io
+    to:
+      - http://myapp-srv-1:8080
+      - http://myapp-srv-2:8080
+    health_checks:
+      - timeout: 10s
+        interval: 60s
+        healthy_threshold: 1
+        unhealthy_threshold: 2
+        http_health_check:
+          path: '/'
+```
+
+### TCP example configuration
+
+```yaml
+routes:
+  - from: tcp+https://tcp-service.localhost.pomerium.io
+    to:
+      - tcp://tcp-1.local
+      - tcp://tcp-2.local
+    health_checks:
+      - timeout: 1s
+        interval: 5s
+        unhealthy_threshold: 3
+        healthy_threshold: 1
+        tcp_health_check:
+          send:
+            text: '50494E47' #PING
+          receive:
+            text: '504F4E47' #PONG
+```
 
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
