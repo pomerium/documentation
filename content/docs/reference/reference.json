@@ -779,6 +779,7 @@
     "title": "Allow Any Authenticated User",
     "path": "/routes/allow-any-authenticated-user",
     "services": ["proxy"],
+    "description": "Allows all requests for any authenticated user or service account. Use with caution.",
     "type": "bool"
   },
   "cluster-name": {
@@ -792,6 +793,7 @@
     "id": "cors-preflight",
     "title": "CORS Preflight",
     "path": "/routes/cors-preflight",
+    "description": "Allows unauthenticated HTTP OPTIONS requests.",
     "services": ["proxy"],
     "type": "bool"
   },
@@ -979,29 +981,36 @@
     "short_description": "Only match requests with an exact match for this path",
     "type": "string"
   },
+  "policy-enforcement": {
+    "id": "policy-enforcement",
+    "title": "Policy Enforcement",
+    "description": "Determines if a policy applies to all routes or can be applied optionally to a given route."
+  },
+  "policy-description": {
+    "id": "policy-description",
+    "title": "Policy Description",
+    "description": "Adds an optional description for this policy."
+  },
   "policy-inheritance": {
     "id": "policy-inheritance",
     "title": "Enforcement",
     "path": "/../capabilities/namespacing#hierarchical-policy-enforcement",
     "services": [],
-    "type": "string",
-    "enterpriseOnly": "true"
+    "type": "string"
   },
   "policy-explanation": {
     "id": "policy-explanation",
     "title": "Explanation",
-    "description": "Adds an explanation to the user when they hit a 403 Unauthorized Endpoint that has this policy.",
+    "description": "Adds the explanation presented to an unauthorized user when they access a route with this policy. Optional.",
     "services": [],
-    "type": "string",
-    "enterpriseOnly": "true"
+    "type": "string"
   },
   "policy-remediation": {
-    "description": "Adds an optional next steps section to cover how the user can self-remediate their state.",
+    "description": "Adds the message, warning, or instructions presented to an unauthorized user to help them self-remediate. Optional.",
     "id": "policy-remediation",
     "title": "Remediation",
     "services": [],
-    "type": "string",
-    "enterpriseOnly": "true"
+    "type": "string"
   },
   "prefix": {
     "id": "prefix",
@@ -1052,6 +1061,7 @@
     "title": "Public Access",
     "path": "/routes/public-access",
     "services": ["proxy"],
+    "description": "Instructs Pomerium to grant unauthorized and unauthenticated access to all requests to the upstream service. Should be applied only to public web services. If applied, no other policy should be provided for this route.",
     "type": "bool"
   },
   "redirect": {
