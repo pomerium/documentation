@@ -22,74 +22,85 @@ keywords:
   ]
 ---
 
-import ConfigDocker from '@site/content/examples/config/config.docker.yaml.md';
-import DockerCompose from '@site/content/examples/docker/basic.docker-compose.yml.md';
+# Pomerium Zero Quickstart
 
-# Run Pomerium Core With Docker
+In this Quickstart, you'll install and run Pomerium Zero in a Docker container. By the end, you'll have a **personal account** and cluster where you can configure routes and policies to your own apps and services.
 
-Run Pomerium Core with Docker containers in **under 5 minutes**.
+## Before you start:
 
-The Core quickstart uses Pomerium's [**Hosted Authenticate Service**](/docs/capabilities/hosted-authenticate-service), but you can also configure a [**self-hosted authenticate service**](/docs/capabilities/self-hosted-authenticate-service) to integrate with Pomerium.
+- Install [Docker](https://docs.docker.com/install/) and [Docker Compose](https://docs.docker.com/compose/install/)
+- Create a [**free Pomerium Zero account**](https://console.pomerium.app/create-account)
 
-## Prerequisites
+## Get Pomerium Zero configuration
 
-[Docker] and [Docker Compose]
+In the onboarding console, select the **Docker** tab and copy the Docker Compose configuration.
 
-## Configure Pomerium
+Paste the configuration in a `docker-compose.yaml` file:
 
-Create a `config.yaml` file in the root of your project.
+```yaml title="docker-compose.yaml"
+services:
+  pomerium:
+    image: pomerium/pomerium:v0.25.1
+    ports:
+      - 80:80
+      - 443:443
+    restart: always
+    environment:
+    // highlight-start
+      POMERIUM_ZERO_TOKEN: <REPLACE_WITH_YOUR_TOKEN>
+    // highlight-end
+      XDG_CACHE_HOME: /var/cache
+      AUTOCERT_DIR: /var/cache/autocert
+    volumes:
+      - pomerium-cache:/var/cache
 
-Add the configuration below to `config.yaml`:
+volumes:
+  pomerium-cache:
+```
 
-<ConfigDocker />
+Replace the value of `POMERIUM_ZERO_TOKEN` with the one generated for you in the onboarding config. The token links this **Pomerium Zero Cluster** with your account.
 
-## Configure Docker
-
-Create a `docker-compose.yaml` file in the root of your project.
-
-Add the configuration below to `docker-compose.yaml`:
-
-<DockerCompose />
+<details>
+  <summary>Clusters Overview</summary>
+  <div>Include high-level summary of Clusters concept in PZ. Link to Clusters documentation.</div>
+</details>
 
 ## Run Docker Compose
 
 ```bash
-docker compose up
+docker compose up -d
 ```
 
-Access the **verify route** you built in your policy: `https://verify.localhost.pomerium.io`
+Pomerium Zero will attempt to detect your **public IP** address to connect you to your cluster.
 
-If you get a self-signed certificate warning, see [Handle Self-Signed Certificate Warning](/docs/internals/troubleshooting#handle-self-signed-certificate-warning) to bypass it.
+But, it won't be able to because you're running Pomerium Zero in an isolated container with its own private network and IP address.
 
-You should be redirected to the **verify** service. You'll see a page like this:
+## Apply custom IP address
 
-![Verify page](./img/quickstart/verify-service.png)
+To connect Pomerium Zero to your cluster, you need to enter a **custom IP address** to override your detected one.
 
-Although identity verification failed, you successfully integrated Pomerium with the upstream verify service.
+If you're testing with `localhost`, enter `127.0.0.1`, or enter your preferred IP address.
 
-:::tip
+You can also change your listening port:
 
-Because this guide doesn't include a [signing key](/docs/reference/signing-key) in the configuration, identity verification will fail.
+[ image ]
 
-See [Identity Verification](/docs/capabilities/getting-users-identity) for more information on how Pomerium can use JWTs for authentication.
+Select **Apply** to connect to your cluster:
 
-:::
+[ image ]
 
-## Next Steps
+Once you've connected, select **Finish**.
 
-If you want to [try Enterprise](https://www.pomerium.com/enterprise-sales/), check out the [Enterprise with Docker quickstart](/docs/deploy/enterprise/quickstart).
+## Connect to upstream services
 
-If you want to try connecting Pomerium with other services, see some of our [Guides](/docs/guides).
+In the Zero Console, you'll notice we've provisioned two routes for you:
 
-**Did you finish this quickstart guide?** We'd love to hear what you think. Get in touch with us on our [Discuss forum](https://discuss.pomerium.com/), message us on [Twitter](https://twitter.com/pomerium_io), [LinkedIn](https://www.linkedin.com/company/pomerium-inc), or check out our [Community](https://www.pomerium.com/docs/community) page.
+- 
 
-:::caution
 
-This is a test environment! If you followed all the steps in this doc your Pomerium environment is not using trusted certificates. Remember to use a valid certificate solution before moving this configuration to a production environment. See [Certificates](/docs/concepts/certificates) for more information.
 
-:::
 
-[configuration file]: /docs/reference
-[container images]: https://hub.docker.com/r/pomerium/pomerium
-[docker]: https://docs.docker.com/install/
-[docker compose]: https://docs.docker.com/compose/install/
+
+
+
+
