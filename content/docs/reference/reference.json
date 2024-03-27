@@ -454,7 +454,7 @@
     "id": "dns-lookup-family",
     "title": "DNS Lookup Family",
     "path": "/dns-lookup-family",
-    "description": "The DNS IP address resolution policy.",
+    "description": "Sets the DNS IP address resolution policy.",
     "services": [],
     "type": "string"
   },
@@ -666,7 +666,7 @@
     "id": "set-response-headers",
     "title": "Set Response Headers",
     "path": "/set-response-headers",
-    "description": "Sets static HTTP Response Header values for all managed routes",
+    "description": "Sets static HTTP Response Header values for all managed routes.",
     "services": [],
     "type": "map of strings key value pairs"
   },
@@ -682,7 +682,7 @@
     "id": "jwt-claim-headers",
     "title": "JWT Claim Headers",
     "path": "/jwt-claim-headers",
-    "description": "The JWT Claim Headers setting allows you to pass specific user session data to upstream applications as HTTP request headers and additional JWT claims.",
+    "description": "Passes user session data to upstream applications as HTTP Request Headers and additional JWT claims.",
     "services": [],
     "type": "slice of string"
   },
@@ -705,7 +705,7 @@
     "id": "x-forwarded-for-http-header",
     "title": "X-Forwarded-For HTTP Header",
     "path": "/x-forwarded-for-http-header",
-    "description": "Do not append proxy IP address to x-forwarded-for (https://www.envoyproxy.io/docs/envoy/latest/configuration/http/http_conn_man/headers.html?highlight=skip_xff_append#x-forwarded-for).",
+    "description": "Indicates which IP addresses a request has flowed through between the client and upstream service.",
     "services": [],
     "type": "bool"
   },
@@ -741,7 +741,7 @@
   "data-broker-storage-connection-string": {
     "id": "data-broker-storage-connection-string",
     "title": "Databroker Storage Connection String",
-    "description": "Sets Postgres connection string to connect Databroker service to storage backend",
+    "description": "Sets the database connection string to connect Databroker service to storage backend.",
     "path": "/databroker#databroker-storage-connection-string",
     "services": [],
     "type": "string"
@@ -1042,7 +1042,7 @@
   "pass-identity-headers": {
     "id": "pass-identity-headers",
     "title": "Pass Identity Headers",
-    "description": "The global Pass Identity Headers setting passes identity headers to all upstream applications.",
+    "description": "If applied, passes X-Pomerium-Jwt-Assertion header and JWT Claims Headers to all upstream applications.",
     "short_description": "Pass identity headers to all upstream applications",
     "path": "/pass-identity-headers",
     "services": ["proxy"],
@@ -1480,5 +1480,25 @@
     "path": "/routes/direct-response",
     "description": "Instructs Pomerium to send a static HTTP response to the downstream client for a managed route.",
     "services": ["proxy"]
+  },
+  "cluster-settings-name": {
+    "id": "cluster-settings-name",
+    "title": "Cluster Name",
+    "description": "A customizable name that identifies a cluster. Defaults to the cluster's randomly generated starter domain name."
+  },
+  "detected-ip-address": {
+    "id": "detected-ip-address",
+    "title": "Detected IP Address",
+    "description": "The IP address detected for this cluster server."
+  },
+  "override-ip-address": {
+    "id": "override-ip-address",
+    "title": "Override IP Address",
+    "description": "Manually sets the IP address of this cluster and overrides the detected IP. Use this setting if Pomerium can't connect to cluster over detected IP."
+  },
+  "cluster-identity": {
+    "id": "cluster-identity",
+    "title": "Cluster Identity",
+    "description": "The cluster token that associates this cluster with a personal account or organization."
   }
 }
