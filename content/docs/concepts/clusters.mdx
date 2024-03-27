@@ -57,8 +57,7 @@ To rotate your cluster identity in the Zero Console:
 1. Under **Actions**, select the **edit** icon
 1. Select the **Domains** tab
 1. In the **Cluster Identity** field, select **Rotate Identity**
-1. Copy the token value and store it somewhere safe
-  ![Rotating a cluster identity in the Zero Console](./img/clusters/pz-rotate-cluster-identity.gif)
+1. Copy the token value and store it somewhere safe ![Rotating a cluster identity in the Zero Console](./img/clusters/pz-rotate-cluster-identity.gif)
 
 After rotating the cluster identity, you must pass it into your configuration and run Pomerium. See the steps below for your deployment environment.
 
@@ -75,46 +74,48 @@ curl https://console.pomerium.app/install.bash | env POMERIUM_ZERO_TOKEN=<cluste
 <TabItem value="docker" label="Docker">
 
 1. In your `docker-compose.yaml` file, replace the value of the `POMERIUM_ZERO_TOKEN` environment variable with the new cluster token value:
-    ```yaml title="docker-compose.yaml"
-    services:
-      pomerium:
-        image: pomerium/pomerium:v0.25.1
-        ports:
-          - 80:80
-          - 443:443
-        restart: always
-        environment:
-        // highlight-start
-          POMERIUM_ZERO_TOKEN: <CLUSTER_TOKEN>
-        // highlight-end
-          XDG_CACHE_HOME: /var/cache
-          AUTOCERT_DIR: /var/cache/autocert
-        volumes:
-          - pomerium-cache:/var/cache
 
-    volumes:
-      pomerium-cache:
-    ```
+   ```yaml title="docker-compose.yaml"
+   services:
+     pomerium:
+       image: pomerium/pomerium:v0.25.1
+       ports:
+         - 80:80
+         - 443:443
+       restart: always
+       environment:
+       // highlight-start
+         POMERIUM_ZERO_TOKEN: <CLUSTER_TOKEN>
+       // highlight-end
+         XDG_CACHE_HOME: /var/cache
+         AUTOCERT_DIR: /var/cache/autocert
+       volumes:
+         - pomerium-cache:/var/cache
+
+   volumes:
+     pomerium-cache:
+   ```
+
 1. Run `docker compose up -d`
 
 </TabItem>
 <TabItem value="kubernetes" label="Kubernetes">
 
 1. Replace the value of `pomerium_zero_token` with your new cluster token:
-    ```yaml
-    apiVersion: v1
-    kind: Secret
-    metadata:
-      name: pomerium
-      namespace: pomerium-zero
-    type: Opaque
-    stringData:
-      pomerium_zero_token: <cluster_token>
-    ```
+   ```yaml
+   apiVersion: v1
+   kind: Secret
+   metadata:
+     name: pomerium
+     namespace: pomerium-zero
+   type: Opaque
+   stringData:
+     pomerium_zero_token: <cluster_token>
+   ```
 1. Apply the manifest to your Kubernetes cluster
-    ```bash
-    kubectl apply -f ./secret.yaml
-    ```
+   ```bash
+   kubectl apply -f ./secret.yaml
+   ```
 
 </TabItem>
 </Tabs>
@@ -145,6 +146,7 @@ If you want to change the cluster name, you can update it in your cluster settin
 Whenever you start a cluster, it must fetch its configuration from the Pomerium Zero control plane. During this process, Pomerium attempts to detect the cluster's outbound IP address to connect to it.
 
 In the Zero Console, the cluster's IP address is referred to as the **Detected IP Address**. Depending on your environment, the detected IP address may not be able to reach you, the end-user. This could be the case if, for example, you're running a cluster:
+
 - Locally from your laptop behind a NAT-enabled router
 - Inside a corporate intranet
 - In a Kubernetes server where the ingress load balancer IP address doesn't match the egress IP address
