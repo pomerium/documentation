@@ -141,14 +141,15 @@ If you want to change the cluster name, you can update it in your cluster settin
 
 ![Viewing the new cluster name in the Zero Console](./img/clusters/cluster-name-table.png)
 
-#### Detected and Override IP address
+#### Detected and Override IP Address
 
 Whenever you start a cluster, it must fetch its configuration from the Pomerium Zero control plane. During this process, Pomerium attempts to detect the cluster's outbound IP address to connect to it.
 
-In the Zero Console, the cluster's IP address is referred to as the **Detected IP Address**. Depending on your environment, the detected IP address may not be able to reach you, the end-user. This could be the case if, for example, you're running a cluster:
+In the Zero Console, the cluster's IP address is referred to as the **Detected IP Address**. Depending on your environment, the detected IP address may not be reachable by you, the end-user. This could be the case if, for example, you're running a cluster:
 
 - Locally from your laptop behind a NAT-enabled router
 - Inside a corporate intranet
+- Behind a firewall
 - In a Kubernetes server where the ingress load balancer IP address doesn't match the egress IP address
 
 In such cases, you may see a `DNS_PROBE_FINISHED_NXDOMAIN` error in your browser when you access a route. As a workaround, we've provided the **Override IP Address** field, which allows you to manually set the IP address so that Pomerium Zero can connect to your cluster.
