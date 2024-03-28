@@ -3,7 +3,7 @@
     "id": "access-log-fields",
     "title": "Access Log Fields",
     "path": "/access-log-fields",
-    "description": "Use Access Log Fields to display HTTP request logs from the proxy service.",
+    "description": "Displays HTTP request logs from the Pomerium Proxy service.",
     "short_description": "",
     "type": "string",
     "services": ["proxy"]
@@ -21,7 +21,7 @@
     "id": "address",
     "title": "Address",
     "path": "/address",
-    "description": "Address specifies the host and port to serve HTTP requests from.",
+    "description": "Specifies the Host and Port to serve HTTP requests from.",
     "short_description": "Specify host and port to serve HTTP requests from",
     "type": "string",
     "services": ["proxy"]
@@ -127,6 +127,14 @@
     "path": "/certificates",
     "type": "string",
     "short_description": "Certificate relative file location string",
+    "services": []
+  },
+  "certificate-authority": {
+    "id": "certificate-authority",
+    "title": "Certificates Authority",
+    "path": "/certificates#certificate-authority",
+    "type": "string",
+    "description": "Defines a set of root certificate authorities that Pomerium uses when communicating with other TLS-protected services.",
     "services": []
   },
   "downstream-mtls-client-certificate-authority": {
@@ -279,7 +287,7 @@
     "id": "javascript-security",
     "title": "Javascript Security",
     "path": "/cookies#cookie-http-only",
-    "description": "If true, prevents javascript in browsers from reading user session cookies.",
+    "description": "If applied, prevents JavaScript in browsers from reading user session cookies.",
     "short_description": "Prevent JavaScript in browsers from reading user session cookies",
     "services": [],
     "type": "bool"
@@ -373,7 +381,7 @@
     "id": "read-timeout",
     "title": "Read Timeout",
     "path": "/global-timeouts#read-timeout",
-    "description": "The amount of time for the client to receive the entire request stream.",
+    "description": "Sets the amount of time for the client to receive the entire request stream.",
     "short_description": "Amount of time for client to receive entire request stream.",
     "services": [],
     "type": ""
@@ -382,7 +390,7 @@
     "id": "write-timeout",
     "title": "Write Timeout",
     "path": "/global-timeouts#write-timeout",
-    "description": "The max stream duration is the maximum time that a stream’s lifetime will span. An HTTP request/response exchange fully consumes a single stream. Therefore, this value must be greater than read_timeout as it covers both request and response time.",
+    "description": "Sets max stream duration of an HTTP request/response exchange. Must be greater than read timeout.",
     "short_description": "Sets maximum stream duration of an HTTP request/response exchange. Must be greater than read_timeout.",
     "services": [],
     "type": ""
@@ -391,7 +399,7 @@
     "id": "idle-timeout",
     "title": "Idle Timeout",
     "path": "/global-timeouts#idle-timeout",
-    "description": "Sets the time at which a downstream or upstream connection will be terminated if there are no active streams.",
+    "description": "Sets the time at which a downstream or upstream connection will be terminated if no active streams.",
     "short_description": "Sets the time to terminate a connection if there are no active streams.",
     "services": [],
     "type": ""
@@ -438,7 +446,7 @@
     "id": "http-redirect-address",
     "title": "HTTP Redirect Address",
     "path": "/http-redirect-address",
-    "description": "If set, the HTTP Redirect Address specifies the host and port to redirect http to https traffic on.",
+    "description": "If set, HTTP Redirect Address specifies the Host and Port to redirect HTTP to HTTPS traffic on.",
     "services": [],
     "type": "string"
   },
@@ -462,7 +470,7 @@
     "id": "log-level",
     "title": "Log Level",
     "path": "/log-level",
-    "description": "Log level sets the global logging level for pomerium.",
+    "description": "Sets the global logging level for this cluster.",
     "services": [],
     "type": "string"
   },
@@ -509,7 +517,7 @@
     "id": "proxy-log-level",
     "title": "Proxy Log Level",
     "path": "/proxy-log-level",
-    "description": "Log level sets the logging level for the Pomerium Proxy service.",
+    "description": "Sets the logging level for the Pomerium Proxy service.",
     "services": [],
     "type": "string"
   },
@@ -542,6 +550,20 @@
   "tracing": {
     "id": "tracing",
     "title": "Tracing",
+    "path": "/tracing",
+    "services": []
+  },
+  "tracing-provider": {
+    "id": "tracing-provider",
+    "title": "Tracing Provider",
+    "description": "The name of the tracing provider. For example, Jaeger or Zipkin. Required.",
+    "path": "/tracing",
+    "services": []
+  },
+  "tracing-sample-rate": {
+    "id": "tracing-sample-rate",
+    "title": "Tracing Sample Rate",
+    "description": "The percentage of requests to sample in decimal notation. Default is 0.0001, or .01%. Optional.",
     "path": "/tracing",
     "services": []
   },
@@ -658,7 +680,7 @@
     "id": "default-upstream-timeout",
     "title": "Default Upstream Timeout",
     "path": "/default-upstream-timeout",
-    "description": "Default Upstream Timeout is the default timeout applied to a proxied route when no timeout key is specified by the policy.",
+    "description": "Sets the default timeout applied to a proxied route when no timeout key is specified by the policy.",
     "services": [],
     "type": ""
   },
