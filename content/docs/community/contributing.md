@@ -41,6 +41,20 @@ Here are some of the expectations we have of contributors:
   - [Best Practices for Maintainers](https://opensource.guide/best-practices/)
   - [Shrinking Code Review](https://alexgaynor.net/2015/dec/29/shrinking-code-review/)
 
+### Logging
+
+Pomerium uses the [zerolog](https://github.com/rs/zerolog) package for logging. Guidelines for log levels:
+
+| Level | When to use |
+| --- | --- |
+| Panic | _Do not use._ Use Fatal instead. |
+| Fatal | For unrecoverable errors at startup, or extremely exceptional circumstances at normal runtime. |
+| Error | Something has failed, and an operator should know about it. |
+| Warning | _Do not use._ Use Info or Error instead. |
+| Info | An operator should want to see this during normal operation or routine inspection. |
+| Debug | Verbose operational information that might be useful during troubleshooting. |
+| Trace | Information that you would care about only when trying to understand code behavior/ordering/interaction. Intended for someone looking at or familiar with the code, not most end users. |
+
 ## Docs
 
 Pomerium's documentation is available at [https://www.pomerium.io/docs](https://www.pomerium.io/docs). If you find a typo, feel a section could be better described, or have an idea for a totally new application or section, don't hesitate to make a pull request change. There are few ways you can do this.
