@@ -1,0 +1,56 @@
+---
+id: custom-domains
+title: Custom Domains
+sidebar_label: Custom Domains
+description: This document describes Custom Domains in Pomerium Zero. You'll learn how to add your own domain and what Pomerium requires to do so.
+---
+
+# Custom Domains in Pomerium Zero
+
+This document describes **Custom Domains** in Pomerium Zero.
+
+## Background
+
+When you deploy a cluster in Pomerium Zero, we provision a randomly generated starter domain that's assigned to that cluster (for example, `unique-jellyfish-3578.pomerium.app`).
+
+Each starter domain comes with its own DNS records and TLS certificates, which makes it easier for new users to quickly build and test routes and policies in Pomerium Zero.
+
+After testing Pomerium Zero with your starter domain, you may want to add a custom domain within your cluster to secure your apps and services.
+
+:::info
+
+See the Clusters Concepts page for more information about clusters in Pomerium Zero.
+
+:::
+
+## Custom Domains
+
+In Pomerium Zero, a **Custom Domain** is a fully qualified domain name (FQDN) where the domain owner can demonstrate control over the domain through DNS validation.
+
+After you successfully add a custom domain to your cluster, Pomerium will automatically issue and renew X.509 wildcard certificates on behalf of the domain to secure the connection over TLS.
+
+### Fully Qualified Domain Names
+
+In the context of Pomerium Zero, an FQDN is the complete domain name of a custom domain. The example below resembles a valid FQDN, where `service` is the hostname, `mycorp` is the subdomain, and `example.com` is the domain name:
+
+`service.mycorp.example.com`
+
+### DNS validation
+
+In order for Pomerium to issue certificates on behalf of a custom domain, you must prove that you control the domain name specified in the certificate through DNS validation. Per the [ACME protocol](https://datatracker.ietf.org/doc/html/rfc8555#section-2), Pomerium uses its own ACME client to communicate with Let's Encrypt, a free Certificate Authority, to validate a domain's DNS records.
+
+Let's Encrypt provides several [challenge types](https://letsencrypt.org/docs/challenge-types/) to validate a domain, including the [DNS-01 challenge](https://letsencrypt.org/docs/challenge-types/#dns-01-challenge). At a high level, this challenge consists of two steps:
+
+1. A TXT record containing a specific token value must be placed into the `_acme-challenge.<YOUR_DOMAIN>` endpoint
+1. A **wildcard CNAME record** must be added under the custom domain that points to your cluster's **Starter Domain**
+
+Pomerium takes care of step `1` for you. Step `2` requires you to manually add the wildcard CNAME record to your domain.
+
+If added successfuly, you will be able to build routes with your custom domain instead of the starter domain. Pomerium will automatically issue and renew X.509 certificates for this custom domain, which you can verify by the Common Name found in the certificate:
+
+![Reviewing the Let's Encrypt certificate for a custom domain](../capabilities/img/custom-domains/custom-domain-certificates.png)
+
+
+
+
+
