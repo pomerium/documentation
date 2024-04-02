@@ -9,7 +9,7 @@ description: This document describes Custom Domains in Pomerium Zero. You'll lea
 
 This document describes **Custom Domains** in Pomerium Zero.
 
-## Background
+## Overview
 
 When you deploy a cluster in Pomerium Zero, we provision a randomly generated starter domain that's assigned to that cluster (for example, `unique-jellyfish-3578.pomerium.app`).
 
@@ -46,11 +46,34 @@ Let's Encrypt provides several [challenge types](https://letsencrypt.org/docs/ch
 
 Pomerium takes care of step `1` for you. Step `2` requires you to manually add the wildcard CNAME record to your domain.
 
+Refer to the steps in [How to Add a Custom Domain](#how-to-add-a-custom-domain) for specific instructions.
+
+## How to Add a Custom Domain
+
+Add a wildcard CNAME record that points to your starter domain:
+
+![Add a CNAME record in GCP](../capabilities/img/custom-domains/gcp-cname-record.png)
+
+:::note
+
+The steps to add a wildcard CNAME record to your domain vary depending on your domain registrar and/or DNS provider. This guide uses Google Cloud Platform as an example.
+
+:::
+
+Add the custom domain in the Zero Console:
+
+1. Select **Settings**
+1. In the **Editing Clusters Settings** dashboard, select **Domains**
+1. In the **Custom Domains** field, select the **+** icon to add a domain name
+1. Enter your FQDN
+
+  ![Entering the fully qualified domain name in the Zero Console](../capabilities/img/custom-domains/add-custom-domain.gif)
+
+
 If added successfuly, you will be able to build routes with your custom domain instead of the starter domain. Pomerium will automatically issue and renew X.509 certificates for this custom domain, which you can verify by the Common Name found in the certificate:
 
 ![Reviewing the Let's Encrypt certificate for a custom domain](../capabilities/img/custom-domains/custom-domain-certificates.png)
 
+You can also review the certificate in the **Certificates** dashboard:
 
-
-
-
+![Review certificate details in the Certificate dashboard in the Zero Console](../capabilities/img/custom-domains/certificate-details.gif)
