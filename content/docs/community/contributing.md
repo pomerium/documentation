@@ -1,4 +1,5 @@
 ---
+# cSpell:ignore zerolog
 title: Contributing
 lang: en-US
 keywords: [pomerium, community, contributing, pr, code]
