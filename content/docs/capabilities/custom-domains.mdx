@@ -32,24 +32,30 @@ After you successfully add a custom domain to your cluster, Pomerium will automa
 
 ### Fully Qualified Domain Names
 
-In the context of Pomerium Zero, an FQDN is the complete domain name of a custom domain. The example below resembles a valid FQDN, where `service` is the hostname, `mycorp` is the subdomain, and `example.com` is the domain name:
+In the context of Pomerium Zero, an FQDN is the complete domain name of a custom domain. The example below resembles a valid custom domain, where `mycorp` is the subdomain and `example.com` is the domain name:
 
-`service.mycorp.example.com`
+`mycorp.example.com`
+
+If you build routes with this custom domain to upstream services with hostnames like `verify`, `internal-tool`, and `authenticate`, your routes would look like:
+
+- `verify.mycorp.example.com`
+- `internal-tool.mycorp.example.com`
+- `authenticate.mycorp.example.com`
 
 ### DNS validation
 
 In order for Pomerium to issue certificates on behalf of a custom domain, you must prove that you control the domain name specified in the certificate through DNS validation. Per the [ACME protocol](https://datatracker.ietf.org/doc/html/rfc8555#section-2), Pomerium uses its own ACME client to communicate with Let's Encrypt, a free Certificate Authority, to validate a domain's DNS records.
 
-Let's Encrypt provides several [challenge types](https://letsencrypt.org/docs/challenge-types/) to validate a domain, including the [DNS-01 challenge](https://letsencrypt.org/docs/challenge-types/#dns-01-challenge). At a high level, this challenge consists of two steps:
+Let's Encrypt provides several [challenge types](https://letsencrypt.org/docs/challenge-types/) to validate a domain, including the [DNS-01 challenge](https://letsencrypt.org/docs/challenge-types/#dns-01-challenge). At a high level, this challenge requires that either:
 
-1. A TXT record containing a specific token value must be placed into the `_acme-challenge.<YOUR_DOMAIN>` endpoint
-1. A **wildcard CNAME record** must be added under the custom domain that points to your cluster's **Starter Domain**
+- A `TXT` record must be placed at `_acme-challenge.<YOUR_DOMAIN>`
+- Or, a `CNAME` record must be placed at `_acme-challenge.<YOUR_DOMAIN>` that points to another domain with the `TXT` record
 
-Pomerium takes care of step `1` for you. Step `2` requires you to manually add the wildcard CNAME record to your domain.
+Because Pomerium owns the `pomerium.app` subdomain, we can write the `TXT` record for you. All you need to do is point a **wildcard CNAME record** to your cluster's starter domain.
 
-Refer to the steps in [How to Add a Custom Domain](#how-to-add-a-custom-domain) for specific instructions.
+Refer to the steps in [**How to add a custom domain**](#how-to-add-a-custom-domain) for specific instructions.
 
-## How to Add a Custom Domain
+## How to add a custom domain
 
 Add a wildcard CNAME record that points to your starter domain:
 
