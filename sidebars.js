@@ -89,7 +89,7 @@ const sidebars = {
         // Enterprise
         {
           id: 'docs/capabilities/impersonation',
-          className: 'enterprise',
+          className: 'zero',
           type: 'doc',
           label: 'User Impersonation',
         },
