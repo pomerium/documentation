@@ -14,9 +14,7 @@ import TabItem from '@theme/TabItem';
 
 This document describes Clusters in Pomerium Zero.
 
-TODO: include a video that walks through Clusters
-
-## Clusters overview
+## Overview
 
 A **Cluster** represents a single Pomerium deployment managed by Pomerium Zero, our hosted control plane. You can think of a Pomerium cluster as a completely distinct deployment of Pomerium that allows you to effectively shard your deployments for performance, governance, security, or management purposes.
 
@@ -28,13 +26,22 @@ When you deploy a cluster, it gets its own:
 - **Routes and Policies**
 - **Wildcard certificates**
 
-### Cluster use cases (Why clusters?)
+### Cluster use cases: Why clusters?
 
-TODO: Fill out reasons why a clusters model makes sense
+#### All-in-one mode deployment model
 
-TODO: It would be ideal to get an architecture diagram here.
+Pomerium consists of 4 services:
 
+- Proxy service
+- Authenticate service
+- Authorize service
+- Databroker service
 
+A cluster deploys these services in all-in-one mode, meaning the configuration for each service is managed from a single cluster instance. All inter-component communications are internally connected, with the exception of the Databroker service, which is an external dependency.
+
+#### Multiple cluster instances
+
+You can deploy multiple clusters from a single cluster identity (see [**Cluster identity**](#cluster-identity) below for more information). The ability to deploy multiple cluster instances means you can manage and run completely separate configurations for workloads that may otherwise be incompatible in a single cluster instance.
 
 ### Cluster identity
 
@@ -126,11 +133,19 @@ curl https://console.pomerium.app/install.bash | env POMERIUM_ZERO_TOKEN=<cluste
 
 ### Cluster domain
 
-Pomerium Zero generates and assigns a unique **Cluster Domain** to your cluster. A cluster domain contains a randomly generated subdomain and the `pomerium.app` domain.
+Pomerium Zero generates and assigns a unique starter **Cluster Domain** to your cluster. A cluster domain is a randomly generated fully qualified domain name that follows this format:
 
-It follows this format: `<CLUSTER-SUBDOMAIN-XXXX>.pomerium.app`
+ `<CLUSTER-SUBDOMAIN-XXXX>.pomerium.app`
 
 For example: `voracious-ape-1578.pomerium.app`
+
+The starter cluster domain comes with its own DNS records and TLS certificates so you can quickly test Pomerium Zero before adding your own custom domain.
+
+:::info
+
+See the **Custom Domains** capabilities page for more information on how to add custom domains to a cluster.
+
+:::
 
 #### Cluster name
 
