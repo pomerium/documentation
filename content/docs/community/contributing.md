@@ -1,4 +1,5 @@
 ---
+# cSpell:ignore zerolog
 title: Contributing
 lang: en-US
 keywords: [pomerium, community, contributing, pr, code]
@@ -40,6 +41,20 @@ Here are some of the expectations we have of contributors:
   - [Linus Torvalds describes a good commit message](https://gist.github.com/matthewhudson/1475276)
   - [Best Practices for Maintainers](https://opensource.guide/best-practices/)
   - [Shrinking Code Review](https://alexgaynor.net/2015/dec/29/shrinking-code-review/)
+
+### Logging
+
+Pomerium uses the [zerolog](https://github.com/rs/zerolog) package for logging. Guidelines for log levels:
+
+| Level | When to use |
+| --- | --- |
+| Panic | _Do not use._ Use Fatal instead. |
+| Fatal | For unrecoverable errors at startup, or extremely exceptional circumstances at normal runtime. |
+| Error | Something has failed, and an operator should know about it. |
+| Warning | _Do not use._ Use Info or Error instead. |
+| Info | An operator should want to see this during normal operation or routine inspection. |
+| Debug | Verbose operational information that might be useful during troubleshooting. |
+| Trace | Information that you would care about only when trying to understand code behavior/ordering/interaction. Intended for someone looking at or familiar with the code, not most end users. |
 
 ## Docs
 
