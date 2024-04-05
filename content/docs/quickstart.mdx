@@ -27,12 +27,12 @@ import TabItem from '@theme/TabItem';
 
 # Pomerium Zero Quickstart
 
-In this Quickstart, you'll install and run Pomerium Zero in a Docker container. By the end, you'll have a **personal account** and cluster where you can configure routes and policies to your own apps and services.
+In this Quickstart, you'll install Pomerium Zero in a Docker container, and secure access to two upstream services.
 
 ## Before you start
 
 - Install [Docker](https://docs.docker.com/install/) and [Docker Compose](https://docs.docker.com/compose/install/)
-- Create a [**free Pomerium Zero account**](https://console.pomerium.app/create-account)
+- Create a [**Pomerium Zero account**](https://console.pomerium.app/create-account)
 
 ## Get Pomerium Zero configuration
 
@@ -40,33 +40,46 @@ In the onboarding console, select the **Docker** tab and copy the Docker Compose
 
 Paste the configuration in a `docker-compose.yaml` file:
 
-```yaml title="docker-compose.yaml"
+```yaml title="docker-compose.yaml" {8,15} showLineNumbers
 services:
   pomerium:
     image: pomerium/pomerium:v0.25.1
     ports:
-      - 80:80
       - 443:443
     restart: always
     environment:
-    // highlight-start
-      POMERIUM_ZERO_TOKEN: <REPLACE_WITH_YOUR_TOKEN>
-    // highlight-end
+      POMERIUM_ZERO_TOKEN: <CLUSTER_TOKEN>
       XDG_CACHE_HOME: /var/cache
-      AUTOCERT_DIR: /var/cache/autocert
     volumes:
       - pomerium-cache:/var/cache
+    networks:
+      main:
+        aliases:
+        - verify.<CLUSTER_STARTER_SUBDOMAIN>.pomerium.app
+  verify:
+    image: cr.pomerium.com/pomerium/verify:latest
+    networks:
+      main:
+        aliases:
+        - verify
+
+networks:
+  main: {}
 
 volumes:
   pomerium-cache:
 ```
 
-Replace the value of `POMERIUM_ZERO_TOKEN` with the one generated for you in the onboarding config. The token links this **Pomerium Zero Cluster** with your account.
+Replace the following values:
 
-<details>
-  <summary>Clusters Overview</summary>
-  <div>Include high-level summary of Clusters concept in PZ. Link to Clusters documentation.</div>
-</details>
+- **Line 8**: Replace `CLUSTER_TOKEN` with the cluster token generated for you in the onboarding config
+- **Line 15**: Replace `CLUSTER_STARTER_SUBDOMAIN` with your generated starter subdomain
+
+:::info
+
+See the **Clusters Concepts** page for more information about how clusters work in Pomerium Zero.
+
+:::
 
 ## Run Docker Compose
 
@@ -74,15 +87,13 @@ Replace the value of `POMERIUM_ZERO_TOKEN` with the one generated for you in the
 docker compose up -d
 ```
 
-Pomerium Zero will attempt to detect your **public IP** address to connect you to your cluster.
+After you install and run your cluster, Pomerium Zero will attempt to detect the cluster's IP address. Because your cluster is running in an isolated Docker container with its own IP address, it won't be able to connect.
 
-But, it won't be able to because you're running Pomerium Zero in an isolated container with its own private network and IP address.
+## Apply override IP address
 
-## Apply custom IP address
+To connect Pomerium Zero to your cluster, you need to enter a custom IP address to override your detected one.
 
-To connect Pomerium Zero to your cluster, you need to enter a **custom IP address** to override your detected one.
-
-If you're testing with `localhost`, enter `127.0.0.1`, or enter your preferred IP address. You can also enter your preferred listening port.
+Since we're using Docker, you should enter `127.0.0.1`.  You can also enter your preferred listening port.
 
 Select **Apply** to connect to your cluster:
 
@@ -92,10 +103,9 @@ Once you've connected, select **Finish**.
 
 ## Connect to upstream services
 
-In the Zero Console, we've provisioned two routes for you with the following names:
+In the Zero Console, we've provisioned two starter routes, **SSH** and **Verify**, that come with their own DNS records and TLS certificates:
 
-- **SSH**
-- **Verify**
+![Viewing the two starter routes](./img/quickstart/pz-quickstart-routes.png)
 
 ### Connect to SSH
 
@@ -185,32 +195,37 @@ make build
 
 In the Zero Console, select the **From** route for the Verify app.
 
-For example:
+You should land on the Verify page:
 
-![Selecting the external URL for the Verify route in the Zero Console](./img/quickstart/pz-quickstart-verify-route.png)
+![The homepage of the Verify app after the user is redirected](./img/quickstart/pz-identity-verified.png)
 
-:::note
+## Review authorization policy
 
-Because the Verify service uses a publically accessible URL, Pomerium Zero won't be able to connect to the `jwks.json` endpoint to fetch the signing key used to verify the user's JWT.
+Select the **Policies** tab. In the policies table, you'll notice the **Any Authenticated User** policy.
 
-![Identity verification failed error when accessing the Verify service](./img/quickstart/pz-identity-verification-failed.png)
+![Reviewing the starter policy in the Zero Console](./img/quickstart/pz-quickstart-policy.png)
+
+This is a simple policy that instructs Pomerium to allow all requests for authenticated users or service accounts. Because you authenticated successfully against our hosted identity provider, Pomerium granted you access to both the SSH and Verify services.
+
+:::info **Build a Policy**
+
+Check out our **Policies** guide to learn how to build more complex policies to secure your routes.
 
 :::
 
+## Review certificates
 
-## Build your own policy
+Pomerium automatically provisions X.509 certificates issued by ZeroSSL to secure the starter routes in your cluster, and any routes you may build that use your assigned `pomerium.app` subdomain.
 
-In the **Policy** tab, create a new policy that instructs Pomerim to grant access only if the user's email address ends the specified value.
+To see certificates in your cluster, go to the **Certificates** tab:
 
-![Building a basic policy in Pomerium Zero](./img/quickstart/pz-my-policy.png)
+![View cluster certificates from ZeroSSL](./img/quickstart/cluster-certs.png)
 
-### Attach the policy to a route
+:::info **Add a Certificate**
 
-Attach your new policy to the Verify route:
+Check out the **Certificates** guide to learn how to import your own certificates to your cluster.
 
-![Attach the new policy to the Verify route in the Zero Console](./img/quickstart/pz-attach-policy.png)
-
-Now, if you authenticate using an email address with a domain other than the one specified in the policy, Pomerium Zero will deny the user access.
+:::
 
 ## Next Steps
 
