@@ -15,7 +15,7 @@ import JenkinsCompose from '../../examples/jenkins/jenkins-docker-compose.md';
 
 # Run Jenkins with Docker
 
-Run Pomerium with Docker Compose to secure your Jenkins application with JWT authentication and custom claims.
+In this guide, you'll secure an instance of Jenkins behind Pomerium Zero using single sign-on (SSO) and custom JWT claims.
 
 ## What is Jenkins?
 
@@ -23,30 +23,172 @@ Jenkins is an automation server you can use to build, test, and deploy applicati
 
 ## Why use Pomerium with Jenkins?
 
-You can set up role-based permissions in Jenkins to control a user’s privileges with Jenkins’ built-in authorization matrix. However, this method requires a username and password to sign in and relies on Jenkins’ user database to store credentials.
+You can set up role-based permissions in Jenkins to control a user’s privileges with Jenkins’ built-in authorization matrix. However, this method requires username/password authentication, which relies on Jenkins’ user database to store credentials.
 
 JWT authentication is a more secure method of identity verification that authenticates and authorizes users against an identity provider, eliminating the need to store or share credentials to access your Jenkins application.
 
-Jenkins doesn’t support JWT authentication out of the box. With Pomerium, you can implement JWT authentication and apply claims to your route’s authorization policy to determine a user’s role and privileges before granting a user access to Jenkins.
+Jenkins doesn’t support JWT authentication out of the box. It requires a JWT authentication plugin to communicate with Pomerium. With the plugin installed, you can configure Pomerium to forward a user's JWT to Jenkins to achieve SSO.
 
 Once you’ve configured JWT authentication, you can assign permissions within Jenkins for a specific user, any authenticated user, anonymous users, or a user group.
 
-## Before you begin
+## Before you start
 
 To complete this guide, you need:
 
-1. [Docker](https://docs.docker.com/get-docker/) and [Docker Compose](https://docs.docker.com/compose/install/)
-2. An [identity provider](/docs/identity-providers) (IdP)
+- Pomerium Zero
+- Linux OS (this guide uses a Compute Engine VM running Debian 12)
+- [Jenkins](https://www.jenkins.io/doc/book/installing/linux/#debianubuntu) (LTS release)
+- [Java](https://www.jenkins.io/doc/book/installing/linux/#installation-of-java) (OpenJDK 17)
 
-:::tip Note
+If you haven't, install Java and Jenkins on your Linux system. Then, check the status of your Jenkins instance:
 
-If you haven’t, complete the [Pomerium Core quickstart](/docs/quickstart) to familiarize yourself with running Pomerium in a container environment.
+```shell-session
+$ sudo systemctl status jenkins
+● jenkins.service - Jenkins Continuous Integration Server
+     Loaded: loaded (/lib/systemd/system/jenkins.service; enabled; preset: enabled)
+     Active: active (running) since Wed 2024-04-10 13:42:10 UTC; 26s ago
+   Main PID: 385 (java)
+      Tasks: 51 (limit: 4686)
+     Memory: 1.1G
+        CPU: 51.586s
+     CGroup: /system.slice/jenkins.service
+             └─385 /usr/bin/java -Djava.awt.headless=true -jar /usr/share/java/jenkins.war --webroot=/var/cach>
+```
 
-Pomerium Enterprise customers can complete the [Enterprise quickstart](/docs/deploy/enterprise/quickstart) using Docker containers as well.
+:::note
+
+This guide runs Pomerium Zero and Jenkins in a Linux VM running Debian 12. If you're using Docker or Kubernetes, the steps will vary.
 
 :::
 
-## Run Jenkins with Docker Compose
+## Set up Pomerium Zero
+
+### Build a policy for Jenkins
+
+First, build a simple policy. The policy built below will only grant access to a request if the user's email address contains the specified domain:
+
+1. Select **Policies**, **New Policy**
+1. Name your policy (for example, "Allow matching email domain")
+1. Add an **Allow** block with an **And** operator
+1. Keep the **Domain** criterion and **Is** operator
+1. Enter the domain portion of the email address you'll use to access Jenkins (for example, `@example.com`)
+1. Save your policy
+
+![Build a policy for Jenkins in the Zero Console](./img/jenkins/pz-jenkins-policy.png)
+
+### Build a route to Jenkins
+
+In the Zero Console:
+
+1. Select **Routes**, **+ New Route**
+1. Name your route (for example, **Jenkins**)
+1. In the **From** field, select **https://** and enter `jenkins.<YOUR_SUBDOMAIN>.pomerium.app` as the URL
+1. In the **To** field, enter `http://localhost:8080`
+1. In the **Policies** field, select the policy you just saved
+1. Select the **Headers** tab
+1. Enable **Pass Identity Headers**
+1. Save your route
+
+:::info
+
+These steps assume you're using your cluster's **Starter Domain** to build a route to secure Jenkins. If you added a **Custom Domain** to your cluster, you can use that domain instead.
+
+:::
+
+![Configure a route to Jenkins in the Zero Console](./img/jenkins/pz-saving-jenkins-route.gif)
+
+After you've saved your route and policy, **apply the changeset** so Pomerium applies these changes to your cluster configuration:
+
+1. Select the changeset icon
+1. Select **Apply Changeset**
+
+![Applying the changeset in the Zero Console](./img/jenkins/pz-apply-changeset.png)
+
+## Access Jenkins
+
+From your Zero Console:
+
+1. Access the external route you built to access Jenkins. After authenticating against Pomerium's hosted identity provider, you should be redirected to your Jenkins instance.
+1. Before you can access your Jenkins dashboard, Jenkins will prompt you to enter the initial admin password. You can find it in `/var/lib/jenkins/secrets/initialAdminSecret`.
+
+    Run the following command to get the admin password:
+        ```bash
+        sudo cat /var/lib/jenkins/secrets/initialAdminPassword
+        ```
+1. Install the suggested plugins. Then, **Skip and continue as admin** (if you skip, the default username is **admin** and the password is the initial admin password). You'll reconfigure authentication for admin and non-admin users in the next section.
+1. In the **Instance Configuration** window, accept the default hostname
+
+
+
+### Get JWT Auth plugin
+
+In the Jenkins dashboard:
+
+1. Select **Manage Jenkins**
+1. Select **Plugins**
+1. In the sidebar, select **Available plugins**
+1. In the search bar, search for and install the [**JWT Auth Plugin**](https://plugins.jenkins.io/jwt-auth)
+1. After installing, restart Jenkins:
+    ```bash
+    sudo systemctl restart jenkins
+    ```
+
+### Configure JWT authentication
+
+After Jenkins restarts:
+
+1. Access Jenkins from the Zero Console
+1. Select **Manage Jenkins**
+1. Select **Security**
+1. In the **Security Realm** dropdown, select **JWT Header Authentication Plugin**
+1. Under **Global JWT Auth Settings**, fill out the fields (reference the table below for the correct values)
+
+    | Field | Value |
+    | --- | --- |
+    | **Header name** | `x-pomerium-jwt-assertion` |
+    | **Username claim name** | `email` |
+    | **Groups claim name** | `groups` |
+    | **Groups claim list seperator** | `,` |
+    | **Email claim name** | `email` |
+    | **Full Name claim name** | `name` |
+    | **Acceptable issuers** | `jenkins.<YOUR_SUBDOMAIN>.pomerium.app` |
+    | **Acceptable audiences** | `jenkins.<YOUR_SUBDOMAIN>.pomerium.app` |
+    | **JWKS JSON URL** | `https://jenkins.<YOUR_SUBDOMAIN>.pomerium.app/.well-known/pomerium/jwks.json` |
+1. Enable **Allow verification failures**
+1. Under **Authorization**, keep **Anyone can do anything**
+    - This ensures you can re-configure authentication settings in the event that JWT authenticaiton fails, which will lock you out of your Jenkins instance
+
+Save your changes and restart Jenkins.
+
+### Authenticate with your JWT
+
+From the Zero Console, access your external Jenkins route. If you configured JWT authentication correctly, you'll notice you're logged in already.
+
+Next, you need to configure authorization in Jenkins to set permissions.
+
+### Configure matrix-based authorization
+
+1. Select **Manage Jenkins**, **Security**
+1. Under **Authorization**, select **Matrix-based security**
+1. Select **Add user...**
+1. In the modal, enter your **User ID**
+    :::tip
+
+    To find your user ID, go to **Dashboard**, **People**. In the user table, you'll find the assigned ID value under the **User ID** column.
+
+    :::
+1. Give the added user **Administrator** privileges
+    ![Giving the user administrator privileges](./img/jenkins/pz-add-user-to-matrix.png)
+1. You can also give **Anonymous** users **Overall Read** privileges. This way, if you access Jenkins from another account, the user won't be able to make any changes to the instance.
+
+Save your changes. You're done!
+
+## Next steps
+
+- If you access Jenkins using another email address, Jenkins will add that user to your Jenkins directory and assign them a user ID. You can add this user to the authorization matrix and assign them appropriate permissions.
+- You can also add groups to the authorization matrix and assign permissions to them.
+
+
 
 <Tabs>
 <TabItem label="Core" value="Core">
@@ -329,7 +471,7 @@ Select **save** to apply the security settings.
 
 ## Test JWT authentication
 
-Restart your container. If the JWT authentication worked, you will see your name in the dashboard instead of **admin**. To see more details about the request, add `/whoAmI` to the URL. For example, `https://jenkins.localhost.pomerium.io/whoAmI`.
+Restart your container. If JWT authentication worked, you will see your name in the dashboard instead of **admin**. To see more details about the request, add `/whoAmI` to the URL. For example, `https://jenkins.localhost.pomerium.io/whoAmI`.
 
 ![View JWT request headers](./img/jenkins/6-enterprise-who-am-i.png)
 
