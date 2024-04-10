@@ -40,21 +40,6 @@ To complete this guide, you need:
 - [Jenkins](https://www.jenkins.io/doc/book/installing/linux/#debianubuntu) (LTS release)
 - [Java](https://www.jenkins.io/doc/book/installing/linux/#installation-of-java) (OpenJDK 17)
 
-If you haven't, install Java and Jenkins on your Linux system. Then, check the status of your Jenkins instance:
-
-```shell-session
-$ sudo systemctl status jenkins
-● jenkins.service - Jenkins Continuous Integration Server
-     Loaded: loaded (/lib/systemd/system/jenkins.service; enabled; preset: enabled)
-     Active: active (running) since Wed 2024-04-10 13:42:10 UTC; 26s ago
-   Main PID: 385 (java)
-      Tasks: 51 (limit: 4686)
-     Memory: 1.1G
-        CPU: 51.586s
-     CGroup: /system.slice/jenkins.service
-             └─385 /usr/bin/java -Djava.awt.headless=true -jar /usr/share/java/jenkins.war --webroot=/var/cach>
-```
-
 :::note
 
 This guide runs Pomerium Zero and Jenkins in a Linux VM running Debian 12. If you're using Docker or Kubernetes, the steps will vary.
@@ -68,7 +53,7 @@ This guide runs Pomerium Zero and Jenkins in a Linux VM running Debian 12. If yo
 
 ### Build a policy for Jenkins
 
-First, build a policy that grants access to a request only if the user's email address contains the specified domain:
+In the Zero Console, build a policy that grants access to a request only if the user's email address contains the specified domain:
 
 1. Select **Policies**, **New Policy**
 1. Name your policy (for example, "Allow matching email domain")
