@@ -15,7 +15,7 @@ import JenkinsCompose from '../../examples/jenkins/jenkins-docker-compose.md';
 
 # Run Jenkins with Docker
 
-In this guide, you'll secure an instance of Jenkins behind Pomerium Zero using single sign-on (SSO) and custom JWT claims.
+In this guide, you'll secure an instance of Jenkins behind Pomerium Zero using single sign-on (SSO).
 
 ## What is Jenkins?
 
@@ -61,17 +61,20 @@ This guide runs Pomerium Zero and Jenkins in a Linux VM running Debian 12. If yo
 
 :::
 
+<Tabs>
+<TabItem label="Zero" value="zero">
+
 ## Set up Pomerium Zero
 
 ### Build a policy for Jenkins
 
-First, build a simple policy. The policy built below will only grant access to a request if the user's email address contains the specified domain:
+First, build a policy that grants access to a request only if the user's email address contains the specified domain:
 
 1. Select **Policies**, **New Policy**
 1. Name your policy (for example, "Allow matching email domain")
 1. Add an **Allow** block with an **And** operator
 1. Keep the **Domain** criterion and **Is** operator
-1. Enter the domain portion of the email address you'll use to access Jenkins (for example, `@example.com`)
+1. Enter the domain portion of the email address you'll use to access Jenkins (for example, `mycorp.com`)
 1. Save your policy
 
 ![Build a policy for Jenkins in the Zero Console](./img/jenkins/pz-jenkins-policy.png)
@@ -85,8 +88,7 @@ In the Zero Console:
 1. In the **From** field, select **https://** and enter `jenkins.<YOUR_SUBDOMAIN>.pomerium.app` as the URL
 1. In the **To** field, enter `http://localhost:8080`
 1. In the **Policies** field, select the policy you just saved
-1. Select the **Headers** tab
-1. Enable **Pass Identity Headers**
+1. Select the **Headers** tab and enable **Pass Identity Headers**
 1. Save your route
 
 :::info
@@ -97,7 +99,7 @@ These steps assume you're using your cluster's **Starter Domain** to build a rou
 
 ![Configure a route to Jenkins in the Zero Console](./img/jenkins/pz-saving-jenkins-route.gif)
 
-After you've saved your route and policy, **apply the changeset** so Pomerium applies these changes to your cluster configuration:
+After you've saved your route and policy, **apply the changeset** to your cluster configuration:
 
 1. Select the changeset icon
 1. Select **Apply Changeset**
@@ -129,6 +131,7 @@ In the Jenkins dashboard:
 1. In the sidebar, select **Available plugins**
 1. In the search bar, search for and install the [**JWT Auth Plugin**](https://plugins.jenkins.io/jwt-auth)
 1. After installing, restart Jenkins:
+
     ```bash
     sudo systemctl restart jenkins
     ```
@@ -179,7 +182,7 @@ Next, you need to configure authorization in Jenkins to set permissions.
     :::
 1. Give the added user **Administrator** privileges
     ![Giving the user administrator privileges](./img/jenkins/pz-add-user-to-matrix.png)
-1. You can also give **Anonymous** users **Overall Read** privileges. This way, if you access Jenkins from another account, the user won't be able to make any changes to the instance.
+1. You can also give **Anonymous** users **Overall Read** privileges. This way, if someones accesses this Jenkins instance from another account, they won't be able to make changes to the application.
 
 Save your changes. You're done!
 
@@ -187,133 +190,6 @@ Save your changes. You're done!
 
 - If you access Jenkins using another email address, Jenkins will add that user to your Jenkins directory and assign them a user ID. You can add this user to the authorization matrix and assign them appropriate permissions.
 - You can also add groups to the authorization matrix and assign permissions to them.
-
-
-
-<Tabs>
-<TabItem label="Core" value="Core">
-
-Create a project and add a file called `docker-compose.yaml`.
-
-In the `docker-compose.yaml` file, add the following code:
-
-```yaml title=docker-compose.yaml
-jenkins:
-  networks:
-    main: {}
-  image: jenkins/jenkins:lts-jdk11
-  privileged: true
-  user: root
-  ports:
-    - 8080:8080
-    - 50000:50000
-
-  volumes:
-    # File path to Jenkins_home -- stores configs, build logs, and artifacts
-    - ./home/jenkins_compose/jenkins_configuration:/var/jenkins_home
-    # "sock" is the Unix socket the Docker daemon listens on by default
-    - ./var/run/docker.sock:/var/run/docker.sock
-```
-
-Run `docker compose up`.
-
-## Set up your Jenkins instance
-
-If your Jenkins container is set up correctly, the Setup Wizard will guide you through several prompts before you can access your dashboard.
-
-To set up your Jenkins instance:
-
-1. Go to `localhost:8080` and enter the admin user password to continue
-
-You can find the admin user password in your Docker logs or in `/var/jenkins_home/secrets/initialAdminPassword`.
-
-![Jenkins admin user password](./img/jenkins/1-jenkins-admin-pass.png)
-
-2. Install the suggested plugins
-3. Create an admin user
-
-You can create your first admin user or select **Skip and continue as admin**. If you skip and continue as admin, the default username is **admin** and the password is the admin user password.
-
-4. In the **Instance Configuration** window, accept the default hostname
-
-After completing the Setup Wizard prompts, you can access the Jenkins dashboard.
-
-![Jenkins dashboard](./img/jenkins/2-jenkins-dashboard.png)
-
-Run `docker compose stop` so you can configure Pomerium.
-
-## Configure Pomerium
-
-### Create a Pomerium configuration file
-
-In your project’s root folder, create a `config.yaml` file.
-
-In your `config.yaml` file, add the following code:
-
-```yaml title=config.yaml
-authenticate_service_url: https://authenticate.localhost.pomerium.io
-
-idp_provider: REPLACE_ME
-idp_provider_url: REPLACE_ME
-idp_client_id: REPLACE_ME
-idp_client_secret: REPLACE_ME
-
-signing_key: REPLACE_ME
-
-routes:
- - from: https://verify.localhost.pomerium.io
-   to: http://verify:8000
-   pass_identity_headers: true
-   policy:
-     - allow:
-         and:
-	email:
-	      is: user@example.com
- - from: https://jenkins.localhost.pomerium.io
-   to: http://jenkins:8080/
-   host_rewrite_header: true
-   pass_identity_headers: true
-   policy:
-     - allow:
-         and:
-           - domain:
-               is: example.com
-           - user:
-               is: username
-```
-
-Next, you need to:
-
-- Update the [identity provider](/docs/identity-providers) configuration variables with your own
-- Replace `user@example.com` with the email associated with your IdP
-- Replace `example.com` with your organization’s domain name
-- Replace `username` with the username associated with your IdP
-- Generate a signing key
-
-To generate a [signing key](/docs/reference/signing-key), use the commands below:
-
-```bash
-# Generates a P-256 (ES256) signing key
-openssl ecparam  -genkey  -name prime256v1  -noout  -out ec_private.pem
-# Prints the base64 encoded value of the signing key
-cat ec_private.pem | base64
-```
-
-Add the base64-encoded signing key to the `signing_key` variable in your `config.yaml` file.
-
-### Run Pomerium services with Docker Compose
-
-In your `docker-compose.yaml` file, replace the code in the file with the Pomerium and Jenkins services below:
-
-<JenkinsCompose />
-
-Run `docker compose up` and navigate to the external Jenkins route at `https://jenkins.localhost.pomerium.io`.
-
-Jenkins will prompt you to sign in with your username and password.
-
-![Sign in to Jenkins](./img/jenkins/3-jenkins-sign-in.png)
-
-Sign in to continue to the Jenkins dashboard.
 
 </TabItem>
 <TabItem label="Enterprise" value="Enterprise">
