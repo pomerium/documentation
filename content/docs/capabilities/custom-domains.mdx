@@ -36,19 +36,15 @@ For example, if you added a custom domain like `mycorp.example.com` to Pomerium 
 
 ## How to add a custom domain
 
-Add a wildcard CNAME record that points to your starter domain. For example:
+Add a **wildcard CNAME record** that points to your starter domain. For example:
 
-`*.mycorp.example.com CNAME unique-jellyfish-3578.pomerium.app`
+```bash
+*.mycorp.example.com CNAME unique-jellyfish-3578.pomerium.app
+```
 
-In Google Cloud Platform, you can manage DNS records using the Cloud DNS interface:
+If you're using a DNS provider like Google's Cloud DNS, you can add the wildcard CNAME record without code:
 
 ![Add a CNAME record in GCP](../capabilities/img/custom-domains/gcp-cname-record.png)
-
-:::note
-
-The steps to add a wildcard CNAME record to your domain vary depending on your domain registrar and/or DNS provider. This guide uses Google Cloud Platform as an example.
-
-:::
 
 Add the custom domain in the Zero Console:
 
@@ -76,4 +72,4 @@ Let's Encrypt provides several [challenge types](https://letsencrypt.org/docs/ch
 - A `TXT` record must be placed at `_acme-challenge.<YOUR_DOMAIN>`
 - Or, a `CNAME` record must be placed at `_acme-challenge.<YOUR_DOMAIN>` that points to another domain with the `TXT` record
 
-Because Pomerium owns the `pomerium.app` subdomain, we can write the `TXT` record for you. All you need to do is point a **wildcard CNAME record** to your cluster's starter domain.
+Because Pomerium owns the `pomerium.app` subdomain, we can write the `TXT` record for you. All you need to do is point a wildcard CNAME record to your cluster's starter domain.
