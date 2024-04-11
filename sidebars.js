@@ -56,6 +56,8 @@ const sidebars = {
       type: 'category',
       label: 'Capabilities',
       items: [
+        // zero
+        'docs/capabilities/custom-domains',
         // core & open source
         //
         // Core concepts
