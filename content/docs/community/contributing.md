@@ -42,6 +42,41 @@ Here are some of the expectations we have of contributors:
   - [Best Practices for Maintainers](https://opensource.guide/best-practices/)
   - [Shrinking Code Review](https://alexgaynor.net/2015/dec/29/shrinking-code-review/)
 
+### Development
+
+See [Building Pomerium From Source](/docs/deploy/core/from-source) for information on getting started developing for Pomerium.
+
+To run the unit tests locally:
+
+```bash
+make test
+```
+
+The instrumentation tests run using Docker Compose. To run the instrumentation tests locally, first build a development Docker image:
+
+```bash
+./scripts/build-dev-docker.bash
+```
+
+Next pick a configuration from the `integration/clusters` directory, for example `single-stateful`, and use Docker Compose to start that configuration. Use the `POMERIUM_TAG` environment variable to specify the `dev` docker image built in the previous step:
+
+```bash
+cd integration/clusters/single-stateful
+env POMERIUM_TAG=dev docker compose up -V
+```
+
+Once that's up and running you can run the integration tests from another terminal:
+
+```bash
+go test -count=1 -v ./integration/...
+```
+
+If you need to make a change to the test configuration itself, there's a [tpl](https://github.com/pomerium/pomerium/tree/main/integration/tpl) folder that contains `jsonnet` files. Make a change and then rebuild the configuration by running:
+
+```bash
+go run ./integration/cmd/pomerium-integration-tests/ generate-configuration
+```
+
 ### Logging
 
 Pomerium uses the [zerolog](https://github.com/rs/zerolog) package for logging. Guidelines for log levels:
