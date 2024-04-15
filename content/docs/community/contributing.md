@@ -1,5 +1,5 @@
 ---
-# cSpell:ignore zerolog
+# cSpell:ignore zerolog jsonnet
 title: Contributing
 lang: en-US
 keywords: [pomerium, community, contributing, pr, code]
@@ -52,7 +52,7 @@ To run the unit tests locally:
 make test
 ```
 
-The instrumentation tests run using Docker Compose. To run the instrumentation tests locally, first build a development Docker image:
+The instrumentation tests run using [Docker Compose]. To run the instrumentation tests locally, first build a development Docker image:
 
 ```bash
 ./scripts/build-dev-docker.bash
@@ -135,6 +135,7 @@ To add a new document to the side or top-bar navigation, see `docs/.vuepress/con
 We use [Netlify](https://www.netlify.com) to build and host our docs. One of nice features of Netlify, is that a preview of the docs are automatically created for each new pull request that is made, which lets you be sure that the version of your docs that you see locally match what will ultimately be deployed in production.
 
 [configuration variables]: /docs/reference
+[docker compose]: https://docs.docker.com/compose/
 [download]: https://github.com/pomerium/pomerium/releases
 [environmental configuration variables]: https://12factor.net/config
 [verify]: https://verify.pomerium.com/
