@@ -1,5 +1,5 @@
 ---
-# cSpell:ignore zerolog
+# cSpell:ignore zerolog jsonnet
 title: Contributing
 lang: en-US
 keywords: [pomerium, community, contributing, pr, code]
@@ -41,6 +41,41 @@ Here are some of the expectations we have of contributors:
   - [Linus Torvalds describes a good commit message](https://gist.github.com/matthewhudson/1475276)
   - [Best Practices for Maintainers](https://opensource.guide/best-practices/)
   - [Shrinking Code Review](https://alexgaynor.net/2015/dec/29/shrinking-code-review/)
+
+### Development
+
+See [Building Pomerium From Source](/docs/deploy/core/from-source) for information on getting started developing for Pomerium.
+
+To run the unit tests locally:
+
+```bash
+make test
+```
+
+The instrumentation tests run using [Docker Compose]. To run the instrumentation tests locally, first build a development Docker image:
+
+```bash
+./scripts/build-dev-docker.bash
+```
+
+Next pick a configuration from the `integration/clusters` directory, for example `single-stateful`, and use Docker Compose to start that configuration. Use the `POMERIUM_TAG` environment variable to specify the `dev` docker image built in the previous step:
+
+```bash
+cd integration/clusters/single-stateful
+env POMERIUM_TAG=dev docker compose up -V
+```
+
+Once that's up and running you can run the integration tests from another terminal:
+
+```bash
+go test -count=1 -v ./integration/...
+```
+
+If you need to make a change to the test configuration itself, there's a [tpl](https://github.com/pomerium/pomerium/tree/main/integration/tpl) folder that contains `jsonnet` files. Make a change and then rebuild the configuration by running:
+
+```bash
+go run ./integration/cmd/pomerium-integration-tests/ generate-configuration
+```
 
 ### Logging
 
@@ -100,6 +135,7 @@ To add a new document to the side or top-bar navigation, see `docs/.vuepress/con
 We use [Netlify](https://www.netlify.com) to build and host our docs. One of nice features of Netlify, is that a preview of the docs are automatically created for each new pull request that is made, which lets you be sure that the version of your docs that you see locally match what will ultimately be deployed in production.
 
 [configuration variables]: /docs/reference
+[docker compose]: https://docs.docker.com/compose/
 [download]: https://github.com/pomerium/pomerium/releases
 [environmental configuration variables]: https://12factor.net/config
 [verify]: https://verify.pomerium.com/
