@@ -22,26 +22,18 @@ This guide shows you how to build a route to Grafana in Pomerium Zero. Watch the
 
 :::note
 
-This guide assumes you've completed the [**Pomerium Zero Quickstart**](/docs/quickstart). If you haven't, you must have a connected Pomerium cluster instance running in a Docker container before continuing.
+This guide assumes you've completed the [**Pomerium Zero Quickstart**](/docs/quickstart).
 
 :::
 
 ## Routing in Pomerium
 
-In Pomerium, **Routing** tells the Proxy service where to listen for incoming requests from the client so it can direct the request to the upstream origin server.
+In Pomerium, **Routing** makes it possible for the Proxy service to manage requests and responses between a client and an upstream service.
 
-When the origin server sends its response back to the client, the Proxy service receives the request, and looks for routing instructions so it knows where to direct the response to.
+To route requests and responses to the correct locations, the Proxy service requires two sets of routing instructions:
 
-In simpler terms, routing makes it possible for Pomerium to manage requests and responses between a client and an upstream service.
-
-:::info How routing works
-
-A Pomerium-managed route consists of two URLs defined by their **From** and **To** values:
-
-- **From** defines the external, publically accessible URL of a proxied request. It tells the Proxy service to listen for requests from this location.
-- **To** defines the destination URL of the proxied request. It can be an internal or external resource.
-
-:::
+- The **From** URL. This URL defines the external, publically accessible URL of a proxied request. It tells the Proxy service to listen for requests from this location.
+- The **To** URL. This URL defines the destination of the proxied request, or where the Proxy service should direct the origin server's response. It can be an internal or external resource.
 
 ## How to build routes in Pomerium Zero
 
@@ -85,13 +77,11 @@ Save your route and **apply the changeset**.
 
 ## Access the route
 
-Now, in your browser, navigate to the external From URL you just saved. You'll notice your accessing Grafana over the external URL. This means you've successfully configured Pomerium to proxy requests to Grafana.
+Now, in your browser, navigate to the external From URL you just saved. You'll notice you're accessing Grafana over the external URL. This means you've successfully configured Pomerium to proxy requests to Grafana.
 
-If you look at the route's TLS certificate, you'll notice the certificate was issued by ZeroSSL on behalf of your cluster domain:
+If you look at the route's TLS certificate, you'll notice the certificate was issued by ZeroSSL on behalf of your cluster domain. This means the connection between the client and Grafana is secured over TLS!
 
 ![Reviewing the service's TLS certificate](./img/routes/pz-courses-route-details.png)
-
-This means the connection between you and Grafana is secured over a TLS.
 
 ## Up Next: Build Policies
 
@@ -107,7 +97,7 @@ At this point, your Docker Compose file should look like this:
 ```yaml title="docker-compose.yaml"
 services:
   pomerium:
-    image: pomerium/pomerium:v0.25.1
+    image: cr.pomerium.com/pomerium/pomerium:v0.25.1
     ports:
       - 443:443
     restart: always
