@@ -37,10 +37,10 @@ Here are some of the expectations we have of contributors:
 
 :::info **Recommended reading**
 
-  - [**CodeReviewComments**](https://github.com/golang/go/wiki/CodeReviewComments)
-  - [**Linus Torvalds describes a good commit message**](https://gist.github.com/matthewhudson/1475276)
-  - [**Best Practices for Maintainers**](https://opensource.guide/best-practices/)
-  - [**Shrinking Code Review**](https://alexgaynor.net/2015/dec/29/shrinking-code-review/)
+- [**CodeReviewComments**](https://github.com/golang/go/wiki/CodeReviewComments)
+- [**Linus Torvalds describes a good commit message**](https://gist.github.com/matthewhudson/1475276)
+- [**Best Practices for Maintainers**](https://opensource.guide/best-practices/)
+- [**Shrinking Code Review**](https://alexgaynor.net/2015/dec/29/shrinking-code-review/)
 
 :::
 
@@ -99,9 +99,9 @@ Pomerium's documentation is available at [https://www.pomerium.io/docs](https://
 
 ### Simple edits
 
-The easiest way to fix minor documentation issues in Pomerium is to click on the **Edit this page** link at the bottom of any page.    
-  
-  ![Selecting the Edit this page link on a docs page](./img/contributing-edit-this-page.png)
+The easiest way to fix minor documentation issues in Pomerium is to click on the **Edit this page** link at the bottom of any page.
+
+![Selecting the Edit this page link on a docs page](./img/contributing-edit-this-page.png)
 
 Doing so will redirect you to the the respective file in the Documentation repository. Here, you can [update the page](https://guides.github.com/features/mastering-markdown/) and commit your changes.
 
@@ -109,15 +109,13 @@ Committing your changes will create a new branch and start a PR.
 
 ![Adding proposed changes in the docs repository](./img/contributing-proposed-changes.png)
 
-
-
 ### Bigger changes
 
 If you need to add a new page, or would like greater control over the editing process you can edit the docs similar to how you would make changes to the source code.
 
 #### Prerequisites
 
-We use [Docusaurus](https://docusaurus.io/) to generate our docs. Docusaurus is a React-powered static-site generator designed for documentation. 
+We use [Docusaurus](https://docusaurus.io/) to generate our docs. Docusaurus is a React-powered static-site generator designed for documentation.
 
 Before building the docs, you'll need the following packages:
 
