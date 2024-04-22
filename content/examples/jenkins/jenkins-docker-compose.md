@@ -4,7 +4,7 @@ networks:
  main: {}
 services:
  pomerium:
-   image: pomerium/pomerium:latest
+   image: cr.pomerium.com/pomerium/pomerium:latest
    volumes:
      - ./config.yaml:/pomerium/config.yaml:ro
    ports:
@@ -16,7 +16,7 @@ services:
  verify:
    networks:
      main: {}
-   image: pomerium/verify:latest
+   image: cr.pomerium.com/pomerium/verify:latest
    expose:
      - 8000
  jenkins:

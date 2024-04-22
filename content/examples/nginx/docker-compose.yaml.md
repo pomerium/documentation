@@ -19,11 +19,11 @@ services:
       - ./proxy.conf:/etc/nginx/proxy.conf
 
   verify:
-    image: pomerium/verify
+    image: cr.pomerium.com/pomerium/verify:latest
     expose:
       - 80
   pomerium:
-    image: pomerium/pomerium:latest
+    image: cr.pomerium.com/pomerium/pomerium:latest
     volumes:
       - ./config.yaml:/pomerium/config.yaml:ro
     expose:

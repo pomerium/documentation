@@ -1,5 +1,5 @@
 ---
-# cSpell:ignore abac, gset, nxon
+# cSpell:ignore abac, gset, nxon, unvalidated
 
 title: Authorization & Policy
 lang: en-US
@@ -34,9 +34,13 @@ You can apply policies in Pomerium to [Namespaces](/docs/capabilities/namespacin
 
 ### Namespaces
 
-Administrators can create a namespace, add users, groups, and routes to it, and configure a policy that applies to that specific namespace.
+:::enterprise
 
-Namespace support is only available for [Enterprise customers](https://www.pomerium.com/enterprise-sales/).
+Namespace support is available only for [Enterprise customers](https://www.pomerium.com/enterprise-sales/).
+
+:::
+
+Administrators can create a namespace, add users, groups, and routes to it, and configure a policy that applies to that specific namespace.
 
 ### Routes
 
@@ -102,7 +106,11 @@ In this example, Pomerium will grant a user access if their email address ends i
 
 ### Enterprise Console GUI
 
-The Enterprise Console provides a policy builder GUI so you can build policies and reapply them to multiple routes and namespaces.
+:::enterprise
+
+The Enterprise Console provides a policy builder GUI so you can build policies and reapply them to multiple routes and namespaces. See our [**Enterprise**](/docs/deploy/enterprise) page to learn more.
+
+:::
 
 Use the **BUILDER** tab to build your policy:
 
@@ -118,17 +126,97 @@ Reapply policies as necessary to any route or namespace:
 
 ### Rego support
 
-Pomerium Core and Enterprise support policies expressed in [Rego](https://www.openpolicyagent.org/docs/latest/#rego) for organizations that prefer to use [OPA](https://www.openpolicyagent.org/).
+Pomerium supports policies expressed in [Rego](https://www.openpolicyagent.org/docs/latest/#rego) for organizations that prefer to use [OPA](https://www.openpolicyagent.org/).
 
-For Enterprise customers, use the **Rego** tab to configure your policy:
+See the [Outputs](#outputs), [Inputs](#inputs), and [Functions](#functions) reference sections below to learn how they apply to policy evaluation.
 
-![Apply Rego in Console editor](./img/authorization/ppl-rego-policy.png)
+#### Outputs
 
-:::tip
+Authorization policy written in Rego is expected to return results in `allow` and/or `deny` rules:
 
-A policy can only support PPL or Rego. Once one is set, the other tab is disabled.
+```rego
+# a policy that always allows access
+allow := true
+```
 
-:::
+```rego
+# a policy that always denies access
+deny := true
+```
+
+Pomerium grants access according to the same rules as [PPL](/docs/capabilities/ppl#actions):
+
+> Only two actions are supported: allow and deny. deny takes precedence over allow. More precisely: a user will have access to a route if at least one allow rule matches and no deny rules match.
+
+`allow` and `deny` rules support four forms:
+
+1. A simple boolean:
+
+```rego
+allow := true
+```
+
+2. An array with a single boolean value:
+
+```rego
+deny := [true]
+```
+
+3. An array with two values: a boolean and a **reason**:
+
+```rego
+allow := [false, "user-unauthorized"]
+```
+
+4. An array with three values: a boolean, a reason, and additional data:
+
+```rego
+allow := [false, "user-unauthorized", { "key": "value" }]
+```
+
+The **reason** value is useful for debugging, since it appears in [authorization logs](/docs/reference/authorize-log-fields#find-authorize-logs). There are two special reasons that trigger functionality in Pomerium:
+
+- `user-unauthenticated` indicates that the user needs to sign in, and results in a redirect to the Authenticate service
+- `device-unauthenticated` indicates that the user needs to register a new device
+
+#### Inputs
+
+Rego scripts are evaluated with inputs available on the `input` object:
+
+```rego
+allow if input.http.method == "POST"
+```
+
+Rego defines the following inputs:
+
+| **Input name** | **Type** | **Description** |
+| :-- | :-- | :-- |
+| `http` | Object | Represents the HTTP request |
+| `http.method` | String | The method used in the HTTP request |
+| `http.hostname` | String | The hostname in the HTTP request |
+| `http.path` | String | The path in the HTTP request |
+| `http.url` | String | The full URL in the HTTP request |
+| `http.headers` | Object | The headers in the HTTP request |
+| `http.client_certificate` | Object | The client certificate details |
+| `http.client_certificate.presented` | Boolean | `true` if the client presented a certificate |
+| `http.client_certificate.leaf` | String | The leaf certificated provided by the client (unvalidated) |
+| `http.client_certificate.intermediates` | String | The remainder of the client certificate chain |
+| `http.ip` | String | The user's IP address |
+| `http.session` | Object | Represents the user's session |
+| `http.session.id` | String | The session ID |
+| `http.is_valid_client_certificate` | Boolean | `true` if the presented client certificate is valid |
+
+#### Functions
+
+The function below is available in Rego scripts:
+
+- `get_databroker_record(record_type, record_id)`: Returns data from the Databroker service.
+
+For example:
+
+```rego
+session := get_databroker_record("type.googleapis.com/session.Session", input.session.id)
+```
 
 <details>
 <summary>Example Rego Policy</summary>
@@ -184,6 +272,20 @@ This example pulls session data from the Databroker service using `type.googleap
 </div>
 </details>
 
+::::enterprise
+
+In the [**Enterprise Console**](/docs/deploy/enterprise), you can write policies in Rego with the PPL builder:
+
+![Apply Rego in Console editor](./img/authorization/ppl-rego-policy.png)
+
+:::note
+
+A policy can only support PPL or Rego. Once one is set, the other tab is disabled.
+
+:::
+
+::::
+
 ### Policy overrides
 
 Pomerium Core and Enterprise offer the following options for overriding your authorization policy:
@@ -192,7 +294,26 @@ Pomerium Core and Enterprise offer the following options for overriding your aut
 - **CORS Preflight**: Allows unauthenticated HTTP OPTIONS requests as per the CORS spec
 - **Public Access**: Allows complete, unrestricted access to an associated route (use this setting with caution)
 
+:::note robots.txt behavior
+
+By default, Pomerium serves a **robots.txt** response directly, instructing search engines _not_ to crawl the route domain:
+
+```txt
+User-agent: *
+Disallow: /
+```
+
+For routes with policies that allow public, unauthenticated access, Pomerium _will not_ serve **robots.txt** directly. Instead, Pomerium will proxy requests for `/robots.txt` to the upstream service.
+
+:::
+
 ## Manage devices
+
+:::enterprise
+
+[Device identity](/docs/capabilities/device-identity) is an Enterprise feature. Check out our [Enterprise](/docs/deploy/enterprise) page to learn more.
+
+:::
 
 The **Manage Devices** feature in the Enterprise Console allows you to enroll and manage user devices for policy-based authorization.
 
@@ -201,5 +322,3 @@ The **Manage Devices** feature in the Enterprise Console allows you to enroll an
 The **Devices List** displays enrolled devices for each user and the approval status. Administrators can inspect, approve, or delete registered devices from this table.
 
 ![List of user devices](./img/authorization/console-devices.png)
-
-See [Device Identity](docs/capabilities/device-identity) for more information.

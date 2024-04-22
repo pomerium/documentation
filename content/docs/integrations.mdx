@@ -4,6 +4,12 @@ sidebar_label: integrations
 description: Extend your authorization policies with data from external sources.
 ---
 
+:::enterprise
+
+This article describes a use case only available to [Pomerium Enterprise](/docs/deploy/enterprise) customers.
+
+:::
+
 <iframe
   width="100%"
   height="415"
@@ -27,7 +33,7 @@ See the pages in this section for more information on our example data sources, 
 
 Any external data source integration requires the following settings:
 
-### **URL**
+### URL
 
 The path to the external data.
 
@@ -72,28 +78,41 @@ The Pomerium Databroker would be updated with types `example.com/geoip`, `device
 
 Compressed versions are supported using `gz` format.
 
-### **Record Type**
+### Record Type
 
 Unless defined by the directory structure of a supplied archive file, the Record Type field defines how the records will be stored and accessed in the Databroker.
 
-### **Foreign Key**
+### Foreign Key
 
 **Foreign Key** is used to map an authorization evaluation to the corresponding record. The supported values are:
 
-- `user.id` (Also the default if no value is provided),
-- `user.email`,
-- `request.ip`,
-- `device.id`.
+- `user.id` (Also the default if no value is provided)
+- `user.email`
+- `request.ip`
 
-### **Headers**
+#### IP range lookup support
+
+For the `request.ip` foreign key, Pomerium also supports matching against a range of IP addresses (expressed in [CIDR notation](https://en.wikipedia.org/wiki/Classless_Inter-Domain_Routing#CIDR_notation)). This can reduce the number of data records you need.
+
+To match against an IP address range, add a special `$index` key to your external data source records. For example:
+
+```json
+{
+  "$index": {"cidr": "10.1.2.3/24"}
+}
+```
+
+See the [GeoIP Ranges](/docs/integrations/geoip) and [Well-Known IP Ranges](/docs/integrations/ip-ranges) guides for specific examples.
+
+### Headers
 
 Headers defined here will be used when connecting to the external data source.
 
-### **Allow Insecure TLS**
+### Allow Insecure TLS
 
 If set, allows the import of external data from sources using untrusted TLS certificates.
 
-### **Polling Min/Max Delay**
+### Polling Min/Max Delay
 
 Defines the minimum and maximum delay times between requests to the external data source. The job would be scheduled to run within `min delay` intervals.
 
@@ -103,6 +122,6 @@ If a job may not complete within the `min delay` period, it would be interrupted
 
 :::
 
-### **Client TLS Key**
+### Client TLS Key
 
 For data sources using mTLS, you can select a [client certificate](/docs/concepts/certificates) (added under **Manage** → **Certificates**) to provide to the data source.

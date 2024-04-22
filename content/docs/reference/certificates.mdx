@@ -18,7 +18,6 @@ This reference covers all of Pomerium's **Certificates Settings**:
 
 - [Certificates](#certificates)
 - [Certificate Authority](#certificate-authority)
-- [Client Certificate Authority](#client-certificate-authority)
 
 :::tip **Note**
 
@@ -148,56 +147,6 @@ Configure **Certificate Authority** in the Enterprise Console:
 <TabItem value="Kubernetes" label="Kubernetes">
 
 Kubernetes does not support `certificate_authority`
-
-</TabItem>
-</Tabs>
-
-## Client Certificate Authority {#client-certificate-authority}
-
-:::caution
-
-This setting is deprecated; it has been moved to a new **Downstream mTLS Settings** group (see the [**Certificate Authority**](/docs/reference/downstream-mtls-settings#ca) setting there).
-
-This setting will be treated as an alias for the new setting, but will be removed in a future Pomerium release.
-
-:::
-
-**Client Certificate Authority** is the X.509 _public-key_ used to validate [mTLS client certificates](/docs/capabilities/mtls-clients).
-
-If not set, no client certificate will be required.
-
-### How to configure {#client-certificate-authority-how-to-configure}
-
-<Tabs>
-<TabItem value="Core" label="Core">
-
-| **Config file keys** | **Environment variables** | **Type** | **Usage**    |
-| :------------------- | :------------------------ | :------- | :----------- |
-| `client_ca`          | `CLIENT_CA`               | `string` | **optional** |
-| `client_ca_file`     | `CLIENT_CA_FILE`          | `string` | **optional** |
-
-### Examples {#client-certificate-authority-examples}
-
-```yaml
-client_ca: base64-encoded-string
-client_ca_file: base64-encoded-string
-```
-
-```bash
-CLIENT_CA=/relative/file/location
-
-CLIENT_CA_FILE=/relative/file/location
-```
-
-</TabItem>
-<TabItem value="Enterprise" label="Enterprise">
-
-`client_ca` and `client_ca_file` are bootstrap configuration settings and are not configurable in the Console.
-
-</TabItem>
-<TabItem value="Kubernetes" label="Kubernetes">
-
-Kubernetes does not support `client_certificate_ca`
 
 </TabItem>
 </Tabs>

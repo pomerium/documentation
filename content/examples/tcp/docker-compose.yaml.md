@@ -2,7 +2,7 @@
 version: "3"
 services:
   pomerium:
-    image: pomerium/pomerium:latest
+    image: cr.pomerium.com/pomerium/pomerium:latest
     volumes:
       # Uncomment to mount certificates (optional)
       # - ./_wildcard.localhost.pomerium.io.pem:/pomerium/cert.pem:ro

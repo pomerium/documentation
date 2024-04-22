@@ -1,0 +1,73 @@
+---
+id: direct-response
+title: Direct Response
+keywords:
+  - direct response
+  - route
+pagination_prev: null
+pagination_next: null
+toc_max_heading_level: 2
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Direct Response
+
+## Summary
+
+**Direct Response** instructs Pomerium to send a static HTTP response to the downstream client for a managed route.
+
+## How to configure
+
+<Tabs>
+<TabItem value="Core" label="Core">
+
+| **Config file keys** | **Type**  | **Usage**    |
+| :------------------- | :-------- | :----------- |
+| `response`           | `object`  | **optional** |
+| `response.status`    | `integer` | **optional** |
+| `response.body`      | `string`  | **optional** |
+
+### Example
+
+The `response` configuration key must replace the `to:` destination URL in a route block:
+
+```yaml
+routes:
+  - from: https://example.com
+    response:
+      status: 200
+      body: 'plain text'
+```
+
+Additional HTTP response headers, such as **Content-Type**, can be defined with the [`set_response_headers`](/docs/reference/routes/headers#set-response-headers) setting:
+
+```yaml
+routes:
+ - from: https://example.com
+   response:
+    status: 200
+    body: "plain text"
+  set_response_headers:
+   Content-Type: "text/plain; charset=us-ascii"
+```
+
+</TabItem>
+<TabItem value="Enterprise" label="Enterprise">
+
+Configure **Direct Response** in the Enterprise Console:
+
+![Configure Direct Response in the Enterprise Console](../img/routes/direct-response/enterprise-direct-response.png)
+
+Additional HTTP response headers, such as **Content-Type**, can be defined with the [`set_response_headers`](/docs/reference/routes/headers#set-response-headers) setting.
+
+![Define additional HTTP response headers as a direct response in the Enterprise Console](../img/routes/direct-response/enterprise-direct-response-content-type.png)
+
+</TabItem>
+<TabItem value="Kubernetes" label="Kubernetes">
+
+Currently, the **Direct Response** setting is not supported for the Ingress Controller. If you'd like support for this feature, see the [GitHub issue](https://github.com/pomerium/ingress-controller/issues/897) and describe your use case.
+
+</TabItem>
+</Tabs>

@@ -28,6 +28,13 @@ const config = {
     xgridKey: process.env.XGRID_KEY,
   },
 
+  scripts: [
+    {
+      src: './static/js/syft.js',
+      async: false,
+    },
+  ],
+
   presets: [
     [
       '@docusaurus/preset-classic',
@@ -37,6 +44,10 @@ const config = {
           routeBasePath: '/',
           sidebarPath: require.resolve('./sidebars.js'),
           editUrl: 'https://github.com/pomerium/documentation/tree/main',
+          admonitions: {
+            keywords: ['note', 'tip', 'info', 'caution', 'danger', 'enterprise'],
+            extendDefaults: true,
+          },
         },
         theme: {
           customCss: require.resolve('./src/css/custom.css'),
@@ -50,6 +61,17 @@ const config = {
         },
       },
     ],
+    [
+      'redocusaurus',
+      {
+        specs: [
+          {
+            spec: 'https://console.pomerium.app/openapi.yaml',
+            route: '/docs/api/'
+          }
+        ]
+      }
+    ]
   ],
 
   themeConfig: {
@@ -84,6 +106,23 @@ const config = {
           position: 'right',
           label: 'Reference',
           to: '/docs/reference/',
+        },
+        {
+          type: 'dropdown',
+          position: 'right',
+          label: 'APIs',
+          items: [
+            {
+              docId: 'docs/api',
+              label: 'Zero API',
+              to: '/docs/api/',
+            },
+            {
+              docId: 'docs/capabilities/enterprise-api',
+              label: 'Enterprise API',
+              to: 'docs/capabilities/enterprise-api',
+            }
+          ]
         },
         {
           type: 'docSidebar',
@@ -196,6 +235,7 @@ const config = {
         id: process.env.GTM,
       },
     ],
+    './docusaurus-plugins/src/webpackDebugFix.js',
   ],
 };
 
