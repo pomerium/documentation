@@ -5,6 +5,84 @@ sidebar_label: 05. Advanced Routes
 sidebar_position: 5
 ---
 
+# Build Advanced Routes
+
+In this guide, you'll build advanced routes in the Zero Console. To do that, you'll configure route settings in Pomerium Zero and test them against an upstream service called HTTPbin.
+
+:::note **Before You Start**
+
+Make sure you’ve completed the following guides:
+
+- [**Build a Simple Route**](/docs/courses/zero-fundamentals/build-routes)
+- [**Build a Simple Policy**](/docs/courses/zero-fundamentals/build-policies)
+- [**Identity Verification with JWTs**](/docs/courses/zero-fundamentals/sing-sign-on)
+- [**Build Advanced Policies**](/docs/courses/zero-fundamentals/advanced-policies)
+
+Each tutorial builds on the same configuration files. In this tutorial, you’ll build new routes with some of Pomerium’s route-level settings.
+
+:::
+
+## Advanced route configuration settings
+
+Pomerium provides route-level settings that allow you to customize how the Proxy service handles requests. More advanced configurations allow identity header pass-through, path and prefix rewrites, and request and response header modifications.
+
+For the purposes of this tutorial, we will only review the following settings to give you an idea of how you can further configure your routes for your use case:
+
+- **Remove Request Headers**
+- **Host Rewrite Headers**
+- **Set Response Headers**
+- **Redirects**
+- **Prefix & Prefix Rewrite**
+- **Direct Response**
+
+### Configure HTTPBin
+
+To see how some of these settings work, we will configure Pomerium and Docker Compose to host an HTTPBin server. If you’re not familiar with [HTTPBin](https://httpbin.org/), it’s a call-and-response HTTP server you can use to test (you guessed it) HTTP requests and responses.
+
+Add the `httpbin` service to your Docker Compose file:
+
+```yaml title="docker-compose.yaml"
+httpbin:
+  image: kennethreitz/httpbin
+  ports:
+    - 80:80
+```
+
+Add the `httpbin` route in your Pomerium configuration file:
+
+1. Create a new route
+1. Add **From** and **To** URLs
+1. For **Policies**, select `Any Authenticated User`
+
+Save your route and apply your changeset.
+
+## Test Headers settings
+
+### Identity headers
+
+[Pass Identity Headers](/docs/reference/routes/pass-identity-headers-per-route) is a route-level setting that forwards a signed JWT to the upstream application in a signed HTTP header. The HTTP header must use the (case insensitive) `x-pomerium-jwt-assertion` format. You configured this setting in the [previous guide](/docs/courses/zero-fundamentals/single-sign-on), but let's see how it looks as a request header.
+
+In the Zero Console:
+
+1. Edit your HTTPBin route
+1. Select **Headers**
+1. Apply the **Pass Identity Headers** setting
+1. Save your route and apply the changeset
+
+Access the HTTPBin route and send a request:
+
+
+
+:::info
+
+RESUME HERE
+
+:::
+
+The **Pass Identity Headers** and **JWT Claim Headers** settings both forward identity headers to an upstream application.
+
+
+
 [
   Goals:
   - Build advanced routes
