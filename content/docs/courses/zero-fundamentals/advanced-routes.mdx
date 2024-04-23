@@ -153,19 +153,158 @@ After applying your changeset, check the request headers in HTTPBin again. You'l
 
 `"Host": "httpbin.righteous-gemstone-1734.pomerium.app"`
 
-## Redirects and Direct Response
+## Test Advanced settings
 
-RESUME HERE
+### Redirects
 
+TODO
 
+### Direct Response
 
-[
-  Goals:
-  - Build advanced routes
-  - Request headers
-  - Response headers
-  - Host headers
-  - Redirects
-  - Direct response
-  - Prefix and Path settings
-]
+TODO
+You can configure Pomerium to send a small, static HTTP response to the downstream client for a managed route.
+
+## Test prefix and path settings
+
+### Configure Node server
+
+To demonstrate these settings, you need to add a simple Node HTTP server to your Docker Compose file.
+
+First, make sure you install [Node.js](https://nodejs.org/en/download).
+
+After you've installed Node.js:
+
+1. Create a new directory called `app` and `cd` into it
+1. Initiate a Node application: `npm init`
+1. Create an `index.js` file: `touch index.js`
+1. Install Express: `npm i express`
+
+Add the following code inside `index.js`:
+
+```js title="index.js"
+const express = require('express');
+const app = express();
+
+app.get('/', (req, res) => {
+  res.send('Hello World!');
+});
+
+app.get('/admin', (req, res) => {
+  res.send('This is an admin only page');
+});
+
+app.listen(5001, () => console.log('Server is up and running'));
+```
+
+This mini server builds two different endpoints:
+
+- `/`
+- `/admin`
+
+Your `app` directory should now have a `package.json` file and a `node_modules` folder.
+
+Next, test your server:
+
+```bash
+node index.js
+```
+
+Navigate to `localhost:5001` to see if your server serves the `Hello World!` message. Similarly, if you go to `localhost:5001/admin`, you should see `This is an admin only page`.
+
+![Testing the Node HTTP server's admin and public endpoint responses](./img/advanced-routes/server-endpoints.gif)
+
+#### Dockerize Node server
+
+Next, we will Dockerize our Node server. In the `./app` directory, create the following files:
+
+```bash
+touch Dockerfile && touch .dockerignore
+```
+
+In `Dockerfile`, add the following instructions:
+
+```yaml title="Dockerfile"
+# pull the Node.js Docker image
+FROM node:alpine
+
+# create the directory inside the container
+WORKDIR /usr/src/app
+
+# copy the package.json files from local machine to the workdir in container
+COPY package*.json ./
+
+# run npm install in our local machine
+RUN npm install
+
+# copy the generated modules and all other files to the container
+COPY . .
+
+# our app is running on port 5001 within the container, so need to expose it
+EXPOSE 5001
+
+# the command that starts our app
+CMD ["node", "index.js"]
+```
+
+In `.dockerignore`, add:
+
+```yaml title=".dockerignore"
+node_modules npm-debug.log
+```
+
+In Docker Compose, add your Node server:
+
+```yaml title="docker-compose.yaml"
+nodeserver:
+  networks:
+    main: {}
+  build:
+    context: ./app
+  ports:
+    - 5001:5001
+```
+
+In the Zero Console, add a route and point it to `nodeserver`. For example:
+
+    ![Adding the nodeserver route in the Zero Console](./img/advanced-routes/node-server-route.png)
+
+Save your changes and apply your changeset. Then, test your route.
+
+### Path Matching: Prefix
+
+Assuming your route works, we will configure the [**Prefix**](/docs/reference/routes/path-matching#prefix) setting.
+
+The `prefix` setting instructs Pomerium to only match the route if the incoming request has the specified prefix in its path.
+
+In the Zero Console:
+
+1. Go to your Node server route
+1. Select **Path Matching**
+1. In the **Prefix** field, enter `/admin`
+
+If you append the `/admin` endpoint to your route, Pomerium should direct you to the `/admin` only page. If you don't append `/admin`, you will see a 404 error:
+
+![Adding the /admin prefix to the Node server route](./img/advanced-routes/nodeserver-prefix-setting.gif)
+
+### Path Rewriting: Prefix Rewrite
+
+Next, let’s add [**Prefix Rewrite**](/docs/reference/routes/path-rewriting#prefix-rewrite).
+
+In the Zero Console:
+
+1. Select **Path Rewriting**
+1. In the **Prefix Rewrite** field, enter a `/`
+
+If the incoming request’s prefix matches the value of `prefix` (`/admin`), Pomerium will rewrite `prefix` to match the value of `prefix_rewrite`.
+
+Now, if you navigate to the `/admin` endpoint, Pomerium will redirect you to the `/` page. If you don’t include the `/admin` prefix, the request will `404`.
+
+![Adding the / prefix rewrite setting to the Node server route](./img/advanced-routes/nodeserver-prefix-rewrite-setting.gif)
+
+Great job! You've configured several advanced routes in Pomerium Zero.
+
+## Up Next: TCP Routes
+
+In the next guide, you'll secure TCP routes and access an SSH service.
+
+Go to [TCP Routes](/docs/courses/zero-fundamentals/tcp-ssh).
