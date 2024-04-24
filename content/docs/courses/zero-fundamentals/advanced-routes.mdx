@@ -7,7 +7,7 @@ sidebar_position: 5
 
 # Build Advanced Routes
 
-In this guide, you'll build advanced routes in the Zero Console. To do that, you'll configure route settings in Pomerium Zero and test them against an upstream service called HTTPbin.
+In this guide, you'll build advanced routes by exploring some of the route settings available in Pomerium Zero.
 
 :::note **Before You Start**
 
@@ -22,20 +22,18 @@ Each tutorial builds on the same configuration files. In this tutorial, you’ll
 
 :::
 
-## Advanced route configuration settings
+## What are advanced routes?
 
-Pomerium provides route-level settings that allow you to customize how the Proxy service handles requests. More advanced configurations allow identity header pass-through, path and prefix rewrites, and request and response header modifications.
+Pomerium provides many route-level settings that allow you to customize how the Proxy service handles requests. More advanced configurations allow identity header pass-through, path and prefix rewrites, and request and response header modifications.
 
-For the purposes of this guide, we will only review select settings from the list below to give you an idea of how you can further configure routes for your use case:
+In the Zero Console, these settings are organized into categories, like TLS Settings and Headers settings. For the purposes of this guide, we will test only select settings from the categories listed below:
 
 - **Headers**
 - **Path Matching**
 - **Path Rewriting**
-- **Prefix & Prefix Rewrite**
-- **Redirects**
-- **Direct Response**
+- **Advanced settings**
 
-### Configure HTTPBin
+### Set up HTTPBin
 
 To test these settings, we will configure Pomerium Zero and Docker Compose to host an HTTPBin server. If you’re not familiar with [HTTPBin](https://httpbin.org/), it’s a call-and-response HTTP server you can use to test (you guessed it) HTTP requests and responses.
 
@@ -133,7 +131,7 @@ Now, configure [**Set Request Headers**](/docs/reference/routes/headers#set-requ
 
     ![Setting and removing HTTP request headers in the Zero Console](./img/advanced-routes/set-and-remove-request-headers.png)
 
-Apply your changeset and test the request again. You'll notice that the set request header was added to the request, and the specified JWT claim headers were removed:
+Apply your changeset and test the request again. You'll notice that the request header was added to the request, and the specified JWT claim headers were removed:
 
     ![Reviewing the response body in HTTPBin after setting and removing HTTP headers](./img/advanced-routes/set-and-remove-headers-response-body.png)
 
@@ -282,7 +280,7 @@ In the Zero Console:
 1. Select **Path Matching**
 1. In the **Prefix** field, enter `/admin`
 
-If you append the `/admin` endpoint to your route, Pomerium should direct you to the `/admin` only page. If you don't append `/admin`, you will see a 404 error:
+If you append the `/admin` endpoint to your route, Pomerium should direct you to the `/admin` only page. If you don't append `/admin`, you will see a `404` error:
 
 ![Adding the /admin prefix to the Node server route](./img/advanced-routes/nodeserver-prefix-setting.gif)
 
@@ -308,3 +306,70 @@ Great job! You've configured several advanced routes in Pomerium Zero.
 In the next guide, you'll secure TCP routes and access an SSH service.
 
 Go to [TCP Routes](/docs/courses/zero-fundamentals/tcp-ssh).
+
+#### Configuration file state
+
+At this point, your Docker Compose file should look like:
+
+```yaml title="docker-compose.yaml"
+services:
+  pomerium:
+    image: pomerium/pomerium:v0.25.1
+    ports:
+      - 443:443
+    restart: always
+    environment:
+      POMERIUM_ZERO_TOKEN: <CLUSTER_TOKEN>
+      XDG_CACHE_HOME: /var/cache
+    volumes:
+      - pomerium-cache:/var/cache
+    networks:
+      main:
+        aliases:
+        - verify.<CLUSTER_SUBDOMAIN>.pomerium.app
+        - authenticate.<CLUSTER_SUBDOMAIN>.pomerium.app
+  verify:
+    image: cr.pomerium.com/pomerium/verify:latest
+    networks:
+      main:
+        aliases:
+        - verify
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - 3000:3000
+    networks:
+      main: {}
+    environment:
+      - GF_AUTH_SIGNOUT_REDIRECT_URL=https://grafana.<CLUSTER_SUBDOMAIN>.pomerium.app/.pomerium/sign_out
+      - GF_AUTH_JWT_ENABLED=true
+      - GF_AUTH_JWT_HEADER_NAME=X-Pomerium-Jwt-Assertion
+      - GF_AUTH_JWT_EMAIL_CLAIM=email
+      - GF_AUTH_JWT_USERNAME_CLAIM=sub
+      - GF_AUTH_JWT_JWK_SET_URL=https://authenticate.<CLUSTER_SUBDOMAIN>.pomerium.app/.well-known/pomerium/jwks.json
+      - GF_AUTH_JWT_CACHE_TTL=60m
+      - GF_AUTH_JWT_AUTO_SIGN_UP=true
+    volumes:
+      - ./grafana-storage:/var/lib/grafana
+
+  httpbin:
+    networks:
+      main: {}
+    image: kennethreitz/httpbin
+    ports:
+      - 80:80
+
+  nodeserver:
+    networks:
+      main: {}
+    build:
+      context: ./app
+    ports:
+      - 5001:5001
+
+networks:
+  main: {}
+
+volumes:
+  pomerium-cache:
+```
