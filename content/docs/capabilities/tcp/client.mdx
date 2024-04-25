@@ -59,7 +59,7 @@ The example below demonstrates a route to the SSH service on the host running th
 
 See the "Configure Routes" section of [TCP Support](/docs/capabilities/tcp#configure-routes) for more detailed information on TCP routes.
 
-## TCP Client Software
+## Access TCP route with client software
 
 You can connect to this route with either the Pomerium CLI or Pomerium Desktop client.
 
@@ -67,7 +67,7 @@ You can connect to this route with either the Pomerium CLI or Pomerium Desktop c
 
 <TabItem value="Pomerium Desktop" label="Pomerium Desktop">
 
-### Install
+### Install Pomerium Desktop
 
 Download the latest release from [GitHub](https://github.com/pomerium/desktop-client/releases).
 
@@ -75,63 +75,17 @@ Download the latest release from [GitHub](https://github.com/pomerium/desktop-cl
 - **Linux**: We provide Linux binaries as `.AppImage` files, which can be executed in place or managed with a tool like [AppImageLauncher](https://github.com/TheAssassin/AppImageLauncher). Interact with the client from the system tray icon.
 - **macOS**: Open the `dmg` and move the binary to **Applications**. Interact with the client from the system tray icon.
 
-<details>
-<summary>Autostart Pomerium Desktop</summary>
-
-If you want Pomerium Desktop to start automatically when you log in to your computer, follow the steps below for your operating system.
-
-<Tabs>
-<TabItem value="windows" label="Windows">
-
-#### Autostart for all users
-
-Copy the shortcut for the Pomerium Desktop app into `C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Startup`.
-
-#### Autostart for your user
-
-Copy the shortcut for the Pomerium Desktop app into `C:\Users\username\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup`, replacing `username` with your username.
-
----
-
-Windows 11 also offers a GUI method, documented by [windowscentral.com](https://www.windowscentral.com/how-launch-apps-automatically-during-login-windows-11)
-
-</TabItem>
-<TabItem value="mac" label="MacOS">
-
-1. From **System Preferences**, select **Users & Groups**.
-
-1. Click **Login Items** near the top, then the **+** button towards the bottom of the window.
-
-1. Select Pomerium Desktop from the Applications folder.
-
-</TabItem>
-<TabItem value="gnome" label="Linux (Gnome)">
-
-The easiest way to autostart user applications in the Gnome Desktop Environment is by using the Tweaks application. Gnome documents this process well, so we won't replicate it here. See [Gnome's documentation](https://help.gnome.org/users/gnome-help/stable/shell-apps-auto-start.html) for more information.
-
-</TabItem>
-<TabItem value="kde" label="Linux (KDE)">
-
-KDE's documentation covers auto-starting applications well: see [System Settings/Autostart](https://userbase.kde.org/System_Settings/Autostart) from the KDE UsersBase Wiki for more information.
-
-</TabItem>
-</Tabs>
-
-</details>
-
 ### Add a Connection
 
-![A new connection to an SSH gateway](examples/img/desktop/demo-new-connection.png)
+![Adding a new connection in the Pomerium Desktop client](./examples/img/desktop/desktop-new-connection.png)
 
-**Name**: A local name for the route.
+**Name**: A local name for the route
 
 **Destination**: Matches the [From](/docs/reference/routes/from) value of the route, without the protocol. Always include the port specified in the route, and do not include the `https://` protocol.
 
 **Local Address**: The local address and port number from which to access the service locally. If left blank, the client will choose a random port to listen to on the loopback address.
 
-In most cases, you only need to specify the port (ex: `:2222`), and the client will listen on all available local addresses.
-
-**Tags**: Use tags to sort and organize your TCP routes.
+**Tags**: Customizable tags to sort and organize TCP routes
 
 :::note Long-lived connections behavior
 
@@ -141,18 +95,20 @@ In most cases, you only need to specify the port (ex: `:2222`), and the client w
 
 ---
 
-#### Advanced Settings
+### Advanced Settings
+
+  ![Reviewing the Advanced Settings in the Pomerium Desktop client](./examples/img/desktop/desktop-advanced-settings.png)
 
 **Pomerium URL**: The Pomerium Proxy service address. This is required if the **Destination URL** can't be resolved from DNS or a local `hosts` entry, or if the Proxy service uses a non-standard port.
 
 **Disable TLS Verification**: Allows untrusted certificates from the Pomerium gateway
 
-**Client Certificate & Certificate Key File or Text**: For routes that require client certificates for [mTLS](/docs/concepts/mutual-auth.md), you can provide the certificate and key file to the Pomerium Desktop client.
+**Client Certificates**: The client certificates options allow you to **set client certificates manually** or to [**search the OS certificate store**](/docs/capabilities/tcp#client-certificates) for trusted CA names. Use these options to add client certificates to routes that enforce [mTLS](/docs/concepts/mutual-auth).
 
 </TabItem>
 <TabItem value="Pomerium CLI" label="Pomerium CLI">
 
-### Install
+### Install Pomerium CLI
 
 See the [Pomerium CLI](/docs/deploy/clients/pomerium-cli) page to learn how to install `pomerium-cli` in your environment.
 
@@ -189,7 +145,14 @@ See the [Pomerium CLI](/docs/deploy/clients/pomerium-cli) page to learn how to i
 </TabItem>
 </Tabs>
 
-For more examples and detailed usage information, see [TCP Support](/docs/capabilities/tcp)
+:::info
+
+For more examples and detailed usage information, see the following docs:
+
+- [**TCP Reference**](/docs/capabilities/tcp/reference)
+- [**Securing TCP-based Services**](/docs/guides/docs/guides/securing-tcp)
+
+:::
 
 ## Advanced Configuration
 
