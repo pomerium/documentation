@@ -1,4 +1,6 @@
 ---
+# cSpell:ignore WORKDIR, workdir, nodeserver
+
 id: advanced-routes
 title: Advanced Routes
 sidebar_label: 05. Advanced Routes
@@ -102,16 +104,15 @@ To add JWT claim headers in the Zero Console:
 1. In **Editing Cluster Settings**, select **Headers**
 1. In the **JWT Claim Headers** field, enter the values below:
 
-    | **KEY** | **VALUE** |
-    | :--- | :--- |
-    | `x-pomerium-claim-email` | `email` |
-    | `x-pomerium-claim-user` | `user` |
-    | `x-pomerium-claim-name` | `name` |
+   | **KEY**                  | **VALUE** |
+   | :----------------------- | :-------- |
+   | `x-pomerium-claim-email` | `email`   |
+   | `x-pomerium-claim-user`  | `user`    |
+   | `x-pomerium-claim-name`  | `name`    |
 
-    For example:
+   For example:
 
-    ![Entering custom JWT claim headers in the Zero Console](./img/advanced-routes/jwt-claim-headers.png)
-
+   ![Entering custom JWT claim headers in the Zero Console](./img/advanced-routes/jwt-claim-headers.png)
 
 After you save your changes, apply your changeset, and access your HTTPBin route, inspect the request. You'll see these additional, unsigned HTTP headers added to the response body:
 
@@ -125,11 +126,11 @@ Now, configure [**Set Request Headers**](/docs/reference/routes/headers#set-requ
 1. In **Property Name**, enter `X-SET-REQUEST-HEADERS`
 1. In **Property Value**, enter `X-TEST-VALUE`
 
-    Next, configure [**Remove Request Headers**](/docs/reference/routes/headers#remove-request-headers) to remove two of the JWT claim headers you set in the previous section.
+   Next, configure [**Remove Request Headers**](/docs/reference/routes/headers#remove-request-headers) to remove two of the JWT claim headers you set in the previous section.
 
 1. In the **Remove Request Headers** field, enter `X-POMERIUM-CLAIM-NAME` and `X-POMERIUM-CLAIM-USER`.
 
-    ![Setting and removing HTTP request headers in the Zero Console](./img/advanced-routes/set-and-remove-request-headers.png)
+   ![Setting and removing HTTP request headers in the Zero Console](./img/advanced-routes/set-and-remove-request-headers.png)
 
 Apply your changeset and test the request again. You'll notice that the request header was added to the request, and the specified JWT claim headers were removed:
 
@@ -159,8 +160,7 @@ TODO
 
 ### Direct Response
 
-TODO
-You can configure Pomerium to send a small, static HTTP response to the downstream client for a managed route.
+TODO You can configure Pomerium to send a small, static HTTP response to the downstream client for a managed route.
 
 ## Test prefix and path settings
 
@@ -326,14 +326,14 @@ services:
     networks:
       main:
         aliases:
-        - verify.<CLUSTER_SUBDOMAIN>.pomerium.app
-        - authenticate.<CLUSTER_SUBDOMAIN>.pomerium.app
+          - verify.<CLUSTER_SUBDOMAIN>.pomerium.app
+          - authenticate.<CLUSTER_SUBDOMAIN>.pomerium.app
   verify:
     image: cr.pomerium.com/pomerium/verify:latest
     networks:
       main:
         aliases:
-        - verify
+          - verify
   grafana:
     image: grafana/grafana:latest
     ports:

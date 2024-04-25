@@ -1,4 +1,6 @@
 ---
+# cSpell:ignore myssh, linuxkit, aarch, epoll, atomicvar,
+
 id: tcp-routes
 title: TCP Routes
 sidebar_label: 06. TCP Routes
@@ -72,23 +74,23 @@ Use "pomerium-cli [command] --help" for more information about a command.
 Add the Redis and OpenSSH server configurations to your Docker Compose file:
 
 ```yaml
-  redis:
-    image: redis:latest
-    networks:
-      main: {}
-    expose:
-      - 6379
+redis:
+  image: redis:latest
+  networks:
+    main: {}
+  expose:
+    - 6379
 
-  myssh:
-    image: linuxserver/openssh-server:latest
-    networks:
-      main: {}
-    expose:
-      - 2222
-    environment:
-      PASSWORD_ACCESS: "true"
-      USER_PASSWORD: supersecret
-      USER_NAME: user
+myssh:
+  image: linuxserver/openssh-server:latest
+  networks:
+    main: {}
+  expose:
+    - 2222
+  environment:
+    PASSWORD_ACCESS: 'true'
+    USER_PASSWORD: supersecret
+    USER_NAME: user
 ```
 
 ## Add routes in Pomerium Zero
@@ -98,21 +100,21 @@ Create a Redis route:
 1. Create a new route for your Redis database
 1. In **From**, select **tcp+https://** in the protocol dropdown menu
 1. Enter your external route and append `:6379` to it
-    1. For example, `redis.super-hero-7645.pomerium.app:6379`
+   1. For example, `redis.super-hero-7645.pomerium.app:6379`
 1. In **To**, enter `tcp://redis:6379`
 1. In **Policies**, select `Any Authenticated User`
 
-    ![Building the Redis route in the Zero Console](./img/tcp/redis-service.png)
+   ![Building the Redis route in the Zero Console](./img/tcp/redis-service.png)
 
 Create an OpenSSH route:
 
 1. Create a new route for the OpenSSH server
 1. In **From**, select **tcp+https://** in the protocol dropdown menu
 1. Enter your external route and append `:22` to it
-    1. For example, `myssh.super-hero-7645.pomerium.app:22`
+   1. For example, `myssh.super-hero-7645.pomerium.app:22`
 1. In **To**, enter `tcp://myssh:2222`
 
-    ![Building the OpenSSH route in the Zero Console](./img/tcp/ssh-server.png)
+   ![Building the OpenSSH route in the Zero Console](./img/tcp/ssh-server.png)
 
 Save your changes and apply them.
 
