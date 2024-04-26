@@ -125,10 +125,9 @@ In a terminal, run the following command:
 ```shell-session
 $ pomerium-cli tcp redis.<CLUSTER_SUBDOMAIN>.pomerium.app:6379 --listen localhost:6379
 ```
+In a separate terminal window, run the `redis-cli info` command. If set up correctly, this action will prompt Pomerium to authenticate you in your browser, which will establish a TCP connection.
 
-If set up correctly, Pomerium will open your browser to authenticate you. This will establish a TCP connection.
-
-In a separate terminal window, run the following `redis-cli` command:
+You should see a similar output in your terminal:
 
 ```bash
 $  redis-cli info
@@ -169,15 +168,15 @@ In a terminal, run the following command:
 $ pomerium-cli tcp myssh.<CLUSTER_SUBDOMAIN>.pomerium.app:22 --listen :2222
 ```
 
-If set up correctly, Pomerium will open your browser to authenticate you. This will establish a TCP connection.
-
 In a separate terminal window, run:
 
 ```bash
-ssh user@myssh.<CLUSTER_SUBDOMAIN>.pomerium.app -p 2222
+ssh user@localhost -p 2222
 ```
 
-This will prompt the SSH server to request a password. The credentials are hardcoded in the Docker Compose file:
+If set up correctly, Pomerium will open your browser to authenticate you. This will establish a TCP connection.
+
+The SSH server will request a password, which you can find in the Docker Compose file:
 
 - **USER_PASSWORD:** supersecret
 - **USER_NAME:** user
