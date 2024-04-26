@@ -18,31 +18,29 @@ sidebar_position: 0
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
-import LongLivedConnections from '@site/content/docs/admonitions/_long-lived-connections.mdx';
 
 # Pomerium Desktop and CLI Clients
 
 This document describes how to use Pomerium's Desktop and CLI clients to connect to TCP routes in Pomerium.
 
-:::note TCP Terminology
+:::info What's a TCP route?
 
-In this document, a "TCP route" refers to a route configured to accept TCP connections.
+A TCP route is for use with upstream services that don't speak HTTP — for example
+SSH, Redis, or MySQL. With a TCP route, the entire connection is proxied to the
+upstream service, rather than each individual request separately.
+
+In Pomerium, TCP routes are denoted with a `tcp+` prefix in the route's **From** URL.
 
 :::
 
 ## Create a TCP route
 
-1. Specify this new Route as a TCP Route by prefixing `tcp+` in the **From** field, along with a port number.
-1. Set the **To** field using `tcp://` as the scheme, along with the address and port that the upstream service is listening on.
+1. Specify this new Route as a TCP Route by prefixing `tcp+` in the **From** field, along with a port number
+1. Set the **To** field using `tcp://` as the scheme, along with the address and port that the upstream service is listening on
 
 The example below demonstrates a route to an SSH service on the host running Pomerium:
 
 <Tabs>
-<TabItem value="Pomerium Zero" label="Pomerium Zero">
-
-![Creating a TCP route in the Zero Console](./examples/img/desktop/zero-ssh-route-example.png)
-
-</TabItem>
 <TabItem value="Pomerium Enterprise" label="Pomerium Enterprise">
 
 ![Example TCP route for SSH](./img/tcp-ssh-route.png)
@@ -63,9 +61,9 @@ The example below demonstrates a route to an SSH service on the host running Pom
 </TabItem>
 </Tabs>
 
-:::note
+:::tip
 
-The port suffix appended to the **From** route is not used to connect to the Pomerium Proxy service from the internet; this will always be port 443 (unless otherwise defined in the configuration file).
+The port number in the route **From** URL is not used in the initial connection to Pomerium itself. This connection will still use port 443, unless you use a bastion host (see [**Advanced configuration**](#advanced-configuration) below).
 
 Rather, the port defined in **From** is part of the mapping to the individual route. In this way, you can create multiple routes that share a DNS entry, differentiated by the port to determine which route they use.
 
@@ -91,12 +89,6 @@ Then, add a connection by filling in the fields defined below:
 - **Tags**: Customizable tags to sort and organize TCP routes
 
 ![Adding a new connection in the Pomerium Desktop client](./examples/img/desktop/desktop-new-connection.png)
-
-:::note Long-lived connections behavior
-
-<LongLivedConnections />
-
-:::
 
 #### Advanced Settings
 
