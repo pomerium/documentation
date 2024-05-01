@@ -16,61 +16,39 @@ This document describes Clusters in Pomerium Zero.
 
 ## Overview
 
-A **Cluster** represents a single Pomerium deployment managed by Pomerium Zero, our hosted control plane. You can think of a Pomerium cluster as a completely distinct deployment of Pomerium that allows you to effectively shard your deployments for performance, governance, security, or management purposes.
+When you deploy Pomerium Zero, you get your own **Cluster**. A cluster represents a Pomerium Core deployment where all the configuration is managed in the Zero Console, our hosted control plane.
 
-When you deploy a cluster, it gets its own:
+TODO: Mention how these clusters share the same backend storage.
 
-- **Cluster identity**
-- **Cluster domain**
-- **Cluster settings**
-- **Routes and Policies**
-- **Wildcard certificates**
+### Cluster token
 
-### Cluster use cases: Why clusters?
+When you create a cluster in Pomerium Zero, a **Cluster Token** is generated that enables your Pomerium instance to connect to Pomerium Zero. This cluster token, which is provided to you during onboarding, is required to deploy your cluster instance.
 
-#### All-in-one mode deployment model
+You can generate a new cluster token at any time. See the [**Rotate cluster token**](#rotate-cluster-token) steps below for more information.
 
-Pomerium consists of 4 services:
+#### Rotate cluster token
 
-- Proxy service
-- Authenticate service
-- Authorize service
-- Databroker service
+A cluster token does not have a set expiration time. However, you may want to rotate the cluster token in the Zero Console for security reasons. For example:
 
-A cluster deploys these services in all-in-one mode, meaning the configuration for each service is managed from a single cluster instance. All inter-component communications are internally connected, with the exception of the Databroker service, which is an external dependency.
-
-#### Multiple cluster instances
-
-You can deploy multiple clusters from a single cluster identity (see [**Cluster identity**](#cluster-identity) below for more information). The ability to deploy multiple cluster instances means you can manage and run completely separate configurations for workloads that may otherwise be incompatible in a single cluster instance.
-
-### Cluster identity
-
-When you create an account in Pomerium Zero, a new **Cluster Token** is generated and assigned to your personal account. This cluster token, which is provided to you during onboarding, is required to deploy your cluster instance.
-
-You can generate a new cluster token at any time. See the [**Rotate cluster identity**](#rotate-cluster-identity) steps below for more information.
-
-#### Rotate cluster identity
-
-A cluster token does not have a set expiration time. However, you may want to rotate the cluster identity in the Zero Console for security reasons. For example:
-
-- A malicious insider could use the token to view the cluster's configuration, which may contain sensitive data
+- A cluster token was accidentally exposed
 - You may lose track of the existing token, and want a new one
 
 :::caution
 
-Rotating the cluster identity will invalidate the existing cluster token.
+Rotating the cluster token will invalidate the existing cluster token.
 
 :::
 
-To rotate your cluster identity in the Zero Console:
+To rotate your cluster token in the Zero Console:
 
 1. From the navigation bar dropdown, select **Manage Clusters**
 1. Under **Actions**, select the **edit** icon
-1. Select the **Domains** tab
-1. In the **Cluster Identity** field, select **Rotate Identity**
-1. Copy the token value and store it somewhere safe ![Rotating a cluster identity in the Zero Console](./img/clusters/pz-rotate-cluster-identity.gif)
+1. Select the **Advanced** tab
+1. In the **Cluster Token** field, select **Rotate Token**
+1. In the confirmation modal, select **Confirm**
+1. Copy the token value and store it somewhere safe
 
-After rotating the cluster identity, you must pass it into your configuration and run Pomerium. See the steps below for your deployment environment.
+After rotating the cluster token, you must pass it into your configuration and run Pomerium. See the steps below for your deployment environment.
 
 <Tabs>
 <TabItem value="linux" label="Linux">
@@ -133,13 +111,13 @@ curl https://console.pomerium.app/install.bash | env POMERIUM_ZERO_TOKEN=<cluste
 
 ### Cluster domain
 
-Pomerium Zero generates and assigns a unique starter **Cluster Domain** to your cluster. A cluster domain is a randomly generated fully qualified domain name that follows this format:
+Pomerium Zero generates and assigns a unique **Starter Domain** to your cluster. A starter domain is a randomly generated fully qualified domain name that follows this format:
 
 `<CLUSTER-SUBDOMAIN-XXXX>.pomerium.app`
 
 For example: `voracious-ape-1578.pomerium.app`
 
-The starter cluster domain comes with its own DNS records and TLS certificates so you can quickly test Pomerium Zero before adding your own custom domain.
+The starter domain comes with its own DNS records and TLS certificates so you can quickly test Pomerium Zero before adding your own custom domain.
 
 :::info
 
@@ -149,7 +127,7 @@ See the **Custom Domains** capabilities page for more information on how to add 
 
 #### Cluster name
 
-The **Cluster Name** is a customizable identifier for your cluster. It defaults to the randomly generated subdomain of your cluster domain, but you can change it at any time. Changing the cluster name does not affect your cluster domain.
+The **Cluster Name** is a customizable identifier for your cluster. It defaults to the randomly generated subdomain of your cluster domain, but you can change it at any time. Changing the cluster name does not affect your starter domain.
 
 If you want to change the cluster name, you can update it in your cluster settings:
 
@@ -177,11 +155,11 @@ In such cases, you may see a `DNS_PROBE_FINISHED_NXDOMAIN` error in your browser
 
 ### Cluster settings
 
-Each cluster is assigned its own **Cluster settings** object, meaning the available settings within a cluster apply only to that cluster instance. This means changes applied to one cluster instance won't affect another cluster deployed with the same token.
+Each cluster instance is assigned a **Cluster settings** object. This means a cluster instance, and its replicas, each share the same configuration.
 
 ### Routes and Policies
 
-**Routes** and **Policies** defined in a cluster are scoped only to that cluster, and are not available in other cluster instances.
+**Routes** and **Policies** defined in a cluster are scoped only to that cluster, and are not available in other clusters.
 
 :::info
 
@@ -194,9 +172,7 @@ To learn more about routing and policies in Pomerium, see the following docs:
 
 ### Wildcard certificates
 
-Pomerium Zero issues **Wildcard Certificates** generated by ZeroSSL for each cluster. You can view the **Cert Details** of a certificate in the **Certificates** settings dashboard:
-
-![The Cluster Cert window in the Zero Console](./img/certificates/cluster-cert-details.png)
+Pomerium Zero provisions wildcard certificates issued by ZeroSSL for each cluster. You can view the **Cert Details** of a certificate in the **Certificates** settings dashboard to verify certificates.
 
 :::info
 
