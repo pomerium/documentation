@@ -36,7 +36,7 @@ Otherwise, the HTTP proxy in front of Pomerium must know how to properly handle 
 
 :::
 
-## Configure Routes
+## Configure TCP routes
 
 TCP configuration is simple. Just specify the correct scheme and ports in your route [`to`](/docs/reference/routes/to) and [`from`](/docs/reference/routes/from) fields.
 
@@ -153,15 +153,23 @@ See the [reference page](/docs/capabilities/tcp/reference#certificate-name-filte
 
 Proxy chaining configures Pomerium to proxy the TCP connection request to the upstream service. In this scenario, the upstream service will either terminate the TCP connection request itself or proxy the connection request to another backend service.
 
-To configure Pomerium to chain TCP connection requests, include either the `http://` or `https://` scheme in the **To** URL:
+To configure Pomerium to chain TCP connection requests:
 
-```yaml title="docker-compose.yaml"
-routes:
-  - from: tcp+https://example.corp.com:10002
-    to: http://second-proxy.example.corp.com:10003
-```
+1. Fist, create a TCP route by specifying the `tcp://` scheme in the `to:` URL. This is  instructs Pomerium to proxy the raw TCP connection:
 
-Specifying the `tcp://` scheme in the **To** URL instructs Pomerium to proxy the raw TCP connection to the upstream service.
+    ```yaml title="docker-compose.yaml"
+    routes:
+      - from: tcp+https://example.corp.com:10002
+        to: tcp://second-proxy.example.corp.com:10003
+    ```
+
+1. Replace `tcp://` with either the `http://` or `https://` scheme. This instructs Pomerium to forward the TCP connection request to the upstream service:
+
+    ```yaml title="docker-compose.yaml"
+    routes:
+      - from: tcp+https://example.corp.com:10002
+        to: http://second-proxy.example.corp.com:10003
+    ```
 
 ## Service-Specific Documentation
 
