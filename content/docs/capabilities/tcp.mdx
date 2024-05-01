@@ -155,21 +155,21 @@ Proxy chaining configures Pomerium to proxy the TCP connection request to the up
 
 To configure Pomerium to chain TCP connection requests:
 
-1. Fist, create a TCP route by specifying the `tcp://` scheme in the `to:` URL. This is  instructs Pomerium to proxy the raw TCP connection:
+1. Fist, create a TCP route by specifying the `tcp://` scheme in the `to:` URL. This is instructs Pomerium to proxy the raw TCP connection:
 
-    ```yaml title="docker-compose.yaml"
-    routes:
-      - from: tcp+https://example.corp.com:10002
-        to: tcp://second-proxy.example.corp.com:10003
-    ```
+   ```yaml title="docker-compose.yaml"
+   routes:
+     - from: tcp+https://example.corp.com:10002
+       to: tcp://second-proxy.example.corp.com:10003
+   ```
 
 1. Replace `tcp://` with either the `http://` or `https://` scheme. This instructs Pomerium to forward the TCP connection request to the upstream service:
 
-    ```yaml title="docker-compose.yaml"
-    routes:
-      - from: tcp+https://example.corp.com:10002
-        to: http://second-proxy.example.corp.com:10003
-    ```
+   ```yaml title="docker-compose.yaml"
+   routes:
+     - from: tcp+https://example.corp.com:10002
+       to: http://second-proxy.example.corp.com:10003
+   ```
 
 :::info TCP examples
 
