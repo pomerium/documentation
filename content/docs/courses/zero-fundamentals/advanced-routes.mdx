@@ -158,11 +158,37 @@ After applying your changeset, check the request headers in HTTPBin again. You'l
 
 ### Redirects
 
-TODO
+Configuring a [**Redirect**](/docs/reference/routes/redirect) instructs Pomerium to send the request to a different URL.
+
+To configure a redirect in the Zero Console:
+
+1. Go to your HTTPBin route and select **Advanced**, **Redirect**
+1. Turn on **HTTPS Redirect**
+1. In the **Host Redirect** field, enter a URL you want to redirect requests to, and remove the scheme
+
+    For example:
+    ![Adding a redirect in the Zero Console](./img/advanced-routes/add-redirects-in-zero-console.png)
+
+After you save your route changes, you'll notice in the **General** tab that the **To** URL has been removed.
+
+If you access your route in the browser, you'll notice it redirects you to the specified URL:
+
+![Demonstrates how Pomerium redirects user to the redirect URL](./img/advanced-routes/pz-redirect.gif)
 
 ### Direct Response
 
-TODO You can configure Pomerium to send a small, static HTTP response to the downstream client for a managed route.
+You can configure Pomerium to send a small, static HTTP response to the downstream client for a managed route.
+
+To configure a [**Direct Response**](/docs/reference/routes/direct-response) in the Zero Console:
+
+1. Select a route
+1. Select **Advanced**, **Direct Response**
+1. In **Status**, enter an HTTP response status code like `200` (this field only accepts numerical values)
+1. In **Body**, enter some example text, like "This is a test response."
+
+After you save your route changes, you'll notice in the **General** tab that the **To** URL has been removed.
+
+Now, navigate to the URL. Pomerium should send back a `200 OK` response with the example text.
 
 ## Test prefix and path settings
 
@@ -239,7 +265,7 @@ RUN npm install
 # copy the generated modules and all other files to the container
 COPY . .
 
-# our app is running on port 5001 within the container, so need to expose it
+# our app is running on port 5001 within the container, so we need to expose it
 EXPOSE 5001
 
 # the command that starts our app
