@@ -89,15 +89,15 @@ localhost:52046>
 
 :::
 
-## Advanced Usage
+## Advanced capabilities
 
-### Listen Configuration
+### Listen configuration
 
 You may specify an optional address and port for the `tcp` command to listen on.
 
 `-` specifies that STDIN and STDOUT should be directly attached to the remote TCP connection. This is useful for [SSH](tcp/examples/ssh#tunnel-and-connect-simultaneously) or for sending data through a shell pipe.
 
-### Bastion Host
+### Bastion host
 
 If the Pomerium proxy is not reachable through port `443` or the route is not in external DNS, you can use Pomerium as a bastion host using the extended TCP URL syntax in your route definition:
 
@@ -113,7 +113,7 @@ pomerium-cli tcp tcp+https://proxy.corp.example.com:8443/redis.internal.example.
 
 The command above connects to `https://pomerium.corp.example.com:8443` and then requests the TCP route for `redis.internal.example.com:6379`.
 
-### Client Certificates
+### Client certificates
 
 If Pomerium is configured to require client certificates, you will also need to provide a client certificate and private key when invoking the `pomerium-cli` command.
 
@@ -171,13 +171,15 @@ To configure Pomerium to chain TCP connection requests:
         to: http://second-proxy.example.corp.com:10003
     ```
 
-## Service-Specific Documentation
+:::info TCP examples
 
-We've outlined how to use a TCP tunnel through Pomerium for several popular services that use TCP connections:
+The guides below demonstrate how to proxy TCP tunnels with Pomerium to well-known services:
 
-- [Git](tcp/examples/git)
-- [Microsoft SQL](tcp/examples/ms-sql)
-- [MySQL and MariaDB](tcp/examples/mysql)
-- [RDP](tcp/examples/rdp)
-- [Redis](tcp/examples/redis)
-- [SSH](tcp/examples/ssh)
+- [**Git**](tcp/examples/git)
+- [**Microsoft SQL**](tcp/examples/ms-sql)
+- [**MySQL and MariaDB**](tcp/examples/mysql)
+- [**RDP**](tcp/examples/rdp)
+- [**Redis**](tcp/examples/redis)
+- [**SSH**](tcp/examples/ssh)
+
+:::
