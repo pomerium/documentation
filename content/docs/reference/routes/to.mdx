@@ -81,9 +81,11 @@ A load balancing weight may be associated with a particular upstream by appendin
   to: ['http://a,10', 'http://b,20']
 ```
 
-### Configure TCP proxy behavior
+### TCP routes
 
-Configure Pomerium to proxy a raw TCP connection by specifying the `tcp://` scheme in the `to` URL:
+You can configure Pomerium to handle a [TCP route](/docs/capabilities/tcp) in one of two different ways.
+
+If you specify a `to` URL with the `tcp://` scheme, Pomerium will proxy the raw TCP connection to the upstream service:
 
 ```yaml
 - from: tcp+https://tcp.example.com:3001
