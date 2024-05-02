@@ -36,7 +36,7 @@ Otherwise, the HTTP proxy in front of Pomerium must know how to properly handle 
 
 :::
 
-## Configure Routes
+## Configure TCP routes
 
 TCP configuration is simple. Just specify the correct scheme and ports in your route [`to`](/docs/reference/routes/to) and [`from`](/docs/reference/routes/from) fields.
 
@@ -89,15 +89,15 @@ localhost:52046>
 
 :::
 
-## Advanced Usage
+## Advanced capabilities
 
-### Listen Configuration
+### Listen configuration
 
 You may specify an optional address and port for the `tcp` command to listen on.
 
 `-` specifies that STDIN and STDOUT should be directly attached to the remote TCP connection. This is useful for [SSH](tcp/examples/ssh#tunnel-and-connect-simultaneously) or for sending data through a shell pipe.
 
-### Bastion Host
+### Bastion host
 
 If the Pomerium proxy is not reachable through port `443` or the route is not in external DNS, you can use Pomerium as a bastion host using the extended TCP URL syntax in your route definition:
 
@@ -113,7 +113,7 @@ pomerium-cli tcp tcp+https://proxy.corp.example.com:8443/redis.internal.example.
 
 The command above connects to `https://pomerium.corp.example.com:8443` and then requests the TCP route for `redis.internal.example.com:6379`.
 
-### Client Certificates
+### Client certificates
 
 If Pomerium is configured to require client certificates, you will also need to provide a client certificate and private key when invoking the `pomerium-cli` command.
 
@@ -149,13 +149,29 @@ pomerium-cli tcp --client-cert-from-store --client-cert-subject "OU=My Departmen
 
 See the [reference page](/docs/capabilities/tcp/reference#certificate-name-filters) for more details about the certificate name filter syntax.
 
-## Service-Specific Documentation
+### Proxy chaining support
 
-We've outlined how to use a TCP tunnel through Pomerium for several popular services that use TCP connections:
+The TCP route example above uses a `to` URL with the scheme `tcp://`. For a TCP route like this, Pomerium will open a raw TCP connection to the upstream service.
 
-- [Git](tcp/examples/git)
-- [Microsoft SQL](tcp/examples/ms-sql)
-- [MySQL and MariaDB](tcp/examples/mysql)
-- [RDP](tcp/examples/rdp)
-- [Redis](tcp/examples/redis)
-- [SSH](tcp/examples/ssh)
+Alternatively, you can configure a TCP route to proxy an HTTP CONNECT request to the upstream service. This is useful if you want to place another HTTP-to-TCP proxy behind Pomerium.
+
+To configure Pomerium to chain TCP connection requests:
+
+```yaml
+routes:
+  - from: tcp+https://example.corp.com:10002
+    to: http://second-proxy.example.corp.com:10003
+```
+
+:::info TCP examples
+
+The guides below demonstrate how to proxy TCP tunnels with Pomerium to well-known services:
+
+- [**Git**](tcp/examples/git)
+- [**Microsoft SQL**](tcp/examples/ms-sql)
+- [**MySQL and MariaDB**](tcp/examples/mysql)
+- [**RDP**](tcp/examples/rdp)
+- [**Redis**](tcp/examples/redis)
+- [**SSH**](tcp/examples/ssh)
+
+:::
