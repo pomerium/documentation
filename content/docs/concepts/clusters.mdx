@@ -16,13 +16,35 @@ This document describes Clusters in Pomerium Zero.
 
 ## Overview
 
-When you deploy Pomerium Zero, you get your own **Cluster**. A cluster represents a Pomerium Core deployment where all the configuration is managed in the Zero Console, our hosted control plane.
+When you deploy Pomerium Zero, you get your own **Cluster**. A cluster represents a local deployment of [Pomerium Core](/docs/deploy/core), the primary server component that secures your services.
 
-TODO: Mention how these clusters share the same backend storage.
+## Why clusters?
+
+### Simpler configuration
+
+Cluster configuration is managed entirely in the **Zero Console**, our hosted control plane. When you apply configuration changes in the Zero Console, your cluster fetches and applies these changes locally.
+
+This model ensures that:
+
+- Your cluster always stays in sync with the Zero Console as changes are applied
+- The Zero Console maintains your cluster's last-known configuration, so Pomerium Core can continue running in the event of a service outage
+- There is less code and configuration surface area to maintain, which makes Pomerium easier to manage
+
+### Data privacy
+
+Pomerium doesn't monitor your organization's traffic or collect private user data. Pomerium _does_ store deployment and configuration details that are necessary to control access to your services, such as your routes, policies, and TLS certificates.
+
+### Scalability
+
+You can deploy multiple cluster replicas from the same cluster token as long as each cluster shares the same backend storage instance. In this way, you can scale Pomerium horizontally to meet the needs of your infrastructure and organization.
+
+![A diagram depicting how clusters communicate with the Zero Console](./img/clusters/clusters-architecture.png)
+
+## Connect to the Zero Console
 
 ### Cluster token
 
-When you create a cluster in Pomerium Zero, a **Cluster Token** is generated that enables your Pomerium instance to connect to Pomerium Zero. This cluster token, which is provided to you during onboarding, is required to deploy your cluster instance.
+When you create a cluster in Pomerium Zero, a **Cluster Token** is generated that enables your Pomerium instance to connect to the Pomerium Zero cloud. This cluster token, which is provided to you during onboarding, instructs Pomerium to run in a Zero-managed mode.
 
 You can generate a new cluster token at any time. See the [**Rotate cluster token**](#rotate-cluster-token) steps below for more information.
 
@@ -47,6 +69,8 @@ To rotate your cluster token in the Zero Console:
 1. In the **Cluster Token** field, select **Rotate Token**
 1. In the confirmation modal, select **Confirm**
 1. Copy the token value and store it somewhere safe
+
+![Rotating the cluster token in the Zero Console](./img/clusters/rotate-cluster-token.gif)
 
 After rotating the cluster token, you must pass it into your configuration and run Pomerium. See the steps below for your deployment environment.
 
@@ -109,38 +133,9 @@ curl https://console.pomerium.app/install.bash | env POMERIUM_ZERO_TOKEN=<cluste
 </TabItem>
 </Tabs>
 
-### Cluster domain
+### Detected and Override IP Address
 
-Pomerium Zero generates and assigns a unique **Starter Domain** to your cluster. A starter domain is a randomly generated fully qualified domain name that follows this format:
-
-`<CLUSTER-SUBDOMAIN-XXXX>.pomerium.app`
-
-For example: `voracious-ape-1578.pomerium.app`
-
-The starter domain comes with its own DNS records and TLS certificates so you can quickly test Pomerium Zero before adding your own custom domain.
-
-:::info
-
-See the **Custom Domains** capabilities page for more information on how to add custom domains to a cluster.
-
-:::
-
-#### Cluster name
-
-The **Cluster Name** is a customizable identifier for your cluster. It defaults to the randomly generated subdomain of your cluster domain, but you can change it at any time. Changing the cluster name does not affect your starter domain.
-
-If you want to change the cluster name, you can update it in your cluster settings:
-
-1. From the navigation bar dropdown, select **Manage Clusters**
-1. Under **Actions**, select the **edit** icon
-1. In the **Cluster Name** field, enter your preferred cluster name
-1. Save your changes and apply the changeset
-
-![Viewing the new cluster name in the Zero Console](./img/clusters/cluster-name-table.png)
-
-#### Detected and Override IP Address
-
-Whenever you start a cluster, it must fetch its configuration from the Pomerium Zero control plane. During this process, Pomerium attempts to detect the cluster's outbound IP address to connect to it.
+Whenever you start a cluster, it must fetch its configuration from the Zero Console. During this process, Pomerium attempts to detect the cluster's outbound IP address to connect to it.
 
 In the Zero Console, the cluster's IP address is referred to as the **Detected IP Address**. Depending on your environment, the detected IP address may not be reachable by you, the end-user. This could be the case if, for example, you're running a cluster:
 
@@ -153,29 +148,49 @@ In such cases, you may see a `DNS_PROBE_FINISHED_NXDOMAIN` error in your browser
 
 ![Manually setting the cluster IP address in the Zero Console](./img/clusters/cluster-ip-address-settings.png)
 
-### Cluster settings
+## Manage your cluster
 
-Each cluster instance is assigned a **Cluster settings** object. This means a cluster instance, and its replicas, each share the same configuration.
+### Starter domain
 
-### Routes and Policies
+Pomerium Zero generates and assigns a unique **Starter Domain** to your cluster. A starter domain is a randomly generated domain name that follows this format:
 
-**Routes** and **Policies** defined in a cluster are scoped only to that cluster, and are not available in other clusters.
+`<CLUSTER-SUBDOMAIN-XXXX>.pomerium.app`
+
+For example: `voracious-ape-1578.pomerium.app`
+
+The starter domain comes with its own DNS records and TLS certificates so you can quickly test Pomerium Zero before adding your own custom domain.
 
 :::info
 
-To learn more about routing and policies in Pomerium, see the following docs:
-
-- [**Routing**](/docs/capabilities/routing)
-- [**Policy Language**](/docs/capabilities/ppl)
+See the **Custom Domains** page for more information on how to add custom domains to a cluster.
 
 :::
 
-### Wildcard certificates
+### Cluster name
 
-Pomerium Zero provisions wildcard certificates issued by ZeroSSL for each cluster. You can view the **Cert Details** of a certificate in the **Certificates** settings dashboard to verify certificates.
+The **Cluster Name** is a customizable identifier for your cluster. It defaults to the randomly generated subdomain of your cluster domain, but you can change it at any time. Changing the cluster name does not affect your starter domain.
+
+If you want to change the cluster name, you can update it in your cluster settings:
+
+1. From the navigation bar dropdown, select **Manage Clusters**
+1. Under **Actions**, select the **edit** icon
+1. In the **Cluster Name** field, enter your preferred cluster name
+1. Save your changes and apply the changeset
+
+![Viewing the new cluster name in the Zero Console](./img/clusters/cluster-name-table.png)
+
+### Routes, policies, and certificates
+
+Routes and policies defined in a cluster are scoped only to that cluster, and are not available in other clusters or replicas.
+
+Pomerium Zero provisions wildcard TLS certificates issued by ZeroSSL for each cluster. Like routes and policies, certificates are scoped to a cluster and are not available in other clusters or replicas.
 
 :::info
 
-See [**Certificates**](/docs/concepts/certificates) to learn more about how certificates work in Pomerium.
+To learn more about routing, policies, and certificates in Pomerium, see the following docs:
+
+- [**Routing**](/docs/capabilities/routing)
+- [**Policy Language**](/docs/capabilities/ppl)
+- [**Certificates**](/docs/concepts/certificates)
 
 :::
