@@ -16,7 +16,7 @@ This document describes Clusters in Pomerium Zero.
 
 ## Overview
 
-When you deploy Pomerium Zero, you get your own **Cluster**. A cluster represents a local deployment of [Pomerium Core](/docs/deploy/core), the primary server component that secures your services.
+When you deploy Pomerium Zero, you get your own **Cluster**. A cluster consists of one ore more replicas of [Pomerium Core](/docs/deploy/core), the primary server component that secures your services. Clusters are deployed locally and managed through the **Zero Console**, a remote control plane hosted in the Pomerium Zero cloud.
 
 ## Why clusters?
 
@@ -28,7 +28,7 @@ This model ensures that:
 
 - Your cluster always stays in sync with the Zero Console as changes are applied
 - The Zero Console maintains your cluster's last-known configuration, so Pomerium Core can continue running in the event of a service outage
-- There is less code and configuration surface area to maintain, which makes Pomerium easier to manage
+- There is less configuration to maintain, which makes Pomerium easier to manage
 
 ### Data privacy
 
@@ -36,7 +36,7 @@ Pomerium doesn't monitor your organization's traffic or collect private user dat
 
 ### Scalability
 
-You can deploy multiple cluster replicas from the same cluster token as long as each cluster shares the same backend storage instance. In this way, you can scale Pomerium horizontally to meet the needs of your infrastructure and organization.
+Replicas within a cluster share the same storage backend to synchronize records and session state. In this way, you can deploy multiple replicas to meet the needs of your infrastructure and organization.
 
 ![A diagram depicting how clusters communicate with the Zero Console](./img/clusters/clusters-architecture.png)
 
