@@ -112,87 +112,93 @@ You should now be able to access `https://authenticate.pomerium.app` which, afte
 
 ## Test Service
 
+:::info
+
+See the [**Verify examples**](https://github.com/pomerium/verify/blob/main/examples/ingress.yaml) repository to review additional example manifests.
+
+:::
+
 1. Define a test service. We'll use the Pomerium Verify app:
 
-```yaml title=verify-service.yaml
-apiVersion: v1
-kind: Service
-metadata:
-  name: verify
-  labels:
-    app: verify
-    service: verify
-spec:
-  ports:
-    - port: 8000
-      targetPort: 8000
-      name: http
-  selector:
-    app: pomerium-verify
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: verify
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: pomerium-verify
-  template:
+    ```yaml title=verify-service.yaml
+    apiVersion: v1
+    kind: Service
     metadata:
+      name: verify
       labels:
-        app: pomerium-verify
+        app: verify
+        service: verify
     spec:
-      containers:
-        - image: docker.io/pomerium/verify
-          imagePullPolicy: IfNotPresent
-          name: httpbin
-          ports:
-            - containerPort: 8000
-              protocol: TCP
-              name: http
-```
+      ports:
+        - port: 8000
+          targetPort: 8000
+          name: http
+      selector:
+        app: pomerium-verify
+    ---
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: verify
+    spec:
+      replicas: 1
+      selector:
+        matchLabels:
+          app: pomerium-verify
+      template:
+        metadata:
+          labels:
+            app: pomerium-verify
+        spec:
+          containers:
+            - image: docker.io/pomerium/verify
+              imagePullPolicy: IfNotPresent
+              name: httpbin
+              ports:
+                - containerPort: 8000
+                  protocol: TCP
+                  name: http
+    ```
 
-Deploy it with `kubectl apply -f verify-service.yaml`
+    Deploy it with `kubectl apply -f verify-service.yaml`
 
 2. Define an Ingress for the new service:
 
-```yaml title=verify-ingress.yaml
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: verify
-  annotations:
-    ingress.pomerium.io/allowed_domains: |
-      - example.com
-    ingress.pomerium.io/pass_identity_headers: 'true'
-spec:
-  ingressClassName: pomerium
-  rules:
-    - host: 'verify.localhost.pomerium.io'
-      http:
-        paths:
-          - pathType: Prefix
-            path: /
-            backend:
-              service:
-                name: verify
-                port:
-                  number: 8000
-```
+    ```yaml title=verify-ingress.yaml {8} showLineNumbers
+    apiVersion: networking.k8s.io/v1
+    kind: Ingress
+    metadata:
+      name: verify
+      annotations:
+        ingress.pomerium.io/allowed_domains: |
+          - example.com
+        ingress.pomerium.io/pass_identity_headers: 'true'
+    spec:
+      ingressClassName: pomerium
+      rules:
+        - host: 'verify.localhost.pomerium.io'
+          http:
+            paths:
+              - pathType: Prefix
+                path: /
+                backend:
+                  service:
+                    name: verify
+                    port:
+                      number: 8000
+    ```
 
-Note that we include the [annotation](/docs/deploy/k8s/ingress#supported-annotations) `ingress.pomerium.io/pass_identity_headers`, which provides a [JWT](/docs/internals/glossary#json-web-token) to the Verify service.
+    Note that in **Line 8**, we include the [annotation](/docs/deploy/k8s/ingress#supported-annotations) `ingress.pomerium.io/pass_identity_headers`, which provides a [JWT](/docs/internals/glossary#json-web-token) to the Verify service.
 
-Deploy the service with `kubectl apply -f verify-ingress.yaml`, and visit the path in your browser:
+    Deploy the service with `kubectl apply -f verify-ingress.yaml`, and visit the path in your browser:
 
-![The top of the Pomerium Verify page](./img/verify-app.png)
+    ![The top of the Pomerium Verify page](./img/verify-app.png)
 
-:::tip
+    :::tip
 
-Identity verification fails because we're using an untrusted test certificate. Updating your deployment with a trusted certificate solution like Let's Encrypt through [cert-manager] will resolve this error.
+    Identity verification fails because we're using an untrusted test certificate. Updating your deployment with a trusted certificate solution like Let's Encrypt through [cert-manager] will resolve this error.
 
-:::
+    :::
 
 ## Next steps
 
