@@ -36,17 +36,17 @@ allow:
   and:
     - domain:
         is: example.com
-    - user:
-        is: user1@example.com
 deny:
   or:
-    - user:
+    - email:
         is: user2@example.com
-    - user:
+    - email:
         is: user3@example.com
 ```
 
-This policy will allow a user with an email address at `example.com` who **is also** `user`. It will deny `user2` **or** `user3`, regardless of their domain and group membership.
+This policy grants access only if the domain portion of a user's email address matches the specified value, `example.com`.
+
+It will deny access to users with a `user2@example.com` **or** `user3@example.com` email address.
 
 ## Rules
 
@@ -158,7 +158,7 @@ Entries marked with `*` denote criteria that are only available in the [Enterpri
 | \* `record` | variable | Allows policies to be extended using data from [external data sources](/docs/integrations) |
 | `reject` | Anything. Typically `true`. | Always returns false. The opposite of `accept`. |
 | \* `time_of_day` | [Time of Day Matcher] | Returns true if the time of the request (for the current day) matches the constraints. |
-| `user` | [String Matcher] | Returns true if the logged-in user's id matches the given value. |
+| `user` | [String Matcher] | Returns `true` if the logged-in user's ID matches the supplied value. (The actual value of the user ID claim depends on how the identity provider sets this value.) |
 
 Entries marked with `*` denote criteria that are only available in the [Enterprise Console](/docs/deploy/enterprise) PPL builder. All other entries are available in both Pomerium Core and Pomerium Enterprise.
 
