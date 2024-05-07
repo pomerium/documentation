@@ -34,8 +34,8 @@ Each PPL policy has at the top level a set of `allow` or `deny` actions, with a 
 ```yaml
 allow:
   and:
-    - email:
-        is: user1@example.com
+    - domain:
+        is: example.com
 deny:
   or:
     - email:
@@ -44,9 +44,9 @@ deny:
         is: user3@example.com
 ```
 
-This policy grants access only if a user's email address matches `user1@example.com`.
+This policy grants access only if the domain portion of a user's email address matches the specified value, `example.com`.
 
-It will deny `user2` **or** `user3`.
+It will deny access to users with a `user2@example.com` **or** `user3@example.com` email address.
 
 ## Rules
 
