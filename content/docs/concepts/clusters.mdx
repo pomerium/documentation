@@ -20,15 +20,31 @@ When you deploy Pomerium Zero, you get your own **Cluster**. A cluster consists 
 
 ## Why clusters?
 
-### Simpler configuration
+A cluster model reduces the complexity of managing Pomerium: All configuration settings, including service accounts, routes, authorization policies, and certificates, are maintained in the Pomerium Zero cloud.
 
-Cluster configuration is managed entirely in the **Zero Console**, our hosted control plane. When you apply configuration changes in the Zero Console, your cluster fetches and applies these changes locally.
+Each replica within a cluster runs Pomerium Core in an all-in-one mode, meaning the services that comprise Core are deployed together and share session state. The diagram below provides a high-level overview of how these services communicate:
+
+   ![A diagram depicting the Pomerium Core service identities](./img/clusters/core-architecture.png)
+
+Similary, replicas communicate with each other to synchronize state across a cluster. This interconnectivity between replicas enables you to horizontally scale your cluster to adapt to the purposes of your use case, be it performance, governance, security, or management related.
+
+    ![A diagram depicting how clusters communicate with the Zero Console](./img/clusters/clusters-architecture.png)
+
+This model affords the following benefits:
+
+- Simplifies configuration
+- Retains data privacy
+- Optimizes scalability
+
+### Simplified configuration
+
+Cluster configuration is managed entirely in the Zero Console. As you apply configuration changes in the Zero Console, your cluster fetches and applies these changes locally.
 
 This model ensures that:
 
 - Your cluster always stays in sync with the Zero Console as changes are applied
-- The Zero Console maintains your cluster's last-known configuration, so Pomerium Core can continue running in the event of a service outage
-- There is less configuration to maintain, which makes Pomerium easier to manage
+- You don't have to manage cluster configuration files or environment variables locally, which reduces the complexity of managing Pomerium Zero
+- The Zero Console maintains your cluster's last-known configuration, so replicas can continue running in the event of a service outage
 
 ### Data privacy
 
@@ -36,9 +52,9 @@ Pomerium doesn't monitor your organization's traffic or collect private user dat
 
 ### Scalability
 
-Replicas within a cluster share the same storage backend to synchronize records and session state. In this way, you can deploy multiple replicas to meet the needs of your infrastructure and organization.
+Replicas within a cluster synchronize records over a streaming connection, which keeps the cluster abreast of configuration changes. In this way, you can deploy multiple replicas to meet the needs of your infrastructure and organization.
 
-![A diagram depicting how clusters communicate with the Zero Console](./img/clusters/clusters-architecture.png)
+See [**Persistence and scalability**](#persistence-and-scalability) below for more information.
 
 ## Deploy your cluster
 
@@ -197,8 +213,22 @@ To learn more about routing, policies, and certificates in Pomerium, see the fol
 
 ## Persistence and scalability
 
-### Storage persistence
+### Persistance
 
-### Deploy a Replica
+By default, Pomerium uses an in-memory storage backend to synchronize a cluster's configuration and session state. This is suitable for test environments, but not for production. In the event of a service outage, your cluster can't fetch its configuration from the cloud, so it can't serve traffic.
 
-TODO: Mention that deploying a replica is not done in the UI.
+To avoid failover, we recommend that you deploy a PostgreSQL database to persist your cluster's configuration state. Since all replicas share the same storage connection, the database will persist cluster state if a replica restarts due to a service outage.
+
+To configure a database in the Zero Console:
+
+1. Select **Settings**
+1. Go to the **General** tab
+1. Enter the connection string in the [**Databroker Storage Connection String**](/docs/reference/databroker#databroker-storage-connection-string) field
+
+  ![Entering the databroker storage connection string in the Zero Console](./img/clusters/databroker-connection.png)
+
+### Replicas
+
+You can't deploy replicas in the Zero Console itself. To deploy a replica, run the Pomerium Zero installation script using the same [cluster token](#cluster-token) you used to deploy your cluster. This will generate another replica, which you can verify on the **Status** page.
+
+![Reviewing Replica status in the Zero Console](./img/clusters/replica-status.png)
