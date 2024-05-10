@@ -33,7 +33,7 @@ To prevent early session loss in production deployments, persistent storage back
 
 Configuration options for each backend are detailed in [databroker configuration reference](/docs/reference/databroker).
 
-Pomerium encrypts record values only for the Redis storage backend (not for the in-memory or Postgres storage backends). When using the Postgres backend we recommend that users configure their own encryption at rest, for example by using full-disk encryption on the volume where Postgres data is stored.
+Pomerium does not encrypt record values for either the in-memory or Postgres storage backends. When using the Postgres backend we recommend that users configure their own encryption at rest, for example by using full-disk encryption on the volume where Postgres data is stored.
 
 ### In-Memory
 
