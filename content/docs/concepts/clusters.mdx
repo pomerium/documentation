@@ -20,21 +20,23 @@ When you deploy Pomerium Zero, you get your own **Cluster**. A cluster consists 
 
 ## Why clusters?
 
-A cluster model reduces the complexity of managing Pomerium: All configuration settings, including service accounts, routes, authorization policies, and certificates, are maintained in the Pomerium Zero cloud.
+A cluster model reduces the complexity of managing Pomerium: All of a cluster's configuration, including settings, routes, policies, and certificates, are managed in the Zero Console.
 
-Each replica within a cluster runs Pomerium Core in an all-in-one mode, meaning the services that comprise Core are deployed together and share session state. The diagram below provides a high-level overview of how these services communicate:
-
-   ![A diagram depicting the Pomerium Core service identities](./img/clusters/core-architecture.png)
-
-Similary, replicas communicate with each other to synchronize state across a cluster. This interconnectivity between replicas enables you to horizontally scale your cluster to adapt to the purposes of your use case, be it performance, governance, security, or management related.
+Configuration changes applied in the remote console are communicated over a streaming connection to your local cluster. Each cluster is connected to its own storage backend, which synchronizes state across replicas.
 
     ![A diagram depicting how clusters communicate with the Zero Console](./img/clusters/clusters-architecture.png)
+
+Each replica within a cluster runs Pomerium Core in an all-in-one mode, meaning the services that comprise Core are deployed together and share session state. Similary, replicas communicate with each other to synchronize state across a cluster.
+
+This interconnectivity between replicas enables you to horizontally scale your cluster to adapt to the purposes of your use case, be it performance, governance, security, or management related.
 
 This model affords the following benefits:
 
 - Simplifies configuration
 - Retains data privacy
 - Optimizes scalability
+
+## Cluster benefits
 
 ### Simplified configuration
 
@@ -43,7 +45,7 @@ Cluster configuration is managed entirely in the Zero Console. As you apply conf
 This model ensures that:
 
 - Your cluster always stays in sync with the Zero Console as changes are applied
-- You don't have to manage cluster configuration files or environment variables locally, which reduces the complexity of managing Pomerium Zero
+- You don't have to manage cluster configuration files or environment variables
 - The Zero Console maintains your cluster's last-known configuration, so replicas can continue running in the event of a service outage
 
 ### Data privacy
@@ -217,7 +219,7 @@ To learn more about routing, policies, and certificates in Pomerium, see the fol
 
 By default, Pomerium uses an in-memory storage backend to synchronize a cluster's configuration and session state. This is suitable for test environments, but not for production. In the event of a service outage, your cluster can't fetch its configuration from the cloud, so it can't serve traffic.
 
-To avoid failover, we recommend that you deploy a PostgreSQL database to persist your cluster's configuration state. Since all replicas share the same storage connection, the database will persist cluster state if a replica restarts due to a service outage.
+To avoid service outages, we recommend that you deploy a PostgreSQL database to persist your cluster's configuration state. Since all replicas share the same storage connection, the database will persist cluster state if a replica restarts due to a service outage.
 
 To configure a database in the Zero Console:
 
