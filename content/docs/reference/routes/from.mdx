@@ -23,9 +23,42 @@ The **From** route is the externally accessible URL for a proxied HTTP request.
 
 The From URL must contain a **scheme** and **hostname**. It can't contain a path.
 
+### Port mapping behavior
+
+In v0.26, we've updated the default route matching behavior so that From routes defined _without_ a specific port in the route URL will match a request on any port.
+
+:::note
+
+You can disable this behavior with the [**Match Any Incoming Port**](/docs/reference/runtime-flags) runtime flag.
+
+:::
+
+With a From route like the one below...
+
+```yaml
+from: https://www.example.com
+```
+
+...Pomerium would match the incoming requests on any port:
+
+```yaml
+https://www.example.com
+https://www.example.com:443
+https://www.example.com:8443
+https://www.example.com:3000
+```
+
+If you specify the port in the From URL, Pomerium will only match incoming requests that specify this port:
+
+```yaml
+from: https://www.example.com:8443
+```
+
 You may map more than one port through the same hostname by specifying a different `:port` in the URL.
 
-To enable [TCP proxying](/docs/capabilities/tcp/) support, specify the `tcp+https` scheme.
+### Define a TCP route
+
+To enable [TCP proxying](/docs/capabilities/tcp/) support, use the `tcp+https` scheme in the From URL.
 
 :::note
 
