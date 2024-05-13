@@ -4,6 +4,7 @@ title: From
 keywords:
   - reference
   - From
+description: This page defines the From route configuration setting in Pomerium.
 pagination_prev: null
 pagination_next: null
 toc_max_heading_level: 2
@@ -16,21 +17,30 @@ import TabItem from '@theme/TabItem';
 
 ## Summary
 
-**From** is the externally accessible URL for the proxied request.
-
-Specifying `tcp+https` for the scheme enables [TCP proxying](/docs/capabilities/tcp/) support for the route. You may map more than one port through the same hostname by specifying a different `:port` in the URL.
+The **From** route is the externally accessible URL for a proxied HTTP request.
 
 ## How to configure
 
-The `URL` must contain a **scheme** and **hostname** and cannot contain a path.
+The From URL must contain a **scheme** and **hostname**. It can't contain a path.
+
+You may map more than one port through the same hostname by specifying a different `:port` in the URL.
+
+To enable [TCP proxying](/docs/capabilities/tcp/) support, specify the `tcp+https` scheme.
 
 :::note
 
-Only secure schemes (`https` and `tcp+https`) are supported.
+When defining a From route, you must use `https` or `tcp+https`. Pomerium only supports secure schemes.
 
 :::
 
 <Tabs>
+<TabItem value="zero" label="Zero">
+
+To define a From route in the Zero Console:
+
+![Defining a From route in the Routes page of the Zero Console](../img/routes/from/zero-from-route.png)
+
+</TabItem>
 <TabItem value="Core" label="Core">
 
 | **YAML**/**JSON** setting | **Type** | **Schemes**          | **Usage**    |
@@ -57,7 +67,7 @@ routes:
 
 Define a **From** route under **General** route settings in the Console:
 
-![Define a route in the Console](../img/routes/from-route.png)
+![Define a route in the Console](../img/routes/from/from-route.png)
 
 </TabItem>
 <TabItem value="Kubernetes" label="Kubernetes">
