@@ -62,11 +62,11 @@ from: https://example.com
 Pomerium will match the From route with incoming requests on _any_ port:
 
 ```yaml
-https://www.example.com 
+https://www.example.com
 
-https://www.example.com:443 
+https://www.example.com:443
 
-https://www.example.com:8443 
+https://www.example.com:8443
 
 https://www.example.com:18443
 ```
@@ -74,7 +74,7 @@ https://www.example.com:18443
 If you disable this runtime flag and _do not_ specify a port in the From URL, Pomerium will only match this route if the incoming request _does not_ specify a port, _or_ the request specifies port `:443`.
 
 ```yaml
-https://www.example.com 
+https://www.example.com
 
 https://www.example.com:443
 ```
