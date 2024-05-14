@@ -52,7 +52,7 @@ This is a bootstrap setting. It is not configurable in the Enterprise Console.
 </TabItem>
 <TabItem value="kubernetes" label="Kubernetes">
 
-TODO.
+This runtime flag is currently not configurable in the Pomerium Ingress Controller.
 
 </TabItem>
 </Tabs>
@@ -77,10 +77,8 @@ https://www.example.com:8443
 https://www.example.com:18443
 ```
 
-If you disable this runtime flag and _do not_ specify a port in the From URL, Pomerium will only match this route if the incoming request _does not_ specify a port, _or_ the request specifies port `:443`.
+If you disable this runtime flag and _do not_ specify a port in the From URL, Pomerium will match the incoming request on port `:443`, the default listening port.
 
 ```yaml
-https://www.example.com
-
 https://www.example.com:443
 ```
