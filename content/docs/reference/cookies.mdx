@@ -266,7 +266,17 @@ cookie.httpOnly: false
 
 | **Config file keys** | **Environment variables** | **Type** | **Default** |
 | :-- | :-- | :-- | :-- |
-| `cookie_expiration` | `COOKIE_EXPIRATION` | `string` ([Go Duration](https://golang.org/pkg/time/#Duration.String) formatting) | `14h` |
+| `cookie_expire` | `COOKIE_EXPIRE` | `string` ([Go Duration](https://golang.org/pkg/time/#Duration.String) formatting) | `14h` |
+
+#### Examples {#cookie-expiration-examples}
+
+```yaml
+cookie_expire: 13h15m0.5s
+```
+
+```bash
+COOKIE_EXPIRE=13h15m0.5s
+```
 
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
@@ -278,7 +288,7 @@ Set **Cookie Expiration** in the Console: ![Setting the cookie expiration time i
 
 | **Name** | **Type** | **Default** |
 | :-- | :-- | :-- |
-| `authenticate.expiration` | `string` ([Go Duration](https://golang.org/pkg/time/#Duration.String) formatting) | `14h` |
+| `authenticate.expire` | `string` ([Go Duration](https://golang.org/pkg/time/#Duration.String) formatting) | `14h` |
 
 See Kubernetes [Cookie Reference](/docs/deploy/k8s/reference#cookie) for more information.
 
@@ -289,13 +299,13 @@ See Kubernetes [Cookie Reference](/docs/deploy/k8s/reference#cookie) for more in
 
 ```yaml
 # config file key
-cookie_expiration: 13h15m0.5s
+cookie_expire: 13h15m0.5s
 
 # environment variable
-COOKIE_EXPIRATION=13h15m0.5s
+COOKIE_EXPIRE=13h15m0.5s
 
 # ingress
-cookie.expiration: 13h15m0.5s
+cookie.expire: 13h15m0.5s
 ```
 
 ## Cookie SameSite {#cookie-samesite}
