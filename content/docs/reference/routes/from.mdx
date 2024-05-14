@@ -19,6 +19,8 @@ import TabItem from '@theme/TabItem';
 
 The **From** route is the externally accessible URL for a proxied HTTP request.
 
+Specifying `tcp+https` for the scheme enables [TCP proxying](/docs/capabilities/tcp/) support for the route. You may map more than one port through the same hostname by specifying a different `:port` in the URL.
+
 ## How to configure
 
 The From URL must contain a **scheme** and **hostname**. It can't contain a path.
@@ -33,13 +35,13 @@ You can disable this behavior with the [**Match Any Incoming Port**](/docs/refer
 
 :::
 
-With a From route like the one below...
+With a From route like the one below:
 
 ```yaml
 from: https://www.example.com
 ```
 
-...Pomerium would match the incoming requests on any port:
+Pomerium will match incoming requests on any port:
 
 ```yaml
 https://www.example.com
@@ -56,12 +58,6 @@ If you specify the port in the From URL, Pomerium will only match incoming reque
 ```yaml
 from: https://www.example.com:8443
 ```
-
-You may map more than one port through the same hostname by specifying a different `:port` in the URL.
-
-### Define a TCP route
-
-To enable [TCP proxying](/docs/capabilities/tcp/) support, use the `tcp+https` scheme in the From URL.
 
 :::note
 

@@ -27,7 +27,13 @@ import Tabs from '@theme/Tabs'; import TabItem from '@theme/TabItem';
 
 The **Match Any Incoming Port** runtime flag instructs Pomerium to match requests on any port for From routes that _do not_ specify a port in the route URL. If the port is specified in the route URL, Pomerium will only match requests on that exact port. This is the default route matching behavior.
 
-If you disable this runtime flag, Pomerium will only match requests for a route if the route URL does not specify a port, or the request specifies port `:443`. If the port is specified in the route URL, Pomerium will continue to only match requests on that exact port.
+If you disable this runtime flag, Pomerium will match incoming requests on port `443` by default unless you specify a port in the From URL.
+
+:::info
+
+See the [**From route**](/docs/reference/routes/from) reference page for more information about how to configure From routes.
+
+:::
 
 ### How to Configure
 
