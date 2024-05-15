@@ -4,7 +4,7 @@ title: From
 keywords:
   - reference
   - From
-description: This page defines the From route configuration setting in Pomerium.
+description: This page defines the From URL configuration setting in Pomerium.
 pagination_prev: null
 pagination_next: null
 toc_max_heading_level: 2
@@ -17,25 +17,19 @@ import TabItem from '@theme/TabItem';
 
 ## Summary
 
-The **From** route is the externally accessible URL for a proxied HTTP request.
+The **From** URL is the externally accessible URL for a proxied HTTP request.
 
 Specifying `tcp+https` for the scheme enables [TCP proxying](/docs/capabilities/tcp/) support for the route. You may map more than one port through the same hostname by specifying a different `:port` in the URL.
 
 ## How to configure
 
-The From URL must contain a **scheme** and **hostname**. It can't contain a path.
+The From URL must contain a **scheme** and **hostname**. It can't contain a path. When defining a From URL, you must use `https` or `tcp+https`. Pomerium only supports secure schemes.
 
-### Port mapping behavior
+### Port matching behavior
 
 In v0.26, we've updated the route matching behavior. If you do not specify a port number in a route's From URL, the route will match incoming requests with any port number (or no port number). If you do specify a port number, that route will match only requests containing that specific port number.
 
-:::note
-
-You can disable this behavior with the [**Match Any Incoming Port**](/docs/reference/runtime-flags) runtime flag.
-
-:::
-
-With a From route like the one below:
+With a From URL like the one below:
 
 ```yaml
 from: https://www.example.com
@@ -59,20 +53,13 @@ If you specify the port in the From URL, Pomerium will only match incoming reque
 from: https://www.example.com:8443
 ```
 
-:::note
+:::tip
 
-When defining a From route, you must use `https` or `tcp+https`. Pomerium only supports secure schemes.
+You can disable this behavior with the [**Match Any Incoming Port**](/docs/reference/runtime-flags) runtime flag.
 
 :::
 
 <Tabs>
-<TabItem value="zero" label="Zero">
-
-To define a From route in the Zero Console:
-
-![Defining a From route in the Routes page of the Zero Console](../img/routes/from/zero-from-route.png)
-
-</TabItem>
 <TabItem value="Core" label="Core">
 
 | **YAML**/**JSON** setting | **Type** | **Schemes**          | **Usage**    |

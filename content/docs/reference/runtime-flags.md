@@ -21,17 +21,17 @@ import Tabs from '@theme/Tabs'; import TabItem from '@theme/TabItem';
 
 | Runtime Flag | Description | Type | Default |
 | :-- | :-- | :-- | :-- |
-| [Match Any Incoming Port](#match-any-incoming-port) | Matches incoming HTTP requests on any port for a From route that does not specify a port in the URL. | Boolean | `true` |
+| [Match Any Incoming Port](#match-any-incoming-port) | Matches incoming HTTP requests on any port for a From URL that does not specify a port. | Boolean | `true` |
 
 ## Match Any Incoming Port
 
-The **Match Any Incoming Port** runtime flag instructs Pomerium to match requests on any port for From routes that _do not_ specify a port in the route URL. If the port is specified in the route URL, Pomerium will only match requests on that exact port. This is the default route matching behavior.
+The **Match Any Incoming Port** runtime flag instructs Pomerium to match requests on any port for From URLs that _do not_ specify a port in the URL. If the port is specified in the From URL, Pomerium will only match requests on that exact port. This is the default route matching behavior.
 
 If you disable this runtime flag, Pomerium will match incoming requests on port `443` by default unless you specify a port in the From URL.
 
 :::info
 
-See the [**From route**](/docs/reference/routes/from) reference page for more information about how to configure From routes.
+See the [**From URL**](/docs/reference/routes/from) reference page for more information about how to configure From URLs.
 
 :::
 
@@ -59,13 +59,13 @@ This runtime flag is currently not configurable in the Pomerium Ingress Controll
 
 #### Examples
 
-With a From route that _does not_ specify an explicit port:
+With a From URL that _does not_ specify an explicit port:
 
 ```yaml
 from: https://example.com
 ```
 
-Pomerium will match the From route with incoming requests on _any_ port:
+Pomerium will match the From URL with incoming requests on _any_ port:
 
 ```yaml
 https://www.example.com
