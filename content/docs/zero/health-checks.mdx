@@ -1,0 +1,167 @@
+---
+id: health-checks
+title: Health Checks
+sidebar_label: Health Checks
+description: This Health Checks page describes health checks in Pomerium Zero.
+---
+
+# Pomerium Zero Health Checks
+
+Health Checks communicate the status of a cluster. You can view health checks in the [Status](https://console.pomerium.app/app/reports/status) page of the Zero Console. Refer to the table below to learn more about a specific health check and what actions are required (if any) to resolve it.
+
+| Code | Health Check | Origin | Scope | Display | error cause |
+| --- | --- | --- | --- | --- | --- |
+| [`certificates_current`](#certificates-current) | cluster configuration certificates are not expiring within next 10 days. | every time a configuration is updated and daily.  | cluster | always | for managed certs: our bug, contact support. for manual certs - user has to upload new cert.  |
+| `certificates_match_hostnames` | cluster configuration hostnames (from) have matching certificates | every time a configuration is updated | cluster | always | either an error in a route or a missing cert.  |
+| `cluster_config_current` | cluster is running latest changeset | every time cluster receives a new configuration, and daily job to check if its latest. | cluster | always | may indicate cluster connectivity issues. restart a cluster. if not resolved - contact support.  |
+| `cluster_version_current` | cluster replica uses latest release | daily nightly job | replica | always | upgrade pomerium version.  |
+| `persistent_backend` | cluster is configured with persistent backend | every time a configuration is updated | cluster | always | configure postgres |
+| `config.databroker.build` | Core was able to parse the configuration. | every time configuration is updated | replica | on error | version incompatibility. shouldn’t happen. |
+| `storage.backend` | storage backend is healthy. only meaningful for postgres.  | when configuration is updated. | replica | on error | check database connection parameters |
+| `xds.cluster` | the cluster configuration was accepted by Envoy. | when configuration is updated.  | replica | on error | contact support. |
+| `xds.listener` | the listener configuration invalid.  | when configuration is updated.  | replica | on error | see the error message - often inability to bind to port.  |
+| `xds.route-configuration` | route config invalid | when configuration is updated | replica | on error | likely our bug. contact support. |
+| `xds.other` | other xds issues | when configuration is updated | replica | on error | likely our bug. contact support. |
+| `zero.bootstrap-config.save` | ability to persist bootstrap config | when cluster starts and on update | replica | on error | check file permissions |
+| `zero.connect` | ability to communicate with cloud | when cluster connectivity status changes | replica | always | firewall issues  |
+
+## Certificates are expired or invalid {#certificates-current}
+
+- **What this health check does**: Checks if a cluster's certificates will expire within 10 days
+- **Frequency**: Runs daily, and every time the cluster configuration is updated
+- **Scope**: Cluster
+- **Display**: Always
+- **What causes this error**:
+    - If you're cluster uses managed certificates provisioned by Pomerium, then this error is a bug. Please [contact support](https://discuss.pomerium.com/).
+    - If you manually uploaded your own custom certificates, then you must upload a new certificate.
+
+**Steps to resolve**: Upload a valid certificate, or allow Pomerium to automate certificate management for you by adding a [Custom Domain](/docs/capabilities/custom-domains).
+
+## Hostnames do not have matching certificates {#certificates-match-hostnames}
+
+- **What this health check does**: Ensures that all the hostnames available in a cluster's configuration have matching certificates
+- **Frequency**: Runs every time the cluster configuration is updated
+- **Scope**: Cluster
+- **Display**: Always
+- **What causes this error**: Either the [From URL](/docs/reference/routes/from) in a route block is incorrect, or the certificate is missing.
+
+**Steps to resolve**: Make sure all [From URLs](/docs/reference/routes/from) are correct, and that the hostnames have matching certificates.
+
+:::info
+
+For more information on certificates in Pomerium, see the following pages:
+
+- [**Certificates**](/docs/concepts/certificates)
+- [**Certificates reference**](/docs/reference/certificates)
+
+:::
+
+## Cluster configuration is not current {#cluster-config-current}
+
+- **What this health check does**: Makes sure the cluster is running the latest changeset
+- **Frequency**: Runs daily to check for the latest configuration, or every time the cluster configuration is updated.
+- **Scope**: Cluster
+- **Display**: Always
+- **What causes this error**: This health check may indicate cluster connectivity issues.
+
+**Steps to resolve**: Please restart the cluster. If that doesn't resolve the issue, please [contact support](https://discuss.pomerium.com/).
+
+##  Cluster version is not current {#cluster-version-current}
+
+- **What this health check does**: Makes sure the cluster replica is running the latest release
+- **Frequency**: Runs daily at night
+- **Scope**: Replica
+- **Display**: Always
+- **What causes this error**: The replica is not running the latest version of Pomerium Zero
+
+**Steps to resolve**: Update your Pomerium Zero cluster configuration to run the latest version of Pomerium.
+
+## Cluster using an in-memory storage backend {#persistent-backend}
+
+- **What this health check does**:
+- **Frequency**:
+- **Scope**:
+- **Display**:
+- **What causes this error**:
+
+**Steps to resolve**:
+
+## Incompatible configuration {#config-databroker-build}
+
+- **What this health check does**:
+- **Frequency**:
+- **Scope**:
+- **Display**:
+- **What causes this error**:
+
+**Steps to resolve**:
+
+## Cluster can't communicate with the storage backend {#storage-backend}
+
+- **What this health check does**:
+- **Frequency**:
+- **Scope**:
+- **Display**:
+- **What causes this error**:
+
+**Steps to resolve**:
+
+## There's an issue with cluster configuration {#xds-cluster}
+
+- **What this health check does**:
+- **Frequency**:
+- **Scope**:
+- **Display**:
+- **What causes this error**:
+
+**Steps to resolve**:
+
+## There's an issue with the network listener {#xds-listener}
+
+- **What this health check does**:
+- **Frequency**:
+- **Scope**:
+- **Display**:
+- **What causes this error**:
+
+**Steps to resolve**:
+
+## There's an issue with the route configuration {#xds-route-configuration}
+
+- **What this health check does**:
+- **Frequency**:
+- **Scope**:
+- **Display**:
+- **What causes this error**:
+
+**Steps to resolve**:
+
+## There's an issue with the configuration {#xds-other}
+
+- **What this health check does**:
+- **Frequency**:
+- **Scope**:
+- **Display**:
+- **What causes this error**:
+
+**Steps to resolve**:
+
+## Pomerium can't write some of its cache files {#zero-bootstrap-config-save}
+
+- **What this health check does**:
+- **Frequency**:
+- **Scope**:
+- **Display**:
+- **What causes this error**:
+
+**Steps to resolve**:
+
+## Cluster connectivity issues with the cloud {#zero-connect}
+
+- **What this health check does**:
+- **Frequency**:
+- **Scope**:
+- **Display**:
+- **What causes this error**:
+
+**Steps to resolve**:
