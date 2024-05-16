@@ -8,52 +8,51 @@ sidebar_label: Upstream Connection Errors
 
 # Upstream connection errors
 
-Upstream connection errors indicate that something is wrong with the upstream server, not Pomerium. Please refer to the list of upstream connection errors below to learn more about a specific issue, and how you can resolve it.
+Upstream connection errors indicate that something is wrong with the upstream server, not Pomerium. Please refer to the list of errors below to learn more about a specific issue, and how you can resolve it.
 
-## 503: No healthy upstream
+## Error 503: No healthy upstream
 
-### Description
+The `no_healthy_upstream` error means that there is an issue with the upstream server that makes it unreachable from Pomerium. The error may be caused by or related to the upstream server's:
 
-The `no_healthy_upstream` error means that there is an issue with the upstream server.
+- Configuration or application code
 
-### Solution
- TODO.
+**Resolution**: Check that there are no errors in the server's configuration files or application code that prevent it from running as expected.
 
-## upstream_max_stream_duration_reached
+- Network or firewall settings
 
-### Description
+**Resolution**: Check your network or firewall settings to make sure your server is reachable. 
 
-### Solution
+- DNS records
 
-## upstream_per_try_timeout
+**Resolution**: Make sure the server's DNS records are pointing to the correct IP address. 
 
-### Description
+## Upstream Max Stream Duration Reached
 
-### Solution
+The `upstream_max_stream_duration_reached` error means that Pomerium destroyed the request because it exceeded the upstream server's maximum stream duration. 
 
-## upstream_reset_after_response_started
+**Resolution**: 
 
-### Description
+## Upstream Per Try Timeout
 
-### Solution
+The `upstream_per_try_timeout` error means that the final upstream try timed out.
 
-## upstream_reset_before_response_started
+## Upstream Reset After Response Started
 
-### Description
+The `upstream_reset_after_response_started` error means that the upstream connection was reset after a response was started. This may include further details about the cause of the disconnect.
 
-### Solution
 
-## upstream_response_timeout
+## Upstream Reset Before Response Started
 
-### Description
+The `upstream_reset_before_response_started` error means the upstream connection was reset before a response was started This may include further details about the cause of the disconnect.
 
-### Solution
+## Upstream Response Timeout
 
-## via_upstream
+The `upstream_response_timeout` error means that the upstream response timed out.
 
-### Description
+## Via Upstream
 
-### Solution
+The `via_upstream` error means that the response code was set by the upstream.
+
 
 
 
