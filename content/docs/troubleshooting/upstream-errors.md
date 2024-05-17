@@ -1,7 +1,7 @@
 ---
 id: upstream-errors
 title: Upstream Connection Errors
-description: This page discusses upstream connection errors proxied by Pomerium.
+description: Troubleshoot upstream connection errors proxied by Pomerium.
 keyword: [upstream connection, error, upstream connection error]
 sidebar_label: Upstream Connection Errors
 ---

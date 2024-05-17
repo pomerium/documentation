@@ -1,0 +1,49 @@
+---
+# cSpell:ignore errgroup tgroth servername
+
+title: Pomerium Enterprise
+description: Troubleshoot issues in Pomerium Enterprise.
+pagination_prev: null
+lang: en-US
+keywords: [pomerium, troubleshooting, faq, frequently asked questions]
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import GenerateRecoveryToken from '@site/content/_generate-recovery-token.md';
+
+This article provides troubleshooting information for various tools and features in Pomerium.
+
+## Pomerium Enterprise
+
+### Generate Recovery Token
+
+<GenerateRecoveryToken />
+
+### Directory sync
+
+**Problem:**
+
+Enterprise Console directory sync fails to complete.
+
+**Solution:**
+
+If your directory sync fails, use the **External Data** > **Last Error** and **Metrics** dashboards to determine the source of the failure, and review your Console logs as well. If the failure is due to a timeout, increase the **IdP Polling Min/Max Delay** settings until the sync completes.
+
+1. In the Console, go to **External Data** > **Last Error** to check for errors that may have caused the sync to fail. Go to **External Data** > **Metrics** to review request durations:
+
+![Check Last Error to see if an error interrupted directory sync](./img/polling-delay-settings/last-error-and-request-duration.gif)
+
+2. Select **Settings** > **Identity Providers** to see the **IdP Polling Min/Max Delay** settings. Increase the **Polling Min Delay** and **Polling Max Delay** settings before attempting to sync your directory again. Continue to monitor the sync; if it fails due to timeout, increase the durations.
+
+![Find the IdP Polling Delays settings in the Console](./img/polling-delay-settings/adjust-polling-delay-settings.gif)
+
+See [**Identity Provider Polling Min/Max Delay**](/docs/reference/identity-provider-settings#identity-provider-polling-minmax-delay) for more information.
+
+### Case sensitive values
+
+Configuration file keys and environment variables of the type `string` are case sensitive. This is important when configuring the Enterprise Console or adding claims to your configuration file.
+
+For example, the `administrators` key allows you to specify a list of names, email addresses, or user IDs as initial administrators to access and configure the Enterprise Console. These string values are case sensitive.
+
+If you wanted to add an email address like `John.Admin@example.com` to the `administrators` file key, Pomerium wouldn't recognize an email like `john.admin@example` because the strings aren't an exact match.
