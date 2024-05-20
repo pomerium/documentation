@@ -14,7 +14,6 @@ You can use the same configuration examples below for other supported [identity 
 1. When using Docker-compose:
 
 ```yaml title="docker-compose.yaml"
-version: '3'
 services:
   pomerium:
     image: cr.pomerium.com/pomerium/pomerium:latest

@@ -95,7 +95,6 @@ In the next section, you'll bind mount these certificates in a Docker Compose fi
 In your `docker-compose.yaml` file, add the following services:
 
 ```yaml
-version: '3'
 services:
   pomerium:
     image: cr.pomerium.com/pomerium/pomerium:latest
