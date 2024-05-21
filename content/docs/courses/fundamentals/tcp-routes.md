@@ -114,7 +114,6 @@ certificates:
 In your Docker Compose file, bind mount your wildcard certificates as a volume in the Pomerium service:
 
 ```yaml title="docker-compose.yaml"
-version: '3'
 services:
   pomerium:
     image: cr.pomerium.com/pomerium/pomerium:latest
