@@ -35,7 +35,7 @@ The available flags are:
 | Runtime Flag | Description | Default |
 | :-- | :-- | :-- |
 | `grpc_databroker_keepalive` | _(experimental)_ Enable gRPC keepalive (HTTP/2 PING) requests on the databroker service connection. This may improve service reliability in [split service mode](/docs/capabilities/high-availability#service-mode) deployments where there are multiple firewalls in the connection path between different Pomerium services. | `false` |
-| `match_any_incoming_port` | For routes where the From URL does not contain a port number, allow it to match incoming requests with any port number. See the section on [Port matching behavior](/docs/reference/routes/from#port-matching-behavior) for more details. | `true` |
+| `match_any_incoming_port` | For a route where the From URL does not contain a port number, allow it to match incoming requests with any port number. See the section on [Port matching behavior](/docs/reference/routes/from#port-matching-behavior) for more details. | `true` |
 | `legacy_identity_manager` | The way Pomerium manages IdP session refresh has been newly rewritten in v0.26 for enhanced performance and reliability. When this flag is enabled, Pomerium will revert to the older implementation. | `false` |
 
 ### Examples
