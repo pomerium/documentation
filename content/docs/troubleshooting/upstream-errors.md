@@ -30,7 +30,7 @@ The `no_healthy_upstream` error means that there is an issue with the upstream s
 
 - DNS records
 
-  **Resolution**: This error may be caused by unresolveable DNS records applied to the upstream server. Make sure the server's DNS records are pointing to the correct IP address.
+  **Resolution**: This error may be caused by unresolvable DNS records applied to the upstream server. Make sure the server's DNS records are pointing to the correct IP address.
 
 - Failing health checks configured in Pomerium
 
