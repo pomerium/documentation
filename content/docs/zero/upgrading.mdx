@@ -1,0 +1,104 @@
+---
+title: Upgrading
+description: This page discusses how to upgrade your cluster to use the latest version of Pomerium Zero.
+keywords:
+  [
+    pomerium zero release,
+    zero release,
+    zero releases,
+    pomerium zero releases,
+    upgrade zero,
+    zero version,
+    latest zero version,
+  ]
+pagination_prev: null
+pagination_next: null
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Upgrade Pomerium Zero
+
+This page shows you how to upgrade your cluster to use the latest version of Pomerium Zero. Refer to the steps for your deployment environment.
+
+:::note
+
+Review the latest [**Core Upgrade guide**](/docs/deploy/core/upgrading) for release details before you upgrade Pomerium Zero.
+
+:::
+
+## How to upgrade Pomerium Zero
+
+<Tabs>
+<TabItem label="Docker" value="docker">
+
+To update Pomerium Zero in Docker:
+
+1. In your `docker-compose.yaml` file, update the Pomerium Zero image tag to specify the [latest tagged release](https://github.com/pomerium/pomerium/tags):
+
+```yaml
+pomerium:
+  image: pomerium/pomerium:vX.Y.Z
+```
+
+1. Run the following command:
+
+```bash
+$ docker compose up -d
+```
+
+Docker should automatically pull the new image of Pomerium Zero before running the container. If for some reason it doesn't pull the image, you can manually run:
+
+```bash
+$ docker pull pomerium/pomerium:vX.Y.Z
+```
+
+</TabItem>
+<TabItem label="Linux" value="linux">
+
+To update Pomerium Zero in Debian-based Linux systems:
+
+1. Check for new package updates:
+
+```bash
+$ sudo apt update
+```
+
+1. Install the latest version of Pomerium Zero:
+
+```bash
+$ sudo apt --only-upgrade install pomerium
+```
+
+To update Pomerium Zero in Red Hat-based Linux systems:
+
+1. Check for new package updates
+
+```bash
+$ sudo yum list updates
+```
+
+1. Install the latest version of Pomerium Zero:
+
+```bash
+$ sudo yum update pomerium
+```
+
+Then, run Pomerium:
+
+```bash
+$ sudo systemctl start pomerium
+```
+
+</TabItem>
+<TabItem value="kubernetes" label="Kubernetes">
+
+To update Pomerium Zero in Kubernetes, run the following command:
+
+```bash
+$ kubectl apply -k github.com/pomerium/pomerium/k8s/zero\?ref=<X.Y.Z>
+```
+
+</TabItem>
+</Tabs>
