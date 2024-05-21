@@ -1,5 +1,4 @@
 ```yaml title=docker-compose.yaml
-version: "3"
 networks:
   main: {}
 services:
