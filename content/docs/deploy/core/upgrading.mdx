@@ -13,6 +13,34 @@ sidebar_position: 10
 
 # Upgrade guide
 
+## 0.26.0
+
+#### Routes port matching
+
+Pomerium’s route matching behavior has changed with regards to port numbers in incoming requests. Previously, when matching an incoming request against the defined routes, Pomerium would require that the request’s `Host` (or `:authority`) header match the route’s `from` URL including any port number. This can cause problems in deployments with a NAT with port mapping in front of Pomerium.
+
+As of v0.26, if a Pomerium route’s `from` URL does not include an explicit port number, the matching behavior is more lenient: the route will match an incoming request with any port number. For example, take a route with the `from` URL `https://app.example.com`. Incoming requests with a host header of `app.example.com` , `app.example.com:443`, and `app.example.com:1234` would all match this route.
+
+However, if you specify a port number explicitly in the `from` URL, then incoming requests must include the same port number in the host header in order to match that route.
+
+You can temporarily revert this change in behavior by setting the [runtime flag](https://www.pomerium.com/docs/reference/runtime-flags) `match_any_incoming_port` to false.
+
+#### Host header rewrite behavior
+
+Pomerium will now consistently rewrite the host header of an incoming request to match the host and port specified in the route `to` URL. (Previously Pomerium would never include a port number even if specified, and Pomerium would not rewrite the host header for any `to` URLs with a host of `localhost` or an IP address.) The new behavior is intended to be more consistent and predictable.
+
+Please set the [Preserve Host Header](https://www.pomerium.com/docs/reference/routes/headers#1-preserve-host-header) option for any routes where Pomerium should not rewrite the host header.
+
+#### Improved session refresh reliability
+
+We’ve updated the way Pomerium refreshes OAuth access tokens in order to improve reliability. Previously, Pomerium could fall behind on access token refresh, leading to users being prompted to sign in again before their Pomerium session should have expired. This may result in a higher rate of requests to your configured identity provider.
+
+If you suspect this is causing any problems for your deployment, you can temporarily revert to the previous implementation by setting the runtime flag `legacy_identity_manager` to true.
+
+#### Deprecations
+
+Support for the deprecated `client_ca` config file key (and `CLIENT_CA` environment variable) is now removed. Please update any remaining usage to `downstream_mtls.ca` or the `DOWNSTREAM_MTLS_CA` environment variable. See [https://www.pomerium.com/docs/reference/downstream-mtls-settings#ca](https://www.pomerium.com/docs/reference/downstream-mtls-settings#ca) for more information about this option.
+
 ## 0.25.0
 
 ### Breaking
