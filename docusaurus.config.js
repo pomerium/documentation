@@ -18,7 +18,8 @@ const config = {
   organizationName: "pomerium",
   projectName: "documentation",
   trailingSlash: false,
-
+  noindex: true,
+  
   customFields: {
     xgridKey: process.env.XGRID_KEY,
   },
