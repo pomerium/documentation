@@ -19,7 +19,7 @@ const config = {
   projectName: "documentation",
   trailingSlash: false,
   noindex: true,
-  
+
   customFields: {
     xgridKey: process.env.XGRID_KEY,
   },
@@ -51,6 +51,13 @@ const config = {
 
   themeConfig: {
     image: 'docs/img/logo.svg',
+    announcementBar: {
+      id: 'old_version',
+      content: 'You\'re viewing the <b>Pomerium v0.17</b> docs website. This documentation is outdated. To view the latest documentation, go to <a href="https://pomerium.com/docs">https://pomerium.com/docs</a>.',
+      backgroundColor: '#fddda3',
+      textColor: '#000000',
+      isCloseable: false,
+    },
     algolia: {
       appId: process.env.ALGOALIA_APPID,
       apiKey: process.env.ALGOLIA_APIKEY,
