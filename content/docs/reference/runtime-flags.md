@@ -1,4 +1,5 @@
 ---
+# cSpell:ignore keepalive
 id: runtime-flags
 title: Runtime Flags
 description: This page lists Runtime Flags available in Pomerium.
@@ -15,70 +16,35 @@ pagination_next: null
 toc_max_heading_level: 2
 ---
 
-import Tabs from '@theme/Tabs'; import TabItem from '@theme/TabItem';
+## Summary
 
-# Runtime Flags
+Starting in v0.26, Pomerium has a new **Runtime Flags** setting. These flags are intended to allow users to temporarily opt out of certain changes to the default Pomerium behavior, or to opt in to experimental changes in behavior.
 
-| Runtime Flag | Description | Type | Default |
-| :-- | :-- | :-- | :-- |
-| [Match Any Incoming Port](#match-any-incoming-port) | Matches incoming HTTP requests on any port for a From URL that does not specify a port. | Boolean | `true` |
+If you find that you need to change one of these settings, please let us know by posting on the [Discuss](https://discuss.pomerium.com/) forum.
 
-## Match Any Incoming Port
+## How to configure
 
-The **Match Any Incoming Port** runtime flag instructs Pomerium to match requests on any port for From URLs that _do not_ specify a port in the URL. If the port is specified in the From URL, Pomerium will only match requests on that exact port. This is the default route matching behavior.
+Runtime flags are currently configurable only in Pomerium Core.
 
-If you disable this runtime flag, Pomerium will match incoming requests on port `443` by default unless you specify a port in the From URL.
+| **Config file key** | **Environment variable** | **Type** |
+| :-- | :-- | :-- |
+| `runtime_flags` | `RUNTIME_FLAGS` | map from `string` to `boolean` |
 
-:::info
+The available flags are:
 
-See the [**From URL**](/docs/reference/routes/from) reference page for more information about how to configure From URLs.
+| Runtime Flag | Description | Default |
+| :-- | :-- | :-- |
+| `grpc_databroker_keepalive` | _(experimental)_ Enable gRPC keepalive (HTTP/2 PING) requests on the databroker service connection. This may improve service reliability in [split service mode](/docs/capabilities/high-availability#service-mode) deployments where there are multiple firewalls in the connection path between different Pomerium services. | `false` |
+| `match_any_incoming_port` | For a route where the From URL does not contain a port number, allow it to match incoming requests with any port number. See the section on [Port matching behavior](/docs/reference/routes/from#port-matching-behavior) for more details. | `true` |
+| `legacy_identity_manager` | The way Pomerium manages IdP session refresh has been newly rewritten in v0.26 for enhanced performance and reliability. When this flag is enabled, Pomerium will revert to the older implementation. | `false` |
 
-:::
-
-### How to Configure
-
-<Tabs>
-<TabItem value="core" label="Core">
-
-| **Config file keys** | **Environment variables** | **Type** | **Default** |
-| :-- | :-- | :-- | :-- |
-| `match_any_incoming_port` | `MATCH_ANY_INCOMING_PORT` | `string` | `true` |
-
-</TabItem>
-<TabItem value="enterprise" label="Enterprise">
-
-This is a bootstrap setting. It is not configurable in the Enterprise Console.
-
-</TabItem>
-<TabItem value="kubernetes" label="Kubernetes">
-
-This runtime flag is currently not configurable in the Pomerium Ingress Controller.
-
-</TabItem>
-</Tabs>
-
-#### Examples
-
-With a From URL that _does not_ specify an explicit port:
+### Examples
 
 ```yaml
-from: https://example.com
+runtime_flags:
+  match_any_incoming_port: false
 ```
 
-Pomerium will match the From URL with incoming requests on _any_ port:
-
-```yaml
-https://www.example.com
-
-https://www.example.com:443
-
-https://www.example.com:8443
-
-https://www.example.com:18443
-```
-
-If you disable this runtime flag and _do not_ specify a port in the From URL, Pomerium will match the incoming request on port `:443`, the default listening port.
-
-```yaml
-https://www.example.com:443
+```bash
+RUNTIME_FLAGS='{"match_any_incoming_port": false}'
 ```
