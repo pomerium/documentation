@@ -27,23 +27,23 @@ import TabItem from '@theme/TabItem';
 
 # Pomerium Zero Quickstart
 
-In this Quickstart, you'll install Pomerium Zero in a Docker container, and secure access to two upstream services.
+The Zero Quickstart shows you how to install and run Pomerium Zero in a Docker container.
 
 ## Before you start
 
 - Install [Docker](https://docs.docker.com/install/) and [Docker Compose](https://docs.docker.com/compose/install/)
-- Create a [**Pomerium Zero account**](https://console.pomerium.app/create-account)
+- Create a (free) [**Pomerium Zero account**](https://console.pomerium.app/create-account)
 
 ## Get Pomerium Zero configuration
 
-In the onboarding console, select the **Docker** tab and copy the Docker Compose configuration.
+In the Zero onboarding screen, select the **Docker** tab and copy the Docker Compose configuration. (If you selected **Finish** before copying the Docker configuration, we've provided a copy below.)
 
-Paste the configuration in a `docker-compose.yaml` file:
+Paste the configuration in a `compose.yaml` file:
 
-```yaml title="docker-compose.yaml" {8,15} showLineNumbers
+```yaml title="compose.yaml" {8,15} showLineNumbers
 services:
   pomerium:
-    image: pomerium/pomerium:v0.25.1
+    image: pomerium/pomerium:v0.27.0
     ports:
       - 443:443
     restart: always
@@ -75,31 +75,34 @@ Replace the following values:
 - **Line 8**: Replace `CLUSTER_TOKEN` with the cluster token generated for you in the onboarding config
 - **Line 15**: Replace `CLUSTER_STARTER_SUBDOMAIN` with your generated starter subdomain
 
-:::info
+:::info Where's my **Starter Domain?**
 
-See the **Clusters Concepts** page for more information about how clusters work in Pomerium Zero.
+You can find your **Starter Domain** at the top of the Zero Console in the navigation bar.
 
 :::
 
-## Run Docker Compose
+
+## Connect to Pomerium Zero
+
+Next, deploy Pomerium Zero with the following command:
 
 ```bash
 docker compose up -d
 ```
 
-After you install and run your cluster, Pomerium Zero will attempt to detect the cluster's IP address. Because your cluster is running in an isolated Docker container with its own IP address, it won't be able to connect.
+This command will deploy a local cluster running Pomerium in a Docker container. If your cluster deploys successfully, the Pomerium Zero cloud will attempt to secure a connection to your cluster.
 
-## Apply override IP address
+If Pomerium Zero connects successfully, it will notify you in the onboarding screen.
 
-To connect Pomerium Zero to your cluster, you need to enter a custom IP address to override your detected one.
-
-Since we're using Docker, you should enter `127.0.0.1`.  You can also enter your preferred listening port.
-
-Select **Apply** to connect to your cluster:
-
-![Connecting to the Pomerium Zero cluster instance in the onboarding screen](./img/quickstart/pz-quickstart-connection-ping.png)
+![The successful connection notification in the Pomerium Zero onboarding flow](./img/quickstart/zero-quickstart-connection.png)
 
 Once you've connected, select **Finish**.
+
+:::info
+
+See the [Clusters Concept] page to learn more about clusters and how they work with the Pomerium Zero cloud.
+
+:::
 
 ## Connect to upstream services
 
@@ -109,10 +112,10 @@ In the Zero Console, we've provisioned two starter routes, **SSH** and **Verify*
 
 ### Connect to SSH
 
-In a terminal, enter the following command and replace `YOUR_CLUSTER_DOMAIN_NAME` with your own:
+In a terminal, enter the following command and replace `CLUSTER_STARTER_DOMAIN` with your own:
 
 ```bash
-pomerium-cli tcp ssh.<YOUR_CLUSTER_DOMAIN_NAME>.app:22
+pomerium-cli tcp ssh.<CLUSTER_STARTER_DOMAIN>.app:22
 ```
 
 A successful request results in a response similar to the one below:
@@ -193,7 +196,7 @@ make build
 
 ### Connect to Verify
 
-In the Zero Console, select the **From** route for the Verify app.
+In the Zero Console, select the **From** URL for the **Verify** app.
 
 You should land on the Verify page:
 
@@ -215,7 +218,7 @@ Check out our **Policies** guide to learn how to build more complex policies to 
 
 ## Review certificates
 
-Pomerium automatically provisions X.509 certificates issued by ZeroSSL to secure the starter routes in your cluster, and any routes you may build that use your assigned `pomerium.app` subdomain.
+Pomerium automatically provisions and manages TLS certificates issued by ZeroSSL to secure the starter routes in your cluster, and any routes you may build that use your cluster's starter domain.
 
 To see certificates in your cluster, go to the **Certificates** tab:
 
