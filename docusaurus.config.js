@@ -157,7 +157,6 @@ const config = {
         },
         {
           type: 'custom-productDropdown',
-          posiiton: 'right',
         },
       ],
     },

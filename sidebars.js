@@ -14,7 +14,7 @@ const sidebars = {
       type: 'category',
       label: 'Deploy',
       link: {type: 'doc', id: 'docs/deploy'},
-      customProps: { products: ['Core', 'Enteprise', 'Ingress Controller'] },
+      customProps: { products: ['Core', 'Enterprise', 'Ingress Controller'] },
       items: [
         {
           id: 'docs/deploy/releases',
