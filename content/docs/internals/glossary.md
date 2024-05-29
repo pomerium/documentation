@@ -70,11 +70,11 @@ Policies can be applied to [Routes](/docs/capabilities/routing) directly, or enf
 
 Specific to Pomerium, a route is a defined path from outside the network (through a public domain) to an internal service. At a very basic level, a route sends traffic from `external-address.company.com` to `internalService-address.localdomain`; a route is restricted by its associated policies and encrypted by your TLS certificates.
 
-Routes can be defined in the [configuration](/docs/reference/routes) for open-source Pomerium or the [Pomerium Enterprise Console][/docs/deploy/enterprise].
+Routes can be defined in the [configuration](/docs/reference/routes) for open-source Pomerium or the [Pomerium Enterprise Console](/docs/deploy/enterprise).
 
 More advanced configurations allow identity header pass-through, path and prefix rewrites, request and response header modification, load balancer services, and other full featured ingress capabilities.
 
-For more information, see the [Routing Capabilities])(/docs/capabilities/routing) page.
+For more information, see the [Routing Capabilities](/docs/capabilities/routing) page.
 
 ### Service Account
 
