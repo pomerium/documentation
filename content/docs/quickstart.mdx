@@ -36,7 +36,9 @@ The Zero Quickstart shows you how to install and run Pomerium Zero in a Docker c
 
 ## Get Pomerium Zero configuration
 
-In the Zero onboarding screen, select the **Docker** tab and copy the Docker Compose configuration. (If you selected **Finish** before copying the Docker configuration, we've provided a copy below.)
+After you create an account, you'll be directed to the Zero onboarding screen. In the onboarding screen, select the **Docker** tab and copy the Docker Compose configuration.
+
+(If you selected **Finish** before copying the Docker configuration, we've provided a copy below.)
 
 Paste the configuration in a `compose.yaml` file:
 
@@ -75,34 +77,29 @@ Replace the following values:
 - **Line 8**: Replace `CLUSTER_TOKEN` with the cluster token generated for you in the onboarding config
 - **Line 15**: Replace `CLUSTER_STARTER_SUBDOMAIN` with your generated starter subdomain
 
-:::info Where's my **Starter Domain?**
+:::tip Where's my **Starter Domain?**
 
-You can find your **Starter Domain** at the top of the Zero Console in the navigation bar.
+You can find your **Starter Domain** at the top of the Zero Console navigation bar:
+
+![Selecting the Cluster dropdown menu in the Zero Console to see the cluster starter domain](./img/quickstart/starter-domain.png)
 
 :::
 
-
 ## Connect to Pomerium Zero
 
-Next, deploy Pomerium Zero with the following command:
+Next, deploy Pomerium with the following command:
 
 ```bash
 docker compose up -d
 ```
 
-This command will deploy a local cluster running Pomerium in a Docker container. If your cluster deploys successfully, the Pomerium Zero cloud will attempt to secure a connection to your cluster.
+Pomerium will deploy and run in a special "Zero-managed" mode, where Pomerium connects to the Pomerium Zero cloud service. The Zero cloud hosts the Zero Console, a remote control plane where you can manage your configuration.
 
-If Pomerium Zero connects successfully, it will notify you in the onboarding screen.
+If your Pomerium deployment connects to the cloud successfully, Pomerium Zero will notify you in the onboarding screen:
 
 ![The successful connection notification in the Pomerium Zero onboarding flow](./img/quickstart/zero-quickstart-connection.png)
 
-Once you've connected, select **Finish**.
-
-:::info
-
-See the [Clusters Concept] page to learn more about clusters and how they work with the Pomerium Zero cloud.
-
-:::
+Once you've connected, select **Finish**. You'll be directed to the Zero Console.
 
 ## Connect to upstream services
 
@@ -110,7 +107,23 @@ In the Zero Console, we've provisioned two starter routes, **SSH** and **Verify*
 
 ![Viewing the two starter routes](./img/quickstart/pz-quickstart-routes.png)
 
+### Connect to Verify
+
+The first service you'll access is the **Verify** app. This hosted demo app is designed to verify a user's identity, but it also serves as a way to validate that Pomerium is up and running as expected.
+
+In the Zero Console, select the **From** URL for the Verify app.
+
+You should land on the Verify page:
+
+![The homepage of the Verify app after the user is redirected](./img/quickstart/pz-identity-verified.png)
+
 ### Connect to SSH
+
+:::note Install Pomerium CLI
+
+You need the Pomerium CLI client to connect to services like **SSH** over a TCP connection. See the [**Pomerium CLI**](/docs/deploy/clients/pomerium-cli) page for installation instructions.
+
+:::
 
 In a terminal, enter the following command and replace `CLUSTER_STARTER_DOMAIN` with your own:
 
@@ -124,83 +137,6 @@ A successful request results in a response similar to the one below:
 $ pomerium-cli tcp ssh.dominant-cowbird-8176.pomerium.app:22
 2024/03/25 16:18:45 listening on 127.0.0.1:52541
 ```
-
-:::note
-
-If you haven't, install [**Pomerium CLI**](/docs/deploy/clients/pomerium-cli) with any of the following methods:
-
-<Tabs>
-<TabItem value="docker" label="Docker">
-
-```bash
-docker run cr.pomerium.com/pomerium/cli:latest
-```
-
-</TabItem>
-<TabItem value="yum" label="Yum">
-
-```bash
-[pomerium-pomerium]
-name=pomerium-pomerium
-baseurl=https://dl.cloudsmith.io/public/pomerium/pomerium/rpm/el/$releasever/$basearch
-repo_gpgcheck=1
-enabled=1
-gpgkey=https://dl.cloudsmith.io/public/pomerium/pomerium/gpg.6E388440B94E1407.key
-gpgcheck=1
-sslverify=1
-pkg_gpgcheck=1
-```
-
-</TabItem>
-<TabItem value="deb" label="Deb">
-
-```bash
-curl -1sLf 'https://dl.cloudsmith.io/public/pomerium/pomerium/gpg.6E388440B94E1407.key' | apt-key add -
-echo "deb https://dl.cloudsmith.io/public/pomerium/pomerium/deb/debian buster main" > /etc/apt/sources.list.d/pomerium-pomerium.list
-```
-
-</TabItem>
-<TabItem value="binaries" label="Binaries">
-
-```bash
-ARCH=[your arch]
-OS=[your os]
-VERSION=[desired version]
-curl -L https://github.com/pomerium/cli/releases/download/${VERSION}/pomerium-cli-${OS}-${ARCH}.tar.gz \
-    | tar -z -x
-```
-
-</TabItem>
-<TabItem value="homebrew" label="Homebrew">
-
-```bash
-brew tap pomerium/tap
-brew install pomerium-cli
-```
-
-</TabItem>
-<TabItem value="source" label="Source">
-
-```bash
-git clone git@github.com:pomerium/cli.git
-cd pomerium
-make build
-./bin/pomerium-cli --help
-```
-
-</TabItem>
-
-</Tabs>
-
-:::
-
-### Connect to Verify
-
-In the Zero Console, select the **From** URL for the **Verify** app.
-
-You should land on the Verify page:
-
-![The homepage of the Verify app after the user is redirected](./img/quickstart/pz-identity-verified.png)
 
 ## Review authorization policy
 
