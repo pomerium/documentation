@@ -31,7 +31,7 @@ The Zero API requires authenticated access for both personal accounts and organi
 
 ### Get ID token
 
-Now, exchange the API User Token for an ID token by sending a `POST` request to the `token` endpoint. Make sure you replace `<API-USER-TOKEN>` with the one generated for you in the Zero Console:
+Now, exchange the API User Token for an ID token by sending a `POST` request to the `/token` endpoint. Make sure you replace `<API-USER-TOKEN>` with the one generated for you in the Zero Console:
 
 ```curl
 curl --location 'https://console.pomerium.app/api/v0/token' \
@@ -41,7 +41,7 @@ curl --location 'https://console.pomerium.app/api/v0/token' \
 }'
 ```
 
-If your request was successful, you should get a response with a temporary ID token:
+If your request was successful, you'll get a response with a temporary ID token:
 
 ```json
 {
@@ -60,7 +60,7 @@ To create a policy, you need your organization ID and your namespace ID.
 
 There are two types of organizations: **personal** and **professional**. When you create an account, you get a personal organization by default. 
 
-To get your personal organization ID, send a `GET` request to the `organizations` endpoint:
+To get your personal organization ID, send a `GET` request to the `/organizations` endpoint:
 
 ```curl
 curl --location 'https://console.pomerium.app/api/v0/organizations' \
@@ -68,7 +68,7 @@ curl --location 'https://console.pomerium.app/api/v0/organizations' \
 --data ''
 ```
 
-If your request was successful, you should get a response similar to the example below:
+If your request was successful, you'll get a response with your organization ID and other related metadata:
 
 ```json
 [
@@ -98,7 +98,11 @@ curl --location 'https://console.pomerium.app/api/v0/organizations/{organization
 --header 'Authorization: Bearer <ID-TOKEN>'
 ```
 
-You should get a response similar to the one below:
+You'll get a response similar to the example below. In the JSON payload, the first object contains data about the organization, which functions as a root namespace with admin-level permissions.
+
+The second object represents a cluster, which is assigned its own namespace. If you look at the `"parentId"` field, you'll notice that the cluster namespace is a child of the root namespace.
+
+The `"cluster"` namespace ID is the one you need to make changes to your cluster through the API:
 
 ```json
 [
@@ -122,17 +126,13 @@ You should get a response similar to the one below:
 ]
 ```
 
-In the JSON payload example above, the first object contains data about the organization, which functions as a root namespace with admin-level permissions.
-
-The second object represents a cluster, which is assigned its own namespace. This is the namespace ID you need when configuring routes and policies in a cluster through the API. 
-
 Go ahead and copy the `"cluster"` namespace ID.
 
 ### Build a policy
 
 Now, you'll build a policy that only grants access if the user's email address matches exactly the email address specified in the policy.
 
-To create a policy, you need to send a `POST` request to the `/policies` endpoint:
+To create a policy, send a `POST` request to the `/policies` endpoint:
 
 ```curl
 curl --location 'https://console.pomerium.app/api/v0/organizations/{organizationId}/policies' \
@@ -158,8 +158,11 @@ curl --location 'https://console.pomerium.app/api/v0/organizations/{organization
   "remediation": "Email address must match user@example.com"
 }'
 ```
+:::info
 
 In the request example above, setting the `"enforced"` field to `false` means that the policy won't be automatically assigned to routes in your cluster. Setting this field to `true` has the opposite effect: it will assign this policy to your existing routes and any new routes added to your cluster.  
+
+:::
 
 If your request was successful, you should receive a response similar to the one below. Notice that the `"routes"` field is empty because this policy hasn't been assigned yet:
 
@@ -192,9 +195,9 @@ If your request was successful, you should receive a response similar to the one
 
 ## 3. Create a route
 
-Next, you'll create a route and attach it to the policy you just created. In this example, we're using HTTPBin as an example service, but you can use any service you want.
+Next, you'll create a route and attach it to the policy you just created. In this example, we're using [HTTPBin](https://httpbin.org/) as an example service, but you can use any service you want.
 
-To create a route, you need to send a `POST` request to the `/routes` endpoint with your organization ID, namespace ID, and the `policyId` of the policy you just created. Make sure you replace `{CLUSTER_STARTER_DOMAIN}` in the `"from"` field with your own:
+To create a route, you need to send a `POST` request to the `/routes` endpoint with your organization ID, namespace ID, and the policy ID of the policy you just created. Make sure you replace `{CLUSTER_STARTER_DOMAIN}` in the `"from"` field with your own:
 
 ```curl
 curl --location 'https://console.pomerium.app/api/v0/organizations/{organizationId}/routes' \
@@ -216,7 +219,7 @@ curl --location 'https://console.pomerium.app/api/v0/organizations/{organization
 }'
 ```
 
-You should receive a response like the one below:
+You'll receive a response like the one below:
 
 ```json
 {
@@ -249,3 +252,4 @@ You should receive a response like the one below:
     "updatedAt": "2024-05-30T20:21:05.087872Z"
 }
 ```
+
