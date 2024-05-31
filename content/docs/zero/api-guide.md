@@ -5,9 +5,6 @@ sidebar_label: API User Guide
 description: This page shows you how to create a route and policy with the Pomerium Zero API.
 ---
 
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
-
 # Get Started With the Pomerium Zero API
 
 This guide walks you through creating your first route and policy with the Pomerium Zero API.
@@ -22,7 +19,7 @@ Throughout this guide, you can refer to either the [**Zero API reference**](/doc
 
 ### Get API User Token
 
-The Zero API requires authenticated access for both personal accounts and organizations. To send an authenticated request, first create an **API User** in the Zero Console: 
+The Zero API requires authenticated access for both personal accounts and organizations. To send an authenticated request, first create an **API User** in the Zero Console:
 
 1. In the **Account** menu, select **API Tokens**
 1. Select **Add API User**
@@ -45,20 +42,20 @@ If your request was successful, you'll get a response with a temporary ID token:
 
 ```json
 {
-    "expiresInSeconds": "3600",
-    "idToken": "<ID-TOKEN>"
+  "expiresInSeconds": "3600",
+  "idToken": "<ID-TOKEN>"
 }
 ```
 
-Copy the ID token and keep it somewhere safe. You won't be able to see it again, and you need it to make authenticated requests. 
+Copy the ID token and keep it somewhere safe. You won't be able to see it again, and you need it to make authenticated requests.
 
 ## 2. Create a policy
 
-To create a policy, you need your organization ID and your namespace ID.  
+To create a policy, you need your organization ID and your namespace ID.
 
 ### Get organization ID
 
-There are two types of organizations: **personal** and **professional**. When you create an account, you get a personal organization by default. 
+There are two types of organizations: **personal** and **professional**. When you create an account, you get a personal organization by default.
 
 To get your personal organization ID, send a `GET` request to the `/organizations` endpoint:
 
@@ -72,16 +69,16 @@ If your request was successful, you'll get a response with your organization ID 
 
 ```json
 [
-    {
-        "createdAt": "2024-01-17T20:07:47.794672Z",
-        "id": "bwjkRZwxbNXBQHHcJHphGSNBbxt",
-        "joinedAt": "2024-05-29T20:27:27.336939Z",
-        "name": "personal",
-        "organizationType": "personal",
-        "ownerUserId": "bMWxgvnRQfcRHjQvfMehbJhYFzB",
-        "role": "admin",
-        "updatedAt": "2024-01-17T20:07:47.794672Z"
-    }
+  {
+    "createdAt": "2024-01-17T20:07:47.794672Z",
+    "id": "bwjkRZwxbNXBQHHcJHphGSNBbxt",
+    "joinedAt": "2024-05-29T20:27:27.336939Z",
+    "name": "personal",
+    "organizationType": "personal",
+    "ownerUserId": "bMWxgvnRQfcRHjQvfMehbJhYFzB",
+    "role": "admin",
+    "updatedAt": "2024-01-17T20:07:47.794672Z"
+  }
 ]
 ```
 
@@ -89,7 +86,7 @@ Copy your organization ID.
 
 ### Get namespace ID
 
-In Pomerium Zero, each cluster is assigned its own namespace. To make changes to your cluster's configuration, you need your cluster's namespace ID. 
+In Pomerium Zero, each cluster is assigned its own namespace. To make changes to your cluster's configuration, you need your cluster's namespace ID.
 
 To get your cluster's namespace ID, send a `GET` request to the `/namespaces` endpoint, replacing `{organizationId}` with your own:
 
@@ -106,23 +103,23 @@ The `"cluster"` namespace ID is the one you need to make changes to your cluster
 
 ```json
 [
-    {
-        "createdAt": "2024-01-17T20:07:47.794672Z",
-        "id": "bwjkRZwxbNXBQHHcJHphGSNBbxt",
-        "name": "personal",
-        "role": "admin",
-        "type": "root",
-        "updatedAt": "2024-01-17T20:07:47.794672Z"
-    },
-    {
-        "createdAt": "2024-01-17T20:07:49.173932Z",
-        "id": "bjQWGxKgPJRSZWSBWpgRWMpJbsv",
-        "name": "trusted-dog-1049",
-        "parentId": "bwjkRZwxbNXBQHHcJHphGSNBbxt",
-        "role": "admin",
-        "type": "cluster",
-        "updatedAt": "2024-05-29T15:07:07.938956Z"
-    }
+  {
+    "createdAt": "2024-01-17T20:07:47.794672Z",
+    "id": "bwjkRZwxbNXBQHHcJHphGSNBbxt",
+    "name": "personal",
+    "role": "admin",
+    "type": "root",
+    "updatedAt": "2024-01-17T20:07:47.794672Z"
+  },
+  {
+    "createdAt": "2024-01-17T20:07:49.173932Z",
+    "id": "bjQWGxKgPJRSZWSBWpgRWMpJbsv",
+    "name": "trusted-dog-1049",
+    "parentId": "bwjkRZwxbNXBQHHcJHphGSNBbxt",
+    "role": "admin",
+    "type": "cluster",
+    "updatedAt": "2024-05-29T15:07:07.938956Z"
+  }
 ]
 ```
 
@@ -145,7 +142,7 @@ curl --location 'https://console.pomerium.app/api/v0/organizations/{organization
   "ppl": {
     "allow": {
       "and": [
-        {"email": 
+        {"email":
             {
             "is": "user@example.com"
             }
@@ -158,9 +155,10 @@ curl --location 'https://console.pomerium.app/api/v0/organizations/{organization
   "remediation": "Email address must match user@example.com"
 }'
 ```
+
 :::info
 
-In the request example above, setting the `"enforced"` field to `false` means that the policy won't be automatically assigned to routes in your cluster. Setting this field to `true` has the opposite effect: it will assign this policy to your existing routes and any new routes added to your cluster.  
+In the request example above, setting the `"enforced"` field to `false` means that the policy won't be automatically assigned to routes in your cluster. Setting this field to `true` has the opposite effect: it will assign this policy to your existing routes and any new routes added to your cluster.
 
 :::
 
@@ -168,28 +166,28 @@ If your request was successful, you should receive a response similar to the one
 
 ```json
 {
-    "createdAt": "2024-05-30T17:04:33.460441Z",
-    "description": "Only allow users with a matching email address.",
-    "enforced": false,
-    "enforcedRoutes": [],
-    "explanation": "You don't have the correct email address to access this service.",
-    "id": "bgrXNgrJFJmMZvPsVsbZHGWxVWP",
-    "name": "Allow matching email",
-    "namespaceId": "bwjkRZwxbNXBQHHcJHphGSNBbxt",
-    "ppl": {
-        "allow": {
-            "and": [
-                {
-                    "email": {
-                        "is": "user@example.com"
-                    }
-                }
-            ]
+  "createdAt": "2024-05-30T17:04:33.460441Z",
+  "description": "Only allow users with a matching email address.",
+  "enforced": false,
+  "enforcedRoutes": [],
+  "explanation": "You don't have the correct email address to access this service.",
+  "id": "bgrXNgrJFJmMZvPsVsbZHGWxVWP",
+  "name": "Allow matching email",
+  "namespaceId": "bwjkRZwxbNXBQHHcJHphGSNBbxt",
+  "ppl": {
+    "allow": {
+      "and": [
+        {
+          "email": {
+            "is": "user@example.com"
+          }
         }
-    },
-    "remediation": "Email address must match user@example.com",
-    "routes": [],
-    "updatedAt": "2024-05-30T17:04:33.460441Z"
+      ]
+    }
+  },
+  "remediation": "Email address must match user@example.com",
+  "routes": [],
+  "updatedAt": "2024-05-30T17:04:33.460441Z"
 }
 ```
 
@@ -223,33 +221,28 @@ You'll receive a response like the one below:
 
 ```json
 {
-    "allowSpdy": false,
-    "allowWebsockets": false,
-    "createdAt": "2024-05-30T20:21:05.087872Z",
-    "enableGoogleCloudServerlessAuthentication": false,
-    "enforcedPolicies": [],
-    "enforcedPolicyIds": [],
-    "from": "https://httpbin.trusted-dog-1049.pomerium.app",
-    "id": "bFjRpQrVGFcBMWzKjvnRpmwwRXh",
-    "name": "HTTP Bin",
-    "namespaceId": "bwjkRZwxbNXBQHHcJHphGSNBbxt",
-    "policies": [
-        {
-            "id": "bgrXNgrJFJmMZvPsVsbZHGWxVWP",
-            "name": "Allow matching email"
-        }
-    ],
-    "policyIds": [
-        "bgrXNgrJFJmMZvPsVsbZHGWxVWP"
-    ],
-    "preserveHostHeader": false,
-    "showErrorDetails": false,
-    "tlsSkipVerify": false,
-    "tlsUpstreamAllowRenegotiation": false,
-    "to": [
-        "http://httpbin:80"
-    ],
-    "updatedAt": "2024-05-30T20:21:05.087872Z"
+  "allowSpdy": false,
+  "allowWebsockets": false,
+  "createdAt": "2024-05-30T20:21:05.087872Z",
+  "enableGoogleCloudServerlessAuthentication": false,
+  "enforcedPolicies": [],
+  "enforcedPolicyIds": [],
+  "from": "https://httpbin.trusted-dog-1049.pomerium.app",
+  "id": "bFjRpQrVGFcBMWzKjvnRpmwwRXh",
+  "name": "HTTP Bin",
+  "namespaceId": "bwjkRZwxbNXBQHHcJHphGSNBbxt",
+  "policies": [
+    {
+      "id": "bgrXNgrJFJmMZvPsVsbZHGWxVWP",
+      "name": "Allow matching email"
+    }
+  ],
+  "policyIds": ["bgrXNgrJFJmMZvPsVsbZHGWxVWP"],
+  "preserveHostHeader": false,
+  "showErrorDetails": false,
+  "tlsSkipVerify": false,
+  "tlsUpstreamAllowRenegotiation": false,
+  "to": ["http://httpbin:80"],
+  "updatedAt": "2024-05-30T20:21:05.087872Z"
 }
 ```
-
