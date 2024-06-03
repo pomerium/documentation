@@ -18,7 +18,7 @@ This document describes Clusters in Pomerium Zero.
 
 ## Overview
 
-When you deploy Pomerium Zero, you get your own **Cluster**. A cluster consists of one ore more replicas of [Pomerium Core](/docs/deploy/core), the primary server component that secures your services. Clusters are deployed locally and managed through the **Zero Console**, a remote control plane hosted in the Pomerium Zero cloud.
+When you deploy Pomerium Zero, you get your own **Cluster**. A cluster consists of one or more replicas of [Pomerium Core](/docs/deploy/core), the primary server component that secures your services. Clusters are deployed locally and managed through the **Zero Console**, a remote control plane hosted in the Pomerium Zero cloud.
 
 ## Why clusters?
 
@@ -106,28 +106,29 @@ curl https://console.pomerium.app/install.bash | env POMERIUM_ZERO_TOKEN=<cluste
 </TabItem>
 <TabItem value="docker" label="Docker">
 
-1. In your `docker-compose.yaml` file, replace the value of the `POMERIUM_ZERO_TOKEN` environment variable with the new cluster token value:
+1. In your `docker-compose.yaml` file, replace `<CLUSTER_TOKEN>` with your new token:
 
-   ```yaml title="docker-compose.yaml"
-   services:
-     pomerium:
-       image: pomerium/pomerium:v0.25.1
-       ports:
-         - 80:80
-         - 443:443
-       restart: always
-       environment:
-       // highlight-start
-         POMERIUM_ZERO_TOKEN: <CLUSTER_TOKEN>
-       // highlight-end
-         XDG_CACHE_HOME: /var/cache
-         AUTOCERT_DIR: /var/cache/autocert
-       volumes:
-         - pomerium-cache:/var/cache
+```yaml title="docker-compose.yaml" {8} showLineNumbers
+services:
+  pomerium:
+    image: pomerium/pomerium:v0.27.0
+    ports:
+      - 443:443
+    restart: always
+    environment:
+      POMERIUM_ZERO_TOKEN: <CLUSTER_TOKEN>
+      XDG_CACHE_HOME: /var/cache
+    volumes:
+      - pomerium-cache:/var/cache
+    networks:
+      main: {}
 
-   volumes:
-     pomerium-cache:
-   ```
+networks:
+  main: {}
+
+volumes:
+  pomerium-cache:
+```
 
 1. Run `docker compose up -d`
 
