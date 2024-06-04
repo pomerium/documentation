@@ -46,7 +46,7 @@ Here are some of the expectations we have of contributors:
 
 ### Development
 
-See [Building Pomerium From Source](/docs/deploy/core/from-source) for information on getting started developing for Pomerium.
+See [Building Pomerium From Source](/docs/core/from-source) for information on getting started developing for Pomerium.
 
 To run the unit tests locally:
 

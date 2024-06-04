@@ -23,7 +23,7 @@ The [Pomerium Kubernetes Ingress Controller](https://github.com/pomerium/ingress
 
 Pomerium’s Ingress Controller for Kubernetes enables you to dynamically provision routes from Ingress resources and set authorization policy on those routes with Ingress annotations. By defining routes as Ingress resources in the Kubernetes API, you can easily create and remove those routes from your Pomerium configuration.
 
-If you've tested Pomerium using the [all-in-one binary](/docs/deploy/core), you're probably familiar with configuring routes in Pomerium's [`config.yaml`](/docs/deploy/core#configuration-file) file. When using the Pomerium Ingress Controller, each route is defined as an Ingress resource in the Kubernetes API.
+If you've tested Pomerium using the [all-in-one binary](/docs/core), you're probably familiar with configuring routes in Pomerium's [`config.yaml`](/docs/core#configuration-file) file. When using the Pomerium Ingress Controller, each route is defined as an Ingress resource in the Kubernetes API.
 
 This document shows you how to configure an Ingress resource that’s compatible with the Pomerium Ingress Controller.
 

@@ -100,8 +100,8 @@ Already upgraded to Pomerium Enterprise, but need some help setting up the Enter
 
 The following docs can help:
 
-- [**Install Pomerium Enterprise**](/docs/deploy/enterprise/install)
-- [**Pomerium Enterprise Configuration**](/docs/deploy/enterprise/configure)
-- [**Pomerium Enterprise Quickstart**](/docs/deploy/enterprise/quickstart)
+- [**Install Pomerium Enterprise**](/docs/enterprise/install)
+- [**Pomerium Enterprise Configuration**](/docs/enterprise/configure)
+- [**Pomerium Enterprise Quickstart**](/docs/enterprise/quickstart)
 
 :::

@@ -9,7 +9,7 @@ description: This article describes how the original user context is passed seco
 
 :::enterprise
 
-This article describes a use case available to [Pomerium Enterprise](/docs/deploy/enterprise/install) customers.
+This article describes a use case available to [Pomerium Enterprise](/docs/enterprise/install) customers.
 
 :::
 
