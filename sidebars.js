@@ -53,7 +53,6 @@ const sidebars = {
         'docs/deploy/production-deployment',
       ],
     },
-    'docs/releases',
     {
       type: 'category',
       label: 'Capabilities',
