@@ -197,7 +197,7 @@ If your request was successful, you should receive a response similar to the one
 
 Next, you'll create a route and attach it to the policy you just created. In this example, we're using [HTTPBin](https://httpbin.org/) as an example service, but you can use any service you want.
 
-To create a route, you need to send a `POST` request to the `/routes` endpoint with your organization ID, namespace ID, and the policy ID of the policy you just created. Make sure you replace `{CLUSTER_STARTER_DOMAIN}` in the `"from"` field with your own:
+To create a route, you need to send a `POST` request to the `/routes` endpoint with your organization ID, namespace ID, and the policy ID of the policy you just created. Make sure you replace `{CLUSTER_STARTER_SUBDOMAIN}` in the `"from"` field with your own:
 
 ```curl
 curl --location 'https://console.pomerium.app/api/v0/organizations/{organizationId}/routes' \
@@ -206,7 +206,7 @@ curl --location 'https://console.pomerium.app/api/v0/organizations/{organization
 --data '{
     "namespaceId": "bwjkRZwxbNXBQHHcJHphGSNBbxt",
     "name": "HTTP Bin",
-    "from": "https://httpbin.{CLUSTER_STARTER_DOMAIN}.pomerium.app",
+    "from": "https://httpbin.{CLUSTER_STARTER_SUBDOMAIN}.pomerium.app",
     "to": ["http://httpbin:80"],
     "allowWebsockets": false,
     "allowSpdy": false,
