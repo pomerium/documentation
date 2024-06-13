@@ -96,7 +96,7 @@ curl --location 'https://console.pomerium.app/api/v0/organizations/{organization
 --header 'Authorization: Bearer <ID-TOKEN>'
 ```
 
-You'll get a response similar to the example below. In the JSON payload, the first object contains data about the organization, which functions as a root namespace with admin-level permissions.
+You'll get a response similar to the example below. In the JSON payload, the first object contains data about the cluster, which has an ID of a root namespace other entities such as routes and policies are assigned to.
 
 The second object represents a cluster, which is assigned its own namespace. If you look at the `"parentId"` field, you'll notice that the cluster namespace is a child of the root namespace.
 
