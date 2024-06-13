@@ -92,7 +92,7 @@ In Pomerium Zero, each cluster is assigned its own namespace. To make changes to
 To get your cluster's namespace ID, send a `GET` request to the `/namespaces` endpoint, replacing `{organizationId}` with your own:
 
 ```curl
-curl --location 'https://console.pomerium.app/api/v0/organizations/{organizationId}/namespaces' \
+curl --location 'https://console.pomerium.app/api/v0/organizations/{organizationId}/clusters' \
 --header 'Authorization: Bearer <ID-TOKEN>'
 ```
 
