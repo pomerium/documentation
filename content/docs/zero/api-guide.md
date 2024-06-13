@@ -42,7 +42,7 @@ curl --location 'https://console.pomerium.app/api/v0/token' \
 
 If your request was successful, you'll get a response with a temporary ID token:
 
-```json
+```json showLineNumbers
 {
   "expiresInSeconds": "3600",
   "idToken": "<ID-TOKEN>"
@@ -68,7 +68,7 @@ curl --location 'https://console.pomerium.app/api/v0/organizations' \
 
 If your request was successful, you'll get a response with your organization ID and other related metadata:
 
-```json
+```json showLineNumbers {4}
 [
   {
     "createdAt": "2024-01-17T20:07:47.794672Z",
@@ -85,46 +85,35 @@ If your request was successful, you'll get a response with your organization ID 
 
 Copy your organization ID.
 
-### Get namespace ID
+### Get cluster ID
 
-In Pomerium Zero, each cluster is assigned its own namespace. To make changes to your cluster's configuration, you need your cluster's namespace ID.
-
-To get your cluster's namespace ID, send a `GET` request to the `/namespaces` endpoint, replacing `{organizationId}` with your own:
+To make changes to a cluster's configuration, you need its cluster ID. To get the cluster ID, send a `GET` request to the `/clusters` endpoint, replacing `{organizationId}` with your own:
 
 ```curl
 curl --location 'https://console.pomerium.app/api/v0/organizations/{organizationId}/clusters' \
 --header 'Authorization: Bearer <ID-TOKEN>'
 ```
 
-You'll get a response similar to the example below. In the JSON payload, the first object contains data about the cluster, which has an ID of a root namespace other entities such as routes and policies are assigned to.
+You'll get a response similar to the example below:
 
-The second object represents a cluster, which is assigned its own namespace. If you look at the `"parentId"` field, you'll notice that the cluster namespace is a child of the root namespace.
-
-The `"cluster"` namespace ID is the one you need to make changes to your cluster through the API:
-
-```json
+```json showLineNumbers {8}
 [
   {
-    "createdAt": "2024-01-17T20:07:47.794672Z",
-    "id": "bwjkRZwxbNXBQHHcJHphGSNBbxt",
-    "name": "personal",
-    "role": "admin",
-    "type": "root",
-    "updatedAt": "2024-01-17T20:07:47.794672Z"
-  },
-  {
+    "autoDetectIpAddress": "47.35.228.147",
     "createdAt": "2024-01-17T20:07:49.173932Z",
+    "domain": "trusted-dog-1049",
+    "fqdn": "trusted-dog-1049.pomerium.app",
+    "hasFailingHealthChecks": true,
     "id": "bjQWGxKgPJRSZWSBWpgRWMpJbsv",
+    "manualOverrideIpAddress": "127.0.0.1",
     "name": "trusted-dog-1049",
-    "parentId": "bwjkRZwxbNXBQHHcJHphGSNBbxt",
-    "role": "admin",
-    "type": "cluster",
-    "updatedAt": "2024-05-29T15:07:07.938956Z"
+    "namespaceId": "bjQWGxKgPJRSZWSBWpgRWMpJbsv",
+    "updatedAt": "2024-06-13T14:22:39.336616Z"
   }
 ]
 ```
 
-Go ahead and copy the `"cluster"` namespace ID.
+Copy the cluster ID.
 
 ### Build a policy
 
@@ -165,7 +154,7 @@ In the request example above, setting the `"enforced"` field to `false` means th
 
 If your request was successful, you should receive a response similar to the one below. Notice that the `"routes"` field is empty because this policy hasn't been assigned yet:
 
-```json
+```json showLineNumbers {22}
 {
   "createdAt": "2024-05-30T17:04:33.460441Z",
   "description": "Only allow users with a matching email address.",
