@@ -153,7 +153,7 @@ curl --location 'https://console.pomerium.app/api/v0/organizations/{organization
   },
   "description": "Only allow users access with a matching email address.",
   "explanation": "You don'\''t have the correct email address to access this service.",
-  "remediation": "Email address must match user@example.com"
+  "remediation": "Use account credentials that match policy requirements."
 }'
 ```
 
