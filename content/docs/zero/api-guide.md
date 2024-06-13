@@ -186,7 +186,7 @@ If your request was successful, you should receive a response similar to the one
       ]
     }
   },
-  "remediation": "Email address must match user@example.com",
+  "remediation": "Use account credentials that match policy requirements.",
   "routes": [],
   "updatedAt": "2024-05-30T17:04:33.460441Z"
 }
