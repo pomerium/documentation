@@ -63,8 +63,7 @@ To get your personal organization ID, send a `GET` request to the `/organization
 
 ```curl
 curl --location 'https://console.pomerium.app/api/v0/organizations' \
---header 'Authorization: Bearer <ID-TOKEN>' \
---data ''
+--header 'Authorization: Bearer <ID-TOKEN>'
 ```
 
 If your request was successful, you'll get a response with your organization ID and other related metadata:
