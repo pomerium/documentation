@@ -207,13 +207,6 @@ curl --location 'https://console.pomerium.app/api/v0/organizations/{organization
     "name": "HTTP Bin",
     "from": "https://httpbin.{CLUSTER_STARTER_SUBDOMAIN}.pomerium.app",
     "to": ["http://httpbin:80"],
-    "allowWebsockets": false,
-    "allowSpdy": false,
-    "tlsSkipVerify": false,
-    "tlsUpstreamAllowRenegotiation": false,
-    "preserveHostHeader": false,
-    "enableGoogleCloudServerlessAuthentication": false,
-    "showErrorDetails": false,
     "policyIds": ["bgrXNgrJFJmMZvPsVsbZHGWxVWP"]
 }'
 ```
