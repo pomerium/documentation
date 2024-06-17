@@ -64,7 +64,7 @@ export default function FooterLinksMultiColumn({columns}) {
             <IconButton
               color="primary"
               onClick={() => window.open('https://twitter.com/pomerium_io')}>
-              <span className="fa-brands fa-twitter" />
+              <span className="fa-brands fa-x-twitter" />
             </IconButton>
           </li>
           <li style={{display: 'inline-block'}}>
