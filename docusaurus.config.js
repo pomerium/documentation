@@ -233,7 +233,7 @@ const config = {
   },
   stylesheets: [
     'https://fonts.googleapis.com/icon?family=Material+Icons',
-    'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/brands.min.css',
+    'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/brands.min.css',
   ],
   plugins: [
     [
