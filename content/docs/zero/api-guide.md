@@ -87,7 +87,7 @@ Copy your organization ID.
 
 ### Get namespace ID
 
-A cluster is assigned its own namespace. To make changes to your cluster's configuration, you need your cluster's namespace ID. 
+A cluster is assigned its own namespace. To make changes to your cluster's configuration, you need your cluster's namespace ID.
 
 To get the namespace ID, send a `GET` request to the `/clusters` endpoint, replacing `{organizationId}` with your own:
 
