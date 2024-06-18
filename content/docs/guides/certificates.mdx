@@ -1,10 +1,10 @@
 ---
 # cSpell:ignore filippo, signcsr, mycsr
 
-title: SSL/TLS Certificates & Encryption
-sidebar_label: SSL/TLS Certificates & Encryption
+title: Set up mTLS
+sidebar_label: Set up mTLS
 lang: en-US
-description: description
+description: This guide walks you through setting up mutual TLS with Pomerium.
 keywords: [x509, certificates, tls, mtls, letsencrypt, lets encrypt]
 pagination_prev: null
 ---
@@ -12,58 +12,6 @@ pagination_prev: null
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 import GenerateWildcardCert from '@site/content/examples/sh/generate_wildcard_cert.sh.md';
-
-# SSL/TLS Certificates & Encryption
-
-Learn what SSL/TLS is, how it secures applications, and how Pomerium incorporates SSL/TLS to secure connections between its end-users, other Pomerium services, and your internal applications.
-
-## What are SSL/TLS certificates?
-
-The Transport Layer Security (TLS) protocol, formerly known as the Secure Sockets Layer (SSL) protocol, is a cryptographic protocol that secures HTTP communications over a computer network.
-
-### Private key pairs
-
-TLS relies on private and public key pairs to authenticate users or services, verify digital signatures, and encrypt and decrypt data.
-
-### SSL/TLS certificates
-
-TLS certificates enable computer systems to verify your identity and encrypt communication over TLS.
-
-Certificates are issued by a Certificate Authority (CA). The CA, which can be public or private, is a trusted entity that establishes digital identities.
-
-The CA generates and signs a certificate (a digital object) that includes your public key, the certificate issuer, expiration and issuance dates, and other relevant metadata.
-
-Both computer systems (servers and other backend services) and end-users rely on certificates to verify each other’s identity before exchanging information.
-
-### TLS Handshake
-
-The TLS handshake is how a client and server verify each other’s identities, determine which cryptographic algorithms they will use to communicate securely over HTTP, and generate session keys to create new sessions.
-
-During the TLS handshake, both parties use their public key for encryption and their private key for decryption. This gives both parties the opportunity to generate and exchange an agreed-upon shared key used to encrypt and decrypt communication in a session.
-
-## Mutual TLS (mTLS) authentication
-
-Mutual TLS (mTLS), or mutual authentication, means that both the client and server verify each other’s identities.
-
-mTLS makes it possible to verify end-users, devices, and servers within an organization, which is a core principle for organizations that are serious about implementing a zero- trust security model.
-
-## Why Pomerium uses mTLS
-
-Since one of Pomerium's core principles is to treat internal and external traffic impartially, Pomerium uses mutually authenticated TLS ubiquitously.
-
-This enables Pomerium to secure connections between:
-
-- The end-user and Pomerium
-- Pomerium services (even if the network is trusted)
-- Pomerium and the destination application
-
-Securing all communication with mTLS bolsters security and can help prevent attacks like:
-
-- Spoofing
-- Credential stuffing
-- Brute force attacks
-- On-path attacks
-- Malicious API attacks
 
 ## Set up mTLS with Pomerium
 
@@ -76,7 +24,7 @@ Tools and resources:
 - [Google Domains](https://domains.google.com/): a domain name registrar you will use to set up your wildcard domain and certificate validation. You can use other registrars as well (some even support [automatic renewal](https://github.com/Neilpang/acme.sh/wiki/dnsapi))
 - [Acme.sh](https://github.com/Neilpang/acme.sh): an Automated Certificate Management Environment (ACME) client you will use to fetch your wildcard certificate. Any [LetsEncrypt client](https://letsencrypt.org/docs/client-options/) that supports wildcard domains would work.
 
-:::tip **Note**
+:::note
 
 There are countless ways to build and manage your public-key infrastructure. Although we hope this guide serves as a helpful baseline for generating and securing Pomerium with certificates, you should modify these instructions to meet your own organization's tools, needs, and constraints.
 
