@@ -1,5 +1,5 @@
 ---
-# cSpell:ignore seperator
+# cSpell:ignore mycorp
 
 title: Run Jenkins with Docker
 sidebar_label: Jenkins
@@ -84,14 +84,10 @@ After you've saved your route and policy, apply your changes.
 1. Access the external route you built to access Jenkins. After authenticating against Pomerium's hosted identity provider, you should be redirected to your Jenkins instance.
 1. Before you can access your Jenkins dashboard, Jenkins will prompt you to enter the initial admin password. You can find it in `/var/lib/jenkins/secrets/initialAdminSecret`.
 
-    Run the following command to get the admin password:
-        ```bash
-        sudo cat /var/lib/jenkins/secrets/initialAdminPassword
-        ```
+   Run the following command to get the admin password: `bash     sudo cat /var/lib/jenkins/secrets/initialAdminPassword     `
+
 1. Install the suggested plugins. Then, **Skip and continue as admin** (if you skip, the default username is **admin** and the password is the initial admin password). You'll reconfigure authentication for admin and non-admin users in the next section.
 1. In the **Instance Configuration** window, accept the default hostname
-
-
 
 ### Get JWT Auth plugin
 
@@ -103,9 +99,9 @@ In the Jenkins dashboard:
 1. In the search bar, search for and install the [**JWT Auth Plugin**](https://plugins.jenkins.io/jwt-auth)
 1. After installing, restart Jenkins:
 
-    ```bash
-    sudo systemctl restart jenkins
-    ```
+   ```bash
+   sudo systemctl restart jenkins
+   ```
 
 ### Configure JWT authentication
 
@@ -117,20 +113,21 @@ After Jenkins restarts:
 1. In the **Security Realm** dropdown, select **JWT Header Authentication Plugin**
 1. Under **Global JWT Auth Settings**, fill out the fields (reference the table below for the correct values)
 
-    | Field | Value |
-    | --- | --- |
-    | **Header name** | `x-pomerium-jwt-assertion` |
-    | **Username claim name** | `email` |
-    | **Groups claim name** | `groups` |
-    | **Groups claim list seperator** | `,` |
-    | **Email claim name** | `email` |
-    | **Full Name claim name** | `name` |
-    | **Acceptable issuers** | `jenkins.<YOUR_SUBDOMAIN>.pomerium.app` |
-    | **Acceptable audiences** | `jenkins.<YOUR_SUBDOMAIN>.pomerium.app` |
-    | **JWKS JSON URL** | `https://jenkins.<YOUR_SUBDOMAIN>.pomerium.app/.well-known/pomerium/jwks.json` |
+   | Field | Value |
+   | --- | --- |
+   | **Header name** | `x-pomerium-jwt-assertion` |
+   | **Username claim name** | `email` |
+   | **Groups claim name** | `groups` |
+   | **Groups claim list separator** | `,` |
+   | **Email claim name** | `email` |
+   | **Full Name claim name** | `name` |
+   | **Acceptable issuers** | `jenkins.<YOUR_SUBDOMAIN>.pomerium.app` |
+   | **Acceptable audiences** | `jenkins.<YOUR_SUBDOMAIN>.pomerium.app` |
+   | **JWKS JSON URL** | `https://jenkins.<YOUR_SUBDOMAIN>.pomerium.app/.well-known/pomerium/jwks.json` |
+
 1. Enable **Allow verification failures**
 1. Under **Authorization**, keep **Anyone can do anything**
-    - This ensures you can re-configure authentication settings in the event that JWT authenticaiton fails, which will lock you out of your Jenkins instance.
+   - This ensures you can re-configure authentication settings in the event that JWT authentication fails, which will lock you out of your Jenkins instance.
 
 Save your changes and restart Jenkins.
 
@@ -145,14 +142,13 @@ Next, you need to configure authorization in Jenkins to set permissions.
 1. Select **Manage Jenkins**, **Security**
 1. Under **Authorization**, select **Matrix-based security**
 1. Select **Add user...**
-1. In the modal, enter your **User ID**
-    :::tip
+1. In the modal, enter your **User ID** :::tip
 
-    To find your user ID, go to **Dashboard**, **People**. In the user table, you'll find the assigned ID value under the **User ID** column.
+   To find your user ID, go to **Dashboard**, **People**. In the user table, you'll find the assigned ID value under the **User ID** column.
 
-    :::
-1. Give the added user **Administrator** privileges
-    ![Giving the user administrator privileges](./img/jenkins/pz-add-user-to-matrix.png)
+   :::
+
+1. Give the added user **Administrator** privileges ![Giving the user administrator privileges](./img/jenkins/pz-add-user-to-matrix.png)
 1. You can also give **Anonymous** users **Overall Read** privileges. This way, if someone accesses this Jenkins instance from another account, they won't be able to make changes to the application.
 
 Save your changes. You're done!
