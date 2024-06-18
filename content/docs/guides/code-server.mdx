@@ -87,30 +87,42 @@ In the Zero Console:
 
 First, make sure your `docker-compose.yaml` file contains the images to run Pomerium Zero and Codeserver:
 
-```yaml
-version: "3"
-services:
+```yaml {7,14} showLineNumbers
   pomerium:
-    image: pomerium/pomerium:v0.25.0
-    environment:
-      - POMERIUM_ZERO_TOKEN=<your-token>
+    image: pomerium/pomerium:v0.27.0
     ports:
       - 443:443
+    restart: always
+    environment:
+      POMERIUM_ZERO_TOKEN: <CLUSTER_TOKEN>
+      XDG_CACHE_HOME: /var/cache
+    volumes:
+      - pomerium-cache:/var/cache
+    networks:
+      main:
+        aliases:
+        - authenticate.<CLUSTER_SUBDOMAIN>.pomerium.app
   codeserver:
     image: codercom/code-server:latest
+    networks:
+      main: {}
     ports:
       - 8080:8080
+    command: --auth none --disable-telemetry /home/coder/project
     volumes:
       - ./code-server:/home/coder/project
       - ./code-server-config/.config:/home/coder/.config
-    command: --auth none --disable-telemetry /home/coder/project
 ```
+
+In line `7`, replace `CLUSTER_TOKEN` with your own.
+
+In line `14`, replace `CLUSTER_SUBDOMAIN` with your own.  For example, if your starter domain is `loquacious-cyborg-2214.pomerium.app`, the URL would be `authenticate.loquacious-cyborg-2214.pomerium.app`.
 
 ## Access Code-server
 
 Run `docker compose up` and go to your external URL.
 
-After authenticating against our hosted Identity Provider, Pomerium will redirect you to your Codeserver instance.
+After authenticating against our hosted Identity Provider, Pomerium will redirect you to your code-server instance.
 
 ## Build a project in Code-server
 
@@ -119,7 +131,7 @@ Now that you can access VSCode in your browser, test out code-server by building
 1. Create an `index.html` file and add the following code:
 
 ```html
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -137,7 +149,6 @@ Now that you can access VSCode in your browser, test out code-server by building
     <h2 style="color:blueviolet">Happy coding!</h2>
   </body>
 </html>
-
 ```
 
 1. Go to **Extensions** and install [Live Server](https://marketplace.visualstudio.com/items?itemName=ritwickdey.LiveServer)
