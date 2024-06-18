@@ -339,10 +339,6 @@ const sidebars = {
             },
             {
               type: 'doc',
-              id: 'docs/guides/cors',
-            },
-            {
-              type: 'doc',
               id: 'docs/guides/cloud-run',
             },
             {
@@ -360,10 +356,6 @@ const sidebars = {
             {
               type: 'doc',
               id: 'docs/guides/istio',
-            },
-            {
-              type: 'doc',
-              id: 'docs/guides/jwt-verification',
             },
             {
               type: 'doc',
@@ -418,6 +410,25 @@ const sidebars = {
             },
           ],
         },
+        {
+          type: 'category',
+          label: 'Configure Pomerium',
+          description: 'Configure Pomerium to work with your services',
+          items: [
+            {
+              type: 'doc',
+              id: 'docs/guides/jwt-verification',
+            },
+            {
+              type: 'doc',
+              id: 'docs/guides/cors',
+            },
+            {
+              type: 'doc',
+              id: 'docs/guides/certificates',
+            },
+          ]
+        }
       ],
     },
   ],
