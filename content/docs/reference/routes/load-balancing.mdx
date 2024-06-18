@@ -13,11 +13,6 @@ import TabItem from '@theme/TabItem';
 
 # Load Balancing Settings
 
-This reference covers all of Pomerium's **Load Balancing Settings**:
-
-- [Load Balancing Policy](#load-balancing-policy)
-- [Health Checks](#health-checks)
-
 ## Load Balancing Policy {#load-balancing-policy}
 
 **Load Balancing Policy** defines the load balancing strategy between multiple upstream servers.
@@ -61,7 +56,7 @@ Set the **Load Balancing Policy** in the Console:
 </TabItem>
 <TabItem value="Kubernetes" label="Kubernetes">
 
-| **[Annotation name](/docs/deploy/k8s/ingress#set-ingress-annotations)** | **Type** | **Usage** | **Default** |
+| **[Annotation name](/docs/k8s/ingress#set-ingress-annotations)** | **Type** | **Usage** | **Default** |
 | :-- | :-- | :-- | :-- |
 | `lb_policy` | `enum` | **optional** | `ROUND_ROBIN` |
 
@@ -72,7 +67,7 @@ ingress.pomerium.io/lb_policy: LEAST_REQUEST
 ingress.pomerium.io/least_request_lb_config: '{"choice_count": 2}'
 ```
 
-See [Kubernetes - Ingress Configuration](/docs/deploy/k8s/ingress) for more information.
+See [Kubernetes - Ingress Configuration](/docs/k8s/ingress) for more information.
 
 </TabItem>
 </Tabs>
@@ -93,13 +88,53 @@ When defined, **Health Checks** will issue periodic health check requests to ups
 
 See Envoy's [`outlier_detection`](https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/upstream/outlier) for automatic upstream server health detection. In the presence of multiple upstream servers, it is recommended to set up either `health_checks`, `outlier_detection`, or both.
 
+### Supported health checks parameters
+
+| **Config file keys** | **Definition** | **Type** | **Usage** |
+| :-- | :-- | :-- | :-- |
+| `timeout` | The total time to wait for a health check response. | [`Duration`](https://developers.google.com/protocol-buffers/docs/reference/google.protobuf#duration) | **required** |
+| `interval` | The interval between health checks. | [`Duration`](https://developers.google.com/protocol-buffers/docs/reference/google.protobuf#duration) | **required** |
+| `unhealthy_threshold` | The number of unhealthy health checks required before a host is marked unhealthy. | [`UInt32Value`](https://developers.google.com/protocol-buffers/docs/reference/google.protobuf#uint32value) | **required** |
+| `healthy_threshold` | The number of healthy health checks required before a host is marked healthy. | [`UInt32Value`](https://developers.google.com/protocol-buffers/docs/reference/google.protobuf#uint32value) | **required** |
+
 See the [Envoy documentation](https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/upstream/health_checking) for a list of [supported parameters](https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/core/v3/health_check.proto#envoy-v3-api-msg-config-core-v3-healthcheck).
 
 ### How to configure {#how-to-configure-health-checks}
 
-Only one of [`http_health_check`](https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/core/v3/health_check.proto#envoy-v3-api-msg-config-core-v3-healthcheck-httphealthcheck), [`tcp_health_check`](https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/core/v3/health_check.proto#envoy-v3-api-msg-config-core-v3-healthcheck-tcphealthcheck), or [`grpc_health_check`](https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/core/v3/health_check.proto#envoy-v3-api-msg-config-core-v3-healthcheck-grpchealthcheck) may be configured per `health_check` object definition.
+You may configure only one of the following options per `health_check` object definition:
 
-See [Load Balancing](/docs/capabilities/load-balancing.md) for example [configurations](/docs/capabilities/load-balancing.md#active-health-checks).
+- `http_health_check`
+- `tcp_health_check`
+- `grpc_health_check`
+
+#### HTTP health check {#http-healthcheck-overview}
+
+| **Config file keys** | **Definition** | **Type** | **Usage** |
+| :-- | :-- | :-- | :-- |
+| `host` | The Host header value in the HTTP health check request. If empty (default value), the name of the cluster this health check is associated with will be used. | `string` | **optional** |
+| `path` | Specifies the HTTP path requested during a health check. For example, `/healthcheck`. | `string` | **required** |
+| `expected_statuses` | Defines a range of HTTP response statuses that are considered healthy. | [`Int64Range`](https://www.envoyproxy.io/docs/envoy/latest/api-v3/type/v3/range.proto#envoy-v3-api-msg-type-v3-int64range) | **optional** |
+| `codec_client_type` | Specifies which application protocol to use: `HTTP1` or `HTTP2`. | [`CodecClientType`](https://www.envoyproxy.io/docs/envoy/latest/api-v3/type/v3/http.proto#envoy-v3-api-enum-type-v3-codecclienttype) | **optional** |
+
+See the [Envoy HTTP health checks documentation](https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/core/v3/health_check.proto#envoy-v3-api-msg-config-core-v3-healthcheck-httphealthcheck) for more information.
+
+#### TCP health check {#tcp-healthcheck-overview}
+
+| **Config file keys** | **Definition** | **Type** | **Usage** |
+| :-- | :-- | :-- | :-- |
+| `send` | Defines the payload, which must be one of [text](https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/core/v3/health_check.proto#envoy-v3-api-field-config-core-v3-healthcheck-payload-text) or [binary](https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/core/v3/health_check.proto#envoy-v3-api-field-config-core-v3-healthcheck-payload-binary). An empty payload results in a connect-only health check. | [`Payload`](https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/core/v3/health_check.proto#envoy-v3-api-msg-config-core-v3-healthcheck-payload) | **optional** |
+| `receive` | Checks a response with 'fuzzy' matching to the extent that each payload block must be found, and in the specified order, but not necessarily contiguous. | [`Payload`](https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/core/v3/health_check.proto#envoy-v3-api-msg-config-core-v3-healthcheck-payload) | **optional** |
+
+See the [Envoy TCP health checks documentation](https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/core/v3/health_check.proto#config-core-v3-healthcheck-tcphealthcheck) for more information.
+
+#### gRPC health check {#grpc-healthcheck-overview}
+
+| **Config file keys** | **Definition** | **Type** | **Usage** |
+| :-- | :-- | :-- | :-- |
+| `authority` | The `:authority` header value in a gRPC health check request. | `string` | **optional** |
+| `service_name` | A service name parameter sent to the gRPC service. See [gRPC health checking](https://github.com/grpc/grpc/blob/master/doc/health-checking.md) for more information. | `string` | **optional** |
+
+See the [Envoy gRPC health checks documentation](https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/core/v3/health_check.proto#config-core-v3-healthcheck-grpchealthcheck) for more information.
 
 <Tabs>
 <TabItem value="Core" label="Core">
@@ -107,6 +142,43 @@ See [Load Balancing](/docs/capabilities/load-balancing.md) for example [configur
 | **Config file keys** | **Type**           | **Usage**    |
 | :------------------- | :----------------- | :----------- |
 | `health_checks`      | `array of objects` | **optional** |
+
+### HTTP example configuration
+
+```yaml
+routes:
+  - from: https://myapp.localhost.pomerium.io
+    to:
+      - http://myapp-srv-1:8080
+      - http://myapp-srv-2:8080
+    health_checks:
+      - timeout: 10s
+        interval: 60s
+        healthy_threshold: 1
+        unhealthy_threshold: 2
+        http_health_check:
+          path: '/'
+```
+
+### TCP example configuration
+
+```yaml
+routes:
+  - from: tcp+https://tcp-service.localhost.pomerium.io
+    to:
+      - tcp://tcp-1.local
+      - tcp://tcp-2.local
+    health_checks:
+      - timeout: 1s
+        interval: 5s
+        unhealthy_threshold: 3
+        healthy_threshold: 1
+        tcp_health_check:
+          send:
+            text: '50494E47' #PING
+          receive:
+            text: '504F4E47' #PONG
+```
 
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
@@ -118,7 +190,7 @@ Configure **Health Checks** under **Load Balancing** settings in the Console:
 </TabItem>
 <TabItem value="Kubernetes" label="Kubernetes">
 
-See Kubernetes [Ingress - load balancing](/docs/deploy/k8s/ingress#load-balancing) for more information.
+See Kubernetes [Ingress - load balancing](/docs/k8s/ingress#load-balancing) for more information.
 
 </TabItem>
 </Tabs>

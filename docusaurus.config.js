@@ -45,7 +45,14 @@ const config = {
           sidebarPath: require.resolve('./sidebars.js'),
           editUrl: 'https://github.com/pomerium/documentation/tree/main',
           admonitions: {
-            keywords: ['note', 'tip', 'info', 'caution', 'danger', 'enterprise'],
+            keywords: [
+              'note',
+              'tip',
+              'info',
+              'caution',
+              'danger',
+              'enterprise',
+            ],
             extendDefaults: true,
           },
         },
@@ -67,11 +74,11 @@ const config = {
         specs: [
           {
             spec: 'https://console.pomerium.app/openapi.yaml',
-            route: '/docs/api/'
-          }
-        ]
-      }
-    ]
+            route: '/docs/api/',
+          },
+        ],
+      },
+    ],
   ],
 
   themeConfig: {
@@ -121,8 +128,8 @@ const config = {
               docId: 'docs/capabilities/enterprise-api',
               label: 'Enterprise API',
               to: 'docs/capabilities/enterprise-api',
-            }
-          ]
+            },
+          ],
         },
         {
           type: 'docSidebar',
@@ -226,7 +233,7 @@ const config = {
   },
   stylesheets: [
     'https://fonts.googleapis.com/icon?family=Material+Icons',
-    'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/brands.min.css',
+    'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/brands.min.css',
   ],
   plugins: [
     [
