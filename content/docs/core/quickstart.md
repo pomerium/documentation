@@ -93,5 +93,5 @@ This is a test environment! If you followed all the steps in this doc your Pomer
 
 [configuration file]: /docs/reference
 [container images]: https://hub.docker.com/r/pomerium/pomerium
-[Docker]: https://docs.docker.com/install/
-[Docker Compose]: https://docs.docker.com/compose/install/
+[docker]: https://docs.docker.com/install/
+[docker compose]: https://docs.docker.com/compose/install/
