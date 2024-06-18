@@ -54,7 +54,6 @@ Pomerium uses [Semantic Versioning](https://semver.org/). In practice, this mean
 
 As Pomerium is still pre-`v1.0.0`, you should expect breaking changes between releases.
 
-
 ### Development
 
 See [Building Pomerium From Source](/docs/core/from-source) for information on getting started developing for Pomerium.
