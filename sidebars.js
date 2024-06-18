@@ -105,6 +105,12 @@ const sidebars = {
           label: 'Device Identity',
         },
         {
+          id: 'docs/integrations',
+          className: 'enterprise',
+          type: 'doc',
+          label: 'External Data Sources'
+        },
+        {
           id: 'docs/capabilities/enterprise-api',
           className: 'enterprise',
           type: 'doc',
