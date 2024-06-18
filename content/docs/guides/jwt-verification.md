@@ -51,7 +51,6 @@ Mac and Linux users can use DNSMasq to map the `*.localhost.pomerium.io` domain 
 1. Create a `docker-compose.yaml` file containing:
 
    ```yaml title="docker-compose.yaml"
-   version: '3.9'
    networks:
      frontend:
        driver: 'bridge'
