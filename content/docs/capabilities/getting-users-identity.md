@@ -118,8 +118,6 @@ A single-page javascript application can verify the JWT using the [JavaScript SD
 
 <ReactApp />
 
-See the [JavaScript SDK guide](/docs/guides/js-sdk) for more information.
-
 ### Manual verification
 
 Though you will likely verify signed headers programmatically in your application's middleware with a third-party JWT library, if you are new to JWT it may be helpful to show what manual verification looks like.

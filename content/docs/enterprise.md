@@ -69,7 +69,7 @@ Pomerium Enterprise's [**Directory Sync**](/docs/capabilities/directory-sync) fe
 
 ### External Data Sources
 
-In the **External Data** dashboard, you can import, view, and manage [external data sources](/docs/integrations). After a successful sync, you can use data unique to your organization to serve as context in your authorization policies. ![Using the External Data Source Record type in a policy](./enterprise/img/external-data-as-context.gif)
+In the **External Data** dashboard, you can import, view, and manage [external data sources](/docs/capabilities/integrations). After a successful sync, you can use data unique to your organization to serve as context in your authorization policies. ![Using the External Data Source Record type in a policy](./enterprise/img/external-data-as-context.gif)
 
 ## Pomerium Enterprise features comparison
 
@@ -90,7 +90,7 @@ In the **External Data** dashboard, you can import, view, and manage [external d
 | [Custom Branding](/docs/capabilities/branding) | <ClearIcon /> | ![Pomerium checkmark](./enterprise/img/pomerium-checkmark.svg) |
 | [Service Accounts](/docs/capabilities/service-accounts) | <ClearIcon /> | ![Pomerium checkmark](./enterprise/img/pomerium-checkmark.svg) |
 | [Metrics](/docs/capabilities/metrics) | <ClearIcon /> | ![Pomerium checkmark](./enterprise/img/pomerium-checkmark.svg) |
-| [External Data Sources](/docs/integrations) | <ClearIcon /> | ![Pomerium checkmark](./enterprise/img/pomerium-checkmark.svg) |
+| [External Data Sources](/docs/capabilities/integrations) | <ClearIcon /> | ![Pomerium checkmark](./enterprise/img/pomerium-checkmark.svg) |
 
 ## Next Steps
 

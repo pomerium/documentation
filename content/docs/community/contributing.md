@@ -169,4 +169,4 @@ After you've pushed your PR, a member of the documentation team will review your
 [verify]: https://verify.pomerium.com/
 [identity provider]: /docs/identity-providers
 [make]: https://en.wikipedia.org/wiki/Make_(software)
-[tls certificates]: /docs/concepts/certificates
+[tls certificates]: /docs/guides/certificates

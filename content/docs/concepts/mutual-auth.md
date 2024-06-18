@@ -88,7 +88,6 @@ In this way, Pomerium applies a zero trust security model to the application lay
 For more information on how Pomerium implements JWT verification, see the following docs:
 
 - [JWT Verification](/docs/capabilities/jwt-verification)
-- [JavaScript SDK](/docs/guides/js-sdk)
 - [Identity Verification](/docs/capabilities/getting-users-identity)
 
 :::
