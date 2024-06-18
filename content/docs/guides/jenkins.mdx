@@ -31,7 +31,7 @@ Once you’ve configured JWT authentication, you can assign permissions within J
 
 To complete this guide, you need:
 
-- Pomerium Zero
+- A [Pomerium Zero](https://console.pomerium.app/create-account) account
 - Linux OS (this guide uses a Compute Engine VM running Debian 12)
 - [Jenkins](https://www.jenkins.io/doc/book/installing/linux/#debianubuntu) (LTS release)
 - [Java](https://www.jenkins.io/doc/book/installing/linux/#installation-of-java) (OpenJDK 17)
@@ -39,8 +39,6 @@ To complete this guide, you need:
 :::note
 
 This guide runs Pomerium Zero and Jenkins in a Linux VM running Debian 12. If you're using Docker or Kubernetes, the steps will vary.
-
-This guide also uses Pomerium's [**Hosted Authenticate**](/docs/capabilities/hosted-authenticate-service) service. If you'd like to use a custom identity provider, see **Custom IdP**.
 
 :::
 
@@ -65,7 +63,7 @@ In the Zero Console:
 
 1. Select **Routes**, **+ New Route**
 1. Name your route (for example, **Jenkins**)
-1. In the **From** field, select **https://** and enter `jenkins.<YOUR_SUBDOMAIN>.pomerium.app` as the URL
+1. In the **From** field, select **https://** and enter `jenkins.<CLUSTER_SUBDOMAIN>.pomerium.app` as the URL
 1. In the **To** field, enter `http://localhost:8080`
 1. In the **Policies** field, select the policy you just saved
 1. Select the **Headers** tab and enable **Pass Identity Headers**
@@ -79,16 +77,9 @@ These steps assume you're using your cluster's **Starter Domain** to build a rou
 
 ![Configure a route to Jenkins in the Zero Console](./img/jenkins/pz-saving-jenkins-route.gif)
 
-After you've saved your route and policy, **apply the changeset** to your cluster configuration:
-
-1. Select the changeset icon
-1. Select **Apply Changeset**
-
-![Applying the changeset in the Zero Console](./img/jenkins/pz-apply-changeset.png)
+After you've saved your route and policy, apply your changes.
 
 ## Access Jenkins
-
-From your Zero Console:
 
 1. Access the external route you built to access Jenkins. After authenticating against Pomerium's hosted identity provider, you should be redirected to your Jenkins instance.
 1. Before you can access your Jenkins dashboard, Jenkins will prompt you to enter the initial admin password. You can find it in `/var/lib/jenkins/secrets/initialAdminSecret`.
@@ -120,7 +111,7 @@ In the Jenkins dashboard:
 
 After Jenkins restarts:
 
-1. Access Jenkins from the Zero Console
+1. Access your Jenkins instance in the browser
 1. Select **Manage Jenkins**
 1. Select **Security**
 1. In the **Security Realm** dropdown, select **JWT Header Authentication Plugin**
@@ -139,13 +130,13 @@ After Jenkins restarts:
     | **JWKS JSON URL** | `https://jenkins.<YOUR_SUBDOMAIN>.pomerium.app/.well-known/pomerium/jwks.json` |
 1. Enable **Allow verification failures**
 1. Under **Authorization**, keep **Anyone can do anything**
-    - This ensures you can re-configure authentication settings in the event that JWT authenticaiton fails, which will lock you out of your Jenkins instance
+    - This ensures you can re-configure authentication settings in the event that JWT authenticaiton fails, which will lock you out of your Jenkins instance.
 
 Save your changes and restart Jenkins.
 
 ### Authenticate with your JWT
 
-From the Zero Console, access your external Jenkins route. If you configured JWT authentication correctly, you'll notice you're logged in already.
+Access your external Jenkins route. If you configured JWT authentication correctly, you'll notice you're logged in already.
 
 Next, you need to configure authorization in Jenkins to set permissions.
 
@@ -162,7 +153,7 @@ Next, you need to configure authorization in Jenkins to set permissions.
     :::
 1. Give the added user **Administrator** privileges
     ![Giving the user administrator privileges](./img/jenkins/pz-add-user-to-matrix.png)
-1. You can also give **Anonymous** users **Overall Read** privileges. This way, if someones accesses this Jenkins instance from another account, they won't be able to make changes to the application.
+1. You can also give **Anonymous** users **Overall Read** privileges. This way, if someone accesses this Jenkins instance from another account, they won't be able to make changes to the application.
 
 Save your changes. You're done!
 
