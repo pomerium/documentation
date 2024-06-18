@@ -1,12 +1,11 @@
 ---
 # cSpell:ignore thisisunsafe, genkey, noout
 
-title: Run Pomerium Core With Docker
 lang: en-US
 sidebar_label: Quickstart
 pagination_prev: null
 pagination_next: null
-description: Get Pomerium up and running quickly with Docker.
+description: Learn how to install and run Pomerium Zero in a Docker container.
 keywords:
   [
     pomerium,
@@ -93,7 +92,7 @@ Next, deploy Pomerium with the following command:
 docker compose up -d
 ```
 
-Pomerium will deploy and run in a special "Zero-managed" mode. In Zero-managed mode, Pomerium connects to the Pomerium Zero cloud service. The Zero cloud hosts the Zero Console, a remote control plane where you can manage your deployments and configuration.
+Pomerium will deploy and run in a special "Zero-managed" mode. In Zero-managed mode, Pomerium connects to the Pomerium Zero cloud service, a remote control plane where you can manage your deployments and configuration.
 
 If your Pomerium deployment connects to the cloud successfully, Pomerium Zero will notify you in the onboarding screen:
 
@@ -119,9 +118,11 @@ You should land on the Verify page:
 
 ### Connect to SSH
 
+The demo SSH route connects to a remote server that you can use to test SSH connections in Pomerium Zero.
+
 :::note Install Pomerium CLI
 
-You need the Pomerium CLI client to connect to services like **SSH** over a TCP connection. See the [**Pomerium CLI**](/docs/deploy/clients/pomerium-cli) page for installation instructions.
+You need the Pomerium CLI client to connect to services like **SSH** over a TCP connection. See the [**Pomerium CLI**](/docs/clients/pomerium-cli) page for installation instructions.
 
 :::
 
@@ -131,11 +132,17 @@ In a terminal, enter the following command and replace `CLUSTER_STARTER_DOMAIN` 
 pomerium-cli tcp ssh.<CLUSTER_STARTER_DOMAIN>.app:22
 ```
 
+Initiate the SSH connection:
+
+```bash
+ssh ssh-demo.pomerium.com -p 22
+```
+
 A successful request results in a response similar to the one below:
 
-```shell-session
-$ pomerium-cli tcp ssh.dominant-cowbird-8176.pomerium.app:22
-2024/03/25 16:18:45 listening on 127.0.0.1:52541
+```bash
+Warning: Permanently added 'ssh-demo.pomerium.com' (ED25519) to the list of known hosts.
+This is an SSH honeypot. Everything is logged and monitored.
 ```
 
 ## Review authorization policy
@@ -146,12 +153,6 @@ Select the **Policies** tab. In the policies table, you'll notice the **Any Auth
 
 This is a simple policy that instructs Pomerium to allow all requests for authenticated users or service accounts. Because you authenticated successfully against our hosted identity provider, Pomerium granted you access to both the SSH and Verify services.
 
-:::info **Build a Policy**
-
-Check out our **Policies** guide to learn how to build more complex policies to secure your routes.
-
-:::
-
 ## Review certificates
 
 Pomerium automatically provisions and manages TLS certificates issued by ZeroSSL to secure the starter routes in your cluster, and any routes you may build that use your cluster's starter domain.
@@ -159,12 +160,6 @@ Pomerium automatically provisions and manages TLS certificates issued by ZeroSSL
 To see certificates in your cluster, go to the **Certificates** tab:
 
 ![View cluster certificates from ZeroSSL](./img/quickstart/cluster-certs.png)
-
-:::info **Add a Certificate**
-
-Check out the **Certificates** guide to learn how to import your own certificates to your cluster.
-
-:::
 
 ## Next Steps
 
