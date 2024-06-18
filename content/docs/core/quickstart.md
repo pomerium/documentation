@@ -23,8 +23,7 @@ keywords:
   ]
 ---
 
-import ConfigDocker from '@site/content/examples/config/config.docker.yaml.md';
-import DockerCompose from '@site/content/examples/docker/basic.docker-compose.yml.md';
+import ConfigDocker from '@site/content/examples/config/config.docker.yaml.md'; import DockerCompose from '@site/content/examples/docker/basic.docker-compose.yml.md';
 
 # Run Pomerium Core With Docker
 
