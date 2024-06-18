@@ -25,7 +25,14 @@ import TabItem from '@theme/TabItem';
 
 In this guide, you'll configure Pomerium Zero to provide single sign-on (SSO) access to Grafana with JWT authentication.
 
-<iframe width="100%" height="500" src="https://fast.wistia.com/embed/iframe/alknnukhwy" frameborder="0" webkitallowfullscreen="true" mozallowfullscreen="true" allowfullscreen="true"></iframe>
+<iframe
+  width="100%"
+  height="500"
+  src="https://fast.wistia.com/embed/iframe/alknnukhwy"
+  frameborder="0"
+  webkitallowfullscreen="true"
+  mozallowfullscreen="true"
+  allowfullscreen="true"></iframe>
 
 ### Before you start
 
@@ -47,8 +54,7 @@ In the Zero Console:
 1. Create a **Route** and name it
 2. In **From**, select `https://` and enter the external URL
 3. In **To**, enter the internal URL
-4. In the **Policies** field, select `Any Authenticated User`
-    ![Creating a Grafana route in the Zero Console](./img/grafana/grafana-create-route.gif)
+4. In the **Policies** field, select `Any Authenticated User` ![Creating a Grafana route in the Zero Console](./img/grafana/grafana-create-route.gif)
 
 Instruct Pomerium to forward the user's JWT as a cryptographically signed HTTP header with the [Pass Identity Headers](/docs/reference/routes/pass-identity-headers-per-route) setting.
 
@@ -56,7 +62,7 @@ Instruct Pomerium to forward the user's JWT as a cryptographically signed HTTP h
 1. Apply **Pass Identity Headers**
 1. Save the route changes
 
-    ![Configuring the headers settings for the Grafana route in the Zero Console](./img/grafana/pass-identity-headers.png)
+   ![Configuring the headers settings for the Grafana route in the Zero Console](./img/grafana/pass-identity-headers.png)
 
 :::note
 
@@ -69,37 +75,37 @@ See the [**Sign in to Grafana**](https://grafana.com/docs/grafana/latest/setup-g
 Add the Grafana configuration below to the Docker Compose file running Pomerium Zero. The Grafana environment variables configure Grafana to accept JWTs from the incoming request and what claims to look for.
 
 ```yaml title="docker-compose.yaml" {14,22,27} showLineNumbers
-  pomerium:
-    image: pomerium/pomerium:v0.25.1
-    ports:
-      - 443:443
-    restart: always
-    environment:
-      POMERIUM_ZERO_TOKEN: <CLUSTER_TOKEN>
-      XDG_CACHE_HOME: /var/cache
-    volumes:
-      - pomerium-cache:/var/cache
-    networks:
-      main:
-        aliases:
+pomerium:
+  image: pomerium/pomerium:v0.25.1
+  ports:
+    - 443:443
+  restart: always
+  environment:
+    POMERIUM_ZERO_TOKEN: <CLUSTER_TOKEN>
+    XDG_CACHE_HOME: /var/cache
+  volumes:
+    - pomerium-cache:/var/cache
+  networks:
+    main:
+      aliases:
         - authenticate.<CLUSTER_STARTER_SUBDOMAIN>.pomerium.app
-  grafana:
-    image: grafana/grafana:latest
-    ports:
-      - 3000:3000
-    networks:
-      main: {}
-    environment:
-      - GF_AUTH_SIGNOUT_REDIRECT_URL=https://grafana.<CLUSTER_STARTER_SUBDOMAIN>.pomerium.app/.pomerium/sign_out
-      - GF_AUTH_JWT_ENABLED=true
-      - GF_AUTH_JWT_HEADER_NAME=X-Pomerium-Jwt-Assertion
-      - GF_AUTH_JWT_EMAIL_CLAIM=sub
-      - GF_AUTH_JWT_USERNAME_CLAIM=sub
-      - GF_AUTH_JWT_JWK_SET_URL=https://authenticate.<CLUSTER_STARTER_SUBDOMAIN>.pomerium.app/.well-known/pomerium/jwks.json
-      - GF_AUTH_JWT_CACHE_TTL=60m
-      - GF_AUTH_JWT_AUTO_SIGN_UP=true
-    volumes:
-      - ./grafana-storage:/var/lib/grafana
+grafana:
+  image: grafana/grafana:latest
+  ports:
+    - 3000:3000
+  networks:
+    main: {}
+  environment:
+    - GF_AUTH_SIGNOUT_REDIRECT_URL=https://grafana.<CLUSTER_STARTER_SUBDOMAIN>.pomerium.app/.pomerium/sign_out
+    - GF_AUTH_JWT_ENABLED=true
+    - GF_AUTH_JWT_HEADER_NAME=X-Pomerium-Jwt-Assertion
+    - GF_AUTH_JWT_EMAIL_CLAIM=sub
+    - GF_AUTH_JWT_USERNAME_CLAIM=sub
+    - GF_AUTH_JWT_JWK_SET_URL=https://authenticate.<CLUSTER_STARTER_SUBDOMAIN>.pomerium.app/.well-known/pomerium/jwks.json
+    - GF_AUTH_JWT_CACHE_TTL=60m
+    - GF_AUTH_JWT_AUTO_SIGN_UP=true
+  volumes:
+    - ./grafana-storage:/var/lib/grafana
 ```
 
 In lines `14`, `22`, and `27`, replace `CLUSTER_STARTER_SUBDOMAIN` with your own.
