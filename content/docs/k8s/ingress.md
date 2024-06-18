@@ -23,18 +23,18 @@ The [Pomerium Kubernetes Ingress Controller](https://github.com/pomerium/ingress
 
 Pomerium’s Ingress Controller for Kubernetes enables you to dynamically provision routes from Ingress resources and set authorization policy on those routes with Ingress annotations. By defining routes as Ingress resources in the Kubernetes API, you can easily create and remove those routes from your Pomerium configuration.
 
-If you've tested Pomerium using the [all-in-one binary](/docs/deploy/core), you're probably familiar with configuring routes in Pomerium's [`config.yaml`](/docs/deploy/core#configuration-file) file. When using the Pomerium Ingress Controller, each route is defined as an Ingress resource in the Kubernetes API.
+If you've tested Pomerium using the [all-in-one binary](/docs/core), you're probably familiar with configuring routes in Pomerium's [`config.yaml`](/docs/core#configuration-file) file. When using the Pomerium Ingress Controller, each route is defined as an Ingress resource in the Kubernetes API.
 
 This document shows you how to configure an Ingress resource that’s compatible with the Pomerium Ingress Controller.
 
 **Before you start:**
 
-This document assumes you've installed the Pomerium Ingress Controller and added global configuration settings with the [Pomerium CRD](/docs/deploy/k8s/configure).
+This document assumes you've installed the Pomerium Ingress Controller and added global configuration settings with the [Pomerium CRD](/docs/k8s/configure).
 
 If you haven't completed these steps, see the following docs:
 
-- [Install Pomerium Ingress Controller](/docs/deploy/k8s/install)
-- [Global Configuration](/docs/deploy/k8s/configure)
+- [Install Pomerium Ingress Controller](/docs/k8s/install)
+- [Global Configuration](/docs/k8s/configure)
 
 ## Configure an Ingress resource
 
@@ -87,7 +87,7 @@ spec:
 
 The default installation adds `pomerium` [IngressClass](https://kubernetes.io/docs/concepts/services-networking/ingress/#ingress-class) to your cluster. In order for Pomerium to service your Ingress objects, please set `spec.ingressClassName` to `pomerium`.
 
-It is also possible to [set Pomerium to be a default ingress controller](/docs/deploy/k8s/install#set-pomerium-as-default-ingressclass) cluster-wide.
+It is also possible to [set Pomerium to be a default ingress controller](/docs/k8s/install#set-pomerium-as-default-ingressclass) cluster-wide.
 
 ### Set Ingress annotations
 
@@ -544,7 +544,7 @@ spec:
 
 ## Metrics
 
-Pomerium [exposes](/docs/deploy/k8s/install#metrics) a number of Prometheus style metrics that you may use to monitor your Ingress.
+Pomerium [exposes](/docs/k8s/install#metrics) a number of Prometheus style metrics that you may use to monitor your Ingress.
 
 In order to filter out metrics for a particular Ingress, use `envoy_cluster_name` metric label, that has a `ingressnamespace-ingressname-host-domain-com` format.
 
