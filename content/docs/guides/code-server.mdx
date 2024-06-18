@@ -1,7 +1,7 @@
 ---
 # cSpell:ignore codercom codeserver
 
-title: Secure Browser Access to code-server VSCode
+title: Secure Code-Server with Pomerium Zero
 sidebar_label: Code-server
 lang: en-US
 keywords:
@@ -22,17 +22,17 @@ description: In this guide, you’ll run code-server VSCode in a Docker containe
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-# Secure Browser Access to code-server VSCode Behind Pomerium
+# Secure Browser Access to Code-Server Behind Pomerium Zero
 
 In this guide, you'll run code-server's Visual Studio Code (VSCode) in a Docker container, and secure browser access to your project with Pomerium.
 
-## What is code-server?
+## What is Code-server?
 
 [Code-server](https://github.com/coder/code-server) is an open-source tool that allows you to run [VSCode](https://code.visualstudio.com/), a popular integrated development environment (IDE), on a **remote server** through the browser. This setup essentially turns VSCode into a cloud-based IDE, providing flexibility and accessibility advantages.
 
 Code-server is particularly popular among developers who want the full power of VSCode, but need to work in a cloud-based environment. This is ideal if you work on multiple machines, need to access your development environment remotely, or you have limited local resources.
 
-## How to secure code-server with Pomerium
+## How to secure Code-server with Pomerium
 
 Code-server requires [password authentication](https://coder.com/docs/code-server/latest/guide#expose-code-server) by default. By securing code-server behind Pomerium, you can remove code-server’s password requirement and configure Pomerium to add [authentication](/docs/capabilities/authentication) and [authorization](/docs/capabilities/authorization) to an online instance of VSCode.
 
@@ -50,157 +50,81 @@ By the end, you will have a minimal, real-world code-server instance that allows
 
 ### Before you start
 
-<Tabs>
-
-<TabItem value="Core" label="Core">
-
-If you completed our [Quickstart guide](/docs/quickstart), you should have a working Pomerium project with the following YAML files:
-
-- `config.yaml`
-- `docker-compose.yaml`
-
-If you haven't completed the Quickstart:
-
-- Install [Docker](https://www.docker.com/) and [Docker Compose](https://docs.docker.com/compose/install/)
-- Create a `config.yaml` file for your Pomerium configuration
-- Create a `docker-compose.yaml` file for your Docker configuration
-
-### Set up Pomerium
-
-In your `config.yaml` file, add our hosted [authenticate service URL](/docs/reference/authenticate-service-url):
-
-```yaml title="config.yaml"
-authenticate_service_url: https://authenticate.pomerium.app
-```
-
-Add the following route:
-
-```yaml title="config.yaml"
-- from: https://code.localhost.pomerium.io
-  to: http://codeserver:8080
-  policy:
-    - allow:
-        or:
-          - email:
-              is: user@example.com
-  allow_any_authenticated_user: true
-  allow_websockets: true
-```
-
-:::note
-
-In this example route, `code.localhost.pomerium.io` is the publicly accessible route. `codeserver` is the local hostname for the server or container running code-server.
-
-:::
-
-### Set up Docker Compose
-
-In your `docker-compose.yaml` file, add the code-server and Pomerium services:
-
-```yaml
-services:
-  pomerium:
-    image: cr.pomerium.com/pomerium/pomerium:latest
-    volumes:
-      - ./config.yaml:/pomerium/config.yaml:ro
-    ports:
-      - 443:443
-  codeserver:
-    image: codercom/code-server:latest
-    ports:
-      - 8080:8080
-    volumes:
-      - ./code-server:/home/coder/project
-      - ./code-server-config/.config:/home/coder/.config
-```
-
-### Access code-server on localhost
-
-Run `docker compose up`. In your browser, go to `localhost:8080`.
-
-Code-server will prompt you to enter a password:
-
-![Code-server password prompt requiring a generated password found in the code-server config file](img/code-server/code-server-password-prompt.png)
-
-You can find a pre-generated password in `code-server-config/.config/code-server/config.yaml`. If you enter it, you gain access to your code-server project.
-
-However, remembering passwords is tedious. Let's disable the password requirement and use Pomerium to enforce authentication and authorization instead.
-
-### Access code-server behind Pomerium
-
-In `docker-compose.yaml`, add the following `command` to your code-server container:
-
-```yaml title="docker-compose.yaml"
-codeserver:
-  image: codercom/code-server:latest
-  ports:
-    - 8080:8080
-  volumes:
-    - ./code-server:/home/coder/project
-    - ./code-server-config/.config:/home/coder/.config
-  command: --auth none --disable-telemetry /home/coder/project
-```
-
-This will disable the password prompt (and prevent code-server from collecting telemetry data from your project). Now, restart Docker Compose and access code-server using the route defined in `config.yaml`:
-
-`https://code.localhost.pomerium.io`
-
-</TabItem>
-
-<TabItem value="Enterprise" label="Enterprise">
-
-This guide shows you how to deploy code-server using Pomerium Enterprise.
+This guide uses Docker to run Pomerium Zero and Code-Server services in containers.
 
 To complete this guide, you need:
 
-- [Pomerium Core](/docs/core)
-- [Pomerium Enterprise](/docs/enterprise/quickstart#install-pomerium-enterprise)
+- A [Pomerium Zero](http://console.pomerium.app/create-account) account
+- [Docker](https://docs.docker.com/install/) and [Docker Compose](https://docs.docker.com/compose/install/)
 
-### Configure Pomerium
+## Configure Pomerium Zero
 
-In your Console, create a [policy](/docs/capabilities/ppl) that allows any authenticated user to access the route:
+### Create a policy
 
-1. Select **New Policy**
-2. Enter a **Name** for your policy, like `any authenticated`
-3. Select **Builder**
-4. Select **Any Authenticated User**
-5. Save your policy
+In the Zero Console:
 
-![Enabling the allow anybody policy in the Enterprise Console PPL builder](img/code-server/code-server-edit-policy.png)
+1. Go to **Policies**
+2. Select **New Policy**
+3. Give it a **Name** and an (optional) **Description**
+4. Add an **Allow Block** and select an **AND** operator
+5. Keep the **Domain** criteria and replace **Value** with the domain portion of your email address (the part after “@”)
 
-Build a route:
+Save your policy.
 
-1. Select **Routes** and enter a **Name**
-1. In the **From** field, enter the publicly accessible route (for example, `code.localhost.pomerium.io`)
-1. In the **To** field, enter the local hostname for the server running code-server (for example, `http://codeserver:8080`)
+### Create a route
 
-Allow your route to create [Websocket connections](/docs/reference/routes/timeouts#websocket-connections):
+In the Zero Console:
 
-1. Select **Timeouts**
-1. Select **Allow Websockets**
+1. Select **Routes**
+2. Add a **New Route**
+3. Give it a **Name** (like Codeserver)
+4. In `From:`, add the external URL to our Codeserver route
+5. In `To:`, add the internal URL
+6. In the **Policies** field, select the Codeserver policy
+7. Select the **Timeouts** tab and **Allow Websockets**
 
-Add a policy and save it:
+## Add Docker Compose Services
 
-1. Under **General** > **Policies**, select **any authenticated**
-1. Save your route
+First, make sure your `docker-compose.yaml` file contains the images to run Pomerium Zero and Codeserver:
 
-![Add an allow any authenticated user authorization policy to the code server route](img/code-server/code-server-build-route.png)
+```yaml {7,14} showLineNumbers
+pomerium:
+  image: pomerium/pomerium:v0.27.0
+  ports:
+    - 443:443
+  restart: always
+  environment:
+    POMERIUM_ZERO_TOKEN: <CLUSTER_TOKEN>
+    XDG_CACHE_HOME: /var/cache
+  volumes:
+    - pomerium-cache:/var/cache
+  networks:
+    main:
+      aliases:
+        - authenticate.<CLUSTER_SUBDOMAIN>.pomerium.app
+codeserver:
+  image: codercom/code-server:latest
+  networks:
+    main: {}
+  ports:
+    - 8080:8080
+  command: --auth none --disable-telemetry /home/coder/project
+  volumes:
+    - ./code-server:/home/coder/project
+    - ./code-server-config/.config:/home/coder/.config
+```
 
-### Test your routes
+In line `7`, replace `CLUSTER_TOKEN` with your own.
 
-To see if your routes are configured correctly, navigate to the externally accessible route you defined in the **From** field:
+In line `14`, replace `CLUSTER_SUBDOMAIN` with your own. For example, if your starter domain is `loquacious-cyborg-2214.pomerium.app`, the URL would be `authenticate.loquacious-cyborg-2214.pomerium.app`.
 
-`https://code.localhost.pomerium.io`
+## Access Code-server
 
-</TabItem>
+Run `docker compose up` and go to your external URL.
 
-</Tabs>
+After authenticating against our hosted Identity Provider, Pomerium will redirect you to your code-server instance.
 
-After authenticating against the Cognito identity provider, you will be redirected to the code-server route.
-
-![A VSCode project running “Hello World” in the integrated terminal.](img/code-server/vscode-helloworld.png)
-
-## Build a project in code-server
+## Build a project in Code-server
 
 Now that you can access VSCode in your browser, test out code-server by building a quick HTML project.
 
@@ -218,18 +142,18 @@ Now that you can access VSCode in your browser, test out code-server by building
   <body>
     <h1 style="color:blueviolet">Check out more from Pomerium:</h1>
     <ul style="font-size: 20px;">
-      <li><a href="https://www.pomerium.com/docs/guides">Guides</a></li>
-      <li><a href="https://www.pomerium.com/blog/">Blog</a></li>
-      <li><a href="https://www.pomerium.com/docs">Documentation</a></li>
+      <li><a href="<https://www.pomerium.com/docs/guides>">Guides</a></li>
+      <li><a href="<https://www.pomerium.com/blog/>">Blog</a></li>
+      <li><a href="<https://www.pomerium.com/docs>">Documentation</a></li>
     </ul>
     <h2 style="color:blueviolet">Happy coding!</h2>
   </body>
 </html>
 ```
 
-2. Go to **Extensions** and install [Live Server](https://marketplace.visualstudio.com/items?itemName=ritwickdey.LiveServer)
-3. Right-click `index.html` and select **Open with Live Server**
-4. Select any of the links to learn more about Pomerium
+1. Go to **Extensions** and install [Live Server](https://marketplace.visualstudio.com/items?itemName=ritwickdey.LiveServer)
+2. Right-click `index.html` and select **Open with Live Server**
+3. Select any of the links to learn more about Pomerium
 
 Great job! You successfully deployed code-server.
 
@@ -238,9 +162,3 @@ Great job! You successfully deployed code-server.
 When the code-server container is rebuilt, any files outside of `/home/coder/project` are reset, removing any dependencies (such as go and make). In a real remote development workflow, you could mount additional volumes, or [use a custom code-server container](https://github.com/cdr/deploy-code-server/tree/main/deploy-container) with these dependencies installed.
 
 :::
-
-[path]: https://en.wikipedia.org/wiki/PATH_(variable)
-[install]: /docs/deploy/
-[synology nas]: /docs/guides/synology.md
-[visual studio code]: https://code.visualstudio.com/
-[code-server]: https://github.com/cdr/code-server
