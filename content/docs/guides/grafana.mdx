@@ -52,13 +52,11 @@ In the Zero Console:
 
 Instruct Pomerium to forward the user's JWT as a cryptographically signed HTTP header with the [Pass Identity Headers](/docs/reference/routes/pass-identity-headers-per-route) setting.
 
-You'll also instruct Pomerium to [rewrite the host header](http://localhost:3002/docs/reference/routes/headers#host-rewrite) value to avoid a [`403: Origin not allowed`](https://github.com/grafana/grafana/issues/45117#issuecomment-1033842787) error.
-
 1. Select the **Headers** tab
 1. Apply **Pass Identity Headers**
-1. In **Host Rewrite to Header**, enter the route’s external URL without the protocol
 1. Save the route changes
-    ![Configuring the headers settings for the Grafana route in the Zero Console](./img/grafana/grafana-headers-settings.gif)
+
+    ![Configuring the headers settings for the Grafana route in the Zero Console](./img/grafana/pass-identity-headers.png)
 
 :::note
 
@@ -68,7 +66,7 @@ See the [**Sign in to Grafana**](https://grafana.com/docs/grafana/latest/setup-g
 
 ## Configure Grafana
 
-Add the Grafana configuration below to the Docker Compose file running Pomerium Zero. The Grafana environment variables tell Grafana to accept JWTs from the incoming request and what claims to look for.
+Add the Grafana configuration below to the Docker Compose file running Pomerium Zero. The Grafana environment variables configure Grafana to accept JWTs from the incoming request and what claims to look for.
 
 ```yaml title="docker-compose.yaml" {14,22,27} showLineNumbers
   pomerium:
@@ -104,9 +102,9 @@ Add the Grafana configuration below to the Docker Compose file running Pomerium 
       - ./grafana-storage:/var/lib/grafana
 ```
 
-In lines `14`, `22`, and `27`:
+In lines `14`, `22`, and `27`, replace `CLUSTER_STARTER_SUBDOMAIN` with your own.
 
-- Replace `CLUSTER_STARTER_SUBDOMAIN` with your cluster's starter subdomain. For example, if your starter domain is `curious-cat-9999.pomerium.app`, lines `14` and `27` would be `authenticate.curious-cat-9999.pomerium.app`.
+For example, if your starter domain is `curious-cat-9999.pomerium.app`, you would replace `CLUSTER_STARTER_DOMAIN` in lines `14`, `22`, and `27` with `curious-cat-9999`.
 
 :::info
 
@@ -114,7 +112,7 @@ You can add your own custom domain to replace the generated starter domain assig
 
 :::
 
-Now, in your Zero Console apply your changeset. Then, run the following command to start Docker:
+Now, apply your changeset. Then, run the following command to start Docker:
 
 ```bash
 docker compose up
