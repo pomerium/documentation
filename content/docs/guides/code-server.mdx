@@ -88,35 +88,35 @@ In the Zero Console:
 First, make sure your `docker-compose.yaml` file contains the images to run Pomerium Zero and Codeserver:
 
 ```yaml {7,14} showLineNumbers
-  pomerium:
-    image: pomerium/pomerium:v0.27.0
-    ports:
-      - 443:443
-    restart: always
-    environment:
-      POMERIUM_ZERO_TOKEN: <CLUSTER_TOKEN>
-      XDG_CACHE_HOME: /var/cache
-    volumes:
-      - pomerium-cache:/var/cache
-    networks:
-      main:
-        aliases:
+pomerium:
+  image: pomerium/pomerium:v0.27.0
+  ports:
+    - 443:443
+  restart: always
+  environment:
+    POMERIUM_ZERO_TOKEN: <CLUSTER_TOKEN>
+    XDG_CACHE_HOME: /var/cache
+  volumes:
+    - pomerium-cache:/var/cache
+  networks:
+    main:
+      aliases:
         - authenticate.<CLUSTER_SUBDOMAIN>.pomerium.app
-  codeserver:
-    image: codercom/code-server:latest
-    networks:
-      main: {}
-    ports:
-      - 8080:8080
-    command: --auth none --disable-telemetry /home/coder/project
-    volumes:
-      - ./code-server:/home/coder/project
-      - ./code-server-config/.config:/home/coder/.config
+codeserver:
+  image: codercom/code-server:latest
+  networks:
+    main: {}
+  ports:
+    - 8080:8080
+  command: --auth none --disable-telemetry /home/coder/project
+  volumes:
+    - ./code-server:/home/coder/project
+    - ./code-server-config/.config:/home/coder/.config
 ```
 
 In line `7`, replace `CLUSTER_TOKEN` with your own.
 
-In line `14`, replace `CLUSTER_SUBDOMAIN` with your own.  For example, if your starter domain is `loquacious-cyborg-2214.pomerium.app`, the URL would be `authenticate.loquacious-cyborg-2214.pomerium.app`.
+In line `14`, replace `CLUSTER_SUBDOMAIN` with your own. For example, if your starter domain is `loquacious-cyborg-2214.pomerium.app`, the URL would be `authenticate.loquacious-cyborg-2214.pomerium.app`.
 
 ## Access Code-server
 
