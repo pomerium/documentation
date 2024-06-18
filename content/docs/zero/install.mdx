@@ -1,0 +1,111 @@
+---
+title: Install
+description: This page includes the Pomerium Zero installation steps for supported deployment environments.
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Install Pomerium Zero
+
+This page provides steps to install Pomerium Zero for each supported deploy environment.
+
+:::note
+
+If you don't have an account yet, you can [**create a Pomerium Zero account**](https://console.pomerium.app/create-account) for free.
+
+:::
+
+<Tabs>
+<TabItem value="Linux" label="linux">
+
+Install Pomerium with the following shell script:
+
+```bash
+curl https://console.pomerium.app/install.bash | env POMERIUM_ZERO_TOKEN=<CLUSTER_TOKEN> bash -s install
+```
+
+Pomerium requires an internet-accessible server and the ability to bind port 443.
+
+</TabItem>
+<TabItem value="kubernetes" label="Kubernetes">
+
+First, install Pomerium into your Kubernetes cluster:
+
+```bash
+kubectl apply -k github.com/pomerium/pomerium/k8s/zero\?ref=v0.26.0
+```
+
+Finally, create a secret to store the token used to authenticate your installation to Pomerium Zero:
+
+```yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: pomerium
+  namespace: pomerium-zero
+type: Opaque
+stringData:
+  pomerium_zero_token: <CLUSTER_TOKEN>
+```
+
+</TabItem>
+<TabItem value="docker" label="Docker">
+
+Save the following configuration as `compose.yaml`:
+
+```yaml title="compose.yaml"
+services:
+  pomerium:
+    image: pomerium/pomerium:v0.26.0
+    ports:
+      - 443:443
+    restart: always
+    environment:
+      POMERIUM_ZERO_TOKEN: <CLUSTER_TOKEN>
+      XDG_CACHE_HOME: /var/cache
+    volumes:
+      - pomerium-cache:/var/cache
+    networks:
+      main:
+        aliases:
+          - verify.<CLUSTER_STARTER_SUBDOMAIN>.pomerium.app
+  verify:
+    image: cr.pomerium.com/pomerium/verify:latest
+    networks:
+      main:
+        aliases:
+          - verify
+
+networks:
+  main: {}
+
+volumes:
+  pomerium-cache:
+```
+
+Then, run the following command in the same directory:
+
+```bash
+docker compose up -d
+```
+
+Pomerium requires an internet-accessible server and the ability to bind port 443.
+
+</TabItem>
+<TabItem value="manual" label="Manual">
+
+Use the following values as necessary to install or update Pomerium in accordance with your environment:
+
+- **Cluster Token**
+- env: `POMERIUM_ZERO_TOKEN`
+- **Domain Name**
+
+Pass the provided **Cluster Token** into the `POMERIUM_ZERO_TOKEN` environment variable.
+
+The **Domain Name** refers to the cluster starter domain that's assigned to your cluster during onboarding.
+
+For example, `sure-colt-611.pomerium.app`.
+
+</TabItem>
+</Tabs>

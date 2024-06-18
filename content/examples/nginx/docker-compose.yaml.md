@@ -1,5 +1,4 @@
 ```yaml title="docker-compose.yaml"
-version: "3"
 services:
   nginx:
     # to emulate nginx-ingress behavior, use openresty which comes with 'escaped_request_uri'

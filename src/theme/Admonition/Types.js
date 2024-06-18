@@ -17,7 +17,7 @@ function EnterpriseAdmonition(props) {
 
 const AdmonitionTypes = {
   ...DefaultAdmonitionTypes,
-  'enterprise': EnterpriseAdmonition,
-}
+  enterprise: EnterpriseAdmonition,
+};
 
 export default AdmonitionTypes;
