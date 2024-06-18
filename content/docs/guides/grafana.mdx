@@ -21,319 +21,115 @@ description: This guide covers how to use Pomerium to authenticate and authorize
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-# Grafana
+# Secure Grafana with Pomerium Zero
 
-Learn how to use Pomerium to authenticate and authorize users of Grafana.
+In this guide, you'll configure Pomerium Zero to provide single sign-on (SSO) access to Grafana with JWT authentication.
 
-## What is Grafana?
+<iframe
+  width="100%"
+  height="500"
+  src="https://fast.wistia.com/embed/iframe/alknnukhwy"
+  frameborder="0"
+  webkitallowfullscreen="true"
+  mozallowfullscreen="true"
+  allowfullscreen="true"></iframe>
 
-[Grafana](https://grafana.com/) is an open-source analytics visualization and monitoring tool. It provides many user-contributed [Dashboards](https://grafana.com/grafana/dashboards/) that make it popular for enthusiasts as well as professionals.
+### Before you start
 
-This guide will demonstrate how to secure an instance of Grafana behind Pomerium, and provide users with a seamless login to Grafana using your identity provider.
-
-## Configure Pomerium
-
-<Tabs>
-
-<TabItem value="Core" label="Core">
+This guide uses Docker to run Pomerium Zero and Grafana services in containers.
 
 To complete this guide, you need:
 
-- [Docker](https://www.docker.com/) and [Docker Compose](https://docs.docker.com/compose/install/)
-- A pre-configured [identity provider](/docs/identity-providers) (IdP)
+- A [Pomerium Zero](https://console.pomerium.app/create-account) account
+- [Docker](https://docs.docker.com/install/) and [Docker Compose](https://docs.docker.com/compose/install/)
 
-See the Pomerium [quick-start] guide to run Pomerium in a containerized Docker environment.
+## Configure Pomerium Zero
 
-:::tip **Note**
+### Create a Grafana route
 
-This guide uses [GitHub](/docs/identity-providers/github) as the pre-configured IdP, but you can use any supported IdP.
+First, build a route that points to the Grafana service.
+
+In the Zero Console:
+
+1. Create a **Route** and name it
+2. In **From**, select `https://` and enter the external URL
+3. In **To**, enter the internal URL
+4. In the **Policies** field, select `Any Authenticated User` ![Creating a Grafana route in the Zero Console](./img/grafana/grafana-create-route.gif)
+
+Instruct Pomerium to forward the user's JWT as a cryptographically signed HTTP header with the [Pass Identity Headers](/docs/reference/routes/pass-identity-headers-per-route) setting.
+
+1. Select the **Headers** tab
+1. Apply **Pass Identity Headers**
+1. Save the route changes
+
+   ![Configuring the headers settings for the Grafana route in the Zero Console](./img/grafana/pass-identity-headers.png)
+
+:::note
+
+See the [**Sign in to Grafana**](https://grafana.com/docs/grafana/latest/setup-grafana/sign-in-to-grafana/) docs for steps on accessing Grafana with initial admin settings. You may want to sign in as the admin user to Grafana before configuring Pomerium to forward the JWT. This way, you can add yourself as a user and assign yourself `Admin` privileges.
 
 :::
 
-### Build a Grafana route
+## Configure Grafana
 
-In your `config.yaml` file, add the following Grafana route:
+Add the Grafana configuration below to the Docker Compose file running Pomerium Zero. The Grafana environment variables configure Grafana to accept JWTs from the incoming request and what claims to look for.
 
-```yaml title="config.yaml"
-- from: https://grafana.localhost.pomerium.io
-  to: http://grafana:3000
-  host_rewrite_header: true
-  pass_identity_headers: true
-  policy:
-    - allow:
-        or:
-          - email:
-              is: user@example.com
-```
-
-In the code above:
-
-- [`host_rewrite_header`](/docs/reference/routes/headers#host-rewrite) rewrites the `Host:` header to match an incoming header value. Without this option enabled, Grafana will throw a `403: Origin not allowed` error after login when you attempt to add users.
-
-This behavior is due to a CSRF check added in Grafana v8.3.5 (this guide uses v9.2.4) that requires the [Origin request header](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Origin) to match the server origin.
-
-See this [GitHub issue](https://github.com/grafana/grafana/issues/45117#issuecomment-1033842787) for more information.
-
-### Configure Grafana to use JWT authentication
-
-Configuring Grafana to use JWT authentication makes it possible for Grafana to accept identity claims sent upstream by Pomerium.
-
-Since you're not using a `grafana.ini` file to configure your Grafana instance, you can override Grafana's configuration using environment variables. See the [Grafana docs](https://grafana.com/docs/grafana/latest/setup-grafana/configure-grafana/#override-configuration-with-environment-variables) for more information.
-
-In your `docker-compose.yaml` file, add the Grafana Docker image as a service:
-
-```yaml title="docker-compose.yaml"
+```yaml title="docker-compose.yaml" {14,22,27} showLineNumbers
+pomerium:
+  image: pomerium/pomerium:v0.25.1
+  ports:
+    - 443:443
+  restart: always
+  environment:
+    POMERIUM_ZERO_TOKEN: <CLUSTER_TOKEN>
+    XDG_CACHE_HOME: /var/cache
+  volumes:
+    - pomerium-cache:/var/cache
+  networks:
+    main:
+      aliases:
+        - authenticate.<CLUSTER_STARTER_SUBDOMAIN>.pomerium.app
 grafana:
   image: grafana/grafana:latest
   ports:
     - 3000:3000
+  networks:
+    main: {}
   environment:
-    - GF_AUTH_SIGNOUT_REDIRECT_URL=https://grafana.localhost.pomerium.io/.pomerium/sign_out
+    - GF_AUTH_SIGNOUT_REDIRECT_URL=https://grafana.<CLUSTER_STARTER_SUBDOMAIN>.pomerium.app/.pomerium/sign_out
     - GF_AUTH_JWT_ENABLED=true
     - GF_AUTH_JWT_HEADER_NAME=X-Pomerium-Jwt-Assertion
-    - GF_AUTH_JWT_EMAIL_CLAIM=email
-    - GF_AUTH_JWT_JWK_SET_URL=https://grafana.localhost.pomerium.io/.well-known/pomerium/jwks.json
+    - GF_AUTH_JWT_EMAIL_CLAIM=sub
+    - GF_AUTH_JWT_USERNAME_CLAIM=sub
+    - GF_AUTH_JWT_JWK_SET_URL=https://authenticate.<CLUSTER_STARTER_SUBDOMAIN>.pomerium.app/.well-known/pomerium/jwks.json
     - GF_AUTH_JWT_CACHE_TTL=60m
+    - GF_AUTH_JWT_AUTO_SIGN_UP=true
   volumes:
     - ./grafana-storage:/var/lib/grafana
 ```
 
-Here's what the environment variables do:
+In lines `14`, `22`, and `27`, replace `CLUSTER_STARTER_SUBDOMAIN` with your own.
 
-- `GF_AUTH_SIGNOUT_REDIRECT_URL`: signs users out of Pomerium when they sign out of Grafana
-- `GF_AUTH_JWT_ENABLED`: enables JWT authentication (Grafana disables it by default)
-- `GF_AUTH_JWT_HEADER_NAME`: tells Grafana which HTTP header to look at for the JWT (see [Identity Verification] for more information)
-- `GF_AUTH_JWT_EMAIL_CLAIM`: associates the `email_claim` in the JWT with the email of the Grafana user
-- `GF_AUTH_JWT_JWK_SET_URL`: defines the URL with the signing key to validate the JWT
-- `GF_AUTH_JWT_CACHE_TTL`: sets a 60-minute cache time for the token
+For example, if your starter domain is `curious-cat-9999.pomerium.app`, you would replace `CLUSTER_STARTER_DOMAIN` in lines `14`, `22`, and `27` with `curious-cat-9999`.
 
-Run `docker-compose up` and navigate to `https://grafana.localhost.pomerium.io`.
+:::info Use Custom Domain
 
-</TabItem>
-<TabItem value="Enterprise" label="Enterprise">
-
-To complete this guide, you need:
-
-- [Pomerium Core](/docs/core)
-- [Pomerium Enterprise](/docs/enterprise/quickstart#install-pomerium-enterprise)
-
-### Configure Pomerium Enterprise
-
-In your Console, create a policy:
-
-1. Enter a **Name** (e.g. 'Allow Authenticated Users')
-2. Select **Builder**, **ADD ALLOW BLOCK**
-3. Select **+** and add an **OR** operator
-4. Under the **Criteria** dropdown, select **Email**
-5. In the **Value** field, enter **user@example.com**
-
-Save your policy.
-
-![Create a policy](img/grafana/grafana-create-policy.png)
-
-Build a route:
-
-1. Enter a **Name** (e.g. 'Grafana')
-2. In the **From** field, enter the externally accessible URL (e.g. `https://grafana.localhost.pomerium.io`)
-3. In the **To** field, enter the host name (e.g. `http://grafana:3000`)
-4. Under **Policies**, select **Allow Authenticated Users**
-5. Select **Pass Identity Headers**
-
-Configure your route to [rewrite the `Host:`](/docs/reference/routes/headers#host-rewrite) header:
-
-1. Under the **Create route** sidebar, select **Headers**
-2. In the **Host Header** field, select **Rewrite to Header** from the dropdown menu
-3. In the **Host Rewrite to Header** field, enter `grafana.localhost.pomerium.io`
-
-![Rewrite host header](img/grafana/grafana-set-headers.png)
-
-This **Host Rewrite** option rewrites the `Host:` header to match an incoming header value. Without this option enabled, Grafana will throw a `403: Origin not allowed` error after login when you attempt to add users.
-
-This behavior is due to a CSRF check added in Grafana v8.3.5 (this guide uses v9.2.4) that requires the [Origin request header](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Origin) to match the server origin.
-
-See this [GitHub issue](https://github.com/grafana/grafana/issues/45117#issuecomment-1033842787) for more information.
-
-Configure your route to [allow websockets](/docs/reference/routes/timeouts#websocket-connections):
-
-1. Under the route sidebar, select **Timeouts**
-2. Select **Allow Websockets**
-
-![Allow websocket connections](img/grafana/grafana-allow-websockets.png)
-
-Save your route.
-
-### Configure Grafana to use JWT authentication
-
-You need to configure Grafana to enable JWT authentication. This makes it possible for Grafana to accept identity claims sent upstream by Pomerium.
-
-In your `grafana.ini` file, make the following changes:
-
-```yaml title="grafana.ini"
-[auth]
-signout_redirect_url = https://grafana.localhost.pomerium.io/.pomerium/sign_out
-[auth.jwt]
-enabled = true
-header_name = X-Pomerium-Jwt-Assertion
-email_claim = email
-jwk_set_url = https://grafana.localhost.pomerium.io/.well-known/pomerium/jwks.json
-cache_ttl = 60m
-```
-
-Under `[auth]`:
-
-- `signout_redirect_url`: signs users out of Pomerium when they sign out of grafana
-- `signout_redirect_url`: signs users out of Pomerium when they sign out of Grafana
-
-Under `[auth.jwt]`:
-
-- `enabled = true`: enables JWT authentication (Grafana disables it by default)
-- `header_name = X-Pomerium-Jwt-Assertion`: tells Grafana which HTTP header to look for the JWT (see [Identity Verification] for more information) `header_name = X-Pomerium-Jwt-Assertion`: tells Grafana which HTTP header to look at for the JWT (see [Identity Verification] for more in formation)
-- `email_claim`: associates the `email_claim` in the JWT with the email of the Grafana user
-- `jwk_set_url`: defines the URL with the signing key to validate the JWT
-- `cache_ttl`: sets a 60-minute cache time for the token
-
-See the [Grafana docs](https://grafana.com/docs/grafana/latest/setup-grafana/configure-grafana/) for more information on custom and default configurations.
-
-</TabItem>
-
-</Tabs>
-
-### Add users to Grafana
-
-At this stage, Grafana is configured to use the `email` claim in the JWT to associate an incoming connection with a user (you will configure Pomerium to include identity information via the JWT in the next section).
-
-But, the user first must exist in Grafana to be associated. Otherwise, you will see the following error in the browser after authenticating:
-
-```json
-{"message": "User not found"}
-```
-
-To avoid this error, create a user with administrator privileges. (If you plan on administering Grafana through a direct connection to the service, skip this section.)
-
-To add users without requiring them to accept an invitation:
-
-1. Log in to Grafana directly as an admin user at `https://grafana.localhost.pomerium.io` (if this is your first time signing up for Grafana, `admin` is the [default username and password](https://grafana.com/docs/grafana/v9.0/setup-grafana/configure-grafana/#security))
-
-1. Select **Server Admin**, **Users**
-
-   ![The users option under the server admin menu](img/grafana-server-admin-users.png)
-
-   :::caution
-
-   This is distinct from the **Users** option under the **Configuration** cog wheel, which will only finalize a new user when they accept an invite via email or link.
-
-   :::
-
-1. Select **New user** to create a new user. Make sure that the email address matches the one provided by Pomerium via your IdP.
-
-   :::tip
-
-   You can access the special endpoint `/.pomerium` from any Pomerium route to view the data provided by Pomerium in the JWT.
-
-   :::
-
-After creating a new user in Grafana, that user should be logged in automatically when they access Grafana from the Pomerium route (after first authenticating with your IdP, of course).
-
-### Manage access at scale
-
-:::tip Note
-
-Ensure that Grafana is up to date to take advantage of `auto_sign_up`, as it is only available for JWT as of version 8.4.0.
+You can add your own custom domain to replace the generated starter domain assigned to your cluster. See the [**Custom Domains**](/docs/capabilities/custom-domains) page for specific instructions.
 
 :::
 
-The steps outlined above work to confirm the configuration for small teams, but adding users individually and manually does not scale for larger organizations. To add users to Grafana at scale, you can use the Grafana's `auto_sign_up` configuration to auto sign up users as they log in:
-
-```ini
-[auth]
-signout_redirect_url = https://grafana.localhost.pomerium.io/.pomerium/sign_out
-[auth.jwt]
-enabled = true
-header_name = X-Pomerium-Jwt-Assertion
-email_claim = email
-jwk_set_url = https://grafana.localhost.pomerium.io/.well-known/pomerium/jwks.json
-cache_ttl = 60m
-username_claim = sub ;sets the username to the value of the "sub" claim
-auto_sign_up = true ;sets the login to automatically create a new user if one doesn't exist
-[users]
-auto_assign_org = true ;auto assigns the user to the existing default organization
-auto_assign_org_role = Editor ;auto assigns the user the "Editor" role
-```
-
-Note that the value of `auto_assign_org_role` could also be "Admin" or "Viewer".
-
-This will automatically create a user with their email and username populated.
-
-:::tip
-
-Pomerium now autopopulates the JWT `name` claim by default with the value provided by the identity provider.
-
-You don't need to pass the `name` claim as a custom header with the `jwt_claims_headers` setting as was previously instructed in this guide.
-
-:::
-
-This configuration will allow seamless authentication and authorization without any additional toil for your team.
-
-:::tip
-
-**For Google users:** When using Google as an IdP, the user field is populated by a numeric value that you cannot configure. Note that Grafana can accept the `name` field as a username, including spaces:
-
-```abnf
-username_claim = name
-```
-
-:::
-
-## Troubleshooting
-
-### Local Signing Key
-
-In instances where Grafana cannot get the signing key for the JWTs from the Pomerium authenticate service, you can place a copy of the key locally.
-
-For example, wildcard certificates signed by LetsEncrypt may still be cross-signed by the [expired DST R3 root]. While many browsers still trust these certificates (as long as they are also signed by a valid root), some applications reject them, including Grafana:
-
-```log
-logger=context error=Get "https://grafana.localhost.pomerium.io/.well-known/pomerium/jwks.json": x509: certificate signed by unknown authority
-```
-
-To circumvent this issue, you can use `curl` or `wget` to download the signing key locally:
-
-<Tabs>
-<TabItem value="curl" label="curl">
-
-From the Grafana host:
+Now, apply your changeset. Then, run the following command to start Docker:
 
 ```bash
-curl https://grafana.localhost.pomerium.io/.well-known/pomerium/jwks.json > /etc/grafana/jwks.json
+docker compose up
 ```
 
-</TabItem>
-<TabItem value="wget" label="wget">
+## Access Grafana with JWT Authentication
 
-From the Grafana host:
+In your browser, access the external route you built that points to Grafana.
 
-```bash
-wget -O /etc/grafana/jwks.json https://grafana.localhost.pomerium.io/.well-known/pomerium/jwks.json
-```
+Grafana will automatically sign you in with your JWT. You can verify the JWT worked by going to the `/profile` page and looking at your profile preferences:
 
-</TabItem>
-</Tabs>
+![Name, Email, and Username fields that say Synced via JWT in the user's profile page in Grafana](./img/grafana/pz-grafana-user-preferences.png)
 
-Edit `grafana.ini` and add the `jwk_set_file` key to provide it to Grafana:
-
-```ini
-[auth.jwt]
-enabled = true
-header_name = X-Pomerium-Jwt-Assertion
-email_claim = email
-jwk_set_file = /etc/grafana/jwks.json
-cache_ttl = 60m
-```
-
-[`authenticate_service_url`]: /docs/reference/authenticate-service-url
-[expired dst r3 root]: https://letsencrypt.org/docs/dst-root-ca-x3-expiration-september-2021/
-[global users]: https://grafana.com/docs/grafana/latest/http_api/admin/#global-users
-[ingress-cert-manager]: /docs/k8s/ingress.md#cert-manager-integration
-[jwt authentication]: https://grafana.com/docs/grafana/v9.0/setup-grafana/configure-security/configure-authentication/jwt/
-[identity verification]: /docs/capabilities/getting-users-identity
-[quick-start]: /docs/quickstart
+Success!
