@@ -42,7 +42,7 @@ curl --location 'https://console.pomerium.app/api/v0/token' \
 
 If your request was successful, you'll get a response with a temporary ID token:
 
-```json showLineNumbers
+```json
 {
   "expiresInSeconds": "3600",
   "idToken": "<ID-TOKEN>"
@@ -68,7 +68,7 @@ curl --location 'https://console.pomerium.app/api/v0/organizations' \
 
 If your request was successful, you'll get a response with your organization ID and other related metadata:
 
-```json showLineNumbers {4}
+```json {4}
 [
   {
     "createdAt": "2024-01-17T20:07:47.794672Z",
@@ -98,7 +98,7 @@ curl --location 'https://console.pomerium.app/api/v0/organizations/{organization
 
 You'll get a response similar to the example below:
 
-```json showLineNumbers {11}
+```json {11}
 [
   {
     "autoDetectIpAddress": "47.35.228.147",
@@ -156,7 +156,7 @@ In the request example above, setting the `"enforced"` field to `false` means th
 
 If your request was successful, you should receive a response similar to the one below. Notice that the `"routes"` field is empty because this policy hasn't been assigned yet:
 
-```json showLineNumbers {22}
+```json {22}
 {
   "createdAt": "2024-05-30T17:04:33.460441Z",
   "description": "Only allow users with a matching email address.",
