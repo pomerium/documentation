@@ -85,9 +85,11 @@ If your request was successful, you'll get a response with your organization ID 
 
 Copy your organization ID.
 
-### Get cluster ID
+### Get namespace ID
 
-To make changes to a cluster's configuration, you need its cluster ID. To get the cluster ID, send a `GET` request to the `/clusters` endpoint, replacing `{organizationId}` with your own:
+A cluster is assigned its own namespace. To make changes to your cluster's configuration, you need your cluster's namespace ID. 
+
+To get the namespace ID, send a `GET` request to the `/clusters` endpoint, replacing `{organizationId}` with your own:
 
 ```curl
 curl --location 'https://console.pomerium.app/api/v0/organizations/{organizationId}/clusters' \
@@ -96,7 +98,7 @@ curl --location 'https://console.pomerium.app/api/v0/organizations/{organization
 
 You'll get a response similar to the example below:
 
-```json showLineNumbers {8}
+```json showLineNumbers {11}
 [
   {
     "autoDetectIpAddress": "47.35.228.147",
@@ -113,7 +115,7 @@ You'll get a response similar to the example below:
 ]
 ```
 
-Copy the cluster ID.
+Copy the namespace ID.
 
 ### Build a policy
 
