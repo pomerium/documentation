@@ -1,5 +1,4 @@
 ```yaml title="docker-compose.md"
-version: "3"
 services:
   pomerium:
     image: cr.pomerium.com/pomerium/pomerium:latest

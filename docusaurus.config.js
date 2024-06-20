@@ -68,6 +68,17 @@ const config = {
         },
       },
     ],
+    [
+      'redocusaurus',
+      {
+        specs: [
+          {
+            spec: 'https://console.pomerium.app/openapi.yaml',
+            route: '/docs/api/',
+          },
+        ],
+      },
+    ],
   ],
 
   themeConfig: {
@@ -104,6 +115,23 @@ const config = {
           to: '/docs/reference/',
         },
         {
+          type: 'dropdown',
+          position: 'right',
+          label: 'APIs',
+          items: [
+            {
+              docId: 'docs/api',
+              label: 'Zero API',
+              to: '/docs/api/',
+            },
+            {
+              docId: 'docs/capabilities/enterprise-api',
+              label: 'Enterprise API',
+              to: 'docs/capabilities/enterprise-api',
+            },
+          ],
+        },
+        {
           type: 'docSidebar',
           sidebarId: 'guides',
           position: 'right',
@@ -117,7 +145,7 @@ const config = {
         },
         {
           type: 'dropdown',
-          label: 'v0.26',
+          label: 'vNext',
           position: 'right',
           items: [
             {
