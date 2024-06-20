@@ -158,7 +158,7 @@ In a later tutorial, you will configure Pomerium and the Verify service to succe
 
 Great job! If you got this far, then you have everything you need to run Pomerium and continue on with our guided tutorials.
 
-In the next section, we will dive deeper into [**Routes**](/examples/fundamentals/build-routes) with Pomerium.
+In the next section, we will dive deeper into [**Routes**](/docs/courses/fundamentals/build-routes) with Pomerium.
 
 ### Configuration file state:
 

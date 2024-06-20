@@ -23,14 +23,14 @@ In this tutorial, you’ll add production certificates with Autocert to your Pom
 
 Make sure you’ve completed the following tutorials:
 
-- [**Get Started**](/examples/fundamentals/get-started)
-- [**Build a Simple Route**](/examples/fundamentals/build-routes)
-- [**Build a Simple Policy**](/examples/fundamentals/build-policies)
-- [**Identity Verification with JWTs**](/examples/fundamentals/jwt-verification)
-- [**Build Advanced Policies**](/examples/fundamentals/advanced-policies)
-- [**Build Advanced Routes**](/examples/fundamentals/advanced-routes)
-- [**Build TCP Routes**](/examples/fundamentals/tcp-routes)
-- [**Self-Host Pomerium**](/examples/fundamentals/self-hosted-pomerium)
+- [**Get Started**](/docs/courses/fundamentals/get-started)
+- [**Build a Simple Route**](/docs/courses/fundamentals/build-routes)
+- [**Build a Simple Policy**](/docs/courses/fundamentals/build-policies)
+- [**Identity Verification with JWTs**](/docs/courses/fundamentals/jwt-verification)
+- [**Build Advanced Policies**](/docs/courses/fundamentals/advanced-policies)
+- [**Build Advanced Routes**](/docs/courses/fundamentals/advanced-routes)
+- [**Build TCP Routes**](/docs/courses/fundamentals/tcp-routes)
+- [**Self-Host Pomerium**](/docs/courses/fundamentals/self-hosted-pomerium)
 
 Each tutorial builds on the same configuration files. In this tutorial, you’ll learn how to enable Autocert to manage TLS certificate automation for your upstream services.
 

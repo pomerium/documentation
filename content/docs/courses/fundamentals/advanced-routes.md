@@ -16,11 +16,11 @@ Now that you’ve built advanced policies, let’s build on your routes a bit mo
 
 Make sure you’ve completed the following tutorials:
 
-- [**Get Started**](/examples/fundamentals/get-started)
-- [**Build a Simple Route**](/examples/fundamentals/build-routes)
-- [**Build a Simple Policy**](/examples/fundamentals/build-policies)
-- [**Identity Verification with JWTs**](/examples/fundamentals/jwt-verification)
-- [**Build Advanced Policies**](/examples/fundamentals/advanced-policies)
+- [**Get Started**](/docs/courses/fundamentals/get-started)
+- [**Build a Simple Route**](/docs/courses/fundamentals/build-routes)
+- [**Build a Simple Policy**](/docs/courses/fundamentals/build-policies)
+- [**Identity Verification with JWTs**](/docs/courses/fundamentals/jwt-verification)
+- [**Build Advanced Policies**](/docs/courses/fundamentals/advanced-policies)
 
 Each tutorial builds on the same configuration files. In this tutorial, you’ll build new routes with some of Pomerium’s route-level settings.
 
