@@ -1,7 +1,7 @@
 ---
 # cSpell:ignore WORKDIR, workdir, nodeserver
 
-id: advanced-routes
+id: zero-advanced-routes
 title: Advanced Routes
 sidebar_label: 05. Advanced Routes
 sidebar_position: 5
@@ -15,10 +15,10 @@ In this guide, you'll build advanced routes by exploring some of the route setti
 
 Make sure you’ve completed the following guides:
 
-- [**Build a Simple Route**](/docs/courses/zero-fundamentals/build-routes)
-- [**Build a Simple Policy**](/docs/courses/zero-fundamentals/build-policies)
-- [**Single Sign-on with JWTs**](/docs/courses/zero-fundamentals/single-sign-on)
-- [**Build Advanced Policies**](/docs/courses/zero-fundamentals/advanced-policies)
+- [**Build a Simple Route**](/docs/courses/fundamentals/zero-build-routes)
+- [**Build a Simple Policy**](/docs/courses/fundamentals/zero-build-policies)
+- [**Single Sign-on with JWTs**](/docs/courses/fundamentals/zero-single-sign-on)
+- [**Build Advanced Policies**](/docs/courses/fundamentals/zero-advanced-policies)
 
 Each tutorial builds on the same configuration files. In this tutorial, you’ll build new routes with some of Pomerium’s route-level settings.
 
@@ -62,7 +62,7 @@ Save your route and apply your changeset.
 
 ### Pass identity headers (per route)
 
-[Pass Identity Headers](/docs/reference/routes/pass-identity-headers-per-route) is a route-level setting that forwards the user's JWT to the upstream application in a signed HTTP header. The HTTP header must use the (case insensitive) `x-pomerium-jwt-assertion` format. You configured this setting in the [previous guide](/docs/courses/zero-fundamentals/single-sign-on), but let's see how it looks as a request header.
+[Pass Identity Headers](/docs/reference/routes/pass-identity-headers-per-route) is a route-level setting that forwards the user's JWT to the upstream application in a signed HTTP header. The HTTP header must use the (case insensitive) `x-pomerium-jwt-assertion` format. You configured this setting in the [previous guide](docs/courses/fundamentals/zero-single-sign-on), but let's see how it looks as a request header.
 
 In the Zero Console:
 
@@ -79,7 +79,7 @@ Access the HTTPBin route and send a request. To send a request, on the HTTPBin p
 
 In the **Response body** field, you'll see the JWT assertion header:
 
-![Inspecting the HTTP request headers in HTTPBin to view the JWT assertion header](./img/advanced-routes/jwt-assertion-header.png)
+![Inspecting the HTTP request headers in HTTPBin to view the JWT assertion header](./img/zero-advanced-routes/jwt-assertion-header.png)
 
 :::info JWTs and SDKs
 
@@ -114,11 +114,11 @@ To add JWT claim headers in the Zero Console:
 
    For example:
 
-   ![Entering custom JWT claim headers in the Zero Console](./img/advanced-routes/jwt-claim-headers.png)
+   ![Entering custom JWT claim headers in the Zero Console](./img/zero-advanced-routes/jwt-claim-headers.png)
 
 After you save your changes, apply your changeset, and access your HTTPBin route, inspect the request. You'll see these additional, unsigned HTTP headers added to the response body:
 
-![Reviewing the JWT claim headers added to the route](./img/advanced-routes/jwt-claims-response.png)
+![Reviewing the JWT claim headers added to the route](./img/zero-advanced-routes/jwt-claims-response.png)
 
 ### Set and remove request headers
 
@@ -132,11 +132,11 @@ Now, configure [**Set Request Headers**](/docs/reference/routes/headers#set-requ
 
 1. In the **Remove Request Headers** field, enter `X-POMERIUM-CLAIM-NAME` and `X-POMERIUM-CLAIM-USER`.
 
-   ![Setting and removing HTTP request headers in the Zero Console](./img/advanced-routes/set-and-remove-request-headers.png)
+   ![Setting and removing HTTP request headers in the Zero Console](./img/zero-advanced-routes/set-and-remove-request-headers.png)
 
 Apply your changeset and test the request again. You'll notice that the request header was added to the request, and the specified JWT claim headers were removed:
 
-    ![Reviewing the response body in HTTPBin after setting and removing HTTP headers](./img/advanced-routes/set-and-remove-headers-response-body.png)
+    ![Reviewing the response body in HTTPBin after setting and removing HTTP headers](./img/zero-advanced-routes/set-and-remove-headers-response-body.png)
 
 ### Rewrite Host header to a literal value
 
@@ -148,7 +148,7 @@ Now, go back to the **Headers** tab for the HTTPBin route. In the **Host Rewrite
 
 For example, `httpbin.righteous-gemstone-1734.pomerium.app`
 
-![Configuring Pomerium to rewrite the Host header to a literal value](./img/advanced-routes/host-rewrite-to-literal-value.png)
+![Configuring Pomerium to rewrite the Host header to a literal value](./img/zero-advanced-routes/host-rewrite-to-literal-value.png)
 
 After applying your changeset, check the request headers in HTTPBin again. You'll notice Pomerium rewrites the Host header to the domain you entered in the Zero Console:
 
@@ -166,13 +166,13 @@ To configure a redirect in the Zero Console:
 1. Turn on **HTTPS Redirect**
 1. In the **Host Redirect** field, enter a URL you want to redirect requests to, and remove the scheme
 
-   For example: ![Adding a redirect in the Zero Console](./img/advanced-routes/add-redirects-in-zero-console.png)
+   For example: ![Adding a redirect in the Zero Console](./img/zero-advanced-routes/add-redirects-in-zero-console.png)
 
 After you save your route changes, you'll notice in the **General** tab that the **To** URL has been removed.
 
 If you access your route in the browser, you'll notice it redirects you to the specified URL:
 
-![Demonstrates how Pomerium redirects user to the redirect URL](./img/advanced-routes/pz-redirect.gif)
+![Demonstrates how Pomerium redirects user to the redirect URL](./img/zero-advanced-routes/pz-redirect.gif)
 
 ### Direct Response
 
@@ -236,7 +236,7 @@ node index.js
 
 Navigate to `localhost:5001` to see if your server serves the `Hello World!` message. Similarly, if you go to `localhost:5001/admin`, you should see `This is an admin only page`.
 
-![Testing the Node HTTP server's admin and public endpoint responses](./img/advanced-routes/server-endpoints.gif)
+![Testing the Node HTTP server's admin and public endpoint responses](./img/zero-advanced-routes/server-endpoints.gif)
 
 #### Dockerize Node server
 
@@ -291,7 +291,7 @@ nodeserver:
 
 In the Zero Console, add a route and point it to `nodeserver`. For example:
 
-    ![Adding the nodeserver route in the Zero Console](./img/advanced-routes/node-server-route.png)
+    ![Adding the nodeserver route in the Zero Console](./img/zero-advanced-routes/node-server-route.png)
 
 Save your changes and apply your changeset. Then, test your route.
 
@@ -309,7 +309,7 @@ In the Zero Console:
 
 If you append the `/admin` endpoint to your route, Pomerium should direct you to the `/admin` only page. If you don't append `/admin`, you will see a `404` error:
 
-![Adding the /admin prefix to the Node server route](./img/advanced-routes/nodeserver-prefix-setting.gif)
+![Adding the /admin prefix to the Node server route](./img/zero-advanced-routes/nodeserver-prefix-setting.gif)
 
 ### Path Rewriting: Prefix Rewrite
 
@@ -324,7 +324,7 @@ If the incoming request’s prefix matches the value of `prefix` (`/admin`), Pom
 
 Now, if you navigate to the `/admin` endpoint, Pomerium will redirect you to the `/` page. If you don’t include the `/admin` prefix, the request will `404`.
 
-![Adding the / prefix rewrite setting to the Node server route](./img/advanced-routes/nodeserver-prefix-rewrite-setting.gif)
+![Adding the / prefix rewrite setting to the Node server route](./img/zero-advanced-routes/nodeserver-prefix-rewrite-setting.gif)
 
 Great job! You've configured several advanced routes in Pomerium Zero.
 
@@ -332,7 +332,7 @@ Great job! You've configured several advanced routes in Pomerium Zero.
 
 In the next guide, you'll secure TCP routes and access an SSH service.
 
-Go to [TCP Routes](/docs/courses/zero-fundamentals/tcp-routes).
+Go to [TCP Routes](docs/courses/fundamentals/zero-tcp-routes).
 
 #### Configuration file state
 
