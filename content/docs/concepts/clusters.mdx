@@ -24,7 +24,7 @@ When you install Pomerium Zero, you get your own **Cluster**. A cluster consists
 
 A cluster model reduces the complexity of managing Pomerium: All of a cluster's configuration, including settings, routes, policies, and certificates, are managed from a central control plane hosted in the Pomerium Zero cloud. This allows you to manage multiple isolated Pomerium Core deployments, each with its own configuration.
 
-Configuration changes applied in the remote control plane are communicated over a streaming connection to your local cluster. Each cluster is connected to its own storage backend, which synchronizes state across replicas.
+Configuration changes applied in the hosted control plane are communicated over a streaming connection to your local cluster. Each cluster is connected to its own storage backend, which synchronizes state across replicas.
 
     ![A diagram depicting how clusters communicate with the Zero Console](./img/clusters/clusters-architecture.png)
 
@@ -52,7 +52,7 @@ This model ensures that:
 
 ### Enhanced data privacy
 
-Pomerium cannot and does not monitor your organization's traffic or collect private user data. However, Pomerium does need to store configuration details required to maintain the hosted control plane.
+Pomerium can't monitor your organization's traffic or collect private user data. However, Pomerium does need to store configuration details required to maintain the hosted control plane.
 
 Pomerium also stores deployment and configuration details required to control access to your services, such as routes, policies, TLS certificates, and sensitive encrypted data when appropriate.
 
@@ -210,9 +210,9 @@ For example: `voracious-ape-1578.pomerium.app`
 
 The starter domain comes with its own DNS records and TLS certificates so you can quickly test Pomerium Zero before adding your own custom domain.
 
-:::info
+:::info Add Custom Domain
 
-See the **Custom Domains** page for more information on how to add custom domains to a cluster.
+See the [**Custom Domains**](/docs/capabilities/custom-domains) page for more information on how to add custom domains to a cluster.
 
 :::
 
@@ -241,7 +241,7 @@ To learn more about routing, policies, and certificates in Pomerium, see the fol
 
 - [**Routing**](/docs/capabilities/routing)
 - [**Policy Language**](/docs/capabilities/ppl)
-- [**Certificates**](/docs/concepts/certificates)
+- [**Certificates**](/docs/reference/certificates)
 
 :::
 
@@ -253,7 +253,7 @@ By default, Pomerium uses an in-memory storage backend to synchronize a cluster'
 
 To avoid service outages, we recommend that you deploy a PostgreSQL database to persist your cluster's configuration state. Since all replicas share the same storage connection, the database will persist cluster state if a replica restarts due to a service outage.
 
-To configure a database in the Zero Console:
+To configure a database connection in Pomerium Zero:
 
 1. Select **Settings**
 1. Go to the **General** tab
