@@ -44,9 +44,19 @@ Here are some of the expectations we have of contributors:
 
 :::
 
+### Versioning
+
+Pomerium uses [Semantic Versioning](https://semver.org/). In practice, this means for a given version number **vMAJOR**.**MINOR**.**PATCH** (for example, `v0.1.0`):
+
+- **MAJOR** indicates an incompatible API change
+- **MINOR** indicates a new, backwards-compatible functionality
+- **PATCH** indicates a backwards-compatible bug fix
+
+As Pomerium is still pre-`v1.0.0`, you should expect breaking changes between releases.
+
 ### Development
 
-See [Building Pomerium From Source](/docs/deploy/core/from-source) for information on getting started developing for Pomerium.
+See [Building Pomerium From Source](/docs/core/from-source) for information on getting started developing for Pomerium.
 
 To run the unit tests locally:
 
@@ -159,4 +169,4 @@ After you've pushed your PR, a member of the documentation team will review your
 [verify]: https://verify.pomerium.com/
 [identity provider]: /docs/identity-providers
 [make]: https://en.wikipedia.org/wiki/Make_(software)
-[tls certificates]: /docs/concepts/certificates
+[tls certificates]: /docs/guides/certificates

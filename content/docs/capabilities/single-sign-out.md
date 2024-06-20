@@ -65,7 +65,7 @@ Note, a CSRF token is required for the single sign out endpoint (despite support
 
 ### Single sign-out example with Pomerium
 
-The example below demonstrates how to correctly implement SSO using the [JavaScript SDK](/docs/guides/js-sdk):
+The example below demonstrates how to correctly implement SSO using the [JavaScript SDK](/docs/capabilities/jwt-verification):
 
 ```js
 export const signOut = (redirectUrl) => {
