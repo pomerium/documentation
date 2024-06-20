@@ -35,7 +35,7 @@ We’ll configure these files together in the next section.
 
 :::info What is **Pomerium Core**?
 
-[**Pomerium Core**](/docs/deploy/core) is our open-source, identity-aware reverse gateway. Pomerium consists of **4 service** identities (that can be deployed together or independently), including the:
+[**Pomerium Core**](/docs/core) is our open-source, identity-aware reverse gateway. Pomerium consists of **4 service** identities (that can be deployed together or independently), including the:
 
 - **Proxy** service — the red-linen rope
 - **Authentication** service — the bouncer checking the user's ID to see if they are who they say they are
@@ -107,7 +107,6 @@ Create a YAML file called `docker-compose.yaml`.
 Add the following configuration settings to `docker-compose.yaml`:
 
 ```yaml title="docker-compose.yaml"
-version: '3'
 services:
   pomerium:
     image: cr.pomerium.com/pomerium/pomerium:latest
@@ -181,7 +180,6 @@ routes:
 Docker Compose:
 
 ```yaml
-version: '3'
 services:
   pomerium:
     image: cr.pomerium.com/pomerium/pomerium:latest

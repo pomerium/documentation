@@ -68,7 +68,6 @@ routes:
 In your `docker-compose.yaml` file, add Grafana as a service:
 
 ```yaml title="docker-compose.yaml"
-version: '3'
 services:
   pomerium:
     image: cr.pomerium.com/pomerium/pomerium:latest
@@ -182,7 +181,6 @@ routes:
 Docker Compose:
 
 ```yaml
-version: '3'
 services:
   pomerium:
     image: cr.pomerium.com/pomerium/pomerium:latest

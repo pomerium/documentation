@@ -88,7 +88,6 @@ In this way, Pomerium applies a zero trust security model to the application lay
 For more information on how Pomerium implements JWT verification, see the following docs:
 
 - [JWT Verification](/docs/capabilities/jwt-verification)
-- [JavaScript SDK](/docs/guides/js-sdk)
 - [Identity Verification](/docs/capabilities/getting-users-identity)
 
 :::
@@ -172,7 +171,7 @@ In this example:
 - Rather than build authentication into the `API` server, both users and admin apps must access it with the sidecar.
 - The sidecar only accepts mTLS-authenticated connections from the proxy, so both apps connect to the API through Pomerium.
 
-[binaries]: /docs/deploy/core
+[binaries]: /docs/core
 [device identity verification]: /docs/concepts/device-identity.md
 [grafana]: /docs/guides/grafana
 [jwt verification]: /docs/guides/jwt-verification.md

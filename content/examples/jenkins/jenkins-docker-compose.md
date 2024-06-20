@@ -1,5 +1,4 @@
 ```yaml
-version: '3'
 networks:
  main: {}
 services:

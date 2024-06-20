@@ -2,7 +2,7 @@
 # cSpell:ignore windowscentral
 
 title: Pomerium TCP Clients
-sidebar_label: Clients (Desktop / CLI)
+sidebar_label: Desktop & CLI Clients
 lang: en-US
 keywords:
   [
@@ -18,26 +18,38 @@ sidebar_position: 0
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
-import LongLivedConnections from '@site/content/docs/admonitions/_long-lived-connections.mdx';
 
 # Pomerium Desktop and CLI Clients
 
-Pomerium is capable of creating secure connections to services like SSH, Redis, and more by creating a TCP tunnel to the service with a local client. This article describes configuring a route to accept TCP connections, and using either the CLI or GUI client to connect to it.
+This document describes how to use Pomerium's Desktop and CLI clients to connect to TCP routes in Pomerium.
 
-## Create a TCP Route
+:::info What's a TCP route?
 
-1. Specify this new Route as a TCP Route by prefixing `tcp+` in the **From** field, along with a port suffix.
+A TCP route is for use with upstream services that don't speak HTTP — for example SSH, Redis, or MySQL. With a TCP route, the entire connection is proxied to the upstream service, rather than each individual request separately.
 
-   The port is not used to connect to the Pomerium Proxy service from the internet; this will always be port 443 (unless otherwise defined in `config.yaml`). Rather, the port defined in **From** is part of the mapping to the individual route. In this way, you can create multiple routes that share a DNS entry, differentiated by the port to determine which route they use.
+In Pomerium, TCP routes are denoted with a `tcp+` prefix in the route's **From** URL.
 
-   For example, suppose we have a server called `augur` running behind Pomerium that has a MySQL server and also listens for SSH connections. We can create routes for `tcp+https://augur.example.com:22` and `tcp+https://augur.example.com:3306`.
+:::
 
-1. The **To** field uses `tcp://` as a protocol, and specifies the address and port the service listens on.
+## Create a TCP route
 
-The example below demonstrates a route to the SSH service on the host running the Pomerium Core or Pomerium Enterprise service:
+1. Specify this new Route as a TCP Route by prefixing `tcp+` in the **From** field, along with a port number
+1. Set the **To** field using `tcp://` as the scheme, along with the address and port that the upstream service is listening on
+
+The example below demonstrates a route to an SSH service on the host running Pomerium:
 
 <Tabs>
-<TabItem value="Pomerium Core" label="Pomerium Core">
+<TabItem value="pomerium-zero" label="Pomerium Zero">
+
+![Creating a TCP route in the Zero Console](./examples/img/desktop/zero-ssh-route-example.png)
+
+</TabItem>
+<TabItem value="pomerium-enterprise" label="Pomerium Enterprise">
+
+![Example TCP route for SSH](./img/tcp-ssh-route.png)
+
+</TabItem>
+<TabItem value="pomerium-core" label="Pomerium Core">
 
 ```yaml
 - from: tcp+https://ssh.localhost.pomerium.io:22
@@ -50,115 +62,59 @@ The example below demonstrates a route to the SSH service on the host running th
 ```
 
 </TabItem>
-<TabItem value="Pomerium Enterprise" label="Pomerium Enterprise">
-
-![Example TCP route for SSH](./img/tcp-ssh-route.png)
-
-</TabItem>
 </Tabs>
 
-See the "Configure Routes" section of [TCP Support](/docs/capabilities/tcp#configure-routes) for more detailed information on TCP routes.
+:::tip
 
-## TCP Client Software
+The port number in the route **From** URL is not used in the initial connection to Pomerium itself. This connection will still use port 443, unless you use a bastion host (see [**Advanced configuration**](#advanced-configuration) below).
 
-You can connect to this route with either the Pomerium CLI or Pomerium Desktop client.
+Rather, the port defined in **From** is part of the mapping to the individual route. In this way, you can create multiple routes that share a DNS entry, differentiated by the port to determine which route they use.
 
-<Tabs>
-
-<TabItem value="Pomerium Desktop" label="Pomerium Desktop">
-
-### Install
-
-Download the latest release from [GitHub](https://github.com/pomerium/desktop-client/releases).
-
-- **Windows**: The installer `.exe` file will install and open the Desktop Client. Right click on the system tray icon to interact with it.
-- **Linux**: We provide Linux binaries as `.AppImage` files, which can be executed in place or managed with a tool like [AppImageLauncher](https://github.com/TheAssassin/AppImageLauncher). Interact with the client from the system tray icon.
-- **macOS**: Open the `dmg` and move the binary to **Applications**. Interact with the client from the system tray icon.
-
-<details>
-<summary>Autostart Pomerium Desktop</summary>
-
-If you want Pomerium Desktop to start automatically when you log in to your computer, follow the steps below for your operating system.
-
-<Tabs>
-<TabItem value="windows" label="Windows">
-
-#### Autostart for all users
-
-Copy the shortcut for the Pomerium Desktop app into `C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Startup`.
-
-#### Autostart for your user
-
-Copy the shortcut for the Pomerium Desktop app into `C:\Users\username\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup`, replacing `username` with your username.
-
----
-
-Windows 11 also offers a GUI method, documented by [windowscentral.com](https://www.windowscentral.com/how-launch-apps-automatically-during-login-windows-11)
-
-</TabItem>
-<TabItem value="mac" label="MacOS">
-
-1. From **System Preferences**, select **Users & Groups**.
-
-1. Click **Login Items** near the top, then the **+** button towards the bottom of the window.
-
-1. Select Pomerium Desktop from the Applications folder.
-
-</TabItem>
-<TabItem value="gnome" label="Linux (Gnome)">
-
-The easiest way to autostart user applications in the Gnome Desktop Environment is by using the Tweaks application. Gnome documents this process well, so we won't replicate it here. See [Gnome's documentation](https://help.gnome.org/users/gnome-help/stable/shell-apps-auto-start.html) for more information.
-
-</TabItem>
-<TabItem value="kde" label="Linux (KDE)">
-
-KDE's documentation covers auto-starting applications well: see [System Settings/Autostart](https://userbase.kde.org/System_Settings/Autostart) from the KDE UsersBase Wiki for more information.
-
-</TabItem>
-</Tabs>
-
-</details>
-
-### Add a Connection
-
-![A new connection to an SSH gateway](examples/img/desktop/demo-new-connection.png)
-
-**Name**: A local name for the route.
-
-**Destination**: Matches the [From](/docs/reference/routes/from) value of the route, without the protocol. Always include the port specified in the route, and do not include the `https://` protocol.
-
-**Local Address**: The local address and port number from which to access the service locally. If left blank, the client will choose a random port to listen to on the loopback address.
-
-In most cases, you only need to specify the port (ex: `:2222`), and the client will listen on all available local addresses.
-
-**Tags**: Use tags to sort and organize your TCP routes.
-
-:::note Long-lived connections behavior
-
-<LongLivedConnections />
+For example, suppose we have a server called `augur` running behind Pomerium that has a MySQL server and also listens for SSH connections. We can create routes for `tcp+https://augur.example.com:22` and `tcp+https://augur.example.com:3306`.
 
 :::
 
----
+:::info
+
+To learn about building TCP routes, see:
+
+- [**Configure TCP Routes**](/docs/capabilities/tcp#configure-tcp-routes)
+- [**Advanced TCP usage**](/docs/capabilities/tcp#advanced-usage)
+
+:::
+
+## Access TCP routes with a client
+
+You can connect to this route with either the Pomerium CLI or Pomerium Desktop client.
+
+### Desktop client steps
+
+If you haven't, install [Pomerium Desktop](/docs/clients/pomerium-desktop).
+
+Then, add a connection by filling in the fields defined below:
+
+- **Name**: A local name for the route
+- **Destination**: Matches the [From](/docs/reference/routes/from) value of the route, without the protocol. Always include the port specified in the route, and do not include the `https://` protocol.
+- **Local Address**: The local address and port number from which to access the service locally. If left blank, the client will choose a random port to listen to on the loopback address.
+- **Tags**: Customizable tags to sort and organize TCP routes
+
+![Adding a new connection in the Pomerium Desktop client](./examples/img/desktop/desktop-new-connection.png)
 
 #### Advanced Settings
 
-**Pomerium URL**: The Pomerium Proxy service address. This is required if the **Destination URL** can't be resolved from DNS or a local `hosts` entry, or if the Proxy service uses a non-standard port.
+- **Pomerium URL**: The Pomerium Proxy service address. This is required if the **Destination URL** can't be resolved from DNS or a local `hosts` entry, or if the Proxy service uses a non-standard port.
+- **Disable TLS Verification**: Allows untrusted certificates from the Pomerium gateway
+- **Client Certificates**: For routes that enforce [mTLS](/docs/concepts/mutual-auth), you can **set a client certificate manually** or automatically [**search the OS certificate store**](/docs/capabilities/tcp#client-certificates) for a trusted certificate (note: macOS and Windows only).
 
-**Disable TLS Verification**: Allows untrusted certificates from the Pomerium gateway
+![Reviewing the Advanced Settings in the Pomerium Desktop client](./examples/img/desktop/advanced-settings.png)
 
-**Client Certificate & Certificate Key File or Text**: For routes that require client certificates for [mTLS](/docs/concepts/mutual-auth.md), you can provide the certificate and key file to the Pomerium Desktop client.
+### Pomerium CLI steps
 
-</TabItem>
-<TabItem value="Pomerium CLI" label="Pomerium CLI">
+If you haven't, install [Pomerium CLI](/docs/clients/pomerium-cli).
 
-### Install
+Then, connect to a TCP route:
 
-See the [Pomerium CLI](/docs/deploy/clients/pomerium-cli) page to learn how to install `pomerium-cli` in your environment.
-
-### Connect to a TCP Route
-
-1. Invoke `pomerium-cli` with the `tcp` option, and provide the route to your service (As defined in [`from`](/docs/reference/routes/from) in your Route specification).
+1. Invoke `pomerium-cli` with the `tcp` option, and provide the route to your service (as defined in [`from`](/docs/reference/routes/from) in your Route specification).
 
    ```shell-session
    $ pomerium-cli tcp ssh.localhost.pomerium.io:22
@@ -178,7 +134,7 @@ See the [Pomerium CLI](/docs/deploy/clients/pomerium-cli) page to learn how to i
    ssh 127.0.0.1 -p 2222
    ```
 
-1. When the connection starts, the cli will open your browser and direct you to your Identity Provider to authenticate your session. Once authenticated the connection will continue and you can close the browser window.
+1. When the connection starts, the CLI will open your browser and direct you to your Identity Provider to authenticate your session. Once authenticated, the connection will continue and you can close the browser window.
 
 1. In this example, since we are using SSH we can consolidate the TCP and SSH connections into a single command:
 
@@ -186,12 +142,16 @@ See the [Pomerium CLI](/docs/deploy/clients/pomerium-cli) page to learn how to i
    ssh -o ProxyCommand='pomerium-cli tcp --listen - %h:%p' ssh.localhost.pomerium.io
    ```
 
-</TabItem>
-</Tabs>
+:::info
 
-For more examples and detailed usage information, see [TCP Support](/docs/capabilities/tcp)
+For more examples and detailed usage information, see the following docs:
 
-## Advanced Configuration
+- [**TCP Reference**](/docs/capabilities/tcp/reference)
+- [**Securing TCP-based Services**](/docs/capabilities/tcp)
+
+:::
+
+## Advanced configuration
 
 If Pomerium is listening on a port other than `443` (set with the [`address` key](/docs/reference/address)), the full TCP URL can be specified with a bastion host:
 

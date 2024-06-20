@@ -32,7 +32,7 @@ Each tutorial builds on the same configuration files. In this tutorial, you’ll
 
 ## Background
 
-When replacing a traditional VPN, there are often non-HTTP based applications you still need to reach. Pomerium can provide the same type of protection to these services with [Pomerium CLI](/docs/deploy/clients/pomerium-cli), a client-side application to proxy TCP connections.
+When replacing a traditional VPN, there are often non-HTTP based applications you still need to reach. Pomerium can provide the same type of protection to these services with [Pomerium CLI](/docs/clients/pomerium-cli), a client-side application to proxy TCP connections.
 
 In this tutorial, you’ll secure a backend Redis service behind Pomerium and access it by connecting to it with a TCP route.
 
@@ -42,7 +42,7 @@ Pomerium’s CLI client comes with a `tcp` command that you can use to secure th
 
 To complete this tutorial, you need:
 
-- [Pomerium CLI](/docs/deploy/clients/pomerium-cli) to proxy TCP connections between end-users and services behind Pomerium
+- [Pomerium CLI](/docs/clients/pomerium-cli) to proxy TCP connections between end-users and services behind Pomerium
 - [mkcert](https://github.com/FiloSottile/mkcert) to generate a locally trusted Certificate Authority and certificates (for development purposes only)
 
 :::note
@@ -114,7 +114,6 @@ certificates:
 In your Docker Compose file, bind mount your wildcard certificates as a volume in the Pomerium service:
 
 ```yaml title="docker-compose.yaml"
-version: '3'
 services:
   pomerium:
     image: cr.pomerium.com/pomerium/pomerium:latest
