@@ -3,7 +3,7 @@
     "id": "access-log-fields",
     "title": "Access Log Fields",
     "path": "/access-log-fields",
-    "description": "Use Access Log Fields to display HTTP request logs from the proxy service.",
+    "description": "Displays HTTP request logs from the Pomerium Proxy service.",
     "short_description": "",
     "type": "string",
     "services": ["proxy"]
@@ -12,7 +12,7 @@
     "id": "authorize-log-fields",
     "title": "Authorize Log Fields",
     "path": "/authorize-log-fields",
-    "description": "Use Authorize Log Fields to display HTTP request logs from the authorize service.",
+    "description": "Displays HTTP request logs from the Pomerium Authorize service.",
     "short_description": "",
     "type": "string",
     "services": ["authorize"]
@@ -21,8 +21,8 @@
     "id": "address",
     "title": "Address",
     "path": "/address",
-    "description": "Address specifies the host and port to serve HTTP requests from.",
-    "short_description": "Specify host and port to serve HTTP requests from",
+    "description": "Specifies the Host and Port to serve HTTP requests from.",
+    "short_description": "",
     "type": "string",
     "services": ["proxy"]
   },
@@ -30,7 +30,7 @@
     "id": "authenticate-service-url",
     "path": "/authenticate-service-url",
     "title": "Authenticate Service URL",
-    "description": "Authenticate Service URL is the externally accessible URL for the authenticate service.",
+    "description": "The externally accessible URL for the authenticate service.",
     "short_description": "",
     "type": "URL",
     "services": ["proxy", "authenticate", "authorize"]
@@ -40,7 +40,7 @@
     "path": "/autocert#autocert",
     "title": "Autocert",
     "description": "Turning on autocert allows Pomerium to automatically retrieve, manage, and renew public facing TLS certificates from Lets Encrypt.",
-    "short_description": "Retrieve, manage, and renew public-facing TLS certificates from Let's Encrypt.",
+    "short_description": "",
     "services": ["authenticate", "proxy"],
     "type": "bool"
   },
@@ -49,7 +49,7 @@
     "title": "Autocert CA",
     "path": "/autocert#autocert-ca",
     "description": "Autocert CA is the directory URL of the ACME CA to use when requesting certificates.",
-    "short_description": "The directory URL of the ACME CA to use when requesting certificates.",
+    "short_description": "",
     "type": "",
     "services": ["authenticate", "proxy"]
   },
@@ -58,7 +58,7 @@
     "title": "Autocert Email",
     "path": "/autocert#autocert-email",
     "description": "Autocert Email is the email address to use when requesting certificates from an ACME CA.",
-    "short_description": "Use Autocert Email address when requesting certificates from an ACME CA.",
+    "short_description": "",
     "services": ["authenticate", "proxy"],
     "type": "email"
   },
@@ -67,7 +67,7 @@
     "title": "Autocert Must-Staple",
     "path": "/autocert#autocert-must-staple",
     "type": "bool",
-    "short_description": "Force Autocert to request a certificate with the status_request extension",
+    "short_description": "",
     "services": ["authenticate", "proxy"]
   },
   "autocert-directory": {
@@ -76,7 +76,7 @@
     "path": "/autocert#autocert-directory",
     "description": "Autocert directory is the path which Autocert will store x509 certificate data.",
     "services": ["authenticate", "proxy"],
-    "short_description": "Path of Autocert directory storing certificate data",
+    "short_description": "",
     "type": "string"
   },
   "autocert-use-staging": {
@@ -84,7 +84,7 @@
     "title": "Autocert Use Staging",
     "path": "/autocert#autocert-use-staging",
     "description": "Autocert Use Staging setting allows you to use Let's Encrypt's staging environment, which has more lenient usage limits than the production environment.",
-    "short_description": "Use Let's Encrypt's staging environment.",
+    "short_description": "",
     "type": "bool",
     "services": ["authenticate", "proxy"]
   },
@@ -93,7 +93,7 @@
     "title": "Autocert EAB Key ID",
     "path": "/autocert#autocert-eab-key-id",
     "description": "Autocert EAB Key ID is the key identifier when requesting a certificate from a CA with External Account Binding enabled.",
-    "short_description": "String containing the identifier for an ACME EAB key to use",
+    "short_description": "",
     "type": "string",
     "services": ["authenticate", "proxy"]
   },
@@ -102,7 +102,7 @@
     "title": "Autocert EAB MAC Key",
     "path": "/autocert#autocert-eab-mac-key",
     "description": "Autocert EAB MAC Key is the base64, url-encoded secret key corresponding to the Autocert EAB Key ID.",
-    "short_description": "String containing secret key",
+    "short_description": "",
     "type": "string",
     "services": ["authenticate", "proxy"]
   },
@@ -112,21 +112,29 @@
     "path": "/autocert#autocert-trusted-certificate-authority",
     "services": ["authenticate", "proxy"],
     "type": "string",
-    "short_description": "Certificate Authority relative file location string"
+    "short_description": ""
   },
   "branding-settings": {
     "id": "branding",
     "title": "Branding Settings",
     "path": "/branding",
     "type": "string",
-    "short_description": "Customize Pomerium's branding settings."
+    "short_description": ""
   },
   "certificates": {
     "id": "certificates",
     "title": "Certificates Settings",
     "path": "/certificates",
     "type": "string",
-    "short_description": "Certificate relative file location string",
+    "short_description": "",
+    "services": []
+  },
+  "certificate-authority": {
+    "id": "certificate-authority",
+    "title": "Certificates Authority",
+    "path": "/certificates#certificate-authority",
+    "type": "string",
+    "description": "",
     "services": []
   },
   "downstream-mtls-client-certificate-authority": {
@@ -134,7 +142,7 @@
     "title": "Downstream mTLS Certificate Authority",
     "path": "/downstream-mtls-settings#ca",
     "description": "A bundle of PEM-encoded X.509 certificates that will be treated as trust anchors when verifying client certificates",
-    "short_description": "PEM certificate bundle",
+    "short_description": "",
     "type": "string"
   },
   "downstream-mtls-crl": {
@@ -142,7 +150,7 @@
     "title": "Downstream mTLS Certificate Revocation List",
     "path": "/downstream-mtls-settings#crl",
     "description": "A bundle of PEM-encoded certificate revocation lists to be consulted during certificate validation.",
-    "short_description": "PEM CRL bundle",
+    "short_description": "",
     "type": "string"
   },
   "downstream-mtls-enforcement": {
@@ -150,7 +158,7 @@
     "title": "Downstream mTLS Enforcement Mode",
     "path": "/downstream-mtls-settings#enforcement-mode",
     "description": "Controls Pomerium's behavior when a client does not present a trusted client certificate.",
-    "short_description": "string (one of `policy_with_default_deny`, `policy`, or `reject_connection`)",
+    "short_description": "",
     "type": "string"
   },
   "downstream-mtls-match-subject-alt-names": {
@@ -158,7 +166,7 @@
     "title": "Downstream mTLS Match SANs",
     "path": "/downstream-mtls-settings#match-sans",
     "description": "Require that each certificate contain a certain type of SAN.",
-    "short_description": "Array of mappings from SAN type to regular expression",
+    "short_description": "",
     "type": "string"
   },
   "downstream-mtls-max-verify-depth": {
@@ -166,7 +174,7 @@
     "title": "Downstream mTLS Max Verify Depth",
     "path": "/downstream-mtls-settings#max-verify-depth",
     "description": "Sets a limit on the depth of a certificate chain presented by the client.",
-    "short_description": "Unsigned integer that defines client certificate chain depth",
+    "short_description": "",
     "type": "string"
   },
   "cookies-settings": {
@@ -279,8 +287,8 @@
     "id": "javascript-security",
     "title": "Javascript Security",
     "path": "/cookies#cookie-http-only",
-    "description": "If true, prevents javascript in browsers from reading user session cookies.",
-    "short_description": "Prevent JavaScript in browsers from reading user session cookies",
+    "description": "If applied, prevents JavaScript in browsers from reading user session cookies.",
+    "short_description": "",
     "services": [],
     "type": "bool"
   },
@@ -289,7 +297,7 @@
     "title": "Expiration",
     "path": "/cookies#cookie-expiration",
     "description": "Sets the lifetime of session cookies. After this interval, users must reauthenticate.",
-    "short_description": "Set session cookie expiration time",
+    "short_description": "",
     "services": [],
     "type": "datetime"
   },
@@ -298,35 +306,35 @@
     "title": "Same Site",
     "path": "/cookies#cookie-samesite",
     "description": "Sets the SameSite Cookie Option.",
-    "short_description": "Set the SameSite Cookie option",
+    "short_description": "",
     "services": [],
     "type": "string"
   },
   "ext-data-url": {
     "id": "ext-data-url",
     "title": "External Data URL",
-    "short_description": "URL to the external dataset",
+    "description": "URL to the external dataset",
     "path": "/../integrations#url",
     "enterpriseOnly": true
   },
   "ext-data-record-type": {
     "id": "ext-data-record-type",
     "title": "External Data Record Type",
-    "short_description": "Overridden by the directory structure of an archive file dataset",
+    "description": "Overridden by the directory structure of an archive file dataset",
     "path": "/../integrations#record-type",
     "enterpriseOnly": true
   },
   "ext-data-foreign-key": {
     "id": "ext-data-foreign-key",
     "title": "Foreign Key",
-    "short_description": "Associates this key from a request to the external data",
+    "description": "Associates this key from a request to the external data",
     "path": "/../integrations#foreign-key",
     "enterpriseOnly": true
   },
   "ext-data-headers": {
     "id": "ext-data-headers",
     "title": "External Data Request Headers",
-    "short_description": "Used when requesting the external dataset",
+    "description": "Used when requesting the external dataset",
     "path": "/../integrations#headers",
     "enterpriseOnly": true
   },
@@ -373,8 +381,8 @@
     "id": "read-timeout",
     "title": "Read Timeout",
     "path": "/global-timeouts#read-timeout",
-    "description": "The amount of time for the client to receive the entire request stream.",
-    "short_description": "Amount of time for client to receive entire request stream.",
+    "description": "Sets the amount of time for the client to receive the entire request stream.",
+    "short_description": "",
     "services": [],
     "type": ""
   },
@@ -382,8 +390,8 @@
     "id": "write-timeout",
     "title": "Write Timeout",
     "path": "/global-timeouts#write-timeout",
-    "description": "The max stream duration is the maximum time that a stream’s lifetime will span. An HTTP request/response exchange fully consumes a single stream. Therefore, this value must be greater than read_timeout as it covers both request and response time.",
-    "short_description": "Sets maximum stream duration of an HTTP request/response exchange. Must be greater than read_timeout.",
+    "description": "Sets max stream duration of an HTTP request/response exchange. Must be greater than read timeout.",
+    "short_description": "",
     "services": [],
     "type": ""
   },
@@ -391,8 +399,8 @@
     "id": "idle-timeout",
     "title": "Idle Timeout",
     "path": "/global-timeouts#idle-timeout",
-    "description": "Sets the time at which a downstream or upstream connection will be terminated if there are no active streams.",
-    "short_description": "Sets the time to terminate a connection if there are no active streams.",
+    "description": "Sets the time at which a downstream or upstream connection will be terminated if no active streams.",
+    "short_description": "",
     "services": [],
     "type": ""
   },
@@ -438,7 +446,7 @@
     "id": "http-redirect-address",
     "title": "HTTP Redirect Address",
     "path": "/http-redirect-address",
-    "description": "If set, the HTTP Redirect Address specifies the host and port to redirect http to https traffic on.",
+    "description": "If set, HTTP Redirect Address specifies the Host and Port to redirect HTTP to HTTPS traffic on.",
     "services": [],
     "type": "string"
   },
@@ -454,7 +462,7 @@
     "id": "dns-lookup-family",
     "title": "DNS Lookup Family",
     "path": "/dns-lookup-family",
-    "description": "The DNS IP address resolution policy.",
+    "description": "Sets the DNS IP address resolution policy.",
     "services": [],
     "type": "string"
   },
@@ -462,7 +470,7 @@
     "id": "log-level",
     "title": "Log Level",
     "path": "/log-level",
-    "description": "Log level sets the global logging level for pomerium.",
+    "description": "Sets the global logging level for this cluster.",
     "services": [],
     "type": "string"
   },
@@ -495,7 +503,7 @@
     "path": "/metrics#metrics-certificate",
     "services": [],
     "type": "string",
-    "short_description": "certificate relative file location string"
+    "description": "certificate relative file location string"
   },
   "metrics-client-certificate-authority": {
     "id": "metrics-client-certificate-authority",
@@ -503,13 +511,13 @@
     "path": "/metrics#metrics-client-certificate-authority",
     "services": [],
     "type": "string",
-    "short_description": "Client certificate authority relative file location string"
+    "description": "Client certificate authority relative file location string"
   },
   "proxy-log-level": {
     "id": "proxy-log-level",
     "title": "Proxy Log Level",
     "path": "/proxy-log-level",
-    "description": "Log level sets the logging level for the Pomerium Proxy service.",
+    "description": "Sets the logging level for the Pomerium Proxy service.",
     "services": [],
     "type": "string"
   },
@@ -528,7 +536,7 @@
     "description": "Shared Secret is the base64-encoded, 256-bit key used to mutually authenticate requests between services.",
     "services": [],
     "type": "string",
-    "short_description": "Base64-encoded string"
+    "short_description": ""
   },
   "shared-secret-file": {
     "id": "shared-secret-file",
@@ -537,11 +545,25 @@
     "description": "File path containing base64-encoded shared secret.",
     "services": [],
     "type": "string",
-    "short_description": "Path to base64-encoded shared secret"
+    "short_description": ""
   },
   "tracing": {
     "id": "tracing",
     "title": "Tracing",
+    "path": "/tracing",
+    "services": []
+  },
+  "tracing-provider": {
+    "id": "tracing-provider",
+    "title": "Tracing Provider",
+    "description": "The name of the tracing provider. For example, Jaeger or Zipkin. Required.",
+    "path": "/tracing",
+    "services": []
+  },
+  "tracing-sample-rate": {
+    "id": "tracing-sample-rate",
+    "title": "Tracing Sample Rate",
+    "description": "The percentage of requests to sample in decimal notation. Default is 0.0001, or .01%. Optional.",
     "path": "/tracing",
     "services": []
   },
@@ -578,7 +600,7 @@
     "id": "identity-provider-client-id",
     "title": "Identity Provider Client ID",
     "path": "/identity-provider-settings#identity-provider-client-id",
-    "description": "Client ID is the OAuth 2.0 Client Identifier retrieved from your identity provider.",
+    "description": "The OAuth 2.0 Client Identifier retrieved from an identity provider.",
     "services": [],
     "type": "string"
   },
@@ -594,7 +616,7 @@
     "id": "identity-provider-client-secret",
     "title": "Identity Provider Client Secret",
     "path": "/identity-provider-settings#identity-provider-client-secret",
-    "description": "Client Secret is the OAuth 2.0 Secret Identifier retrieved from your identity provider.",
+    "description": "The OAuth 2.0 Secret Identifier retrieved from an identity provider.",
     "services": [],
     "type": "string"
   },
@@ -602,7 +624,7 @@
     "id": "identity-provider-name",
     "title": "Identity Provider Name",
     "path": "/identity-provider-settings#identity-provider-name",
-    "description": "Provider is the short-hand name of a built-in OpenID Connect (oidc) identity provider to be used for authentication.",
+    "description": "The short-hand name of an OIDC identity provider used for authentication.",
     "services": [],
     "type": "string"
   },
@@ -610,8 +632,8 @@
     "id": "identity-provider-scopes",
     "title": "Identity Provider Scopes",
     "path": "/identity-provider-settings#identity-provider-scopes",
-    "description": "Identity provider scopes correspond to access privilege scopes as defined in Section 33 of OAuth 20 RFC6749.",
-    "short_description": "e.g. openid, profile, email, offline_access",
+    "description": "IdP scopes correspond to access privilege scopes. For example, 'openid', 'profile', 'email', or 'offline_access'.",
+    "short_description": "",
     "services": [],
     "type": "comma separated strings"
   },
@@ -619,7 +641,7 @@
     "id": "identity-provider-url",
     "title": "Identity Provider URL",
     "path": "/identity-provider-settings#identity-provider-url",
-    "description": "Provider URL is the base path to an identity provider's OpenID connect discovery document.",
+    "description": "The base URL to an identity provider's OIDC discovery document.",
     "services": [],
     "type": "string"
   },
@@ -627,7 +649,7 @@
     "id": "identity-provider-request-params",
     "title": "Identity Provider Request Params",
     "path": "/identity-provider-settings#identity-provider-request-params",
-    "description": "Headers specifies a mapping of HTTP Header to be added to proxied  requests. Nota bene Downstream application headers will be overwritten by Pomerium's headers on conflict.",
+    "description": "Specifies a mapping of HTTP headers to be added to proxied requests. Downstream application headers will be overwritten by Pomerium's headers on conflict.",
     "services": [],
     "type": "map of strings key value pairs"
   },
@@ -658,7 +680,7 @@
     "id": "default-upstream-timeout",
     "title": "Default Upstream Timeout",
     "path": "/default-upstream-timeout",
-    "description": "Default Upstream Timeout is the default timeout applied to a proxied route when no timeout key is specified by the policy.",
+    "description": "Sets the default timeout applied to a proxied route when no timeout key is specified by the policy.",
     "services": [],
     "type": ""
   },
@@ -666,7 +688,7 @@
     "id": "set-response-headers",
     "title": "Set Response Headers",
     "path": "/set-response-headers",
-    "description": "Sets static HTTP Response Header values for all managed routes",
+    "description": "Sets static HTTP Response Header values for all managed routes.",
     "services": [],
     "type": "map of strings key value pairs"
   },
@@ -682,7 +704,7 @@
     "id": "jwt-claim-headers",
     "title": "JWT Claim Headers",
     "path": "/jwt-claim-headers",
-    "description": "The JWT Claim Headers setting allows you to pass specific user session data to upstream applications as HTTP request headers and additional JWT claims.",
+    "description": "Passes user session data to upstream applications as HTTP Request Headers and additional JWT claims.",
     "services": [],
     "type": "slice of string"
   },
@@ -705,7 +727,7 @@
     "id": "x-forwarded-for-http-header",
     "title": "X-Forwarded-For HTTP Header",
     "path": "/x-forwarded-for-http-header",
-    "description": "Do not append proxy IP address to x-forwarded-for (https://www.envoyproxy.io/docs/envoy/latest/configuration/http/http_conn_man/headers.html?highlight=skip_xff_append#x-forwarded-for).",
+    "description": "Indicates which IP addresses a request has flowed through between the client and upstream service.",
     "services": [],
     "type": "bool"
   },
@@ -741,7 +763,7 @@
   "data-broker-storage-connection-string": {
     "id": "data-broker-storage-connection-string",
     "title": "Databroker Storage Connection String",
-    "description": "Sets Postgres connection string to connect Databroker service to storage backend",
+    "description": "Sets the database connection string to connect Databroker service to storage backend.",
     "path": "/databroker#databroker-storage-connection-string",
     "services": [],
     "type": "string"
@@ -793,14 +815,14 @@
     "id": "cors-preflight",
     "title": "CORS Preflight",
     "path": "/routes/cors-preflight",
-    "description": "Allows unauthenticated HTTP OPTIONS requests.",
     "services": ["proxy"],
+    "description": "Allows unauthenticated HTTP OPTIONS requests.",
     "type": "bool"
   },
   "enable-google-cloud-serverless-authentication": {
     "id": "enable-google-cloud-serverless-authentication",
     "title": "Enable Google Cloud Serverless Authentication",
-    "short_description": "Send a signed Authorization Header to upstream GCP services",
+    "short_description": "",
     "path": "/routes/enable-google-cloud-serverless-authentication",
     "services": ["proxy"],
     "type": "bool"
@@ -810,7 +832,7 @@
     "title": "Error Message Header",
     "path": "/branding#error-message-header",
     "description": "A paragraph that will appear on all Route Error Pages in the top section.",
-    "short_description": "Can contain plain text or Markdown.",
+    "short_description": "",
     "services": [],
     "type": "string"
   },
@@ -827,7 +849,7 @@
     "title": "From",
     "path": "/routes/from",
     "services": ["proxy"],
-    "short_description": "The externally accessible URL for the proxied request",
+    "short_description": "",
     "type": "URL",
     "description": "The external URL for a proxied request. Must contain a scheme and Hostname, must not contain a path."
   },
@@ -835,9 +857,9 @@
     "id": "health-checks",
     "title": "Health Checks",
     "path": "/routes/load-balancing#health-checks",
-    "description": "Issues periodic health check requests to upstream servers. Unhealthy servers won't serve traffic.",
     "services": ["proxy"],
-    "type": "array of objects"
+    "type": "array of objects",
+    "description": "Issues periodic health check requests to upstream servers. Unhealthy servers won't serve traffic."
   },
   "health-checks-timeout": {
     "id": "http-health-check-timeout",
@@ -992,8 +1014,32 @@
     "title": "Kubernetes Service Account Token",
     "path": "/routes/kubernetes-service-account-token",
     "services": ["proxy"],
-    "short_description": "string or relative file location containing a Kubernetes bearer token",
+    "description": "String or relative file location containing a Kubernetes bearer token",
     "type": "string"
+  },
+  "service-account-token": {
+    "id": "service-account-token",
+    "title": "Service Account Token",
+    "path": "/../capabilities/service-accounts#authenticate-with-the-service-account-jwt",
+    "description": "The generated JWT used to authenticate this service account. See documentation for supported authentication methods and examples."
+  },
+  "service-account-description": {
+    "id": "service-account-description",
+    "title": "Service Account Description",
+    "path": "/../capabilities/service-accounts",
+    "description": "A customizable description that identifies this service account."
+  },
+  "service-account-expiration": {
+    "id": "service-account-expiration",
+    "title": "Service Account Expiration",
+    "path": "/../capabilities/service-accounts",
+    "description": "Sets the expiration time for this service account token. After the specified date, this token becomes invalid."
+  },
+  "service-account-user-id": {
+    "id": "service-account-user-id",
+    "title": "Service Account User ID",
+    "path": "/../capabilities/service-accounts",
+    "description": "The User ID associated with this service account."
   },
   "load-balancing-settings": {
     "id": "load-balancing-settings",
@@ -1034,7 +1080,7 @@
     "id": "pass-identity-headers-per-route",
     "title": "Pass Identity Headers (per route)",
     "description": "If applied, passes X-Pomerium-Jwt-Assertion header and JWT Claims Headers to the upstream application.",
-    "short_description": "Pass identity headers to the upstream application",
+    "short_description": "",
     "path": "/routes/pass-identity-headers-per-route",
     "services": ["proxy"],
     "type": "boolean"
@@ -1042,8 +1088,8 @@
   "pass-identity-headers": {
     "id": "pass-identity-headers",
     "title": "Pass Identity Headers",
-    "description": "The global Pass Identity Headers setting passes identity headers to all upstream applications.",
-    "short_description": "Pass identity headers to all upstream applications",
+    "description": "If applied, passes X-Pomerium-Jwt-Assertion header and JWT Claims Headers to all upstream applications.",
+    "short_description": "",
     "path": "/pass-identity-headers",
     "services": ["proxy"],
     "type": "boolean"
@@ -1062,7 +1108,7 @@
     "path": "/routes/path-matching#path",
     "services": ["proxy"],
     "description": "Matches incoming requests with a path that is an exact match for the specified path.",
-    "short_description": "Only match requests with an exact match for this path",
+    "short_description": "",
     "type": "string"
   },
   "policy-enforcement": {
@@ -1082,6 +1128,13 @@
     "services": [],
     "type": "string"
   },
+  "policy-definition": {
+    "id": "policy-definition",
+    "title": "Definition",
+    "description": "Adds the explanation presented to an unauthorized user when they access a route with this policy. Optional.",
+    "services": [],
+    "type": "string"
+  },
   "policy-explanation": {
     "id": "policy-explanation",
     "title": "Explanation",
@@ -1094,7 +1147,8 @@
     "id": "policy-remediation",
     "title": "Remediation",
     "services": [],
-    "type": "string"
+    "type": "string",
+    "enterpriseOnly": "true"
   },
   "prefix": {
     "id": "prefix",
@@ -1102,7 +1156,7 @@
     "path": "/routes/path-matching#prefix",
     "services": ["proxy"],
     "description": "Matches incoming requests with a path that begins with the specified prefix.",
-    "short_description": "Only match requests with paths starting with this prefix",
+    "short_description": "",
     "type": "string"
   },
   "path-rewriting-settings": {
@@ -1119,15 +1173,24 @@
     "path": "/routes/path-rewriting#prefix-rewrite",
     "services": ["proxy"],
     "description": "While forwarding a request, Prefix Rewrite swaps the matched prefix (or path) with the specified value.",
-    "short_description": "Swaps the matched prefix with this value",
+    "short_description": "",
     "type": "string"
+  },
+  "preserve-host-header": {
+    "id": "preserve-host-header",
+    "title": "Preserve Host Header",
+    "description": "Passes the host header from the incoming request to the proxied host, instead of the destination hostname.",
+    "short_description": "",
+    "path": "/routes/headers#1-preserve-host-header",
+    "services": ["proxy"],
+    "type": "boolean"
   },
   "primary-color": {
     "id": "primary-color",
     "title": "Primary Color",
     "path": "/branding#primary-color",
     "description": "A hex code that determines the primary color for the Enterprise Console and Route Error Details pages.",
-    "short_description": "Defaults to #6F43E7",
+    "short_description": "",
     "services": [],
     "type": "string"
   },
@@ -1136,7 +1199,7 @@
     "title": "Primary Color (Dark Mode)",
     "path": "/branding#primary-color-dark-mode",
     "description": "A hex code that determines the primary color for the Enterprise Console and Route Error Details pages when in Dark Mode.",
-    "short_description": "Defaults to #6F43E7",
+    "short_description": "",
     "services": [],
     "type": "string"
   },
@@ -1225,7 +1288,7 @@
     "title": "Regex Priority Order",
     "path": "/routes/regex-priority-order",
     "services": ["proxy"],
-    "description": "When a regex is used as part of the path then the order a route will be evaluated can be arbitrary. This allows you to put an integer value to prioritize route evaluation.",
+    "description": "Rewrites the URL path according to the regex rewrite pattern.",
     "type": "uint32"
   },
   "regex-rewrite": {
@@ -1234,7 +1297,7 @@
     "path": "/routes/path-rewriting#regex-rewrite",
     "services": ["proxy"],
     "description": "Rewrites the URL path according to the regex rewrite pattern.",
-    "short_description": "Rewrites the URL path according to this pattern",
+    "short_description": "",
     "type": "string"
   },
   "regex-rewrite-substitution": {
@@ -1242,23 +1305,23 @@
     "title": "Regex Rewrite Substitution",
     "path": "/routes/path-rewriting#regex-rewrite",
     "description": "Rewrites the URL path according to the regex rewrite substitution.",
-    "short_description": "Paths matching the regex-rewrite pattern will be replaced with this value",
+    "short_description": "",
     "enterpriseOnly": true
   },
   "remove-request-headers": {
     "id": "remove-request-headers",
     "title": "Remove Request Headers",
     "path": "/routes/headers#remove-request-headers",
-    "description": "Removes given request headers so they do not reach the upstream server.",
     "services": ["proxy"],
+    "description": "Removes given request headers so they do not reach the upstream server.",
     "type": "array of strings"
   },
   "rewrite-response-headers": {
     "id": "rewrite-response-headers",
     "title": "Rewrite Response Headers",
     "path": "/routes/headers#rewrite-response-headers",
-    "description": "Modifies response headers before they are returned to the client. 'Header' matches the HTTP header name; 'prefix' will be replaced with 'value'.",
     "services": ["proxy"],
+    "description": "Modifies response headers before they are returned to the client. 'Header' matches the HTTP header name; 'prefix' will be replaced with 'value'.",
     "type": "object"
   },
   "route-timeout": {
@@ -1274,7 +1337,7 @@
     "title": "Secondary Color",
     "description": "A hex code that determines the secondary color for the Enterprise Console and Route Error Details pages.",
     "path": "/branding#secondary-color",
-    "short_description": "Defaults to #49AAA1",
+    "short_description": "",
     "services": [],
     "type": "string"
   },
@@ -1282,7 +1345,7 @@
     "id": "darkmode-secondary-color",
     "title": "Secondary Color (Dark Mode)",
     "description": "A hex code that determines the secondary color for the Enterprise Console and Route Error Details pages when in Dark Mode.",
-    "short_description": "Defaults to #49AAA1",
+    "short_description": "",
     "path": "/branding#secondary-color-dark-mode",
     "services": [],
     "type": "string"
@@ -1294,7 +1357,7 @@
     "services": ["proxy"],
     "type": "map of strings key value pairs",
     "description": "Sets static and dynamic values for given request headers. Available substitutions: ${pomerium.id_token}, ${pomerium.access_token}, ${pomerium.client_cert_fingerprint}.",
-    "short_description": "Value should be a string. Available substitutions: ${pomerium.id_token}, ${pomerium.access_token}, ${pomerium.client_cert_fingerprint}."
+    "short_description": ""
   },
   "show-error-details": {
     "id": "show-error-details",
@@ -1322,8 +1385,8 @@
     "id": "tls-client-certificate",
     "title": "TLS Client Certificate",
     "path": "/routes/tls#tls-client-certificate",
-    "description": "Pomerium presents this client certificate to upstream services when requested to enforce mTLS.",
     "services": ["proxy"],
+    "description": "Pomerium presents this client certificate to upstream services when requested to enforce mTLS.",
     "type": "string"
   },
   "tls-custom-certificate-authority": {
@@ -1343,8 +1406,8 @@
     "id": "tls-skip-verification",
     "title": "TLS Skip Verification",
     "path": "/routes/tls#tls-skip-verification",
-    "description": "If applied, Pomerium accepts any certificate presented by the upstream server and any Hostname in that certificate. Use for testing only.",
     "services": ["proxy"],
+    "description": "If applied, Pomerium accepts any certificate presented by the upstream server and any Hostname in that certificate. Use for testing only.",
     "type": "bool"
   },
   "tls-upstream-allow-renegotiation": {
@@ -1359,16 +1422,16 @@
     "id": "tls-upstream-server-name",
     "title": "TLS Upstream Server Name",
     "path": "/routes/tls#tls-upstream-server-name",
-    "description": "This server name overrides the Hostname in the 'To:' field, and will be used to verify the certificate name.",
     "services": [],
+    "description": "This server name overrides the Hostname in the 'To:' field, and will be used to verify the certificate name.",
     "type": "string"
   },
   "tls-downstream-server-name": {
     "id": "tls-downstream-server-name",
     "title": "TLS Downstream Server Name",
     "path": "/routes/tls#tls-downstream-server-name",
-    "description": "This server name overrides the Hostname in the 'From:' field, and serves as the Server Name Indication when establishing a TLS connection with Pomerium.",
     "services": [],
+    "description": "This server name overrides the Hostname in the 'From:' field, and serves as the Server Name Indication when establishing a TLS connection with Pomerium.",
     "type": "string"
   },
   "to": {
@@ -1378,7 +1441,7 @@
     "services": ["proxy"],
     "description": "The destination(s) of a proxied request. Must contain a scheme and Hostname, with an optional weight.",
     "type": "URL(s)",
-    "short_description": "URL(s) must contain a scheme and hostname, with an optional weight"
+    "short_description": ""
   },
   "spdy": {
     "id": "spdy",
@@ -1402,7 +1465,7 @@
     "path": "/google-cloud-serverless-authentication-service-account",
     "services": ["authorize"],
     "type": "string",
-    "short_description": "Base64-encoded string containing GCP serverless authentication service account"
+    "short_description": ""
   },
   "signing-key": {
     "id": "signing-key",
@@ -1411,7 +1474,7 @@
     "description": "Signing Key is the key used to sign a user's attestation JWT which can be consumed by upstream applications to pass along identifying user information like username, id, and groups.",
     "services": [],
     "type": "string",
-    "short_description": "Base64-encoded string containing signing key"
+    "short_description": "y"
   },
   "signing-key-file": {
     "id": "signing-key-file",
@@ -1420,7 +1483,7 @@
     "description": "File path to a secret containing the signing key, used to sign a user's attestation JWT which can be consumed by upstream applications to pass along identifying user information like username, id, and groups.",
     "services": [],
     "type": "string",
-    "short_description": "File path containing a Base64-encoded string"
+    "short_description": ""
   },
   "devices": {
     "id": "devices",
@@ -1480,5 +1543,49 @@
     "path": "/routes/direct-response",
     "description": "Instructs Pomerium to send a static HTTP response to the downstream client for a managed route.",
     "services": ["proxy"]
+  },
+  "response-status": {
+    "id": "response-status",
+    "title": "Direct Response Status",
+    "path": "/routes/direct-response",
+    "description": "Sets the status code that Pomerium returns for a static HTTP response. Type: Integer. For example, 200.",
+    "services": ["proxy"]
+  },
+  "response-body": {
+    "id": "response-body",
+    "title": "Direct Response Body",
+    "path": "/routes/direct-response",
+    "description": "Specifies the response body that Pomerium returns for a static HTTP response. Type: String. For example, 'plain text.'",
+    "services": ["proxy"]
+  },
+  "cluster-settings-name": {
+    "id": "cluster-settings-name",
+    "title": "Cluster Name",
+    "description": "A customizable name that identifies a cluster. Defaults to the cluster's randomly generated starter domain name."
+  },
+  "cluster-starter-domain": {
+    "id": "cluster-starter-domain",
+    "title": "Cluster Starter Domain",
+    "description": "The randomly generated starter domain assigned to this cluster. This domain is not changeable, and is designed to be used as a proof of concept."
+  },
+  "detected-ip-address": {
+    "id": "detected-ip-address",
+    "title": "Detected IP Address",
+    "description": "The IP address detected for this cluster server."
+  },
+  "override-ip-address": {
+    "id": "override-ip-address",
+    "title": "Override IP Address",
+    "description": "Manually sets the IP address of this cluster and overrides the detected IP. Use this setting if Pomerium can't connect to cluster over detected IP."
+  },
+  "cluster-identity": {
+    "id": "cluster-identity",
+    "title": "Cluster Identity",
+    "description": "The cluster token that associates this cluster with a personal account or organization."
+  },
+  "custom-domains": {
+    "id": "custom-domains",
+    "title": "Custom Domains",
+    "description": "A custom wildcard subdomain used to define routes in this cluster. Can only be associated with 1 cluster."
   }
 }

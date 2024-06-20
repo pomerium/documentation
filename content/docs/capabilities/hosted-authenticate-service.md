@@ -36,7 +36,7 @@ Pomerium's hosted services solution removes the tedium of configuring your own i
 
 If you're testing Pomerium for the first time, run [Pomerium with Docker](/docs/quickstart) using our hosted services – you can run Pomerium Core in **under 5 minutes** with minimal setup.
 
-Current Pomerium users who are interested in our [Enterprise Console](https://www.pomerium.com/enterprise-sales/) can test out the [Docker Enterprise Quickstart](/docs/deploy/enterprise/quickstart) using hosted services as well.
+Current Pomerium users who are interested in our [Enterprise Console](https://www.pomerium.com/enterprise-sales/) can test out the [Docker Enterprise Quickstart](/docs/enterprise/quickstart) using hosted services as well.
 
 ## Configure the Hosted Authenticate Service
 
