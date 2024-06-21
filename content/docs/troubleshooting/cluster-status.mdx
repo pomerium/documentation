@@ -11,7 +11,7 @@ The [Status](https://console.pomerium.app/app/reports/status) page of the Zero C
 
 We've addressed all the cluster status alerts below. Refer to the relevant alert to learn how to fix it.
 
-## Certificates are expired or invalid {#certificates-current}
+## Certificates are expired or invalid {#certificates_current}
 
 This cluster status alert inspects a cluster's certificates to see if they expire within 10 days. It runs daily, and every time the cluster configuration is updated.
 
@@ -22,7 +22,7 @@ This cluster status alert inspects a cluster's certificates to see if they expir
 
 **Steps to resolve**: Upload a valid certificate, or allow Pomerium to automate certificate management for you by adding a [Custom Domain](/docs/capabilities/custom-domains).
 
-## Hostnames do not have matching certificates {#certificates-match-hostnames}
+## Hostnames do not have matching certificates {#certificates_match_hostnames}
 
 This cluster status alert ensures that all the hostnames available in a cluster's configuration have matching certificates. It runs every time the cluster configuration is updated.
 
@@ -39,7 +39,7 @@ For more information on certificates in Pomerium, see the following pages:
 
 :::
 
-## Cluster configuration is not current {#cluster-config-current}
+## Cluster configuration is not current {#cluster_config_current}
 
 This cluster status alert makes sure the cluster is running the latest changeset. It runs daily to check for the latest configuration, or every time the cluster configuration is updated.
 
@@ -47,7 +47,7 @@ This cluster status alert makes sure the cluster is running the latest changeset
 
 **Steps to resolve**: Restart the cluster. If that doesn't resolve the issue, please [contact support](https://discuss.pomerium.com/).
 
-## Cluster version is not current {#cluster-version-current}
+## Cluster version is not current {#cluster_version_current}
 
 This cluster status alert makes sure the cluster replica is running the latest release. It runs daily.
 
@@ -55,7 +55,7 @@ This cluster status alert makes sure the cluster replica is running the latest r
 
 **Steps to resolve**: Update your Pomerium Zero cluster configuration to run the latest version of Pomerium.
 
-## Cluster using an in-memory storage backend {#persistent-backend}
+## Cluster using an in-memory storage backend {#persistent_backend}
 
 This cluster status alert throws an error if it detects a cluster isn't connected to a persistent storage backend. It runs every time the cluster configuration is updated.
 
@@ -65,7 +65,7 @@ By default, a cluster uses an in-memory storage backend to synchronize replicas.
 
 **Steps to resolve**: See the [**Databroker Storage Connection String**](/docs/reference/databroker#databroker-storage-connection-string) reference page to learn how to connect to a database instance in Pomerium.
 
-## Incompatible configuration {#config-databroker-build}
+## Incompatible configuration {#config.databroker.build}
 
 This cluster status alert looks for configuration incompatibilities in a replica. It runs every time the cluster configuration is updated.
 
@@ -73,7 +73,7 @@ This cluster status alert looks for configuration incompatibilities in a replica
 
 **Steps to resolve**: If you see this warning, please [contact support](https://discuss.pomerium.com/).
 
-## Cluster can't communicate with the storage backend {#storage-backend}
+## Cluster can't communicate with the storage backend {#storage.backend}
 
 This cluster status alert monitors the connection to a PostgreSQL database. It runs every time the cluster configuration is updated.
 
@@ -81,13 +81,13 @@ This cluster status alert monitors the connection to a PostgreSQL database. It r
 
 **Steps to resolve**: Check the parameters of your [**Databroker Storage Connection String**](/docs/reference/databroker#databroker-storage-connection-string).
 
-## There's an issue with cluster configuration {#xds-cluster}
+## There's an issue with cluster configuration {#xds.cluster}
 
 This cluster status alert tells you if Envoy accepted the cluster configuration or not after a configuration update.
 
 **What causes this alert**: If you see this warning, please [contact support](https://discuss.pomerium.com/).
 
-## There's an issue with the network listener {#xds-listener}
+## There's an issue with the network listener {#xds.listener}
 
 This cluster status alert makes sure the network listener is configured correctly. It runs every time the cluster configuration is updated.
 
@@ -98,7 +98,7 @@ This cluster status alert makes sure the network listener is configured correctl
 - If this is a port binding error, you may need to kill a process running on that port or specify a port to bind to.
 - If this is a permissions issue, you may need to add the `CAP_NET_BIND_SERVICE` capability to the process.
 
-## There's an issue with the route configuration {#xds-route-configuration}
+## There's an issue with the route configuration {#xds.route-configuration}
 
 This cluster status alert verifies the route configuration. It runs every time the cluster configuration is updated.
 
@@ -106,13 +106,13 @@ This cluster status alert verifies the route configuration. It runs every time t
 
 **Steps to resolve**: If you see this warning, it's likely a problem with Pomerium. Please [contact support](https://discuss.pomerium.com/).
 
-## There's an issue with the configuration {#xds-other}
+## There's an issue with the configuration {#xds.other}
 
 This cluster status alert monitors [xDS](https://www.envoyproxy.io/docs/envoy/latest/api-docs/xds_protocol) issues in a replica. It runs every time the cluster configuration is updated.
 
 **What causes this alert**: If you see this warning, it's likely a problem with Pomerium. Please [contact support](https://discuss.pomerium.com/).
 
-## Pomerium can't write some of its cache files {#zero-bootstrap-config-save}
+## Pomerium can't write some of its cache files {#zero.bootstrap-config.save}
 
 This cluster status alert makes sure Pomerium can persist a replica's bootstrap configuration. It runs when you start a cluster, or every time the cluster configuration is updated.
 
@@ -120,7 +120,7 @@ This cluster status alert makes sure Pomerium can persist a replica's bootstrap 
 
 **Steps to resolve**: Check your file permissions to make sure Pomerium has read access.
 
-## Cluster connectivity issues with the cloud {#zero-connect}
+## Cluster connectivity issues with the cloud {#zero.connect}
 
 This cluster status alert monitors the connection between the Pomerium Zero cloud and a cluster. It maintains a consistent streaming connection.
 
