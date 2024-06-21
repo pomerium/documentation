@@ -131,7 +131,7 @@ docker compose up
 
 And access your route: https://grafana.localhost.pomerium.io
 
-![The Grafana login screen](../img/build-routes/grafana-login-screen.png)
+![The Grafana login screen](./img/build-routes/grafana-login-screen.png)
 
 If you reach this after the authentication step, you’ve succeeded in setting up a route to Grafana!
 

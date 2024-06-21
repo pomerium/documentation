@@ -245,7 +245,7 @@ If you access your authenticate service URL, Pomerium will redirect you to your 
 
 After signing in, Pomerium will redirect you to the **User Details** page:
 
-![The User Details page](../img/self-hosted-pomerium/user-details-page.png)
+![The User Details page](./img/self-hosted-pomerium/user-details-page.png)
 
 Awesome! You’ve successfully configured Pomerium to run in a Compute Engine VM instance running Debian.
 
