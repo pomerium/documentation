@@ -76,7 +76,7 @@ Replace the following values:
 - **Line 8**: Replace `CLUSTER_TOKEN` with the cluster token generated for you in the onboarding config
 - **Line 15**: Replace `CLUSTER_STARTER_SUBDOMAIN` with your generated starter subdomain
 
-:::tip Where's my **Starter Domain?**
+:::info Where's my **Starter Domain?**
 
 You can find your **Starter Domain** at the top of the Zero Console navigation bar:
 
@@ -116,6 +116,12 @@ You should land on the Verify page:
 
 ![The homepage of the Verify app after the user is redirected](./img/quickstart/pz-identity-verified.png)
 
+:::info Build your own route
+
+Check out [**Pomerium Fundamentals: Build Routes**](/docs/courses/fundamentals/build-routes) to learn how to create a route to your own service behind Pomerium.
+
+:::
+
 ### Connect to SSH
 
 The demo SSH route connects to a remote server that you can use to test SSH connections in Pomerium Zero.
@@ -145,22 +151,29 @@ Warning: Permanently added 'ssh-demo.pomerium.com' (ED25519) to the list of know
 This is an SSH honeypot. Everything is logged and monitored.
 ```
 
-## Review authorization policy
+## Review starter policy and certificates
 
-Select the **Policies** tab. In the policies table, you'll notice the **Any Authenticated User** policy.
+Select the **Policies** tab. In the policies table, you'll notice a default policy that only grants access if the user's email matches the one associated with your Pomerium Zero account:
 
 ![Reviewing the starter policy in the Zero Console](./img/quickstart/pz-quickstart-policy.png)
 
-This is a simple policy that instructs Pomerium to allow all requests for authenticated users or service accounts. Because you authenticated successfully against our hosted identity provider, Pomerium granted you access to both the SSH and Verify services.
+:::info Update policy
 
-## Review certificates
+This **Starter Policy** is assigned to both of the demo routes. You can remove this policy and create your own at any time.
+
+- Go to the [**PPL page**](/docs/capabilities/ppl) to learn about Pomerium Policy Language
+- Go to [**Build Policies**](/docs/courses/fundamentals/zero-build-policies) to learn how to create and assign policies using the Zero PPL builder
+
+:::
 
 Pomerium automatically provisions and manages TLS certificates issued by ZeroSSL to secure the starter routes in your cluster, and any routes you may build that use your cluster's starter domain.
 
 To see certificates in your cluster, go to the **Certificates** tab:
 
-![View cluster certificates from ZeroSSL](./img/quickstart/cluster-certs.png)
+![View cluster certificates from ZeroSSL](./img/quickstart/pz-starter-certificates.png)
 
 ## Next Steps
 
-### Add a [**Custom Domain**](/docs/capabilities/custom-domains)
+### [**Build your First Route**](/docs/courses/fundamentals/zero-build-routes)
+
+### [**Add a Custom Domain**](/docs/capabilities/custom-domains)
