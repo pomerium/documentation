@@ -103,7 +103,7 @@ Select the Verify route. Now, click the **padlock** icon and view the certificat
 
 You should see your domain in the **Issued To > Common Name (CN)** field (the UI will vary depending on your browser, but you get the idea):
 
-![Viewing the certificate provided by Autocert](../img/production-certificates/autocert-certificate.png)
+![Viewing the certificate provided by Autocert](./img/production-certificates/autocert-certificate.png)
 
 That’s it! You configured Pomerium to manage certificates for your upstream applications.
 
