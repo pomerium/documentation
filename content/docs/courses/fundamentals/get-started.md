@@ -26,7 +26,7 @@ Your project will contain all the files and configurations you need to run **Pom
 
 The directory structure will look like this:
 
-![Your project's file structure](../img/get-started/pomerium-file-structure.png)
+![Your project's file structure](./img/get-started/pomerium-file-structure.png)
 
 - The `config.yaml` file configures Pomerium itself
 - The `docker-compose.yaml` file configures and runs your Docker containers
@@ -132,7 +132,7 @@ docker compose up
 
 Now, go to the [Verify service](https://verify.localhost.pomerium.io/) in your browser.
 
-![Image of the Verify service web page](../img/get-started/verify-state.png)
+![Image of the Verify service web page](./img/get-started/verify-state.png)
 
 You may have some questions, like:
 
