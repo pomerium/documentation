@@ -80,4 +80,4 @@ routes:
     pass_identity_headers: true
 ```
 
-See the [Pomerium Core Docker quickstart](/docs/quickstart) for more examples.
+See the [Pomerium Core Docker quickstart](/docs/core/quickstart) for more examples.
