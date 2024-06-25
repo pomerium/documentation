@@ -52,10 +52,10 @@ RUNTIME_FLAGS='{"match_any_incoming_port": false}'
 
 ### Envoy resource manager memory thresholds
 
-If you set this runtime flag to `false`, Pomerium will regard the memory saturation value as `0`, which disables all overload actions. 
+If you set this runtime flag to `false`, Pomerium will regard the memory saturation value as `0`, which disables all overload actions.
 
 | **Memory percentage threshold** | **Overload action** | **Description** |
-| :--- | :--- | :--- |
+| :-- | :-- | :-- |
 | **90%** | `shrink_heap` | Envoy will shrink its heap memory every 10 seconds. |
 | **90%** | `reset_high_memory_stream` | Envoy will start resetting streams using the most memory. As memory usage increases, the eligibility threshold is reduced. |
 | **>85%** | `reduce_timeouts` | Envoy will gradually reduce timeouts by up to 50%. |
