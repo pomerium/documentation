@@ -1,0 +1,149 @@
+---
+id: x-forwarded-for-settings
+title: X-Forwarded-For Settings
+description: This page documents X-Forwarded-HTTP header settings.
+keywords:
+  - reference
+  - X-Forwarded-For settings
+  - x-forwarded-for-http-header
+  - x forwarded for http header
+  - the number of trusted hops
+  - xff_num_trusted_hops
+  - xff num trusted hops
+pagination_prev: null
+pagination_next: null
+toc_max_heading_level: 2
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# X-Forwarded-For Settings
+
+## X-Forwarded-For HTTP Headers
+
+The `X-Forwarded-For` (XFF) HTTP header lists the IP addresses a request has passed through on its way from the end-user (client) to an upstream service.
+
+By default, when Pomerium receives a request it appends the IP address of the direct downstream client to the XFF header value _before_ proxying the request to the upstream service.
+
+However, if you set the **X-Forwarded-For HTTP Headers** (`skip_xff_append`) option to `true`, Pomerium _will not_ modify any incoming XFF HTTP header. Instead, Pomerium will pass this incoming header to the upstream service unchanged.
+
+## How to configure
+
+<Tabs>
+<TabItem value="Core" label="Core">
+
+| **Config file keys** | **Environment variables** | **Type**  | **Default** |
+| :------------------- | :------------------------ | :-------- | :---------- |
+| `skip_xff_append`    | `SKIP_XFF_APPEND`         | `boolean` | `false`     |
+
+### Examples
+
+```yaml
+skip_xff_append: true
+```
+
+```bash
+SKIP_XFF_APPEND=true
+```
+
+</TabItem>
+<TabItem value="Enterprise" label="Enterprise">
+
+Configure **X-Forward-For HTTP Headers** with the toggle button in the Console. The button has three states:
+
+- **Unset** ("-") uses the value in your configuration file
+- **Checkmark** sets `skip_xff_append` to `true`
+- **Empty** sets `skip_xff_append` to `false`
+
+![Configure x-forward-for-http-headers in the console](./img/headers/x-forwarded-for-http-header.png)
+
+</TabItem>
+<TabItem value="Kubernetes" label="Kubernetes">
+
+Kubernetes does not support `skip_xff_append`
+
+</TabItem>
+</Tabs>
+
+### Skip XFF Append Examples
+
+Assume the client IP address is `192.0.5.1`.
+
+With `skip_xff_append` set to `false` (the default behavior):
+
+  ```yaml
+  skip_xff_append: false
+  ```
+
+Pomerium will append the IP address of the downstream client to the `X-Forwarded-For` HTTP request header:
+
+  ```bash title="Request Details"
+  X-Forwarded-For: 192.0.5.1
+  ```
+
+With `skip_xff_append` set to `true`:
+
+  ```yaml
+  skip_xff_append: true
+  ```
+
+Pomerium will send the request to the upstream service without modifying the `X-Forwarded-For` header:
+
+  ```bash title="Request Details"
+  X-Forwarded-For:
+  ```
+
+## The Number of Trusted Hops
+
+**The Number of Trusted Hops** (`xff_num_trusted_hops`) setting instructs Pomerium to trust additional IP addresses (or "hops") appended to the XFF header (see the [X-Forwarded-For HTTP headers](#x-forwarded-for-http-headers) section for more information).
+
+If Pomerium doesn't trust the IP address(es) appended to the XFF header, the request will be rejected.
+
+Pomerium will only trust the downstream `X-Forwarded-Proto` header if you set `xff_num_trusted_hops` to a non-zero value. If you set this option to `0`, the downstream `X-Forwarded-Proto` and `:scheme` headers will be set to either HTTP or HTTPS depending on if the downstream connection is secured over TLS.
+
+:::info
+
+The `X-Forwarded-Proto` HTTP header indicates the originating protocol (either HTTP or HTTPS) of the downstream client request.
+
+:::
+
+## How to configure
+
+<Tabs>
+<TabItem value="Core" label="Core">
+
+| **Config file keys**   | **Environment variables** | **Type** | **Usage**    |
+| :--------------------- | :------------------------ | :------- | :----------- |
+| `xff_num_trusted_hops` | `XFF_NUM_TRUSTED_HOPS`    | `uint32` | **optional** |
+
+### Examples
+
+```yaml
+xff_num_trusted_hops: 2
+```
+
+```bash
+XFF_NUM_TRUSTED_HOPS=2
+```
+
+</TabItem>
+<TabItem value="Enterprise" label="Enterprise">
+
+`xff_num_trusted_hops` is a bootstrap configuration setting and is not configurable in the Console.
+
+</TabItem>
+<TabItem value="Kubernetes" label="Kubernetes">
+
+Kubernetes does not support `xff_num_trusted_hops`
+
+</TabItem>
+</Tabs>
+
+:::info Additional Resources
+
+See the [Envoy](https://www.envoyproxy.io/docs/envoy/latest/configuration/http/http_conn_man/headers.html?highlight=skip_xff_append#x-forwarded-for) docs for more information about the `X-Forwarded-For` header.
+
+See Envoy's [`x-envoy-external-address` header](https://www.envoyproxy.io/docs/envoy/latest/configuration/http/http_conn_man/headers#x-envoy-external-address) docs to learn more about how Envoy determines the trusted client address.
+
+:::
