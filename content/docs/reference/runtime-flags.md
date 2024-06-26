@@ -65,6 +65,6 @@ If you set this runtime flag to `false`, Pomerium will regard the memory saturat
 
 :::note Pod resource limits behavior
 
-If you [specify memory limits](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/) for containers in a Pod, the `envoy_resource_manager_enabled` runtime flag will be **enabled** by default.
+The `envoy_resource_manager_enabled` runtime flag is set to **true** by default, but only takes effect if you [specify memory limits](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/) for the Pomerium pod.
 
 :::
