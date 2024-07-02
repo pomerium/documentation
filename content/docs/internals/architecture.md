@@ -60,7 +60,7 @@ The points below outline the Databroker’s role in the request and session life
 
 In production deployments, it is recommended that you deploy each component [separately](/docs/reference/service-mode). This allows you to limit external attack surface, as well as scale and manage the services independently.
 
-In test deployments, all four components may run from a [single binary and configuration](/docs/reference#all-in-one-vs-split-service-mode).
+In test deployments, all four components may run from a [single binary and configuration](/docs/internals/configuration#all-in-one-vs-split-service-mode).
 
 ![pomerium architecture diagram](./img/architecture/pomerium-container-context-stateless-authn.svg)
 
