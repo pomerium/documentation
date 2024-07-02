@@ -195,7 +195,7 @@ See the [Set Request Headers](/docs/reference/routes/headers#pass-dynamic-tokens
 
 #### Set Authorization Header
 
-The [Set Authorization Header](/docs/reference/routes/headers#set-authorization-header) option is deprecated in favor of the new variable substitution support in the Set Request Headers option. This new support allows you to pass IdP tokens to upstream services in any header, not just the `Authorization` header.
+The [Set Authorization Header](/docs/reference/routes/headers##set-request-headers) option is deprecated in favor of the new variable substitution support in the Set Request Headers option. This new support allows you to pass IdP tokens to upstream services in any header, not just the `Authorization` header.
 
 The Set Authorization Header option will be removed in a future release.
 
@@ -271,7 +271,7 @@ For Open Source, please use IdP Claims passed by your IdP.
   - [Okta](https://developer.okta.com/docs/guides/customize-tokens-groups-claim/main)
   - [Auth0](https://auth0.com/docs/customize/extensions/authorization-extension/configure-authorization-extension#add-authorization-information-to-the-token-issued)
   - [Azure](https://learn.microsoft.com/en-us/azure/active-directory/hybrid/how-to-connect-fed-group-claims)
-  - [Cognito](/docs/identity-providers/cognito##getting-groups)
+  - [Cognito](/docs/identity-providers/cognito#getting-groups)
 - You may need adjust requested scopes via `idp_scopes` config option.
 - visit your authenticate endpoint `/.pomerium` route to check the group claims are passed by your IdP.
 - use `claim/` [PPL criteria](/docs/capabilities/ppl#criteria)
@@ -297,7 +297,7 @@ Setting the below options in Pomerium config file would now result in an error. 
 
 - `idp_service_account`: use IdP provider specific options in the UI.
 - `idp_refresh_directory_timeout`: use [Polling Min Delay](/docs/enterprise/configure#polling-minmax-delay).
-- `idp_refresh_directory_interval`: replaced by [Polling Max Delay](/docs/enterprise/configure#polling-minmax-delay).
+- `idp_refresh_directory_interval`: replaced by [Polling Max Delay](/docs/reference/identity-provider-settings#identity-provider-polling-minmax-delay).
 - `idp_qps`: not required, IdP providers adjust their qps rate.
 
 Pomerium Core would only perform user authentication and session refresh with the IdP provider, and would not try to synchronize user details and groups, which is now part of [External Data Sources](/docs/capabilities/integrations/).
