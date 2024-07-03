@@ -23,7 +23,7 @@ The [Pomerium Kubernetes Ingress Controller](https://github.com/pomerium/ingress
 
 Pomerium’s Ingress Controller for Kubernetes enables you to dynamically provision routes from Ingress resources and set authorization policy on those routes with Ingress annotations. By defining routes as Ingress resources in the Kubernetes API, you can easily create and remove those routes from your Pomerium configuration.
 
-If you've tested Pomerium using the [all-in-one binary](/docs/core), you're probably familiar with configuring routes in Pomerium's [`config.yaml`](/docs/core#configuration-file) file. When using the Pomerium Ingress Controller, each route is defined as an Ingress resource in the Kubernetes API.
+If you've tested Pomerium using the [all-in-one binary](/docs/core), you're probably familiar with configuring routes in Pomerium's [`config.yaml`](/docs/internals/configuration) file. When using the Pomerium Ingress Controller, each route is defined as an Ingress resource in the Kubernetes API.
 
 This document shows you how to configure an Ingress resource that’s compatible with the Pomerium Ingress Controller.
 
@@ -175,7 +175,7 @@ The remaining annotations are specific to or behave differently than they do whe
 | `ingress.pomerium.io/set_request_headers_secret` | Name of Kubernetes Secret containing the contents of the request header to send upstream. When used, `ingress.pomerium.io/set_request_headers` should not contain overlapping keys. |
 | `ingress.pomerium.io/set_response_headers_secret` | Name of Kubernetes Secret containing the contents of the response header to send downstream. When used, `ingress.pomerium.io/set_response_headers` should not contain overlapping keys. |
 | `ingress.pomerium.io/service_proxy_upstream` | When set to `"true"` forces Pomerium to connect to upstream servers through the k8s service proxy, and not individual endpoints. <br/> This is useful when deploying Pomerium inside a service mesh. |
-| `ingress.pomerium.io/tcp_upstream` | When set to `"true"`, defines the route as supporting a TCP tunnel. See the [example below](#tcp-endpoints) for more information. |
+| `ingress.pomerium.io/tcp_upstream` | When set to `"true"`, defines the route as supporting a TCP tunnel. See the [example below](/docs/k8s/ingress#tcp-services) for more information. |
 | `ingress.pomerium.io/tls_client_secret` | Name of Kubernetes `tls` Secret containing a [client certificate][tls_client_certificate] for connecting to the upstream. |
 | `ingress.pomerium.io/tls_custom_ca_secret` | Name of Kubernetes `tls` Secret containing a custom [CA certificate][`tls_custom_ca_secret`] for the upstream. |
 | `ingress.pomerium.io/tls_downstream_client_ca_secret` | Name of Kubernetes `tls` Secret containing a [Client CA][client-certificate-authority] for validating downstream clients. |
@@ -323,7 +323,7 @@ Each Ingress should be backed by a Service. Pomerium supports certain extensions
 
 Pomerium is capable of creating secure connections to services like SSH, Databases, and more by creating a TCP tunnel to the service with a local client.
 
-The example route below defines a route providing a tunneled TCP connection to an upstream service listening for non-web traffic. Pomerium provides [command line and GUI](/docs/capabilities/tcp/client#tcp-client-software) clients to interact with the TCP services.
+The example route below defines a route providing a tunneled TCP connection to an upstream service listening for non-web traffic. Pomerium provides [command line and GUI](/docs/capabilities/tcp/client) clients to interact with the TCP services.
 
 ```yaml
 apiVersion: networking.k8s.io/v1
