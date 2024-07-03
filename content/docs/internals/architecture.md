@@ -60,7 +60,7 @@ The points below outline the Databroker’s role in the request and session life
 
 In production deployments, it is recommended that you deploy each component [separately](/docs/reference/service-mode). This allows you to limit external attack surface, as well as scale and manage the services independently.
 
-In test deployments, all four components may run from a [single binary and configuration](/docs/reference#all-in-one-vs-split-service-mode).
+In test deployments, all four components may run from a [single binary and configuration](/docs/internals/configuration#all-in-one-vs-split-service-mode).
 
 ![pomerium architecture diagram](./img/architecture/pomerium-container-context-stateless-authn.svg)
 
@@ -86,7 +86,7 @@ The Authentication service redirects the request to the Proxy with the session d
 
 **Step 3:** Authorizing the request
 
-The Proxy saves the session data locally and sends it to the Databroker service over a gRPC call. The Databroker persists the session data and manages the session, and the Authorizaton service queries the Databroker for session data by way of on-demand caching.
+The Proxy saves the session data locally and sends it to the Databroker service over a gRPC call. The Databroker persists the session data and manages the session, and the Authorization service queries the Databroker for session data by way of on-demand caching.
 
 Now that the client is authenticated, the Proxy sends the request again to the Authorization service. The Authorization service can now locate the session in the Databroker.
 

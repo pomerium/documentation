@@ -146,7 +146,7 @@ A **TEE** is a physical method of executing cryptographic functions using data t
 
 ### Zero Trust
 
-Zero trust is a philosophy and/or framework for security models that includes several facets. We go into detail in our [Background](/docs/concepts/zero-trust#zero-trust) page, but briefly: zero-trust assumes that any one method of security is fallible, and defines a set of security principles that work in concert to provide the highest security without over-burdening administrators, end users, or network devices with extraneous overhead.
+Zero trust is a philosophy and/or framework for security models that includes several facets. We go into detail in our [Background](/docs/concepts/zero-trust) page, but briefly: zero-trust assumes that any one method of security is fallible, and defines a set of security principles that work in concert to provide the highest security without over-burdening administrators, end users, or network devices with extraneous overhead.
 
 [authenticate]: #authentication
 [authenticated]: #authentication
