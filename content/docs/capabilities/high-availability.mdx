@@ -10,7 +10,7 @@ import InstallMkcert from '@site/content/_install-mkcert.md';
 
 Pomerium is designed to be run in two modes: All-In-One or Split Service. These modes are not mutually exclusive, meaning you can run one or multiple instances of Pomerium in all-in-one mode, and spin up additional instances for specific components as needed.
 
-Each instance of Pomerium runs in all-in-one mode unless specified to run as a specific component by the `services` key. See [All-In-One vs Split Service mode](/docs/reference#all-in-one-vs-split-service-mode) for more details.
+Each instance of Pomerium runs in all-in-one mode unless specified to run as a specific component by the `services` key. See [All-In-One vs. Split Service mode](/docs/internals/configuration#all-in-one-vs-split-service-mode) for more details.
 
 :::caution
 
@@ -74,7 +74,7 @@ The Databroker service is responsible for background identity data retrieval and
 
 The Databroker service does not require significant resources, as it provides streaming updates of state changes to the other services. There will be utilization spikes when Authorize services are restarted and perform an initial synchronization.
 
-Databroker resource requirements scale with the number of replicated services in the [data plane](#data-plane). That is to say, additional instances of the Proxy and Authorize services will increase demand on Databroker. Additionally, the size of the user directory contributes to the resource requirements for data storage.
+Databroker resource requirements scale with the number of replicated services in the data plane. That is to say, additional instances of the Proxy and Authorize services will increase demand on Databroker. Additionally, the size of the user directory contributes to the resource requirements for data storage.
 
 In many deployments, 2 replicas of Databroker is enough to provide resilient service.
 
