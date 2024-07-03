@@ -86,7 +86,7 @@ The Authentication service redirects the request to the Proxy with the session d
 
 **Step 3:** Authorizing the request
 
-The Proxy saves the session data locally and sends it to the Databroker service over a gRPC call. The Databroker persists the session data and manages the session, and the Authorizaton service queries the Databroker for session data by way of on-demand caching.
+The Proxy saves the session data locally and sends it to the Databroker service over a gRPC call. The Databroker persists the session data and manages the session, and the Authorization service queries the Databroker for session data by way of on-demand caching.
 
 Now that the client is authenticated, the Proxy sends the request again to the Authorization service. The Authorization service can now locate the session in the Databroker.
 
