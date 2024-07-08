@@ -26,23 +26,23 @@ This document describes how Pomerium supports JWT authentication in upstream ser
 
 ## Overview
 
-JWTs provide a secure and efficient means to authenticate and authorize users before they can access upstream services behind Pomerium. By default, Pomerium secures these connections over TLS, but you can also configure Pomerium to provide an additional layer of security with **JWT authentication** at the application level. This way, even if other security checks fail, the upstream application can still grant or deny access based on the authenticity of the JWT. 
+JWTs provide a secure and efficient means to authenticate and authorize users before they can access upstream services behind Pomerium. By default, Pomerium secures these connections over TLS, but you can also configure Pomerium to provide an additional layer of security with **JWT authentication** at the application level. This way, even if other security checks fail, the upstream service can grant or deny access based on the authenticity of the JWT. 
 
 ## Why JWT authentication?
 
-**Identity and request verification**
+**Identity verification**
 
-JWT authentication through Pomerium provides a way for your upstream services to verify three things before accepting an incoming request:
+JWT authentication through Pomerium enables an upstream service to verify a user's identity based on claims contained in the JWT. Pomerium signs and issues a new JWT based on the ID token received from the service's configured identity provider, so the upstream service can trust that the claims were not modified in transit.
 
-- **JWT verification**: Did Pomerium issue and sign the user's JWT?
-- **Identity verification**: Is this user who they say they are?
-- **Request verification**: Did Pomerium handle the incoming request?  
+**Request verification**
+
+Because Pomerium handles each request before forwarding it, the upstream service can verify that Pomerium processed the request.
 
 An upstream service behind Pomerium should only accept an incoming request if it can confirm that the JWT is valid, the user's identity is authenticated, and that Pomerium processed the request.  
 
 **Single Sign-on (SSO)**
 
-You can configure upstream services to accept JWTs sent by Pomerium to achieve an SSO authentication flow. This capability is completely free and relatively easy to configure depending on the upstream service and your identity provider.
+You can configure upstream services to accept JWTs sent by Pomerium to achieve an SSO authentication flow. This capability is completely free and relatively easy to configure depending on the upstream service and your [identity provider](/docs/identity-providers).
 
 :::info Implement SSO with Pomerium
 
@@ -67,7 +67,7 @@ Pomerium signs the Pomerium JWT with a private [signing key](/docs/reference/sig
 
 ### JWT validation
 
-The upstream service receives the `X-Pomerium-Jwt-Assertion-Header` with the encrypted JWT. To validate a JWT, it checks the following items:
+The upstream service receives the `X-Pomerium-Jwt-Assertion-Header` with the encrypted JWT. To validate a JWT, the service should check the following items:
 
 - [JWT signature](#jwt-signature)
 - [Audience (`aud`) claim](#aud-claim)
@@ -84,6 +84,12 @@ For example:
 <Tabs>
 <TabItem label="Hosted Authenticate" value="hosted-authenticate">
 
+:::note
+
+When using the [hosted authenticate service](/docs/capabilities/hosted-authenticate-service), Pomerium uses the route domain as the [**Authenticate Service URL**](/docs/reference/authenticate-service-url).
+
+:::
+
 ```bash
 curl https://service.corp.example.com/.well-known/pomerium/jwks.json | jq
 ```
@@ -98,9 +104,7 @@ curl https://<AUTHENTICATE-SERVICE-URL>/.well-known/pomerium/jwks.json | jq
 </TabItem>
 </Tabs>
 
-TODO: 
-- Explain the difference between the hosted and self-hosted route URLs pointing to the JWKS enpdoint
-- Explain how `kid` contains the JWT key ID, and this is the value you need to get the public key
+A successful request returns a JSON object describing the signing key. The `kid` parameter contains the signing key ID, which is used to calculate the corresponding public key.
 
 
 ```json title="JWKS response"
@@ -139,27 +143,19 @@ After the upstream service validates the JWT, it can accept the JWT and the requ
 
 ## The Pomerium JWT
 
-Pomerium generates a new **Pomerium JWT** based on the claims data contained in the ID token provided by the user's identity provider after successful authentication. 
-
-In addition to including standard claims as defined in [RFC 7519](https://datatracker.ietf.org/doc/html/rfc7519#section-4.1), Pomerium also injects its own claims into the Pomeruim JWT as well. (See [JWT claims data](#jwt-claims-data) below for more details.)
+Pomerium generates a new **Pomerium JWT** based on the claims data contained in the original ID token. In addition to including standard claims as defined in [RFC 7519](https://datatracker.ietf.org/doc/html/rfc7519#section-4.1), Pomerium also injects its own claims into the Pomeruim JWT as well. (See [JWT claims data](#jwt-claims-data) below for more details.)
 
 :::note
 
-The original ID token sourced from the identity provider is never modified or leaked to end users or upstream services.
+The original ID token sourced from an identity provider is never modified or leaked to end users or upstream services.
 
 :::
 
-:::info Signing keys
+### Pomerium JWT claims data
 
-signing key
+When Pomerium is configured for JWT authentication, the user's associated identity information will be included in the signed `X-Pomerium-Jwt-Assertion` header in each upstream request. The signed Pomerium JWT is also available at the special `/.pomerium/jwt` endpoint of any URL handled by Pomerium.
 
-:::
-
-## Pomerium JWT claims data
-
-When the [Pass Identity Headers] route option is enabled, the user's associated identity information will be included in a signed attestation JWT. This JWT is added to each upstream request in the header `X-Pomerium-Jwt-Assertion`. The signed attestation JWT is also available at the special `/.pomerium/jwt` endpoint of any URL handled by Pomerium.
-
-The JWT will contain at least the following claims:
+The Pomerium JWT contains at least the following claims:
 
 | claim | description |
 | :-: | --- |
@@ -173,20 +169,24 @@ The JWT will contain at least the following claims:
 | `groups` | The user's group memberships (if supported for the identity provider). |
 | `name` | The user's full name, as specified by the identity provider. |
 
-<details>
-  <summary>Audience and issuer claims</summary>
-  <div>
+:::info Validating "aud" and "iss" claims
 
-The `aud` claim defines what application the JWT is intended for. Pomerium sets the audience claim to be the domain of the target upstream application.
+The `aud` claim defines what application the JWT is intended for. Pomerium sets the `aud` claim to be the domain of the target upstream application.
 
-Since version 0.22, Pomerium sets the `iss` claim also to the domain of the target upstream application. (In previous versions, this was instead set to the authentication service domain.)
+Since v0.22, Pomerium sets the `iss` claim also to the domain of the target upstream application. (In previous versions, this was instead set to the authentication service domain.)
 
 Upstream services should verify that these claims match the expected domain in order to prevent token reuse between different upstream services.
 
-  </div>
-</details>
+:::
 
-If your identity provider (IdP) provides other claims that you would like to pass to your application, you can use the [JWT Claims Headers](/docs/reference/jwt-claim-headers) option to include them in the JWT as well.
+### JWT Settings
+
+Use these settings to configure Pomerium to forward the Pomerium JWT to upstream services:
+
+- [Pass Identity Headers (global)](/docs/reference/pass-identity-headers)
+- [Pass Identity Headers (per route)](/docs/reference/routes/pass-identity-headers-per-route)
+
+If your identity provider provides other claims not included in the Pomerium JWT that you would like to pass to your application, you can use the [JWT Claims Headers](/docs/reference/jwt-claim-headers) option to include them in the JWT as well.
 
 :::tip JWT Verification with Pomerium SDKs
 
@@ -199,7 +199,6 @@ See the following guides to quickly implement JWT verification with our SDKs:
 
 :::
 
-TODO: Finish draft, remove below content
 ---
 
 ## JWT verification
