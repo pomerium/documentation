@@ -158,7 +158,7 @@ After the upstream service validates the JWT, it can accept the JWT and the requ
 
 ## The Pomerium JWT
 
-Pomerium generates a new **Pomerium JWT** based on the claims data contained in the original ID token. In addition to including standard claims as defined in [RFC 7519](https://datatracker.ietf.org/doc/html/rfc7519#section-4.1), Pomerium also injects its own claims into the Pomeruim JWT as well. (See [JWT claims data](#jwt-claims-data) below for more details.)
+Pomerium generates a new **Pomerium JWT** based on the claims data contained in the original ID token. In addition to including standard claims as defined in [RFC 7519](https://datatracker.ietf.org/doc/html/rfc7519#section-4.1), Pomerium also injects its own claims into the Pomerium JWT as well. (See [JWT claims data](#jwt-claims-data) below for more details.)
 
 :::note
 

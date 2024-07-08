@@ -1,4 +1,5 @@
 ---
+# cSpell:ignore Jklds, Tpai, Ibvjq, ecparam, pubout
 title: JWT Verification
 description: This guide provides several methods to validate the Pomerium JWT in an upstream application.
 sidebar_label: JWT Verification
