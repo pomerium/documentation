@@ -95,7 +95,6 @@ const sidebars = {
         },
         'docs/capabilities/hosted-authenticate-service',
         'docs/capabilities/self-hosted-authenticate-service',
-        'docs/capabilities/jwt-verification',
         'docs/capabilities/mtls-clients',
         'docs/capabilities/mtls-services',
         'docs/capabilities/getting-users-identity',
@@ -474,6 +473,10 @@ const sidebars = {
             {
               type: 'doc',
               id: 'docs/guides/jwt-verification-with-envoy',
+            },
+            {
+              type: 'doc',
+              id: 'docs/guides/verify-jwt',
             },
             {
               type: 'doc',
