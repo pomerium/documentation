@@ -63,7 +63,7 @@ After successful authentication, Pomerium mints a new [**Pomerium JWT**](#pomeri
 
 ### Signed HTTP header
 
-Pomerium signs the Pomerium JWT with a private [signing key](/docs/reference/signing-key) on behalf of the user, and places the JWT into a special HTTP header called the `X-Pomerium-Jwt-Assertion-Header`. This signed header is included in the HTTP request that Pomerium forwards to the upstream service.
+Pomerium signs the Pomerium JWT with a private [signing key](/docs/reference/signing-key) on behalf of the user, and places the JWT into a special HTTP header called the `X-Pomerium-Jwt-Assertion-Header`. This signed header is included in every request that Pomerium forwards to the upstream service.
 
 ### JWT validation
 
@@ -137,6 +137,17 @@ The `iat` claim informs you at what time the JWT was issued. The `exp` claim spe
 
 If the JWT has expired, it is not longer valid and can't be trusted.
 
+:::tip JWT Verification with Pomerium SDKs
+
+Pomerium's **[Go and JavaScript SDKs]** provide custom JWT libraries that enable upstream services to parse and validate the Pomerium JWT.
+
+See the following guides to quickly implement JWT verification with our SDKs:
+
+- **[JS SDK]**
+- **[GO SDK]**
+
+:::
+
 ---
 
 After the upstream service validates the JWT, it can accept the JWT and the request. 
@@ -187,17 +198,6 @@ Use these settings to configure Pomerium to forward the Pomerium JWT to upstream
 - [Pass Identity Headers (per route)](/docs/reference/routes/pass-identity-headers-per-route)
 
 If your identity provider provides other claims not included in the Pomerium JWT that you would like to pass to your application, you can use the [JWT Claims Headers](/docs/reference/jwt-claim-headers) option to include them in the JWT as well.
-
-:::tip JWT Verification with Pomerium SDKs
-
-Pomerium's **[Go and JavaScript SDKs]** provide free JWT libraries so you don't have to implement JWT verification yourself. 
-
-See the following guides to quickly implement JWT verification with our SDKs:
-
-- **[JS SDK]**
-- **[GO SDK]**
-
-:::
 
 ---
 

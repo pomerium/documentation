@@ -310,6 +310,7 @@ const sidebars = {
           label: 'Identity Providers',
           description:
             'Configure a custom Identity Provider for authentication',
+          link: {type: 'doc', id: 'docs/identity-providers/index'},
           items: [
             {
               type: 'doc',
