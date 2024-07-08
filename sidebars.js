@@ -473,7 +473,7 @@ const sidebars = {
           items: [
             {
               type: 'doc',
-              id: 'docs/guides/jwt-verification',
+              id: 'docs/guides/jwt-verification-with-envoy',
             },
             {
               type: 'doc',

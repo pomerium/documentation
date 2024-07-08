@@ -2,10 +2,12 @@
 # cSpell:ignore envoyproxy
 
 title: JWT Verification with Envoy
+id: jwt-verification-with-envoy
 lang: en-US
 keywords: [pomerium, identity access proxy, envoy, jwt]
 description: This example demonstrates how to verify the Pomerium JWT assertion header using Envoy.
 sidebar_label: JWT Verification with Envoy
+slug: jwt-verification-with-envoy
 ---
 
 This example demonstrates how to verify the [Pomerium JWT assertion header](https://www.pomerium.io/reference/#pass-identity-headers) using [Envoy](https://www.envoyproxy.io/). This is useful for legacy or 3rd party applications which can't be modified to perform verification themselves.
