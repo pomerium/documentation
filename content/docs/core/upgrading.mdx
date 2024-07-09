@@ -195,7 +195,7 @@ See the [Set Request Headers](/docs/reference/routes/headers#pass-dynamic-tokens
 
 #### Set Authorization Header
 
-The [Set Authorization Header](/docs/reference/routes/headers#set-authorization-header) option is deprecated in favor of the new variable substitution support in the Set Request Headers option. This new support allows you to pass IdP tokens to upstream services in any header, not just the `Authorization` header.
+The [Set Authorization Header](/docs/reference/routes/headers#set-request-headers) option is deprecated in favor of the new variable substitution support in the Set Request Headers option. This new support allows you to pass IdP tokens to upstream services in any header, not just the `Authorization` header.
 
 The Set Authorization Header option will be removed in a future release.
 
@@ -271,10 +271,10 @@ For Open Source, please use IdP Claims passed by your IdP.
   - [Okta](https://developer.okta.com/docs/guides/customize-tokens-groups-claim/main)
   - [Auth0](https://auth0.com/docs/customize/extensions/authorization-extension/configure-authorization-extension#add-authorization-information-to-the-token-issued)
   - [Azure](https://learn.microsoft.com/en-us/azure/active-directory/hybrid/how-to-connect-fed-group-claims)
-  - [Cognito](/docs/identity-providers/cognito.html#group-based-policies)
+  - [Cognito](/docs/identity-providers/cognito#getting-groups)
 - You may need adjust requested scopes via `idp_scopes` config option.
 - visit your authenticate endpoint `/.pomerium` route to check the group claims are passed by your IdP.
-- use `claim/` [PPL criteria](/docs/capabilities/ppl.html#criteria)
+- use `claim/` [PPL criteria](/docs/capabilities/ppl#criteria)
 
 ```yaml
 routes:
@@ -296,8 +296,8 @@ IdP directory sync has been moved to https://github.com/pomerium/datasource and 
 Setting the below options in Pomerium config file would now result in an error. In Pomerium Enterprise Console, please navigate to Settings > Identity Provider and configure directory sync there.
 
 - `idp_service_account`: use IdP provider specific options in the UI.
-- `idp_refresh_directory_timeout`: use [Polling Min Delay](/docs/enterprise/configure#polling-minmax-delay).
-- `idp_refresh_directory_interval`: replaced by [Polling Max Delay](/docs/enterprise/configure#polling-minmax-delay).
+- `idp_refresh_directory_timeout`: use [Polling Min Delay](/docs/reference/identity-provider-settings#identity-provider-polling-minmax-delay).
+- `idp_refresh_directory_interval`: replaced by [Polling Max Delay](/docs/reference/identity-provider-settings#identity-provider-polling-minmax-delay).
 - `idp_qps`: not required, IdP providers adjust their qps rate.
 
 Pomerium Core would only perform user authentication and session refresh with the IdP provider, and would not try to synchronize user details and groups, which is now part of [External Data Sources](/docs/capabilities/integrations/).
@@ -374,7 +374,7 @@ To improve performance, IdP directory synchronization for GitHub now uses the Gr
 
 #### CLI Source and Packaging Update
 
-`pomerium-cli` has been factored out of the core repository and now resides at [https://github.com/pomerium/cli](https://github.com/pomerium/cli). If you currently install the CLI tool from [Packages](/docs/core#packages-2) or [Homebrew](/docs/core#homebrew), no changes should be required to your process. However, users of docker images or direct github release downloads will need to update their references.
+`pomerium-cli` has been factored out of the core repository and now resides at [https://github.com/pomerium/cli](https://github.com/pomerium/cli). If you currently install the CLI tool from [Packages](/docs/clients/pomerium-cli#packages) or [Homebrew](/docs/clients/pomerium-cli#homebrew), no changes should be required to your process. However, users of docker images or direct github release downloads will need to update their references.
 
 Please see the [updated install instructions](/docs/clients/pomerium-cli) for additional details.
 
@@ -447,7 +447,7 @@ With the v0.13 release, routes may contain [multiple `to` URLs](/docs/reference/
 - Configurable [load balancing policies](/docs/reference/routes/load-balancing#load-balancing-policy)
 - Configurable [load balancing weight](/docs/reference/routes/to)
 
-See [Load Balancing](@site/content/docs/capabilities/load-balancing.md) for more information on using this feature set.
+See [Load Balancing](/docs/capabilities/load-balancing) for more information on using this feature set.
 
 #### Dynamic certificate updates
 

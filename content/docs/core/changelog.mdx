@@ -17,6 +17,39 @@ Please refer to the [upgrade guide](/docs/core/upgrading) before upgrading.
 
 :::
 
+## [v0.26.1](https://github.com/pomerium/pomerium/tree/v0.26.1) (2024-07-01)
+
+[Full Changelog](https://github.com/pomerium/pomerium/compare/v0.26.0...v0.26.1)
+
+Pomerium v0.26.1 includes multiple security updates:
+
+- The Pomerium user info page (at `/.pomerium`) unintentionally included serialized OAuth 2.0 access and ID tokens from the logged-in user's session. These tokens are not intended to be exposed to end users, and have now been removed. For more details, please see the official [CVE statement](https://github.com/pomerium/pomerium/security/advisories/GHSA-rrqr-7w59-637v).
+
+  Credit to Vadim Sheydaev, also known as Enr1g for reporting this issue.
+
+- This release includes an update from Envoy 1.30.1 to Envoy 1.30.3 to address the following security issues:
+
+  - [CVE-2024-34362](https://github.com/envoyproxy/envoy/security/advisories/GHSA-hww5-43gv-35jv): Crash (use-after-free) in EnvoyQuicServerStream
+  - [CVE-2024-34363](https://github.com/envoyproxy/envoy/security/advisories/GHSA-g979-ph9j-5gg4): Crash due to uncaught nlohmann JSON exception
+  - [CVE-2024-34364](https://github.com/envoyproxy/envoy/security/advisories/GHSA-xcj3-h7vf-fw26): Envoy OOM vector from HTTP async client with unbounded response buffer for mirror response, and other components
+  - [CVE-2024-32974](https://github.com/envoyproxy/envoy/security/advisories/GHSA-mgxp-7hhp-8299): Crash in EnvoyQuicServerStream::OnInitialHeadersComplete()
+  - [CVE-2024-32975](https://github.com/envoyproxy/envoy/security/advisories/GHSA-g9mq-6v96-cpqc): Crash in QuicheDataReader::PeekVarInt62Length()
+  - [CVE-2024-32976](https://github.com/envoyproxy/envoy/security/advisories/GHSA-7wp5-c2vq-4f8m): Endless loop while decompressing Brotli data with extra input
+  - [CVE-2024-23326](https://github.com/envoyproxy/envoy/security/advisories/GHSA-vcf8-7238-v74c): Envoy incorrectly accepts HTTP 200 response for entering upgrade mode
+  - [CVE-2024-38525](https://github.com/envoyproxy/envoy/security/advisories/GHSA-8mq4-c2v5-3h39): datadog tracer does not handle trace headers with unicode characters
+
+- The release also removes a transitive dependency on the gopkg.in/square/go-jose.v2 library which is vulnerable to https://github.com/advisories/GHSA-c5q2-7r4c-mv6g.
+
+### Security
+
+- envoy: upgrade to v1.30.3 by @kenjenkins in https://github.com/pomerium/pomerium/pull/5155
+- userinfo: remove excess userinfo data by @calebdoxsey in https://github.com/pomerium/pomerium/pull/5148
+- update the pomerium/webauthn dependency (#5125) by @kenjenkins in https://github.com/pomerium/pomerium/pull/5157
+
+### Fixed
+
+- autocert: fix filter chain, handshake by @calebdoxsey in https://github.com/pomerium/pomerium/pull/5151
+
 ## [v0.26.0](https://github.com/pomerium/pomerium/tree/v0.26.0) (2024-05-17)
 
 [Full Changelog](https://github.com/pomerium/pomerium/compare/v0.25.2...v0.26.0)
