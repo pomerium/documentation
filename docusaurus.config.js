@@ -222,6 +222,7 @@ const config = {
         'actionscript',
         'log',
         'ini',
+        'json',
         'nginx',
         'rego',
         'shell-session',
