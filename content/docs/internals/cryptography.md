@@ -12,13 +12,13 @@ Pomerium uses cryptography to secure data in transit, at rest, and to provide gu
 
 ## Encryption in transit[](https://www.pomerium.com/docs/internals/cryptography#encryption-in-transit)
 
-Data in transit is protected by Transport Layer Security ([TLS](https://en.wikipedia.org/wiki/Transport_Layer_Security)). See our lab's [SSL Labs report](https://www.ssllabs.com/ssltest/analyze.html?d=authenticate.demo.pomerium.com&latest) .
+Data in transit is protected by [Transport Layer Security](https://en.wikipedia.org/wiki/Transport_Layer_Security) (TLS). See our lab's [SSL Labs report](https://www.ssllabs.com/ssltest/analyze.html?d=authenticate.demo.pomerium.com&latest) .
 
 ### Downstream TLS[](https://www.pomerium.com/docs/internals/cryptography#downstream-tls)
 
-For downstream TLS (connections from the user's client to Pomerium)
+For downstream TLS (connections from the user's client to Pomerium):
 
-- The minimum accepted version of TLS is 1.2.
+- The minimum accepted version of TLS is 1.2
 - For TLS 1.2, the following cipher suites are offered, in this order:
   - ECDHE-ECDSA-AES256-GCM-SHA384
   - ECDHE-RSA-AES256-GCM-SHA384
@@ -32,7 +32,7 @@ For downstream TLS (connections from the user's client to Pomerium)
 
 ### Upstream TLS[](https://www.pomerium.com/docs/internals/cryptography#upstream-tls)
 
-For upstream TLS (connections from Pomerium to the application or service)
+For upstream TLS (connections from Pomerium to the application or service):
 
 - The minimum accepted version of TLS is 1.2
 - For TLS 1.2, the following cipher suites are supported:
@@ -55,8 +55,8 @@ For upstream TLS (connections from Pomerium to the application or service)
   - NIST P-256
   - NIST P-384
   - NIST P-521
-- [HTTP Strict Transport Security](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security) (HSTS) with a long duration is used by default.
-- [Mutually authenticated](https://en.wikipedia.org/wiki/Mutual_authentication) TLS is used when client side certificates are provided.
+- [HTTP Strict Transport Security](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security) (HSTS) with a long duration is used by default
+- [Mutually authenticated](https://en.wikipedia.org/wiki/Mutual_authentication) TLS is used when client side certificates are provided
 
 ### Hosted Control Plane
 
@@ -66,7 +66,7 @@ For connections to the Pomerium Zero web console:
 
 - The minimum accepted TLS version is 1.2
 - TLS 1.3 is supported and preferred by the server
-- For TLS 1.2 the following cipher suites are supported
+- For TLS 1.2, the following cipher suites are supported:
   - TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305_SHA256
   - TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256
   - TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256
