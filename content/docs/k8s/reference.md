@@ -192,6 +192,22 @@ PomeriumSpec defines Pomerium-specific configuration parameters.
         <tr>
             <td>
                 <p>
+                <code>runtimeFlags</code>&#160;&#160;
+                
+                    <strong>map[string]boolean</strong>
+                
+                </p>
+                <p>
+                    
+                    RuntimeFlags sets the <a href="https://www.pomerium.com/docs/reference/runtime-flags">runtime flags</a> to enable/disable certain features.
+                </p>
+                
+            </td>
+        </tr>
+    
+        <tr>
+            <td>
+                <p>
                 <code>secrets</code>&#160;&#160;
                 
                     <strong>string</strong>&#160;
