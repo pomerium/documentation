@@ -1,6 +1,6 @@
 ---
 # cSpell:ignore secp256r1, FIPS
-
+description: This page discusses how Pomerium implements cryptography to secure data between its services and end users.
 title: Cryptography
 lang: en-US
 keywords: [pomerium, security, disclosure, vulnerabilities]
@@ -12,7 +12,7 @@ Pomerium uses cryptography to secure data in transit, at rest, and to provide gu
 
 ## Encryption in transit[](https://www.pomerium.com/docs/internals/cryptography#encryption-in-transit)
 
-Data in transit is protected by [Transport Layer Security](https://en.wikipedia.org/wiki/Transport_Layer_Security) (TLS). See our lab's [SSL Labs report](https://www.ssllabs.com/ssltest/analyze.html?d=authenticate.demo.pomerium.com&latest) .
+Data in transit is protected by [Transport Layer Security](https://en.wikipedia.org/wiki/Transport_Layer_Security) (TLS). See our lab's [SSL Labs report](https://www.ssllabs.com/ssltest/analyze.html?d=authenticate.demo.pomerium.com&latest).
 
 ### Downstream TLS[](https://www.pomerium.com/docs/internals/cryptography#downstream-tls)
 
