@@ -1,5 +1,5 @@
 ---
-# cSpell:ignore secp256r1
+# cSpell:ignore secp256r1, FIPS
 
 title: Cryptography
 lang: en-US
