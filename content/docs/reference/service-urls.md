@@ -20,7 +20,7 @@ import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 import PomeriumAuthenticateServices from '@site/content/docs/admonitions/_pomerium-authenticate-services.mdx';
 
-# Service URLs
+# Service URL Settings
 
 ## Authenticate Service URL
 
@@ -176,7 +176,7 @@ The `authorize_service_url` is not customizable in all-in-one mode with the CRD
 
 ## Authorize Internal Service URL
 
-The **Authorize Internal Service URL** setting is only required for [split-service mode](/docs/internals/configuration#all-in-one-vs-split-service-mode) deployments where Pomerium can’t access the public [**Authorize Service URL**](/docs/reference/authorize-service-url).
+The **Authorize Internal Service URL** setting is only required for [split service mode](/docs/internals/configuration#all-in-one-vs-split-service-mode) deployments where Pomerium can’t access the public [**Authorize Service URL**](/docs/reference/authorize-service-url).
 
 If defined, **Authorize Internal Service URL** overrides the [Authorize Service URL](#authorize-service-url).
 
