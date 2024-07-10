@@ -14,7 +14,7 @@ The Self-Hosted Authenticate Service is available for both open-source Pomerium 
 
 ## How the Self-Hosted Authenticate Service works
 
-Self-hosting your Pomerium instance requires you to configure an [Authenticate Service URL](/docs/reference/authenticate-service-url) and an OIDC-compliant [identity provider](/docs/identity-providers) (IdP).
+Self-hosting your Pomerium instance requires you to configure an [Authenticate Service URL](/docs/reference/service-urls#authenticate-service-url) and an OIDC-compliant [identity provider](/docs/identity-providers) (IdP).
 
 ### Authenticate service URL
 
