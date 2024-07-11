@@ -26,7 +26,7 @@ import PomeriumAuthenticateServices from '@site/content/docs/admonitions/_pomeri
 
 The **Authenticate Service URL** setting defines the externally accessible URL where Pomerium redirects end users (clients) to authenticate against an identity provider.
 
-If you're running Pomerium in [split service mode](/docs/internals/configuration#all-in-one-vs-split-service-mode), each Pomerium Core service (except the Databroker service) requires the authenticate service URL in its configuration file, either as a config file key or environment variable. These services include the Proxy, Authenticate, and Authorize services.
+If Pomerium is running in [split service mode](/docs/internals/configuration#all-in-one-vs-split-service-mode), each individual Pomerium service (except the Databroker service) requires the authenticate service URL in its configuration. These services include the Proxy, Authenticate, and Authorize services.
 
 :::info
 
@@ -43,7 +43,7 @@ If you're running Pomerium in [split service mode](/docs/internals/configuration
 | :-- | :-- | :-- | :-- |
 | `authenticate_service_url` | `AUTHENTICATE_SERVICE_URL` | `URL` | \***optional** |
 
-\* Excluding the `authenticate_service_url` defaults to the Hosted Authenticated service. 
+\* Excluding the `authenticate_service_url` defaults to the [hosted authenticated service](/docs/capabilities/hosted-authenticate-service). 
 
 ### Examples
 
@@ -67,7 +67,7 @@ AUTHENTICATE_SERVICE_URL=https://authenticate.corp.example.com
 | :-------------------------------------------- | :------- | :----------- |
 | `authenticate.url`                            | `URL`    | \***optional** |
 
-\* Excluding the `authenticate.url` defaults to the Hosted Authenticated service. 
+\* Excluding the `authenticate.url` defaults to the [hosted authenticated service](/docs/capabilities/hosted-authenticate-service). 
 
 ### Examples
 
@@ -83,13 +83,11 @@ See the [Kubernetes - Global Configuration](/docs/k8s/configure) for more inform
 
 ## Authenticate Internal Service URL
 
-The **Authenticate Internal Service URL** setting defines the internally accessible URL where Pomerium redirects end users (clients) to authenticate against an identity provider. 
+The **Authenticate Internal Service URL** setting defines the internally accessible URL where Pomerium redirects end users (clients) to authenticate against an identity provider. An internal service URL is required for deployments where Pomerium can't access an external service URL (typically, this is due to network or environmental contraints).
 
-When running in [split service mode](/docs/internals/configuration#all-in-one-vs-split-service-mode), each Pomerium Core service requires an authenticate service URL to communicate with other Pomerium services. In deployments where accessing an external URL is not possible (or not preferable), you can instead use the authenticate internal service URL.    
+If Pomerium is running in [split service mode](/docs/internals/configuration#all-in-one-vs-split-service-mode), each individual Pomerium service (except the Databroker service) requires either an internal or external authenticate service URL in its configuration. These services include the Proxy, Authenticate, and Authorize services.
 
-Each Pomerium Core service (except the Databroker service) requires the authenticate internal service URL in its configuration file, either as a config file key or environment variable. These services include the Proxy, Authenticate, and Authorize services.
-
-If defined, the authenticate internal service URL overrides the [authenticate service URL](#authenticate-service-url). 
+A service's configuration can include both an internal and external authenticate service URL. If defined, the authenticate internal service URL overrides the external [authenticate service URL](#authenticate-service-url) when Pomerium is determining which TLS certificate and hostname to use when the authenticate service listens for incoming TLS connections.
 
 ### How to configure
 
@@ -100,7 +98,7 @@ If defined, the authenticate internal service URL overrides the [authenticate se
 | :-- | :-- | :-- | :-- |
 | `authenticate_internal_service_url` | `AUTHENTICATE_INTERNAL_SERVICE_URL` | `URL` | \***optional** |
 
-\* Excluding the `authenticate_internal_service_url` defaults to the Hosted Authenticated service.
+\* Excluding the `authenticate_internal_service_url` defaults to the [hosted authenticated service](/docs/capabilities/hosted-authenticate-service).
 
 ### Examples
 
@@ -149,7 +147,7 @@ If your load balancer does not support gRPC pass-through, you must set this valu
 
 ### Examples
 
-You can specify multiple URLs as an array with `authorize_service_urls`:
+You can specify multiple URLs as an array with the `authorize_service_urls` key:
 
 ```yaml
 authorize_service_urls:
@@ -176,9 +174,9 @@ The `authorize_service_url` is not customizable in all-in-one mode with the CRD
 
 ## Authorize Internal Service URL
 
-The **Authorize Internal Service URL** setting is only required for [split service mode](/docs/internals/configuration#all-in-one-vs-split-service-mode) deployments where Pomerium can’t access the public [**Authorize Service URL**](/docs/reference/service-urls#authorize-service-url).
+The **Authorize Internal Service URL** setting is only required for [split service mode](/docs/internals/configuration#all-in-one-vs-split-service-mode) deployments where Pomerium can’t access the external [authorize service URL](#authorize-service-url).
 
-If defined, **Authorize Internal Service URL** overrides the [Authorize Service URL](#authorize-service-url).
+If defined, the authorize internal service URL overrides the external [authorize service URL](#authorize-service-url) when Pomerium is determining which TLS certificate and hostname to use when the authorize service listens for incoming TLS connections. 
 
 ### How to configure
 
