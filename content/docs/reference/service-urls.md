@@ -16,9 +16,7 @@ pagination_next: null
 toc_max_heading_level: 2
 ---
 
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
-import PomeriumAuthenticateServices from '@site/content/docs/admonitions/_pomerium-authenticate-services.mdx';
+import Tabs from '@theme/Tabs'; import TabItem from '@theme/TabItem'; import PomeriumAuthenticateServices from '@site/content/docs/admonitions/\_pomerium-authenticate-services.mdx';
 
 # Service URL Settings
 
@@ -43,7 +41,7 @@ If Pomerium is running in [split service mode](/docs/internals/configuration#all
 | :-- | :-- | :-- | :-- |
 | `authenticate_service_url` | `AUTHENTICATE_SERVICE_URL` | `URL` | \***optional** |
 
-\* Excluding the `authenticate_service_url` defaults to the [hosted authenticated service](/docs/capabilities/hosted-authenticate-service). 
+\* Excluding the `authenticate_service_url` defaults to the [hosted authenticated service](/docs/capabilities/hosted-authenticate-service).
 
 ### Examples
 
@@ -63,11 +61,11 @@ AUTHENTICATE_SERVICE_URL=https://authenticate.corp.example.com
 </TabItem>
 <TabItem value="Kubernetes" label="Kubernetes">
 
-| **[Parameter name](/docs/k8s/reference#spec** | **Type** | **Usage**    |
-| :-------------------------------------------- | :------- | :----------- |
+| **[Parameter name](/docs/k8s/reference#spec** | **Type** | **Usage**      |
+| :-------------------------------------------- | :------- | :------------- |
 | `authenticate.url`                            | `URL`    | \***optional** |
 
-\* Excluding the `authenticate.url` defaults to the [hosted authenticated service](/docs/capabilities/hosted-authenticate-service). 
+\* Excluding the `authenticate.url` defaults to the [hosted authenticated service](/docs/capabilities/hosted-authenticate-service).
 
 ### Examples
 
@@ -176,7 +174,7 @@ The `authorize_service_url` is not customizable in all-in-one mode with the CRD
 
 The **Authorize Internal Service URL** setting is only required for [split service mode](/docs/internals/configuration#all-in-one-vs-split-service-mode) deployments where Pomerium can’t access the external [authorize service URL](#authorize-service-url).
 
-If defined, the authorize internal service URL overrides the external [authorize service URL](#authorize-service-url) when Pomerium is determining which TLS certificate and hostname to use when the authorize service listens for incoming TLS connections. 
+If defined, the authorize internal service URL overrides the external [authorize service URL](#authorize-service-url) when Pomerium is determining which TLS certificate and hostname to use when the authorize service listens for incoming TLS connections.
 
 ### How to configure
 
