@@ -81,7 +81,7 @@ See the [Kubernetes - Global Configuration](/docs/k8s/configure) for more inform
 
 ## Authenticate Internal Service URL
 
-The **Authenticate Internal Service URL** setting defines the internally accessible URL where Pomerium redirects end users (clients) to authenticate against an identity provider. An internal service URL is required for deployments where Pomerium can't access an external service URL (typically, this is due to network or environmental contraints).
+The **Authenticate Internal Service URL** setting defines the internally accessible URL where Pomerium redirects end users (clients) to authenticate against an identity provider. An internal service URL is required for deployments where Pomerium can't access an external service URL (typically, this is due to network or environmental constraints).
 
 If Pomerium is running in [split service mode](/docs/internals/configuration#all-in-one-vs-split-service-mode), each individual Pomerium service (except the Databroker service) requires either an internal or external authenticate service URL in its configuration. These services include the Proxy, Authenticate, and Authorize services.
 
