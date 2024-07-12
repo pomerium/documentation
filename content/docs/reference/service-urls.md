@@ -1,7 +1,7 @@
 ---
 title: Service URLs
 id: service-urls
-description: This page covers all of Pomerium's service URL settings, including authenticate and authorize external and internal service URLs.
+description: This page covers all of Pomerium's service URL settings, including authenticate, authorize, and databroker external and internal service URLs.
 keywords:
   - authenticate service url
   - authenticate internal service url
@@ -24,7 +24,7 @@ import Tabs from '@theme/Tabs'; import TabItem from '@theme/TabItem'; import Pom
 
 The **Authenticate Service URL** setting defines the externally accessible URL where Pomerium redirects end users (clients) to authenticate against an identity provider.
 
-If Pomerium is running in [split service mode](/docs/internals/configuration#all-in-one-vs-split-service-mode), each individual Pomerium service (except the Databroker service) requires the authenticate service URL in its configuration. These services include the Proxy, Authenticate, and Authorize services.
+If Pomerium is running in [split-service mode](/docs/internals/configuration#all-in-one-vs-split-service-mode), each Pomerium service requires the authenticate service URL in its configuration.
 
 :::info
 
@@ -39,7 +39,7 @@ If Pomerium is running in [split service mode](/docs/internals/configuration#all
 
 | **Config file keys** | **Environment variables** | **Type** | **Usage** |
 | :-- | :-- | :-- | :-- |
-| `authenticate_service_url` | `AUTHENTICATE_SERVICE_URL` | `URL` | \***optional** |
+| `authenticate_service_url` | `AUTHENTICATE_SERVICE_URL` | `URL` | \***required** |
 
 \* Excluding the `authenticate_service_url` defaults to the [hosted authenticated service](/docs/capabilities/hosted-authenticate-service).
 
@@ -63,7 +63,7 @@ AUTHENTICATE_SERVICE_URL=https://authenticate.corp.example.com
 
 | **[Parameter name](/docs/k8s/reference#spec** | **Type** | **Usage**      |
 | :-------------------------------------------- | :------- | :------------- |
-| `authenticate.url`                            | `URL`    | \***optional** |
+| `authenticate.url`                            | `URL`    | \***required** |
 
 \* Excluding the `authenticate.url` defaults to the [hosted authenticated service](/docs/capabilities/hosted-authenticate-service).
 
@@ -81,11 +81,11 @@ See the [Kubernetes - Global Configuration](/docs/k8s/configure) for more inform
 
 ## Authenticate Internal Service URL
 
-The **Authenticate Internal Service URL** setting defines the internally accessible URL where Pomerium redirects end users (clients) to authenticate against an identity provider. An internal service URL is required for deployments where Pomerium can't access an external service URL (typically, this is due to network or environmental constraints).
+The **Authenticate Internal Service URL** setting defines an internally accessible URL where Pomerium redirects end users (clients) to authenticate against an identity provider. Use this setting if Pomerium can't access an external service URL. 
 
-If Pomerium is running in [split service mode](/docs/internals/configuration#all-in-one-vs-split-service-mode), each individual Pomerium service (except the Databroker service) requires either an internal or external authenticate service URL in its configuration. These services include the Proxy, Authenticate, and Authorize services.
+You may include both an internal and external authenticate service URL in the same configuration. In this case, the internal authenticate service URL overrides the external service URL when Pomerium determines which TLS certificate and hostname the authenticate service will listen with when receiving incoming client requests.
 
-A service's configuration can include both an internal and external authenticate service URL. If defined, the authenticate internal service URL overrides the external [authenticate service URL](#authenticate-service-url) when Pomerium is determining which TLS certificate and hostname to use when the authenticate service listens for incoming TLS connections.
+If Pomerium is running in [split-service mode](/docs/internals/configuration#all-in-one-vs-split-service-mode), each Pomerium service requires either an internal or external authenticate service URL in its configuration.
 
 ### How to configure
 
@@ -96,7 +96,7 @@ A service's configuration can include both an internal and external authenticate
 | :-- | :-- | :-- | :-- |
 | `authenticate_internal_service_url` | `AUTHENTICATE_INTERNAL_SERVICE_URL` | `URL` | \***optional** |
 
-\* Excluding the `authenticate_internal_service_url` defaults to the [hosted authenticated service](/docs/capabilities/hosted-authenticate-service).
+\* Excluding the `authenticate_internal_service_url` defaults to the [hosted authenticated service](/docs/capabilities/hosted-authenticate-service) if `authenticate_service_url` isn't defined.
 
 ### Examples
 
@@ -172,9 +172,9 @@ The `authorize_service_url` is not customizable in all-in-one mode with the CRD
 
 ## Authorize Internal Service URL
 
-The **Authorize Internal Service URL** setting is only required for [split service mode](/docs/internals/configuration#all-in-one-vs-split-service-mode) deployments where Pomerium can’t access the external [authorize service URL](#authorize-service-url).
+The **Authorize Internal Service URL** setting is only required for [split-service mode](/docs/internals/configuration#all-in-one-vs-split-service-mode) deployments where Pomerium can’t access the external [authorize service URL](#authorize-service-url).
 
-If defined, the authorize internal service URL overrides the external [authorize service URL](#authorize-service-url) when Pomerium is determining which TLS certificate and hostname to use when the authorize service listens for incoming TLS connections.
+If defined, the authorize internal service URL overrides the external [authorize service URL](#authorize-service-url) when Pomerium determines which TLS certificate the authorize service should listen with.
 
 ### How to configure
 
@@ -204,6 +204,84 @@ AUTHORIZE_INTERNAL_SERVICE_URL=https://localhost:5443
 <TabItem value="Kubernetes" label="Kubernetes">
 
 Kubernetes does not support `authorize_internal_service_url`
+
+</TabItem>
+</Tabs>
+
+## Databroker Service URL {#databroker-service-url}
+
+The **Databroker Service URL** settings points to a databroker which is responsible for storing associated authorization context (for example, sessions, users, and user groups).
+
+### How to configure {#databroker-service-url-how-to-configure}
+
+<Tabs>
+<TabItem value="Core" label="Core">
+
+| **Config file keys** | **Environment variables** | **Type** | **Default** |
+| :-- | :-- | :-- | :-- |
+| `databroker_service_url` | `DATABROKER_SERVICE_URL` | `URL` | `http://localhost:5443` (In [all-in-one mode](/docs/internals/configuration#all-in-one-vs-split-service-mode)) |
+| `databroker_service_urls` | `DATABROKER_SERVICE_URLS` | `URL` | `http://localhost:5443` (In [all-in-one mode](/docs/internals/configuration#all-in-one-vs-split-service-mode)) |
+
+#### Examples {#databroker-service-url-examples}
+
+```yaml
+databroker_service_urls:
+  - http://databroker.corp.example1.com
+  - https://databroker.corp.example2.com
+```
+
+```bash
+DATABROKER_SERVICE_URL=https://databroker.corp.example.com
+```
+
+</TabItem>
+<TabItem value="Enterprise" label="Enterprise">
+
+`databroker_service_url` and `databroker_internal_service_urls` are bootstrap configuration settings and are not configurable in the Console.
+
+</TabItem>
+<TabItem value="Kubernetes" label="Kubernetes">
+
+`databroker_service_url` is not customizable in Kubernetes for all-in-one mode deployments
+
+</TabItem>
+</Tabs>
+
+## Databroker Internal Service URL {#databroker-internal-service-url}
+
+The **Databroker Internal Service URL** overrides [`databroker_service_url`](/docs/reference/databroker) when determining the TLS certificate for the Databroker service to listen with.
+
+### How to configure {#databroker-internal-service-url-how-to-configure}
+
+<Tabs>
+<TabItem value="Core" label="Core">
+
+| **Config file keys** | **Environment variables** | **Type** | **Default** |
+| :-- | :-- | :-- | :-- |
+| `databroker_internal_service_url` | `DATABROKER_INTERNAL_SERVICE_URL` | `URL` | `http://localhost:5443` (In all-in-one mode) |
+| `databroker_internal_service_urls` | `DATABROKER_INTERNAL_SERVICE_URLS` | `URL` | `http://localhost:5443` (In all-in-one mode) |
+
+#### Examples {#databroker-internal-service-url-examples}
+
+```yaml
+databroker_internal_service_urls:
+  - http://localhost:5443
+  - http://service_url.com
+```
+
+```bash
+DATABROKER_INTERNAL_SERVICE_URL=http://localhost:5443
+```
+
+</TabItem>
+<TabItem value="Enterprise" label="Enterprise">
+
+`databroker_internal_service_url` and `databroker_internal_service_urls` are bootstrap configuration settings and are not configurable in the Console.
+
+</TabItem>
+<TabItem value="Kubernetes" label="Kubernetes">
+
+`databroker_internal_service_url` is not customizable in Kubernetes
 
 </TabItem>
 </Tabs>
