@@ -4,6 +4,7 @@
 title: JWT Authentication
 description: Learn how Pomerium supports single sign-on (SSO) and identity verification with JWT authentication and signed HTTP headers.
 sidebar_label: JWT Authentication
+keywords: jwt assertion header, jwt authentication, jwt, single sign-on, sso, identity verification, request verification, pomerium jwt, jwt validation, jwt claims
 ---
 
 import Tabs from '@theme/Tabs'; import TabItem from '@theme/TabItem'; import GoApp from '../../examples/go-sdk/go-app.md'; import ReactApp from '../../examples/js-sdk/react-app.md';
@@ -27,11 +28,11 @@ JWTs provide a secure and efficient means to authenticate and authorize users be
 
 ## Why JWT authentication?
 
-**Identity verification**
+### Identity verification
 
 JWT authentication through Pomerium enables an upstream service to verify a user's identity based on claims contained in the JWT. Pomerium signs and issues a new JWT based on the ID token received from the service's configured identity provider, so the upstream service can verify that the claims were not modified in transit.
 
-**Request verification**
+### Request verification
 
 Pomerium places the newly minted JWT in a [JWT assertion header](#jwt-assertion-header). The presence of the JWT assertion header confirms that the request originated from Pomerium, where the user was authenticated and the request was authorized in accordance with the route's authorization policy.
 
@@ -41,7 +42,7 @@ If you configure Pomerum for JWT authentication, the upstream service should onl
 
 :::
 
-**Single Sign-on (SSO)**
+### Single Sign-on (SSO)
 
 You can configure upstream services to accept JWTs sent by Pomerium to achieve an SSO authentication flow. This capability is completely free and relatively easy to configure depending on the upstream service and your [identity provider](/docs/identity-providers).
 
@@ -161,7 +162,7 @@ If the JWT has expired, it is invalid and can't be trusted.
 
 :::tip JWT Verification with Pomerium SDKs
 
-Pomerium's [**JWT Verification**](/docs/guides/verify-jwt) guides provide custom libraries that enable upstream services to parse and validate the Pomerium JWT.
+Pomerium's [**JWT Verification**](/docs/guides/verify-jwt) guide shows you how to use our custom JWT libraries to parse and validate the Pomerium JWT in an upstream service.
 
 :::
 

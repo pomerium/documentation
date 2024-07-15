@@ -21,45 +21,7 @@ Before trusting any user identity information in the JWT, your application shoul
 2. The JWT has not expired.
 3. The JWT audience and issuer match your application's domain.
 
-:::info
-
-Signed headers are used to establish an extra layer of authentication. For more information on the benefits, check out our [blog post](https://www.pomerium.com/blog/signed-headers-a-safety-net-for-application-security/) on this topic.
-
-:::
-
-The attestation JWT's signature can be verified using the public key retrieved from Pomerium's `/.well-known/pomerium/jwks.json` endpoint (on any route domain). For example:
-
-```bash
-curl https://your-app.corp.example.com/.well-known/pomerium/jwks.json | jq
-```
-
-```json
-{
-  "keys": [
-    {
-      "use": "sig",
-      "kty": "EC",
-      "kid": "ccc5bc9d835ff3c8f7075ed4a7510159cf440fd7bf7b517b5caeb1fa419ee6a1",
-      "crv": "P-256",
-      "alg": "ES256",
-      "x": "QCN7adG2AmIK3UdHJvVJkldsUc6XeBRz83Z4rXX8Va4",
-      "y": "PI95b-ary66nrvA55TpaiWADq8b3O1CYIbvjqIHpXCY"
-    }
-  ]
-}
-```
-
-(This endpoint can also be used to integrate with other systems, such as [Istio](https://istio.io/). For example, see the Istio guide on [Authentication Policy](https://istio.io/latest/docs/reference/config/security/jwt/#JWTRule-jwks_uri), and specifically the [`jwksUri`](https://istio.io/latest/docs/reference/config/security/jwt/#JWTRule-jwks_uri) key on the `jwtRules` mapping.)
-
-:::caution
-
-In order to use the `/.well-known/pomerium/jwks.json` endpoint, you must set either the [Signing Key] or [Signing Key File] configuration option.
-
-:::
-
-After verifying the JWT signature, your application should verify that JWT has not expired, by comparing the current time with the timestamps in the `exp` and `iat` claims. We recommend allowing up to 1 minute leeway in this comparison, to account for clock skew between Pomerium and your application.
-
-And finally, your application should verify that the `aud` and `iss` claim both match the domain used to serve your application.
+See [JWT validation](/docs/capabilities/getting-users-identity#jwt-validation) for specific instructions on validating each of these requirements.
 
 ## Verification in a Go application
 
@@ -94,6 +56,8 @@ The `issuer` and `audience` parameters are optional. If you don’t define them,
 If you define the `issuer` and `audience` parameters, `PomeriumVerifier` verifies their values against the claims provided by the identity provider.
 
 The `issuer` and `audience` parameters should both be set to the domain of the **upstream application** without the prefixed protocol (for example, `httpbin.corp.example.com`).
+
+<b>Note:</b> We strongly recommend that you explicitly define the expected issuer and audience claims. Relying on a TOFU policy is dangerous in ephemeral serverless environments (such as AWS Lamda or Cloud Run), where applications are typically short-lived. 
 
   </div>
 </details>
@@ -147,7 +111,7 @@ Though you will likely verify signed headers programmatically in your applicatio
 
    ![httpbin displaying jwt headers](./img/jwt/inspect-headers.png)
 
-1. `X-Pomerium-Jwt-Assertion` is the signature value. It's less scary than it looks, and is basically just a compressed, JSON blob as described above. Navigate to [jwt.io], which provides a helpful user interface to manually verify JWT values.
+1. `X-Pomerium-Jwt-Assertion` is the signature value. It's less scary than it looks, and is basically just a compressed, JSON blob as described above. Navigate to [jwt.io](https://jwt.io/), which provides a helpful user interface to manually verify JWT values.
 
 1. Paste the value of `X-Pomerium-Jwt-Assertion` header token into the `Encoded` form. You should notice that the decoded values look much more familiar.
 
@@ -158,12 +122,3 @@ Though you will likely verify signed headers programmatically in your applicatio
    ![httpbin displaying verified jwt](./img/jwt/jwt-payload.png)
 
 **Voila!** Hopefully walking through a manual verification has helped give you a better feel for how signed JWT tokens are used as a secondary validation mechanism in pomerium.
-
-:::caution
-
-In an actual client, you'll want to ensure that all the other claims values are valid (like expiration, issuer, audience and so on) in the context of your application. You'll also want to make sure you have a safe and reliable mechanism for distributing the public signing key to client apps (typically, a [key management service]).
-
-:::
-
-[jwt.io]: https://jwt.io/
-[key management service]: https://en.wikipedia.org/wiki/Key_management
