@@ -33,7 +33,7 @@ JWT authentication through Pomerium enables an upstream service to verify a user
 
 **Request verification**
 
-Because Pomerium handles each request before forwarding it, the upstream service can verify that Pomerium processed and authorized the request according to the rules defined in the route's authorization policy.
+The presence of the JWT assertion header confirms that the request originates from Pomerium, where the user was authenticated and the request was authorized in accordance with the route policy.
 
 :::note
 
