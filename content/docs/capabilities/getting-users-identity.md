@@ -4,7 +4,7 @@
 title: JWT Authentication
 description: Learn how Pomerium supports single sign-on (SSO) and identity verification with JWT authentication and signed HTTP headers.
 sidebar_label: JWT Authentication
-keywords: jwt assertion header, jwt authentication, jwt, single sign-on, sso, identity verification, request verification, pomerium jwt, jwt validation, jwt claims
+keywords: [jwt assertion header, jwt authentication, jwt, single sign-on, sso, identity verification, request verification, pomerium jwt, jwt validation, jwt claims]
 ---
 
 import Tabs from '@theme/Tabs'; import TabItem from '@theme/TabItem'; import GoApp from '../../examples/go-sdk/go-app.md'; import ReactApp from '../../examples/js-sdk/react-app.md';
@@ -24,7 +24,9 @@ This document describes how Pomerium supports JWT authentication in upstream ser
 
 ## Overview
 
-JWTs provide a secure and efficient means to authenticate and authorize users before they can access upstream services behind Pomerium. By default, Pomerium secures these connections over TLS, but you can also configure Pomerium to provide an additional layer of security with **JWT authentication** at the application level. This way, even if other security checks fail, the upstream service can grant or deny access based on the authenticity of the JWT.
+JWTs provide a secure and efficient means to authenticate and authorize users before they can access upstream services behind Pomerium. When configured for JWT authentication, Pomerium sends its own JWT to the upstream service. By verifying the Pomerium JWT, the upstream service can:
+- Confirm that the Pomerium Proxy service handled the client request before forwarding it. (This capability offers an easy alternative to [client-side mTLS](/docs/capabilities/mtls-clients), which can be difficult to configure depending on your infrastucture or environment.)
+- Make application-level authorization decisions based on the user's associated identity information. 
 
 ## Why JWT authentication?
 
