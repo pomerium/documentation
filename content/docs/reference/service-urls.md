@@ -85,7 +85,7 @@ The **Authenticate Internal Service URL** setting defines an internally accessib
 
 You may include both an internal and external authenticate service URL in the same configuration. In this case, the internal authenticate service URL overrides the external service URL when Pomerium determines which TLS certificate and hostname the authenticate service will listen with when receiving incoming client requests.
 
-If Pomerium is running in [split-service mode](/docs/internals/configuration#all-in-one-vs-split-service-mode), each Pomerium service requires either an internal or external authenticate service URL in its configuration.
+If an internal authenticate service URL is required, it should be configured on each Pomerium service.
 
 ### How to configure
 
