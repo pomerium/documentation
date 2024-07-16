@@ -1,16 +1,26 @@
 ---
-title: Service URLs
+title: Service URL Settings
 id: service-urls
 description: This page covers all of Pomerium's service URL settings, including authenticate, authorize, and databroker external and internal service URLs.
 keywords:
   - authenticate service url
-  - authenticate internal service url
   - authenticate_service_url
+  - authenticate-service-url
+  - authenticate internal service url
   - authenticate_internal_service_url
+  - authenticate-internal-service-url
   - authorize service url
   - authorize_service_url
+  - authorize-service-url
   - authorize internal service url
   - authorize_internal_service_url
+  - authorize-internal-service-url
+  - databroker service url
+  - databroker_service_url
+  - databroker-service-url
+  - databroker internal service url
+  - databroker_internal_service_url
+  - databroker-internal-service-url
 pagination_prev: null
 pagination_next: null
 toc_max_heading_level: 2
