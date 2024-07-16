@@ -30,7 +30,7 @@ import Tabs from '@theme/Tabs'; import TabItem from '@theme/TabItem'; import Pom
 
 # Service URL Settings
 
-The [authenticate service URL](#authenticate-service-url) setting controls whether or not Pomerium will use the [hosted authenticate service](/docs/capabilities/hosted-authenticate-service). If you prefer to use your own [identity provider](/docs/identity-providers), you'll need this service URL when configuring your identity provider client's OAuth callback URL. 
+The [authenticate service URL](#authenticate-service-url) setting controls whether or not Pomerium will use the [hosted authenticate service](/docs/capabilities/hosted-authenticate-service). If you prefer to use your own [identity provider](/docs/identity-providers), you'll need this service URL when configuring your identity provider client's OAuth callback URL.
 
 ## Authenticate Service URL
 
