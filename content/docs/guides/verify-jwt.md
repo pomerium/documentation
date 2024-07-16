@@ -57,7 +57,7 @@ If you define the `issuer` and `audience` parameters, `PomeriumVerifier` verifie
 
 The `issuer` and `audience` parameters should both be set to the domain of the **upstream application** without the prefixed protocol (for example, `httpbin.corp.example.com`).
 
-<b>Note:</b> We strongly recommend that you explicitly define the expected issuer and audience claims. Relying on a TOFU policy is dangerous in ephemeral serverless environments (such as AWS Lamda or Cloud Run), where applications are typically short-lived. 
+<b>Note:</b> We strongly recommend that you explicitly define the expected issuer and audience claims. Relying on a TOFU policy is dangerous in ephemeral serverless environments (such as AWS Lamda or Cloud Run), where applications are typically short-lived.
 
   </div>
 </details>

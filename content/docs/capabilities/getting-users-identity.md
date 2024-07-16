@@ -1,10 +1,22 @@
 ---
-# cSpell:ignore ecparam genkey noout pubout secp256r1 QCN7adG2AmIK3UdHJvVJkldsUc6XeBRz83Z4rXX8Va4 ary66nrvA55TpaiWADq8b3O1CYIbvjqIHpXCY
+# cSpell:ignore ecparam genkey noout pubout secp256r1 QCN7adG2AmIK3UdHJvVJkldsUc6XeBRz83Z4rXX8Va4 ary66nrvA55TpaiWADq8b3O1CYIbvjqIHpXCY Lamda
 
 title: JWT Authentication
 description: Learn how Pomerium supports single sign-on (SSO) and identity verification with JWT authentication and signed HTTP headers.
 sidebar_label: JWT Authentication
-keywords: [jwt assertion header, jwt authentication, jwt, single sign-on, sso, identity verification, request verification, pomerium jwt, jwt validation, jwt claims]
+keywords:
+  [
+    jwt assertion header,
+    jwt authentication,
+    jwt,
+    single sign-on,
+    sso,
+    identity verification,
+    request verification,
+    pomerium jwt,
+    jwt validation,
+    jwt claims,
+  ]
 ---
 
 import Tabs from '@theme/Tabs'; import TabItem from '@theme/TabItem'; import GoApp from '../../examples/go-sdk/go-app.md'; import ReactApp from '../../examples/js-sdk/react-app.md';
@@ -25,8 +37,9 @@ This document describes how Pomerium supports JWT authentication in upstream ser
 ## Overview
 
 JWTs provide a secure and efficient means to authenticate and authorize users before they can access upstream services behind Pomerium. When configured for JWT authentication, Pomerium sends its own JWT to the upstream service. By verifying the Pomerium JWT, the upstream service can:
-- Confirm that the Pomerium Proxy service handled the client request before forwarding it. (This capability offers an easy alternative to [client-side mTLS](/docs/capabilities/mtls-clients), which can be difficult to configure depending on your infrastucture or environment.)
-- Make application-level authorization decisions based on the user's associated identity information. 
+
+- Confirm that the Pomerium Proxy service handled the client request before forwarding it. (This capability offers an easy alternative to [client-side mTLS](/docs/capabilities/mtls-clients), which can be difficult to configure depending on your infrastructure or environment.)
+- Make application-level authorization decisions based on the user's associated identity information.
 
 ## Why JWT authentication?
 
@@ -40,7 +53,7 @@ Pomerium places the newly minted JWT in a [JWT assertion header](#jwt-assertion-
 
 :::caution JWT validation conditions
 
-If you configure Pomerum for JWT authentication, the upstream service should only accept an incoming request if it satisfies all [**JWT validation**](#jwt-validation) conditions.
+If you configure Pomerium for JWT authentication, the upstream service should only accept an incoming request if it satisfies all [**JWT validation**](#jwt-validation) conditions.
 
 :::
 
@@ -70,7 +83,7 @@ Pomerium signs the Pomerium JWT with a private [signing key](/docs/reference/sig
 
 :::info JWT assertion header field
 
-The JWT assertion header is a proprietay HTTP header field that follows the format `X-Pomerium-Jwt-Assertion` in a given request.
+The JWT assertion header is a proprietary HTTP header field that follows the format `X-Pomerium-Jwt-Assertion` in a given request.
 
 :::
 
