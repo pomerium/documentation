@@ -1,9 +1,11 @@
 ---
-title: Configuration & Settings
+title: Configuration
+description: This page discusses configuration settings for Pomerium Core.
+keywords: [core configuration]
 sidebar_label: Configuration
 ---
 
-# Configuration & Settings
+# Configuration
 
 Pomerium can be configured using a configuration file ([YAML]/[JSON]/[TOML]) or [environmental variables]. In general, environmental variable keys are identical to config file keys but are uppercase. Enterprise users will be able to set these settings in the GUI, or using the API.
 
@@ -14,8 +16,6 @@ Using both [environmental variables] and config file keys is allowed and encoura
 Pomerium can hot-reload route configuration details, authorization policy, certificates, and other proxy settings.
 
 :::
-
-## Reference table of settings
 
 See the [reference](/docs/reference) page for a complete list of available options.
 
