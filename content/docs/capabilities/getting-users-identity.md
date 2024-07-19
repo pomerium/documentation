@@ -49,7 +49,7 @@ JWT authentication through Pomerium enables an upstream service to verify a user
 
 ### Request verification
 
-Pomerium places the newly minted JWT in a [JWT assertion header](#jwt-assertion-header). The presence of the JWT assertion header confirms that the request originated from Pomerium, where the user was authenticated and the request was authorized in accordance with the route's authorization policy.
+Pomerium places the newly minted JWT in a [JWT assertion header](#jwt-assertion-header). ```
 
 :::caution JWT validation conditions
 
