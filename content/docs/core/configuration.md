@@ -7,7 +7,13 @@ sidebar_label: Configuration
 
 # Configuration
 
-Pomerium can be configured using a configuration file ([YAML]/[JSON]/[TOML]) or [environmental variables]. In general, environmental variable keys are identical to config file keys but are uppercase. Enterprise users will be able to set these settings in the GUI, or using the API.
+You can configure Pomerium using a configuration file or [environmental variables]. If using a configuration file, the following languages are supported:
+
+- [YAML]
+- [JSON]
+- [TOML]
+
+Environmental variable keys are identical to configuration file keys, but they must be uppercase. Enterprise users will be able to set these settings in the GUI, or using the API.
 
 Using both [environmental variables] and config file keys is allowed and encouraged (for instance, secret keys are probably best set as environmental variables). However, if duplicate configuration keys are found, environment variables take precedence.
 
