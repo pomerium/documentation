@@ -7,15 +7,13 @@ sidebar_label: Configuration
 
 # Configuration
 
-You can configure Pomerium using a configuration file or [environmental variables]. If using a configuration file, the following languages are supported:
+You can configure Pomerium using either a configuration file or [environmental variables](https://en.wikipedia.org/wiki/Environment_variable). If using a configuration file, the following languages are supported:
 
-- [YAML]
-- [JSON]
-- [TOML]
+- [YAML](https://yaml.org/)
+- [JSON](https://www.json.org/json-en.html)
+- [TOML](https://toml.io/en/)
 
-Environmental variable keys are identical to configuration file keys, but they must be uppercase. Enterprise users will be able to set these settings in the GUI, or using the API.
-
-Using both [environmental variables] and config file keys is allowed and encouraged (for instance, secret keys are probably best set as environmental variables). However, if duplicate configuration keys are found, environment variables take precedence.
+Using both environmental variables and configuration file keys is allowed and encouraged (for instance, secret keys are probably best set as environmental variables). However, if duplicate configuration keys are found, environment variables take precedence.
 
 :::tip
 
@@ -23,19 +21,35 @@ Pomerium can hot-reload route configuration details, authorization policy, certi
 
 :::
 
-See the [reference](/docs/reference) page for a complete list of available options.
+### Configuration syntax
 
-## All-In-One vs Split Service mode
+Both configuration file keys and environment variables are case sensitive. Configuration file keys are always lowercase and use hyphens (`-`). 
 
-When running Pomerium as a single system service or container, all the options on this page can be set in a single `config.yaml` file, or passed to the single instance as environment variables.
+Environmental variables are identical to configuration file keys, but they are always uppercase and use underscores (`_`). 
 
-When running Pomerium in a distributed environment where there are multiple processes, each handling separate [components](/docs/internals/architecture#component-level), all services can still share a single config file or set of environment variables.
+See the [Reference](/docs/reference) page for a comprehensive list of Pomerium's configuration settings.
 
-Alternately, you can create individual config files or sets of environment variables for each service. When doing so, each file or set can define which component a process will run as using the [service mode](/docs/reference/service-mode) key.
+## All In One and Split Service modes
 
-The table contains all config options for Pomerium Core. You can also browse each key using the index on the left.
+You can configure Pomerium using either All In One mode or Split Service mode.
 
-[environmental variables]: https://en.wikipedia.org/wiki/Environment_variable
-[json]: https://en.wikipedia.org/wiki/JSON
-[toml]: https://en.wikipedia.org/wiki/TOML
-[yaml]: https://en.wikipedia.org/wiki/YAML
+### All In One mode
+
+All In One mode means all of Pomerium's configuration settings are set in a single configuration file. You can use All In One mode when running Pomerium: 
+
+- As a single system service or container, or
+- In a distributed environment where there are multiple processes that each handle separate [components](/docs/internals/architecture#component-level). 
+
+### Split Service mode
+
+Alternately, you can create individual configuration files (or sets of environment variables) for each Pomerium service. When doing so, each file or set defines which component a process will run by using the [service mode](/docs/reference/service-mode) key.
+
+:::tip Our recommendation
+
+We recommend All In One mode to configure Pomerium for the following reasons: 
+
+- **Reduce complexity**: All In One mode reduces the complexity of managing configuration. A single configuration file means there is one source of truth.
+- **Secure communication**: Pomerium services communicate internally. Splitting up services requires securing these endpoints and configuring DNS records for each service.
+- **Scaling**: All In One instances scale for better performance. All URLs point at the same Pomerium service instance.
+
+:::
