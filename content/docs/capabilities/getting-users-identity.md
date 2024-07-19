@@ -53,7 +53,12 @@ Pomerium places the newly minted JWT in a [JWT assertion header](#jwt-assertion-
 
 :::caution JWT validation conditions
 
-If you configure Pomerium for JWT authentication, the upstream service should only accept an incoming request if it satisfies all [**JWT validation**](#jwt-validation) conditions.
+If you configure Pomerium for JWT authentication, the upstream service should only accept an incoming request if it satisfies all [**JWT validation**](#jwt-validation) conditions. 
+
+By validating the JWT, the upstream can assert:
+- the request was originated from Pomerium
+- the user was authenticated
+- the request was authorized in accordance with the route's authorization policy.
 
 :::
 
