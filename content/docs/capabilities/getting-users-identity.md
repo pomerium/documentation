@@ -113,7 +113,16 @@ For example:
 
 :::note
 
-When using the [**hosted authenticate service**](/docs/capabilities/hosted-authenticate-service), use the route domain to fetch the JWKS key.
+Pomerium Assertion JWT is signed by Pomerium. The upstream application should fetch the public key that can be obtained as follows: 
+
+1. Hostname: `iss` claim from the token.
+2. Path: `/.well-known/pomerium/jwks.json`
+3. Scheme: `https`. 
+4. Set `Accept: application/json` header. 
+
+The returned [JWK Key Set](https://datatracker.ietf.org/doc/html/rfc7517#section-5) contains public keys Pomerium uses.
+
+Use `kid` from the JWT to find the specific key in the JWK Key Set.
 
 :::
 
