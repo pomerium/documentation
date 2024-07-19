@@ -49,18 +49,12 @@ JWT authentication through Pomerium enables an upstream service to verify a user
 
 ### Request verification
 
-Pomerium places the newly minted JWT in a [JWT assertion header](#jwt-assertion-header). ```
+Pomerium places the newly minted JWT in a [JWT assertion header](#jwt-assertion-header). The upstream service should only accept the incoming request if it satisfies all [JWT validation](#jwt-validation) conditions. 
 
-:::caution JWT validation conditions
-
-If you configure Pomerium for JWT authentication, the upstream service should only accept an incoming request if it satisfies all [**JWT validation**](#jwt-validation) conditions. 
-
-By validating the JWT, the upstream can assert:
-- the request was originated from Pomerium
-- the user was authenticated
-- the request was authorized in accordance with the route's authorization policy.
-
-:::
+By validating the JWT, the upstream service can assert that:
+- The request originated from Pomerium
+- The user was authenticated
+- The request was authorized in accordance with the route's authorization policy
 
 ### Single Sign-on (SSO)
 
@@ -84,11 +78,11 @@ After successful authentication, Pomerium mints a new [**Pomerium JWT**](#pomeri
 
 ### JWT assertion header
 
-Pomerium signs the Pomerium JWT with [signing key](/docs/reference/signing-key), and places the JWT into a special HTTP header called the JWT assertion header. Pomerium includes the JWT assertion header in every request it forwards to the upstream service if [pass identity header](/docs/reference/routes/pass-identity-headers-per-route) is enabled.
+Pomerium signs the Pomerium JWT with a [signing key](/docs/reference/signing-key), and places the JWT into a special HTTP header called the JWT assertion header. Pomerium includes the JWT assertion header in every request it forwards to the upstream service (if the [pass identity headers](/docs/reference/routes/pass-identity-headers-per-route) setting is enabled).
 
 :::info JWT assertion header field
 
-The JWT assertion is passed in `X-Pomerium-Jwt-Assertion` HTTP header and is encoded according to [RFC 7519](https://datatracker.ietf.org/doc/html/rfc7519).
+The Pomerium JWT is passed in the `X-Pomerium-Jwt-Assertion` HTTP header, and is encoded according to [RFC 7519](https://datatracker.ietf.org/doc/html/rfc7519).
 
 :::
 
@@ -104,43 +98,38 @@ The upstream service receives the `X-Pomerium-Jwt-Assertion-Header` with the enc
 
 The upstream service should validate that the JWT was signed by the issuing authority.
 
-Validating the JWT signature requires fetching the corresponding public key from the [**JSON web key set**](https://datatracker.ietf.org/doc/html/rfc8414#section-2) (JWKS) endpoint. The JWKS endpoint is reachable from any Pomerium-managed route domain at `/.well-known/pomerium/jwks.json`.
+Pomerium issues and signs the new JWT with a private signing key. To validate the signature, the upstream service must fetch the corresponding public key from Pomerium's [JSON web key set](https://datatracker.ietf.org/doc/html/rfc7517#section-5) (JWKS) endpoint. 
+
+To configure your service to fetch the public key:
+
+1. Get the hostname from the JWT's `iss` claim
+1. Append the `/.well-known/pomerium/jwks.json` path to the hostname
+1. Prepend the `https://` scheme to the URL
+1. Set the `Accept: application/json` header 
+
 
 For example:
 
 <Tabs>
 <TabItem label="Hosted Authenticate" value="hosted-authenticate">
 
-:::note
-
-Pomerium Assertion JWT is signed by Pomerium. The upstream application should fetch the public key that can be obtained as follows: 
-
-1. Hostname: `iss` claim from the token.
-2. Path: `/.well-known/pomerium/jwks.json`
-3. Scheme: `https`. 
-4. Set `Accept: application/json` header. 
-
-The returned [JWK Key Set](https://datatracker.ietf.org/doc/html/rfc7517#section-5) contains public keys Pomerium uses.
-
-Use `kid` from the JWT to find the specific key in the JWK Key Set.
-
-:::
-
 ```bash
-curl https://service.corp.example.com/.well-known/pomerium/jwks.json | jq
+curl https://service.corp.example.com/.well-known/pomerium/jwks.json \
+-H 'Accept: application/json'
 ```
 
 </TabItem>
 <TabItem label="Self-hosted Authenticate" value="self-hosted-authenticate">
 
 ```bash
-curl https://<AUTHENTICATE-SERVICE-URL>/.well-known/pomerium/jwks.json | jq
+curl https://<AUTHENTICATE-SERVICE-URL>/.well-known/pomerium/jwks.json \
+-H 'Accept: application/json'
 ```
 
 </TabItem>
 </Tabs>
 
-A successful request returns a JSON object describing the signing key. The `kid` parameter contains the signing key ID, which is used to calculate the corresponding public key.
+The returned JWK key set contains the public keys Pomerium uses. Use the `kid` claim from the Pomerium JWT to find the specific key in the returned key set.
 
 ```json title="JWKS response"
 {
