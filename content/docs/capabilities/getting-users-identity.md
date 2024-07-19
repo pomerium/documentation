@@ -84,7 +84,7 @@ After successful authentication, Pomerium mints a new [**Pomerium JWT**](#pomeri
 
 ### JWT assertion header
 
-Pomerium signs the Pomerium JWT with a private [signing key](/docs/reference/signing-key) on behalf of the user, and places the JWT into a special HTTP header called the JWT assertion header. Pomerium includes the JWT assertion header in every request it forwards to the upstream service.
+Pomerium signs the Pomerium JWT with [signing key](/docs/reference/signing-key), and places the JWT into a special HTTP header called the JWT assertion header. Pomerium includes the JWT assertion header in every request it forwards to the upstream service if [pass identity header](/docs/reference/routes/pass-identity-headers-per-route) is enabled.
 
 :::info JWT assertion header field
 
