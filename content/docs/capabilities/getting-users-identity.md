@@ -49,9 +49,10 @@ JWT authentication through Pomerium enables an upstream service to verify a user
 
 ### Request verification
 
-Pomerium places the newly minted JWT in a [JWT assertion header](#jwt-assertion-header). The upstream service should only accept the incoming request if it satisfies all [JWT validation](#jwt-validation) conditions. 
+Pomerium places the newly minted JWT in a [JWT assertion header](#jwt-assertion-header). The upstream service should only accept the incoming request if it satisfies all [JWT validation](#jwt-validation) conditions.
 
 By validating the JWT, the upstream service can assert that:
+
 - The request originated from Pomerium
 - The user was authenticated
 - The request was authorized in accordance with the route's authorization policy
@@ -98,15 +99,14 @@ The upstream service receives the `X-Pomerium-Jwt-Assertion-Header` with the enc
 
 The upstream service should validate that the JWT was signed by the issuing authority.
 
-Pomerium issues and signs the new JWT with a private signing key. To validate the signature, the upstream service must fetch the corresponding public key from Pomerium's [JSON web key set](https://datatracker.ietf.org/doc/html/rfc7517#section-5) (JWKS) endpoint. 
+Pomerium issues and signs the new JWT with a private signing key. To validate the signature, the upstream service must fetch the corresponding public key from Pomerium's [JSON web key set](https://datatracker.ietf.org/doc/html/rfc7517#section-5) (JWKS) endpoint.
 
 To configure your service to fetch the public key:
 
 1. Get the hostname from the JWT's `iss` claim
 1. Append the `/.well-known/pomerium/jwks.json` path to the hostname
 1. Prepend the `https://` scheme to the URL
-1. Set the `Accept: application/json` header 
-
+1. Set the `Accept: application/json` header
 
 For example:
 
