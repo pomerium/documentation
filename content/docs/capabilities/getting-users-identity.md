@@ -88,7 +88,7 @@ Pomerium signs the Pomerium JWT with [signing key](/docs/reference/signing-key),
 
 :::info JWT assertion header field
 
-The JWT assertion header is a proprietary HTTP header field that follows the format `X-Pomerium-Jwt-Assertion` in a given request.
+The JWT assertion is passed in `X-Pomerium-Jwt-Assertion` HTTP header and is encoded according to [RFC 7519](https://datatracker.ietf.org/doc/html/rfc7519).
 
 :::
 
