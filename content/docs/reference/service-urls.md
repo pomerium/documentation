@@ -36,6 +36,10 @@ The [authenticate service URL](#authenticate-service-url) setting controls wheth
 
 The **Authenticate Service URL** setting defines the externally accessible URL where Pomerium redirects end users (clients) to authenticate against an identity provider.
 
+If not set, Pomerium will use the [Hosted Authenticate Service](/docs/capabilities/hosted-authenticate-service).
+
+If you prefer to use your own [identity provider](/docs/identity-providers), you'll need to set an authenticate service URL, and you will need this URL when configuring your identity provider client's OAuth callback URL.
+
 If Pomerium is running in [split-service mode](/docs/internals/configuration#all-in-one-vs-split-service-mode), each Pomerium service requires the authenticate service URL in its configuration.
 
 :::info
