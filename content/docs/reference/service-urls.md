@@ -79,8 +79,8 @@ AUTHENTICATE_SERVICE_URL=https://authenticate.corp.example.com
 </TabItem>
 <TabItem value="Kubernetes" label="Kubernetes">
 
-| **[Parameter name](/docs/k8s/reference#spec** | **Type** | **Usage**      |
-| :-------------------------------------------- | :------- | :------------- |
+| **[Parameter name](/docs/k8s/reference#spec** | **Type** | **Usage**    |
+| :-------------------------------------------- | :------- | :----------- |
 | `authenticate.url`                            | `URL`    | **optional** |
 
 ### Examples
