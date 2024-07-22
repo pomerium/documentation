@@ -31,7 +31,7 @@ See the [Reference](/docs/reference) page for a comprehensive list of Pomerium's
 
 ## All In One and Split Service modes
 
-Pomerium relies on four [distinct services](/docs/internals/architecture) to securely process requests between clients and upstream applications. You can configure these services using either All In One mode or Split Service mode.
+You can configure Pomerium using either All In One mode or Split Service mode. 
 
 ### All In One mode
 
