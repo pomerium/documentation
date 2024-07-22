@@ -90,7 +90,7 @@ authenticate:
   url: https://authenticate.corp.example.com
 ```
 
-See the [Kubernetes - Global Configuration](/docs/k8s/configure) for more information.
+See the [Kubernetes - Global Configuration](/docs/k8s/configure#authenticate-endpoint) for more information.
 
 </TabItem>
 </Tabs>
