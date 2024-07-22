@@ -59,9 +59,7 @@ If Pomerium is running in [split-service mode](/docs/internals/configuration#all
 
 | **Config file keys** | **Environment variables** | **Type** | **Usage** |
 | :-- | :-- | :-- | :-- |
-| `authenticate_service_url` | `AUTHENTICATE_SERVICE_URL` | `URL` | \***required** |
-
-\* Excluding the `authenticate_service_url` defaults to the [hosted authenticated service](/docs/capabilities/hosted-authenticate-service).
+| `authenticate_service_url` | `AUTHENTICATE_SERVICE_URL` | `URL` | **optional** |
 
 ### Examples
 
