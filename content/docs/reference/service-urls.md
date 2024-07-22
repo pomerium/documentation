@@ -83,9 +83,7 @@ AUTHENTICATE_SERVICE_URL=https://authenticate.corp.example.com
 
 | **[Parameter name](/docs/k8s/reference#spec** | **Type** | **Usage**      |
 | :-------------------------------------------- | :------- | :------------- |
-| `authenticate.url`                            | `URL`    | \***required** |
-
-\* Excluding the `authenticate.url` defaults to the [hosted authenticated service](/docs/capabilities/hosted-authenticate-service).
+| `authenticate.url`                            | `URL`    | **optional** |
 
 ### Examples
 
