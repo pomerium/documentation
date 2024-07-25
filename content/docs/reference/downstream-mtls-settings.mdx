@@ -168,7 +168,7 @@ The Ingress Controller does not support these settings.
 
    This matches the default behavior of many popular reverse proxies, such as Apache httpd and Caddy.
 
-   Note that in this mode, client certificates will be required even for internal Pomerium routes, such as the authenticate URL (if using the self-hosted authenticate service) and the /.pomerium/ page (the page showing details of a user's current login session). In particular, any upstream services that perform [JWT verification](/docs/capabilities/getting-users-identity) will not be able to access the default [JWKS endpoint](/docs/reference/signing-key#how-to-use-signing-key). You may need to host your own JWKS endpoint, or provide some other means of distributing the JWT verification key(s).
+   Note that in this mode, client certificates will be required even for internal Pomerium routes, such as the authenticate URL (if using the self-hosted authenticate service) and the /.pomerium/ page (the page showing details of a user's current login session). In particular, any upstream services that perform [JWT verification](/docs/capabilities/getting-users-identity) will not be able to access the default [JWKS endpoint](/docs/reference/signing-key-settings#signing-key#how-to-use-signing-key). You may need to host your own JWKS endpoint, or provide some other means of distributing the JWT verification key(s).
 
    This mode also adds a requirement that any configured [**CRL**](#crl) is valid only between its `thisUpdate` and `nextUpdate` timestamps. _If an invalid CRL is provided for a certain CA, no certificates issued by that CA will be allowed._
 
