@@ -77,8 +77,8 @@ export default function FooterLinksMultiColumn({columns}) {
           <li style={{display: 'inline-block'}}>
             <IconButton
               color="primary"
-              onClick={() => window.open('https://slack.pomerium.io/')}>
-              <span className="fa-brands fa-slack" />
+              onClick={() => window.open('https://discuss.pomerium.com/')}>
+              <span className="fa-brands fa-discourse" />
             </IconButton>
           </li>
         </ul>
