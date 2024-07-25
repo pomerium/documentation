@@ -71,7 +71,7 @@ Although identity verification failed, you successfully integrated Pomerium with
 
 :::tip
 
-Because this guide doesn't include a [signing key](/docs/reference/signing-key-settings#signing-key) in the configuration, identity verification will fail.
+Because this guide doesn't include a [signing key](/docs/reference/signing-key#signing-key) in the configuration, identity verification will fail.
 
 See [Identity Verification](/docs/capabilities/getting-users-identity) for more information on how Pomerium can use JWTs for authentication.
 

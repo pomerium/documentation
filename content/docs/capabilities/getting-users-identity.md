@@ -167,5 +167,5 @@ In an actual client, you'll want to ensure that all the other claims values are 
 [key management service]: https://en.wikipedia.org/wiki/Key_management
 [nist p-256]: https://csrc.nist.gov/csrc/media/events/workshop-on-elliptic-curve-cryptography-standards/documents/papers/session6-adalier-mehmet.pdf
 [pass identity headers]: /docs/reference/routes/pass-identity-headers-per-route
-[signing key]: /docs/reference/signing-key-settings#signing-key
-[signing key file]: /docs/reference/signing-key-settings#signing-key-file
+[signing key]: /docs/reference/signing-key#signing-key
+[signing key file]: /docs/reference/signing-key#signing-key-file

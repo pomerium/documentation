@@ -94,4 +94,4 @@ Configuration options for each backend are detailed in the [**databroker configu
 
 ## Troubleshooting
 
-Most issues with the Databroker service are caused by a [`shared_secret`](/docs/reference/shared-secret-settings#shared-secret) mismatch between services. See [Troubleshooting - Shared Secret Mismatch](/docs/reference/shared-secret-settings#shared-secret) for details.
+Most issues with the Databroker service are caused by a [`shared_secret`](/docs/reference/shared-secret#shared-secret) mismatch between services. See [Troubleshooting - Shared Secret Mismatch](/docs/reference/shared-secret#shared-secret) for details.
