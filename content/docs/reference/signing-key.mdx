@@ -1,8 +1,8 @@
 ---
 # cSpell:ignore ecparam genkey noout QCN7adG2AmIK3UdHJvVJkldsUc6XeBRz83Z4rXX8Va4 ary66nrvA55TpaiWADq8b3O1CYIbvjqIHpXCY
 
-id: signing-key-settings
-title: Signing Key Settings
+id: signing-key
+title: Signing Key
 sidebar_label: Signing Key Settings
 description: |
   This page discusses the signing key settings Pomerium uses to sign the Pomerium JWT that's sent to upstream services to verify a user's identity.
@@ -17,13 +17,11 @@ toc_max_heading_level: 2
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-# Signing Key Settings
-
-## Signing Key
+# Signing Key
 
 **Signing Key** is one or more PEM-encoded private keys used to sign a user's attestation JWT, which can be consumed by upstream applications to pass along identifying user information like username, id, and groups.
 
-### How to configure
+## How to configure
 
 <Tabs>
 <TabItem value="Core" label="Core">
@@ -31,6 +29,7 @@ import TabItem from '@theme/TabItem';
 | **Config file keys** | **Environment variables** | **Type** | **Usage**    |
 | :------------------- | :------------------------ | :------- | :----------- |
 | `signing_key`        | `SIGNING_KEY`             | `string` | **optional** |
+| `signing_key_file`   | `SIGNING_KEY_FILE`        | `string` | **optional** |
 
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
@@ -48,6 +47,16 @@ See Kubernetes [bootstrap secrets](/docs/k8s/reference#spec) for more informatio
 
 </TabItem>
 </Tabs>
+
+## Examples
+
+```yaml
+signing_key: LS0tLS1CRUdJTiBFQyBQUklWQVRFIEtFWS0tLS0tCk1IY0NBUUVFSUNUWHlVQ0phYmlHTW1wd3VqYlBmWHhNS2MzWjNFM0tEcmlEbmQwZktiTmtvQW9HQ0NxR1NNNDkKQXdFSG9VUURRZ0FFM1FYQmZ1eEV1UEhJT0ZDb3RaaXBOMUFqM3UrOUtFRWd4RFVURW9CcjYxYXpaYWFvYlRGbwo0cGY3WFRSbzVhM2U2aDdKUW9wckp4QSszd0dwTUpSYWl3PT0KLS0tLS1FTkQgRUMgUFJJVkFURSBLRVktLS0tLQo=
+```
+
+```bash
+SIGNING_KEY_FILE='/run/secrets/POMERIUM_SIGNING_KEY'
+```
 
 ### How to use signing key
 
@@ -105,51 +114,3 @@ To implement key rotation, follow a 3-step process:
 3. Remove the old key from the list.
 
 With sufficient time between the steps, this process should be resilient to caching of the JWKS endpoint by applications.
-
-## Signing Key File
-
-**Signing Key File** is the path to a file containing a [Signing Key](#signing-key).
-
-The signing key is the private key used to sign a user's attestation JWT, which can be consumed by upstream applications to pass along identifying user session information such as username, id, and groups.
-
-See [Signing Key](#signing-key) for more information.
-
-### How to configure
-
-<Tabs>
-<TabItem value="Core" label="Core">
-
-| **Config file keys** | **Environment variables** | **Type** | **Usage**    |
-| :------------------- | :------------------------ | :------- | :----------- |
-| `signing_key_file`   | `SIGNING_KEY_FILE`        | `string` | **optional** |
-
-### Examples
-
-Signing Key File is useful when deploying in environments that provide secret management like [Docker Swarm](https://docs.docker.com/engine/swarm/secrets/).
-
-For example:
-
-```yaml
-signing_key_file: '/run/secrets/POMERIUM_SIGNING_KEY'
-```
-
-```bash
-SIGNING_KEY_FILE='/run/secrets/POMERIUM_SIGNING_KEY'
-```
-
-</TabItem>
-<TabItem value="Enterprise" label="Enterprise">
-
-`signing_key_file` is a bootstrap configuration setting and is not configurable in the Console.
-
-</TabItem>
-<TabItem value="Kubernetes" label="Kubernetes">
-
-| **Name**              | **Type** | **Usage**    |
-| :-------------------- | :------- | :----------- |
-| `secrets.signing_key` | `string` | **optional** |
-
-See Kubernetes [bootstrap secrets](/docs/k8s/reference#spec) for more information.
-
-</TabItem>
-</Tabs>
