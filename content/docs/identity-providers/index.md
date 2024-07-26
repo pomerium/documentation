@@ -26,7 +26,7 @@ The steps to integrate your IdP with Pomerium vary depending on your provider, b
 - **[Client ID]**
 - **[Client Secret]**
 
-The **Redirect URI** should include your [Authenticate Service URL](/docs/reference/authenticate-service-url) with `/oauth2/callback` in the URL path.
+The **Redirect URI** should include your [Authenticate Service URL](/docs/reference/service-urls#authenticate-service-url) with `/oauth2/callback` in the URL path.
 
 For example, `https://{authenticate_service_url}.com/oauth2/callback`.
 
