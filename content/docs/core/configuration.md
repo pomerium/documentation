@@ -13,7 +13,7 @@ You can configure Pomerium using either a configuration file or [environmental v
 - [JSON](https://www.json.org/json-en.html)
 - [TOML](https://toml.io/en/)
 
-Using both environmental variables and configuration file keys is allowed and encouraged (for example, secret keys are probably best set as environmental variables). However, if duplicate configuration keys are found, environment variables take precedence.
+You can use both environment variables and a configuration file. If a particular option is set using both an environment variable and a config file key, the environment variable will take precedence.
 
 :::tip
 
