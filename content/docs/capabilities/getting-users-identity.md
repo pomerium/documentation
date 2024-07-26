@@ -98,7 +98,7 @@ curl https://your-app.corp.example.com/.well-known/pomerium/jwks.json | jq
 
 :::caution
 
-In order to use the `/.well-known/pomerium/jwks.json` endpoint you must set either the [Signing Key] or [Signing Key File] configuration option.
+In order to use the `/.well-known/pomerium/jwks.json` endpoint, you must set either [Signing Key] configuration option.
 
 :::
 
@@ -167,5 +167,4 @@ In an actual client, you'll want to ensure that all the other claims values are 
 [key management service]: https://en.wikipedia.org/wiki/Key_management
 [nist p-256]: https://csrc.nist.gov/csrc/media/events/workshop-on-elliptic-curve-cryptography-standards/documents/papers/session6-adalier-mehmet.pdf
 [pass identity headers]: /docs/reference/routes/pass-identity-headers-per-route
-[signing key]: /docs/reference/signing-key#signing-key
-[signing key file]: /docs/reference/signing-key#signing-key-file
+[signing key]: /docs/reference/signing-key
