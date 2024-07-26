@@ -7,11 +7,13 @@ sidebar_label: Configuration
 
 # Configuration
 
-You can configure Pomerium using either a configuration file or [environmental variables](https://en.wikipedia.org/wiki/Environment_variable). If using a configuration file, the following languages are supported:
+You can configure Pomerium using either a configuration file or [environment variables](https://en.wikipedia.org/wiki/Environment_variable). If using a configuration file, the following languages are supported:
 
 - [YAML](https://yaml.org/)
 - [JSON](https://www.json.org/json-en.html)
 - [TOML](https://toml.io/en/)
+
+(Our documentation always assumes a YAML configuration file.)
 
 You can use both environment variables and a configuration file. If a particular option is set using both an environment variable and a config file key, the environment variable will take precedence.
 
@@ -25,7 +27,7 @@ Pomerium can hot-reload route configuration details, authorization policy, certi
 
 Both configuration file keys and environment variables are case sensitive.
 
-Configuration file keys are always lowercase and use dashes (`-`). Environmental variables are identical to configuration file keys, except they are always uppercase and use underscores (`_`).
+Configuration file keys are always lowercase. Environmental variables are identical to configuration file keys, except they are always uppercase.
 
 See the [Reference](/docs/reference) page for a comprehensive list of Pomerium's configuration settings.
 
