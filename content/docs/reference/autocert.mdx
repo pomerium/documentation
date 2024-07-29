@@ -8,6 +8,7 @@ keywords:
   - Autocert
   - ACME
   - acme
+  - OCSP stapling
 pagination_prev: null
 pagination_next: null
 ---
@@ -17,9 +18,13 @@ import TabItem from '@theme/TabItem';
 
 # Autocert Settings
 
-The Autocert settings configure Pomerium to manage public-facing TLS certificates automatically, by integrating with a certificate authority that supports the [ACME protocol](https://datatracker.ietf.org/doc/html/rfc8555), such as [Let's Encrypt](https://letsencrypt.org/).
+The Autocert settings configure Pomerium to manage public-facing TLS certificates automatically, by integrating with a certificate authority (CA) that supports the [ACME protocol](https://datatracker.ietf.org/doc/html/rfc8555), such as [Let's Encrypt](https://letsencrypt.org/).
 
 Autocert can be useful in situations where Pomerium may not be behind a TLS-terminating ingress controller, proxy, or load balancer that manages TLS certificates on behalf of your upstream services. Certificates provisioned by Autocert provide also [OCSP stapling](https://en.wikipedia.org/wiki/OCSP_stapling).
+
+You must use the [Autocert Directory](#autocert-directory) setting with Autocert to store and share certificate data between Pomerium services.
+
+Autocert can incorporate also certificates set manually in the Pomerium configuration. These certificates will take precedence over generated certificates when applicable to configured routes.
 
 :::note Autocert support
 
@@ -35,17 +40,16 @@ The suite of Autocert settings listed below are supported only in [Pomerium Core
 
 ## Autocert {#autocert}
 
-The **Autocert** setting enables Pomerium to automatically retrieve, manage, and renew public-facing TLS certificates from [Let's Encrypt][letsencrypt] to secure Pomerium-managed route domains and the authenticate service (Autocert is not supported with the [Hosted Authenticate Service](/docs/capabilities/hosted-authenticate-service)).
+The **Autocert** setting enables Pomerium to automatically retrieve, manage, and renew public-facing TLS certificates from the [Autocert CA](#autocert-ca). Pomerium uses these certificates to secure Pomerium-managed route domains and the authenticate service. If you don't configure Autocert CA, Pomerium will use Let's Encrypt by default.
 
-Autocert can incorporate also certificates available in the system trust store and certificates set manually in the Pomerium configuration. These certificates will take precedence over generated certificates when applicable to configured routes.
+When requesting or renewing a certificate, Pomerium performs either the HTTP-01 or TLS-ALPN-01 challenge (the DNS-01 challenge is not supported):
 
-Before Autocert can provision certificates, it must complete either the [HTTP-01](https://letsencrypt.org/docs/challenge-types/#http-01-challenge) or [TLS-ALPN-01](https://letsencrypt.org/docs/challenge-types/#tls-alpn-01) challenge. The HTTP-01 challenge requires internet access to port 80; the TLS-ALPN-01 challenge requires internet access to port 443. Autocert does not support `DNS-01` challenges, which is required to generate wildcard certificates.
+- The HTTP-01 challenge requires that you set up an HTTP redirect listener on port 80 (see [HTTP Redirect Address](/docs/reference/http-redirect-address)).
+- The TLS-ALPN-01 challenge requires that the [Address](/docs/reference/address) setting specifies port 443.
 
-You must use the [Autocert Directory](#autocert-directory) setting with Autocert to store and share certificate data between Pomerium services.
+:::caution Let's Encrypt usage limits
 
-:::caution Autocert usage limits
-
-By using Autocert, you agree to the [Let's Encrypt Subscriber Agreement](https://letsencrypt.org/documents/LE-SA-v1.2-November-15-2017.pdf). Let's Encrypt enforces [_strict_ usage limits](https://letsencrypt.org/docs/rate-limits/) per domain you should be aware of. Consider testing Autocert with [`autocert_use_staging`](/docs/reference/autocert) first.
+If you use Let's Encrypt as your CA, you agree to the [Let's Encrypt Subscriber Agreement](https://letsencrypt.org/documents/LE-SA-v1.4-April-3-2024.pdf). Let's Encrypt enforces [_strict_ usage limits](https://letsencrypt.org/docs/rate-limits/) per domain you should be aware of. Consider testing Autocert with [`autocert_use_staging`](/docs/reference/autocert) first.
 
 :::
 
