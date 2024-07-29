@@ -151,16 +151,27 @@ const config = {
           position: 'right',
         },
         {
-          type: 'dropdown',
-          label: 'vNext',
+          type: 'docsVersionDropdown',
           position: 'right',
-          items: [
+          dropdownActiveClassDisabled: true,
+          dropdownItemsAfter: [
             {
-              type: 'doc',
-              label: 'Archived Versions',
-              docId: 'docs/versions',
+              to: 'https://pomerium.com/docs',
+              label: 'v0.26.X (recently released)',
             },
-          ],
+            {
+              to: 'https://0-25-0.docs.pomerium.com/docs',
+              label: 'v0.25.X',
+            },
+            {
+              to: 'https://0-24-0.docs.pomerium.com/docs',
+              label: 'v0.24.X',
+            },
+            {
+              to: '/docs/versions',
+              label: 'All Versions',
+            },
+          ]
         },
       ],
     },
