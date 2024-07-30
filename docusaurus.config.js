@@ -59,6 +59,7 @@ const config = {
             current: {
               label: 'v0.26.X (latest release)',
               // Uncomment below settings in vNext
+              // label: 'vNext (current release)'
               // banner: 'unreleased',
               // badge: true,
               // noIndex: true,
