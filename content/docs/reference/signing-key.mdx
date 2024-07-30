@@ -4,7 +4,7 @@
 id: signing-key
 title: Signing Key
 description: |
-  Signing Key is one or more PEM-encoded private keys used to sign a user's attestation JWT which can be consumed by upstream applications to pass along identifying user information like username, id, and groups. If multiple keys are provided only the first will be used for signing.
+  This page discusses the signing key settings Pomerium uses to sign the Pomerium JWT that's sent to upstream services to verify a user's identity.
 keywords:
   - reference
   - Signing Key
@@ -18,8 +18,6 @@ import TabItem from '@theme/TabItem';
 
 # Signing Key
 
-## Summary
-
 **Signing Key** is one or more PEM-encoded private keys used to sign a user's attestation JWT, which can be consumed by upstream applications to pass along identifying user information like username, id, and groups.
 
 ## How to configure
@@ -30,6 +28,7 @@ import TabItem from '@theme/TabItem';
 | **Config file keys** | **Environment variables** | **Type** | **Usage**    |
 | :------------------- | :------------------------ | :------- | :----------- |
 | `signing_key`        | `SIGNING_KEY`             | `string` | **optional** |
+| `signing_key_file`   | `SIGNING_KEY_FILE`        | `string` | **optional** |
 
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
@@ -47,6 +46,16 @@ See Kubernetes [bootstrap secrets](/docs/k8s/reference#spec) for more informatio
 
 </TabItem>
 </Tabs>
+
+## Examples
+
+```yaml
+signing_key: LS0tLS1CRUdJTiBFQyBQUklWQVRFIEtFWS0tLS0tCk1IY0NBUUVFSUNUWHlVQ0phYmlHTW1wd3VqYlBmWHhNS2MzWjNFM0tEcmlEbmQwZktiTmtvQW9HQ0NxR1NNNDkKQXdFSG9VUURRZ0FFM1FYQmZ1eEV1UEhJT0ZDb3RaaXBOMUFqM3UrOUtFRWd4RFVURW9CcjYxYXpaYWFvYlRGbwo0cGY3WFRSbzVhM2U2aDdKUW9wckp4QSszd0dwTUpSYWl3PT0KLS0tLS1FTkQgRUMgUFJJVkFURSBLRVktLS0tLQo=
+```
+
+```bash
+SIGNING_KEY_FILE='/run/secrets/POMERIUM_SIGNING_KEY'
+```
 
 ### How to use signing key
 
@@ -95,7 +104,7 @@ If no certificate is specified, one will be generated and the base64'd public ke
 
 If multiple keys are provided, only the first will be used for signing.
 
-## Key rotation
+### Key rotation
 
 To implement key rotation, follow a 3-step process:
 
