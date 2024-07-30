@@ -45,7 +45,7 @@ JWTs provide a secure and efficient means to authenticate and authorize users be
 
 ### Identity verification
 
-JWT authentication through Pomerium enables an upstream service to verify a user's identity based on claims contained in the JWT. Pomerium signs and issues a new JWT based on the ID token received from the service's configured identity provider, so the upstream service can verify that the claims were not modified in transit.
+JWT authentication through Pomerium enables an upstream service to verify a user's identity based on claims contained in the JWT. Pomerium signs and issues a new JWT based on the ID token received from the service's configured identity provider.
 
 ### Request verification
 
