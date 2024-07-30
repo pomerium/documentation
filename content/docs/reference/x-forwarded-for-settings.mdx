@@ -1,0 +1,190 @@
+---
+id: x-forwarded-for-settings
+title: X-Forwarded-For Settings
+description: This page documents X-Forwarded-HTTP header settings.
+keywords:
+  - reference
+  - X-Forwarded-For settings
+  - x-forwarded-for-http-header
+  - x forwarded for http header
+  - the number of trusted hops
+  - xff_num_trusted_hops
+  - xff num trusted hops
+pagination_prev: null
+pagination_next: null
+toc_max_heading_level: 2
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# X-Forwarded-For Settings
+
+The `X-Forwarded-For` (XFF) HTTP header lists the IP addresses a request has passed through on its way from the end user (client) to a backend service.
+
+(This is most relevant for deployments where there is another L7 proxy or load balancer in front of Pomerium, or in between Pomerium and upstream services.)
+
+The following settings affect the way Pomerium sets or consumes the XFF header.
+
+## Skip XFF Append
+
+By default, when Pomerium receives a request, it appends the IP address of the direct downstream client to the XFF header before proxying the request to the upstream service.
+
+However, if you set the **Skip XFF Append** (`skip_xff_append`) option to `true`, Pomerium will not modify an incoming XFF header. Instead, Pomerium will pass this incoming header to the upstream service unchanged.
+
+### How to configure
+
+<Tabs>
+<TabItem value="Core" label="Core">
+
+| **Config file keys** | **Environment variables** | **Type**  | **Default** |
+| :------------------- | :------------------------ | :-------- | :---------- |
+| `skip_xff_append`    | `SKIP_XFF_APPEND`         | `boolean` | `false`     |
+
+### Examples
+
+```yaml
+skip_xff_append: true
+```
+
+```bash
+SKIP_XFF_APPEND=true
+```
+
+</TabItem>
+<TabItem value="Enterprise" label="Enterprise">
+
+Configure **X-Forward-For HTTP Header** with the toggle button in the Console. The button has three states:
+
+- **Unset** ("-") uses the value in your configuration file
+- **Checkmark** sets `skip_xff_append` to `true`
+- **Empty** sets `skip_xff_append` to `false`
+
+![Configure x-forward-for-http-headers in the console](./img/headers/x-forwarded-for-http-header.png)
+
+</TabItem>
+<TabItem value="Kubernetes" label="Kubernetes">
+
+Kubernetes does not support `skip_xff_append`
+
+</TabItem>
+</Tabs>
+
+### Skip XFF Append examples
+
+Assume you have a load balancer in front of Pomerium, and it connects to Pomerium from IP address `10.1.2.3`. Say that the load balancer is configured to populate the `X-Forwarded-For` header, so that if a client connects to the load balancer from IP address `192.0.5.1`, then the load balancer will set `X-Forwarded-For: 192.0.5.1` on the request to Pomerium.
+
+With `skip_xff_append` set to `false` (the default behavior), Pomerium will then append the IP address of the load balancer on the request made to the upstream service:
+
+```plain title="Request Details"
+X-Forwarded-For: 192.0.5.1,10.1.2.3
+```
+
+With `skip_xff_append` set to `true`, Pomerium will not append the IP address of the load balancer on the request made to the upstream service:
+
+```plain title="Request Details"
+X-Forwarded-For: 192.0.5.1
+```
+
+## XFF Number of Trusted Hops
+
+The **XFF Number of Trusted Hops** (`xff_num_trusted_hops`) setting instructs Pomerium whether to trust an incoming request's XFF header.
+
+When unset or set to `0`, Pomerium will not trust the incoming XFF header. Pomerium will consider the client IP address to be the IP address of the direct downstream client.
+
+This affects the client IP address logged in the access logs (if configured; see [Access log fields](/docs/reference/access-log-fields#access-log-fields-and-defaults)). The client IP address is also sent to the upstream service in the [`x-envoy-external-address` header](https://www.envoyproxy.io/docs/envoy/latest/configuration/http/http_conn_man/headers#x-envoy-external-address).
+
+:::info X-Forwarded-Proto header
+
+This setting also affects whether Pomerium trusts the [`X-Forwarded-Proto` header](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Forwarded-Proto). This header indicates the originating protocol (either HTTP or HTTPS) of the downstream client request. Pomerium will only trust the downstream `X-Forwarded-Proto` header if you set `xff_num_trusted_hops` to a _non-zero_ value.
+
+When set to `0`, Pomerium will set the `X-Forwarded-Proto` header to either `http` or `https` depending on whether the downstream connection is secured over TLS.
+
+:::
+
+### How to configure
+
+<Tabs>
+<TabItem value="Core" label="Core">
+
+| **Config file keys**   | **Environment variables** | **Type** | **Usage**    |
+| :--------------------- | :------------------------ | :------- | :----------- |
+| `xff_num_trusted_hops` | `XFF_NUM_TRUSTED_HOPS`    | `uint32` | **optional** |
+
+### Examples
+
+```yaml
+xff_num_trusted_hops: 2
+```
+
+```bash
+XFF_NUM_TRUSTED_HOPS=2
+```
+
+</TabItem>
+<TabItem value="Enterprise" label="Enterprise">
+
+`xff_num_trusted_hops` is a bootstrap configuration setting and is not configurable in the Console.
+
+</TabItem>
+<TabItem value="Kubernetes" label="Kubernetes">
+
+Kubernetes does not support `xff_num_trusted_hops`
+
+</TabItem>
+</Tabs>
+
+### XFF Number of Trusted Hops examples
+
+As in the previous example, assume you have a load balancer in front of Pomerium, which connects to Pomerium from IP address `10.1.2.3`, and is configured to populate the `X-Forwarded-For` header.
+
+With `xff_num_trusted_hops` set to `0`, Pomerium's access log will show the load balancer IP address (`10.1.2.3`) as the client IP address for all incoming requests.
+
+```yaml {title="config.yaml"}
+xff_num_trusted_hops: 0
+access_log_fields: [forwarded-for, ip, method, path]
+```
+
+Example access log entry:
+
+```json
+{
+  "level": "info",
+  "service": "envoy",
+  "forwarded-for": "192.0.5.1,10.1.2.3",
+  "ip": "10.1.2.3",
+  "method": "GET",
+  "path": "/",
+  "time": "2024-07-08T16:42:48-07:00",
+  "message": "http-request"
+}
+```
+
+With the `xff_num_trusted_hops` option set to `1`, Pomerium will trust the client IP address populated by the load balancer:
+
+```yaml {title="config.yaml"}
+xff_num_trusted_hops: 1
+access_log_fields: [forwarded-for, ip, method, path]
+```
+
+Example access log entry:
+
+```json
+{
+  "level": "info",
+  "service": "envoy",
+  "forwarded-for": "192.0.5.1,10.1.2.3",
+  // highlight-next-line
+  "ip": "192.0.5.1",
+  "method": "GET",
+  "path": "/",
+  "time": "2024-07-08T16:42:48-07:00",
+  "message": "http-request"
+}
+```
+
+:::info Additional Resource
+
+See the [**Envoy docs**](https://www.envoyproxy.io/docs/envoy/latest/configuration/http/http_conn_man/headers.html?highlight=skip_xff_append#x-forwarded-for) for more information about the `X-Forwarded-For` header.
+
+:::
