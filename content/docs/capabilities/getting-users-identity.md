@@ -98,7 +98,7 @@ curl https://your-app.corp.example.com/.well-known/pomerium/jwks.json | jq
 
 :::caution
 
-In order to use the `/.well-known/pomerium/jwks.json` endpoint, you must set either [Signing Key] configuration option.
+In order to use the `/.well-known/pomerium/jwks.json` endpoint, you must set the [Signing Key] configuration option.
 
 :::
 
