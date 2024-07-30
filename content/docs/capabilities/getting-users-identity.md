@@ -163,7 +163,7 @@ The upstream service should verify that the `aud` and `iss` claims match the dom
 
 The `aud` claim identifies the recipient the JWT is intended for. In the context of a service behind Pomerium, the `aud` claim should always be set as the upstream service's domain name.
 
-Since v0.22, Pomerium sets the `iss` claim also to the domain of the target upstream service. (In previous versions, this was instead set to the [authenticate service](/docs/reference/authenticate-service-url) domain.)
+Since v0.22, Pomerium sets the `iss` claim also to the domain of the target upstream service. (In previous versions, this was instead set to the [authenticate service](/docs/reference/service-urls#authenticate-service-url) domain.)
 
 If the domain provided in the `aud` and `iss` claims doesn't match the upstream service's domain name, the JWT is invalid and can't be trusted.
 
