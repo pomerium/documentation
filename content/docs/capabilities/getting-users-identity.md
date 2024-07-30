@@ -184,7 +184,7 @@ Pomerium's [**JWT Verification**](/docs/guides/verify-jwt) guide shows you how t
 
 :::
 
-After the upstream service validates the JWT, it can accept the JWT and the request.
+After the upstream service validates the JWT, it can accept the request and trust other claims present in the JWT.
 
 ## The Pomerium JWT
 
