@@ -95,7 +95,6 @@ const sidebars = {
         },
         'docs/capabilities/hosted-authenticate-service',
         'docs/capabilities/self-hosted-authenticate-service',
-        'docs/capabilities/jwt-verification',
         'docs/capabilities/mtls-clients',
         'docs/capabilities/mtls-services',
         'docs/capabilities/getting-users-identity',
@@ -310,6 +309,7 @@ const sidebars = {
           label: 'Identity Providers',
           description:
             'Configure a custom Identity Provider for authentication',
+          link: {type: 'doc', id: 'docs/identity-providers/index'},
           items: [
             {
               type: 'doc',
@@ -472,7 +472,11 @@ const sidebars = {
           items: [
             {
               type: 'doc',
-              id: 'docs/guides/jwt-verification',
+              id: 'docs/guides/jwt-verification-with-envoy',
+            },
+            {
+              type: 'doc',
+              id: 'docs/guides/verify-jwt',
             },
             {
               type: 'doc',
