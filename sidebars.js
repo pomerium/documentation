@@ -118,6 +118,12 @@ const sidebars = {
           label: 'Custom Branding & Errors',
         },
         {
+          id: 'docs/capabilities/rego',
+          className: 'enterprise',
+          type: 'doc',
+          label: 'Custom Rego Policies',
+        },
+        {
           id: 'docs/capabilities/device-identity',
           className: 'enterprise',
           type: 'doc',
