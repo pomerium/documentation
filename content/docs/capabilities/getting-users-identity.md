@@ -65,7 +65,7 @@ The Pomerium JWT does not contain any path information for an upstream service. 
 
 ### Single Sign-on (SSO)
 
-You can configure upstream services to accept JWTs sent by Pomerium to achieve an SSO authentication flow. This capability is completely free and relatively easy to configure depending on the upstream service and your [identity provider](/docs/identity-providers).
+You can configure upstream services to accept the Pomerium JWT to achieve an SSO authentication flow. This capability is completely free and relatively easy to configure depending on the upstream service and your [identity provider](/docs/identity-providers).
 
 :::info Implement SSO with Pomerium
 
@@ -85,7 +85,7 @@ After successful authentication, Pomerium mints a new [**Pomerium JWT**](#pomeri
 
 ### JWT assertion header
 
-Pomerium signs the Pomerium JWT with a [signing key](/docs/reference/signing-key), and places it into a special HTTP header called the JWT assertion header. Pomerium includes the JWT assertion header in every request it forwards to the upstream service (if the [pass identity headers](/docs/reference/routes/pass-identity-headers-per-route) setting is enabled).
+Pomerium signs its JWT with a [signing key](/docs/reference/signing-key). If the [pass identity headers](/docs/reference/routes/pass-identity-headers-per-route) setting is enabled, Pomerium will place the JWT into a special HTTP header called the JWT assertion header. Pomerium includes the JWT assertion header in every request it forwards to the upstream service.
 
 :::info JWT assertion header field
 
@@ -107,7 +107,7 @@ The upstream service should validate that the JWT was signed by the issuing auth
 
 Pomerium issues and signs the new JWT with a private signing key. To validate the signature, the upstream service must fetch the corresponding public key from Pomerium's [JSON web key set](https://datatracker.ietf.org/doc/html/rfc7517#section-5) (JWKS) endpoint.
 
-To configure your service to fetch the public key:
+To configure an upstream service to fetch the public key:
 
 1. Get the hostname from the JWT's `iss` claim
 1. Append the `/.well-known/pomerium/jwks.json` path to the hostname
@@ -135,7 +135,7 @@ curl https://<AUTHENTICATE-SERVICE-URL>/.well-known/pomerium/jwks.json \
 </TabItem>
 </Tabs>
 
-The returned JWK key set contains the public keys Pomerium uses. Use the `kid` claim from the Pomerium JWT to find the correct key in the returned key set.
+The returned JWK key set contains Pomerium's public keys. Use the `kid` claim provided in the Pomerium JWT header to identify the correct key in the returned key set.
 
 ```json title="JWKS response"
 {
