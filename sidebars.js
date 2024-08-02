@@ -111,16 +111,16 @@ const sidebars = {
 
         // Enterprise
         {
-          id: 'docs/capabilities/impersonation',
+          id: 'docs/capabilities/branding',
           className: 'enterprise',
           type: 'doc',
-          label: 'User Impersonation',
+          label: 'Custom Branding & Errors',
         },
         {
-          id: 'docs/capabilities/directory-sync',
+          id: 'docs/capabilities/rego',
           className: 'enterprise',
           type: 'doc',
-          label: 'Directory Sync',
+          label: 'Custom Rego Policies',
         },
         {
           id: 'docs/capabilities/device-identity',
@@ -129,34 +129,46 @@ const sidebars = {
           label: 'Device Identity',
         },
         {
+          id: 'docs/capabilities/directory-sync',
+          className: 'enterprise',
+          type: 'doc',
+          label: 'Directory Sync',
+        },
+        {
+          id: 'docs/capabilities/enterprise-api',
+          className: 'enterprise',
+          type: 'doc',
+          label: 'Enterprise API',
+        },
+        {
           id: 'docs/integrations',
           className: 'enterprise',
           type: 'doc',
           label: 'External Data Sources',
         },
         {
-          id: 'docs/capabilities/enterprise-api',
+          id: 'docs/capabilities/high-availability',
           className: 'enterprise',
           type: 'doc',
-          label: 'Management API',
-        },
-        {
-          id: 'docs/capabilities/original-request-context',
-          className: 'enterprise',
-          type: 'doc',
-          label: 'Original User Context',
-        },
-        {
-          id: 'docs/capabilities/branding',
-          className: 'enterprise',
-          type: 'doc',
-          label: 'Custom Branding / Errors',
+          label: 'High Availability',
         },
         {
           id: 'docs/capabilities/metrics',
           className: 'enterprise',
           type: 'doc',
           label: 'Metrics',
+        },
+        {
+          id: 'docs/capabilities/namespacing',
+          className: 'enterprise',
+          type: 'doc',
+          label: 'Namespaces',
+        },
+        {
+          id: 'docs/capabilities/original-request-context',
+          className: 'enterprise',
+          type: 'doc',
+          label: 'Original User Context',
         },
         {
           id: 'docs/capabilities/reports',
@@ -171,16 +183,10 @@ const sidebars = {
           label: 'Service Accounts',
         },
         {
-          id: 'docs/capabilities/high-availability',
+          id: 'docs/capabilities/impersonation',
           className: 'enterprise',
           type: 'doc',
-          label: 'High Availability',
-        },
-        {
-          id: 'docs/capabilities/namespacing',
-          className: 'enterprise',
-          type: 'doc',
-          label: 'Namespaces',
+          label: 'User Impersonation',
         },
       ],
     },
