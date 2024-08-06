@@ -14,6 +14,12 @@ You'll run a Guacamole server behind Pomerium, and configure the Guacamole insta
 
 Guacamole will pull the email address from the unsigned HTTP header and verify that it matches the authenticated user's email address. If Guacamole can validate the email address, it will sign the user in without prompting them to reauthenticate.
 
+:::note
+
+This guide provides steps to secure client access to the Guacamole gateway behind Pomerium. It does not cover how to add connections to Guacamole itself.
+
+:::
+
 ### Before you start
 
 To complete this guide, you need:
@@ -101,45 +107,52 @@ In your Docker Compose file, replace `nginx` with Pomerium Core:
         guacnetwork_compose
     ```
 1. Add the Pomerium Core configuration:
-  ```yaml showLineNumbers
-  pomerium:
-    image: cr.pomerium.com/pomerium/pomerium:latest
-    # highlight-start
-    # Mount your config file
-    volumes:
-      - ./config.yaml:/pomerium/config.yaml:ro
-    # highlight-end
-    ports:
-      - 443:443
-    networks:
-      - guacnetwork_compose
-    environment:
-      JWT_CLAIMS_HEADERS: email, groups, user
-  ```
+    ```yaml showLineNumbers
+    pomerium:
+      image: cr.pomerium.com/pomerium/pomerium:latest
+      # highlight-start
+      # Mount your config file
+      volumes:
+        - ./config.yaml:/pomerium/config.yaml:ro
+      # highlight-end
+      ports:
+        - 443:443
+      networks:
+        - guacnetwork_compose
+      environment:
+        JWT_CLAIMS_HEADERS: email
+    ```
+  
 1. In line 5 above, you mount a Pomerium configuration file into Docker Compose. In your project's root directory, create a `config.yaml` file with the following configuration:
-  ```yaml title="Pomerium configuration file"
-  authenticate_service_url: https://authenticate.pomerium.app
+    ```yaml title="Pomerium configuration file"
+    authenticate_service_url: https://authenticate.pomerium.app
 
-  jwt_claim_headers: email
+    jwt_claim_headers: email
 
-  routes:
-    - from: https://guacamole.localhost.pomerium.io
-      to: http://guacamole:8080
-      policy:
-        - allow:
-            or:
-              - email:
-                # highlight-next-line
-                  is: user@example.com
-      pass_identity_headers: true
-      jwt_claims_headers: email
-  ```
-  Don't forget to replace `user@example.com` with your own email address.
+    routes:
+      - from: https://guacamole.localhost.pomerium.io
+        to: http://guacamole:8080
+        policy:
+          - allow:
+              or:
+                - email:
+                  # highlight-next-line
+                    is: user@example.com
+        pass_identity_headers: true
+        jwt_claims_headers: email
+    ```
+    Don't forget to replace `user@example.com` with your own email address.
 
 A few things to note:
 - [`pass_identity_headers`](/docs/reference/routes/pass-identity-headers-per-route) instructs Pomerium to send the [Pomerium JWT](/docs/capabilities/getting-users-identity) to Guacamole after the user authenticates successfully against the identity provider.
-- `jwt_claims_headers` instructs Pomerium to forward additional claims as unsigned HTTP headers with the request. (Guacamole expects an incoming `X-Pomerium-Claim-Email` HTTP header from Pomerium.)
+- [`jwt_claims_headers`](/docs/reference/jwt-claim-headers) instructs Pomerium to forward additional claims as unsigned HTTP headers with the request. (Guacamole expects an incoming `X-Pomerium-Claim-Email` HTTP header from Pomerium.)
 
 ## Run Docker Compose
 
 Now, run `docker compose up -d`. 
+
+Navigate to the Guacamole route defined in `config.yaml` by adding `/guacamole` to its path. For example, if your route is `guacamole.localhost.pomerium.io`, the route you'd access in the browser would be `guacamole.localhost.pomerium.io/guacamole`. 
+
+After authenticating against the configured identity provider, Pomerium will redirect you to the Guacamole dashboard:
+
+![The Guacamole dashboard after signing in with HTPP authentication](./img/guacamole/guacamole-dashboard.png)
