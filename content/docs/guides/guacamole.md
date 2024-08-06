@@ -17,7 +17,7 @@ Guacamole will pull the email address from the unsigned HTTP header and verify t
 
 :::note
 
-This guide provides steps to secure client access to the Guacamole gateway behind Pomerium. It does not cover how to add connections to Guacamole itself.
+This guide provides steps to secure access to the Guacamole gateway behind Pomerium. It does not cover how to add connections to Guacamole itself.
 
 :::
 
