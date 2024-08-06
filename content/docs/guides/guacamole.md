@@ -3,7 +3,7 @@
 title: Secure Apache Guacamole
 description: This guide shows you to secure Apache Guacamole behind Pomerium using JWT Claims Headers to support HTTP header authentication.
 keywords: [JWT claims headers, http auth, header auth]
-sidebar_label: Guacamole
+sidebar_label: Apache Guacamole
 ---
 
 # Secure Apache Guacamole
