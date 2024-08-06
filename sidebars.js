@@ -294,6 +294,10 @@ const sidebars = {
             },
             {
               type: 'doc',
+              id: 'docs/guides/guacamole',
+            },
+            {
+              type: 'doc',
               id: 'docs/guides/transmission',
             },
             {
