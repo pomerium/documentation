@@ -144,7 +144,6 @@ In your Docker Compose file, replace `nginx` with Pomerium Core:
                    # highlight-next-line
                    is: user@example.com
        pass_identity_headers: true
-       jwt_claims_headers: email
    ```
 
    Don't forget to replace `user@example.com` with your own email address.
