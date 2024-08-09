@@ -220,6 +220,12 @@ The Pomerium JWT contains at least the following claims:
 | `groups` | The user's group memberships (if supported for the identity provider). |
 | `name` | The user's full name, as specified by the identity provider. |
 
+:::tip Prevent session replay attempts
+
+The `jti` claim (the JWT ID) contains a unique identifier assigned to each Pomerium JWT. You can prevent session replay attempts by implementing a system that monitors `jti` reuse either in real time or by checking session logs.
+
+:::
+
 ### JWT Settings
 
 Use these settings to configure Pomerium to forward the Pomerium JWT to upstream services:
