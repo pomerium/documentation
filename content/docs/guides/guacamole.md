@@ -46,6 +46,7 @@ This guide uses the [Hosted Authenticate Service](/docs/capabilities/hosted-auth
 - `guacamole/guacd`: The guacd daemon, which provides support for VNC, RDP, SSH, telnet, and Kubernetes.
 - `guacamole/guacamole`: The Guacamole web application running within a Tomcat 8 server with websocket support.
 - `mysql` or `postgres`: The relational database that stores authentication and connection configuration data.
+> **Security Best Practice:** Ensure that environment variables containing sensitive data, such as passwords, are stored securely. Consider using Docker secrets or an `.env` file.
 
 This guide uses an open-source [Docker Compose](https://github.com/boschkundendienst/guacamole-docker-compose) configuration to install these services. This configuration file also includes an `nginx` instance, which you'll replace with Pomerium.
 
