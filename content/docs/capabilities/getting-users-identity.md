@@ -210,7 +210,6 @@ The Pomerium JWT contains at least the following claims:
 
 | JWT Claim | Description |
 | :-: | --- |
-| `jti` | A randomly generated UUID that represents the JWT ID. |
 | `exp` | Expiration time in seconds since the UNIX epoch. Set to expire 5 minutes after `iat` time. |
 | `iat` | Issued-at time in seconds since the UNIX epoch. |
 | `aud` | The domain for the upstream application (for example, `httpbin.corp.example.com`). |
