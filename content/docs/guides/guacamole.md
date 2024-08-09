@@ -8,7 +8,7 @@ sidebar_label: Apache Guacamole
 
 # Secure Apache Guacamole
 
-This guide shows you how to secure an instance of [Apache Guacamole](https://guacamole.apache.org/), a clientless, remote desktop gateway that supports VNC, RDP, and SSH protocols.
+This guide will walk you through securing an instance of [Apache Guacamole](https://guacamole.apache.org/) behind Pomerium, leveraging JWT Claims Headers for HTTP header authentication. The setup allows centralized, secure, and seamless authentication via Pomerium. [Apache Guacamole](https://guacamole.apache.org/), a clientless, remote desktop gateway that supports VNC, RDP, and SSH protocols.
 
 ## How to secure Apache Guacamole
 
