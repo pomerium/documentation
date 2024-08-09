@@ -57,12 +57,8 @@ const config = {
           },
           versions: {
             current: {
-              label: 'v0.26 (latest)',
-              // Uncomment below settings in vNext
-              // label: 'vNext (current)'
-              // banner: 'unreleased',
-              // badge: true,
-              // noIndex: true,
+              label: 'vNext (current)',
+              badge: true,
             },
           },
         },
@@ -165,6 +161,10 @@ const config = {
           position: 'right',
           dropdownActiveClassDisabled: true,
           dropdownItemsAfter: [
+            {
+              to: 'https://0-26-0.docs.pomerium.com/docs',
+              label: 'v0.26 (latest)',
+            },
             {
               to: 'https://0-25-0.docs.pomerium.com/docs',
               label: 'v0.25',
