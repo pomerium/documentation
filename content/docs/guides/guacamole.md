@@ -9,7 +9,11 @@ sidebar_label: Apache Guacamole
 # Secure Apache Guacamole
 
 This guide will walk you through securing an instance of [Apache Guacamole](https://guacamole.apache.org/) behind Pomerium, leveraging JWT Claims Headers for HTTP header authentication. The setup allows centralized, secure, and seamless authentication via Pomerium. [Apache Guacamole](https://guacamole.apache.org/), a clientless, remote desktop gateway that supports VNC, RDP, and SSH protocols.
-
++To complete this guide, you will:
++1. Install and configure Guacamole using Docker Compose.
++2. Replace the default Nginx with Pomerium in the Docker setup.
++3. Configure Pomerium to forward identity headers to Guacamole.
++4. Securely run your setup and verify proper authentication.
 ## How to secure Apache Guacamole
 
 You'll run a Guacamole server behind Pomerium, and configure the Guacamole instance to support [HTTP header authentication](https://guacamole.apache.org/doc/gug/header-auth.html). After a user authenticates against the configured identity provider, Pomerium will forward the user's email address in an unsigned HTTP header to Guacamole with the request.
