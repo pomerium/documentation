@@ -55,6 +55,16 @@ const config = {
             ],
             extendDefaults: true,
           },
+          versions: {
+            current: {
+              label: 'v0.26.X (latest release)',
+              // Uncomment below settings in vNext
+              // label: 'vNext (current release)'
+              // banner: 'unreleased',
+              // badge: true,
+              // noIndex: true,
+            },
+          },
         },
         theme: {
           customCss: require.resolve('./src/css/custom.css'),
@@ -151,16 +161,27 @@ const config = {
           position: 'right',
         },
         {
-          type: 'dropdown',
-          label: 'vNext',
+          type: 'docsVersionDropdown',
           position: 'right',
-          items: [
+          dropdownActiveClassDisabled: true,
+          dropdownItemsAfter: [
             {
-              type: 'doc',
-              label: 'Archived Versions',
-              docId: 'docs/versions',
+              to: 'https://0-25-0.docs.pomerium.com/docs',
+              label: 'v0.25.X',
             },
-          ],
+            {
+              to: 'https://0-24-0.docs.pomerium.com/docs',
+              label: 'v0.24.X',
+            },
+            {
+              type: 'html',
+              value: '<hr>',
+            },
+            {
+              to: '/docs/versions',
+              label: 'All Versions',
+            },
+          ]
         },
       ],
     },
