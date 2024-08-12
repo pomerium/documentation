@@ -6,19 +6,18 @@ keywords: [JWT claims headers, http auth, header auth]
 sidebar_label: Apache Guacamole
 ---
 
+import GuacamoleDockerCompose from '@site/content/examples/guacamole/guacamole.docker-compose.md'; import GuacamolePomeriumConfig from '@site/content/examples/guacamole/guacamole.pomerium-config.md';
+
 # Secure Apache Guacamole
 
-This guide will walk you through securing an instance of [Apache Guacamole](https://guacamole.apache.org/) behind Pomerium, leveraging JWT Claims Headers for HTTP header authentication. The setup allows centralized, secure, and seamless authentication via Pomerium. [Apache Guacamole](https://guacamole.apache.org/), a clientless, remote desktop gateway that supports VNC, RDP, and SSH protocols.
-+To complete this guide, you will:
-+1. Install and configure Guacamole using Docker Compose.
-+2. Replace the default Nginx with Pomerium in the Docker setup.
-+3. Configure Pomerium to forward identity headers to Guacamole.
-+4. Securely run your setup and verify proper authentication.
-## How to secure Apache Guacamole
+This guide shows you how to secure an instance of [Apache Guacamole](https://guacamole.apache.org/) behind Pomerium using JWT Claim Headers to support [HTTP header authentication](https://guacamole.apache.org/doc/gug/header-auth.html). After a user authenticates against a configured identity provider, Pomerium will forward the user's email address in an unsigned HTTP header to Guacamole with the request. This setup allows for centralized, secure, and seamless authentication through Pomerium.
 
-You'll run a Guacamole server behind Pomerium, and configure the Guacamole instance to support [HTTP header authentication](https://guacamole.apache.org/doc/gug/header-auth.html). After a user authenticates against the configured identity provider, Pomerium will forward the user's email address in an unsigned HTTP header to Guacamole with the request.
+To complete this guide, you'll follow these steps:
 
-Guacamole will pull the email address from the unsigned HTTP header and verify that it matches the authenticated user's email address. If Guacamole can validate the email address, it will sign the user in without prompting them to reauthenticate.
+1.  Install and configure Guacamole using Docker Compose.
+1.  Replace the default Nginx with Pomerium in the Docker configuration.
+1.  Configure Pomerium to forward identity headers to Guacamole.
+1.  Securely run your setup and verify proper authentication.
 
 :::note
 
@@ -26,7 +25,7 @@ This guide provides steps to secure access to the Guacamole gateway behind Pomer
 
 :::
 
-### Before you start
+## Before you start
 
 To complete this guide, you need:
 
@@ -39,14 +38,19 @@ This guide uses the [Hosted Authenticate Service](/docs/capabilities/hosted-auth
 
 :::
 
-## Install Guacamole with Docker Compose
+### Install Guacamole with Docker Compose
 
 [Installing Guacamole](https://guacamole.apache.org/doc/gug/guacamole-docker.html) with Docker requires the following services:
 
 - `guacamole/guacd`: The guacd daemon, which provides support for VNC, RDP, SSH, telnet, and Kubernetes.
 - `guacamole/guacamole`: The Guacamole web application running within a Tomcat 8 server with websocket support.
 - `mysql` or `postgres`: The relational database that stores authentication and connection configuration data.
-> **Security Best Practice:** Ensure that environment variables containing sensitive data, such as passwords, are stored securely. Consider using Docker secrets or an `.env` file.
+
+:::info Security Best Practice
+
+Ensure that environment variables containing sensitive data, such as passwords, are stored securely. Consider using Docker secrets or an `.env` file.
+
+:::
 
 This guide uses an open-source [Docker Compose](https://github.com/boschkundendienst/guacamole-docker-compose) configuration to install these services. This configuration file also includes an `nginx` instance, which you'll replace with Pomerium.
 
@@ -93,7 +97,7 @@ guacamole:
   restart: always
 ```
 
-## Configure Pomerium
+### Configure Pomerium
 
 In your Docker Compose file, replace `nginx` with Pomerium Core:
 
@@ -155,15 +159,31 @@ In your Docker Compose file, replace `nginx` with Pomerium Core:
 
 A few things to note:
 
-- [`pass_identity_headers`](/docs/reference/routes/pass-identity-headers-per-route) instructs Pomerium to send the [Pomerium JWT](/docs/capabilities/getting-users-identity) to Guacamole after the user authenticates successfully against the identity provider.
+- [`pass_identity_headers`](/docs/reference/routes/pass-identity-headers-per-route) instructs Pomerium to send the [Pomerium JWT](/docs/capabilities/getting-users-identity) to Guacamole after the user authenticates successfully against the identity provider. You must enable this setting to forward identity headers with JWT Claims Headers.
 - [`jwt_claims_headers`](/docs/reference/jwt-claim-headers) instructs Pomerium to forward additional claims as unsigned HTTP headers with the request. (Guacamole expects an incoming `X-Pomerium-Claim-Email` HTTP header from Pomerium.)
 
-## Run Docker Compose
+### Run Docker Compose
 
-Now, run `docker compose up -d`.
+Now, run Docker Compose:
+
+```bash
+docker compose up -d
+```
 
 Navigate to the Guacamole route defined in `config.yaml` by adding `/guacamole` to its path. For example, if your route is `guacamole.localhost.pomerium.io`, the route you'd access in the browser would be `guacamole.localhost.pomerium.io/guacamole`.
 
 After authenticating against the configured identity provider, Pomerium will redirect you to the Guacamole dashboard:
 
 ![The Guacamole dashboard after signing in with HTTP authentication](./img/guacamole/guacamole-dashboard.png)
+
+## Configuration file reference
+
+If you're stuck, the reference files below contain the configuration used to complete this guide. Compare your configuration to see if you missed something.
+
+Docker Compose configuration reference file:
+
+<GuacamoleDockerCompose />
+
+Pomerium configuration reference file:
+
+<GuacamolePomeriumConfig />
