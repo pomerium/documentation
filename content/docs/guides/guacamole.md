@@ -1,5 +1,5 @@
 ---
-# cSpell:ignore guacd, GUACD, guacnetwork
+# cSpell:ignore guacd, GUACD, guacnetwork, initdb
 title: Secure Apache Guacamole
 description: This guide shows you to secure Apache Guacamole behind Pomerium using JWT Claims Headers to support HTTP header authentication.
 keywords: [JWT claims headers, http auth, header auth]
