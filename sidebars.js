@@ -33,6 +33,10 @@ const sidebars = {
           type: 'doc',
           id: 'docs/courses/fundamentals/zero-tcp-routes',
         },
+        {
+          type: 'doc',
+          id: 'docs/courses/fundamentals/zero-custom-idp',
+        },
       ],
     },
     {
