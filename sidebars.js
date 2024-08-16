@@ -274,7 +274,11 @@ const sidebars = {
           items: [
             {
               type: 'doc',
-              id: 'docs/guides/grafana',
+              id: 'docs/guides/ad-guard',
+            },
+            {
+              type: 'doc',
+              id: 'docs/guides/guacamole',
             },
             {
               type: 'doc',
@@ -282,19 +286,11 @@ const sidebars = {
             },
             {
               type: 'doc',
-              id: 'docs/guides/jenkins',
-            },
-            {
-              type: 'doc',
-              id: 'docs/guides/tooljet',
-            },
-            {
-              type: 'doc',
               id: 'docs/guides/gitlab',
             },
             {
               type: 'doc',
-              id: 'docs/guides/transmission',
+              id: 'docs/guides/grafana',
             },
             {
               type: 'doc',
@@ -302,11 +298,19 @@ const sidebars = {
             },
             {
               type: 'doc',
+              id: 'docs/guides/jenkins',
+            },
+            {
+              type: 'doc',
               id: 'docs/guides/tiddlywiki',
             },
             {
               type: 'doc',
-              id: 'docs/guides/ad-guard',
+              id: 'docs/guides/tooljet',
+            },
+            {
+              type: 'doc',
+              id: 'docs/guides/transmission',
             },
           ],
         },
@@ -327,10 +331,6 @@ const sidebars = {
             },
             {
               type: 'doc',
-              id: 'docs/identity-providers/azure',
-            },
-            {
-              type: 'doc',
               id: 'docs/identity-providers/cognito',
             },
             {
@@ -344,6 +344,10 @@ const sidebars = {
             {
               type: 'doc',
               id: 'docs/identity-providers/google',
+            },
+            {
+              type: 'doc',
+              id: 'docs/identity-providers/azure',
             },
             {
               type: 'doc',
@@ -400,11 +404,11 @@ const sidebars = {
             },
             {
               type: 'doc',
-              id: 'docs/guides/cloud-run',
+              id: 'docs/guides/argo',
             },
             {
               type: 'doc',
-              id: 'docs/guides/argo',
+              id: 'docs/guides/cloud-run',
             },
             {
               type: 'doc',
@@ -478,7 +482,7 @@ const sidebars = {
           items: [
             {
               type: 'doc',
-              id: 'docs/guides/jwt-verification-with-envoy',
+              id: 'docs/guides/cors',
             },
             {
               type: 'doc',
@@ -486,7 +490,7 @@ const sidebars = {
             },
             {
               type: 'doc',
-              id: 'docs/guides/cors',
+              id: 'docs/guides/jwt-verification-with-envoy',
             },
             {
               type: 'doc',
