@@ -26,7 +26,12 @@ When you deploy a cluster in Pomerium Zero, we provision a randomly generated st
 
 Each starter subdomain comes with its own DNS records and TLS certificates, which makes it easier for new users to quickly build and test routes and policies in Pomerium Zero.
 
-After testing Pomerium Zero with your starter domain, you may want to add a custom domain for use by your cluster's routes to secure your apps and services.
+After testing Pomerium Zero with your starter domain, you'll likely want to start using your own domain name. To use your own domain name with Pomerium Zero, you'll need to:
+
+- add a DNS record for that domain name, so that it resolves to the IP address of your Pomerium cluster
+- upload a TLS certificate for that domain name (and periodically renew and re-upload this certificate)
+
+The **Custom Domains** feature helps simplify these steps.
 
 :::info
 
@@ -65,7 +70,7 @@ Add the custom domain in **Cluster Settings > Domains**:
 
 ![Entering the fully qualified domain name in the Zero Console](../capabilities/img/custom-domains/add-custom-domain.gif)
 
-If added successfully, you will be able to build routes with your custom domain instead of the starter domain. Pomerium will automatically issue and renew X.509 certificates for this custom domain, which you can verify by the Common Name found in the certificate:
+If added successfully, you will be able to build routes with your custom domain instead of the starter domain. Pomerium will automatically provision and renew TLS certificates for this custom domain, which you can verify by the Common Name found in the certificate:
 
 ![Reviewing the Let's Encrypt certificate for a custom domain](../capabilities/img/custom-domains/custom-domain-certificates.png)
 
