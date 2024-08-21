@@ -20,14 +20,14 @@ Though not itself an identity provider, Pomerium incorporates a single sign-on f
 
 ### Enforcing authorization
 
-Pomerium ensures that only authorized users can access services, or applications to which they are entitled access. 
+Pomerium ensures that only authorized users can access services, or applications to which they are entitled access.
 
-- For HTTP-based services, authorization will be made on a per-request basis. 
+- For HTTP-based services, authorization will be made on a per-request basis.
 - Otherwise, for TCP-based services, authorization will be made on a per-session basis.
 
-### Protecting data in transit 
+### Protecting data in transit
 
-All communication is encrypted and mutually authenticated when certificates are provided. 
+All communication is encrypted and mutually authenticated when certificates are provided.
 
 This applies to communication between:
 
@@ -36,14 +36,14 @@ This applies to communication between:
 - Pomerium and downstream clients (for example, a user's browser or device).
 - Pomerium and the databroker's storage system.
 
-### Protecting data at rest 
+### Protecting data at rest
 
 Sensitive data is encrypted. This applies to all data in the databroker, including:
 
 - Session, user, and directory data; as well as any other identity or contextual data.
 - Service secrets (TLS certificates or identity provider credentials).
 
-### Ensuring availability 
+### Ensuring availability
 
 Pomerium aims to be fault tolerant, and horizontally scalable. Pomerium inherits [Envoy's availability threat model](https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/security/threat_model#confidentiality-integrity-and-availability).
 
