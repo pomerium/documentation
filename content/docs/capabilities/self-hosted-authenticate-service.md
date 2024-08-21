@@ -18,11 +18,11 @@ Self-hosting your Pomerium instance requires you to configure an [Authenticate S
 
 ### Authenticate service URL
 
-The authenticate service URL defines where Pomerium redirects end users (clients) to authenticate against an identity provider. The configured identity provider must also use this URL as its [redirect URI](https://openid.net/specs/openid-connect-core-1_0.html#AuthRequest), and append the `/oauth2/callback` path to the URL. 
+The authenticate service URL defines where Pomerium redirects end users (clients) to authenticate against an identity provider. The configured identity provider must also use this URL as its [redirect URI](https://openid.net/specs/openid-connect-core-1_0.html#AuthRequest), and append the `/oauth2/callback` path to the URL.
 
 For example, if your authenticate service URL is `https://authenticate.corp.example.com`, the identity provider's redirect URI would be `https://authenticate.corp.example.com/oauth2/callback`.
 
-:::tip 
+:::tip
 
 If you require a different callback path than `/oauth2/callback`, use the [Authenticate Callback Path](/docs/reference/authenticate-callback-path) setting to define a custom callback path.
 
