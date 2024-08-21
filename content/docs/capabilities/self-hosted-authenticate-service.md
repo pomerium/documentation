@@ -10,7 +10,7 @@ description: Use Pomerium's Self-Hosted Authenticate Service to set up and deplo
 
 Pomerium's **Self-Hosted Authenticate Service** allows you to configure your own **Authenticate Service URL** and **Identity Provider**.
 
-The Self-Hosted Authenticate Service is available for both open-source Pomerium Core and Enterprise users.
+The Self-Hosted Authenticate Service is available for Pomerium Zero, open-source Pomerium Core, and Enterprise users.
 
 ## How the Self-Hosted Authenticate Service works
 
@@ -18,7 +18,17 @@ Self-hosting your Pomerium instance requires you to configure an [Authenticate S
 
 ### Authenticate service URL
 
-The authenticate service URL is an externally accessible URL used by Pomerium's Authenticate Service. You can include your own URL for testing or use Pomerium's localhost URL, which is hardcoded to point to `127.0.0.1`.
+The authenticate service URL defines where Pomerium redirects end users (clients) to authenticate against an identity provider. The configured identity provider must also use this URL as its [redirect URI](https://openid.net/specs/openid-connect-core-1_0.html#AuthRequest), and append the `/oauth2/callback` path to the URL. 
+
+For example, if your authenticate service URL is `https://authenticate.corp.example.com`, the identity provider's redirect URI would be `https://authenticate.corp.example.com/oauth2/callback`.
+
+:::tip 
+
+If you require a different callback path than `/oauth2/callback`, use the [Authenticate Callback Path](/docs/reference/authenticate-callback-path) setting to define a custom callback path.
+
+:::
+
+You can use your own authenticate service URL or use Pomerium's localhost URL for testing, which is hardcoded to point to `127.0.0.1`:
 
 ```yaml
 authenticate_service_url: https://authenticate.localhost.pomerium.io
