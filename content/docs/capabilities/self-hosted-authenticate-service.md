@@ -38,7 +38,7 @@ If you require a different callback path than `/oauth2/callback`, use the [Authe
 
 ### Identity provider
 
-Pomerium's Authenticate Service requires an IdP to authenticate users. Pomerium can support any IdP that incorporates the OAuth 2.0 and OIDC protocols in the authentication flow. 
+Pomerium's Authenticate Service requires an IdP to authenticate users. Pomerium can support any IdP that incorporates the OAuth 2.0 and OIDC protocols in the authentication flow.
 
 Although the steps to configure an IdP to integrate with Pomerium vary depending on the provider (see [identity providers](/docs/identity-providers) for vendor-specific guides), the Pomerium configuration always requires some (or all) of the following IdP-related settings:
 
@@ -53,28 +53,28 @@ See [Identity Provider Settings](/docs/reference/identity-provider-settings#iden
 
 To configure Pomerium to use the self-hosted authenticate service:
 
-1. Add your authenticate service URL 
-    ```yaml title="pomerium-config.yaml"
-    authenticate_service_url: https://authenticate.localhost.pomerium.io
-    ```
+1. Add your authenticate service URL
+   ```yaml title="pomerium-config.yaml"
+   authenticate_service_url: https://authenticate.localhost.pomerium.io
+   ```
 1. Include your IdP settings
-    ```yaml title="pomerium-config.yaml"
-    idp_provider: <idp>
-    idp_client_id: <client_id>
-    idp_client_secret: <client_secret>
-    ```
+   ```yaml title="pomerium-config.yaml"
+   idp_provider: <idp>
+   idp_client_id: <client_id>
+   idp_client_secret: <client_secret>
+   ```
 1. Build a route and policy
-    ```yaml title="pomerium-config.yaml"
-    routes:
-      - from: https://verify.localhost.pomerium.io
-        to: http://verify:8000
-        policy:
-          - allow:
-              or:
-                - email:
-                    is: user@example.com
-        pass_identity_headers: true
-    ```
+   ```yaml title="pomerium-config.yaml"
+   routes:
+     - from: https://verify.localhost.pomerium.io
+       to: http://verify:8000
+       policy:
+         - allow:
+             or:
+               - email:
+                   is: user@example.com
+       pass_identity_headers: true
+   ```
 
 Your self-hosted configuration file might look like this:
 
