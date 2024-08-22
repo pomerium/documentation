@@ -409,9 +409,9 @@ Kubernetes has its own concept of [readiness](https://kubernetes.io/docs/tasks/c
 
 :::
 
-### Mutual TLS
+### Upstream mutual TLS
 
-The Ingress spec assumes that all communications to the upstream service is sent in plaintext. Pomerium supports mutual TLS communication with upstream endpoints.
+The Ingress spec assumes that all communications to the upstream service are sent in plaintext. However, you can configure both Pomerium and the upstream server to mutually authenticate each other with TLS certificates. This configuration secures communication between Pomerium and the upstream endpoint over TLS.
 
 Annotate your Ingress with
 
