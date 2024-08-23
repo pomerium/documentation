@@ -222,7 +222,7 @@ The Pomerium JWT contains at least the following claims:
 
 :::tip Prevent session replay attempts
 
-The `jti` claim (the JWT ID) contains a unique identifier assigned to each Pomerium JWT. You can prevent session replay attempts by implementing a system that monitors `jti` reuse either in real time or by checking session logs.
+The `jti` claim (the JWT ID) contains a unique identifier assigned to each Pomerium JWT. If you can implement a system that checks the `jti` value in real time, you can prevent session replay attempts. Or, if you persist the `jti` value in your logs, you can detect replayed JWTs after the fact.
 
 :::
 
