@@ -28,7 +28,7 @@ This guide covers the following mutual authentication methods with Pomerium:
 
 This section provides examples of mutual authentication methods you can implement with Pomerium.
 
-Each example diagrams Pomerium as a single service, as it is in [all-in-one mode](/docs/core/configuration#all-in-one-and-split-service-modes-split-service-mode). This is the version provided by our [binaries] and in our Docker-based [Quickstart].
+Each example diagrams Pomerium as a single service, as it is in [all-in-one mode](/docs/core/configuration#all-in-one-and-split-service-modes). This is the version provided by our [binaries] and in our Docker-based [Quickstart].
 
 ### Basic Pomerium installation
 
