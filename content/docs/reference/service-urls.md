@@ -44,7 +44,7 @@ If not set, Pomerium will use the [Hosted Authenticate Service](/docs/capabiliti
 
 If you prefer to use your own [identity provider](/docs/identity-providers), you'll need to set an authenticate service URL, and you will need this URL when configuring your identity provider client's OAuth callback URL.
 
-If Pomerium is running in [split-service mode](/docs/internals/configuration#all-in-one-vs-split-service-mode), each Pomerium service requires the authenticate service URL in its configuration.
+If Pomerium is running in [split-service mode](/docs/core/configuration#all-in-one-and-split-service-mode), each Pomerium service requires the authenticate service URL in its configuration.
 
 :::info
 
@@ -233,8 +233,8 @@ The **Databroker Service URL** settings points to a databroker which is responsi
 
 | **Config file keys** | **Environment variables** | **Type** | **Default** |
 | :-- | :-- | :-- | :-- |
-| `databroker_service_url` | `DATABROKER_SERVICE_URL` | `URL` | `http://localhost:5443` (In [all-in-one mode](/docs/internals/configuration#all-in-one-vs-split-service-mode)) |
-| `databroker_service_urls` | `DATABROKER_SERVICE_URLS` | `URL` | `http://localhost:5443` (In [all-in-one mode](/docs/internals/configuration#all-in-one-vs-split-service-mode)) |
+| `databroker_service_url` | `DATABROKER_SERVICE_URL` | `URL` | `http://localhost:5443` (In [all-in-one mode](/docs/core/configuration#all-in-one-and-split-service-mode)) |
+| `databroker_service_urls` | `DATABROKER_SERVICE_URLS` | `URL` | `http://localhost:5443` (In [all-in-one mode](/docs/core/configuration#all-in-one-and-split-service-mode)) |
 
 #### Examples {#databroker-service-url-examples}
 
