@@ -27,17 +27,17 @@ Pomerium can hot-reload route configuration details, authorization policy, certi
 
 Both configuration file keys and environment variables are case sensitive.
 
-Configuration file keys are always lowercase. Environmental variables are identical to configuration file keys, except they are always uppercase.
+Configuration file keys are always lowercase. Environment variables are identical to configuration file keys, except they are always uppercase.
 
 See the [Reference](/docs/reference) page for a comprehensive list of Pomerium's configuration settings.
 
 ## All-in-One and Split-Service modes
 
-You can configure Pomerium using either All-in-One mode or Split Service mode.
+You can configure Pomerium using either All-in-One mode or Split-Service mode.
 
 ### All-in-One mode
 
-All-in-One mode means all of Pomerium's configuration settings are set in a single configuration file. You can use All-in-One mode when running Pomerium:
+All-in-One mode means a single Pomerium process runs all of the [four logical services](/docs/internals/architecture#component-level). You can use All-in-One mode when running Pomerium:
 
 - As a single system service or container, or
 - In a distributed environment where there are multiple processes that each handle separate [Pomerium services](/docs/internals/architecture#component-level).
