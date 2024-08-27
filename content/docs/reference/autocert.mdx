@@ -2,59 +2,57 @@
 id: autocert
 title: Autocert Settings
 description: |
-  Enable Autocert and Autocert settings to retrieve, manage, and renew public facing TLS certificates from Let's Encrypt.
+  Autocert lets Pomerium manage public-facing TLS certificates automatically.
 keywords:
   - reference
   - Autocert
+  - ACME
+  - acme
+  - OCSP stapling
 pagination_prev: null
 pagination_next: null
 ---
 
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
-
 # Autocert Settings
 
-This reference covers all of Pomerium's **Autocert Settings**:
+The Autocert settings configure Pomerium to manage public-facing TLS certificates automatically, by integrating with a certificate authority (CA) that supports the [ACME protocol](https://datatracker.ietf.org/doc/html/rfc8555), such as [Let's Encrypt](https://letsencrypt.org/).
 
-- [Autocert](#autocert)
-- [Autocert CA](#autocert-ca)
-- [Autocert Directory](#autocert-directory)
-- [Autocert EAB Key ID](#autocert-eab-key-id)
-- [Autocert EAB Mac Key](#autocert-eab-mac-key)
-- [Autocert Email](#autocert-email)
-- [Autocert Must Staple](#autocert-must-staple)
-- [Autocert Trusted Certificate Authority](#autocert-trusted-certificate-authority)
-- [Autocert Use Staging](#autocert-use-staging)
+Autocert can be useful in situations where Pomerium may not be behind a TLS-terminating ingress controller, proxy, or load balancer that manages TLS certificates on behalf of your upstream services. Certificates provisioned by Autocert provide also [OCSP stapling](https://en.wikipedia.org/wiki/OCSP_stapling).
+
+You must use the [Autocert Directory](#autocert-directory) setting with Autocert to store and share certificate data between Pomerium services.
+
+Autocert can incorporate also certificates set manually in the Pomerium configuration. These certificates will take precedence over generated certificates when applicable to configured routes.
+
+:::note Autocert support
+
+The suite of Autocert settings listed below are supported only in [Pomerium Core](/docs/core) configurations. Here's what you should know about ACME support in other Pomerium products:
+
+- Pomerium Enterprise users should note that Autocert cannot be configured in the [Enterprise Console](/docs/enterprise#enterprise-console) or the Pomerium Enterprise [configuration file](/docs/enterprise/configure). Autocert is a bootstrap setting, meaning it must be configured in Pomerium Core (either in a configuration file or as an environment variable) before running Pomerium Enterprise.
+
+- Kubernetes users should refer to the [Cert-Manager integration](/docs/k8s/ingress#cert-manager-integration) section for more information on configuring automated certificate management in the Pomerium Ingress Controller.
+
+- Pomerium Zero users should note that Pomerium automatically manages certificates for [starter domains](/docs/concepts/clusters#starter-domain) and [custom domains](/docs/capabilities/custom-domains).
+
+:::
 
 ## Autocert {#autocert}
 
-Turning on Autocert allows Pomerium to automatically retrieve, manage, and renew public facing TLS Certificates from [Let's Encrypt][letsencrypt], which includes managed routes and the Authenticate Service.
+The **Autocert** setting enables Pomerium to automatically retrieve, manage, and renew public-facing TLS certificates from the [Autocert CA](#autocert-ca). Pomerium uses these certificates to secure Pomerium-managed route domains and the authenticate service. If you don't configure Autocert CA, Pomerium will use Let's Encrypt by default.
 
-You must use [Autocert Directory](/docs/reference/autocert) with Autocert to store and share certificate data between services. (Note that Autocert also provides [OCSP stapling](https://en.wikipedia.org/wiki/OCSP_stapling).)
+When requesting or renewing a certificate, Pomerium performs either the HTTP-01 or TLS-ALPN-01 challenge (the DNS-01 challenge is not supported):
 
-The Autocert setting can be useful in situations where you may not have Pomerium behind a TLS terminating ingress or proxy that is already handling your public certificates on your behalf.
+- The HTTP-01 challenge requires that you set up an HTTP redirect listener on port 80 (see [HTTP Redirect Address](/docs/reference/http-redirect-address)).
+- The TLS-ALPN-01 challenge requires that the [Address](/docs/reference/address) setting specifies port 443.
 
-Autocert will incorporate certificates available in the system trust store and certificates set manually in the Pomerium configuration, and they will take precedence over generated certificates when applicable to configured routes.
+:::caution Let's Encrypt usage limits
 
-Autocert will attempt `HTTP-01`and `TLS-ALPN-01` challenges. It does not support `DNS-01` challenges, required to generate wildcard certificates.
-
-Kubernetes users should not use Autocert. See the [cert-manager's guide](https://cert-manager.io/docs/tutorials/acme/pomerium-ingress/) for more information.
-
-:::warning
-
-By using Autocert, you agree to the [Let's Encrypt Subscriber Agreement](https://letsencrypt.org/documents/LE-SA-v1.2-November-15-2017.pdf). There are [_strict_ usage limits](https://letsencrypt.org/docs/rate-limits/) per domain you should be aware of. Consider testing with [`autocert_use_staging`](/docs/reference/autocert) first.
-
-Autocert requires that port `443` be accessible from the internet in order to complete a [TLS-ALPN-01 challenge](https://letsencrypt.org/docs/challenge-types/#tls-alpn-01) or port `80` in order to complete an [HTTP-01 challenge](https://letsencrypt.org/docs/challenge-types/#http-01-challenge) (https://letsencrypt.org/docs/challenge-types/#tls-alpn-01).
+If you use Let's Encrypt as your CA, you agree to the [Let's Encrypt Subscriber Agreement](https://letsencrypt.org/documents/LE-SA-v1.4-April-3-2024.pdf). Let's Encrypt enforces [_strict_ usage limits](https://letsencrypt.org/docs/rate-limits/) per domain you should be aware of. Consider testing Autocert with [`autocert_use_staging`](/docs/reference/autocert) first.
 
 :::
 
 [letsencrypt]: https://letsencrypt.org/
 
 ### How to configure {#autocert-how-to-configure}
-
-<Tabs>
-<TabItem value="Core" label="Core">
 
 | **Config file keys** | **Environment variables** | **Type**  | **Usage**    |
 | :------------------- | :------------------------ | :-------- | :----------- |
@@ -70,33 +68,17 @@ autocert: true
 AUTOCERT=TRUE
 ```
 
-</TabItem>
-<TabItem value="Enterprise" label="Enterprise">
-
-`autocert` is a bootstrap configuration setting and is not configurable in the Console.
-
-</TabItem>
-<TabItem value="Kubernetes" label="Kubernetes">
-
-Kubernetes users should not use Autocert. See the [cert-manager's guide](https://cert-manager.io/docs/tutorials/acme/pomerium-ingress/) for more information.
-
-</TabItem>
-</Tabs>
-
 ## Autocert CA {#autocert-ca}
 
 **Autocert CA** is the directory URL of the ACME CA to use when requesting certificates.
 
-:::tip
+:::note
 
 If set, Autocert CA will override the [**Autocert Use Staging**](/docs/reference/autocert) setting.
 
 :::
 
 ### How to configure {#autocert-ca-how-to-configure}
-
-<Tabs>
-<TabItem value="Core" label="Core">
 
 | **Config file keys** | **Environment variables** | **Type** | **Usage**    |
 | :------------------- | :------------------------ | :------- | :----------- |
@@ -112,37 +94,23 @@ autocert_ca: https://acme.zerossl.com/v2/DV90
 AUTOCERT_CA=https://acme.zerossl.com/v2/DV90
 ```
 
-</TabItem>
-<TabItem value="Enterprise" label="Enterprise">
-
-`autocert_ca` is a bootstrap configuration setting and is not configurable in the Console.
-
-</TabItem>
-<TabItem value="Kubernetes" label="Kubernetes">
-
-Kubernetes users should not use Autocert. See the [cert-manager's guide](https://cert-manager.io/docs/tutorials/acme/pomerium-ingress/) for more information.
-
-</TabItem>
-</Tabs>
-
 ## Autocert Directory {#autocert-directory}
 
-**Autocert Directory** is the path where [Autocert](/docs/reference/autocert) stores X.509 Certificate data.
+**Autocert Directory** is the path where [Autocert](/docs/reference/autocert) stores X.509 certificate data.
 
 ### How to configure {#autocert-directory-how-to-configure}
 
-<Tabs>
-<TabItem value="Core" label="Core">
+| **Config file keys** | **Environment variables** | **Type** | **Usage** |
+| :-- | :-- | :-- | :-- |
+| `autocert_dir` | `AUTOCERT_DIR` | \*`string` | \*\* **optional** |
 
-| **Config file keys** | **Environment variables** | **Type** | **Usage**    |
-| :------------------- | :------------------------ | :------- | :----------- |
-| `autocert_dir`       | `AUTOCERT_DIR`            | `string` | **optional** |
+\* `string` must point to the directory path or URL of an S3 or GCS bucket.
 
-**Note**: `string` must point to the path of the directory, or a URL to an S3 or GCS bucket.
+\*\* If you don't specify an Autocert directory, Pomerium will generate a directory by default based on your runtime environment. See [Defaults](#autocert-directory-defaults) for more information.
 
 #### Examples {#autocert-directory-examples}
 
-##### S3 Bucket
+##### S3 bucket
 
 An S3 bucket can be used as storage by using a URL like:
 
@@ -152,7 +120,7 @@ autocert_dir: s3://your-bucket.s3.us-east-1.amazonaws.com/some/prefix
 
 Credentials are sourced from [the environment](https://pkg.go.dev/github.com/aws/aws-sdk-go-v2/config#EnvConfig).
 
-##### GCS Bucket
+##### GCS bucket
 
 A Google Cloud Storage bucket can be used as storage by using a URL like:
 
@@ -161,19 +129,6 @@ autocert_dir: gs://your-bucket/some/prefix
 ```
 
 Credentials are sourced from [Google Application Default Credentials](https://cloud.google.com/docs/authentication/application-default-credentials).
-
-</TabItem>
-<TabItem value="Enterprise" label="Enterprise">
-
-`autocert_dir` is a bootstrap configuration setting and is not configurable in the Console.
-
-</TabItem>
-<TabItem value="Kubernetes" label="Kubernetes">
-
-Kubernetes users should not use Autocert. See the [cert-manager's guide](https://cert-manager.io/docs/tutorials/acme/pomerium-ingress/) for more information.
-
-</TabItem>
-</Tabs>
 
 ### Defaults {#autocert-directory-defaults}
 
@@ -189,9 +144,6 @@ Kubernetes users should not use Autocert. See the [cert-manager's guide](https:/
 **Autocert EAB Key ID** is the key identifier when requesting a certificate from a CA with External Account Binding (EAB) enabled.
 
 ### How to configure {#autocert-eab-key-id-how-to-configure}
-
-<Tabs>
-<TabItem value="Core" label="Core">
 
 | **Config file keys**  | **Environment variables** | **Type** | **Usage**    |
 | :-------------------- | :------------------------ | :------- | :----------- |
@@ -209,19 +161,6 @@ autocert_eab_key_id: EAB_KID
 AUTOCERT_EAB_KEY_ID=EAB_KID
 ```
 
-</TabItem>
-<TabItem value="Enterprise" label="Enterprise">
-
-`autocert_eab_key_id` is a bootstrap configuration setting and is not configurable in the Console.
-
-</TabItem>
-<TabItem value="Kubernetes" label="Kubernetes">
-
-Kubernetes users should not use Autocert. See the [cert-manager's guide](https://cert-manager.io/docs/tutorials/acme/pomerium-ingress/) for more information.
-
-</TabItem>
-</Tabs>
-
 ## Autocert EAB MAC Key {#autocert-eab-mac-key}
 
 **Autocert EAB MAC Key** is the base64-URL-encoded secret key corresponding to the [Autocert EAB Key ID](/docs/reference/autocert).
@@ -229,9 +168,6 @@ Kubernetes users should not use Autocert. See the [cert-manager's guide](https:/
 The Autocert EAB MAC Key setting is required when Autocert EAB Key ID is set.
 
 ### How to configure {#autocert-eab-mac-key-how-to-configure}
-
-<Tabs>
-<TabItem value="Core" label="Core">
 
 | **Config file keys**   | **Environment variables** | **Type** | **Usage**    |
 | :--------------------- | :------------------------ | :------- | :----------- |
@@ -247,19 +183,6 @@ autocert_eab_key_id: base64-URL-encoded_secret_key
 AUTOCERT_EAB_KEY_ID=base64-URL-encoded_secret_key
 ```
 
-</TabItem>
-<TabItem value="Enterprise" label="Enterprise">
-
-`autocert_eab_mac_key` is a bootstrap configuration setting and is not configurable in the Console.
-
-</TabItem>
-<TabItem value="Kubernetes" label="Kubernetes">
-
-Kubernetes users should not use Autocert. See the [cert-manager's guide](https://cert-manager.io/docs/tutorials/acme/pomerium-ingress/) for more information.
-
-</TabItem>
-</Tabs>
-
 ## Autocert Email {#autocert-email}
 
 **Autocert Email** is the email address to use when requesting certificates from an ACME CA or registering an ACME account.
@@ -271,9 +194,6 @@ The CA may contact you at this address when, for example, a certificate expires.
 :::
 
 ### How to configure {#autocert-email-how-to-configure}
-
-<Tabs>
-<TabItem value="Core" label="Core">
 
 | **Config file keys** | **Environment variables** | **Type** | **Usage**    |
 | :------------------- | :------------------------ | :------- | :----------- |
@@ -288,19 +208,6 @@ autocert_email: example@domain.com
 ```bash
 AUTOCERT_EMAIL=example@domain.com
 ```
-
-</TabItem>
-<TabItem value="Enterprise" label="Enterprise">
-
-`autocert_email` is a bootstrap configuration setting and is not configurable in the Console.
-
-</TabItem>
-<TabItem value="Kubernetes" label="Kubernetes">
-
-Kubernetes users should not use Autocert. See the [cert-manager's guide](https://cert-manager.io/docs/tutorials/acme/pomerium-ingress/) for more information.
-
-</TabItem>
-</Tabs>
 
 ## Autocert Must Staple {#autocert-must-staple}
 
@@ -318,12 +225,9 @@ The Autocert Must Staple setting will only take effect when you request or renew
 
 ### How to configure {#autocert-must-staple-how-to-configure}
 
-<Tabs>
-<TabItem value="Core" label="Core">
-
-| **Config file keys** | **Environment variables** | **Type** | **Usage** |
-| :-- | :-- | :-- | :-- |
-| `autocert_must_staple` | `AUTOCERT_MUST_STAPLE` | `boolean` | **optional** |
+| **Config file keys** | **Environment variables** | **Type** | **Usage** | **Default** |
+| :-- | :-- | :-- | :-- | :-- |
+| `autocert_must_staple` | `AUTOCERT_MUST_STAPLE` | `boolean` | **optional** | `false` |
 
 See [RFC7633](https://tools.ietf.org/html/rfc7633) for more information.
 
@@ -337,19 +241,6 @@ autocert_must_staple: true
 AUTOCERT_MUST_STAPLE=true
 ```
 
-</TabItem>
-<TabItem value="Enterprise" label="Enterprise">
-
-`autocert_must_staple` is a bootstrap configuration setting and is not configurable in the Console.
-
-</TabItem>
-<TabItem value="Kubernetes" label="Kubernetes">
-
-Kubernetes users should not use Autocert. See the [cert-manager's guide](https://cert-manager.io/docs/tutorials/acme/pomerium-ingress/) for more information.
-
-</TabItem>
-</Tabs>
-
 ## Autocert Trusted Certificate Authority {#autocert-trusted-certificate-authority}
 
 **Autocert Trusted Certificate Authority** is the X.509 CA (bundle) used when communicating with a CA supporting the ACME protocol.
@@ -357,9 +248,6 @@ Kubernetes users should not use Autocert. See the [cert-manager's guide](https:/
 If not set, the system trusted roots will be used to verify TLS connections to the ACME CA.
 
 ### How to configure {#autocert-trusted-certificate-authority-how-to-configure}
-
-<Tabs>
-<TabItem value="Core" label="Core">
 
 | **Config file keys** | **Environment variables** | **Type** | **Usage** |
 | :-- | :-- | :-- | :-- |
@@ -384,31 +272,15 @@ AUTOCERT_TRUSTED_CA=base64-encoded-string
 AUTOCERT_TRUSTED_CA_FILE=/relative/file/location
 ```
 
-</TabItem>
-<TabItem value="Enterprise" label="Enterprise">
-
-`autocert_trusted_ca` and `autocert_trusted_ca_file` are bootstrap configuration settings and are not configurable in the Console.
-
-</TabItem>
-<TabItem value="Kubernetes" label="Kubernetes">
-
-Kubernetes users should not use Autocert. See the [cert-manager's guide](https://cert-manager.io/docs/tutorials/acme/pomerium-ingress/) for more information.
-
-</TabItem>
-</Tabs>
-
 ## Autocert Use Staging {#autocert-use-staging}
 
-**Autocert Use Staging** setting allows you to use Let's Encrypt's [staging environment](https://letsencrypt.org/docs/staging-environment/), which has more lenient [usage limits](https://letsencrypt.org/docs/rate-limits/) than the production environment.
+The **Autocert Use Staging** setting allows you to use Let's Encrypt's [staging environment](https://letsencrypt.org/docs/staging-environment/), which has more generous [usage limits](https://letsencrypt.org/docs/staging-environment/) than the production environment. If you're testing or using Autocert in development, you should use the staging environment so that you don't exceed Let's Encrypt's rate limits.
 
 ### How to configure {#autocert-use-staging-how-to-configure}
 
-<Tabs>
-<TabItem value="Core" label="Core">
-
-| **Config file keys** | **Environment variables** | **Type** | **Usage** |
-| :-- | :-- | :-- | :-- |
-| `autocert_use_staging` | `AUTOCERT_USE_STAGING` | `boolean` | **optional** |
+| **Config file keys** | **Environment variables** | **Type** | **Usage** | **Default** |
+| :-- | :-- | :-- | :-- | :-- |
+| `autocert_use_staging` | `AUTOCERT_USE_STAGING` | `boolean` | **optional** | `false` |
 
 #### Examples {#autocert-use-staging-examples}
 
@@ -419,16 +291,3 @@ autocert_use_staging: true
 ```bash
 AUTOCERT_USE_STAGING=true
 ```
-
-</TabItem>
-<TabItem value="Enterprise" label="Enterprise">
-
-`autocert_use_staging` is a bootstrap configuration setting and is not configurable in the Console.
-
-</TabItem>
-<TabItem value="Kubernetes" label="Kubernetes">
-
-Kubernetes users should not use Autocert. See the [cert-manager's guide](https://cert-manager.io/docs/tutorials/acme/pomerium-ingress/) for more information.
-
-</TabItem>
-</Tabs>

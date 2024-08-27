@@ -1,9 +1,8 @@
 ---
-sidebar_label: Custom Branding / Errors
 description: Add custom colors, logos, and error messages.
 ---
 
-# Custom Branding / White Labeling
+# Custom Branding (White Labeling)
 
 :::enterprise
 

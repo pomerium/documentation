@@ -1,16 +1,29 @@
 ---
 # cSpell:ignore ecparam genkey noout pubout secp256r1 QCN7adG2AmIK3UdHJvVJkldsUc6XeBRz83Z4rXX8Va4 ary66nrvA55TpaiWADq8b3O1CYIbvjqIHpXCY
 
-title: Identity Verification
-description: This article describes how to to get and cryptographically verify a user's identity with Pomerium.
-sidebar_label: Identity Verification
+title: JWT Authentication
+description: Learn how Pomerium supports single sign-on (SSO) and identity verification with JWT authentication and signed HTTP headers.
+sidebar_label: JWT Authentication
+keywords:
+  [
+    jwt assertion header,
+    jwt authentication,
+    jwt,
+    single sign-on,
+    sso,
+    identity verification,
+    request verification,
+    pomerium jwt,
+    jwt validation,
+    jwt claims,
+  ]
 ---
 
-import GoApp from '../../examples/go-sdk/go-app.md';
+import Tabs from '@theme/Tabs'; import TabItem from '@theme/TabItem'; import GoApp from '../../examples/go-sdk/go-app.md'; import ReactApp from '../../examples/js-sdk/react-app.md';
 
-import ReactApp from '../../examples/js-sdk/react-app.md';
+# JWT Authentication
 
-# Identity Verification (from your app)
+This document describes how Pomerium supports JWT authentication in upstream services with JSON web tokens (JWTs).
 
 <iframe
   width="100%"
@@ -21,70 +34,118 @@ import ReactApp from '../../examples/js-sdk/react-app.md';
   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
   allowfullscreen></iframe>
 
-This article describes how to retrieve a user's identity from a Pomerium-managed application. Pomerium uses JSON web tokens (**[JWT]**) to attest that a given request was handled by Pomerium's authorization service.
+## Overview
 
-## Prerequisites
+JWTs provide a secure and efficient means to authenticate and authorize users before they can access upstream services behind Pomerium. When configured for JWT authentication, Pomerium sends its own JWT to the upstream service. By verifying the Pomerium JWT, the upstream service can:
 
-To secure your app with signed headers, you'll need the following:
+- Confirm that the Pomerium Proxy service handled the client request before forwarding it.
+- Make application-level authorization decisions based on the user's associated identity information.
 
-- An application you want users to connect to.
-- A [JWT library] with support for the `ES256` signing algorithm.
+## Why JWT authentication?
 
-## JWT data
+### Identity verification
 
-When the [Pass Identity Headers] route option is enabled, the user's associated identity information will be included in a signed attestation JWT. This JWT is added to each upstream request in the header `X-Pomerium-Jwt-Assertion`. The signed attestation JWT is also available at the special `/.pomerium/jwt` endpoint of any URL handled by Pomerium.
+JWT authentication through Pomerium enables an upstream service to verify a user's identity based on claims contained in the JWT. Pomerium signs and issues a new JWT based on the ID token received from the service's configured identity provider.
 
-The JWT will contain at least the following claims:
+### Request verification
 
-| claim | description |
-| :-: | --- |
-| `exp` | Expiration time in seconds since the UNIX epoch. |
-| `iat` | Issued-at time in seconds since the UNIX epoch. |
-| `aud` | The domain for the upstream application (e.g. `httpbin.corp.example.com`). |
-| `iss` | Same as the `aud` claim. |
-| `sub` | The user's ID, as specified by the identity provider. |
-| `email` | The user's email address. |
-| `groups` | The user's group memberships (if supported for the identity provider). |
-| `name` | The user's full name, as specified by the identity provider. |
+Pomerium places the newly minted JWT in a [JWT assertion header](#jwt-assertion-header). The upstream service should only accept the incoming request if it satisfies all [JWT validation](#jwt-validation) conditions.
 
-<details>
-  <summary>Audience and issuer claims</summary>
-  <div>
+By validating the JWT, the upstream service can assert that:
 
-The audience (`aud`) claim defines what application the JWT is intended for. Pomerium sets the audience claim to be the domain of the target upstream application.
+- The request originated from Pomerium.
+- The user was authenticated.
+- The request was authorized in accordance with the route's authorization policy.
 
-Since version 0.22, Pomerium sets the issuer (`iss`) claim also to the domain of the target upstream application. (In previous versions, this was instead set to the authentication service domain.)
+:::note
 
-Upstream services should verify that these claims match the expected domain in order to prevent token reuse between different upstream services.
+The Pomerium JWT does not contain any path information for an upstream service. If you've configured multiple routes with different paths for the same upstream service (such as an `/admin` route that grants access to a limited set of users), the application can't determine which Pomerium route the JWT corresponds to.
 
-  </div>
-</details>
+:::
 
-If your identity provider (IdP) provides other claims that you would like to pass to your application, you can use the [JWT Claims Headers](/docs/reference/jwt-claim-headers) option to include them in the JWT as well.
+### Single Sign-on (SSO)
 
-## JWT verification
+You can configure upstream services to accept the Pomerium JWT to achieve an SSO authentication flow. This capability is completely free and relatively easy to configure depending on the upstream service and your [identity provider](/docs/identity-providers).
 
-Before trusting any user identity information in the JWT, your application should verify:
+:::info Implement SSO with Pomerium
 
-1. The JWT has a valid signature from a trusted source.
-2. The JWT has not expired.
-3. The JWT audience and issuer match your application's domain.
+See our [**Grafana**](/docs/guides/grafana) guide for a real-world example of how configuring both Pomerium and and an upstream service can provide easy SSO access for your end users.
 
-Signed headers are used to establish an extra layer of authentication. For more information on the benefits, check out our [blog post](https://www.pomerium.com/blog/signed-headers-a-safety-net-for-application-security/) on this topic!
+:::
 
-The attestation JWT's signature can be verified using the public key retrieved from Pomerium's `/.well-known/pomerium/jwks.json` endpoint (on any route domain). For example:
+## JWT authentication flow
+
+![A diagram that shows how Pomerium forwards JWTs to an upstream application](./img/jwt-authn/jwt-authentication.svg)
+
+### Identity provider authentication
+
+Pomerium requires users to authenticate against an OIDC-compliant identity provider before authorizing or denying a request to an upstream service.
+
+After successful authentication, Pomerium mints a new [**Pomerium JWT**](#pomerium-jwt) based on the **ID token** generated by the identity provider. (This is Pomerium's default behavior, even if you haven't configured Pomerium to support JWT authentication.)
+
+### JWT assertion header
+
+Pomerium signs its JWT with a [signing key](/docs/reference/signing-key). If the [pass identity headers](/docs/reference/routes/pass-identity-headers-per-route) setting is enabled, Pomerium will place the JWT into a special HTTP header called the JWT assertion header. Pomerium includes the JWT assertion header in every request it forwards to the upstream service.
+
+:::info JWT assertion header field
+
+Pomerium passes the JWT in the `X-Pomerium-Jwt-Assertion` HTTP header, and encodes it according to [RFC7519](https://datatracker.ietf.org/doc/html/rfc7519).
+
+:::
+
+### JWT validation
+
+The upstream service receives the `X-Pomerium-Jwt-Assertion-Header` with the encrypted JWT. To validate a JWT, the service should check the following items:
+
+- [JWT signature](#jwt-signature)
+- [Audience (`aud`) and issuer (`iss`) claims](#aud-and-iss-claims)
+- [JWT timestamps](#jwt-timestamps)
+
+#### JWT signature
+
+The upstream service should validate that the JWT was signed by the issuing authority.
+
+Pomerium issues and signs the new JWT with a private signing key. To validate the signature, the upstream service must fetch the corresponding public key from Pomerium's [JSON web key set](https://datatracker.ietf.org/doc/html/rfc7517#section-5) (JWKS) endpoint.
+
+To configure an upstream service to fetch the public key:
+
+1. Get the hostname from the JWT's `iss` claim
+1. Append the `/.well-known/pomerium/jwks.json` path to the hostname
+1. Prepend the `https://` scheme to the URL
+1. Set the `Accept: application/json` header in the request
+
+For example:
+
+<Tabs>
+<TabItem label="Hosted Authenticate" value="hosted-authenticate">
 
 ```bash
-curl https://your-app.corp.example.com/.well-known/pomerium/jwks.json | jq
+curl https://service.corp.example.com/.well-known/pomerium/jwks.json \
+-H 'Accept: application/json'
 ```
 
-```json
+</TabItem>
+<TabItem label="Self-hosted Authenticate" value="self-hosted-authenticate">
+
+```bash
+curl https://<AUTHENTICATE-SERVICE-URL>/.well-known/pomerium/jwks.json \
+-H 'Accept: application/json'
+```
+
+</TabItem>
+</Tabs>
+
+The returned JWK key set contains Pomerium's public keys. Use the `kid` claim provided in the Pomerium JWT header to identify the correct key in the returned key set.
+
+```json title="JWKS response"
 {
   "keys": [
     {
       "use": "sig",
       "kty": "EC",
+      // highlight-start
       "kid": "ccc5bc9d835ff3c8f7075ed4a7510159cf440fd7bf7b517b5caeb1fa419ee6a1",
+      // highlight-end
       "crv": "P-256",
       "alg": "ES256",
       "x": "QCN7adG2AmIK3UdHJvVJkldsUc6XeBRz83Z4rXX8Va4",
@@ -94,78 +155,76 @@ curl https://your-app.corp.example.com/.well-known/pomerium/jwks.json | jq
 }
 ```
 
-(This endpoint can also be used to integrate with other systems, such as [Istio](https://istio.io/). For example, see the Istio guide on [Authentication Policy](https://istio.io/latest/docs/reference/config/security/jwt/#JWTRule-jwks_uri), and specifically the [`jwksUri`](https://istio.io/latest/docs/reference/config/security/jwt/#JWTRule-jwks_uri) key on the `jwtRules` mapping.)
+If the JWT signature can't be validated, the JWT is invalid and can't be trusted.
 
-:::caution
+#### Aud and iss claims
 
-In order to use the `/.well-known/pomerium/jwks.json` endpoint you must set either the [Signing Key] or [Signing Key File] configuration option.
+The upstream service should verify that the `aud` and `iss` claims match the domain used to serve your application.
 
-:::
+The `aud` claim identifies the recipient the JWT is intended for. In the context of a service behind Pomerium, the `aud` claim should always be set as the upstream service's domain name.
 
-After verifying the JWT signature, your application should verify that JWT has not expired, by comparing the current time with the timestamps in the `exp` and `iat` claims. We recommend allowing up to 1 minute leeway in this comparison, to account for clock skew between Pomerium and your application.
+Since v0.22, Pomerium sets the `iss` claim also to the domain of the target upstream service. (In previous versions, this was instead set to the [authenticate service](/docs/reference/service-urls#authenticate-service-url) domain.)
 
-And finally, your application should verify that the `aud` and `iss` claim both match the domain used to serve your application.
+If the domain provided in the `aud` and `iss` claims doesn't match the upstream service's domain name, the JWT is invalid and can't be trusted.
 
-### Verification in a Go application
+```json title="Valid aud and iss claims"
+{
+  "aud": "verify.pomerium.app",
+  "iss": "verify.pomerium.app"
+}
+```
 
-For an application written in Go, you can use the [Go SDK] to perform the necessary verification steps. For example:
+#### JWT timestamps
 
-<GoApp />
+The upstream service should verify that the Pomerium JWT has not expired.
 
-### Verification in a Single-Page Application
+The `iat` claim informs you at what time the JWT was issued. The `exp` claim specifies the expiration time on or after which the JWT must be considered invalid. By default, Pomerium sets the `exp` claim to expire 5 minutes after the time it was issued.
 
-A single-page javascript application can verify the JWT using the [JavaScript SDK]. For example:
+By comparing the current time with the timestamps in the `exp` and `iat` claims, you can verify if the JWT has expired or not. We recommend allowing up to a 1-minute leeway when comparing the `exp` and `iat` timestamps to account for [clock skew](https://en.wikipedia.org/wiki/Clock_skew) between Pomerium and the upstream service.
 
-<ReactApp />
+If the JWT has expired, it is invalid and can't be trusted.
 
-### Manual verification
+:::tip JWT Verification with Pomerium SDKs
 
-Though you will likely verify signed headers programmatically in your application's middleware with a third-party JWT library, if you are new to JWT it may be helpful to show what manual verification looks like.
-
-1. Provide Pomerium with a base64-encoded Elliptic Curve ([NIST P-256]) Private Key. In production, you'd likely want to get these from your key management service (KMS).
-
-   ```bash
-   openssl ecparam -genkey -name prime256v1 -noout -out ec_private.pem
-   openssl ec -in ec_private.pem -pubout -out ec_public.pem
-   # careful! this will output your private key in terminal
-   cat ec_private.pem | base64
-   ```
-
-   Copy the base64 encoded value of your private key to Pomerium's environmental configuration variable `SIGNING_KEY`.
-
-   ```bash
-   SIGNING_KEY=LS0tLS1CRUdJTiBQUklWQVRFIEtFWS0tLS0tCk1JR0hBZ0VBTUJNR0J5cUdTTTQ5QWdFR0NDcUdTTTQ5QXdFSEJHMHdhd0lCQVFRZzBQdk1VeVZGeWxTbGZ3eDgKSDBxMUVyOHZlOXBnY3ZzNkV6ZnR5OHlxNnFLaFJBTkNBQVM5ZC96TC9aSXd5ZGQ1RXZMb0xGMytHblVIUS9wdQpQaU45NDV1Y1RpTFRqMDhZalo3U0NJV2JHc2tiK0RIMzJ2aUc2KzRnb0FvWlFUM1R6b2kzRVl6OAotLS0tLUVORCBQUklWQVRFIEtFWS0tLS0tCg==
-   ```
-
-1. Reload Pomerium. Navigate to httpbin (by default, `https://httpbin.corp.${YOUR-DOMAIN}.com`), and log in as usual. Click **request inspection**. Select `/headers`. Click **try it out** and then **execute**. You should see something like the following.
-
-   ![httpbin displaying jwt headers](./img/inspect-headers.png)
-
-1. `X-Pomerium-Jwt-Assertion` is the signature value. It's less scary than it looks and basically just a compressed, json blob as described above. Navigate to [jwt.io] which provides a helpful GUI to manually verify JWT values.
-
-1. Paste the value of `X-Pomerium-Jwt-Assertion` header token into the `Encoded` form. You should notice that the decoded values look much more familiar.
-
-   ![httpbin displaying decoded jwt](./img/verifying-headers-1.png)
-
-1. Finally, we want to cryptographically verify the validity of the token. To do this, we will need the signer's public key. You can simply copy and past the output of `cat ec_public.pem`.
-
-   ![httpbin displaying verified jwt](./img/jwt-payload.png)
-
-**Voila!** Hopefully walking through a manual verification has helped give you a better feel for how signed JWT tokens are used as a secondary validation mechanism in pomerium.
-
-:::caution
-
-In an actual client, you'll want to ensure that all the other claims values are valid (like expiration, issuer, audience and so on) in the context of your application. You'll also want to make sure you have a safe and reliable mechanism for distributing the public signing key to client apps (typically, a [key management service]).
+Pomerium's [**JWT Verification**](/docs/guides/verify-jwt) guide shows you how to use our custom JWT libraries to parse and validate the Pomerium JWT in an upstream service.
 
 :::
 
-[go sdk]: https://github.com/pomerium/sdk-go
-[jwt]: https://jwt.io/introduction/
-[javascript sdk]: https://github.com/pomerium/js-sdk
-[jwt library]: https://jwt.io/libraries
-[jwt.io]: https://jwt.io/
-[key management service]: https://en.wikipedia.org/wiki/Key_management
-[nist p-256]: https://csrc.nist.gov/csrc/media/events/workshop-on-elliptic-curve-cryptography-standards/documents/papers/session6-adalier-mehmet.pdf
-[pass identity headers]: /docs/reference/routes/pass-identity-headers-per-route
-[signing key]: /docs/reference/signing-key
-[signing key file]: /docs/reference/signing-key-file
+After the upstream service validates the JWT, it can accept the request and trust other claims present in the JWT.
+
+## The Pomerium JWT
+
+Pomerium generates a new **Pomerium JWT** based on the claims data contained in the original ID token. In addition to including standard claims as defined in [RFC7519](https://datatracker.ietf.org/doc/html/rfc7519#section-4.1), Pomerium also injects its own claims into the Pomerium JWT as well. (See [JWT claims data](#jwt-claims-data) below for more details.)
+
+:::note
+
+The original ID token sourced from an identity provider is never modified or leaked to end users or upstream services.
+
+:::
+
+### Pomerium JWT claims data
+
+When Pomerium is configured for JWT authentication with the [pass identity headers](#jwt-settings) setting, the user's associated identity information will be included in the JWT assertion header in each upstream request. (The signed Pomerium JWT is also available at the special `/.pomerium/jwt` endpoint of any URL handled by Pomerium.)
+
+The Pomerium JWT contains at least the following claims:
+
+| JWT Claim | Description |
+| :-: | --- |
+| `jti` | A randomly generated UUID that represents the JWT ID. |
+| `exp` | Expiration time in seconds since the UNIX epoch. Set to expire 5 minutes after `iat` time. |
+| `iat` | Issued-at time in seconds since the UNIX epoch. |
+| `aud` | The domain for the upstream application (for example, `httpbin.corp.example.com`). |
+| `iss` | Same as the `aud` claim. |
+| `sub` | The user's ID, as specified by the identity provider. |
+| `email` | The user's email address. |
+| `groups` | The user's group memberships (if supported for the identity provider). |
+| `name` | The user's full name, as specified by the identity provider. |
+
+### JWT Settings
+
+Use these settings to configure Pomerium to forward the Pomerium JWT to upstream services:
+
+- [Pass Identity Headers (global)](/docs/reference/pass-identity-headers)
+- [Pass Identity Headers (per route)](/docs/reference/routes/pass-identity-headers-per-route)
+
+If your identity provider provides other claims not included in the Pomerium JWT that you would like to pass to your application, you can use the [JWT Claims Headers](/docs/reference/jwt-claim-headers) option to include them in the JWT as well.

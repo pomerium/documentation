@@ -55,6 +55,12 @@ const config = {
             ],
             extendDefaults: true,
           },
+          versions: {
+            current: {
+              label: 'vNext (current)',
+              badge: true,
+            },
+          },
         },
         theme: {
           customCss: require.resolve('./src/css/custom.css'),
@@ -89,6 +95,14 @@ const config = {
       indexName: process.env.INDEX_NAME,
       contextualSearch: false,
       searchPagePath: false,
+    },
+    announcementBar: {
+      id: 'kubecon-2024',
+      content:
+        'Meet the Pomerium Development Team at our KubeCon 2024 booth in Salt Lake City, Utah from November 12-15. <b><a href="https://calendar.google.com/calendar/appointments/schedules/AcZssZ0YfkyTbr2fYMyJvdPf7vsQ2xLkc77t1eGPiwM2jRkl8hBLubeOWjgX3dcFHjU_M86cgYhBIV_u?gv=true" target="_blank">Book an appointment now!</a></b>',
+      backgroundColor: '#7C3AED',
+      textColor: '#FFFFFF',
+      isCloseable: true,
     },
     navbar: {
       title: '',
@@ -144,14 +158,29 @@ const config = {
           position: 'right',
         },
         {
-          type: 'dropdown',
-          label: 'vNext',
+          type: 'docsVersionDropdown',
           position: 'right',
-          items: [
+          dropdownActiveClassDisabled: true,
+          dropdownItemsAfter: [
             {
-              type: 'doc',
-              label: 'Archived Versions',
-              docId: 'docs/versions',
+              to: 'https://0-26-0.docs.pomerium.com/docs',
+              label: 'v0.26 (latest)',
+            },
+            {
+              to: 'https://0-25-0.docs.pomerium.com/docs',
+              label: 'v0.25',
+            },
+            {
+              to: 'https://0-24-0.docs.pomerium.com/docs',
+              label: 'v0.24',
+            },
+            {
+              type: 'html',
+              value: '<hr>',
+            },
+            {
+              to: '/docs/versions',
+              label: 'All Versions',
             },
           ],
         },

@@ -33,6 +33,10 @@ const sidebars = {
           type: 'doc',
           id: 'docs/courses/fundamentals/zero-tcp-routes',
         },
+        {
+          type: 'doc',
+          id: 'docs/courses/fundamentals/zero-custom-idp',
+        },
       ],
     },
     {
@@ -102,7 +106,6 @@ const sidebars = {
         },
         'docs/capabilities/hosted-authenticate-service',
         'docs/capabilities/self-hosted-authenticate-service',
-        'docs/capabilities/jwt-verification',
         'docs/capabilities/mtls-clients',
         'docs/capabilities/mtls-services',
         'docs/capabilities/getting-users-identity',
@@ -119,16 +122,16 @@ const sidebars = {
 
         // Enterprise
         {
-          id: 'docs/capabilities/impersonation',
+          id: 'docs/capabilities/branding',
           className: 'enterprise',
           type: 'doc',
-          label: 'User Impersonation',
+          label: 'Custom Branding & Errors',
         },
         {
-          id: 'docs/capabilities/directory-sync',
+          id: 'docs/capabilities/rego',
           className: 'enterprise',
           type: 'doc',
-          label: 'Directory Sync',
+          label: 'Custom Rego Policies',
         },
         {
           id: 'docs/capabilities/device-identity',
@@ -137,34 +140,46 @@ const sidebars = {
           label: 'Device Identity',
         },
         {
+          id: 'docs/capabilities/directory-sync',
+          className: 'enterprise',
+          type: 'doc',
+          label: 'Directory Sync',
+        },
+        {
+          id: 'docs/capabilities/enterprise-api',
+          className: 'enterprise',
+          type: 'doc',
+          label: 'Enterprise API',
+        },
+        {
           id: 'docs/integrations',
           className: 'enterprise',
           type: 'doc',
           label: 'External Data Sources',
         },
         {
-          id: 'docs/capabilities/enterprise-api',
+          id: 'docs/capabilities/high-availability',
           className: 'enterprise',
           type: 'doc',
-          label: 'Management API',
-        },
-        {
-          id: 'docs/capabilities/original-request-context',
-          className: 'enterprise',
-          type: 'doc',
-          label: 'Original User Context',
-        },
-        {
-          id: 'docs/capabilities/branding',
-          className: 'enterprise',
-          type: 'doc',
-          label: 'Custom Branding / Errors',
+          label: 'High Availability',
         },
         {
           id: 'docs/capabilities/metrics',
           className: 'enterprise',
           type: 'doc',
           label: 'Metrics',
+        },
+        {
+          id: 'docs/capabilities/namespacing',
+          className: 'enterprise',
+          type: 'doc',
+          label: 'Namespaces',
+        },
+        {
+          id: 'docs/capabilities/original-request-context',
+          className: 'enterprise',
+          type: 'doc',
+          label: 'Original User Context',
         },
         {
           id: 'docs/capabilities/reports',
@@ -179,16 +194,10 @@ const sidebars = {
           label: 'Service Accounts',
         },
         {
-          id: 'docs/capabilities/high-availability',
+          id: 'docs/capabilities/impersonation',
           className: 'enterprise',
           type: 'doc',
-          label: 'High Availability',
-        },
-        {
-          id: 'docs/capabilities/namespacing',
-          className: 'enterprise',
-          type: 'doc',
-          label: 'Namespaces',
+          label: 'User Impersonation',
         },
       ],
     },
@@ -276,7 +285,11 @@ const sidebars = {
           items: [
             {
               type: 'doc',
-              id: 'docs/guides/grafana',
+              id: 'docs/guides/ad-guard',
+            },
+            {
+              type: 'doc',
+              id: 'docs/guides/guacamole',
             },
             {
               type: 'doc',
@@ -284,19 +297,11 @@ const sidebars = {
             },
             {
               type: 'doc',
-              id: 'docs/guides/jenkins',
-            },
-            {
-              type: 'doc',
-              id: 'docs/guides/tooljet',
-            },
-            {
-              type: 'doc',
               id: 'docs/guides/gitlab',
             },
             {
               type: 'doc',
-              id: 'docs/guides/transmission',
+              id: 'docs/guides/grafana',
             },
             {
               type: 'doc',
@@ -304,11 +309,19 @@ const sidebars = {
             },
             {
               type: 'doc',
+              id: 'docs/guides/jenkins',
+            },
+            {
+              type: 'doc',
               id: 'docs/guides/tiddlywiki',
             },
             {
               type: 'doc',
-              id: 'docs/guides/ad-guard',
+              id: 'docs/guides/tooljet',
+            },
+            {
+              type: 'doc',
+              id: 'docs/guides/transmission',
             },
           ],
         },
@@ -317,6 +330,7 @@ const sidebars = {
           label: 'Identity Providers',
           description:
             'Configure a custom Identity Provider for authentication',
+          link: {type: 'doc', id: 'docs/identity-providers/index'},
           items: [
             {
               type: 'doc',
@@ -325,10 +339,6 @@ const sidebars = {
             {
               type: 'doc',
               id: 'docs/identity-providers/auth0',
-            },
-            {
-              type: 'doc',
-              id: 'docs/identity-providers/azure',
             },
             {
               type: 'doc',
@@ -345,6 +355,10 @@ const sidebars = {
             {
               type: 'doc',
               id: 'docs/identity-providers/google',
+            },
+            {
+              type: 'doc',
+              id: 'docs/identity-providers/azure',
             },
             {
               type: 'doc',
@@ -401,11 +415,11 @@ const sidebars = {
             },
             {
               type: 'doc',
-              id: 'docs/guides/cloud-run',
+              id: 'docs/guides/argo',
             },
             {
               type: 'doc',
-              id: 'docs/guides/argo',
+              id: 'docs/guides/cloud-run',
             },
             {
               type: 'doc',
@@ -479,11 +493,15 @@ const sidebars = {
           items: [
             {
               type: 'doc',
-              id: 'docs/guides/jwt-verification',
+              id: 'docs/guides/cors',
             },
             {
               type: 'doc',
-              id: 'docs/guides/cors',
+              id: 'docs/guides/verify-jwt',
+            },
+            {
+              type: 'doc',
+              id: 'docs/guides/jwt-verification-with-envoy',
             },
             {
               type: 'doc',
