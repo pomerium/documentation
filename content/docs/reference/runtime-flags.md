@@ -34,10 +34,11 @@ The available flags are:
 
 | Runtime Flag | Description | Default |
 | :-- | :-- | :-- |
+| `config_hot_reload` | Enables automatic config reloading triggered whenever a configuration file is written to (either the main Pomerium configuration file or a file referenced from the main configuration). In some rare cases this may not work correctly, so this option provides a way to disable this behavior. (See issue [#5079](https://github.com/pomerium/pomerium/issues/5079) for more context.) | `true` |
+| `envoy_resource_manager` | Monitors control group (cgroup) memory usage of all processes running in the container (including both Pomerium and Envoy) and applies overload actions when memory thresholds are exceeded to reduce memory consumption. See [memory thresholds](#envoy-resource-manager-memory-thresholds) to review thresholds and their corresponding overload actions. | `true` |
 | `grpc_databroker_keepalive` | _(experimental)_ Enables gRPC keep-alive (HTTP/2 PING) requests on the databroker service connection. This may improve service reliability in [split service mode](/docs/capabilities/high-availability#service-mode) deployments where there are multiple firewalls in the connection path between different Pomerium services. | `false` |
-| `match_any_incoming_port` | For a route where the From URL does not contain a port number, allow it to match incoming requests with any port number. See the section on [Port matching behavior](/docs/reference/routes/from#port-matching-behavior) for more details. | `true` |
 | `legacy_identity_manager` | The way Pomerium manages IdP session refresh has been newly rewritten in v0.26 for enhanced performance and reliability. When this flag is enabled, Pomerium will revert to the older implementation. | `false` |
-| `envoy_resource_manager_enabled` | Monitors control group (cgroup) memory usage of all processes running in the container (including both Pomerium and Envoy) and applies overload actions when memory thresholds are exceeded to reduce memory consumption. See [memory thresholds](#envoy-resource-manager-memory-thresholds) to review thresholds and their corresponding overload actions. | `true` |
+| `match_any_incoming_port` | For a route where the From URL does not contain a port number, allow it to match incoming requests with any port number. See the section on [Port matching behavior](/docs/reference/routes/from#port-matching-behavior) for more details. | `true` |
 
 ### Examples
 
@@ -65,6 +66,6 @@ If you set this runtime flag to `false`, Pomerium will regard the memory saturat
 
 :::note Pod resource limits behavior
 
-The `envoy_resource_manager_enabled` runtime flag is set to **true** by default, but only takes effect if you [specify memory limits](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/) for the Pomerium pod.
+The `envoy_resource_manager` runtime flag is set to **true** by default, but only takes effect if you [specify memory limits](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/) for the Pomerium pod.
 
 :::
