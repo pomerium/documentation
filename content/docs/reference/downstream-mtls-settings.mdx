@@ -172,7 +172,7 @@ The Ingress Controller does not support these settings.
 
    This mode also adds a requirement that any configured [**CRL**](#crl) is valid only between its `thisUpdate` and `nextUpdate` timestamps. _If an invalid CRL is provided for a certain CA, no certificates issued by that CA will be allowed._
 
-   Also note that in this mode, requests without a trusted client certificate will never reach the Pomerium authorize service, and so no record of these requests will be logged.
+   Selecting this mode will also enable TLS connection failure logging. Any connection attempt that fails during the TLS handshake will be logged by the proxy service with the message `"listener connection failure"`. The log entry will include the client IP address, server hostname, and client certificate info (if a client certificate was presented). This allows you to monitor rejected connections. (Otherwise, when a connection is rejected due to mTLS requirements, the client would never have the opportunity to make any requests, and so there would be no entries in the [access log](/docs/reference/access-log-fields#access-log-behavior) or [authorize log](/docs/capabilities/audit-logs).)
 
 ### How to configure {#enforcement-mode-how-to-configure}
 
