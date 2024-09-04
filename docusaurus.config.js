@@ -57,7 +57,7 @@ const config = {
           },
           versions: {
             current: {
-              label: 'vNext (current)',
+              label: 'vNext (upcoming release)',
               badge: true,
             },
           },
@@ -98,7 +98,8 @@ const config = {
     },
     announcementBar: {
       id: 'kubecon-2024',
-      content: 'Meet the Pomerium Development Team at our KubeCon 2024 booth in Salt Lake City, Utah from November 12-15. <b><a href="https://calendar.google.com/calendar/appointments/schedules/AcZssZ0YfkyTbr2fYMyJvdPf7vsQ2xLkc77t1eGPiwM2jRkl8hBLubeOWjgX3dcFHjU_M86cgYhBIV_u?gv=true" target="_blank">Book an appointment now!</a></b>',
+      content:
+        'Meet the Pomerium Development Team at our KubeCon 2024 booth in Salt Lake City, Utah from November 12-15. <b><a href="https://calendar.google.com/calendar/appointments/schedules/AcZssZ0YfkyTbr2fYMyJvdPf7vsQ2xLkc77t1eGPiwM2jRkl8hBLubeOWjgX3dcFHjU_M86cgYhBIV_u?gv=true" target="_blank">Book an appointment now!</a></b>',
       backgroundColor: '#7C3AED',
       textColor: '#FFFFFF',
       isCloseable: true,
@@ -181,7 +182,7 @@ const config = {
               to: '/docs/versions',
               label: 'All Versions',
             },
-          ]
+          ],
         },
       ],
     },

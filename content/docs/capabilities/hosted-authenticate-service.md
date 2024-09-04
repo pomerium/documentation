@@ -8,39 +8,41 @@ description: Use Pomerium's Hosted Authenticate Service to set up and deploy Pom
 
 # Hosted Authenticate Service
 
-Pomerium's **Hosted Authenticate Service** provides a hosted alternative to the Self-Hosted Authenticate Service.
+Pomerium's **Hosted Authenticate Service** provides a hosted alternative to the self-hosted authenticate service.
 
-The Hosted Authenticate Service is available for open-source Pomerium, Pomerium Zero, and Pomerium Enterprise.
+Introduced in Pomerium v0.22, the hosted authenticate service is available for open-source Pomerium, Pomerium Zero, and Pomerium Enterprise.
 
-## How the Hosted Authenticate Service works
+## How the hosted authenticate service works
 
-Pomerium's hosted service includes a **Hosted Authenticate Service URL** and a **Hosted Identity Provider** that handle authentication and authorization using OAuth 2.0 and OIDC protocols.
+Pomerium's hosted authenticate service includes a **Hosted Authenticate Service URL** and a **Hosted Identity Provider** that handle authentication and authorization using OAuth 2.0 and OIDC protocols.
 
-Starting in **Pomerium v0.22.0**, both open-source Pomerium Core and Enterprise deployments will use our hosted services by default.
+Pomerium Zero, Core, and Enterprise configurations that do not include the self-hosted authenticate service URL or identity provider settings default to the hosted authenticate service settings. See [Configure the hosted authenticate service](#configure-the-hosted-authenticate-service) section for more information.
 
-The Hosted Authenticate Service is optional. If you prefer to self-host these services, you still can. See the [Self-Hosted Authenticate service](/docs/capabilities/self-hosted-authenticate-service) page for more information.
+## Why use the hosted authenticate service
 
-## Why use Hosted Authenticate Service
+The hosted authenticate service offers a quicker way for users to deploy and test Pomerium.
 
-The Hosted Authenticate Service offers a quicker way for users to deploy and test Pomerium.
+### No configuration
 
-### Zero configuration
-
-The Hosted Authenticate Service requires no setup to use. That means you don't need to include the hosted authenticate service URL or IdP settings in your configuration.
+The hosted authenticate service doesn't require an authenticate service URL or identity provider settings to use.
 
 ### Less time to deploy
 
-Pomerium's hosted services solution removes the tedium of configuring your own identity provider (IdP) and authenticate service URL so you can deploy Pomerium in less time.
+Pomerium's hosted authenticate service removes the tedium of configuring your own identity provider (IdP) and authenticate service URL so you can deploy Pomerium in less time.
 
 ### Faster proof of concept
 
-If you're testing Pomerium for the first time, run [Pomerium with Docker](/docs/quickstart) using our hosted services – you can run Pomerium Core in **under 5 minutes** with minimal setup.
+If you're testing Pomerium for the first time, run [Pomerium with Docker](/docs/core/quickstart) using our hosted authenticate service – you can run Pomerium Core in **under 5 minutes** with minimal setup.
 
-Current Pomerium users who are interested in our [Enterprise Console](https://www.pomerium.com/enterprise-sales/) can test out the [Docker Enterprise Quickstart](/docs/enterprise/quickstart) using hosted services as well.
+:::enterprise
 
-## Configure the Hosted Authenticate Service
+Pomerium users who are interested in [Pomerium Enterprise](https://www.pomerium.com/enterprise-sales/) can test out the [Docker Enterprise quickstart](/docs/enterprise/quickstart) using our hosted authenticate service as well.
 
-The Hosted Authenticate Service requires zero configuration to use.
+:::
+
+## Configure the hosted authenticate service
+
+The hosted authenticate service requires no configuration to use.
 
 Add the following route and policy to your configuration file:
 
@@ -110,7 +112,7 @@ We make no commitments to uptime for our free hosted authenticate service.
 
 ## Privacy considerations
 
-Users that take advantage of our Hosted Authenticate Service should review the [Terms of Service agreement](https://www.pomerium.com/pomerium-zero-user-agreement/).
+Users that take advantage of our hosted authenticate service should review the [Terms of Service agreement](https://www.pomerium.com/pomerium-zero-user-agreement/).
 
 Specifically, you should be aware that by using our hosted services, you agree to Pomerium collecting the following data:
 
