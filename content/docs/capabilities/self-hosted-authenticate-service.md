@@ -10,7 +10,7 @@ description: Use Pomerium's Self-Hosted Authenticate Service to deploy Pomerium 
 
 Pomerium's **Self-Hosted Authenticate Service** allows you to configure Pomerium with the identity provider of your choice.
 
-The self-hosted authenticate service is available for all versions of Pomerium (open-source, Pomerium Zero, and Pomerium Enterprise).
+The self-hosted authenticate service is available for open-source Pomerium, Pomerium Zero, and Pomerium Enterprise.
 
 :::info
 
