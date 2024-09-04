@@ -21,6 +21,7 @@ The _authenticate service_ is one of the [four logical services](/docs/internals
 ## How the self-hosted authenticate service works
 
 To configure the self-hosted authenticate service, you will need to set up:
+
 - a URL for the authenticate service
 - an identity provider (IdP)
 
@@ -33,7 +34,6 @@ This URL should not contain a path or query parameters. For example, `https://au
 This URL must be different from any of the route URLs you use with Pomerium.
 
 See the [Authenticate Service URL](/docs/reference/service-urls#authenticate-service-url) reference page for details on how to configure this setting.
-
 
 ### Identity provider
 
