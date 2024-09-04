@@ -204,7 +204,7 @@ The original ID token sourced from an identity provider is never modified or lea
 
 ### Pomerium JWT claims data
 
-When Pomerium is configured for JWT authentication with the [pass identity headers](#jwt-settings) setting, the user's associated identity information will be included in the JWT assertion header in each upstream request. (The signed Pomerium JWT is also available at the special `/.pomerium/jwt` endpoint of any URL handled by Pomerium.)
+When Pomerium is configured for JWT authentication with the [pass identity headers](#jwt-settings) setting, the user's associated identity information will be included in the JWT assertion header in each upstream request.
 
 The Pomerium JWT contains at least the following claims:
 
