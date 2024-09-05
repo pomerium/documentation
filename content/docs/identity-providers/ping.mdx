@@ -2,6 +2,7 @@
 title: Ping
 lang: en-US
 keywords: [ping, oidc, identity provider, idp]
+description: Learn how to configure Ping Identity as an identity provider that works with Pomerium to authenticate users.
 pagination_prev: null
 pagination_next: null
 ---
@@ -11,47 +12,62 @@ import TabItem from '@theme/TabItem';
 
 # Ping Identity
 
-This document covers configuring Ping Identity as an IdP for your Pomerium gateway. It assumes you have already [installed Pomerium](/docs/zero/install).
+Learn how to configure Ping Identity as an identity provider (IdP) to work with Pomerium.
 
-:::caution
+:::note
 
-While we do our best to keep our documentation up to date, changes to third-party systems are outside our control. Refer to [Adding an application - Web application](https://docs.pingidentity.com/bundle/p14c/page/lyd1583255784891.html) from Ping's documentation as needed, or [let us know](https://github.com/pomerium/documentation/issues/new?assignees=&labels=&template=doc-error.md) if we need to re-visit this page.
+While we do our best to keep our documentation up to date, changes to third-party systems are outside of our control. Refer to [Adding an application](https://docs.pingidentity.com/r/en-us/pingone/p1_add_app_worker) from Ping's documentation as needed, or [let us know](https://github.com/pomerium/documentation/issues/new?assignees=&labels=&template=doc-error.md) if we need to update this page.
 
 :::
 
-## Create OpenID Connect App
+## Before you start
 
-1. To use the Ping Identity provider, first go to the [Ping One](https://www.pingidentity.com/en/account/sign-on.html) console and select the environment you want to create the app for.
+To complete this guide, you must:
 
-1. Click **Connections** in the side menu, select **Applications** and click **+** button to create a new application:
+- Install [Pomerium](/docs/zero).
+- Create a free [PingOne account](https://www.pingidentity.com/en/try-ping.html). (This guide uses a [PingOne for Workforce](https://www.pingidentity.com/en/platform/solutions/pingone-for-workforce.html) account.)
 
-   ![The Ping Applications Screen, highlighting the "New App" button.](./img/ping/ping-new-app.png)
+After creating a PingOne account, you'll be directed to the PingOne console.
 
-1. Select **WEB APP**, then **OIDC**:
+### Create an OIDC web app
 
-   ![Ping Add Application](./img/ping/ping-add-application.png)
+In the PingOne console:
 
-1. Name the application and optionally provide a description and icon:
+1. From the **Applications** sidebar menu, select **Applications** and create a new application (**+**).
+1. Enter an **Application Name** and an optional description or logo.
+1. Select **OIDC web app** and **Save**.
 
-   ![Ping Create App Profile](./img/ping/ping-app-profile.png)
+![Create a new OIDC web app in the PingOne console](./img/ping/ping-add-oidc-web-app.png)
 
-1. On the **Configure** page, add the Pomerium authenticate redirect URL. For example: `https://authenticate.localhost.pomerium.io/oauth2/callback`.
+### Configure the OIDC web app
 
-1. Provide the necessary scopes to your application as needed for your policies from the scopes available in the [OpenID Spec](https://openid.net/specs/openid-connect-core-1_0.html#ScopeClaims). Pomerium requires at least the `email` scope:
+After saving, a new screen will open with information related to your OIDC web app.
 
-   ![Ping App Resource Grants](./img/ping/ping-app-grants.png)
+In the app screen:
 
-1. OIDC Attributes. **Save and Close**.
+1. Select the **Configuration** tab, then select the edit icon.
+1. In the **Redirect URIs** field, enter your [authenticate service URL](/docs/reference/service-urls#authenticate-service-url) with the `/oauth2/callback` path appended to it.
+1. Select **Save**.
 
-1. From the **Configuration** tab of your new application, note the values of the following keys to use in your Pomerium Configuration:
+  ![Entering the Pomerium authenticate service URL with the oauth2 callback path in PingOne console](./img/ping/ping-redirect-uri.png)
 
-   - **ISSUER**: used as the `idp_provider_url` (e.g. `https://auth.pingone.com/720dbe8a-83ed-48e1-9988-9928301ae668/as`)
-   - **CLIENT ID**: used as the `idp_client_id`
-   - **CLIENT SECRET**: used as the `idp_client_secret`
+Next, configure attribute mappings:
 
-   ![Ping Configuration](./img/ping/ping-configuration.png)
+1. Select the **Attribute Mappings** tab, then select the edit icon.
+1. Select **+Add**.
+1. In the **Attributes** field, enter **email**.
+1. In the **PingOne Mappings** dropdown menu, select **Email Address**.
+1. Select **Save**.
 
-1. Toggle the green slider to enable your new application.
+  ![Entering attribute mappings in PingOne](./img/ping/ping-attribute-settings.png)
+
+Save the following details from the **Configuration** tab (you need these to configure Pomerium):
+
+- **Client ID**
+- **Client Secret**
+- **Issuer** URL
+
+![Saving the client ID, client secret, and issuer URL in PingOne console](./img/ping/ping-client-data.gif)
 
 ## Pomerium Configuration
 
