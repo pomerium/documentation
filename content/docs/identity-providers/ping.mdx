@@ -22,12 +22,14 @@ While we do our best to keep our documentation up to date, changes to third-part
 
 ## Before you start
 
-To complete this guide, you must:
+To complete this guide:
 
 - Install [Pomerium](/docs/zero).
 - Create a free [PingOne account](https://www.pingidentity.com/en/try-ping.html). (This guide uses a [PingOne for Workforce](https://www.pingidentity.com/en/platform/solutions/pingone-for-workforce.html) account.)
 
-After creating a PingOne account, you'll be directed to the PingOne console.
+## Configure PingOne
+
+After creating a PingOne account and signing in, you'll be directed to the PingOne console.
 
 ### Create an OIDC web app
 
@@ -41,9 +43,7 @@ In the PingOne console:
 
 ### Configure the OIDC web app
 
-After saving, a new screen will open with information related to your OIDC web app.
-
-In the app screen:
+To configure your OIDC web app:
 
 1. Select the **Configuration** tab, then select the edit icon.
 1. In the **Redirect URIs** field, enter your [authenticate service URL](/docs/reference/service-urls#authenticate-service-url) with the `/oauth2/callback` path appended to it.
@@ -61,6 +61,10 @@ Next, configure attribute mappings:
 
   ![Entering attribute mappings in PingOne](./img/ping/ping-attribute-settings.png)
 
+Enable the OIDC web app with the toggle button:
+
+![Enable the OIDC web app in the Ping console](./img/ping/ping-enable-app.png)
+
 Save the following details from the **Configuration** tab (you need these to configure Pomerium):
 
 - **Client ID**
@@ -69,7 +73,7 @@ Save the following details from the **Configuration** tab (you need these to con
 
 ![Saving the client ID, client secret, and issuer URL in PingOne console](./img/ping/ping-client-data.gif)
 
-## Pomerium Configuration
+## Configure Pomerium
 
 Update your Pomerium configuration to use Ping as the IdP:
 
