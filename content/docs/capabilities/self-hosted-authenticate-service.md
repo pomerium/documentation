@@ -23,7 +23,7 @@ The _authenticate service_ is one of the [four logical services](/docs/internals
 To configure the self-hosted authenticate service, you will need to set up:
 
 - a URL for the authenticate service
-- an identity provider (IdP)
+- an identity provider
 
 ### Authenticate service URL
 
