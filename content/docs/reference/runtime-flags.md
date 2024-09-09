@@ -39,7 +39,7 @@ The available flags are:
 | `grpc_databroker_keepalive` | _(experimental)_ Enables gRPC keep-alive (HTTP/2 PING) requests on the databroker service connection. This may improve service reliability in [split service mode](/docs/capabilities/high-availability#service-mode) deployments where there are multiple firewalls in the connection path between different Pomerium services. | `false` |
 | `legacy_identity_manager` | The way Pomerium manages IdP session refresh has been newly rewritten in v0.26 for enhanced performance and reliability. When this flag is enabled, Pomerium will revert to the older implementation. | `false` |
 | `match_any_incoming_port` | For a route where the From URL does not contain a port number, allow it to match incoming requests with any port number. See the section on [Port matching behavior](/docs/reference/routes/from#port-matching-behavior) for more details. | `true` |
-| `pomerium_jwt_endpoint` | When disabled (`false`), Pomerium will provide user-related information in a plain-text, JSON format from the new `/.pomerium/user` endpoint. When set to `true`, Pomerium will serve the Pomerium JWT from the deprecated `/.pomerium/jwt` endpoint. | `false` |
+| `pomerium_jwt_endpoint` | Temporary opt-out of the `/.pomerium/jwt` deprecation: when set to `true`, Pomerium will continue to issue a JWT from the deprecated `/.pomerium/jwt` endpoint. (This endpoint does not provide the desired security properties for the Pomerium JWT and will be removed in a future release.) | `false` |
 
 ### Examples
 
