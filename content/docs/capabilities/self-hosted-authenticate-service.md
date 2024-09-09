@@ -23,7 +23,7 @@ The _authenticate service_ is one of the [four logical services](/docs/internals
 To configure the self-hosted authenticate service, you will need to set up:
 
 - a URL for the authenticate service
-- an identity provider
+- an identity provider (IdP) 
 
 ### Authenticate service URL
 
@@ -35,9 +35,17 @@ This URL must be different from any of the route URLs you use with Pomerium.
 
 See the [Authenticate Service URL](/docs/reference/service-urls#authenticate-service-url) reference page for details on how to configure this setting.
 
+#### Why use an authenticate service URL?
+
+In a typical OIDC authentication flow, the Relying Party (in this case, the upstream service) requires an OpenID (OP) client to authenticate users against an IdP (the OP client must be registered with the IdP). 
+
+Without the authenticate service URL setting, if you configured Pomerium to protect multiple upstream services, each service would require its own OP client.
+
+The authenticate service URL allows you to configure a single URL that you can reuse to authenticate users across multiple Pomerium-managed routes. This way, you don't need to configure and maintain multiple OP clients to authenticate end users.
+
 ### Identity provider
 
-Pomerium relies on an identity provider (IdP) to authenticate users. Pomerium can use any IdP that implements the OpenID Connect (OIDC) protocol.
+Pomerium relies on an IdP to authenticate users. Pomerium can use any IdP that implements the OpenID Connect (OIDC) protocol.
 
 The steps to configure your IdP will vary depending on the specific provider. See [**Identity Providers**](/docs/identity-providers) for a list of guides to configure commonly-used IdPs.
 
