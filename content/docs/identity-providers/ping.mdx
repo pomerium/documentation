@@ -70,15 +70,19 @@ Save the following details from the **Configuration** tab (you need these to con
 - **Client ID**
 - **Client Secret**
 - **Issuer** URL
-
-![Saving the client ID, client secret, and issuer URL in PingOne console](./img/ping/ping-client-data.gif)
+- **Environment ID** (Pomerium Enterprise only)
 
 ## Configure Pomerium
 
 Update your Pomerium configuration to use Ping as the IdP:
 
-<Tabs queryString="configuration-settings">
-<TabItem value="config-file-keys" label="config.yaml">
+<Tabs>
+<TabItem value="pomerium-zero" label="Zero">
+
+![Configuring PingOne as and IdP in Pomerium Zero](./img/ping/ping-zero-idp-config.png)
+
+</TabItem>
+<TabItem value="pomerium-core" label="Core">
 
 ```yaml
 idp_provider: 'ping'
@@ -88,44 +92,33 @@ idp_client_secret: 'CLIENT_SECRET'
 ```
 
 </TabItem>
-<TabItem value="environment-variables" label="Environment Variables">
+<TabItem value="pomerium-enterprise" label="Enterprise">
 
-```bash
-IDP_PROVIDER="ping"
-IDP_PROVIDER_URL="https://auth.pingone.com/720dbe8a-83ed-48e1-9988-9928301ae668/as"
-IDP_CLIENT_ID="CLIENT_ID"
-IDP_CLIENT_SECRET="CLIENT_SECRET"
-```
+See [Groups - Directory Sync](#groups) below for Enterprise configuration steps.
 
 </TabItem>
 </Tabs>
 
-## Groups
+## Configure Groups
 
-![Ping Settings](./img/ping/ping-idp.png)
+<Tabs>
+<TabItem value="custom-claim" label="Custom Claim (Zero, Core)">
 
-<Tabs queryString="get-groups">
-<TabItem value="custom-claim" label="Custom Claim (Open Source)">
+### Custom Claim (Zero, Core)
 
-### Custom Claim (Open Source)
+A `groups` claim can be added to tokens returned from Ping by adding the claim to the "Attribute Mappings":
 
-A `groups` claim can be added to tokens returned from Ping by adding it to the "Attribute Mappings":
+![Ping Attribute Mappings](./img/ping/ping-add-groups-attribute.png)
 
-![Ping Attribute Mappings](./img/ping/ping-groups.png)
-
-Now when users login they will have a claim named `groups` that contains their groups and the `claim` PPL criterion can be used for authorization:
+Now, when a user signs in their token will include a custom `groups` claim that contains groups they are a member of. You can use the `claim` PPL criterion in your authorization policy:
 
 ```yaml
-routes:
-  - from: 'https://verify.localhost.pomerium.io'
-    to: 'https://verify.pomerium.com'
-    policy:
-      - allow:
-          and:
-            - claim/groups: 49dfb9e6-f81f-4a1c-b4a3-d0122ebe4aab
+allow:
+  and:
+    - claim/groups: 49dfb9e6-f81f-4a1c-b4a3-d0122ebe4aab
 ```
 
-:::tip
+:::note
 
 The `groups` claim contains group IDs, not group names.
 
@@ -136,25 +129,33 @@ The `groups` claim contains group IDs, not group names.
 
 ### Directory Sync (Enterprise)
 
-#### Create a Ping Worker Application
+#### Create a Ping Worker application
 
-In order for Pomerium to validate group membership, we'll also need to configure a [Worker Application](https://docs.pingidentity.com/bundle/pingdirectory-73/page/lfm1564011499001.html) in Ping.
+In order for Pomerium to validate group membership, you need to configure a [Worker application](https://docs.pingidentity.com/bundle/pingdirectory-73/page/lfm1564011499001.html).
 
-1. Click **Add Application**, and select **Worker → Worker App**.
+In the PingOne console:
 
-   ![Ping Add Worker](./img/ping/ping-add-worker.png)
+1. From the **Applications** sidebar menu, select **Applications** and create a new application (**+**).
+1. Enter an **Application Name** and an optional description or logo.
+1. Select **Worker** and **Save**.
 
-1. Toggle the green slider to enable your new application.
+![Add a Worker app in PingOne](./img/ping/ping-worker-app.png)
 
-1. This application's **Client ID** and **Client Secret** will be used in the Pomerium Enterprise Console.
+In the **Overview** tab, save the following configuration details:
 
-   ![Ping Worker Configuration](./img/ping/ping-worker-configuration.png)
+- **Client ID**
+- **Client Secret**
+- **Environment ID**
 
 #### Configure Pomerium Enterprise Console
 
-Under **Settings → Identity Providers**, select "Ping" as the identity provider and set the Client ID, Client Secret and Environment ID. The Environment ID can be found in Ping under **Environment → Properties**.
+In the Enterprise console:
 
-![Ping Settings](./img/ping/ping-idp.png)
+1. Select **Settings**
+1. Select **Identity Providers**
+1. Select **Ping** and enter the Client ID, Client Secret, and Environment ID
+
+![Configuring Ping IdP in Pomerium Enterprise](./img/ping/ping-enterprise-idp-config.png)
 
 </TabItem>
 </Tabs>
