@@ -121,7 +121,7 @@ See Kubernetes [Storage reference](/docs/k8s/reference#storage) for more informa
 
 ## Databroker Storage Connection String {#databroker-storage-connection-string}
 
-**Databroker Storage Connection String** sets the Postgres connection string that the Databroker service uses to connect to storage backend.
+**Databroker Storage Connection String** sets the Postgres connection string that the Databroker service uses to connect to storage backend. The connection string may be provided directly in the configuration or read from a file.
 
 ### How to configure {#databroker-storage-connection-string-how-to-configure}
 
@@ -137,7 +137,8 @@ See the [PostgreSQL connection URI docs](https://www.postgresql.org/docs/current
 
 | **Config file keys** | **Environment variables** | **Type** | **Usage** |
 | :-- | :-- | :-- | :-- |
-| `databroker_storage_connection_string` | `DATABROKER_STORAGE_CONNECTION_STRING` | `string` | **required** |
+| `databroker_storage_connection_string` | `DATABROKER_STORAGE_CONNECTION_STRING` | `string` | **optional** |
+| `databroker_storage_connection_string_file` | `DATABROKER_STORAGE_CONNECTION_STRING_FILE` | `string` (file path) | **optional** |
 
 #### Examples {#databroker-storage-connection-string-examples}
 
@@ -145,8 +146,16 @@ See the [PostgreSQL connection URI docs](https://www.postgresql.org/docs/current
 databroker_storage_connection_string: postgresql://postgres:postgres@database/postgres?sslmode=disable
 ```
 
+```yaml
+databroker_storage_connection_string_file: /run/secrets/db_connection_string
+```
+
 ```bash
 DATABROKER_STORAGE_CONNECTION_STRING=postgresql://postgres:postgres@database/postgres?sslmode=disable
+```
+
+```bash
+DATABROKER_STORAGE_CONNECTION_STRING_FILE=/run/secrets/db_connection_string
 ```
 
 </TabItem>
