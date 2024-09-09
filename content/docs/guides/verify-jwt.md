@@ -62,32 +62,6 @@ The `issuer` and `audience` parameters should both be set to the domain of the *
   </div>
 </details>
 
-### PomeriumVerifier reference
-
-The `PomeriumVerifier` class is the easiest way to verify JWTs. See the reference below for more information:
-
-#### Parameters
-
-| Parameters | Description | Value |
-| :-- | :-- | --- |
-| issuer | The domain of the upstream application (for example, `httpbin.corp.example.com`). | String |
-| audience | The same value as `issuer`. | String |
-| expirationBuffer | Adds padding in seconds to prevent throwing errors for expired JWTs that may have differing server times. Defaults to `0` | Integer |
-| firstUse | Decides whether or not to trust the first JWT. | Boolean |
-| jwtData | The JSON payload containing JWT claims. | Object |
-| verifiedJwtData | The verified JSON payload containing JWT claims. | Object |
-
-#### Methods
-
-| Method | Description |
-| :-- | :-- |
-| getClientJwt | Fetches client JWT from the `/.pomerium/jwt` endpoint. |
-| parseJWT | Decodes JWT token. |
-| getJWKsData | Fetches JWKs data from the `/.well-known/pomerium/jwks.json` endpoint. |
-| verifyPomeriumJWT | Verifies JWT using the `jwt`, `authenticateBaseUrl`, `issuer`, and `audience` parameters. |
-| withHttps | Prepends the URL with the `https://` protocol. |
-| signOut | Signs user out and redirects them with the `/.pomerium/sign_out` endpoint. |
-
 ## Manual verification
 
 Though you will likely verify signed headers programmatically in your application's middleware with a third-party JWT library, if you are new to JWT it may be helpful to show what manual verification looks like.
