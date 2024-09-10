@@ -10,7 +10,7 @@ description: Use Pomerium's Hosted Authenticate Service to set up and deploy Pom
 
 Pomerium's **Hosted Authenticate Service** provides a hosted alternative to the self-hosted authenticate service.
 
-Introduced in Pomerium v0.22, the hosted authenticate service is available in Pomerium Zero, open-source Pomerium Core, and Pomerium Enterprise.
+Introduced in Pomerium v0.22, the hosted authenticate service is available for open-source Pomerium, Pomerium Zero, and Pomerium Enterprise.
 
 ## How the hosted authenticate service works
 
