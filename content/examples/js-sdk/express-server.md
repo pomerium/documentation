@@ -14,7 +14,8 @@ app.get("/wrong-audience", (request, response) => {
   const jwtVerifier = new PomeriumVerifier({
     audience: [
       'correct-audience.com'
-    ]
+    ],
+    expirationBuffer: 1000
   });
   jwtVerifier.verifyJwt(request.get('X-Pomerium-Jwt-Assertion'))
     .then(r => response.send(r))
@@ -23,7 +24,8 @@ app.get("/wrong-audience", (request, response) => {
 
 app.get("/wrong-issuer", (request, response) => {
   const jwtVerifier = new PomeriumVerifier({
-    issuer: 'correct-issuer.com'
+    issuer: 'correct-issuer.com',
+    expirationBuffer: 1000
   });
   jwtVerifier.verifyJwt(request.get('X-Pomerium-Jwt-Assertion'))
     .then(r => response.send(r))
