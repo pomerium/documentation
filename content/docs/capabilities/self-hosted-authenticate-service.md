@@ -35,7 +35,7 @@ This URL must be different from any of the route URLs you use with Pomerium.
 
 See the [Authenticate Service URL](/docs/reference/service-urls#authenticate-service-url) reference page for details on how to configure this setting.
 
-:::info Why does Pomerium use a separate URL for this?
+:::info Why does Pomerium use a separate authenticate service URL?
 
 In a typical OIDC authentication flow, all redirect URLs must be pre-registered with the IdP. Pomerium uses a single authenticate service URL so that you need to register only one redirect URL with your IdP. This way, Pomerium can protect multiple upstream services without requiring you to update your IdP client whenever you add a new service.
 
