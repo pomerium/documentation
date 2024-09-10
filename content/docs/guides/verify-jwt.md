@@ -5,10 +5,7 @@ description: This guide provides several methods to validate the Pomerium JWT in
 sidebar_label: JWT Verification
 ---
 
-import Tabs from '@theme/Tabs'; 
-import TabItem from '@theme/TabItem'; 
-import GoApp from '../../examples/go-sdk/go-app.md'; 
-import ExpressApp from '../../examples/js-sdk/express-server.md';
+import Tabs from '@theme/Tabs'; import TabItem from '@theme/TabItem'; import GoApp from '../../examples/go-sdk/go-app.md'; import ExpressApp from '../../examples/js-sdk/express-server.md';
 
 This guide provides several methods to verify and validate the Pomerium JWT forwarded in signed the `X-Pomerium-Jwt-Assertion` header:
 
