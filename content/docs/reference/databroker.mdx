@@ -1,7 +1,6 @@
 ---
 id: databroker
-title: Databroker Settings
-sidebar_label: Databroker Settings
+title: Databroker Storage Settings
 pagination_prev: null
 pagination_next: null
 ---
@@ -9,107 +8,39 @@ pagination_next: null
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-# Databroker Settings
+The databroker service manages all persistent state within Pomerium. These settings control how the databroker service will store this state.
 
-## Databroker Storage Certificate Authority {#databroker-storage-certificate-authority}
+## Databroker Storage Type {#databroker-storage-type}
 
-**Databroker Storage Certificate Authority** defines the set of root certificates used when verifying storage server connections.
+**Databroker Storage Type** sets the backend storage type:
+- `memory` — data is stored in main memory
+- `postgres` — data is stored in an external PostgreSQL database
 
-### How to configure {#databroker-storage-certificate-authority-how-to-configure}
+The in-memory option is sufficient for single-replica Pomerium deployments. A PostgreSQL database is required when running multiple replicas of Pomerium, in order to ensure that all replicas share a consistent view of the application state.
+
+### How to configure {#databroker-storage-type-how-to-configure}
 
 <Tabs>
 <TabItem value="Core" label="Core">
 
-| **Config file keys** | **Environment variables** | **Type** | **Usage** |
+| **Config file keys** | **Environment variables** | **Type** | **Default** |
 | :-- | :-- | :-- | :-- |
-| `databroker_storage_ca_file` | `DATABROKER_STORAGE_CA_FILE` | `string` | **optional** |
+| `databroker_storage_type` | `DATABROKER_STORAGE_TYPE` | `string` | `memory` |
 
-#### Examples {#databroker-storage-certificate-authority-examples}
+### Examples {#databroker-storage-type-example}
 
 ```yaml
-databroker_storage_ca_file: /relative/file/location
+databroker_storage_type: postgres
 ```
 
 ```bash
-DATABROKER_STORAGE_CA_FILE=/relative/file/location
+DATABROKER_STORAGE_TYPE=postgres
 ```
 
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
 
-`databroker_storage_ca_file` is a bootstrap configuration setting and is not configurable in the Console.
-
-</TabItem>
-<TabItem value="Kubernetes" label="Kubernetes">
-
-See Kubernetes [Storage reference](/docs/k8s/reference#storage) for more information.
-
-</TabItem>
-</Tabs>
-
-## Databroker Storage Certificate File {#databroker-storage-certificate-file}
-
-**Databroker Storage Certificate File** stores the certificate used to connect to a storage backend.
-
-### How to configure {#databroker-storage-certificate-file-how-to-configure}
-
-<Tabs>
-<TabItem value="Core" label="Core">
-
-| **Config file keys** | **Environment variables** | **Type** | **Usage** |
-| :-- | :-- | :-- | :-- |
-| `databroker_storage_cert_file` | `DATABROKER_STORAGE_CERT_FILE` | `string` | **optional** |
-
-#### Examples {#databroker-storage-certificate-file-examples}
-
-```yaml
-databroker_storage_cert_file: /relative/file/location
-```
-
-```bash
-DATABROKER_STORAGE_CERT_FILE=/relative/file/location
-```
-
-</TabItem>
-<TabItem value="Enterprise" label="Enterprise">
-
-`databroker_storage_cert_file` is a bootstrap configuration setting and is not configurable in the Console.
-
-</TabItem>
-<TabItem value="Kubernetes" label="Kubernetes">
-
-See Kubernetes [Storage reference](/docs/k8s/reference#storage) for more information.
-
-</TabItem>
-</Tabs>
-
-## Databroker Storage Certificate Key File {#databroker-storage-certificate-key-file}
-
-**Databroker Storage Certificate Key File** stores the certificate key used to connect to a storage backend.
-
-### How to configure {#databroker-storage-certificate-key-file-how-to-configure}
-
-<Tabs>
-<TabItem value="Core" label="Core">
-
-| **Config file keys** | **Environment variables** | **Type** | **Usage** |
-| :-- | :-- | :-- | :-- |
-| `databroker_storage_key_file` | `DATABROKER_STORAGE_KEY_FILE` | `string` | **optional** |
-
-#### Examples {#databroker-storage-certificate-key-file-examples}
-
-```yaml
-databroker_storage_key_file: /relative/file/location
-```
-
-```bash
-DATABROKER_STORAGE_KEY_FILE=/relative/file/location
-```
-
-</TabItem>
-<TabItem value="Enterprise" label="Enterprise">
-
-`databroker_storage_key_file` is a bootstrap configuration setting and is not configurable in the Console.
+`databroker_storage_type` is a bootstrap configuration setting and is not configurable in the Console.
 
 </TabItem>
 <TabItem value="Kubernetes" label="Kubernetes">
@@ -121,26 +52,28 @@ See Kubernetes [Storage reference](/docs/k8s/reference#storage) for more informa
 
 ## Databroker Storage Connection String {#databroker-storage-connection-string}
 
-**Databroker Storage Connection String** sets the Postgres connection string that the Databroker service uses to connect to storage backend. The connection string may be provided directly in the configuration or read from a file.
+**Databroker Storage Connection String** tells Pomerium how to connect to an external PostgreSQL database. This connection string may be provided directly in the configuration or read from a file.
+
+This setting is **required** when the storage type is set to `postgres`.
 
 ### How to configure {#databroker-storage-connection-string-how-to-configure}
 
-For Postgres, the following URL types are supported:
+The connection string may be provided in either keyword/value format or URI format:
 
-- `postgres://[username:password@]host:port/[db]`
-- `postgresql://[userspec@][hostspec][/dbname][?paramspec]`
+- `host=localhost port=5432 dbname=mydb user=mydbuser`
+- `postgresql://[username:password@]host:port/[dbname][?paramspec]`
 
-See the [PostgreSQL connection URI docs](https://www.postgresql.org/docs/current/libpq-connect.html#LIBPQ-CONNSTRING) for more information.
+See the [PostgreSQL documentation](https://www.postgresql.org/docs/current/libpq-connect.html#LIBPQ-CONNSTRING) for more information on the available options.
 
 <Tabs>
 <TabItem value="Core" label="Core">
 
-| **Config file keys** | **Environment variables** | **Type** | **Usage** |
-| :-- | :-- | :-- | :-- |
-| `databroker_storage_connection_string` | `DATABROKER_STORAGE_CONNECTION_STRING` | `string` | **optional** |
-| `databroker_storage_connection_string_file` | `DATABROKER_STORAGE_CONNECTION_STRING_FILE` | `string` (file path) | **optional** |
+| **Config file keys** | **Environment variables** | **Type** |
+| :-- | :-- | :-- |
+| `databroker_storage_connection_string` | `DATABROKER_STORAGE_CONNECTION_STRING` | `string` |
+| `databroker_storage_connection_string_file` | `DATABROKER_STORAGE_CONNECTION_STRING_FILE` | `string` (file path) |
 
-#### Examples {#databroker-storage-connection-string-examples}
+### Examples {#databroker-storage-connection-string-examples}
 
 ```yaml
 databroker_storage_connection_string: postgresql://postgres:postgres@database/postgres?sslmode=disable
@@ -176,77 +109,3 @@ See Kubernetes [Storage reference](/docs/k8s/reference#storage) for more informa
 When using multiple hosts make sure to specify `target_session_attrs=read-write` so that the Databroker does not attempt to write to a read-only replica.
 
 :::
-
-## Databroker Storage TLS Skip Verify {#databroker-storage-tls-skip-verify}
-
-If **Databroker Storage TLS Skip Verify** is set, the TLS connection to the storage backend will not be verified.
-
-### How to configure {#databroker-storage-tls-skip-verify-how-to-configure}
-
-<Tabs>
-<TabItem value="Core" label="Core">
-
-| **Config file keys** | **Environment variables** | **Type** | **Usage** |
-| :-- | :-- | :-- | :-- |
-| `databroker_storage_tls_skip_verify` | `DATABROKER_STORAGE_TLS_SKIP_VERIFY` | `string` | **optional** |
-
-#### Examples {#databroker-storage-tls-skip-verify-examples}
-
-```yaml
-databroker_storage_tls_skip_verify: /relative/file/location
-```
-
-```bash
-DATABROKER_STORAGE_TLS_SKIP_VERIFY=/relative/file/location
-```
-
-</TabItem>
-<TabItem value="Enterprise" label="Enterprise">
-
-`databroker_storage_tls_skip_verify` is a bootstrap configuration setting and is not configurable in the Console.
-
-</TabItem>
-<TabItem value="Kubernetes" label="Kubernetes">
-
-See Kubernetes [Storage reference](/docs/k8s/reference#storage) for more information.
-
-</TabItem>
-</Tabs>
-
-## Databroker Storage Type {#databroker-storage-type}
-
-**Databroker Storage Type** sets the backend storage that the Databroker server will use.
-
-Only `memory` and `postgres` are supported.
-
-### How to configure {#databroker-storage-type-how-to-configure}
-
-<Tabs>
-<TabItem value="Core" label="Core">
-
-| **Config file keys** | **Environment variables** | **Type** | **Usage** | **Default** |
-| :-- | :-- | :-- | :-- | :-- |
-| `databroker_storage_type` | `DATABROKER_STORAGE_TYPE` | `string` | **required** | **memory** |
-
-### Examples {#databroker-storage-type-example}
-
-```yaml
-databroker_storage_type: postgres
-```
-
-```bash
-DATABROKER_STORAGE_TYPE=postgres
-```
-
-</TabItem>
-<TabItem value="Enterprise" label="Enterprise">
-
-`databroker_storage_type` is a bootstrap configuration setting and is not configurable in the Console.
-
-</TabItem>
-<TabItem value="Kubernetes" label="Kubernetes">
-
-See Kubernetes [Storage reference](/docs/k8s/reference#storage) for more information.
-
-</TabItem>
-</Tabs>
