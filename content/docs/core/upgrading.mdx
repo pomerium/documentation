@@ -13,6 +13,34 @@ sidebar_position: 3
 
 # Upgrade guide
 
+## 0.27.0
+
+### Breaking
+
+#### Deprecated JWT endpoint
+
+The /.pomerium/jwt endpoint is now deprecated and disabled by default. (To temporarily opt out of this deprecation, set the runtime flag [`pomerium_jwt_endpoint`](/docs/reference/runtime-flags) to true. This flag will be removed in a future release.)
+
+This endpoint was originally added for single-page web apps to get information about the currently signed-in user, but for this use case it is not necessary to receive this information as a signed JWT.
+
+Furthermore, this endpoint is incompatible with the desired security properties for the Pomerium JWT. We intend for the Pomerium JWT to represent that a specific request to an upstream service was duly authorized by Pomerium. The JWTs issued by the /.pomerium/jwt endpoint do not satisfy this property.
+
+There is a new /.pomerium/user endpoint to provide the same user data, but as a plaintext JSON response. If you are using the Pomerium [JavaScript SDK](https://github.com/pomerium/js-sdk), version 1.1.0 includes a new `getBrowserUser()` method to replace the existing `verifyBrowserUser()` method.
+
+#### Upgrading Pomerium Zero deployments in Kubernetes
+
+For Pomerium Zero deployments in Kubernetes, we updated the Kubernetes manifest to use a [Deployment](https://kubernetes.io/docs/concepts/workloads/controllers/deployment/) instead of a StatefulSet. Before you upgrade, you need to delete your existing StatefulSet with a command like:
+
+  ```bash
+  kubectl delete statefulset/pomerium -n pomerium-zero
+  ```
+
+Once you’ve removed your StatefulSet, run the following command to update Pomerium in Kubernetes:
+
+  ```bash
+  kubectl apply -k github.com/pomerium/pomerium/k8s/zero
+  ```
+
 ## 0.26.0
 
 #### Routes port matching

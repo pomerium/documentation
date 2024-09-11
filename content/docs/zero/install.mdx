@@ -18,39 +18,6 @@ If you haven't signed up for Pomerium Zero, you can [**create an account**](http
 :::
 
 <Tabs>
-<TabItem value="linux" label="Linux">
-
-Install Pomerium with the following shell script:
-
-```bash
-curl https://console.pomerium.app/install.bash | env POMERIUM_ZERO_TOKEN=<CLUSTER_TOKEN> bash -s install
-```
-
-Pomerium requires an internet-accessible server and the ability to bind port 443.
-
-</TabItem>
-<TabItem value="kubernetes" label="Kubernetes">
-
-First, install Pomerium into your Kubernetes cluster:
-
-```bash
-kubectl apply -k github.com/pomerium/pomerium/k8s/zero\?ref=v0.26.0
-```
-
-Finally, create a secret to store the token used to authenticate your installation to Pomerium Zero:
-
-```yaml
-apiVersion: v1
-kind: Secret
-metadata:
-  name: pomerium
-  namespace: pomerium-zero
-type: Opaque
-stringData:
-  pomerium_zero_token: <CLUSTER_TOKEN>
-```
-
-</TabItem>
 <TabItem value="docker" label="Docker">
 
 Save the following configuration as `compose.yaml`:
@@ -92,6 +59,39 @@ docker compose up -d
 ```
 
 Pomerium requires an internet-accessible server and the ability to bind port 443.
+
+</TabItem>
+<TabItem value="linux" label="Linux">
+
+Install Pomerium with the following shell script:
+
+```bash
+curl https://console.pomerium.app/install.bash | env POMERIUM_ZERO_TOKEN=<CLUSTER_TOKEN> bash -s install
+```
+
+Pomerium requires an internet-accessible server and the ability to bind port 443.
+
+</TabItem>
+<TabItem value="kubernetes" label="Kubernetes">
+
+First, install Pomerium into your Kubernetes cluster:
+
+```bash
+kubectl apply -k github.com/pomerium/pomerium/k8s/zero\?ref=v0.26.0
+```
+
+Finally, create a secret to store the token used to authenticate your installation to Pomerium Zero:
+
+```yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: pomerium
+  namespace: pomerium-zero
+type: Opaque
+stringData:
+  pomerium_zero_token: <CLUSTER_TOKEN>
+```
 
 </TabItem>
 <TabItem value="manual" label="Manual">
@@ -164,6 +164,12 @@ $ sudo yum update pomerium
 
 </TabItem>
 <TabItem value="kubernetes" label="Kubernetes">
+
+:::note
+
+In v0.27, we updated the Kubernetes installation manifest to use a Deployment instead of a StatefulSet. Before upgrading, you must remove your existing StatefulSet. See the [v0.27 Upgrade guide](/docs/core/upgrading#upgrading-pomerium-zero-deployments-in-kubernetes) for specific instructions.
+
+:::
 
 To update Pomerium in Kubernetes, run the following command:
 
