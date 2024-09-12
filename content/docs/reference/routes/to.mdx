@@ -23,9 +23,9 @@ import TabItem from '@theme/TabItem';
 <Tabs>
 <TabItem value="Core" label="Core">
 
-| **YAML**/**JSON** setting | **Type** | **Usage**    | **Schemes**            |
-| :------------------------ | :------- | :----------- | :--------------------- |
-| `to`                      | `URL`    | **optional** | `http`, `https`, `tcp` |
+| **YAML**/**JSON** setting | **Type** | **Usage** | **Schemes** |
+| :-- | :-- | :-- | :-- |
+| `to` | `URL` | **optional** | `http`, `https`, `h2c`, `tcp` |
 
 ### Examples
 
@@ -80,6 +80,25 @@ A load balancing weight may be associated with a particular upstream by appendin
 - from: https://example.com
   to: ['http://a,10', 'http://b,20']
 ```
+
+### HTTP/2 cleartext
+
+When Pomerium connects to an `https` upstream, it will negotiate either HTTP/1.1 or HTTP/2 using [ALPN](https://en.wikipedia.org/wiki/Application-Layer_Protocol_Negotiation) (as part of the TLS handshake).
+
+To configure Pomerium to make requests to an upstream service using HTTP/2 _without_ TLS (that is, in cleartext), use the special `h2c://` scheme:
+
+```yaml
+- from: https://example.com
+  to: h2c://localhost:9090
+```
+
+:::info
+
+The HTTP/2 specification refers to this case as having _"[prior knowledge](https://datatracker.ietf.org/doc/html/rfc9113#name-starting-http-2-with-prior-)"_ that a server supports HTTP/2.
+
+One use case is connecting to an insecure gRPC server. As gRPC requires HTTP/2, a client has "prior knowledge" that the server supports HTTP/2.
+
+:::
 
 ### TCP routes
 

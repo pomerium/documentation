@@ -5,7 +5,7 @@ description: This guide provides several methods to validate the Pomerium JWT in
 sidebar_label: JWT Verification
 ---
 
-import Tabs from '@theme/Tabs'; import TabItem from '@theme/TabItem'; import GoApp from '../../examples/go-sdk/go-app.md'; import ReactApp from '../../examples/js-sdk/react-app.md';
+import Tabs from '@theme/Tabs'; import TabItem from '@theme/TabItem'; import GoApp from '../../examples/go-sdk/go-app.md'; import ExpressApp from '../../examples/js-sdk/express-server.md';
 
 This guide provides several methods to verify and validate the Pomerium JWT forwarded in signed the `X-Pomerium-Jwt-Assertion` header:
 
@@ -29,9 +29,9 @@ For an application written in Go, you can use the [Go SDK](https://github.com/po
 
 <GoApp />
 
-## Verification in a single-page application
+## Verification in a Node.js application
 
-Pomerium's [JavaScript SDK](https://github.com/pomerium/js-sdk) provides a client-side solution to verify JWTs issued by the authorization service.
+Pomerium's [JavaScript SDK](https://github.com/pomerium/js-sdk) provides a server-side solution to verify JWTs issued by the authorization service.
 
 ### Requirements to use the JavaScript SDK
 
@@ -43,9 +43,9 @@ To use the JavaScript SDK, you need:
 - [NPM](https://www.npmjs.com/) (to install Node.js and Yarn)
 - [Yarn](https://classic.yarnpkg.com/lang/en/docs/install/#mac-stable) (preferred package manager)
 
-The following code provides a minimum working example of how JWT verification works using the JavaScript SDK in a React app:
+The following code provides a minimum working example of how JWT verification works using the JavaScript SDK in a Node.js app:
 
-<ReactApp />
+<ExpressApp />
 
 <details>
   <summary>Trust on first use (TOFU)</summary>
@@ -61,32 +61,6 @@ The `issuer` and `audience` parameters should both be set to the domain of the *
 
   </div>
 </details>
-
-### PomeriumVerifier reference
-
-The `PomeriumVerifier` class is the easiest way to verify JWTs. See the reference below for more information:
-
-#### Parameters
-
-| Parameters | Description | Value |
-| :-- | :-- | --- |
-| issuer | The domain of the upstream application (for example, `httpbin.corp.example.com`). | String |
-| audience | The same value as `issuer`. | String |
-| expirationBuffer | Adds padding in seconds to prevent throwing errors for expired JWTs that may have differing server times. Defaults to `0` | Integer |
-| firstUse | Decides whether or not to trust the first JWT. | Boolean |
-| jwtData | The JSON payload containing JWT claims. | Object |
-| verifiedJwtData | The verified JSON payload containing JWT claims. | Object |
-
-#### Methods
-
-| Method | Description |
-| :-- | :-- |
-| getClientJwt | Fetches client JWT from the `/.pomerium/jwt` endpoint. |
-| parseJWT | Decodes JWT token. |
-| getJWKsData | Fetches JWKs data from the `/.well-known/pomerium/jwks.json` endpoint. |
-| verifyPomeriumJWT | Verifies JWT using the `jwt`, `authenticateBaseUrl`, `issuer`, and `audience` parameters. |
-| withHttps | Prepends the URL with the `https://` protocol. |
-| signOut | Signs user out and redirects them with the `/.pomerium/sign_out` endpoint. |
 
 ## Manual verification
 

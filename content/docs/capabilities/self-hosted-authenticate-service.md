@@ -3,81 +3,60 @@ id: self-hosted-authenticate-service
 title: Self-Hosted Authenticate Service
 sidebar_label: Self-Hosted Authenticate Service
 keywords: [self-hosted authenticate service url, self-hosted identity provider]
-description: Use Pomerium's Self-Hosted Authenticate Service to set up and deploy Pomerium with your own hosted settings.
+description: Use Pomerium's Self-Hosted Authenticate Service to deploy Pomerium with your own identity provider.
 ---
 
 # Self-Hosted Authenticate Service
 
-Pomerium's **Self-Hosted Authenticate Service** allows you to configure your own **Authenticate Service URL** and **Identity Provider**.
+Pomerium's **Self-Hosted Authenticate Service** allows you to configure Pomerium with the identity provider of your choice.
 
-The Self-Hosted Authenticate Service is available for both open-source Pomerium Core and Enterprise users.
+The self-hosted authenticate service is available for open-source Pomerium, Pomerium Zero, and Pomerium Enterprise.
 
-## How the Self-Hosted Authenticate Service works
+:::info
 
-Self-hosting your Pomerium instance requires you to configure an [Authenticate Service URL](/docs/reference/service-urls#authenticate-service-url) and an OIDC-compliant [identity provider](/docs/identity-providers) (IdP).
+The _authenticate service_ is one of the [four logical services](/docs/internals/architecture#component-level) that make up Pomerium. The authenticate service is unique in that Pomerium can either run this service itself, or instead use the [Hosted Authenticate Service](/docs/capabilities/hosted-authenticate-service).
+
+:::
+
+## How the self-hosted authenticate service works
+
+To configure the self-hosted authenticate service, you will need to set up:
+
+- a URL for the authenticate service
+- an identity provider (IdP)
 
 ### Authenticate service URL
 
-The authenticate service URL is an externally accessible URL used by Pomerium's Authenticate Service. You can include your own URL for testing or use Pomerium's localhost URL, which is hardcoded to point to `127.0.0.1`.
+The authenticate service URL is a public-facing URL that should resolve to your Pomerium instance. (If running in split service mode, this URL should resolve to the authenticate service.) Whenever a user is required to log in to access a route, Pomerium will redirect the user to the authenticate service using this URL.
 
-```yaml
-authenticate_service_url: https://authenticate.localhost.pomerium.io
-```
+This URL should not contain a path or query parameters. For example, `https://authenticate.corp.example.com`.
+
+This URL must be different from any of the route URLs you use with Pomerium.
+
+See the [Authenticate Service URL](/docs/reference/service-urls#authenticate-service-url) reference page for details on how to configure this setting.
+
+:::info Why does Pomerium use a separate authenticate service URL?
+
+In a typical OIDC authentication flow, all redirect URLs must be pre-registered with the IdP. Pomerium uses a single authenticate service URL so that you need to register only one redirect URL with your IdP. This way, Pomerium can protect multiple upstream services without requiring you to update your IdP client whenever you add a new service.
+
+:::
 
 ### Identity provider
 
-Pomerium's Authenticate Service requires an IdP to authenticate and authorize users. Pomerium supports all major IdP solutions and any IdP that uses OAuth 2.0 and OIDC protocols as well.
+Pomerium relies on an IdP to authenticate users. Pomerium can use any IdP that implements the OpenID Connect (OIDC) protocol.
 
-## Configure the Self-Hosted Authenticate Service
+The steps to configure your IdP will vary depending on the specific provider. See [**Identity Providers**](/docs/identity-providers) for a list of guides to configure commonly-used IdPs.
 
-To configure Pomerium to use self-hosted services:
+You will generally need to configure your IdP client to allow an OAuth redirect URL based on your chosen authenticate service URL, with the path `/oauth2/callback` appended to it.
 
-1. Add your authenticate service URL
+For example, if your authenticate service URL is `https://authenticate.corp.example.com`, you should configure your identity provider to allow the redirect URI `https://authenticate.corp.example.com/oauth2/callback`.
 
-```yaml pomerium-config.yaml
-authenticate_service_url: https://authenticate.localhost.pomerium.io
-```
+:::tip
 
-1. Include your IdP settings
+If you require a different callback path than `/oauth2/callback`, you can use the [Authenticate Callback Path](/docs/reference/authenticate-callback-path) setting to change the callback path.
 
-```yaml pomerium-config.yaml
-idp_provider: google
-idp_client_id: my_client_id
-idp_client_secret: my_client_secret
-```
+:::
 
-1. Build a route and policy
+Once you have set up an IdP client, you will need to configure Pomerium with the IdP name, client ID and client secret, and possibly a URL assigned to your individual IdP client.
 
-```yaml pomerium-config.yaml
-routes:
-  - from: https://verify.localhost.pomerium.io
-    to: http://verify:8000
-    policy:
-      - allow:
-          or:
-            - email:
-                is: user@example.com
-    pass_identity_headers: true
-```
-
-Your self-hosted configuration file might look like this:
-
-```yaml pomerium-config.yaml
-authenticate_service_url: https://authenticate.localhost.pomerium.io
-
-idp_provider: google
-idp_client_id: my_client_id
-idp_client_secret: my_client_secret
-
-routes:
-  - from: https://verify.localhost.pomerium.io
-    to: http://verify:8000
-    policy:
-      - allow:
-          or:
-            - email:
-                is: user@example.com
-    pass_identity_headers: true
-```
-
-See the [Pomerium Core Docker quickstart](/docs/core/quickstart) for more examples.
+See the [Identity Provider Settings](/docs/reference/identity-provider-settings#identity-provider-client-id) reference page for details on how to configure these settings.
