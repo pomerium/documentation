@@ -114,30 +114,6 @@ Pass the provided **Cluster Token** into the `POMERIUM_ZERO_TOKEN` environment v
 Learn how to upgrade Pomerium Zero.
 
 <Tabs>
-<TabItem label="Docker" value="docker">
-
-To update Pomerium in Docker:
-
-1. In your `compose.yaml` file, update the Pomerium image tag to specify the [latest tagged release](https://github.com/pomerium/pomerium/tags):
-
-```yaml
-pomerium:
-  image: pomerium/pomerium:<vX.Y.Z>
-```
-
-1. Run the following command:
-
-```bash
-$ docker compose up -d
-```
-
-Docker should automatically pull the new image of Pomerium before running the container. If for some reason Docker doesn't pull the image, you can manually run:
-
-```bash
-$ docker pull pomerium/pomerium:<vX.Y.Z>
-```
-
-</TabItem>
 <TabItem label="Linux" value="linux">
 
 To update Pomerium in Debian-based Linux systems:
@@ -165,10 +141,40 @@ $ sudo yum update pomerium
 </TabItem>
 <TabItem value="kubernetes" label="Kubernetes">
 
+:::note
+
+In v0.27, we updated the Kubernetes installation manifest to use a Deployment instead of a StatefulSet. Before upgrading, you must remove your existing StatefulSet. See the [v0.27 Upgrade guide](/docs/core/upgrading#upgrading-pomerium-zero-deployments-in-kubernetes) for specific instructions.
+
+:::
+
 To update Pomerium in Kubernetes, run the following command:
 
 ```bash
 $ kubectl apply -k github.com/pomerium/pomerium/k8s/zero\?ref=<X.Y.Z>
+```
+
+</TabItem>
+<TabItem label="Docker" value="docker">
+
+To update Pomerium in Docker:
+
+1. In your `compose.yaml` file, update the Pomerium image tag to specify the [latest tagged release](https://github.com/pomerium/pomerium/tags):
+
+```yaml
+pomerium:
+  image: pomerium/pomerium:<vX.Y.Z>
+```
+
+1. Run the following command:
+
+```bash
+$ docker compose up -d
+```
+
+Docker should automatically pull the new image of Pomerium before running the container. If for some reason Docker doesn't pull the image, you can manually run:
+
+```bash
+$ docker pull pomerium/pomerium:<vX.Y.Z>
 ```
 
 </TabItem>
