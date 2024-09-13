@@ -150,7 +150,7 @@ Make sure to always restrict access to the envoy admin interface ingress.
 
 ```yaml title="kustomization.yaml"
 resources:
-  - github.com/pomerium/ingress-controller/config/default\?ref=v0.27.0
+  - github.com/pomerium/ingress-controller/config/default?ref=v0.27.0
   - admin-service.yaml
   - admin-ingress.yaml
 patches:
