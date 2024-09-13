@@ -57,7 +57,7 @@ const config = {
           },
           versions: {
             current: {
-              label: 'vNext (upcoming release)',
+              label: 'v0.27 (latest)',
               badge: true,
             },
           },
@@ -164,15 +164,11 @@ const config = {
           dropdownItemsAfter: [
             {
               to: 'https://0-26-0.docs.pomerium.com/docs',
-              label: 'v0.26 (latest)',
+              label: 'v0.26',
             },
             {
               to: 'https://0-25-0.docs.pomerium.com/docs',
               label: 'v0.25',
-            },
-            {
-              to: 'https://0-24-0.docs.pomerium.com/docs',
-              label: 'v0.24',
             },
             {
               type: 'html',
