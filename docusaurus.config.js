@@ -162,10 +162,6 @@ const config = {
           position: 'right',
           dropdownActiveClassDisabled: true,
           dropdownItemsAfter: [
-            // {
-            //   to: 'https://0-26-0.docs.pomerium.com/docs',
-            //   label: 'v0.26 (latest)',
-            // },
             {
               to: 'https://0-26-0.docs.pomerium.com/docs',
               label: 'v0.26',
