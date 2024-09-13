@@ -58,7 +58,6 @@ const config = {
           versions: {
             current: {
               label: 'v0.27 (latest)',
-              badge: true,
             },
           },
         },
