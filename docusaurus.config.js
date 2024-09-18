@@ -273,6 +273,15 @@ const config = {
       },
     ],
     './docusaurus-plugins/src/webpackDebugFix.js',
+    [
+      'docusaurus-pushfeedback',{
+          project: 'esgee0kxds',
+          buttonPosition: 'center-right',
+          modalPosition: 'sidebar-right',
+          buttonStyle: 'dark',
+          modalTitle: 'Share your thoughts'
+      }
+    ]
   ],
 };
 
