@@ -6,6 +6,9 @@ sidebar_label: Policy Language
 description: Learn how to use Pomerium Policy Language to build context-aware authorization policies for routes.
 ---
 
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
 # Pomerium Policy Language
 
 <iframe
@@ -315,6 +318,73 @@ Compare to a policy that only allows a set of specific devices:
 Users can [find their device IDs](/docs/capabilities/device-identity#find-the-device-id) at the `/.pomerium` endpoint from any route.
 
 :::
+
+### Record Matcher
+
+The record matcher is an object that uses operators as keys. It points to an integrated [external data source](/docs/capabilities/integrations) file (known as a "record") defined in the Enterprise Console. Pomerium matches requests to a specific external data source using a record's [foreign key](/docs/capabilities/integrations#foreign-key). You can use data stored in a record as external context in an authorization policy.
+
+The record matcher supports all of the [String Matcher](/docs/capabilities/ppl#string-matcher) and [String List Matcher](/docs/capabilities/ppl#string-list-matcher) operators. However, the following operators are specific to the record matcher:
+
+- `type`: Identifies the [Record Type](/docs/capabilities/integrations#record-type) as it’s defined in the Enterprise Console
+- `field`: Specifies the field name as defined by the external data source
+- [Exists operator](#exists-operator)
+- [Numerical comparison operators](#numerical-comparison-operators) (`<`, `<=`, `=`, `>`, `>=`)
+
+#### Exists operator
+
+The “exists” operator is an object that requires a boolean value:
+
+- When set to `true`, it returns `ok` if it can find the corresponding external data source record in the Enterprise Console.
+- When set to `false`, it returns `ok` if it can’t find the corresponding external data source record in the Enterprise Console.
+
+:::note
+
+The "exists" operator does not require a "field" key.
+
+:::
+
+<Tabs>
+<TabItem value="policy-builder" label="Policy Builder">
+
+![Buiding a policy using the exists operator with an external data source](./img/ppl/exists-operator.png)
+
+</TabItem>
+<TabItem value="policy-editor" label="Policy Editor">
+
+```yaml
+allow:
+  and:
+    - record:
+        type: pomerium.io/ExternalDataSource
+        exists: true
+```
+
+</TabItem>
+</Tabs>
+
+#### Numerical comparison operators
+
+The numerical comparison operators (`<`, `<=`, `=`, `>`, `>=`) can be used to express conditions for external data sources with numerical fields.
+
+<Tabs>
+<TabItem value="policy-builder" label="Policy Builder">
+
+![Buiding a policy using the a numerical comparison operator with an external data source](./img/ppl/numerical-comparison-operators.png)
+
+</TabItem>
+<TabItem value="policy-editor" label="Policy Editor">
+
+```yaml
+allow:
+  and:
+    - record:
+        type: pomerium.io/ExternalDataSource
+        field: trust_score
+        ">=": 5
+```
+
+</TabItem>
+</Tabs>
 
 ### String Matcher
 
