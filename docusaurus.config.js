@@ -279,7 +279,8 @@ const config = {
           buttonPosition: 'center-right',
           modalPosition: 'sidebar-right',
           buttonStyle: 'dark',
-          modalTitle: 'Share your thoughts'
+          modalTitle: 'Share your thoughts',
+          hideEmail: true,
       }
     ]
   ],
