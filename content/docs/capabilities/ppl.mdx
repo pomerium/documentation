@@ -6,6 +6,9 @@ sidebar_label: Policy Language
 description: Learn how to use Pomerium Policy Language to build context-aware authorization policies for routes.
 ---
 
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
 # Pomerium Policy Language
 
 <iframe
@@ -155,7 +158,7 @@ Entries marked with `*` denote criteria that are only available in the [Enterpri
 | `http_path` | [String Matcher] | Returns true if the HTTP path matches the given value. |
 | `invalid_client_certificate` | Anything. Typically `true`. | Returns true if the incoming request does not have a trusted client certificate. By default, a `deny` rule using this criterion is added to all Pomerium policies when [downstream mTLS] is configured (but this default can be changed using the [Enforcement Mode](/docs/reference/downstream-mtls-settings#enforcement-mode) setting.) |
 | `pomerium_routes` | Anything. Typically `true`. | Returns true if the incoming request is for the special `.pomerium` routes. A default `allow` rule using this criterion is added to all Pomerium policies. |
-| \* `record` | variable | Allows policies to be extended using data from [external data sources](/docs/capabilities/integrations) |
+| \* `record` | variable | Allows policies to be extended using data from [external data sources](/docs/capabilities/integrations). See [Record Matcher](#record-matcher) for more information. |
 | `reject` | Anything. Typically `true`. | Always returns false. The opposite of `accept`. |
 | \* `time_of_day` | [Time of Day Matcher] | Returns true if the time of the request (for the current day) matches the constraints. |
 | `user` | [String Matcher] | Returns `true` if the logged-in user's ID matches the supplied value. (The actual value of the user ID claim depends on how the identity provider sets this value.) |
@@ -315,6 +318,73 @@ Compare to a policy that only allows a set of specific devices:
 Users can [find their device IDs](/docs/capabilities/device-identity#find-the-device-id) at the `/.pomerium` endpoint from any route.
 
 :::
+
+### Record Matcher
+
+The record matcher is an object that uses operators as keys. It points to records collected from an [external data source](/docs/capabilities/integrations) defined in the Enterprise Console. Pomerium matches requests to a specific external data source using a record's [foreign key](/docs/capabilities/integrations#foreign-key). You can use data stored in a record as external context in an authorization policy.
+
+The record matcher supports all of the [String Matcher](/docs/capabilities/ppl#string-matcher) and [String List Matcher](/docs/capabilities/ppl#string-list-matcher) operators. However, the following operators are specific to the record matcher:
+
+- `type`: Identifies the [Record Type](/docs/capabilities/integrations#record-type) as it’s defined in the Enterprise Console
+- `field`: Specifies the field name as defined by the external data source
+- [Exists operator](#exists-operator)
+- [Numerical comparison operators](#numerical-comparison-operators) (`<`, `<=`, `=`, `>`, `>=`)
+
+#### Exists operator
+
+The “exists” operator is a **boolean**:
+
+- When set to `true`, it returns `ok` if it can find the corresponding external data source record in the Enterprise Console.
+- When set to `false`, it returns `ok` if it can’t find the corresponding external data source record in the Enterprise Console.
+
+:::note
+
+The "exists" operator does not require a "field" key.
+
+:::
+
+<Tabs>
+<TabItem value="policy-builder" label="Policy Builder">
+
+![Builds an authorization policy using the exists operator with an external data source](./img/ppl/exists-operator.png)
+
+</TabItem>
+<TabItem value="policy-editor" label="Policy Editor">
+
+```yaml
+allow:
+  and:
+    - record:
+        type: pomerium.io/ExternalDataSource
+        exists: true
+```
+
+</TabItem>
+</Tabs>
+
+#### Numerical comparison operators
+
+The numerical comparison operators (`<`, `<=`, `=`, `>`, `>=`) can be used to express conditions for external data sources with numerical fields.
+
+<Tabs>
+<TabItem value="policy-builder" label="Policy Builder">
+
+![Building a policy using the a numerical comparison operator with an external data source](./img/ppl/numerical-comparison-operators.png)
+
+</TabItem>
+<TabItem value="policy-editor" label="Policy Editor">
+
+```yaml
+allow:
+  and:
+    - record:
+        type: pomerium.io/ExternalDataSource
+        field: trust_score
+        '>=': 5
+```
+
+</TabItem>
+</Tabs>
 
 ### String Matcher
 
