@@ -503,8 +503,8 @@ const sidebars = {
             {
               type: 'doc',
               id: 'docs/guides/configure-metrics',
-              className: 'enterprise'
-            }
+              className: 'enterprise',
+            },
           ],
         },
       ],
