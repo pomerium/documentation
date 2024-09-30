@@ -18,7 +18,7 @@ Use Pomerium as a first-class secure-by-default Ingress Controller. The Pomerium
 ## Deploy
 
 ```console
-kubectl apply -k github.com/pomerium/ingress-controller/config/default\?ref=v0.27.0
+kubectl apply -k github.com/pomerium/ingress-controller/config/default\?ref=v0.27.1
 ```
 
 The Pomerium Ingress Controller is now installed into your cluster.
@@ -150,7 +150,7 @@ Make sure to always restrict access to the envoy admin interface ingress.
 
 ```yaml title="kustomization.yaml"
 resources:
-  - github.com/pomerium/ingress-controller/config/default?ref=v0.27.0
+  - github.com/pomerium/ingress-controller/config/default?ref=v0.27.1
   - admin-service.yaml
   - admin-ingress.yaml
 patches:
