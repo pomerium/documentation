@@ -500,6 +500,11 @@ const sidebars = {
               type: 'doc',
               id: 'docs/guides/certificates',
             },
+            {
+              type: 'doc',
+              id: 'docs/guides/configure-metrics',
+              className: 'enterprise'
+            }
           ],
         },
       ],
