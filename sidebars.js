@@ -99,6 +99,7 @@ const sidebars = {
         },
         'docs/capabilities/hosted-authenticate-service',
         'docs/capabilities/self-hosted-authenticate-service',
+        'docs/capabilities/metrics',
         'docs/capabilities/mtls-clients',
         'docs/capabilities/mtls-services',
         'docs/capabilities/getting-users-identity',
@@ -155,12 +156,6 @@ const sidebars = {
           className: 'enterprise',
           type: 'doc',
           label: 'High Availability',
-        },
-        {
-          id: 'docs/capabilities/metrics',
-          className: 'enterprise',
-          type: 'doc',
-          label: 'Metrics',
         },
         {
           id: 'docs/capabilities/namespacing',
