@@ -2,7 +2,7 @@
 # cSpell:ignore XPOST tsdb
 
 title: Configure Metrics in Pomerium Enterprise
-sidebar_label: Configure Metrics
+sidebar_label: Metrics
 description: Learn how to configure Prometheus to power metrics in the Pomerium Enterprise web console.
 lang: en-US
 keywords: [pomerium, enterprise pomerium, telemetry, metrics, prometheus]
@@ -18,7 +18,7 @@ Learn how to configure [Prometheus](https://prometheus.io/) as a metrics collect
 
 Pomerium Enterprise uses Prometheus to collect observability and monitoring metrics from your Pomerium deployment. To set up Pomerium to work with Prometheus, you must configure either an external or embedded Prometheus instance.
 
-This guide shows you how to configure both the external and embedded Prometheus options.
+This guide explains what the external and embedded Prometheus options are, and how to configure them.
 
 ## Before you start
 
@@ -45,6 +45,10 @@ This setting exposes internal metrics within the Enterprise web console. If not 
 <TabItem label="External Prometheus" value="external-prometheus">
 
 ### External Prometheus
+
+An external Prometheus instance runs as its own process separate from Pomerium. Use this option if you prefer to configure and maintain Prometheus yourself.
+
+The steps below show you how to connect Prometheus to Pomerium Core and Pomerium Enterprise.
 
 :::tip
 
@@ -98,6 +102,8 @@ For production deployments, we suggest using a dedicated Prometheus instance.
 <TabItem label="Embedded Prometheus" value="embedded-prometheus">
 
 ### Embedded Prometheus
+
+Pomerium Enterprise supports an embedded Prometheus instance that you configure only in Pomerium. Use this option if you don't want to maintain an external Prometheus instance, or if you're testing metrics.
 
 To configure an embedded Prometheus instance, add the [`prometheus_data_dir`](/docs/enterprise/configure#prometheus-data-dir) key and file path in your Pomerium Enterprise configuration file:
 

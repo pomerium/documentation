@@ -59,6 +59,7 @@ const sidebars = {
         'docs/enterprise/quickstart',
         'docs/enterprise/install',
         'docs/enterprise/configure',
+        'docs/enterprise/configure-metrics',
         'docs/enterprise/changelog',
         'docs/enterprise/upgrading',
       ],
@@ -499,11 +500,6 @@ const sidebars = {
             {
               type: 'doc',
               id: 'docs/guides/certificates',
-            },
-            {
-              type: 'doc',
-              id: 'docs/guides/configure-metrics',
-              className: 'enterprise',
             },
           ],
         },
