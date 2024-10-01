@@ -31,25 +31,13 @@ This guide runs both Pomerium instances on localhost (`127.0.0.1`).
 
 ## Configure Pomerium
 
-1. In your Pomerium configuration file, define the [`metrics_address`](/docs/reference/metrics#metrics-address) key to a network interface or port. In the example below, Pomerium provides metrics at port `9091` on an IP address reachable by Pomerium Enterprise:
+In your Pomerium Enterprise configuration file, define the `metrics_addr` key to a network interface or port:
 
-   ```yaml title="pomerium.yaml"
-   metrics_address: 127.0.0.1:9091
-   ```
+```yaml title="pomerium-enterprise.yaml"
+metrics_addr: 127.0.0.1:9092
+```
 
-   :::note
-
-   If you're running Pomerium Enterprise in a distributed environment where the IP address is unknown at the time of deployment, you can use the resolvable fully qualified domain name (FQDN) of the Pomerium host (for example, `pomerium0.internal.example.com`). Or, you can override this key with the [`METRICS_ADDRESS`](/docs/reference/metrics#metrics-address) environment variable.
-
-   We do not recommend exposing this endpoint to public traffic as it can contain potentially sensitive information.
-
-   :::
-
-1. In your Pomerium Enterprise configuration file, define the `metrics_addr` key to a network interface or port. For example:
-
-   ```yaml title="pomerium-enterprise.yaml"
-   metrics_addr: 127.0.0.1:9092
-   ```
+This setting exposes internal metrics within the Enterprise web console. If not defined, Pomerium will expose `127.0.0.1` on port `:9092` by default.
 
 ## Configure Prometheus
 
@@ -57,6 +45,12 @@ This guide runs both Pomerium instances on localhost (`127.0.0.1`).
 <TabItem label="External Prometheus" value="external-prometheus">
 
 ### External Prometheus
+
+:::tip
+
+For production deployments, we suggest using a dedicated Prometheus instance.
+
+:::
 
 1. In your Prometheus configuration file, add [instances](https://prometheus.io/docs/concepts/jobs_instances/#jobs-and-instances) for Pomerium and Pomerium Enterprise:
 
@@ -86,9 +80,17 @@ This guide runs both Pomerium instances on localhost (`127.0.0.1`).
    prometheus_url: http://192.168.122.50:9090
    ```
 
-   :::tip
+1. In your Pomerium configuration file, define the [`metrics_address`](/docs/reference/metrics#metrics-address) key to a network interface or port. In the example below, Pomerium provides metrics at port `9091` on an IP address reachable by Pomerium Enterprise:
 
-   For production deployments, we suggest using a dedicated Prometheus instance.
+   ```yaml title="pomerium.yaml"
+   metrics_address: 127.0.0.1:9091
+   ```
+
+   :::note
+
+   If you're running Pomerium Enterprise in a distributed environment where the IP address is unknown at the time of deployment, you can use the resolvable fully qualified domain name (FQDN) of the Pomerium host (for example, `pomerium0.internal.example.com`). Or, you can override this key with the [`METRICS_ADDRESS`](/docs/reference/metrics#metrics-address) environment variable.
+
+   We do not recommend exposing this endpoint to public traffic as it can contain potentially sensitive information.
 
    :::
 
@@ -99,7 +101,7 @@ This guide runs both Pomerium instances on localhost (`127.0.0.1`).
 
 To configure an embedded Prometheus instance, add the [`prometheus_data_dir`](/docs/enterprise/configure#prometheus-data-dir) key and file path in your Pomerium Enterprise configuration file:
 
-```yaml title="config.yaml"
+```yaml title="pomerium-enterprise.yaml"
 prometheus_data_dir: /var/lib/pomerium-console/tsdb
 ```
 
