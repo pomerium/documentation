@@ -13,7 +13,12 @@ import TabItem from '@theme/TabItem';
 
 # gRPC Settings
 
-This reference covers all of Pomerium's **gRPC Settings**:
+Pomerium's gRPC settings apply to internal communication between:
+
+- Pomerium services running in [split service mode].
+- The Enterprise Console and core Pomerium in a [Pomerium Enterprise](/docs/enterprise) deployment.
+
+These settings have no effect on gRPC traffic proxied on a regular Pomerium route.
 
 - [gRPC Address](#grpc-address)
 - [gRPC Client DNS RoundRobin](#grpc-client-dns-roundrobin)
@@ -22,7 +27,7 @@ This reference covers all of Pomerium's **gRPC Settings**:
 
 ## gRPC Address {#grpc-address}
 
-**gRPC Address** specifies the host and port to serve gRPC requests from.
+**gRPC Address** specifies the IP address and port for the internal gRPC service to listen on.
 
 ### How to configure {#how-to-configure-grpc-address}
 
@@ -31,7 +36,7 @@ This reference covers all of Pomerium's **gRPC Settings**:
 
 | **Config file keys** | **Environment variables** | **Type** | **Default** |
 | :-- | :-- | :-- | :-- |
-| `grpc_address` | `GRPC_ADDRESS` | `string` | `:443` (`:5443` if in [all-in-one](/docs/internals/configuration#all-in-one-vs-split-service-mode) mode) |
+| `grpc_address` | `GRPC_ADDRESS` | `string` | `:5443` in all-in-one mode <br/> `:443` in [split service mode] |
 
 ### Examples {#examples-grpc-address}
 
@@ -130,7 +135,7 @@ Kubernetes does not support **gRPC Client Timeout**
 
 ## gRPC Insecure {#grpc-insecure}
 
-**gRPC Insecure** disables transport security for gRPC communication. If running in [all-in-one](/docs/internals/configuration#all-in-one-vs-split-service-mode) mode, defaults to true as communication will run over localhost's own socket.
+**gRPC Insecure** disables transport security (TLS) for internal gRPC communication.
 
 ### How to configure {#how-to-configure-grpc-insecure}
 
@@ -139,7 +144,7 @@ Kubernetes does not support **gRPC Client Timeout**
 
 | **Config file keys** | **Environment variables** | **Type** | **Default** |
 | :-- | :-- | :-- | :-- |
-| `grpc_insecure` | `GRPC_INSECURE` | `boolean` | `true` (If in [all-in-one](/docs/internals/configuration#all-in-one-vs-split-service-mode) mode) |
+| `grpc_insecure` | `GRPC_INSECURE` | `boolean` | `true` in all-in-one mode <br/> `false` in [split service mode] |
 
 ### Examples {#examples-grpc-insecure}
 
@@ -163,3 +168,5 @@ GRPC_INSECURE=false
 
 </TabItem>
 </Tabs>
+
+[split service mode]: /docs/internals/configuration#all-in-one-vs-split-service-mode
