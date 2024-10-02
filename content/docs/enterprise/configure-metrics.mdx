@@ -6,11 +6,7 @@ sidebar_label: Metrics
 description: Learn how to configure Prometheus to power metrics in the Pomerium Enterprise web console.
 lang: en-US
 keywords: [pomerium, enterprise pomerium, telemetry, metrics, prometheus]
-toc_max_heading_level: 2
 ---
-
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
 
 Learn how to configure [Prometheus](https://prometheus.io/) as a metrics collection backend in Pomerium Enterprise.
 
@@ -18,7 +14,7 @@ Learn how to configure [Prometheus](https://prometheus.io/) as a metrics collect
 
 Pomerium Enterprise uses Prometheus to collect observability and monitoring metrics from your Pomerium deployment. To set up Pomerium to work with Prometheus, you must configure either an external or embedded Prometheus instance.
 
-This guide explains what the external and embedded Prometheus options are, and how to configure them.
+This guide explains what the [external](#external-prometheus) and [embedded](#embedded-prometheus) Prometheus options are, and how to configure them.
 
 ## Before you start
 
@@ -40,9 +36,6 @@ metrics_addr: 127.0.0.1:9092
 This setting exposes internal metrics within the Enterprise web console. If not defined, Pomerium will expose `127.0.0.1` on port `:9092` by default.
 
 ## Configure Prometheus
-
-<Tabs>
-<TabItem label="External Prometheus" value="external-prometheus">
 
 ### External Prometheus
 
@@ -98,9 +91,6 @@ For production deployments, we suggest using a dedicated Prometheus instance.
 
    :::
 
-</TabItem>
-<TabItem label="Embedded Prometheus" value="embedded-prometheus">
-
 ### Embedded Prometheus
 
 Pomerium Enterprise supports an embedded Prometheus instance that you configure only in Pomerium. Use this option if you don't want to maintain an external Prometheus instance, or if you're testing metrics.
@@ -116,9 +106,6 @@ prometheus_data_dir: /var/lib/pomerium-console/tsdb
 The directory path can be any location that you have permissions to write to. This example uses the default location created if you install Pomerium Enterprise with the [OS Packages](/docs/enterprise/install#install-pomerium-enterprise) option.
 
 :::
-
-</TabItem>
-</Tabs>
 
 ## Test the configuration
 
