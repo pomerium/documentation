@@ -11,7 +11,7 @@ keywords: [pomerium, pomerium enterprise, telemetry, metrics, prometheus, pomeri
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-Metrics in Pomerium provide observability and monitoring data from your Pomerium deployment. You can use metrics to review traffic and monitor the status of a directory sync in Pomerium Enterprise.
+Metrics in Pomerium provide observability and monitoring data from your Pomerium deployment. Use metrics to review traffic and its effects on your system.
 
 Metrics are available only in Pomerium Zero and Pomerium Enterprise deployments. 
 
@@ -34,7 +34,22 @@ You can view and filter this data in your traffic dashboard to gauge how much de
 
 #### Time range and routes
 
-Pomerium stores traffic metrics up to the last 30 days of usage. You can filter traffic by time range and routes.
+Pomerium stores traffic metrics up to the last 30 days of usage. You can filter traffic by time range and routes. 
+
+The following time ranges are supported:
+
+- Last 30 days
+- Last 2 weeks
+- Last 7 days
+- Last 24 hours
+- Last 12 hours
+- Last 3 hours
+- Last hour
+- Last 15 minutes (Enterprise only)
+
+When filtering by route, select: 
+- **All Routes** to review aggregated traffic metrics across all routes defined in your Pomerium deployment. 
+- an individual route to review aggregated traffic metrics for that route.
 
 <Tabs>
 <TabItem label="Zero" value="zero">
@@ -51,7 +66,7 @@ Pomerium stores traffic metrics up to the last 30 days of usage. You can filter 
 
 ## Metrics in Pomerium Zero
 
-Pomerium Zero collects metrics at the [cluster](/docs/concepts/clusters) level, which includes active replicas. To review the traffic dashboard in Pomerium Zero:
+Pomerium Zero collects traffic metrics at the [cluster](/docs/concepts/clusters) level, which includes active replicas. To review the traffic dashboard in Pomerium Zero:
 
 1. In the left-hand sidebar, select **Reports**.
 1. Select **Traffic**.
@@ -60,7 +75,9 @@ Pomerium Zero collects metrics at the [cluster](/docs/concepts/clusters) level, 
 
 ### Total and Authorized requests
 
-The **Total requests** chart shows the total number of proxied requests. The **Authorized requests** chart shows the total number of requests that Pomerium authorized and forwarded to an upstream service. Both charts display the number of requests for the selected time range compared to the previous time range.   
+The **Total requests** chart shows the total number of proxied requests. The **Authorized requests** chart shows the total number of requests Pomerium authorized and forwarded to an upstream service.
+  
+Both charts display the difference in requests between the selected and previous time ranges.
     ![Displaying the total and authorized requests in Pomerium Zero](./img/metrics/zero-total-and-authorized-requests.png)
 
 The **Authorized Requests** pie chart displays the total number of authorized and denied requests.
@@ -70,7 +87,7 @@ The **Authorized Requests** pie chart displays the total number of authorized an
 
 Request duration measures the amount of time it takes Pomerium to proxy a request in milliseconds. Pomerium Zero provides two request duration charts. 
 
-The first chart sums requests with similar durations and calculates the amount as a percentage value. 
+The first chart organizes requests by duration ranges defined along the x-axis. Pomerium sums the total value of requests within each range and calculates the amount as a percentage value. 
 
 ![A chart displaying request duration in Pomerium Zero](./img/metrics/zero-request-duration.png)
 
@@ -80,7 +97,7 @@ The second chart organizes requests by percentile ranges, date, and time.
 
 ### Requests per second
 
-The **Requests per second** chart calculates the average amount of proxied requests per second over the time span of an hour. Requests are organized by date and time, and categorized by the following response status codes:
+The **Requests per second** chart calculates the average amount of proxied requests per second over the span of an hour. Requests are organized by date and time, and categorized by the following response status codes:
 
 - **200s** (200-299): successful responses  
 - **300s** (300-399): redirection messages
@@ -91,6 +108,12 @@ The **Requests per second** chart calculates the average amount of proxied reque
 
 ### Bytes sent and received
 
-The **Bytes sent** and **Bytes received** charts display the total amount of bytes sent and received over the time spand of an hour.
+The **Bytes sent** and **Bytes received** charts display the average amount of bytes sent and received over the span of an hour.
 
 ![A chart displaying bytes sent and received in Pomerium Zero](./img/metrics/zero-bytes-sent-received.png)
+
+## Metrics in Pomerium Enterprise
+
+In Pomerium Enterprise, you must configure metrics before you can view them.  Metrics are not enabled by default, and are not required to run Pomerium Enterprise. See the **Configure Metrics** guide to learn how to enable metrics in your Enterprise deployment.
+
+To learn more about what metrics are supported in Pomerium Enterprise, see the [Reports](/docs/capabilities/reports) capabilities page.
