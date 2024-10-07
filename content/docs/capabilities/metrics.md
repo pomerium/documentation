@@ -127,7 +127,7 @@ The **Authorized Requests** pie chart displays the total number of authorized an
 
 The **Healthy Upstream Endpoints** graph shows you the number of healthy endpoints over time. A dip in the graph denotes an unhealthy endpoint.
 
-![A graph displaying the number of healthy upsteram endpoints in Pomerium Enterprise](./img/metrics/enterprise-healthy-upstream-endpoints-graph.png)
+![A graph displaying the number of healthy upstream endpoints in Pomerium Enterprise](./img/metrics/enterprise-healthy-upstream-endpoints-graph.png)
 
 </TabItem>
 </Tabs>
