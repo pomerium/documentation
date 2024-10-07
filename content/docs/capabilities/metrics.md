@@ -84,7 +84,7 @@ When you access the Enterprise Console, you'll land on the traffic dashboard. Po
 
 Namespaces follow a hierarchical system. You can view traffic metrics for all namespaces, or a specific namespace, using the namespace dropdown menu. You can filter by:
 
-- Global namespace, which encompasses all namespaces in your deployment.   
+- Global namespace, which encompasses all namespaces in your deployment.
 - Parent namespace, which includes child namespaces (if any).
 - Child namespace, which displays metrics only for that namespace.
 
@@ -113,19 +113,19 @@ The **Authorized Requests** pie chart displays the total number of authorized an
 </TabItem>
 <TabItem value="enterprise" label="Enterprise">
 
-The **Total requests** chart shows the total number of proxied requests. The **Authorized requests** chart shows the total number of requests Pomerium authorized and forwarded to an upstream service. 
+The **Total requests** chart shows the total number of proxied requests. The **Authorized requests** chart shows the total number of requests Pomerium authorized and forwarded to an upstream service.
 
-The **Healthy Endpoints** chart displays the number of healthy upstream endpoints, and roughly correlates with the number of routes defined in your deployment. 
+The **Healthy Endpoints** chart displays the number of healthy upstream endpoints, and roughly correlates with the number of routes defined in your deployment.
 
-For example, if a route's **To** definition includes [multiple upstream resources](/docs/reference/routes/to#target-multiple-upstream-resources), Pomerium includes these resources in the total sum of healthy endpoints. Pomerium excludes unhealthy endpoints from this total. See Load Balancing - [Active Health Checks](/docs/capabilities/load-balancing#active-health-checks) and [Passive Health Checks](/docs/capabilities/load-balancing#passive-health-checks) for more information. 
+For example, if a route's **To** definition includes [multiple upstream resources](/docs/reference/routes/to#target-multiple-upstream-resources), Pomerium includes these resources in the total sum of healthy endpoints. Pomerium excludes unhealthy endpoints from this total. See Load Balancing - [Active Health Checks](/docs/capabilities/load-balancing#active-health-checks) and [Passive Health Checks](/docs/capabilities/load-balancing#passive-health-checks) for more information.
 
 ![Viewing the total and authorized request charts in the Enterprise Console](./img/metrics/enterprise-total-requests.png)
 
 The **Authorized Requests** pie chart displays the total number of authorized and denied requests.
 
-![A pie chart showing the number of authorized and denied requests in Pomerium Enterprise](./img/metrics/enterprise-authorized-requests.png) 
+![A pie chart showing the number of authorized and denied requests in Pomerium Enterprise](./img/metrics/enterprise-authorized-requests.png)
 
-The **Healthy Upstream Endpoints** graph shows you the number of healthy endpoints over time. A dip in the graph denotes an unhealthy endpoint. 
+The **Healthy Upstream Endpoints** graph shows you the number of healthy endpoints over time. A dip in the graph denotes an unhealthy endpoint.
 
 ![A graph displaying the number of healthy upsteram endpoints in Pomerium Enterprise](./img/metrics/enterprise-healthy-upstream-endpoints-graph.png)
 
@@ -258,7 +258,7 @@ In the **Runtime** dashboard, you can monitor how many system resources Pomerium
 In you the **Sessions** dashboard, you can:
 
 - View active sessions.
-- Revoke sessions. 
+- Revoke sessions.
 - Filter by session or user information.
 
 You can also export session data.
