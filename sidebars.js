@@ -170,12 +170,6 @@ const sidebars = {
           label: 'Original User Context',
         },
         {
-          id: 'docs/capabilities/reports',
-          className: 'enterprise',
-          type: 'doc',
-          label: 'Reports',
-        },
-        {
           id: 'docs/capabilities/service-accounts',
           className: 'enterprise',
           type: 'doc',

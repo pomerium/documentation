@@ -65,16 +65,44 @@ When filtering by route, select:
 </TabItem>
 </Tabs>
 
-## Metrics in Pomerium Zero
+## Traffic dashboard
+
+<Tabs>
+<TabItem value="zero" label="Zero">
 
 Pomerium Zero collects traffic metrics at the [cluster](/docs/concepts/clusters) level, which includes active replicas. To review the traffic dashboard in Pomerium Zero:
 
 1. In the left-hand sidebar, select **Reports**.
 1. Select **Traffic**.
 
-   ![Find traffic metrics in Pomerium Zero](./img/metrics/zero-find-traffic-dashboard.png)
+![Find traffic metrics in Pomerium Zero](./img/metrics/zero-find-metrics.gif)
+
+</TabItem>
+<TabItem value="enterprise" label="Enterprise">
+
+When you access the Enterprise Console, you'll land on the traffic dashboard. Pomerium Enterprise organizes traffic metrics in your deployment with [namespaces](/docs/capabilities/namespacing).
+
+Namespaces follow a hierarchical system. You can view traffic metrics for all namespaces, or a specific namespace, using the namespace dropdown menu. You can filter by:
+
+- Global namespace, which encompasses all namespaces in your deployment.   
+- Parent namespace, which includes child namespaces (if any).
+- Child namespace, which displays metrics only for that namespace.
+
+![Selecting a namespace to view its traffic in the Enterprise Console](./img/metrics/enterprise-metrics-namespaces.gif)
+
+:::enterprise
+
+In Pomerium Enterprise, you must configure metrics before you can view them. Metrics are not enabled by default, and are not required to run Pomerium Enterprise. See the **Configure Metrics** guide to enable metrics in your Enterprise deployment.
+
+:::
+
+</TabItem>
+</Tabs>
 
 ### Total and Authorized requests
+
+<Tabs>
+<TabItem value="zero" label="Zero">
 
 The **Total requests** chart shows the total number of proxied requests. The **Authorized requests** chart shows the total number of requests Pomerium authorized and forwarded to an upstream service.
 
@@ -82,9 +110,34 @@ Both charts display the difference in requests between the selected and previous
 
 The **Authorized Requests** pie chart displays the total number of authorized and denied requests. ![A pie chart showing the number of authorized and denied requests in Pomerium Zero](./img/metrics/zero-authorized-and-denied-chart.png)
 
+</TabItem>
+<TabItem value="enterprise" label="Enterprise">
+
+The **Total requests** chart shows the total number of proxied requests. The **Authorized requests** chart shows the total number of requests Pomerium authorized and forwarded to an upstream service. 
+
+The **Healthy Endpoints** chart displays the number of healthy upstream endpoints, and roughly correlates with the number of routes defined in your deployment. 
+
+For example, if a route's **To** definition includes [multiple upstream resources](/docs/reference/routes/to#target-multiple-upstream-resources), Pomerium includes these resources in the total sum of healthy endpoints. Pomerium excludes unhealthy endpoints from this total. See Load Balancing - [Active Health Checks](/docs/capabilities/load-balancing#active-health-checks) and [Passive Health Checks](/docs/capabilities/load-balancing#passive-health-checks) for more information. 
+
+![Viewing the total and authorized request charts in the Enterprise Console](./img/metrics/enterprise-total-requests.png)
+
+The **Authorized Requests** pie chart displays the total number of authorized and denied requests.
+
+![A pie chart showing the number of authorized and denied requests in Pomerium Enterprise](./img/metrics/enterprise-authorized-requests.png) 
+
+The **Healthy Upstream Endpoints** graph shows you the number of healthy endpoints over time. A dip in the graph denotes an unhealthy endpoint. 
+
+![A graph displaying the number of healthy upsteram endpoints in Pomerium Enterprise](./img/metrics/enterprise-healthy-upstream-endpoints-graph.png)
+
+</TabItem>
+</Tabs>
+
 ### Request durations
 
-Request duration measures the amount of time it takes Pomerium to proxy a request in milliseconds. Pomerium Zero provides two request duration charts.
+<Tabs>
+<TabItem value="zero" label="Zero">
+
+Request duration measures the amount of time it takes Pomerium to proxy a request in milliseconds (ms). Pomerium Zero provides two request duration charts:
 
 The first chart organizes requests by duration ranges defined along the x-axis. Pomerium sums the total value of requests within each range and calculates the amount as a percentage value.
 
@@ -94,7 +147,26 @@ The second chart organizes requests by percentile ranges, date, and time.
 
 ![A chart displaying request duration in Pomerium Zero](./img/metrics/zero-request-duration-second-chart.png)
 
-### Requests per second
+</TabItem>
+<TabItem value="enterprise" label="Enterprise">
+
+Request duration measures the amount of time it takes Pomerium to proxy a request in milliseconds (ms). Pomerium Enterprise provides two request duration charts:
+
+The first chart organizes requests by duration ranges defined along the x-axis. Pomerium sums the total value of requests within each range and calculates the amount as a percentage value.
+
+![A chart displaying request duration in Pomerium Enterprise](./img/metrics/enterprise-request-duration.png)
+
+The second chart organizes requests by percentile ranges, date, and time. You can select a specific percentile range to view more granular data in that range:
+
+![A chart displaying request duration with percentile ranges in Enterprise Console](./img/metrics/enterprise-percentile-ranges.gif)
+
+</TabItem>
+</Tabs>
+
+### Requests rate and response codes
+
+<Tabs>
+<TabItem value="zero" label="Zero">
 
 The **Requests per second** chart calculates the average amount of proxied requests per second over the span of an hour. Requests are organized by date and time, and categorized by the following response status codes:
 
@@ -105,14 +177,97 @@ The **Requests per second** chart calculates the average amount of proxied reque
 
 ![A chart displaying requests per second in Pomerium Zero](./img/metrics/zero-requests-per-second.png)
 
-### Bytes sent and received
+</TabItem>
+<TabItem value="enterprise" label="Enterprise">
+
+The **Request Rate** chart calculates the average amount of proxied requests per second over the span of an hour.
+
+![A chart displaying requests per second in Pomerium Enterprise](./img/metrics/enterprise-request-rate.png)
+
+The **Response Codes** chart organizes requests by date and time, and categorizes them with the following response status codes:
+
+- **HTTP 2xx** (200-299): successful responses
+- **HTTP 3xx** (300-399): redirection messages
+- **HTTP 4xx** (400-499): client error responses
+- **HTTP 5xx** (500-599): server error responses
+
+![A response codes chart in Pomerium Enterprise](./img/metrics/enterprise-response-status-codes.gif)
+
+</TabItem>
+</Tabs>
+
+### Bytes sent and received, request size
+
+<Tabs>
+<TabItem value="zero" label="Zero">
 
 The **Bytes sent** and **Bytes received** charts display the average amount of bytes sent and received over the span of an hour.
 
 ![A chart displaying bytes sent and received in Pomerium Zero](./img/metrics/zero-bytes-sent-received.png)
 
-## Metrics in Pomerium Enterprise
+</TabItem>
+<TabItem value="enterprise" label="Enterprise">
 
-In Pomerium Enterprise, you must configure metrics before you can view them. Metrics are not enabled by default, and are not required to run Pomerium Enterprise. See the **Configure Metrics** guide to learn how to enable metrics in your Enterprise deployment.
+The **Request Size** chart organizes requests based on their request size measured in kilobytes (KB).
 
-To learn more about what metrics are supported in Pomerium Enterprise, see the [Reports](/docs/capabilities/reports) capabilities page.
+![A chart displaying response size in Pomerium Enterprise](./img/metrics/enterprise-request-size.png)
+
+</TabItem>
+</Tabs>
+
+## Changesets and Deployments
+
+<Tabs>
+<TabItem label="Zero" value="zero">
+
+From the **Deployments** page, you can review **Changes** and **Changesets** made to your Pomerium Zero configuration. A change represents a single configuration change applied to your cluster. A changeset represents a collection of changes with a respective status. Changeset statuses include:
+
+- **Pending**
+- **Applying**
+- **Applied**
+- **Failed**
+
+Changes can be auto-applied (the default behavior), or applied manually. If you apply changesets manually, you can review pending changes before applying them to your configuration:
+
+![Applying a changeset in Pomerium Zero](./img/metrics/zero-changesets.png)
+
+After you've applied a change or a changeset, you can review them in the Deployments dashboard:
+
+![Reviewing changesets in Pomerium Zero](./img/metrics/zero-deployments-changesets.gif)
+
+</TabItem>
+<TabItem label="Enterprise" value="enterprise">
+
+From the **Deployments** page, administrators can review changes made to their Pomerium configuration.
+
+The default view shows all changes made through Pomerium Enterprise. Use the **COMPARE** button next to an entry to filter to only changes that affected that resource. Select two versions of that resource, then **DIFF** to see what changed:
+
+![A screenshot showing the diff of a change to a route, adding a policy](./img/reports/reports-deployments-diff.png)
+
+</TabItem>
+</Tabs>
+
+## Runtime (Enterprise)
+
+In the **Runtime** dashboard, you can monitor how many system resources Pomerium is consuming. Filter by date range, service, and instance.
+
+![The Runtime Info page in Pomerium Enterprise](./img/metrics/reports-runtime-fullpage.png)
+
+<Tabs>
+<TabItem label="Zero" value="zero">
+</TabItem>
+<TabItem label="Enterprise" value="enterprise">
+</TabItem>
+</Tabs>
+
+## Sessions (Enterprise)
+
+In you the **Sessions** dashboard, you can:
+
+- View active sessions.
+- Revoke sessions. 
+- Filter by session or user information.
+
+You can also export session data.
+
+![The Sessions page in Pomerium Enterprise](./img/metrics/reports-sessions-fullpage.png)
