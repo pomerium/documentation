@@ -253,13 +253,6 @@ In the **Runtime** dashboard, you can monitor how many system resources Pomerium
 
 ![The Runtime Info page in Pomerium Enterprise](./img/metrics/reports-runtime-fullpage.png)
 
-<Tabs>
-<TabItem label="Zero" value="zero">
-</TabItem>
-<TabItem label="Enterprise" value="enterprise">
-</TabItem>
-</Tabs>
-
 ## Sessions (Enterprise)
 
 In you the **Sessions** dashboard, you can:
