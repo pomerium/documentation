@@ -217,7 +217,7 @@ The **Request Size** chart organizes requests based on their request size measur
 </TabItem>
 </Tabs>
 
-## Runtime metrics
+## Runtime dashboard
 
 <Tabs>
 <TabItem value="zero" label="Zero">
