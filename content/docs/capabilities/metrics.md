@@ -13,7 +13,9 @@ import Tabs from '@theme/Tabs'; import TabItem from '@theme/TabItem';
 
 Metrics in Pomerium provide observability and monitoring data from your Pomerium deployment. Use metrics to review traffic and its effects on your system.
 
-Metrics are available only in Pomerium Zero and Pomerium Enterprise deployments.
+Pomerium exposes standard Prometheus metrics related to its operation. 
+Open source users need [configure](/docs/reference/metrics) metrics collection and visualization manually. 
+Pomerium Zero and Pomerium Enterprise have simplified collection and visualization built-in. 
 
 ## Metrics definitions
 
