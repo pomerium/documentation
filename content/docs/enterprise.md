@@ -81,11 +81,11 @@ In the **External Data** dashboard, you can import, view, and manage [external d
 | TCP Support | ![Pomerium checkmark](./enterprise/img/pomerium-checkmark.svg) | ![Pomerium checkmark](./enterprise/img/pomerium-checkmark.svg) |
 | Enterprise Console | <ClearIcon /> | ![Pomerium checkmark](./enterprise/img/pomerium-checkmark.svg) |
 | [Enterprise API](/docs/capabilities/enterprise-api) | <ClearIcon /> | ![Pomerium checkmark](./enterprise/img/pomerium-checkmark.svg) |
-| [Session Management](/docs/capabilities/reports#sessions) | <ClearIcon /> | ![Pomerium checkmark](./enterprise/img/pomerium-checkmark.svg) |
+| [Session Management](/docs/capabilities/metrics#sessions) | <ClearIcon /> | ![Pomerium checkmark](./enterprise/img/pomerium-checkmark.svg) |
 | [Namespaces](/docs/capabilities/namespacing) | <ClearIcon /> | ![Pomerium checkmark](./enterprise/img/pomerium-checkmark.svg) |
 | [Directory Sync](/docs/capabilities/directory-sync) | <ClearIcon /> | ![Pomerium checkmark](./enterprise/img/pomerium-checkmark.svg) |
 | [User Impersonation](/docs/capabilities/impersonation) | <ClearIcon /> | ![Pomerium checkmark](./enterprise/img/pomerium-checkmark.svg) |
-| [Deployment History](/docs/capabilities/reports#deployments) | <ClearIcon /> | ![Pomerium checkmark](./enterprise/img/pomerium-checkmark.svg) |
+| [Deployment History](/docs/capabilities/metrics#changesets-and-deployments) | <ClearIcon /> | ![Pomerium checkmark](./enterprise/img/pomerium-checkmark.svg) |
 | [Device Identity](/docs/capabilities/device-identity) | <ClearIcon /> | ![Pomerium checkmark](./enterprise/img/pomerium-checkmark.svg) |
 | [Custom Branding](/docs/capabilities/branding) | <ClearIcon /> | ![Pomerium checkmark](./enterprise/img/pomerium-checkmark.svg) |
 | [Service Accounts](/docs/capabilities/service-accounts) | <ClearIcon /> | ![Pomerium checkmark](./enterprise/img/pomerium-checkmark.svg) |
