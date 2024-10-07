@@ -59,6 +59,7 @@ const sidebars = {
         'docs/enterprise/quickstart',
         'docs/enterprise/install',
         'docs/enterprise/configure',
+        'docs/enterprise/configure-metrics',
         'docs/enterprise/changelog',
         'docs/enterprise/upgrading',
       ],
