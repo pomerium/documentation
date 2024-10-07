@@ -94,7 +94,7 @@ Namespaces follow a hierarchical system. You can view traffic metrics for all na
 
 :::enterprise
 
-In Pomerium Enterprise, you must configure metrics before you can view them. Metrics are not enabled by default, and are not required to run Pomerium Enterprise. See the **Configure Metrics** guide to enable metrics in your Enterprise deployment.
+In Pomerium Enterprise, you must configure metrics before you can view them. Metrics are not enabled by default, and are not required to run Pomerium Enterprise. See the [Configure Metrics](/docs/enterprise/configure-metrics) guide to enable metrics in your Enterprise deployment.
 
 :::
 
