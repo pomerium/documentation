@@ -100,6 +100,7 @@ const sidebars = {
         },
         'docs/capabilities/hosted-authenticate-service',
         'docs/capabilities/self-hosted-authenticate-service',
+        'docs/capabilities/metrics',
         'docs/capabilities/mtls-clients',
         'docs/capabilities/mtls-services',
         'docs/capabilities/getting-users-identity',
@@ -158,12 +159,6 @@ const sidebars = {
           label: 'High Availability',
         },
         {
-          id: 'docs/capabilities/metrics',
-          className: 'enterprise',
-          type: 'doc',
-          label: 'Metrics',
-        },
-        {
           id: 'docs/capabilities/namespacing',
           className: 'enterprise',
           type: 'doc',
@@ -174,12 +169,6 @@ const sidebars = {
           className: 'enterprise',
           type: 'doc',
           label: 'Original User Context',
-        },
-        {
-          id: 'docs/capabilities/reports',
-          className: 'enterprise',
-          type: 'doc',
-          label: 'Reports',
         },
         {
           id: 'docs/capabilities/service-accounts',
