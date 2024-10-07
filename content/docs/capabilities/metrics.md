@@ -13,9 +13,9 @@ import Tabs from '@theme/Tabs'; import TabItem from '@theme/TabItem';
 
 Metrics in Pomerium provide observability and monitoring data from your Pomerium deployment. Use metrics to review traffic and its effects on your system.
 
-Pomerium exposes standard Prometheus metrics related to its operation. 
-Open source users need [configure](/docs/reference/metrics) metrics collection and visualization manually. 
-Pomerium Zero and Pomerium Enterprise have simplified collection and visualization built-in. 
+Pomerium exposes standard Prometheus metrics related to its operation. Open-source users must [configure](/docs/reference/metrics) metrics collection and visualization manually. 
+
+Pomerium Zero and Pomerium Enterprise provide simplified, built-in metrics collection and visualizations. 
 
 ## Metrics definitions
 
@@ -127,7 +127,7 @@ The **Authorized Requests** pie chart displays the total number of authorized an
 
 ![A pie chart showing the number of authorized and denied requests in Pomerium Enterprise](./img/metrics/enterprise-authorized-requests.png)
 
-The **Healthy Upstream Endpoints** graph shows you the number of healthy endpoints over time. A dip in the graph denotes an unhealthy endpoint.
+The **Healthy Upstream Endpoints** graph shows you the number of healthy endpoints over time. A dip in the graph denotes unhealthy endpoints.
 
 ![A graph displaying the number of healthy upstream endpoints in Pomerium Enterprise](./img/metrics/enterprise-healthy-upstream-endpoints-graph.png)
 
@@ -217,52 +217,19 @@ The **Request Size** chart organizes requests based on their request size measur
 </TabItem>
 </Tabs>
 
-## Changesets and Deployments
+## Runtime
 
 <Tabs>
-<TabItem label="Zero" value="zero">
+<TabItem value="zero" label="Zero">
 
-From the **Deployments** page, you can review **Changes** and **Changesets** made to your Pomerium Zero configuration. A change represents a single configuration change applied to your cluster. A changeset represents a collection of changes with a respective status. Changeset statuses include:
-
-- **Pending**
-- **Applying**
-- **Applied**
-- **Failed**
-
-Changes can be auto-applied (the default behavior), or applied manually. If you apply changesets manually, you can review pending changes before applying them to your configuration:
-
-![Applying a changeset in Pomerium Zero](./img/metrics/zero-changesets.png)
-
-After you've applied a change or a changeset, you can review them in the Deployments dashboard:
-
-![Reviewing changesets in Pomerium Zero](./img/metrics/zero-deployments-changesets.gif)
+Runtime metrics are not supported in Pomerium Zero.
 
 </TabItem>
-<TabItem label="Enterprise" value="enterprise">
-
-From the **Deployments** page, administrators can review changes made to their Pomerium configuration.
-
-The default view shows all changes made through Pomerium Enterprise. Use the **COMPARE** button next to an entry to filter to only changes that affected that resource. Select two versions of that resource, then **DIFF** to see what changed:
-
-![A screenshot showing the diff of a change to a route, adding a policy](./img/reports/reports-deployments-diff.png)
-
-</TabItem>
-</Tabs>
-
-## Runtime (Enterprise)
+<TabItem value="enterprise" label="Enterprise">
 
 In the **Runtime** dashboard, you can monitor how many system resources Pomerium is consuming. Filter by date range, service, and instance.
 
 ![The Runtime Info page in Pomerium Enterprise](./img/metrics/reports-runtime-fullpage.png)
 
-## Sessions (Enterprise)
-
-In you the **Sessions** dashboard, you can:
-
-- View active sessions.
-- Revoke sessions.
-- Filter by session or user information.
-
-You can also export session data.
-
-![The Sessions page in Pomerium Enterprise](./img/metrics/reports-sessions-fullpage.png)
+</TabItem>
+</Tabs>
