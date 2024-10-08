@@ -25,7 +25,9 @@ You can set also set [route-level timeouts](/docs/reference/routes/timeouts).
 
 ## Read Timeout
 
-**Read Timeout** sets the maximum amount of time for the client to receive an entire HTTP request stream.
+**Read Timeout** sets the maximum amount of time for a downstream client to complete a single HTTP request. The time starts when a request is begun and ends either when Pomerium has proxied the entire request body to the upstream service, or when Pomerium has begun sending a response back to the client.
+
+This timeout is disabled if set to `0`. (This is not recommended, as a malicious client could consume significant resources by beginning many incomplete requests.)
 
 ### How to configure
 
@@ -34,7 +36,7 @@ You can set also set [route-level timeouts](/docs/reference/routes/timeouts).
 
 | **Config file keys** | **Environment variables** | **Type** | **Default** |
 | :-- | :-- | :-- | :-- |
-| `timeout_read` | `TIMEOUT_READ` | `string` ([Go Duration](https://golang.org/pkg/time/#Duration.String) formatting) | `30s` |
+| `timeout_read` | `TIMEOUT_READ` | [Go Duration] string | `30s` |
 
 ### Examples
 
@@ -56,7 +58,7 @@ Set **Global Timeouts** in the Console: ![Global timeouts in Console](./img/time
 
 | **[Parameter name](/docs/k8s/reference#timeouts)** | **Type** | **Defaults** |
 | :-- | :-- | :-- |
-| `timeouts.read` | `string` ([Go Duration](https://golang.org/pkg/time/#Duration.String) formatting) | `30s` |
+| `timeouts.read` | [Go Duration] string | `30s` |
 
 ### Examples
 
@@ -70,7 +72,9 @@ timeouts:
 
 ## Write Timeout
 
-**Write Timeout** sets the maximum time that a stream’s lifetime will span. An HTTP request/response exchange fully consumes a single stream. So, the `write_timeout` value must be greater than `read_timeout`, as it covers both the HTTP request and response time.
+**Write Timeout** sets the maximum time for a single HTTP request/response pair to fully complete. This should be greater than the [**Read Timeout**](#read-timeout) setting as this includes both the request and response time.
+
+This timeout is disabled if set to `0`.
 
 ### How to configure
 
@@ -79,7 +83,7 @@ timeouts:
 
 | **Config file keys** | **Environment variables** | **Type** | **Default** |
 | :-- | :-- | :-- | :-- |
-| `timeout_write` | `TIMEOUT_WRITE` | `string` ([Go Duration](https://golang.org/pkg/time/#Duration.String) formatting) | `0` |
+| `timeout_write` | `TIMEOUT_WRITE` | [Go Duration] string | `0` (no timeout) |
 
 ### Examples
 
@@ -101,7 +105,7 @@ Set **Global Timeouts** in the Console: ![Global timeouts in Console](./img/time
 
 | **[Parameter name](/docs/k8s/reference#timeouts)** | **Type** | **Default** |
 | :-- | :-- | :-- |
-| `timeouts.write` | `string` ([Go Duration](https://golang.org/pkg/time/#Duration.String) formatting) | `0` |
+| `timeouts.write` | [Go Duration] string | `0` (no timeout) |
 
 ### Examples
 
@@ -115,7 +119,9 @@ timeouts:
 
 ## Idle Timeout
 
-**Idle Timeout** sets the time at which an upstream or downstream connection will be terminated if there are no active streams.
+**Idle Timeout** sets the time at which an upstream or downstream connection will be terminated if there are no active requests/responses.
+
+This timeout is disabled if set to `0`.
 
 ### How to configure
 
@@ -124,7 +130,7 @@ timeouts:
 
 | **Config file keys** | **Environment variables** | **Type** | **Default** |
 | :-- | :-- | :-- | :-- |
-| `timeout_idle` | `TIMEOUT_IDLE` | `string` ([Go Duration](https://golang.org/pkg/time/#Duration.String) formatting) | `5m` |
+| `timeout_idle` | `TIMEOUT_IDLE` | [Go Duration] string | `5m` |
 
 ### Examples
 
@@ -146,7 +152,7 @@ Set **Global Timeouts** in the Console: ![Global timeouts in Console](./img/time
 
 | **[Parameter name](/docs/k8s/reference#timeouts)** | **Type** | **Default** |
 | :-- | :-- | :-- |
-| `timeouts.idle` | `string` ([Go Duration](https://golang.org/pkg/time/#Duration.String) formatting) | `5m` |
+| `timeouts.idle` | [Go Duration] string | `5m` |
 
 ### Examples
 
@@ -157,3 +163,5 @@ timeouts:
 
 </TabItem>
 </Tabs>
+
+[Go Duration]: https://golang.org/pkg/time/#Duration.String
