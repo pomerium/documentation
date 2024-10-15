@@ -1,4 +1,5 @@
 ---
+# cSpell:ignore freebind
 id: import
 title: Import Core config to Pomerium Zero
 sidebar_label: Core to Zero Import
