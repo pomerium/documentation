@@ -6,6 +6,9 @@ sidebar_label: Core to Zero Import
 description: Learn how to import an existing Pomerium Core configuration into a Pomerium Zero cluster.
 ---
 
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
 Learn how to import your existing open-source Pomerium Core configuration to Pomerium Zero.
 
 ## Overview
@@ -45,7 +48,27 @@ The Core to Zero import feature supports Core configurations running in Linux, K
 
 :::
 
-### Create a new cluster
+<Tabs>
+<TabItem label="Zero Onboarding" value="zero-onboarding">
+
+If you just signed up for Pomerium Zero, you can import an existing configuration when you onboard.
+
+In the Zero onbarding screen:
+
+1. Select **Docker**.
+1. Select the **Import an Existing Configuration** button.
+1. Enter the Docker container name or ID with the configuration you want to import.
+
+   If the Docker name or ID is incorrect, run `docker ps` to see details about your containers. Find the name of the `pomerium/pomerium` container and enter it as the Pomerium container name.
+
+1. Copy the generated Docker command.
+
+   ![Copying the generated import command for Docker a installation](./img/core-to-zero/zero-onboarding-import-ui.png)
+
+</TabItem>
+<TabItem label="New Cluster" value="new-cluster">
+
+If you already have a Pomerium Zero account, you must create a new cluster to import your existing configuration.
 
 In the Zero UI:
 
@@ -69,6 +92,9 @@ In the **Connect Cluster** screen:
 4. Copy the generated Docker command.
 
    ![Copying the generated import command for Docker a installation](./img/core-to-zero/docker-import-command.png)
+
+</TabItem>
+</Tabs>
 
 ### Run the import CLI command
 
