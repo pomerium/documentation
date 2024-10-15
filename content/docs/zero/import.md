@@ -1,5 +1,5 @@
 ---
-id: core-to-zero
+id: import
 title: Import Core config to Pomerium Zero
 sidebar_label: Core to Zero Import
 description: Learn how to import an existing Pomerium Core configuration into a Pomerium Zero cluster.
