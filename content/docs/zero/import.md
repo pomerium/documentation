@@ -12,13 +12,13 @@ Learn how to import your existing open-source Pomerium Core configuration to Pom
 
 The **Core to Zero** import feature enables you to import an existing Pomerium Core configuration into a Pomerium Zero cluster with a simple CLI command. A successful import:
 
-- converts entities in Core to Pomerium Zero.
-- removes duplicate policies from the configuration.
-- prevents partial imports with quota checks.
+- Converts entities in Core to Pomerium Zero
+- Removes duplicate policies from the configuration
+- Prevents partial imports with quota checks
 
 ## Who is this for?
 
-The Core to Zero import feature is for users that want to use Pomerium Zero with their existing Pomerium Core configuration. Without the import capability, you’d have to manually configure each route, policy, certificate, and config setting in Pomerium Zero.
+The Core to Zero import feature enables you to migrate an existing Pomerium Core configuration into a Pomerium Zero cluster. Without the import capability, you’d have to manually configure each route, policy, certificate, and config setting in Pomerium Zero.
 
 This feature automates the process of importing your existing configuration so you don’t have to.
 
@@ -27,38 +27,6 @@ This feature automates the process of importing your existing configuration so y
 - **Entity:** any route, policy, certificate, or self-hosted domain defined in a Pomerium configuration.
 - **Replica:** a separate Pomerium configuration that shares a storage backend with other replicas running in the same deployment.
 - **Quota:** the amount of entities and replicas you can define in a cluster for free.
-
-## Supported settings
-
-Some settings available in Pomerium Core are not supported in Pomerium Zero. If unsupported settings are detected during an import, Pomerium will either remove them to complete the import or abort the import process.
-
-The table below lists unsupported settings, and which settings cause an import failure:
-
-| Unsupported config settings         | Fails import? |
-| ----------------------------------- | ------------- |
-| `authenticate_internal_service_url` | Yes           |
-| `authorize_internal_service_url`    | Yes           |
-| `databroker_internal_service_url`   | Yes           |
-| `derive_tls`                        | Yes           |
-| `audit_key`                         | No            |
-| `primary_color`                     | No            |
-| `secondary_color`                   | No            |
-| `darkmode_primary_color`            | No            |
-| `darkmode_secondary_color`          | No            |
-| `logo_url`                          | No            |
-| `favicon_url`                       | No            |
-| `error_message_first_paragraph`     | No            |
-| `use_proxy_protocol`                | No            |
-| `envoy_bind_config_freebind`        | No            |
-| `envoy_bind_config_source_address`  | No            |
-| `metrics_certificate`               | No            |
-| `metrics_client_ca`                 | No            |
-
-## Quotas
-
-When importing your Core configuration, the number of existing entities or replicas may exceed the personal account quotas in Pomerium Zero.
-
-To accommodate Core configurations with lots of entities or multiple replicas, we temporarily increase quotas during the import process. This exception prevents partial configuration imports.
 
 ## How to import your Core configuration
 
@@ -73,7 +41,7 @@ To complete this guide, you need a:
 
 :::note
 
-This guide assumes Docker as the deployment environment.
+The Core to Zero import feature supports Core configurations running in Linux, Kubernetes, Docker, or a manual setup. This guide assumes Docker as the deployment environment.
 
 :::
 
@@ -123,3 +91,37 @@ Open your Docker project. In the integrated terminal:
 1. Select **Finish**.
 
 Check your cluster for the imported configuration.
+
+## Additional resources
+
+### Supported settings
+
+Some settings available in Pomerium Core are not supported in Pomerium Zero. If unsupported settings are detected during an import, Pomerium will either remove them to complete the import or abort the import process.
+
+The table below lists unsupported settings, and which settings cause an import failure:
+
+| Unsupported config settings         | Fails import? |
+| ----------------------------------- | ------------- |
+| `authenticate_internal_service_url` | Yes           |
+| `authorize_internal_service_url`    | Yes           |
+| `databroker_internal_service_url`   | Yes           |
+| `derive_tls`                        | Yes           |
+| `audit_key`                         | No            |
+| `primary_color`                     | No            |
+| `secondary_color`                   | No            |
+| `darkmode_primary_color`            | No            |
+| `darkmode_secondary_color`          | No            |
+| `logo_url`                          | No            |
+| `favicon_url`                       | No            |
+| `error_message_first_paragraph`     | No            |
+| `use_proxy_protocol`                | No            |
+| `envoy_bind_config_freebind`        | No            |
+| `envoy_bind_config_source_address`  | No            |
+| `metrics_certificate`               | No            |
+| `metrics_client_ca`                 | No            |
+
+### Quotas
+
+When importing your Core configuration, the number of existing entities or replicas may exceed the personal account quotas in Pomerium Zero.
+
+To accommodate Core configurations with lots of entities or multiple replicas, we temporarily increase quotas during the import process. This exception prevents partial configuration imports.
