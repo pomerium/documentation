@@ -286,10 +286,6 @@ const sidebars = {
             },
             {
               type: 'doc',
-              id: 'docs/guides/code-server',
-            },
-            {
-              type: 'doc',
               id: 'docs/guides/gitlab',
             },
             {
