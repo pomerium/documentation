@@ -19,6 +19,30 @@ This reference covers all of Pomerium's **Path Rewriting Settings**:
 - [Regex Rewrite Pattern](#regex-rewrite)
 - [Regex Rewrite Substitution](#regex-rewrite)
 
+:::caution
+
+These settings affect only the _requests_ sent to an upstream service. Pomerium will not rewrite responses from an upstream service based on these settings. This includes any link URLs or paths to JavaScript or CSS assets.
+
+In general, if you want to expose an upstream service under some URL path prefix, you will _also_ need to configure the service so it is aware of this path prefix. Otherwise, absolute URLs in the response may be incorrect and the service may not function correctly.
+
+<details>
+<summary>Example: Grafana</summary>
+
+If you host a Grafana instance at `https://example.com/grafana/`, using a Pomerium route with the following settings:
+
+```
+  prefix: /grafana/
+  prefix_rewrite: /
+```
+
+then you will also need to configure Grafana with its [`root_url`](https://grafana.com/docs/grafana/latest/setup-grafana/configure-grafana/#root_url) option set to `https://example.com/grafana/`.
+
+(The specific configuration options will vary from service to service. You will need to consult the documentation for your particular service.)
+
+</details>
+
+:::
+
 ## Prefix Rewrite {#prefix-rewrite}
 
 If set, **Prefix Rewrite** indicates that during forwarding, the matched prefix (or path) should be swapped with this value.
