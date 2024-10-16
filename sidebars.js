@@ -373,6 +373,11 @@ const sidebars = {
             },
             {
               type: 'doc',
+              id: 'docs/integrations/fleet',
+              className: 'enterprise',
+            },
+            {
+              type: 'doc',
               id: 'docs/integrations/geoip',
               className: 'enterprise',
             },
