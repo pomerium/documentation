@@ -5,9 +5,7 @@ sidebar_label: FleetDM
 description: Learn how to integrate FleetDM with Pomerium Enterprise.
 ---
 
-## FleetDM Integration
-
-FleetDM provides an open-source, scalable device management (MDM) solution that supports all major operating systems and devices, including iPads, iPhones, and Chromebooks.
+FleetDM provides an open-source, scalable device management (MDM) solution that supports all major operating systems, including macOS, Linux, and Windows.
 
 The FleetDM integration with Pomerium Enterprise enables you to build policies in Pomerium that express Fleet conditions as Pomerium policy language (PPL).
 
@@ -36,92 +34,11 @@ Pomerium matches an incoming request with a Fleet-managed host by requiring the 
 
 Pomerium receives the client certificate, generates its SHA-1 fingerprint, and matches it with the host ID stored in the FleetDM plugin.
 
-### Host data
-
 Using the host ID, Pomerium can periodically fetch [host](https://fleetdm.com/docs/rest-api/rest-api#example33) data from Fleet. The host data provides an updated [report](https://fleetdm.com/docs/rest-api/rest-api#get-query-report) of a host’s state, including its compliance to Fleet policies and vulnerability status.
 
-<details>
-  <summary>Example host response:</summary>
-  <div>
-    ```
-        {
-          "host":
-          {
-            ...
-          "software": [
-              {
-                "id": 408,
-                "name": "osquery",
-                "version": "4.5.1",
-                "source": "rpm_packages",
-                "browser": "",
-                "generated_cpe": "",
-                "vulnerabilities": null,
-                "installed_paths": ["/usr/lib/some-path-1"]
-              },
-              {
-                "id": 1146,
-                "name": "tar",
-                "version": "1.30",
-                "source": "rpm_packages",
-                "browser": "",
-                "generated_cpe": "",
-                "vulnerabilities": null
-              },
-              {
-                "id": 321,
-                "name": "SomeApp.app",
-                "version": "1.0",
-                "source": "apps",
-                "browser": "",
-                "bundle_identifier": "com.some.app",
-                "last_opened_at": "2021-08-18T21:14:00Z",
-                "generated_cpe": "",
-                "vulnerabilities": null,
-                "installed_paths": ["/usr/lib/some-path-2"]
-              }
-              ...
-          "policies": [
-              {
-                "id": 2,
-                "name": "SomeQuery2",
-                "query": "SELECT * FROM bar;",
-                "description": "this is another query",
-                "resolution": "fix with these other steps...",
-                "platform": "darwin",
-                "response": "fail",
-                "critical": false
-              },
-              {
-                "id": 3,
-                "name": "SomeQuery3",
-                "query": "SELECT * FROM baz;",
-                "description": "",
-                "resolution": "",
-                "platform": "",
-                "response": "",
-                "critical": false
-              },
-              {
-                "id": 1,
-                "name": "SomeQuery",
-                "query": "SELECT * FROM foo;",
-                "description": "this is a query",
-                "resolution": "fix with these steps...",
-                "platform": "windows,linux",
-                "response": "pass",
-                "critical": false
-              }
-            ],
-            ...
-        }
-    ```
-  </div>
-</details>
+### FleetDM PPL criteria
 
-### FleetDM matcher and PPL criteria
-
-Pomerium provides a custom FleetDM matcher, which is an object that uses operators as keys. The matcher points to records collected from the FleetDM plugin.
+Pomerium provides a custom FleetDM criterion that points to records collected from the FleetDM plugin.
 
 Custom FleetDM operators enable you to build policies that enforce Fleet conditions. Only [deny](/docs/capabilities/ppl#actions) actions are supported.
 
@@ -137,11 +54,7 @@ Custom FleetDM operators include:
 
 ## Configure the FleetDM plugin
 
-This guide shows you how to:
-
-- Deploy a Fleet instance.
-- Configure the FleetDM plugin in Pomerium Enterprise.
-- Create authorization policies in Pomerium with FleetDM criteria.
+This guide shows you how to configure Fleet to work with the FleetDM plugin in Pomerium Enterprise. After integrating the plugin, you'll build authorization policies in the PPL builder with custom FleetDM criteria.
 
 To complete this guide, you need:
 
@@ -149,27 +62,25 @@ To complete this guide, you need:
 - [Pomerium Core](https://www.pomerium.com/docs/core)
 - A deployed [Fleet instance](https://github.com/fleetdm/fleet/tree/main/infrastructure/render)
 - A configured certificate authority (CA) and client certificate
-- An environment to install a Fleet agent
+- A test environment to install a Fleet agent
 
-:::note
+:::note Before you start
 
-For the purposes of this guide, we recommend installing the Fleet agent in a VM running macOS. You can install and run a macOS VM for free with Tart. See the [Tart Quickstart](https://tart.run/quick-start/) for more information.
+For the purposes of this guide, we recommend that you:
+
+- Install the Fleet agent in a VM running macOS. You can install and run a macOS VM for free with Tart. See the [**Tart Quickstart**](https://tart.run/quick-start/) for more information.
+
+- Use locally trusted certificates to test this implementation. This guide uses [**mkcert**](https://github.com/FiloSottile/mkcert) to install a local CA that issues self-signed client certificates. However, this option is **not suitable for production environments**.
+
+Lastly, this is not a production configuration. A production configuration requires a private CA integration with FleetDM, which is out of scope for this guide.
 
 :::
 
-### Configure FleetDM
+### Enroll a host
 
-To quickly set up FleetDM, see the [Fleet deployment guide](https://github.com/fleetdm/fleet/tree/main/infrastructure/render). After you deploy a Fleet instance, you should have the following services:
-
-- Fleet web service
-- Fleet MySQL database
-- Fleet Redis service
-
-Fleet provides a URL to access the dashboard of your Fleet instance:
+After you [deploy Fleet](https://github.com/fleetdm/fleet/tree/main/infrastructure/render), you can access the Fleet dashboard. This is where you can enroll and manage hosts, build queries, and more.
 
 ![The FleetDM dashboard and management web console](./img/fleet/fleet-dashboard.png)
-
-### Enroll a host
 
 Fleet [gathers host information](https://fleetdm.com/guides/enroll-hosts) by installing an [osquery](https://github.com/osquery/osquery) agent (”Fleet agent”) on each host.
 
@@ -200,11 +111,17 @@ To enroll a host, download the Fleet agent:
 
    ![Reviewing the enrolled host in the Fleet dashboard](./img/fleet/fleet-enrolled-host-vm.png)
 
-1. Lastly, install the CA bundle, which includes the client certificate, on the VM where you installed the Fleet agent.
+1. Install your client certificate on the VM where you installed the Fleet agent (see the mkcert [Advanced options](https://github.com/FiloSottile/mkcert?tab=readme-ov-file#advanced-options) if you don't know how to generate a client certificate). Once you've installed the client certificate, you must import it into the VM's local Keychain.
+
+   To import the client certificate, run the [security import](https://ss64.com/mac/security.html) command below inside the VM. Make sure you replace the `client-cert-location` parameter with the location of the client certificate in the VM.
+
+    ```bash
+    security import <client-cert-location>  -A -P changeit -k ~/Library/Keychains/login.keychain-db
+    ```
 
 ### Configure certificate query
 
-Fleet agents provide a [certificates](https://fleetdm.com/tables/certificates) query that scans a device’s local key store for installed CA bundles. This query exposes certificates data, including the client certificate SHA-1 fingerprint installed on an enrolled host.
+Fleet agents provide a [certificates](https://fleetdm.com/tables/certificates) query that scans a device’s local key store for installed certificates. This query exposes certificates data, including the client certificate SHA-1 fingerprint installed on an enrolled host.
 
 To configure the certificate query, in the Fleet dashboard:
 
