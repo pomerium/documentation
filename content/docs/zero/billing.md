@@ -2,14 +2,22 @@
 title: Billing in Pomerium Zero
 sidebar_label: Billing
 description: Learn how manage subscriptions and billing in Pomerium Zero.
-keywords: [billing, organizations, personal account, professional, organization, subscription]
+keywords:
+  [
+    billing,
+    organizations,
+    personal account,
+    professional,
+    organization,
+    subscription,
+  ]
 ---
 
-Learn how billing works in Pomerium Zero. 
+Learn how billing works in Pomerium Zero.
 
 ## Overview
 
-Pomerium Zero provides a self-service billing dashboard where you can manage your subscription and payment information. Billing applies only to **Professional** organizations, not **Personal** **Account** organizations. You can upgrade your account at any time. 
+Pomerium Zero provides a self-service billing dashboard where you can manage your subscription and payment information. Billing applies only to **Professional** organizations, not **Personal** **Account** organizations. You can upgrade your account at any time.
 
 - For questions about billing, see [**How billing works.**](#how-billing-works)
 - For questions about upgrading or downgrading subscriptions, see [**Manage subscriptions**](#manage-subscriptions).
@@ -26,7 +34,7 @@ Pomerium Zero assigns accounts to organizations. There are two types of organiza
 - **Personal Account**
 - **Professional**
 
-A Personal Account organization (”personal account”) is assigned to you by default when you register for an account. 
+A Personal Account organization (”personal account”) is assigned to you by default when you register for an account.
 
 A Professional organization is available only if you upgrade from a **Free** plan to a **Business** plan.
 
@@ -37,13 +45,13 @@ Pomerium Zero provides two types of plans:
 - **Free**
 - **Business**
 
-A Free plan is intended for testing purposes, hobbyists, and small teams. Personal accounts subscribe to the Free plan by default. 
+A Free plan is intended for testing purposes, hobbyists, and small teams. Personal accounts subscribe to the Free plan by default.
 
 A Business plan is designed for large teams. Professional organizations subscribe to the Business plan.
 
 ### Quotas
 
-Personal and professional organizations are allocated different quotas. Personal accounts have lower quotas, and professional organizations have much higher quotas. 
+Personal and professional organizations are allocated different quotas. Personal accounts have lower quotas, and professional organizations have much higher quotas.
 
 The table below breaks down quotas by organization type:
 
@@ -60,10 +68,10 @@ The table below breaks down quotas by organization type:
 
 User quotas differ also based on the organization type:
 
-| User Type | Personal account | Professional org |
-| --- | --- | --- |
-| Admin users | 1 | 20 |
-| Users | 10 | 1,000 |
+| User Type   | Personal account | Professional org |
+| ----------- | ---------------- | ---------------- |
+| Admin users | 1                | 20               |
+| Users       | 10               | 1,000            |
 
 :::note
 
@@ -73,17 +81,17 @@ See the [Pricing page](https://www.pomerium.com/pricing) for a thorough breakdow
 
 ### Quota thresholds
 
-At some point, you may require higher quotas to accommodate your use case. 
+At some point, you may require higher quotas to accommodate your use case.
 
 If you’re using a professional account and you need to increase the quota for a given entity, [contact us](/docs/community). We will increase quotas on an as-needed basis.
 
-If you’re using a personal account, you must upgrade to increase quotas. 
+If you’re using a personal account, you must upgrade to increase quotas.
 
 ## How billing works
 
-Pomerium charges your account monthly based on usage during a billing period. The billing period starts at the beginning of a calendar month and ends at the end of the month. 
+Pomerium charges your account monthly based on usage during a billing period. The billing period starts at the beginning of a calendar month and ends at the end of the month.
 
-Pomerium starts monitoring your usage when you upgrade and charges you for total usage at the end of the billing period. 
+Pomerium starts monitoring your usage when you upgrade and charges you for total usage at the end of the billing period.
 
 ### Usage
 
@@ -92,13 +100,13 @@ When you upgrade, you can choose a monthly or annual rate:
 - $9 per user/month (billed monthly)
 - $7 per user/month (billed annually)
 
-Pomerium calculates usage based on the total number of monthly active users (MAU) during a billing period. An “active user” includes Pomerium Zero users and Pomerium Core users. 
+Pomerium calculates usage based on the total number of monthly active users (MAU) during a billing period. An “active user” includes Pomerium Zero users and Pomerium Core users.
 
 :::info How Pomerium counts unique users
 
-An admin user signing into the Zero dashboard counts as a user in Pomerium Zero. Any user accessing a Pomerium-managed route counts as a user in Pomerium Core. 
+An admin user signing into the Zero dashboard counts as a user in Pomerium Zero. Any user accessing a Pomerium-managed route counts as a user in Pomerium Core.
 
-If a user in Zero and Core shares the same user ID, it counts as one user. 
+If a user in Zero and Core shares the same user ID, it counts as one user.
 
 :::
 
@@ -112,7 +120,7 @@ Billing rate = $7
 
 Usage x Billing rate = $1,400
 
-Based on usage, your monthly invoice would be $1,400. 
+Based on usage, your monthly invoice would be $1,400.
 
 :::tip
 
@@ -124,7 +132,7 @@ You can monitor MAU in the **Usage** dashboard in Pomerium Zero:
 
 ## Manage subscriptions
 
-You can manage subscriptions in the Zero billing dashboard. 
+You can manage subscriptions in the Zero billing dashboard.
 
 To get to the billing dashboard:
 
@@ -133,7 +141,7 @@ To get to the billing dashboard:
 1. In the **Organization Settings** page, select the **Billing** tab.
 1. Select **Manage Subscription**.
 
-From here, you can: 
+From here, you can:
 
 - [Upgrade your subscription](#upgrade-subscription) to a Business plan.
 - [Downgrade your subscription](#downgrade-subscription) back to a Free plan.
@@ -149,16 +157,16 @@ To upgrade your account in Pomerium Zero, you must exceed a quota. When you do, 
 
 Alternatively, you can upgrade your subscription on the [Pricing](https://www.pomerium.com/pricing) page.
 
-Upgrading does not replace your personal account. It creates an additional professional organization separate from your personal account. 
+Upgrading does not replace your personal account. It creates an additional professional organization separate from your personal account.
 
 ![Selecting the organization dropdown menu in the Zero navigation bar](./img/billing/billing-org-dropdown.png)
 
 ### Downgrade subscription
 
-You can downgrade your subscription from a Business plan to a Free plan. If you do, you’ll be charged at the end of the billing period for any usage up to the time you downgraded.  
+You can downgrade your subscription from a Business plan to a Free plan. If you do, you’ll be charged at the end of the billing period for any usage up to the time you downgraded.
 
 ### Missed payments
 
-If you can’t pay your bill for any reason, your subscription will lapse and Pomerium Zero will switch into read-only mode. In read-only mode, your clusters will continue to work, but you won’t be able to make changes to your configuration. 
+If you can’t pay your bill for any reason, your subscription will lapse and Pomerium Zero will switch into read-only mode. In read-only mode, your clusters will continue to work, but you won’t be able to make changes to your configuration.
 
 When Pomerium receives full payment for any outstanding bills under your account, you can resume using Pomerium Zero as normal.
