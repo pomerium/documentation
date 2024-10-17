@@ -24,30 +24,22 @@ Pomerium Zero provides a self-service billing dashboard where you can manage you
 
 ## Billing definitions
 
-- **Quota**: the amount of a given entity you can define in Pomerium Zero based on your subscription type.
-- **Entity**: a route, policy, certificate, service account, custom domain, API user, replica, or cluster.
+- **Quota**: the amount of a given entity you can define in Pomerium Zero based on your subscription type
+- **Entity**: a route, policy, certificate, service account, custom domain, API user, replica, or cluster
 
 ## Organizations
 
 Pomerium Zero assigns accounts to organizations. There are two types of organizations:
 
-- **Personal Account**
-- **Professional**
-
-A Personal Account organization (”personal account”) is assigned to you by default when you register for an account.
-
-A Professional organization is available only if you upgrade from a **Free** plan to a **Business** plan.
+- **Personal Account**: assigned to you by default when you register for an account
+- **Professional**: available only if you upgrade from a **Free** plan to a **Business** plan
 
 ### Plans and subscriptions
 
 Pomerium Zero provides two types of plans:
 
-- **Free**
-- **Business**
-
-A Free plan is intended for testing purposes, hobbyists, and small teams. Personal accounts subscribe to the Free plan by default.
-
-A Business plan is designed for large teams. Professional organizations subscribe to the Business plan.
+- **Free**: intended for testing purposes, hobbyists, and small teams. Personal accounts subscribe to the Free plan by default.
+- **Business**: intended for large teams. Professional organizations subscribe to the Business plan.
 
 ### Quotas
 
@@ -144,7 +136,7 @@ To get to the billing dashboard:
 From here, you can:
 
 - [Upgrade your subscription](#upgrade-subscription) to a Business plan.
-- [Downgrade your subscription](#downgrade-subscription) back to a Free plan.
+- [Downgrade your subscription](#downgrade-subscription) to a Free plan.
 - Review your payment information and billing history.
 
 ### Upgrade subscription
