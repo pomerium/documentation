@@ -81,7 +81,7 @@ If you’re using a personal account, you must upgrade to increase quotas.
 
 ## How billing works
 
-Pomerium charges your account monthly based on usage during a billing period. The billing period starts at the beginning of a calendar month and ends at the end of the month.
+Pomerium charges your account monthly based on usage during a billing period. The billing period starts the day you sign up and ends the same day the next month (or, if that's not not possible, the last day of the month closest to the anchor date).
 
 Pomerium starts monitoring your usage when you upgrade and charges you for total usage at the end of the billing period.
 
