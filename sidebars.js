@@ -373,7 +373,7 @@ const sidebars = {
             },
             {
               type: 'doc',
-              id: 'docs/integrations/fleet',
+              id: 'docs/integrations/fleetdm',
               className: 'enterprise',
             },
             {
