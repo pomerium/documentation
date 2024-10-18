@@ -1,4 +1,4 @@
-```yaml title=config.yaml
+```yaml title="config.yaml"
 idp_provider: REPLACE_ME
 idp_provider_url: REPLACE_ME
 idp_client_id: REPLACE_ME
