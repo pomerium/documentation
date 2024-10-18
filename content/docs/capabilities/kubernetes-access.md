@@ -60,5 +60,6 @@ kubectl config set-cluster via-pomerium --server=https://mycluster.pomerium.io
 kubectl config set-context via-pomerium --user=via-pomerium --cluster=via-pomerium
 # Add credentials command
 kubectl config set-credentials via-pomerium --exec-command=pomerium-cli \
-  --exec-arg=k8s,exec-credential,https://mycluster.pomerium.io
+  --exec-arg=k8s,exec-credential,https://mycluster.pomerium.io \
+  --exec-api-version=client.authentication.k8s.io/v1beta1
 ```
