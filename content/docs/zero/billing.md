@@ -81,16 +81,11 @@ If you’re using a personal account, you must upgrade to increase quotas.
 
 ## How billing works
 
-Pomerium charges your account monthly based on usage during a billing period. The billing period starts the day you sign up and ends the same day the next month (or, if that's not not possible, the last day of the month closest to the anchor date).
+Pomerium charges your account monthly based on usage during a billing period. The billing period starts the day you sign up and ends the same day the next month (or, if that's not possible, the last day of the month closest to the anchor date).
 
 Pomerium starts monitoring your usage when you upgrade and charges you for total usage at the end of the billing period.
 
 ### Usage
-
-When you upgrade, you can choose a monthly or annual rate:
-
-- $9 per user/month (billed monthly)
-- $7 per user/month (billed annually)
 
 Pomerium calculates usage based on the total number of monthly active users (MAU) during a billing period. An “active user” includes Pomerium Zero users and Pomerium Core users.
 
@@ -106,13 +101,13 @@ Pomerium reports active users daily. At the end of the billing period, Pomerium 
 
 For example:
 
-Usage = 200 MAU
+- Usage = 200 MAU
 
-Billing rate = $7
+- Billing rate = $9 per user/month
 
-Usage x Billing rate = $1,400
+- Usage x Billing rate = $1,800
 
-Based on usage, your monthly invoice would be $1,400.
+Based on usage, your monthly invoice would be $1,800.
 
 :::tip
 
