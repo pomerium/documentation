@@ -1,7 +1,7 @@
 ---
 title: Billing in Pomerium Zero
 sidebar_label: Billing
-description: Learn how manage subscriptions and billing in Pomerium Zero.
+description: Learn how to manage subscriptions and billing in Pomerium Zero.
 keywords:
   [
     billing,
