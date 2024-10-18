@@ -1,4 +1,4 @@
-```yaml title=docker-compose.yaml
+```yaml title="docker-compose.yaml"
 networks:
   main: {}
 services:
