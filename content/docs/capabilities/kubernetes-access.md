@@ -43,29 +43,29 @@ Building on top of a standard Kubernetes and Pomerium deployment:
 
 1. Pomerium is given access to a Kubernetes service account with [impersonation](https://kubernetes.io/docs/reference/access-authn-authz/authentication/#user-impersonation) permissions. The supported groups can be explicitly listed in the RBAC definition:
 
-  ```yaml
-  apiVersion: rbac.authorization.k8s.io/v1
-  kind: ClusterRole
-  metadata:
-    name: pomerium-impersonation
-  rules:
+```yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: pomerium-impersonation
+rules:
   - apiGroups:
-    - ''
+      - ''
     resources:
-    - users
+      - users
     verbs:
-    - impersonate
+      - impersonate
   - apiGroups:
-    - ''
+      - ''
     resources:
-    - groups
+      - groups
     verbs:
-    - impersonate
+      - impersonate
     resourceNames:
       - group1
       - group2
       - group3
-  ```
+```
 
 2. A [route's policy](/docs/reference/routes/policy) is created for the API server and [configured](/docs/reference/routes/kubernetes-service-account-token) to use the service account token
 3. Kubernetes RoleBindings operate against IdP Users and Group subjects
