@@ -1,4 +1,4 @@
-```yaml title=pomerium.yaml
+```yaml title="pomerium.yaml"
 apiVersion: ingress.pomerium.io/v1
 kind: Pomerium
 metadata:
@@ -9,4 +9,4 @@ spec:
       url: https://authenticate.pomerium.app
   certificates:
       - pomerium/pomerium-wildcard-tls
-  ```
+```
