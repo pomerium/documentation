@@ -1,4 +1,4 @@
-```yaml title=config.yaml
+```yaml title="config.yaml"
 authenticate_service_url: https://authenticate.localhost.pomerium.io
 
 

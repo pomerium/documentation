@@ -105,7 +105,7 @@ Once you've generated a signed JWT, you can configure Pomerium.
 
 In your Pomerium configuration file, add the following identity provider settings:
 
-```yaml title=pomerium-config
+```yaml title="pomerium-config"
 idp_provider: apple
 idp_client_id: app_or_service_id
 idp_client_secret: signed_apple_jwt

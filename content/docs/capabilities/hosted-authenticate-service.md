@@ -46,7 +46,7 @@ The hosted authenticate service requires no configuration to use.
 
 Add the following route and policy to your configuration file:
 
-```yaml title=pomerium-config.yaml
+```yaml title="pomerium-config.yaml"
 routes:
   - from: https://verify.localhost.pomerium.io
     to: http://verify:8000
@@ -62,7 +62,7 @@ This minimal configuration is all you need to connect to an upstream service wit
 
 If you want, you can still include the hosted URL in your configuration:
 
-```yaml title=pomerium-config.yaml
+```yaml title="pomerium-config.yaml"
 authenticate_service_url: https://authenticate.pomerium.app
 
 routes:
@@ -78,7 +78,7 @@ routes:
 
 If you use the hosted URL and include your own IdP settings, Pomerium will override your IdP configuration and use the hosted IdP instead:
 
-```yaml title=pomerium-config.yaml
+```yaml title="pomerium-config.yaml"
 authenticate_service_url: https://authenticate.pomerium.app
 
 idp_provider: google
