@@ -217,27 +217,27 @@ In the Enterprise Console:
 
 1. Select **Certificates**.
 1. Select **ADD CERTIFICATE**.
-1. Add the root CA file (`rootCA.pem`).
-    ![Importing the mkcert root CA into the Enterprise Console](./img/fleet/enterprise-import-cert.png)
+1. Add the root CA file (`rootCA.pem`). ![Importing the mkcert root CA into the Enterprise Console](./img/fleet/enterprise-import-cert.png)
 
 ### Create a route
 
 Next, create a route you want to protect. This guide will use Pomerium's [Verify](https://github.com/pomerium/verify) service as an example.
 
 In the Enterprise Console:
+
 1. Select **Routes**.
 1. Select **New Route** and name it.
 1. In **From:**, enter the externally accesible URL.
 1. In the **To:** field, enter the destination URL.
 
-    ![Build a route in the Enterprise Console](./img/fleet/enterprise-verify-service.png)
+   ![Build a route in the Enterprise Console](./img/fleet/enterprise-verify-service.png)
 
 Now, configure the route to require a client certificate issued by a CA:
 
 1. Under route settings, select **TLS Settings**.
 1. In the field [**TLS Downstream Client Certificate Authority**](/docs/reference/routes/tls#tls-downstream-client-certificate-authority), select **Downstream CA**.
 
-    ![Adding the Downstream CA setting to the route](./img/fleet/enterprise-tls-setting.png)
+   ![Adding the Downstream CA setting to the route](./img/fleet/enterprise-tls-setting.png)
 
 ### Create policies in Pomerium
 
@@ -268,6 +268,6 @@ Next, attach these policies to your route:
 1. Select the route.
 1. In the **Policies** field, select your policies.
 
-    ![Attaching policies to route](./img/fleet/enterprise-attach-policies.png)
+   ![Attaching policies to route](./img/fleet/enterprise-attach-policies.png)
 
 Save your changes. When you access a Pomerium route with a Fleet-managed host, Pomerium will authorize access based on the host’s compliance to Fleet policies and vulnerability status.
