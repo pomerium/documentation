@@ -13,7 +13,7 @@ When Pomerium receives a request from a Fleet-managed device, Pomerium will make
 
 ## How Pomerium works with FleetDM
 
-Fleet provides a dedicated web service (Fleet UI) where administrators can manage teams, issued devices (”enrolled hosts”), Fleet policies, and more.
+FleetDM provides a dedicated web service (Fleet UI) where administrators can manage teams, issued devices (”enrolled hosts”), Fleet policies, and more.
 
 In Fleet UI, administrators can install Fleet agents on remote hosts. The Fleet agents periodically query hosts to gather updated host data, and push the information to Fleet servers. Administrators can review reports in Fleet UI to monitor hosts for security vulnerabilities.
 
@@ -54,7 +54,7 @@ Custom FleetDM operators include:
 
 ## Configure the FleetDM plugin
 
-This guide shows you how to configure Fleet to work with the FleetDM plugin in Pomerium Enterprise. After integrating the plugin, you'll build authorization policies in the PPL builder with custom FleetDM criteria.
+This guide shows you how to configure FleetDM to work with the FleetDM plugin in Pomerium Enterprise. After integrating the plugin, you'll build authorization policies in the PPL builder with custom FleetDM criteria.
 
 To complete this guide, you need:
 
@@ -166,29 +166,63 @@ See the Fleet [policies](https://fleetdm.com/docs/rest-api/rest-api#policies) do
 
 ### Configure Pomerium Enterprise
 
-Next, add the FleetDM plugin as an external data source in the Enterprise Console:
+Next, add the FleetDM plugin as an external data source in the Enterprise Console.
+
+This step requires you to run the [FleetDM plugin](https://github.com/pomerium/datasource/tree/main) with its Docker image.
+
+:::note
+
+These instructions assume a local testing environment using [Docker Compose](https://docs.docker.com/compose/). Adjust as needed for your deployment environment.
+
+:::
+
+1. Add the FleetDM plugin Docker image to Docker Compose:
+
+    ```yaml
+    services:
+      fleetdm:
+        image: docker.cloudsmith.io/pomerium/datasource/datasource:main
+        command:
+          - fleetdm
+          - --api-url=https://pomerium.cloud.fleetdm.com/
+          - --api-token=<YOUR_FLEETDM_API_TOKEN>
+          - --cert-query-id=<YOUR_FLEETDM_CERT_QUERY_ID>
+          - --address=:8080
+        container_name: fleetdm
+        restart: always
+        expose:
+          - 8080
+    ```
+1. Run the container:
+
+    ```bash
+    docker compose up
+    ```
+
+In the Enterprise Console:
 
 1. Select **External Data**.
-2. Select **ADD EXTERNAL DATA SOURCE**.
-3. In the **URL** field, enter the URL to the external data source.
+1. Select **ADD EXTERNAL DATA SOURCE**.
+1. In the **URL** field, enter the URL to the external data source.
+1. Select **SAVE EXTERNAL DATA SOURCE**.
 
 ### Create a policy in Pomerium
 
 In the Enterprise Console:
 
 1. Select **Policies,** create a **New Policy**, and name it.
-2. Select the **Builder** tab.
-3. Select **Add Deny Block**.
-4. In the **Criteria** field, select **FleetDM**.
-5. In the **Operator** field, select **Failing Policies**.
-6. In the **Search Policies** bar, Pomerium will list Fleet policies. Select the policy you want to apply.
+1. Select the **Builder** tab.
+1. Select **Add Deny Block**.
+1. In the **Criteria** field, select **FleetDM**.
+1. In the **Operator** field, select **Failing Policies**.
+1. In the **Search Policies** bar, Pomerium will list Fleet policies. Select the policy you want to apply.
 
    ![Building a policy in the PPL builder using FleetDM criteria](./img/fleet/enterprise-fleet-ppl.png)
 
 You can also deny access based on vulnerabilities:
 
 1. In the **Operator** field, select **Vulnerabilities**.
-2. Enter the vulnerability by its CVE ID. For example, `CVE-2020-10735`.
+1. Enter the vulnerability by its CVE ID. For example, `CVE-2020-10735`.
 
    ![Building a policy in the PPL builder using FleetDM criteria](./img/fleet/ppl-vulnerability.png)
 
