@@ -15,7 +15,7 @@ When Pomerium receives a request from a Fleet-managed device, Pomerium will make
 
 FleetDM provides a dedicated web service (Fleet UI) where administrators can manage teams, issued devices (”enrolled hosts”), Fleet policies, and more.
 
-The FleetDM agents periodically query hosts to gather updated host data, and push the information to Fleet servers. Administrators can view host data in FleetDM UI.
+The Fleet agents periodically query hosts to gather updated host data, and push the information to Fleet servers. Administrators can view host data in Fleet UI.
 
 Pomerium can integrate your Fleet instance as an external data source (the “FleetDM plugin”) in the Enterprise Console. You can use custom PPL criteria to build policies in Pomerium that enforce Fleet conditions before authorizing or denying access to services behind Pomerium. For example, Pomerium can deny access if:
 
@@ -52,7 +52,7 @@ Custom FleetDM operators include:
 | `failing_critical_policy` | boolean | Denies access if a host fails any critical Fleet policies. |
 | `failing_any_policy` | boolean | Denies access if a host fails any Fleet policy. |
 
-## Configure the FleetDM plugin
+## Configure FleetDM
 
 This guide shows you how to configure FleetDM to work with the FleetDM plugin in Pomerium Enterprise. After integrating the plugin, you'll build authorization policies in the PPL builder with custom FleetDM criteria.
 
@@ -164,7 +164,11 @@ See the Fleet [policies](https://fleetdm.com/docs/rest-api/rest-api#policies) do
 
 :::
 
-### Configure Pomerium Enterprise
+## Configure the FleetDM plugin
+
+The following sections show you how to configure the FleetDM plugin in the Enterprise Console.
+
+### Configure the external data source
 
 Next, add the FleetDM plugin as an external data source in the Enterprise Console.
 
@@ -207,9 +211,37 @@ In the Enterprise Console:
 1. In the **URL** field, enter the URL to the external data source.
 1. Select **SAVE EXTERNAL DATA SOURCE**.
 
-### Create a policy in Pomerium
+### Import Certificate Authority (CA)
 
 In the Enterprise Console:
+
+1. Select **Certificates**.
+1. Select **ADD CERTIFICATE**.
+1. Add the root CA file (`rootCA.pem`).
+    ![Importing the mkcert root CA into the Enterprise Console](./img/fleet/enterprise-import-cert.png)
+
+### Create a route
+
+Next, create a route you want to protect. This guide will use Pomerium's [Verify](https://github.com/pomerium/verify) service as an example.
+
+In the Enterprise Console:
+1. Select **Routes**.
+1. Select **New Route** and name it.
+1. In **From:**, enter the externally accesible URL.
+1. In the **To:** field, enter the destination URL.
+
+    ![Build a route in the Enterprise Console](./img/fleet/enterprise-verify-service.png)
+
+Now, configure the route to require a client certificate issued by a CA:
+
+1. Under route settings, select **TLS Settings**.
+1. In the field [**TLS Downstream Client Certificate Authority**](/docs/reference/routes/tls#tls-downstream-client-certificate-authority), select **Downstream CA**.
+
+    ![Adding the Downstream CA setting to the route](./img/fleet/enterprise-tls-setting.png)
+
+### Create policies in Pomerium
+
+Create policies that deny access based on FleetDM criteria:
 
 1. Select **Policies,** create a **New Policy**, and name it.
 1. Select the **Builder** tab.
@@ -227,4 +259,15 @@ You can also deny access based on vulnerabilities:
 
    ![Building a policy in the PPL builder using FleetDM criteria](./img/fleet/ppl-vulnerability.png)
 
-Save your policy. When you access a Pomerium route with a Fleet-managed host, Pomerium will authorize access based on the host’s compliance to Fleet policies and vulnerability status.
+Save your policies.
+
+### Attach policies
+
+Next, attach these policies to your route:
+
+1. Select the route.
+1. In the **Policies** field, select your policies.
+
+    ![Attaching policies to route](./img/fleet/enterprise-attach-policies.png)
+
+Save your changes. When you access a Pomerium route with a Fleet-managed host, Pomerium will authorize access based on the host’s compliance to Fleet policies and vulnerability status.
