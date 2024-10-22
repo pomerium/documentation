@@ -79,8 +79,8 @@ kustomize build config/default
 ```yaml title="kustomization.yaml"
 resources:
   - https://raw.githubusercontent.com/pomerium/ingress-controller/v0.22.1/deployment.yaml
-patchesStrategicMerge:
-  - patch-proxy-external-dns.yaml
+patches:
+  - path: patch-proxy-external-dns.yaml
 ```
 
 ```yaml title="patch-proxy-external-dns.yaml"
@@ -106,8 +106,8 @@ You must configure [storage persistence](/docs/internals/data-storage) in order 
 ```yaml title="kustomization.yaml"
 resources:
   - https://raw.githubusercontent.com/pomerium/ingress-controller/v0.22.1/deployment.yaml
-patchesStrategicMerge:
-  - deployment.yaml
+patches:
+  - path: deployment.yaml
 ```
 
 ```yaml title="deployment.yaml"
@@ -127,8 +127,8 @@ An `IngressClass` may be designated as a [default controller](https://kubernetes
 ```yaml title="kustomization.yaml"
 resources:
   - https://raw.githubusercontent.com/pomerium/ingress-controller/v0.22.0/deployment.yaml
-patchesStrategicMerge:
-  - patch-proxy-external-dns.yaml
+patches:
+  - path: patch-proxy-external-dns.yaml
 ```
 
 ```yaml title="patch-ingress-class.yaml"
