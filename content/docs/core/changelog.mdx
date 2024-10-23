@@ -17,6 +17,33 @@ Please refer to the [upgrade guide](/docs/core/upgrading) before upgrading.
 
 :::
 
+## [v0.27.2](https://github.com/pomerium/pomerium/tree/v0.27.2) (2024-11-22)
+
+[Full Changelog](https://github.com/pomerium/pomerium/compare/v0.27.1...v0.27.2)
+
+### Pomerium Zero
+
+- Add a Pomerium Core to Pomerium Zero import tool, allowing you to bring your existing Pomerium configuration into Pomerium Zero.
+- Add active users reporting, for self-serve billing in Pomerium Zero. End user information is pseudonymized and reported to Pomerium Zero, in order to bill paid organizations according to the number of active users across the organization as a whole.
+
+### Fixed
+
+- Improve handling of transient errors from the databroker.
+- Fix a data race in the in-memory databroker storage backend.
+- Remove an incorrect “unknown config option” warning message when the `set_response_headers` config file key is present.
+
+### Changes
+
+- For any routes where the [Kubernetes Service Account Token](https://www.pomerium.com/docs/reference/routes/kubernetes-service-account-token) option is set, allow both websockets and SPDY connection upgrades. (One of these is necessary for commands like `kubectl exec` and `kubectl port-forward` to work correctly, depending on your version of Kubernetes.)
+- Previously, the [Log Level](https://www.pomerium.com/docs/reference/log-level) option could affect the default value of the [Authorize Log Fields](https://www.pomerium.com/docs/reference/authorize-log-fields) option: setting the main log level to `debug` would change the default set of authorize log fields to include `headers` (logging all HTTP request headers). This undocumented behavior has been removed, and these two options are now entirely independent.
+- Remove some currently-unused configuration options:
+  - `databroker_storage_cert_file`
+  - `databroker_storage_key_file`
+  - `databroker_storage_ca_file`
+  - `databroker_storage_tls_skip_verify`
+  - `grpc_client_dns_roundrobin`
+- Various other minor code clean-up.
+
 ## [v0.27.1](https://github.com/pomerium/pomerium/tree/v0.27.1) (2024-09-26)
 
 [Full Changelog](https://github.com/pomerium/pomerium/compare/v0.27.0...v0.27.1)
