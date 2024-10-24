@@ -9,7 +9,7 @@ sidebar_position: 10
 
 # Putting It All Together
 
-You’ve made it! Congratulations on completing our Guided Tutorials series! Let’s quickly run through what you’ve learned:
+You've made it! Congratulations on completing our Guided Tutorials series! Let's quickly run through what you've learned:
 
 - You configured Pomerium and several upstream services to run in Docker
 - You built routes to these services so Pomerium can proxy the requests
@@ -22,9 +22,9 @@ You’ve made it! Congratulations on completing our Guided Tutorials series! Let
 
 Now, you have a production-ready Pomerium instance. You have everything you need to be able to secure tools like [Grafana](https://www.pomerium.com/docs/guides/grafana), [Jenkins](https://www.pomerium.com/docs/guides/jenkins), [Code-server](https://www.pomerium.com/integrations/code-server), and more!
 
-## So, what’s next?
+## So, what's next?
 
-Well, there’s a few things you can do:
+Well, there's a few things you can do:
 
 - Review our Capabilities section to see what other features are available. Here are a few suggestions:
   - Configure [Single Sign-out](https://www.pomerium.com/docs/capabilities/single-sign-out)
@@ -32,6 +32,9 @@ Well, there’s a few things you can do:
   - Test out logging in Pomerium with our [Audit Logs](https://www.pomerium.com/docs/capabilities/audit-logs)
   - Explore global and route-level settings on our [Reference](https://www.pomerium.com/docs/reference) page
 - Check out our [Guides](https://www.pomerium.com/docs/guides) to learn how to secure other services behind Pomerium
-- Read some of our [Blog posts](https://www.pomerium.com/blog/) to see what’s happening in the greater Zero Trust community and at Pomerium
+- Read some of our [Blog posts](https://www.pomerium.com/blog/) to see what's happening in the greater Zero Trust community and at Pomerium
+- Import your existing Pomerium Core configuration to Pomerium Zero
+  - Pomerium Zero provides a hosted configuration UI for managing your Pomerium configurations.
+  - See [**Import Core Config to Zero**](/docs/zero/import) for more information.
 
-You’re bound to have some questions and feedback along the way. Visit our [Discuss page](https://discuss.pomerium.com/) to ask questions, see what our users are up to, and let us know what you thought of our Guided Tutorials!
+You're bound to have some questions and feedback along the way. Visit our [Discuss page](https://discuss.pomerium.com/) to ask questions, see what our users are up to, and let us know what you thought of our Guided Tutorials!
