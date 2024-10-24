@@ -38,13 +38,13 @@ apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
   name: pomerium
-  namespace: pomerium-master-postgres
+  namespace: pomerium
 spec:
   endpoints:
     - port: metrics
   selector:
     matchLabels:
-      app.kubernetes.io/instance: pomerium
+      app.kubernetes.io/name: pomerium
 ```
 
 ## Advanced
