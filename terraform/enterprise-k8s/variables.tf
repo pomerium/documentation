@@ -183,3 +183,9 @@ variable "sidecars" {
     args  = list(string)
   }))
 }
+
+variable "license_key_validate_offline" {
+  description = "Whether to validate the license key offline. Can only be used with a valid offline license key."
+  type        = bool
+  default     = false
+}

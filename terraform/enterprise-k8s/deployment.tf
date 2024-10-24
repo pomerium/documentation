@@ -154,6 +154,11 @@ resource "kubernetes_deployment" "pomerium-console" {
           }
 
           env {
+            name  = "LICENSE_KEY_VALIDATE_OFFLINE"
+            value = var.license_key_validate_offline
+          }
+
+          env {
             name  = "TMPDIR"
             value = "/tmp"
           }
