@@ -18,6 +18,18 @@ As a context-aware access proxy, Pomerium's security model holds data confidenti
 
 Though not itself an identity provider, Pomerium incorporates a single sign-on flow with third-party providers to delegate authentication, and populate identity details for authorization decisions. Pomerium ensures that a request is backed by a valid user session from a trusted identity provider.
 
+#### Authentication Cookie Handling
+
+Pomerium automatically strips its authentication cookies (`_pomerium`) from requests before forwarding them to upstream services. This security feature:
+
+- Prevents [credential replay attacks](https://owasp.org/www-community/attacks/Credential_Reuse_Attack)
+- Ensures authentication tokens don't leak to backend services
+- Requires no additional configuration
+
+This process is handled by Pomerium's proxy and implemented in the [`clean-upstream.lua`](https://github.com/pomerium/pomerium/blob/main/config/envoyconfig/luascripts/clean-upstream.lua) script.
+
+This approach addresses a common shortcoming of external authorization-style solutions like OAuth2 Proxy, which may inadvertently expose authentication tokens to backend services, increasing the risk of token theft and misuse. By removing these cookies, Pomerium maintains a clear separation between its authentication layer and your application logic, enhancing overall security.
+
 ### Enforcing authorization
 
 Pomerium ensures that only authorized users can access services, or applications to which they are entitled access.
