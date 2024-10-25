@@ -20,7 +20,7 @@ You've made it! Congratulations on completing our Guided Tutorials series! Let's
 - You configured Pomerium to run in a VM instance
 - You enabled Autocert, which automatically generates certificates for upstream connections between Pomerium and your services
 
-Now, you have a production-ready Pomerium instance. You have everything you need to be able to secure tools like [Grafana](https://www.pomerium.com/docs/guides/grafana), [Jenkins](https://www.pomerium.com/docs/guides/jenkins), [Code-server](https://www.pomerium.com/integrations/code-server), and more!
+Now, you have a production-ready Pomerium instance. You have everything you need to be able to secure tools like [Grafana](https://www.pomerium.com/docs/guides/grafana), [Jenkins](https://www.pomerium.com/docs/guides/jenkins), [Code-server](https://www.pomerium.com/docs/guides/code-server), and more!
 
 ## So, what's next?
 
