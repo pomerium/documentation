@@ -28,7 +28,7 @@ Pomerium automatically strips its authentication cookies (`_pomerium`) from requ
 
 This process is handled by Pomerium's proxy and implemented in the [`clean-upstream.lua`](https://github.com/pomerium/pomerium/blob/main/config/envoyconfig/luascripts/clean-upstream.lua) script.
 
-By removing these cookies, Pomerium maintains a clear separation between its authentication layer and your application logic, enhancing overall security. This approach addresses a common shortcoming of external authorization-style solutions like OAuth2 Proxy, which may inadvertently expose authentication tokens to backend services, increasing the risk of token theft and misuse.
+This approach addresses a common shortcoming of external authorization-style solutions like OAuth2 Proxy, which may inadvertently expose authentication tokens to backend services, increasing the risk of token theft and misuse. By removing these cookies, Pomerium maintains a clear separation between its authentication layer and your application logic, enhancing overall security.
 
 
 ### Enforcing authorization
