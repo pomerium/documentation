@@ -30,7 +30,6 @@ This process is handled by Pomerium's proxy and implemented in the [`clean-upstr
 
 This approach addresses a common shortcoming of external authorization-style solutions like OAuth2 Proxy, which may inadvertently expose authentication tokens to backend services, increasing the risk of token theft and misuse. By removing these cookies, Pomerium maintains a clear separation between its authentication layer and your application logic, enhancing overall security.
 
-
 ### Enforcing authorization
 
 Pomerium ensures that only authorized users can access services, or applications to which they are entitled access.
