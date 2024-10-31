@@ -25,18 +25,21 @@ If you haven't signed up for Pomerium Zero, you can [**create an account**](http
 :::
 
 <Tabs>
-<TabItem value="linux" label="Linux">
+<TabItem value="kubernetes-helm" label="Kubernetes (Helm)">
 
-Install Pomerium with the following shell script:
+To install Pomerium with Helm, run the following command:
 
 ```bash
-curl https://console.pomerium.app/install.bash | env POMERIUM_ZERO_TOKEN=<CLUSTER_TOKEN> bash -s install
+helm install pomerium-zero oci://docker.io/pomerium/pomerium-zero \
+  --set pomeriumZeroToken=<CLUSTER_TOKEN> \
+  --namespace pomerium-zero \
+  --create-namespace
 ```
 
-Pomerium requires an internet-accessible server and the ability to bind port 443.
+See the chart on [GitHub](https://github.com/pomerium/install/tree/main/zero/helm) for more details.
 
 </TabItem>
-<TabItem value="kubernetes" label="Kubernetes">
+<TabItem value="kubernetes-manual" label="Kubernetes (Manual)">
 
 First, install Pomerium into your Kubernetes cluster:
 
@@ -101,52 +104,36 @@ docker compose up -d
 Pomerium requires an internet-accessible server and the ability to bind port 443.
 
 </TabItem>
-<TabItem value="manual" label="Manual">
+<TabItem value="linux" label="Linux">
 
-Use the following values as necessary to install or update Pomerium in accordance with your environment:
+Install Pomerium with the following shell script:
 
-- **Cluster Token**
-- env: `POMERIUM_ZERO_TOKEN`
-- **Domain Name**
+```bash
+curl https://console.pomerium.app/install.bash | env POMERIUM_ZERO_TOKEN=<CLUSTER_TOKEN> bash -s install
+```
 
-Pass the provided **Cluster Token** into the `POMERIUM_ZERO_TOKEN` environment variable.
-
-**Domain Name** refers to your cluster's [starter domain](/docs/concepts/clusters#starter-domain).
+Pomerium requires an internet-accessible server and the ability to bind port 443.
 
 </TabItem>
 </Tabs>
 
-## Upgrade Pomerium Zero
+## Update Pomerium Zero
 
-Learn how to upgrade Pomerium Zero.
+Learn how to update Pomerium Zero.
 
 <Tabs>
-<TabItem label="Linux" value="linux">
+<TabItem value="kubernetes-helm" label="Kubernetes (Helm)">
 
-To update Pomerium in Debian-based Linux systems:
-
-1. Check for new package updates and install Pomerium:
+To update Pomerium with Helm, run the following command:
 
 ```bash
-$ sudo apt update && sudo apt install pomerium
-```
-
-To update Pomerium in Red Hat-based Linux systems:
-
-1. Check for new package updates
-
-```bash
-$ sudo yum list updates
-```
-
-1. Install the latest version of Pomerium:
-
-```bash
-$ sudo yum update pomerium
+helm upgrade pomerium-zero oci://docker.io/pomerium/pomerium-zero \
+  --namespace pomerium-zero \
+  --version <X.Y.Z>
 ```
 
 </TabItem>
-<TabItem value="kubernetes" label="Kubernetes">
+<TabItem value="kubernetes-manual" label="Kubernetes (Manual)">
 
 :::note
 
@@ -185,9 +172,29 @@ $ docker pull pomerium/pomerium:<vX.Y.Z>
 ```
 
 </TabItem>
-<TabItem value="manual" label="Manual">
+<TabItem label="Linux" value="linux">
 
-For custom configurations, update the Pomerium image tag to the latest version.
+To update Pomerium in Debian-based Linux systems:
+
+1. Check for new package updates and install Pomerium:
+
+```bash
+$ sudo apt update && sudo apt install pomerium
+```
+
+To update Pomerium in Red Hat-based Linux systems:
+
+1. Check for new package updates
+
+```bash
+$ sudo yum list updates
+```
+
+1. Install the latest version of Pomerium:
+
+```bash
+$ sudo yum update pomerium
+```
 
 </TabItem>
 </Tabs>
