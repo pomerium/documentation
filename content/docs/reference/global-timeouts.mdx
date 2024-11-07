@@ -164,4 +164,42 @@ timeouts:
 </TabItem>
 </Tabs>
 
+## Default Upstream Timeout
+
+**Default Upstream Timeout** is the default timeout applied to a proxied route when no `timeout` key is specified by the policy.
+
+### How to configure
+
+<Tabs>
+<TabItem value="Core" label="Core">
+
+| **Config file keys** | **Environment variables** | **Type** | **Default** |
+| :-- | :-- | :-- | :-- |
+| `default_upstream_timeout` | `DEFAULT_UPSTREAM_TIMEOUT` | [Go Duration] string | `30s` |
+
+### Examples
+
+```yaml
+default_upstream_timeout: 30s
+```
+
+```bash
+DEFAULT_UPSTREAM_TIMEOUT=1h45m
+```
+
+</TabItem>
+<TabItem value="Enterprise" label="Enterprise">
+
+Set **Default Upstream Timeout** in the Console:
+
+![Enterprise Console with default timeout setting](./img/timeouts/default-upstream-timeout.png)
+
+</TabItem>
+<TabItem value="Kubernetes" label="Kubernetes">
+
+Kubernetes does not support `default_upstream_timeout`
+
+</TabItem>
+</Tabs>
+
 [go duration]: https://golang.org/pkg/time/#Duration.String
