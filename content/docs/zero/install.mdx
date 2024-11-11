@@ -25,18 +25,21 @@ If you haven't signed up for Pomerium Zero, you can [**create an account**](http
 :::
 
 <Tabs>
-<TabItem value="linux" label="Linux">
+<TabItem value="kubernetes-helm" label="Kubernetes (Helm)">
 
-Install Pomerium with the following shell script:
+To install Pomerium with Helm, run the following command:
 
 ```bash
-curl https://console.pomerium.app/install.bash | env POMERIUM_ZERO_TOKEN=<CLUSTER_TOKEN> bash -s install
+helm install pomerium-zero oci://docker.io/pomerium/pomerium-zero \
+  --set pomeriumZeroToken=<CLUSTER_TOKEN> \
+  --namespace pomerium-zero \
+  --create-namespace
 ```
 
-Pomerium requires an internet-accessible server and the ability to bind port 443.
+See the chart on [GitHub](https://github.com/pomerium/install/tree/main/zero/helm) for more details.
 
 </TabItem>
-<TabItem value="kubernetes" label="Kubernetes">
+<TabItem value="kubernetes-manual" label="Kubernetes (Manual)">
 
 First, install Pomerium into your Kubernetes cluster:
 
@@ -65,7 +68,7 @@ Save the following configuration as `compose.yaml`:
 ```yaml title="compose.yaml"
 services:
   pomerium:
-    image: pomerium/pomerium:v0.27.2
+    image: pomerium/pomerium:v0.28.0
     ports:
       - 443:443
     restart: always
@@ -101,26 +104,74 @@ docker compose up -d
 Pomerium requires an internet-accessible server and the ability to bind port 443.
 
 </TabItem>
-<TabItem value="manual" label="Manual">
+<TabItem value="linux" label="Linux">
 
-Use the following values as necessary to install or update Pomerium in accordance with your environment:
+Install Pomerium with the following shell script:
 
-- **Cluster Token**
-- env: `POMERIUM_ZERO_TOKEN`
-- **Domain Name**
+```bash
+curl https://console.pomerium.app/install.bash | env POMERIUM_ZERO_TOKEN=<CLUSTER_TOKEN> bash -s install
+```
 
-Pass the provided **Cluster Token** into the `POMERIUM_ZERO_TOKEN` environment variable.
-
-**Domain Name** refers to your cluster's [starter domain](/docs/concepts/clusters#starter-domain).
+Pomerium requires an internet-accessible server and the ability to bind port 443.
 
 </TabItem>
 </Tabs>
 
-## Upgrade Pomerium Zero
+## Update Pomerium Zero
 
-Learn how to upgrade Pomerium Zero.
+Learn how to update Pomerium Zero.
 
 <Tabs>
+<TabItem value="kubernetes-helm" label="Kubernetes (Helm)">
+
+To update Pomerium with Helm, run the following command:
+
+```bash
+helm upgrade pomerium-zero oci://docker.io/pomerium/pomerium-zero \
+  --namespace pomerium-zero \
+  --version <X.Y.Z>
+```
+
+</TabItem>
+<TabItem value="kubernetes-manual" label="Kubernetes (Manual)">
+
+:::note
+
+In v0.27, we updated the Kubernetes installation manifest to use a Deployment instead of a StatefulSet. Before upgrading, you must remove your existing StatefulSet. See the [v0.27 Upgrade guide](/docs/core/upgrading#upgrading-pomerium-zero-deployments-in-kubernetes) for specific instructions.
+
+:::
+
+To update Pomerium in Kubernetes, run the following command:
+
+```bash
+$ kubectl apply -k github.com/pomerium/pomerium/k8s/zero\?ref=0.28.0
+```
+
+</TabItem>
+<TabItem label="Docker" value="docker">
+
+To update Pomerium in Docker:
+
+1. In your `compose.yaml` file, update the Pomerium image tag to specify the [latest tagged release](https://github.com/pomerium/pomerium/tags):
+
+```yaml
+pomerium:
+  image: pomerium/pomerium:v0.28.0
+```
+
+1. Run the following command:
+
+```bash
+$ docker compose up -d
+```
+
+Docker should automatically pull the new image of Pomerium before running the container. If for some reason Docker doesn't pull the image, you can manually run:
+
+```bash
+$ docker pull pomerium/pomerium:v0.28.0
+```
+
+</TabItem>
 <TabItem label="Linux" value="linux">
 
 To update Pomerium in Debian-based Linux systems:
@@ -144,50 +195,6 @@ $ sudo yum list updates
 ```bash
 $ sudo yum update pomerium
 ```
-
-</TabItem>
-<TabItem value="kubernetes" label="Kubernetes">
-
-:::note
-
-In v0.27, we updated the Kubernetes installation manifest to use a Deployment instead of a StatefulSet. Before upgrading, you must remove your existing StatefulSet. See the [v0.27 Upgrade guide](/docs/core/upgrading#upgrading-pomerium-zero-deployments-in-kubernetes) for specific instructions.
-
-:::
-
-To update Pomerium in Kubernetes, run the following command:
-
-```bash
-$ kubectl apply -k github.com/pomerium/pomerium/k8s/zero\?ref=<X.Y.Z>
-```
-
-</TabItem>
-<TabItem label="Docker" value="docker">
-
-To update Pomerium in Docker:
-
-1. In your `compose.yaml` file, update the Pomerium image tag to specify the [latest tagged release](https://github.com/pomerium/pomerium/tags):
-
-```yaml
-pomerium:
-  image: pomerium/pomerium:<vX.Y.Z>
-```
-
-1. Run the following command:
-
-```bash
-$ docker compose up -d
-```
-
-Docker should automatically pull the new image of Pomerium before running the container. If for some reason Docker doesn't pull the image, you can manually run:
-
-```bash
-$ docker pull pomerium/pomerium:<vX.Y.Z>
-```
-
-</TabItem>
-<TabItem value="manual" label="Manual">
-
-For custom configurations, update the Pomerium image tag to the latest version.
 
 </TabItem>
 </Tabs>
