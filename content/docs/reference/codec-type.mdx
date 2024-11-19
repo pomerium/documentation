@@ -57,7 +57,7 @@ Kubernetes does not support `codec_type`.
 | `auto` | Either `http1` or `http2` will be determined via TLS ALPN or protocol inference |
 | `http1` | Only support `http1` |
 | `http2` | Only support `http2` |
-| `http3` | Starts a both UDP and TCP listener on [address](/docs/reference/address). The UDP listener is configured to use QUIC with HTTP/3. The TCP listener is configured to use `auto` as the codec type, and an `Alt-Svc` header is added to all responses indicating `h3` is available (Available since v0.29) |
+| `http3` | Starts both a UDP and TCP listener on [address](/docs/reference/address). The UDP listener is configured to use QUIC with HTTP/3. The TCP listener is configured to use `auto` as the codec type, and an `Alt-Svc` header is added to all responses indicating `h3` is available (Available since v0.29) |
 
 ## Protocol Details
 
@@ -88,12 +88,6 @@ HTTP/3 is the latest version of the HTTP protocol, utilizing QUIC over UDP. Bene
 - **Network Compatibility**: Ensure that firewalls, routers, and network devices allow UDP traffic on the necessary ports. Some networks may block UDP traffic, which can prevent HTTP/3 connections from being established.
 - **Fallback Mechanism**: When HTTP/3 is enabled, Pomerium also provides a TCP listener that supports `http1` and `http2` protocols. This allows clients that cannot use HTTP/3 (due to network restrictions or lack of support) to fall back to earlier protocol versions.
 - **Client Support**: Only clients that support HTTP/3 and QUIC can leverage these benefits. Older clients will continue to use HTTP/1.1 or HTTP/2.
-
-:::enterprise
-
-Before you can generate device registration links for users within your directory, you must sync your directory data first.
-
-See [**Directory Sync**](/docs/capabilities/directory-sync) for more information.
 
 :::warning
 
