@@ -16,9 +16,7 @@ import TabItem from '@theme/TabItem';
 
 ## Summary
 
-**Codec Type** specifies the codec to use for downstream connections. The codec type can be either `auto`, `http1` or `http2`.
-
-When `auto` is specified, the codec will be determined via `TLS-ALPN-01` or protocol inference.
+**Codec Type** specifies the codec to use for downstream connections.
 
 ## How to configure
 
@@ -47,7 +45,16 @@ CODEC_TYPE=http2
 </TabItem>
 <TabItem value="Kubernetes" label="Kubernetes">
 
-Kubernetes does not support `codec_type`
+Kubernetes does not support `codec_type`.
 
 </TabItem>
 </Tabs>
+
+### Options
+
+| **Options** | **Description** |
+| :-- | :-- |
+| `auto` | Either `http1` or `http2` will be determined via TLS ALPN or protocol inference |
+| `http1` | Only support `http1` |
+| `http2` | Only support `http2` |
+| `http3` | Starts a both UDP and TCP listener on [address](/docs/reference/address). The UDP listener is configured to use QUIC with HTTP/3. The TCP listener is configured to use `auto` as the codec type, and an `Alt-Svc` header is added to all responses indicating `h3` is available (Available since v0.29) |
