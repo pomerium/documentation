@@ -16,9 +16,7 @@ import TabItem from '@theme/TabItem';
 
 ## Summary
 
-**Codec Type** specifies the codec to use for downstream connections. The codec type can be either `auto`, `http1` or `http2`.
-
-When `auto` is specified, the codec will be determined via `TLS-ALPN-01` or protocol inference.
+**Codec Type** specifies the codec to use for downstream connections.
 
 ## How to configure
 
@@ -47,7 +45,60 @@ CODEC_TYPE=http2
 </TabItem>
 <TabItem value="Kubernetes" label="Kubernetes">
 
-Kubernetes does not support `codec_type`
+Kubernetes does not support `codec_type`.
 
 </TabItem>
 </Tabs>
+
+### Options
+
+| **Options** | **Description** |
+| :-- | :-- |
+| `auto` | Either `http1` or `http2` will be determined via TLS ALPN or protocol inference |
+| `http1` | Only support `http1` |
+| `http2` | Only support `http2` |
+| `http3` | Starts both a UDP and TCP listener on [address](/docs/reference/address). The UDP listener is configured to use QUIC with HTTP/3. The TCP listener is configured to use `auto` as the codec type, and an `Alt-Svc` header is added to all responses indicating `h3` is available (Available since v0.29) |
+
+## Protocol Details
+
+### HTTP/1.1 (`http1`)
+
+HTTP/1.1 is the traditional protocol for web communication, operating over TCP. It supports basic request-response interactions but lacks advanced features like multiplexing, which can lead to inefficiencies such as head-of-line blocking.
+
+### HTTP/2 (`http2`)
+
+HTTP/2 enhances performance over HTTP/1.1 by introducing:
+
+- **Multiplexing**: Allows multiple requests and responses concurrently over a single connection.
+- **Header Compression**: Reduces overhead by compressing HTTP headers.
+- **Server Push**: Enables servers to send resources proactively to clients.
+
+These features improve page load times and resource utilization, especially for applications with multiple simultaneous requests.
+
+### HTTP/3 (`http3`)
+
+HTTP/3 is the latest version of the HTTP protocol, utilizing QUIC over UDP. Benefits include:
+
+- **Reduced Latency**: Faster connection establishment with 0-RTT (zero round-trip time) support.
+- **Improved Performance**: Better handling of packet loss and network congestion.
+- **Connection Migration**: Maintains connections even when network changes occur (e.g., switching from Wi-Fi to cellular).
+
+**Considerations**:
+
+- **Network Compatibility**: Ensure that firewalls, routers, and network devices allow UDP traffic on the necessary ports. Some networks may block UDP traffic, which can prevent HTTP/3 connections from being established.
+- **Fallback Mechanism**: When HTTP/3 is enabled, Pomerium also provides a TCP listener that supports `http1` and `http2` protocols. This allows clients that cannot use HTTP/3 (due to network restrictions or lack of support) to fall back to earlier protocol versions.
+- **Client Support**: Only clients that support HTTP/3 and QUIC can leverage these benefits. Older clients will continue to use HTTP/1.1 or HTTP/2.
+
+:::warning
+
+Because HTTP/3 relies on QUIC over UDP, it may be blocked by some network environments that restrict UDP traffic. Ensure that your deployment environment permits UDP on the necessary ports, and be prepared for clients in restrictive networks to fall back to HTTP/1.1 or HTTP/2.
+
+:::
+
+When `codec_type` is set to `http3`, Pomerium operates as follows:
+
+- **UDP Listener**: Listens for QUIC connections to serve HTTP/3 traffic.
+- **TCP Listener**: Continues to support `http1` and `http2` based on the `auto` codec type.
+- **Alt-Svc Header**: Adds an `Alt-Svc` header to HTTP responses, informing clients that HTTP/3 is available.
+
+This configuration allows clients that support HTTP/3 to upgrade their connections while maintaining compatibility with clients using earlier protocol versions.
