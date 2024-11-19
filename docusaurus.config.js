@@ -102,12 +102,11 @@ const config = {
       searchPagePath: false,
     },
     announcementBar: {
-      id: 'kubecon-2024',
-      content:
-        'Meet the Pomerium Development Team at our KubeCon 2024 booth in Salt Lake City, Utah from November 12-15. <b><a href="https://calendar.google.com/calendar/appointments/schedules/AcZssZ0YfkyTbr2fYMyJvdPf7vsQ2xLkc77t1eGPiwM2jRkl8hBLubeOWjgX3dcFHjU_M86cgYhBIV_u?gv=true" target="_blank">Book an appointment now!</a></b>',
-      backgroundColor: '#7C3AED',
-      textColor: '#FFFFFF',
-      isCloseable: true,
+      id: 'old_version',
+      content: 'You\'re viewing the <b>Pomerium v0.26.0</b> docs website. This documentation is outdated. To view the latest documentation, go to <a href="https://pomerium.com/docs">https://pomerium.com/docs</a>.',
+      backgroundColor: '#fddda3',
+      textColor: '#000000',
+      isCloseable: false,
     },
     navbar: {
       title: '',
