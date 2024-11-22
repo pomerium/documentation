@@ -12,7 +12,7 @@ In this guide you'll learn how to implement a just-in-time access request/approv
 
 ## What is Just-In-Time Access?
 
-Just-In-Time (JIT) access is an approach to security where access to applications is time-limited and provided only on an as-needed basis. A user requests access to an application and an adminstrator grants the request for a limited period of time after which the user would have to request access again.
+Just-In-Time (JIT) access is an approach to security where access to applications is time-limited and provided only on an as-needed basis. A user requests access to an application and an administrator grants the request for a limited period of time after which the user would have to request access again.
 
 ## Implementing Just-In-Time Access with Pomerium PPL
 
@@ -29,15 +29,15 @@ allow:
 
 In this example only `user@example.com` would have access to a route, and only before `2150-01-02T16:20:00`. After `2150-01-02T16:20:00` the user would see a 403 forbidden page.
 
-Such a policy can be manually maintained by an adminstrator via the Pomerium Zero UI. They might receive an access request via slack or email and grant access by adding criteria to the policy and saving it. Any routes using that policy would then grant access to the user. No further action would be required by the administrator to revoke access later since the `date` criterion does this automatically.
+Such a policy can be manually maintained by an administrator via the Pomerium Zero UI. They might receive an access request via slack or email and grant access by adding criteria to the policy and saving it. Any routes using that policy would then grant access to the user. No further action would be required by the administrator to revoke access later since the `date` criterion does this automatically.
 
 This workflow may be sufficient for a small organization with infrequent access requests. However it can be improved via automation.
 
 ## Automating Just-In-Time Access
 
-In addition to a friendly user interface, Pomerium Zero has a publically-accessible API. By building a custom application utilizing this API we can automate the request/approve workflow.
+In addition to a friendly user interface, Pomerium Zero has a publicly-accessible API. By building a custom application utilizing this API we can automate the request/approve workflow.
 
-To demonstrate this we have built a `jit-example` application in Go available at [github.com/pomerium/jit-example](https://github.com/pomerium/jit-example). It runs a basic web server where users can request access and adminstrators can approve or reject those requests. This is done by updating a policy in Pomerium Zero which can then be attached to one or more routes.
+To demonstrate this we have built a `jit-example` application in Go available at [github.com/pomerium/jit-example](https://github.com/pomerium/jit-example). It runs a basic web server where users can request access and administrators can approve or reject those requests. This is done by updating a policy in Pomerium Zero which can then be attached to one or more routes.
 
 :::info Use Your Own Start Domain
 
@@ -77,4 +77,4 @@ Authentication and authorization of the `jit-example` is done by Pomerium itself
   - A policy restricting the users to administrators only should be attached policy
   - in **Headers**, **Pass Identity Headers** needs to be enabled
 
-With this setup any user will have access to [https://jit-example.curious-cat-9999.pomerium.app](https://jit-example.curious-cat-9999.pomerium.app) but only adminstrators will be able to approve access requests.
+With this setup any user will have access to [https://jit-example.curious-cat-9999.pomerium.app](https://jit-example.curious-cat-9999.pomerium.app) but only administrators will be able to approve access requests.
