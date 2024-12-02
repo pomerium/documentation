@@ -39,7 +39,7 @@ In addition to a friendly user interface, Pomerium Zero has a publicly-accessibl
 
 To demonstrate this we have built a `jit-example` application in Go available at [github.com/pomerium/jit-example](https://github.com/pomerium/jit-example). It runs a basic web server where users can request access and administrators can approve or reject those requests. This is done by updating a policy in Pomerium Zero which can then be attached to one or more routes.
 
-:::info Use Your Own Start Domain
+:::info Use Your Own Starter Domain
 
 In the below examples we have used the `curious-cat-9999.pomerium.app` starter domain. You should replace this with your own starter domain or use a custom domain.
 
