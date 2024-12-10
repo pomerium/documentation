@@ -61,11 +61,11 @@ This value is only visible in the Console UI.
 
 `From` is the externally accessible URL for the proxied request.
 
-Specifying `tcp+https` for the scheme enables [TCP proxying](/docs/capabilities/tcp) support for the route. You may map more than one port through the same hostname by specifying a different `:port` in the URL.
+Specifying `tcp+https` or `udp+https` for the scheme enables [TCP proxying](/docs/capabilities/tcp) or [UDP proxying](/docs/capabilities/udp) support for the route. You may map more than one port through the same hostname by specifying a different `:port` in the URL.
 
 :::warning
 
-Only secure schemes (`https` and `tcp+https`) are supported.
+Only secure schemes (`https`, `tcp+https` and `udp+https`) are supported.
 
 :::
 
@@ -86,7 +86,7 @@ Once a Route is created, the Metric Name field will populate. You can use this n
 
 A load balancing weight may be associated with a particular upstream by appending `,[weight]` to the URL. The exact behavior depends on your [`lb_policy`](/docs/reference/routes/load-balancing#load-balancing-policy) setting. See [Load Balancing](/docs/capabilities/load-balancing) for example [configurations](/docs/capabilities/load-balancing#load-balancing-weight).
 
-Must be `tcp` if `from` is `tcp+https`.
+Should be `tcp` if `from` is `tcp+https` or `udp` if `from` is `udp+https`.
 
 :::warning
 

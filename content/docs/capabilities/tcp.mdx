@@ -18,6 +18,7 @@ keywords:
   ]
 ---
 
+import CLIClientCertificates from './_cli-client-certificates.mdx'
 import LongLivedConnections from '@site/content/docs/admonitions/_long-lived-connections.mdx';
 
 # TCP over HTTP Support
@@ -113,41 +114,7 @@ pomerium-cli tcp tcp+https://proxy.corp.example.com:8443/redis.internal.example.
 
 The command above connects to `https://pomerium.corp.example.com:8443` and then requests the TCP route for `redis.internal.example.com:6379`.
 
-### Client certificates
-
-If Pomerium is configured to require client certificates, you will also need to provide a client certificate and private key when invoking the `pomerium-cli` command.
-
-You can specify these either by using PEM files, or (new in [v0.23.0](https://github.com/pomerium/cli/releases/tag/v0.23.0)) by searching for a certificate in the system trust store (on **macOS** and **Windows** only).
-
-To specify a client certificate and key using PEM files:
-
-```bash
-pomerium-cli tcp --client-cert cert.pem --client-key key.pem redis.corp.example.com:6379
-```
-
-To search for a client certificate in the system trust store:
-
-```bash
-pomerium-cli tcp --client-cert-from-store redis.corp.example.com:6379
-```
-
-This will search the Keychain (on macOS) or the Windows certificate store (on Windows) for a client certificate and private key, based on the trusted CA names advertised by Pomerium in the TLS handshake.
-
-If you need to select between multiple matching client certificates, you can additionally filter based on the Distinguished Name of the certificate's Issuer and/or the certificate Subject.
-
-For example, to filter for a certificate directly issued by a CA with the Common Name "My Trusted CA":
-
-```bash
-pomerium-cli tcp --client-cert-from-store --client-cert-issuer "CN=My Trusted CA" redis.corp.example.com:6379
-```
-
-Or, to filter for a certificate whose Subject contains the Organizational Unit Name "My Department":
-
-```bash
-pomerium-cli tcp --client-cert-from-store --client-cert-subject "OU=My Department" redis.corp.example.com:6379
-```
-
-See the [reference page](/docs/capabilities/tcp/reference#certificate-name-filters) for more details about the certificate name filter syntax.
+<CLIClientCertificates protocol='tcp' />
 
 ### Proxy chaining support
 

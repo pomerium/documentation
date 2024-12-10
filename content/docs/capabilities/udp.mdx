@@ -1,0 +1,70 @@
+---
+description: This article describes how to leverage pomerium for UDP proxying.
+keywords:
+  [
+    pomerium,
+    pomerium-cli,
+    proxy,
+    identity access proxy,
+    ssh,
+    udp,
+    application,
+    non http,
+    tunnel,
+  ]
+---
+
+import CLIClientCertificates from './_cli-client-certificates.mdx'
+
+# UDP over HTTP Support
+
+In addition to managing HTTP based applications, Pomerium can be used to protect UDP systems with the same consistent authorization policy. This is achieved by tunneling UDP over HTTP with the help of a client side command built into [`pomerium-cli`](/docs/clients/pomerium-cli).
+
+Internally, Pomerium uses [`CONNECT-UDP`](https://datatracker.ietf.org/doc/html/rfc9298) to establish the UDP tunnel.
+
+## Configure UDP Routes
+
+UDP configuration is simple. Just specify the correct scheme and ports in your route [`to`](/docs/reference/routes/to) and [`from`](/docs/reference/routes/from) fields.
+
+Example:
+
+```yaml
+routes:
+  - from: udp+https://time.corp.example.com:13
+    to: udp://time.internal.example.com:13
+    policy:
+      - allow:
+          or:
+            - email:
+                is: contractor@not-example.com
+            - claim/groups: 'datascience@example.com'
+```
+
+When creating UDP routes, note the following:
+
+- When configuring a UDP route, any HTTP specific settings such as `regex_rewrite_pattern` or `set_request_headers` have no effect.
+- The port defined in `from` does not dictate what port the tunneled traffic uses. This will always be the port defined by [`address`](/docs/reference/address) in your Pomerium configuration (`443` by default). The port instead differentiates multiple routes to the same hostname for different services.
+
+## Connect to UDP Routes
+
+While HTTP routes can be consumed with just a normal browser, `pomerium-cli` or Pomerium Desktop must serve as a proxy for UDP routes.
+
+To connect, you normally need just the external hostname and port of your UDP route:
+
+```shell-session
+$ pomerium-cli udp udp.localhost.pomerium.io:1234
+2023/10/02 11:19:59 listening on 127.0.0.1:52046
+```
+
+By default, `pomerium-cli` will start a listener on loopback on a random port.
+
+On first connection, you will be sent through a standard Pomerium HTTP authentication flow. After completing this, your UDP connection should be established!
+
+## Advanced capabilities
+
+### Listen configuration
+
+You may specify an optional address and port for the `tcp` command to listen on.
+
+
+<CLIClientCertificates protocol='udp' />
