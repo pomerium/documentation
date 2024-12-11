@@ -296,6 +296,10 @@ const sidebars = {
             },
             {
               type: 'doc',
+              id: 'docs/guides/llm',
+            },
+            {
+              type: 'doc',
               id: 'docs/guides/tiddlywiki',
             },
             {
