@@ -1,0 +1,68 @@
+---
+title: Ethr
+description: Testing Pomerium UDP Tunnels with Ethr
+---
+
+# Testing Pomerium UDP Tunnels with Ethr
+
+Since v0.29.0 Pomerium supports tunneling UDP traffic. This example demonstrates how to do this using [Ethr](https://github.com/microsoft/ethr), a network performance measurement tool.
+
+You will need two machines: one running the Ethr client and the Pomerium CLI, and another running the Ethr server and Pomerium. Replace __`ethr.corp.example.com`__ with your domain name.
+
+## Server
+
+1. Install Pomerium
+2. [Install Ethr](https://github.com/microsoft/ethr?tab=readme-ov-file#installation)
+3. Enable QUIC by setting [`codec_type`](/docs/reference/codec-type) to `http3`
+
+   ```yaml
+   codec_type: http3
+   ```
+   :::tip QUIC
+
+    Pomerium also supports UDP tunneling with `http1` or `auto` (the default), but using `http3` significantly improves performance.
+
+   :::
+
+4. Add a UDP route on port 8888
+
+   ```yaml
+   - routes:
+       from: udp+https://ethr.corp.example.com:8888
+       to: udp://127.0.0.1:8888
+       allow_any_authenticated_user: true
+   ```
+
+5. Run Pomerium
+6. Run the Ethr server
+
+   ```bash
+   ethr -s
+   ```
+
+## Client
+
+1. Install the Pomerium CLI
+2. [Install Ethr](https://github.com/microsoft/ethr?tab=readme-ov-file#installation)
+3. Start a UDP tunnel
+
+   ```bash
+   pomerium-cli udp ethr.corp.example.com:8888 --listen :8888
+   ```
+
+   :::tip TLS issues
+
+   If you don't have a valid certificate use `--disable-tls-verification`.
+
+   :::
+4. Run the Ethr client
+
+   ```bash
+   ethr -c localhost -p udp -b 1M -l 1k -d 5s
+   ```
+
+You should see packets arrive at the Ethr server demonstrating that UDP tunneling is working.
+
+## More Resources
+
+- [Ethr](https://github.com/microsoft/ethr)
