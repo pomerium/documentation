@@ -301,6 +301,10 @@ const sidebars = {
             },
             {
               type: 'doc',
+              id: 'docs/guides/jit',
+            },
+            {
+              type: 'doc',
               id: 'docs/guides/tiddlywiki',
             },
             {
