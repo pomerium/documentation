@@ -19,17 +19,17 @@ import TabItem from '@theme/TabItem';
 
 The **From** URL is the externally accessible URL for a proxied HTTP request.
 
-Specifying `tcp+https` for the scheme enables [TCP proxying](/docs/capabilities/tcp/) support for the route. You may map more than one port through the same hostname by specifying a different `:port` in the URL.
+Specifying `tcp+https` or `udp+https` for the scheme enables [TCP proxying](/docs/capabilities/tcp/) or [UDP proxying](/docs/capabilities/udp) (available since v0.29) support for the route. You may map more than one port through the same hostname by specifying a different `:port` in the URL.
 
-## How to configure
+## How to Configure
 
-The From URL must contain a **scheme** and **hostname**. It can't contain a path. When defining a From URL, you must use `https` or `tcp+https`. Pomerium only supports secure schemes.
+The from URL must contain a **scheme** and **hostname**. It can't contain a path. When defining a From URL, you must use `https`, `tcp+https` or `udp+https`. Pomerium only supports secure schemes.
 
-### Port matching behavior
+### Port Matching Behavior
 
 In v0.26, we've updated the route matching behavior. If you do not specify a port number in a route's From URL, the route will match incoming requests with any port number (or no port number). If you do specify a port number, that route will match only requests containing that specific port number.
 
-With a From URL like the one below:
+With a from URL like the one below:
 
 ```yaml
 from: https://www.example.com
@@ -64,23 +64,22 @@ You can revert to the previous behavior by setting the [`match_any_incoming_port
 <Tabs>
 <TabItem value="Core" label="Core">
 
-| **YAML**/**JSON** setting | **Type** | **Schemes**          | **Usage**    |
-| :------------------------ | :------- | :------------------- | :----------- |
-| `from`                    | `URL`    | `https`, `tcp+https` | **required** |
+| **YAML**/**JSON** setting | **Type** | **Schemes** | **Usage** |
+| :-- | :-- | :-- | :-- |
+| `from` | `URL` | `https`, `tcp+https`, `udp+https` | **required** |
 
 ### Examples
 
 ```yaml
 routes:
   - from: https://verify.corp.example.com
-  - to: https://example.com
-```
-
-```yaml
-# TCP
-routes:
+    to: https://example.com
+  # TCP
   - from: tcp+https://ssh.corp.example.com:22
-  - to: tcp://example.com:22
+    to: tcp://ssh.local:22
+  # UDP
+  - from: udp+https://time.corp.example.com:13
+    to: udp://time.local:13
 ```
 
 </TabItem>
@@ -144,7 +143,7 @@ routes:
     to: tcp://example.com:22
 ```
 
-### Wildcard processing behavior
+### Wildcard Processing Behavior
 
 Pomerium processes routes in the order they are defined in the configuration file. However, routes which **don't** contain wildcards (`*`) may take precedence over routes which **do** contain wildcards.
 
