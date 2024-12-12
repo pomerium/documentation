@@ -25,7 +25,7 @@ import TabItem from '@theme/TabItem';
 
 | **YAML**/**JSON** setting | **Type** | **Usage** | **Schemes** |
 | :-- | :-- | :-- | :-- |
-| `to` | `URL` | **optional** | `http`, `https`, `h2c`, `tcp` |
+| `to` | `URL` | **optional** | `http`, `https`, `h2c`, `tcp`, `udp` |
 
 ### Examples
 
@@ -100,7 +100,7 @@ One use case is connecting to an insecure gRPC server. As gRPC requires HTTP/2, 
 
 :::
 
-### TCP routes
+### TCP Routes
 
 You can configure Pomerium to handle a [TCP route](/docs/capabilities/tcp) in one of two different ways.
 
@@ -121,6 +121,28 @@ If you specify a `to` URL with the scheme `http://` or `https://`, Pomerium will
 This allows you to place Pomerium in front of another HTTP-to-TCP proxy.
 
 If you specify a list of multiple `to` URLs in one route, you may not include both `tcp://` and non-`tcp://` URLs.
+
+### UDP Routes
+
+Starting in v0.29, you can configure Pomerium to handle a [UDP route](/docs/capabilities/udp) in one of two different ways.
+
+If you specify a `to` URL with the `udp://` scheme, Pomerium will proxy the raw UDP connection to the upstream service:
+
+```yaml
+- from: udp+https://udp.example.com:3001
+  to: udp://localhost:3001
+```
+
+If you specify a `to` URL with the scheme `http://` or `https://`, Pomerium will instead proxy an HTTP CONNECT-UDP request to the upstream service:
+
+```yaml
+- from: udp+https://udp.example.com:3001
+  to: https://second-proxy.udp.example.com:3002
+```
+
+This allows you to place Pomerium in front of another HTTP-to-UDP proxy.
+
+If you specify a list of multiple `to` URLs in one route, you may not include both `udp://` and non-`udp://` URLs.
 
 :::note
 
