@@ -32,7 +32,32 @@ Key benefits:
 
 Pomerium intercepts and routes user traffic to protected services through an identity-aware access layer, ensuring every request is validated against your configured identity provider, policies, and device context.
 
-![diagram here](#)
+```mermaid
+flowchart LR
+    subgraph Internet
+        U((User))
+    end
+
+    subgraph Identity
+        IdP((Identity Provider))
+    end
+
+    subgraph Pomerium
+        Proxy(Pomerium Proxy)
+        Policy(Policy Engine)
+        Proxy --> Policy
+    end
+
+    subgraph Internal
+        S(Protected Service)
+    end
+
+    U -->|Request Access| Proxy
+    Proxy -->|Authenticate| IdP
+    IdP -->|Return Claims| Proxy
+    Policy -->|Allow or Deny| Proxy
+    Proxy -->|Forward Request| S
+```
 
 In practice:
 
