@@ -290,7 +290,7 @@ Great! With these steps, you can manually verify the JWT’s signature and that 
 
 :::note
 
-Pomerium offers [**front- and back-end SDKs**](/docs/guides/verify-jwt) with built-in JWT libraries.
+Pomerium offers [**front- and back-end SDKs**](/docs/manage/verify-jwt) with built-in JWT libraries.
 
 You can use these libraries in your own applications to work easily with Pomerium’s JWT flow, or implement your own solution.
 

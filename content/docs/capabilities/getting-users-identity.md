@@ -19,7 +19,7 @@ keywords:
   ]
 ---
 
-import Tabs from '@theme/Tabs'; import TabItem from '@theme/TabItem'; import GoApp from '../../examples/go-sdk/go-app.md'; import ReactApp from '../../examples/js-sdk/react-app.md';
+import Tabs from '@theme/Tabs'; import TabItem from '@theme/TabItem'; import GoApp from '/content/examples/go-sdk/go-app.md'; import ReactApp from '/content/examples/js-sdk/react-app.md';
 
 # JWT Authentication
 
@@ -186,7 +186,7 @@ If the JWT has expired, it is invalid and can't be trusted.
 
 :::tip JWT Verification with Pomerium SDKs
 
-Pomerium's [**JWT Verification**](/docs/guides/verify-jwt) guide shows you how to use our custom JWT libraries to parse and validate the Pomerium JWT in an upstream service.
+Pomerium's [**JWT Verification**](/docs/manage/verify-jwt) guide shows you how to use our custom JWT libraries to parse and validate the Pomerium JWT in an upstream service.
 
 :::
 

@@ -5,7 +5,7 @@ description: This guide provides several methods to validate the Pomerium JWT in
 sidebar_label: JWT Verification
 ---
 
-import Tabs from '@theme/Tabs'; import TabItem from '@theme/TabItem'; import GoApp from '../../examples/go-sdk/go-app.md'; import ExpressApp from '../../examples/js-sdk/express-server.md';
+import Tabs from '@theme/Tabs'; import TabItem from '@theme/TabItem'; import GoApp from '/content/examples/go-sdk/go-app.md'; import ExpressApp from '/content/examples/js-sdk/express-server.md';
 
 This guide provides several methods to verify and validate the Pomerium JWT forwarded in signed the `X-Pomerium-Jwt-Assertion` header:
 
@@ -83,16 +83,16 @@ Though you will likely verify signed headers programmatically in your applicatio
 
 1. Reload Pomerium. Navigate to httpbin (by default, `https://httpbin.corp.${YOUR-DOMAIN}.com`), and log in as usual. Click **request inspection**. Select `/headers`. Click **try it out** and then **execute**. You should see something like the following.
 
-   ![httpbin displaying jwt headers](./img/jwt/inspect-headers.png)
+   ![httpbin displaying jwt headers](./jwt/inspect-headers.png)
 
 1. `X-Pomerium-Jwt-Assertion` is the signature value. It's less scary than it looks, and is basically just a compressed, JSON blob as described above. Navigate to [jwt.io](https://jwt.io/), which provides a helpful user interface to manually verify JWT values.
 
 1. Paste the value of `X-Pomerium-Jwt-Assertion` header token into the `Encoded` form. You should notice that the decoded values look much more familiar.
 
-   ![httpbin displaying decoded jwt](./img/jwt/verifying-headers-1.png)
+   ![httpbin displaying decoded jwt](./jwt/verifying-headers-1.png)
 
 1. Finally, we want to cryptographically verify the validity of the token. To do this, we will need the signer's public key. You can simply copy and paste the output of `cat ec_public.pem`.
 
-   ![httpbin displaying verified jwt](./img/jwt/jwt-payload.png)
+   ![httpbin displaying verified jwt](./jwt/jwt-payload.png)
 
 **Voila!** Hopefully walking through a manual verification has helped give you a better feel for how signed JWT tokens are used as a secondary validation mechanism in pomerium.

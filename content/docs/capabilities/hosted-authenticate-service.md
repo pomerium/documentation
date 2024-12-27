@@ -36,7 +36,7 @@ If you're testing Pomerium for the first time, run [Pomerium with Docker](/docs/
 
 :::enterprise
 
-Pomerium users who are interested in [Pomerium Enterprise](https://www.pomerium.com/enterprise-sales/) can test out the [Docker Enterprise quickstart](/docs/enterprise/quickstart) using our hosted authenticate service as well.
+Pomerium users who are interested in [Pomerium Enterprise](https://www.pomerium.com/enterprise-sales/) can test out the [Docker Enterprise quickstart](/docs/deploy/enterprise/quickstart) using our hosted authenticate service as well.
 
 :::
 

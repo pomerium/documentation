@@ -39,7 +39,7 @@ Each example diagrams Pomerium as a single service, as it is in [all-in-one mode
 
 This example shows you what a basic Pomerium installation looks like on a local area network (LAN). The Pomerium instance proxies requests to a single upstream service. Assume that the service contains sensitive data that only authorized users should have access to.
 
-![Pomerium basic installation](./img/mutual-authentication/pomerium-basic.svg)
+![Pomerium basic installation](./mutual-authentication/pomerium-basic.svg)
 
 1. The user connects to the route `service.example.com` and Pomerium receives the traffic.
 1. Pomerium redirects the user to the identity provider (IdP) to sign in and validate their identity.
@@ -47,7 +47,7 @@ This example shows you what a basic Pomerium installation looks like on a local 
 
 In this scenario, Pomerium only grants access to authorized users. However, this model depends on the security of your network perimeter: If a bad actor gains access to your internal network, they can communicate with the upstream service directly:
 
-![Hacker getting into LAN](./img/mutual-authentication/pomerium-basic-hacker.svg)
+![Hacker getting into LAN](./mutual-authentication/pomerium-basic-hacker.svg)
 
 While your network _should_ be secured to only allow traffic at specified ports and directed to specified services, this creates a single point of failure. A hacker only needs to bypass your firewall to get direct access to the upstream service.
 
@@ -70,7 +70,7 @@ To verify a JWT, the upstream service must check that the JWT was signed by a tr
 
 See the diagram below for a step-by-step example:
 
-![JWT verification](./img/mutual-authentication/jwt-verification.svg)
+![JWT verification](./mutual-authentication/jwt-verification.svg)
 
 1. The user connects to the route `service.example.com` and Pomerium receives the traffic.
 1. Pomerium redirects the user to the IdP to sign in and validate their identity.
@@ -79,7 +79,7 @@ See the diagram below for a step-by-step example:
 
 A hacker may be able to forge a basic JWT, but they can't sign it with the key secured in the Pomerium configuration, so the upstream service rejects their connections:
 
-![JWT verification hacker](./img/mutual-authentication/jwt-verification-hacker.svg)
+![JWT verification hacker](./mutual-authentication/jwt-verification-hacker.svg)
 
 In this way, Pomerium applies a zero trust security model to the application layer of the infrastructure's network model. You can see JWT verification in practice with the [Grafana](/docs/guides/grafana) integration guide.
 
@@ -87,7 +87,7 @@ In this way, Pomerium applies a zero trust security model to the application lay
 
 For more information on how Pomerium implements JWT verification, see the following docs:
 
-- [JWT Verification](/docs/guides/verify-jwt)
+- [JWT Verification](/docs/manage/verify-jwt)
 - [Identity Verification](/docs/capabilities/getting-users-identity)
 
 :::
@@ -102,7 +102,7 @@ For more information on how Pomerium implements JWT verification, see the follow
 
 Transport Layer Security (TLS) is a security protocol that encrypts HTTP traffic between a server and a client using the server’s TLS certificate. The server validates its identity with its TLS certificate and the certificate authority (CA) that signed it.
 
-![North-south mTLS](./img/mutual-authentication/north-south-mutual-auth.svg)
+![North-south mTLS](./mutual-authentication/north-south-mutual-auth.svg)
 
 1. The browser initiates a connection to `example.com` over the `HTTP` protocol.
 1. The server sends its public certificate to the browser.
@@ -111,7 +111,7 @@ Transport Layer Security (TLS) is a security protocol that encrypts HTTP traffic
 
 The process above, an example of [north-south traffic](https://en.wikipedia.org/wiki/North-south_traffic) over `HTTPS`, confirms the identity of the _server_, protecting the client. Mutual TLS (**mTLS**) allows the server to confirm the identity of the _client_ using a client certificate.
 
-![mTLS](./img/mutual-authentication/mTLS.svg)
+![mTLS](./mutual-authentication/mTLS.svg)
 
 1. After the server certificate is trusted and an `HTTPS` connection is established, the server requests a client certificate.
 1. The user is prompted to use one of the certificates previously imported into the browser; the certificate is sent to the server.
@@ -126,7 +126,7 @@ Traffic between services in an internal network is referred to as [east-west tra
 
 With Pomerium, you only need to configure mTLS between your Pomerium instance and an upstream service (the east-west traffic) once per service and maintain it by updating certificates.
 
-![East-west mTLS](./img/mutual-authentication/east-west-mtls-hacker.svg)
+![East-west mTLS](./mutual-authentication/east-west-mtls-hacker.svg)
 
 In this way, you've applied a zero trust security model to the protocol layer of the infrastructure's network model.
 
@@ -136,13 +136,13 @@ If your company depends on software that was not built for mutual authentication
 
 Pomerium describes the technical steps to test such a configuration using Envoy and Docker containers in the [JWT Verification] guide, but you can see a sidecar described conceptually below:
 
-![Mutual authentication with a sidecar](./img/mutual-authentication/sidecar-mutual-auth.svg)
+![Mutual authentication with a sidecar](./mutual-authentication/sidecar-mutual-auth.svg)
 
 In this example, the service is only network-accessible from the `backend` network. The only other container with access to that network is `sidecar`, which performs the JWT or mTLS authentication before allowing traffic to the service.
 
 Because the `backend` network is inaccessible to any traffic not coming from the sidecar, a bad actor has no way of accessing it:
 
-![Hacker attempting to access backend without sidecar](./img/mutual-authentication/sidecar-mtls-hacker.svg)
+![Hacker attempting to access backend without sidecar](./mutual-authentication/sidecar-mtls-hacker.svg)
 
 ### Putting it all together
 
@@ -152,7 +152,7 @@ For example, it's usually not reasonable to expect a service with many unique en
 
 This final diagram demonstrates what mTLS might look like in an organization when applied to downstream and upstream applications and services with Pomerium proxying the requests and securing the traffic:
 
-![Putting it all together](./img/mutual-authentication/put-it-together.svg)
+![Putting it all together](./mutual-authentication/put-it-together.svg)
 
 In this example:
 
@@ -174,7 +174,7 @@ In this example:
 [binaries]: /docs/core
 [device identity verification]: /docs/concepts/device-identity.md
 [grafana]: /docs/guides/grafana
-[jwt verification]: /docs/guides/jwt-verification.md
+[jwt verification]: /docs/manage/jwt-verification.md
 [jwt-rfc]: https://datatracker.ietf.org/doc/html/rfc7519
 [`pass_identity_headers`]: /docs/reference/routes/pass-identity-headers-per-route
 [quickstart]: /docs/get-started/quickstart

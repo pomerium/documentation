@@ -20,7 +20,7 @@ This guide explains what the [external](#external-prometheus) and [embedded](#em
 
 To complete this guide, you need:
 
-- [Pomerium Enterprise](/docs/enterprise)
+- [Pomerium Enterprise](/docs/deploy/enterprise)
 - [Pomerium Core](/docs/core)
 
 This guide runs both Pomerium instances on localhost (`127.0.0.1`).
@@ -71,7 +71,7 @@ For production deployments, we suggest using a dedicated Prometheus instance.
    curl -i -XPOST path.to.prometheus:port/-/reload
    ```
 
-1. In your Pomerium Enterprise configuration file, define the [`prometheus_url`](/docs/enterprise/configure#prometheus-url) key to point to your Prometheus instance. The example below uses port 9090, the default [Prometheus port](https://prometheus.io/docs/introduction/first_steps/).
+1. In your Pomerium Enterprise configuration file, define the [`prometheus_url`](/docs/deploy/enterprise/configure#prometheus-url) key to point to your Prometheus instance. The example below uses port 9090, the default [Prometheus port](https://prometheus.io/docs/introduction/first_steps/).
 
    ```yaml title="pomerium-enterprise.yaml"
    prometheus_url: http://192.168.122.50:9090
@@ -95,7 +95,7 @@ For production deployments, we suggest using a dedicated Prometheus instance.
 
 Pomerium Enterprise supports an embedded Prometheus instance that you configure only in Pomerium. Use this option if you don't want to maintain an external Prometheus instance, or if you're testing metrics.
 
-To configure an embedded Prometheus instance, add the [`prometheus_data_dir`](/docs/enterprise/configure#prometheus-data-dir) key and file path in your Pomerium Enterprise configuration file:
+To configure an embedded Prometheus instance, add the [`prometheus_data_dir`](/docs/deploy/enterprise/configure#prometheus-data-dir) key and file path in your Pomerium Enterprise configuration file:
 
 ```yaml title="pomerium-enterprise.yaml"
 prometheus_data_dir: /var/lib/pomerium-console/tsdb
@@ -103,7 +103,7 @@ prometheus_data_dir: /var/lib/pomerium-console/tsdb
 
 :::note
 
-The directory path can be any location that you have permissions to write to. This example uses the default location created if you install Pomerium Enterprise with the [OS Packages](/docs/enterprise/install#install-pomerium-enterprise) option.
+The directory path can be any location that you have permissions to write to. This example uses the default location created if you install Pomerium Enterprise with the [OS Packages](/docs/deploy/enterprise/install#install-pomerium-enterprise) option.
 
 :::
 

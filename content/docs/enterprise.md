@@ -29,7 +29,7 @@ Pomerium Enterprise comes with all the capabilities in Pomerium Core, plus the f
 
 The **Enterprise Console** provides a dashboard where you can view traffic and logs, manage routes and policies, import external data, configure global and namespaced settings, and more.
 
-![An overview animation of the Pomerium Enterprise Console](./enterprise/img/enterprise-console-overview.gif)
+![An overview animation of the Pomerium Enterprise Console](./deploy/enterprise/img/enterprise-console-overview.gif)
 
 ### Enterprise API
 
@@ -41,7 +41,7 @@ Everything that is manageable in the Enterprise Console can also be driven progr
 
 The **Sessions** dashboard allows you to view and manage sessions within your organization. Admin members can export session data and revoke sessions in real time.
 
-![View and manage sessions in the Enterprise Console's Sessions dashboard](./enterprise/img/manage-sessions.png)
+![View and manage sessions in the Enterprise Console's Sessions dashboard](./deploy/enterprise/img/manage-sessions.png)
 
 :::enterprise
 
@@ -55,42 +55,42 @@ The **Namespaces** dashboard is where you configure user roles and permissions f
 
 Pomerium Enterprise allows you to import groups defined by your identity provider. This allows you to build stable policies that don’t require adjustments as your company changes.
 
-![Manage Namespaces in the Enterprise Console's Namespaces dashboard](./enterprise/img/manage-namespaces.gif)
+![Manage Namespaces in the Enterprise Console's Namespaces dashboard](./deploy/enterprise/img/manage-namespaces.gif)
 
 ### Deployment History and Audit Logs
 
 The **Deployments** dashboard allows you to view and export change logs from the Enterprise Console. Select a change to review which user applied it and when.
 
-![View deployments in the Enterprise Console's Deployments dashboard](./enterprise/img/deployments-dashboard.gif)
+![View deployments in the Enterprise Console's Deployments dashboard](./deploy/enterprise/img/deployments-dashboard.gif)
 
 ### Directory Sync
 
-Pomerium Enterprise's [**Directory Sync**](/docs/capabilities/directory-sync) feature allows you to import your identity provider's directory data. After a successful sync, you can use your internal groups and teams data when building policies. ![Viewing the Identity Providers settings for a directory sync in the Enterprise Console](./enterprise/img/directory-sync-2.png)
+Pomerium Enterprise's [**Directory Sync**](/docs/capabilities/directory-sync) feature allows you to import your identity provider's directory data. After a successful sync, you can use your internal groups and teams data when building policies. ![Viewing the Identity Providers settings for a directory sync in the Enterprise Console](./deploy/enterprise/img/directory-sync-2.png)
 
 ### External Data Sources
 
-In the **External Data** dashboard, you can import, view, and manage [external data sources](/docs/capabilities/integrations). After a successful sync, you can use data unique to your organization to serve as context in your authorization policies. ![Using the External Data Source Record type in a policy](./enterprise/img/external-data-as-context.gif)
+In the **External Data** dashboard, you can import, view, and manage [external data sources](/docs/capabilities/integrations). After a successful sync, you can use data unique to your organization to serve as context in your authorization policies. ![Using the External Data Source Record type in a policy](./deploy/enterprise/img/external-data-as-context.gif)
 
 ## Pomerium Enterprise features comparison
 
 | Features | Pomerium Core | Pomerium Enterprise |
 | :-- | :-- | :-- |
-| Identity-based Access | ![Pomerium checkmark](./enterprise/img/pomerium-checkmark.svg) | ![Pomerium checkmark](./enterprise/img/pomerium-checkmark.svg) |
-| SSO Support | ![Pomerium checkmark](./enterprise/img/pomerium-checkmark.svg) | ![Pomerium checkmark](./enterprise/img/pomerium-checkmark.svg) |
-| Declarative Authorization Policy | ![Pomerium checkmark](./enterprise/img/pomerium-checkmark.svg) | ![Pomerium checkmark](./enterprise/img/pomerium-checkmark.svg) |
-| TCP Support | ![Pomerium checkmark](./enterprise/img/pomerium-checkmark.svg) | ![Pomerium checkmark](./enterprise/img/pomerium-checkmark.svg) |
-| Enterprise Console | <ClearIcon /> | ![Pomerium checkmark](./enterprise/img/pomerium-checkmark.svg) |
-| [Enterprise API](/docs/capabilities/enterprise-api) | <ClearIcon /> | ![Pomerium checkmark](./enterprise/img/pomerium-checkmark.svg) |
-| [Session Management](/docs/capabilities/metrics#sessions) | <ClearIcon /> | ![Pomerium checkmark](./enterprise/img/pomerium-checkmark.svg) |
-| [Namespaces](/docs/capabilities/namespacing) | <ClearIcon /> | ![Pomerium checkmark](./enterprise/img/pomerium-checkmark.svg) |
-| [Directory Sync](/docs/capabilities/directory-sync) | <ClearIcon /> | ![Pomerium checkmark](./enterprise/img/pomerium-checkmark.svg) |
-| [User Impersonation](/docs/capabilities/impersonation) | <ClearIcon /> | ![Pomerium checkmark](./enterprise/img/pomerium-checkmark.svg) |
-| [Deployment History](/docs/capabilities/metrics#changesets-and-deployments) | <ClearIcon /> | ![Pomerium checkmark](./enterprise/img/pomerium-checkmark.svg) |
-| [Device Identity](/docs/capabilities/device-identity) | <ClearIcon /> | ![Pomerium checkmark](./enterprise/img/pomerium-checkmark.svg) |
-| [Custom Branding](/docs/capabilities/branding) | <ClearIcon /> | ![Pomerium checkmark](./enterprise/img/pomerium-checkmark.svg) |
-| [Service Accounts](/docs/capabilities/service-accounts) | <ClearIcon /> | ![Pomerium checkmark](./enterprise/img/pomerium-checkmark.svg) |
-| [Metrics](/docs/capabilities/metrics) | <ClearIcon /> | ![Pomerium checkmark](./enterprise/img/pomerium-checkmark.svg) |
-| [External Data Sources](/docs/capabilities/integrations) | <ClearIcon /> | ![Pomerium checkmark](./enterprise/img/pomerium-checkmark.svg) |
+| Identity-based Access | ![Pomerium checkmark](./deploy/enterprise/img/pomerium-checkmark.svg) | ![Pomerium checkmark](./deploy/enterprise/img/pomerium-checkmark.svg) |
+| SSO Support | ![Pomerium checkmark](./deploy/enterprise/img/pomerium-checkmark.svg) | ![Pomerium checkmark](./deploy/enterprise/img/pomerium-checkmark.svg) |
+| Declarative Authorization Policy | ![Pomerium checkmark](./deploy/enterprise/img/pomerium-checkmark.svg) | ![Pomerium checkmark](./deploy/enterprise/img/pomerium-checkmark.svg) |
+| TCP Support | ![Pomerium checkmark](./deploy/enterprise/img/pomerium-checkmark.svg) | ![Pomerium checkmark](./deploy/enterprise/img/pomerium-checkmark.svg) |
+| Enterprise Console | <ClearIcon /> | ![Pomerium checkmark](./deploy/enterprise/img/pomerium-checkmark.svg) |
+| [Enterprise API](/docs/capabilities/enterprise-api) | <ClearIcon /> | ![Pomerium checkmark](./deploy/enterprise/img/pomerium-checkmark.svg) |
+| [Session Management](/docs/capabilities/metrics#sessions) | <ClearIcon /> | ![Pomerium checkmark](./deploy/enterprise/img/pomerium-checkmark.svg) |
+| [Namespaces](/docs/capabilities/namespacing) | <ClearIcon /> | ![Pomerium checkmark](./deploy/enterprise/img/pomerium-checkmark.svg) |
+| [Directory Sync](/docs/capabilities/directory-sync) | <ClearIcon /> | ![Pomerium checkmark](./deploy/enterprise/img/pomerium-checkmark.svg) |
+| [User Impersonation](/docs/capabilities/impersonation) | <ClearIcon /> | ![Pomerium checkmark](./deploy/enterprise/img/pomerium-checkmark.svg) |
+| [Deployment History](/docs/capabilities/metrics#changesets-and-deployments) | <ClearIcon /> | ![Pomerium checkmark](./deploy/enterprise/img/pomerium-checkmark.svg) |
+| [Device Identity](/docs/capabilities/device-identity) | <ClearIcon /> | ![Pomerium checkmark](./deploy/enterprise/img/pomerium-checkmark.svg) |
+| [Custom Branding](/docs/capabilities/branding) | <ClearIcon /> | ![Pomerium checkmark](./deploy/enterprise/img/pomerium-checkmark.svg) |
+| [Service Accounts](/docs/capabilities/service-accounts) | <ClearIcon /> | ![Pomerium checkmark](./deploy/enterprise/img/pomerium-checkmark.svg) |
+| [Metrics](/docs/capabilities/metrics) | <ClearIcon /> | ![Pomerium checkmark](./deploy/enterprise/img/pomerium-checkmark.svg) |
+| [External Data Sources](/docs/capabilities/integrations) | <ClearIcon /> | ![Pomerium checkmark](./deploy/enterprise/img/pomerium-checkmark.svg) |
 
 ## Next Steps
 
@@ -100,8 +100,8 @@ Already upgraded to Pomerium Enterprise, but need some help setting up the Enter
 
 The following docs can help:
 
-- [**Install Pomerium Enterprise**](/docs/enterprise/install)
-- [**Pomerium Enterprise Configuration**](/docs/enterprise/configure)
-- [**Pomerium Enterprise Quickstart**](/docs/enterprise/quickstart)
+- [**Install Pomerium Enterprise**](/docs/deploy/enterprise/install)
+- [**Pomerium Enterprise Configuration**](/docs/deploy/enterprise/configure)
+- [**Pomerium Enterprise Quickstart**](/docs/deploy/enterprise/quickstart)
 
 :::
