@@ -86,7 +86,7 @@ See the [Service Accounts](/docs/capabilities/service-accounts) capabilities pag
 
 ### Single Sign-On
 
-Single Sign-On (**SSO**) is the most frequently asked for requirement by enterprise organizations looking to adopt new SaaS applications. SSO enables authentication via an organization’s [identity provider], such as [Google Workspace](/docs/identity-providers/google) or [Okta](/docs/identity-providers/okta), as opposed to users or IT admins managing hundreds, if not thousands, of usernames and passwords.
+Single Sign-On (**SSO**) is the most frequently asked for requirement by enterprise organizations looking to adopt new SaaS applications. SSO enables authentication via an organization’s [identity provider], such as [Google Workspace](/docs/integrations/google) or [Okta](/docs/integrations/okta), as opposed to users or IT admins managing hundreds, if not thousands, of usernames and passwords.
 
 ### Stateless
 

@@ -32,7 +32,7 @@ To complete this guide, you need:
 
 :::note
 
-If you completed our [**Quickstart guide**](/docs/quickstart), you should have a working Pomerium project with the following YAML files:
+If you completed our [**Quickstart guide**](/docs/get-started/quickstart), you should have a working Pomerium project with the following YAML files:
 
 - `config.yaml`
 - `docker-compose.yaml`

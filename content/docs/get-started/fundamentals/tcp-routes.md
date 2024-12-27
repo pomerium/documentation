@@ -19,12 +19,12 @@ Specifically,  we’ll create a [Redis](https://redis.io/) service and route us
 
 Make sure you’ve completed the following tutorials:
 
-- [**Get Started**](/docs/courses/fundamentals/get-started)
-- [**Build a Simple Route**](/docs/courses/fundamentals/build-routes)
-- [**Build a Simple Policy**](/docs/courses/fundamentals/build-policies)
-- [**Identity Verification with JWTs**](/docs/courses/fundamentals/jwt-verification)
-- [**Build Advanced Policies**](/docs/courses/fundamentals/advanced-policies)
-- [**Build Advanced Routes**](/docs/courses/fundamentals/advanced-routes)
+- [**Get Started**](/docs/get-started/fundamentals/get-started)
+- [**Build a Simple Route**](/docs/get-started/fundamentals/build-routes)
+- [**Build a Simple Policy**](/docs/get-started/fundamentals/build-policies)
+- [**Identity Verification with JWTs**](/docs/get-started/fundamentals/jwt-verification)
+- [**Build Advanced Policies**](/docs/get-started/fundamentals/advanced-policies)
+- [**Build Advanced Routes**](/docs/get-started/fundamentals/advanced-routes)
 
 Each tutorial builds on the same configuration files. In this tutorial, you’ll build routes to several services and proxy TCP connections to these services with Pomerium CLI.
 

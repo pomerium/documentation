@@ -32,8 +32,8 @@ Specifically, we’ll cover:
 
 Make sure you’ve completed the following tutorials:
 
-- [**Get Started**](/docs/courses/fundamentals/get-started)
-- [**Build a Simple Route**](/docs/courses/fundamentals/build-routes)
+- [**Get Started**](/docs/get-started/fundamentals/get-started)
+- [**Build a Simple Route**](/docs/get-started/fundamentals/build-routes)
 
 If you completed these tutorials, you should have:
 

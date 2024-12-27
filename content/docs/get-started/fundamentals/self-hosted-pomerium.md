@@ -25,13 +25,13 @@ To do this, you must:
 
 Make sure you’ve completed the following tutorials:
 
-- [**Get Started**](/docs/courses/fundamentals/get-started)
-- [**Build a Simple Route**](/docs/courses/fundamentals/build-routes)
-- [**Build a Simple Policy**](/docs/courses/fundamentals/build-policies)
-- [**Identity Verification with JWTs**](/docs/courses/fundamentals/jwt-verification)
-- [**Build Advanced Policies**](/docs/courses/fundamentals/advanced-policies)
-- [**Build Advanced Routes**](/docs/courses/fundamentals/advanced-routes)
-- [**Build TCP Routes**](/docs/courses/fundamentals/tcp-routes)
+- [**Get Started**](/docs/get-started/fundamentals/get-started)
+- [**Build a Simple Route**](/docs/get-started/fundamentals/build-routes)
+- [**Build a Simple Policy**](/docs/get-started/fundamentals/build-policies)
+- [**Identity Verification with JWTs**](/docs/get-started/fundamentals/jwt-verification)
+- [**Build Advanced Policies**](/docs/get-started/fundamentals/advanced-policies)
+- [**Build Advanced Routes**](/docs/get-started/fundamentals/advanced-routes)
+- [**Build TCP Routes**](/docs/get-started/fundamentals/tcp-routes)
 
 Each tutorial builds on the same configuration files. In this tutorial, you’ll replace the Hosted Authenticate service with your own self-hosted authenticate service.
 
@@ -109,7 +109,7 @@ You can integrate Pomerium with any identity provider (IdP) that supports OAuth2
 - Okta OneLogin
 - Ping
 
-For the purposes of this guide, we will use GitHub as the IdP (the configuration is simpler than other IdPs). See our [GitHub](/docs/identity-providers/github) guide for detailed instructions.
+For the purposes of this guide, we will use GitHub as the IdP (the configuration is simpler than other IdPs). See our [GitHub](/docs/integrations/github) guide for detailed instructions.
 
 :::tip **About the Authorization Callback URL**
 
@@ -257,4 +257,4 @@ This means your Pomerium instance is hosted in a private network. Because you ha
 
 This setting will secure connections between Pomerium and the upstream service, and it’s the final piece you need to self-host a production-ready Pomerium deployment.
 
-**Next up**: [Production Certificates With Autocert](/docs/courses/fundamentals/production-certificates)
+**Next up**: [Production Certificates With Autocert](/docs/get-started/fundamentals/production-certificates)

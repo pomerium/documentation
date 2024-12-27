@@ -135,7 +135,7 @@ PomeriumSpec defines Pomerium-specific configuration parameters.
                 </p>
                 <p>
                     
-                    IdentityProvider configure single-sign-on authentication and user identity details by integrating with your <a href="https://www.pomerium.com/docs/identity-providers/">Identity Provider</a>
+                    IdentityProvider configure single-sign-on authentication and user identity details by integrating with your <a href="https://www.pomerium.com/docs/integrations/">Identity Provider</a>
                 </p>
                 
             </td>
@@ -437,7 +437,7 @@ Cookie defines Pomerium session cookie options.
 
 ### `identityProvider`
 
-IdentityProvider configure single-sign-on authentication and user identity details by integrating with your <a href="https://www.pomerium.com/docs/identity-providers/">Identity Provider</a>
+IdentityProvider configure single-sign-on authentication and user identity details by integrating with your <a href="https://www.pomerium.com/docs/integrations/">Identity Provider</a>
 
 <table>
     <thead>

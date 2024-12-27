@@ -36,7 +36,7 @@ In your Account dashboard, go to **Certificates, IDs, & Profiles**.
 1. For **Bundle ID**, select **Explicit** and enter a domain (for example, `com.app.test`)
 1. Under **Capabilities**, select **Sign In with Apple**
 
-![Register an App ID](./img/apple/apple-register-app.png)
+![Register an App ID](../integrations/img/apple/apple-register-app.png)
 
 ### Register a Services ID
 
@@ -58,7 +58,7 @@ In the **Web Authentication Configuration** window:
 1. In **Return URLs**, enter your authenticate service URL and the `/oauth2/callback` path (for example, `https://authenticate.service.url.net/oauth2/callback`)
 1. Select **Continue** and save your Service ID configuration
 
-![Add web authentication configuration](./img/apple/apple-web-authn-config.png)
+![Add web authentication configuration](../integrations/img/apple/apple-web-authn-config.png)
 
 ### Create a signing key
 
@@ -69,11 +69,11 @@ In the **Web Authentication Configuration** window:
 1. Select **Sign in with Apple** and **Configure**
 1. In **Configure Key**, select the **Primary App ID**
 
-![Register a new key](./img/apple/apple-register-new-key.png)
+![Register a new key](../integrations/img/apple/apple-register-new-key.png)
 
 After successfully creating a signing key, Apple will prompt you to download your key.
 
-![Download signing key](./img/apple/apple-download-key.png)
+![Download signing key](../integrations/img/apple/apple-download-key.png)
 
 Download the key and store it somewhere safe. You can only download it once and must pass in the key in order to generate your **Client Secret** (JWT).
 
@@ -115,7 +115,7 @@ Access a route defined in your configuration file.
 
 Apple should prompt you to sign in:
 
-![Apple sign in](./img/apple/apple-sign-in-prompt.png)
+![Apple sign in](../integrations/img/apple/apple-sign-in-prompt.png)
 
 :::tip
 

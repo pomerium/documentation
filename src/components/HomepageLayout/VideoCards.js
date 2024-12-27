@@ -52,7 +52,7 @@ export default function VideoMediaCard() {
             sx={{
               bgcolor: colorMode === 'dark' ? '#121212' : '',
             }}>
-            <Link to="/docs/quickstart">Try Quickstart</Link>
+            <Link to="/docs/get-started/quickstart">Try Quickstart</Link>
           </CardActions>
         </Card>
       </div>

@@ -28,9 +28,9 @@ But first, a bit of background on JWTs and their application in Pomerium…
 
 Make sure you’ve completed the following tutorials:
 
-- [**Get Started**](/docs/courses/fundamentals/get-started)
-- [**Build a Simple Route**](/docs/courses/fundamentals/build-routes)
-- [**Build a Simple Policy**](/docs/courses/fundamentals/build-policies)
+- [**Get Started**](/docs/get-started/fundamentals/get-started)
+- [**Build a Simple Route**](/docs/get-started/fundamentals/build-routes)
+- [**Build a Simple Policy**](/docs/get-started/fundamentals/build-policies)
 
 If you completed these tutorials, you should have:
 
