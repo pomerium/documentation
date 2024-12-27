@@ -255,6 +255,6 @@ You should now be able to run the example with:
 [httpbin.localhost.pomerium.io]: https://verify.localhost.pomerium.io
 [local development with wildcard dns on linux]: https://sixfeetup.com/blog/local-development-with-wildcard-dns-on-linux
 [local development with wildcard dns]: https://blog.thesparktree.com/local-development-with-wildcard-dns
-[mutual authentication: a component of zero trust]: /docs/concepts/mutual-auth.md
-[mutual authentication with a sidecar]: /docs/concepts/mutual-auth.md#mutual-authentication-with-a-sidecar
+[mutual authentication: a component of zero trust]: /docs/manage/mutual-auth.md
+[mutual authentication with a sidecar]: /docs/manage/mutual-auth.md#mutual-authentication-with-a-sidecar
 [verify.localhost.pomerium.io]: https://verify.localhost.pomerium.io

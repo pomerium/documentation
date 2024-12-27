@@ -115,14 +115,13 @@ const sidebars = {
         // 'docs/capabilities/hosted-authenticate-service', // consolidate into authentication
         // 'docs/capabilities/self-hosted-authenticate-service', // consolidate into authentication
         'docs/capabilities/metrics',
-        'docs/capabilities/mtls-clients',
-        'docs/capabilities/mtls-services',
+        'docs/capabilities/certificates-and-tls',
+        // 'docs/capabilities/mtls-services', //consolidate into certificates-and-tls
         'docs/capabilities/getting-users-identity',
-        'docs/capabilities/single-sign-out',
+        // 'docs/capabilities/single-sign-out', // consolidate into authentication
         'docs/capabilities/programmatic-access',
-        'docs/capabilities/load-balancing',
+        // 'docs/capabilities/load-balancing', // consolidate into routing
         'docs/capabilities/kubernetes-access',
-        // 'docs/capabilities/non-http-protocols',
 
         {
           type: 'category',
@@ -153,14 +152,18 @@ const sidebars = {
           id: 'docs/capabilities/branding',
           className: 'enterprise',
           type: 'doc',
-          label: 'Custom Branding & Errors',
         },
         {
-          id: 'docs/capabilities/rego',
+          id: 'docs/capabilities/self-remediation',
           className: 'enterprise',
           type: 'doc',
-          label: 'Custom Rego Policies',
         },
+        // {
+        //   id: 'docs/capabilities/rego', //consolidate into ppl
+        //   className: 'enterprise',
+        //   type: 'doc',
+        //   label: 'Custom Rego Policies',
+        // },
         {
           id: 'docs/capabilities/device-identity',
           className: 'enterprise',
@@ -392,130 +395,7 @@ const sidebars = {
         keywords: ['guides'],
         slug: 'docs/guides',
       },
-      items: [
-        {
-          type: 'category',
-          label: 'Upstream Services',
-          description:
-            'Secure common services and applications behind Pomerium',
-          items: [
-            {
-              type: 'doc',
-              id: 'docs/guides/ad-guard',
-            },
-            {
-              type: 'doc',
-              id: 'docs/guides/guacamole',
-            },
-            {
-              type: 'doc',
-              id: 'docs/guides/code-server',
-            },
-            {
-              type: 'doc',
-              id: 'docs/guides/gitlab',
-            },
-            {
-              type: 'doc',
-              id: 'docs/guides/grafana',
-            },
-            {
-              type: 'doc',
-              id: 'docs/guides/hedgedoc',
-            },
-            {
-              type: 'doc',
-              id: 'docs/guides/jenkins',
-            },
-            {
-              type: 'doc',
-              id: 'docs/guides/jit',
-            },
-            {
-              type: 'doc',
-              id: 'docs/guides/llm',
-            },
-            {
-              type: 'doc',
-              id: 'docs/guides/tiddlywiki',
-            },
-            {
-              type: 'doc',
-              id: 'docs/guides/tooljet',
-            },
-            {
-              type: 'doc',
-              id: 'docs/guides/transmission',
-            },
-          ],
-        },
-        {
-          type: 'category',
-          label: 'Courses',
-          description: 'Learn how Pomerium works with guided tutorials',
-          items: [
-            {
-              type: 'doc',
-              id: 'docs/get-started/fundamentals/get-started',
-            },
-            {
-              type: 'doc',
-              id: 'docs/get-started/fundamentals/build-routes',
-            },
-            {
-              type: 'doc',
-              id: 'docs/get-started/fundamentals/build-policies',
-            },
-            {
-              type: 'doc',
-              id: 'docs/get-started/fundamentals/jwt-verification',
-            },
-            {
-              type: 'doc',
-              id: 'docs/get-started/fundamentals/advanced-policies',
-            },
-            {
-              type: 'doc',
-              id: 'docs/get-started/fundamentals/advanced-routes',
-            },
-            {
-              type: 'doc',
-              id: 'docs/get-started/fundamentals/tcp-routes',
-            },
-            {
-              type: 'doc',
-              id: 'docs/get-started/fundamentals/self-hosted-pomerium',
-            },
-            {
-              type: 'doc',
-              id: 'docs/get-started/fundamentals/production-certificates',
-            },
-            {
-              type: 'doc',
-              id: 'docs/get-started/fundamentals/conclusion',
-            },
-          ],
-        },
-        // {
-        //   type: 'category',
-        //   label: 'Configure Pomerium',
-        //   description: 'Configure Pomerium to work with your services',
-        //   items: [
-        //     // {
-        //     //   type: 'doc',
-        //     //   id: 'docs/guides/cors',
-        //     // },
-        //     // {
-        //     //   type: 'doc',
-        //     //   id: 'docs/guides/jwt-verification-with-envoy',
-        //     // },
-        //     {
-        //       type: 'doc',
-        //       id: 'docs/guides/certificates',
-        //     },
-        //   ],
-        // },
-      ],
+      items: [{type: 'autogenerated', dirName: 'docs/guides'}],
     },
   ],
 };

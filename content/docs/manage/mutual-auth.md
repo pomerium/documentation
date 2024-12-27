@@ -172,7 +172,7 @@ In this example:
 - The sidecar only accepts mTLS-authenticated connections from the proxy, so both apps connect to the API through Pomerium.
 
 [binaries]: /docs/core
-[device identity verification]: /docs/concepts/device-identity.md
+[device identity verification]: /docs/capabilities/device-identity.mdx
 [grafana]: /docs/guides/grafana
 [jwt verification]: /docs/manage/jwt-verification.md
 [jwt-rfc]: https://datatracker.ietf.org/doc/html/rfc7519
