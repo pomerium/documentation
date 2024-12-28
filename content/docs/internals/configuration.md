@@ -29,9 +29,7 @@ Alternately, you can create individual config files or sets of environment varia
 
 The table contains all config options for Pomerium Core. You can also browse each key using the index on the left.
 
-
-
-import InstallMkcert from '@site/content/_install-mkcert.md';
+import InstallMkcert from '@site/content/\_install-mkcert.md';
 
 ## Service Mode
 
@@ -274,7 +272,6 @@ Now you may bring up your deployment and visit a test route https://httpbin.loca
 ```sh
 docker compose up
 ```
-
 
 [environmental variables]: https://en.wikipedia.org/wiki/Environment_variable
 [json]: https://en.wikipedia.org/wiki/JSON
