@@ -1,7 +1,5 @@
 // solution here: https://github.com/rohit-gohri/redocusaurus/issues/236#issuecomment-1449548972
 
-// solution here: https://github.com/rohit-gohri/redocusaurus/issues/236#issuecomment-1449548972
-
 module.exports = async function webpackDebugFix(context, opts) {
   const webpack = require('webpack');
 

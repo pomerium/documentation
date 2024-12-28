@@ -85,9 +85,8 @@ In this way, Pomerium applies a zero trust security model to the application lay
 
 :::tip
 
-For more information on how Pomerium implements JWT verification, see the following docs:
+For more information on how Pomerium implements JWT verification, see the following doc:
 
-- [JWT Verification](/docs/manage/verify-jwt)
 - [Identity Verification](/docs/capabilities/getting-users-identity)
 
 :::
@@ -174,7 +173,6 @@ In this example:
 [binaries]: /docs/core
 [device identity verification]: /docs/capabilities/device-identity.mdx
 [grafana]: /docs/guides/grafana
-[jwt verification]: /docs/manage/jwt-verification.md
 [jwt-rfc]: https://datatracker.ietf.org/doc/html/rfc7519
 [`pass_identity_headers`]: /docs/reference/routes/pass-identity-headers-per-route
 [quickstart]: /docs/get-started/quickstart

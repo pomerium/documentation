@@ -2,7 +2,7 @@
 # cSpell:ignore LGUI
 
 title: Pomerium's Security Policy & Threat Model
-sidebar_label: Security
+sidebar_label: Security & Threat Model
 lang: en-US
 keywords:
   [pomerium, security, disclosure, vulnerabilities, cryptography, encryption]

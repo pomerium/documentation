@@ -1,18 +1,24 @@
 ---
-# cSpell:ignore errgroup tgroth servername
-
 title: Troubleshooting
 description: Learn how to troubleshoot common configuration issues or work around any outstanding bugs.
 pagination_prev: null
 lang: en-US
-keywords: [pomerium, troubleshooting, faq, frequently asked questions]
+keywords:
+  [
+    pomerium,
+    troubleshooting,
+    faq,
+    frequently asked questions,
+    cors,
+    cross-origin,
+    http,
+    https,
+  ]
 ---
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 import GenerateRecoveryToken from '@site/content/_generate-recovery-token.md';
-
-This article provides troubleshooting information for various tools and features in Pomerium.
 
 ## Pomerium Zero
 
@@ -212,7 +218,7 @@ Ensure that the Proxy service knows about and trusts the certificate authority t
   COPY --from=builder /etc/ssl/certs/your-cert-bundle.crt /etc/ssl/certs/ca-certificates.crt
   ```
 
-- Finally, ensure that you aren't being man-in-the-middle'd or that some eager router isn't injecting its own certificate along the way. Use openssl to verify that your Proxy service is getting the certificate you think its getting.
+- Finally, ensure that you aren't being man-in-the-middle'd or that some eager router isn't injecting its own certificate along the way. Use openssl to verify that your Proxy service is getting the certificate you think it’s getting.
 
   ```bash
   openssl s_client -servername pomerium.io -connect pomerium.io:443 </dev/null \
@@ -233,7 +239,7 @@ The Proxy service is not able to create a connection with the authorization serv
 
 **Solution**
 
-Usually, this is the result of either a routing issue or a configuration error. Make sure that you are using the _internally_ routable URL for the Authorize service. Many cloud loud balancers _do not_ yet support gRPC transposing the ingress. So while your authenticate service url will probably look like `https://authenticate.corp.example.com`, your authorizer service url will likely be more like `https://pomerium-authorize-service.default.svc.cluster.local` or `https://localhost:5443`.
+Usually, this is the result of either a routing issue or a configuration error. Make sure that you are using the _internally_ routable URL for the Authorize service. Many cloud load balancers _do not_ yet support gRPC transposing the ingress. So while your authenticate service URL might look like `https://authenticate.corp.example.com`, your authorize service URL might be `https://pomerium-authorize-service.default.svc.cluster.local` or `https://localhost:5443`.
 
 ### Pomerium exits on startup
 
@@ -332,37 +338,37 @@ The `no_healthy_upstream` error means that there is an issue with the upstream s
 
 The `upstream_max_stream_duration_reached` error means that Pomerium cancelled the request because it exceeded the upstream server's maximum stream duration.
 
-    **Resolution**: By default, Pomerium sets a 10-second timeout for all requests. If your requests are taking longer than expected, see the [Connections - Timeouts](/docs/internals/connection#timeouts) page to learn how timeouts work with upstream connections, and how to configure timeouts to avoid this error.
+**Resolution**: By default, Pomerium sets a 10-second timeout for all requests. If your requests are taking longer than expected, see the [Connections - Timeouts](/docs/internals/connection#timeouts) page to learn how timeouts work with upstream connections, and how to configure timeouts to avoid this error.
 
 ### Upstream Per Try Timeout
 
 The `upstream_per_try_timeout` error means that the final attempt to connect to the upstream server timed out.
 
-    **Resolution**: See the [Connections - Timeouts](/docs/internals/connection#timeouts) page to learn how timeouts work with upstream connections, and how to configure timeouts in Pomerium to avoid this error.
+**Resolution**: See the [Connections - Timeouts](/docs/internals/connection#timeouts) page to learn how timeouts work with upstream connections, and how to configure timeouts in Pomerium to avoid this error.
 
 ### Upstream Reset After Response Started
 
 The `upstream_reset_after_response_started` error means that the upstream server reset the connection _after_ it began transmitting the response.
 
-    **Resolution**: See the [Connections - Timeouts](/docs/internals/connection#timeouts) page to learn how timeouts work with upstream connections, and how to configure timeouts in Pomerium to avoid this error.
+**Resolution**: See the [Connections - Timeouts](/docs/internals/connection#timeouts) page to learn how timeouts work with upstream connections, and how to configure timeouts in Pomerium to avoid this error.
 
 ### Upstream Reset Before Response Started
 
 The `upstream_reset_before_response_started` error means the upstream server reset the connection _before_ it began transmitting the response.
 
-    **Resolution**: See the [Connections - Timeouts](/docs/internals/connection#timeouts) page to learn how timeouts work with upstream connections, and how to configure timeouts in Pomerium to avoid this error.
+**Resolution**: See the [Connections - Timeouts](/docs/internals/connection#timeouts) page to learn how timeouts work with upstream connections, and how to configure timeouts in Pomerium to avoid this error.
 
 ### Upstream Response Timeout
 
 The `upstream_response_timeout` error means that the upstream server's response timed out.
 
-    **Resolution**: See the [Connections - Timeouts](/docs/internals/connection#timeouts) page to learn how timeouts work with upstream connections, and how to configure timeouts in Pomerium to avoid this error.
+**Resolution**: See the [Connections - Timeouts](/docs/internals/connection#timeouts) page to learn how timeouts work with upstream connections, and how to configure timeouts in Pomerium to avoid this error.
 
 ### Via Upstream
 
 The `via_upstream` error means that the upstream service set the response code.
 
-    **Resolution**: To resolve this error, check the upstream service's application logs for more information about how the response status code is set.
+**Resolution**: To resolve this error, check the upstream service's application logs for more information about how the response status code is set.
 
 ---
 
@@ -391,3 +397,202 @@ If you don't see an **Advanced** option:
 1. Select **Enter**
 
 Your browser will redirect you to the route defined in your policy.
+
+---
+
+## Cross-Origin Configuration
+
+For applications that need to send requests across different domains (for example, a web app hosted at `https://app.example.com` making calls to `https://api.example.com`), you may need to configure Cross-Origin Resource Sharing (CORS). Below is a thorough guide for setting up Pomerium to accommodate cross-domain requests. For more details on CORS, see the [MDN Documentation](https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS) or [Microsoft Docs on CORS](https://docs.microsoft.com/en-us/iis/configuration/system.webServer/security/cors).
+
+Many applications, particularly single-page JavaScript applications or frameworks (React, Vue, Angular, Next.js, etc.), use multiple domains or subdomains when communicating with an API or service layer. The examples below illustrate how to configure Pomerium to support CORS, without modifying the underlying application code.
+
+### Configuration
+
+#### Pomerium
+
+```yaml
+authenticate_service_url: https://authenticate.localhost.pomerium.io
+
+certificate_file: /pomerium/cert.pem
+certificate_key_file: /pomerium/private-key.pem
+
+idp_provider: REPLACE
+idp_client_id: REPLACE
+idp_client_secret: REPLACE
+
+cookie_secret: V2JBZk0zWGtsL29UcFUvWjVDWWQ2UHExNXJ0b2VhcDI=
+
+routes:
+  - from: https://api.localhost.pomerium.io
+    to: http://api:8000
+    allow_any_authenticated_user: true
+    cors_allow_preflight: true
+    set_response_headers:
+      'Access-Control-Allow-Credentials': 'true'
+      'Access-Control-Allow-Origin': 'https://app.localhost.pomerium.io'
+      'Access-Control-Allow-Headers': 'X-Pomerium-Authorization'
+  - from: https://app.localhost.pomerium.io
+    to: http://app:8000
+    allow_any_authenticated_user: true
+```
+
+#### Web Application
+
+```go
+package main
+
+import (
+	"net/http"
+)
+
+func main() {
+	http.Handle("/", http.FileServer(http.Dir(".")))
+	http.ListenAndServe(":8000", nil)
+}
+```
+
+```html
+<!doctype html>
+<html>
+  <head>
+    <title>Example Application</title>
+    <script type="module" src="index.mjs"></script>
+  </head>
+  <body></body>
+</html>
+```
+
+```javascript
+(async () => {
+  const result = await fetch('https://api.localhost.pomerium.io', {
+    method: 'POST',
+    headers: {
+      Accept: 'application/json',
+    },
+  });
+  const json = await result.json();
+  console.log('RESULT', json);
+})();
+```
+
+#### API Application
+
+```go
+package main
+
+import (
+	"io"
+	"net/http"
+)
+
+func main() {
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		io.WriteString(w, `{ "message": "HELLO WORLD" }`)
+	})
+	http.ListenAndServe(":8000", nil)
+}
+```
+
+#### Docker-Compose
+
+```yaml
+services:
+  pomerium:
+    image: pomerium/pomerium:main
+    ports:
+      - 443:443
+    volumes:
+      - ./_wildcard.localhost.pomerium.io.pem:/pomerium/cert.pem:ro
+      - ./_wildcard.localhost.pomerium.io-key.pem:/pomerium/private-key.pem:ro
+      - ./config.yaml:/pomerium/config.yaml:ro
+
+  app:
+    image: golang:latest
+    command: ['go', 'run', '.']
+    environment:
+      GO111MODULE: 'off'
+    volumes:
+      - ./app.go:/go/app.go:ro
+      - ./index.html:/go/index.html:ro
+      - ./index.mjs:/go/index.mjs:ro
+
+  api:
+    image: golang:latest
+    command: ['go', 'run', '.']
+    environment:
+      GO111MODULE: 'off'
+    volumes:
+      - ./api.go:/go/api.go:ro
+```
+
+### Problem
+
+When accessing `app.localhost.pomerium.io`, the browser returns a 401 error for requests to `api.localhost.pomerium.io`:
+
+> URL: https://api.localhost.pomerium.io/ Status: 401 Unauthorized Source: Network Address: 127.0.0.1:443 Initiator: index.mjs:2
+
+Because these domains differ, cookies may not be automatically sent, leading to authentication failures and CORS-related requests being denied.
+
+### Solutions
+
+#### Use a Single Domain
+
+Rather than using different subdomains for your app and API, configure them on a single domain with different paths. For example:
+
+```yaml
+routes:
+  - from: https://app.localhost.pomerium.io
+    prefix: /api
+    to: http://api:8000
+    allow_any_authenticated_user: true
+  - from: https://app.localhost.pomerium.io
+    to: http://app:8000
+    allow_any_authenticated_user: true
+```
+
+Then your requests can share domain cookies and avoid CORS complexities. Update the JavaScript to reference `location.origin + '/api'` instead of the separate `api.localhost.pomerium.io` domain.
+
+#### Pass the Pomerium Credentials via a Header
+
+If you must use different domains, you can pass the JWT in a custom header. For example:
+
+```yaml
+cookie_http_only: false
+```
+
+```javascript
+(async () => {
+  const result = await fetch('https://api.localhost.pomerium.io', {
+    method: 'POST',
+    headers: {
+      Accept: 'application/json',
+      'X-Pomerium-Authorization': document.cookie.substring(
+        document.cookie.indexOf('=') + 1,
+      ),
+    },
+  });
+  const json = await result.json();
+  console.log('RESULT', json);
+})();
+```
+
+#### Share the Cookie
+
+If both subdomains share a parent domain, you can set a cookie domain such as `cookie_domain: '.localhost.pomerium.io'`. The browser will then share cookies among subdomains. You’ll still need to configure your JavaScript client to send credentials:
+
+```javascript
+(async () => {
+  const result = await fetch('https://api.localhost.pomerium.io', {
+    method: 'POST',
+    headers: {
+      Accept: 'application/json',
+    },
+    credentials: 'include',
+  });
+  const json = await result.json();
+  console.log('RESULT', json);
+})();
+```
+
+> For more details on how cookies and credentials work in fetch or XHR, refer to [XMLHttpRequest/withCredentials on MDN](https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/withCredentials) and [fetch() API documentation](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API).

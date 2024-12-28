@@ -29,12 +29,12 @@ This document shows you how to configure an Ingress resource that’s compatible
 
 **Before you start:**
 
-This document assumes you've installed the Pomerium Ingress Controller and added global configuration settings with the [Pomerium CRD](/docs/k8s/configure).
+This document assumes you've installed the Pomerium Ingress Controller and added global configuration settings with the [Pomerium CRD](/docs/deploy/k8s//configure).
 
 If you haven't completed these steps, see the following docs:
 
-- [Install Pomerium Ingress Controller](/docs/k8s/install)
-- [Global Configuration](/docs/k8s/configure)
+- [Install Pomerium Ingress Controller](/docs/deploy/k8s//install)
+- [Global Configuration](/docs/deploy/k8s//configure)
 
 ## Configure an Ingress resource
 
@@ -87,7 +87,7 @@ spec:
 
 The default installation adds `pomerium` [IngressClass](https://kubernetes.io/docs/concepts/services-networking/ingress/#ingress-class) to your cluster. In order for Pomerium to service your Ingress objects, please set `spec.ingressClassName` to `pomerium`.
 
-It is also possible to [set Pomerium to be a default ingress controller](/docs/k8s/install#set-pomerium-as-default-ingressclass) cluster-wide.
+It is also possible to [set Pomerium to be a default ingress controller](/docs/deploy/k8s//install#set-pomerium-as-default-ingressclass) cluster-wide.
 
 ### Set Ingress annotations
 
@@ -175,7 +175,7 @@ The remaining annotations are specific to or behave differently than they do whe
 | `ingress.pomerium.io/set_request_headers_secret` | Name of Kubernetes Secret containing the contents of the request header to send upstream. When used, `ingress.pomerium.io/set_request_headers` should not contain overlapping keys. |
 | `ingress.pomerium.io/set_response_headers_secret` | Name of Kubernetes Secret containing the contents of the response header to send downstream. When used, `ingress.pomerium.io/set_response_headers` should not contain overlapping keys. |
 | `ingress.pomerium.io/service_proxy_upstream` | When set to `"true"` forces Pomerium to connect to upstream servers through the k8s service proxy, and not individual endpoints. <br/> This is useful when deploying Pomerium inside a service mesh. |
-| `ingress.pomerium.io/tcp_upstream` | When set to `"true"`, defines the route as supporting a TCP tunnel. See the [example below](/docs/k8s/ingress#tcp-services) for more information. |
+| `ingress.pomerium.io/tcp_upstream` | When set to `"true"`, defines the route as supporting a TCP tunnel. See the [example below](/docs/deploy/k8s/ingress#tcp-services) for more information. |
 | `ingress.pomerium.io/tls_client_secret` | Name of Kubernetes `tls` Secret containing a [client certificate][tls_client_certificate] for connecting to the upstream. |
 | `ingress.pomerium.io/tls_custom_ca_secret` | Name of Kubernetes `tls` Secret containing a custom [CA certificate][`tls_custom_ca_secret`] for the upstream. |
 | `ingress.pomerium.io/tls_downstream_client_ca_secret` | Name of Kubernetes `tls` Secret containing a [Client CA][client-certificate-authority] for validating downstream clients. |
@@ -544,7 +544,7 @@ spec:
 
 ## Metrics
 
-Pomerium [exposes](/docs/k8s/install#metrics) a number of Prometheus style metrics that you may use to monitor your Ingress.
+Pomerium [exposes](/docs/deploy/k8s//install#metrics) a number of Prometheus style metrics that you may use to monitor your Ingress.
 
 In order to filter out metrics for a particular Ingress, use `envoy_cluster_name` metric label, that has a `ingressnamespace-ingressname-host-domain-com` format.
 
