@@ -18,6 +18,12 @@ import UpgradeNotice from '@site/content/docs/admonitions/_upgrade-versions.mdx'
 
 ## Upgrade Guide (Core Edition)
 
+:::tip
+
+Changelog notes for Pomerium Core can be found on [GitHub](https://github.com/pomerium/pomerium/releases).
+
+:::
+
 This page contains the list of deprecations and important or breaking changes for Pomerium Core. Please read it carefully before upgrading.
 
 ### 0.28.0
@@ -295,76 +301,41 @@ No breaking changes in v0.28.
 
 - `--disable-validation` is now deprecated. Use [`--validation-mode=none`](/docs/deploy/enterprise/configure#validation_mode) to preserve existing behavior, or [`--validation-mode=static`](/docs/deploy/enterprise/configure#validation_mode). We’ll remove `--disable-validation` in a future release.
 
-###### New
+- The Enterprise Console now includes a “Report issue” feedback widget, allowing you to easily report any problems you may encounter.
+- IdP directory sync performance has been improved, especially when using Okta.
+- The policy builder has a new “Exists” condition for use with external data source records.
+- When configuring an external data source, the “Foreign Key” input will now display all valid choices.
+- The `--disable-validation` option has been expanded to include additional validation modes, represented by [`--validation-mode`](https://www.pomerium.com/docs/deploy/enterprise/configure#validation_mode).
 
-- The Enterprise Console includes a “Report issue” feedback widget, loaded from a third-party service. Disable it by setting [`--disable-feedback-widget`](/docs/deploy/enterprise/configure#disable-feedback-widget).
-- IdP directory sync performance improved.
-- A new “Exists” condition for external data source records. Example use case: enforce that incoming requests match an approved client certificate fingerprint.
-- When configuring an external data source, the “Foreign Key” input now displays valid choices.
-- `--disable-validation` has been expanded into a new [`--validation-mode`](https://www.pomerium.com/docs/deploy/enterprise/configure#validation_mode) option (`full`, `static`, `none`). `none` also disables a safety check related to overlapping cert domain names.
-
-###### Fixed
-
-- A few policy builder UI issues:
-  - The “Claim” criterion now displays claim names containing “/” correctly.
-  - The “Record” criterion now displays the value “0” correctly.
+- A few policy builder UI bugs are fixed:
+  - The “Claim” criterion now correctly displays claim names containing a “/” character.
+  - The “Record” criterion now correctly displays the value “0”.
 
 ### v0.27.1
 
-##### Security
-
-- Restrict the debug “DataBroker Browser” page to global admins only.
-
-##### Fixed
-
-- Fix the Kubernetes service account token route setting.
-- Fix the database migration command to sync schema version metadata on rollback.
+- Restrict the debug “DataBroker Browser” page to users with global admin privileges.
+- Fix the Kubernetes service account token route setting (previously had no effect).
+- Fix the database migration command to synchronize schema version metadata on rollback.
 
 ### v0.27.2
-
-##### Fixed
 
 - Fix a bug with the route “To” option.
 
 ### v0.27.3
 
-##### New
-
-- FleetDM integration to enforce policy based on device state.
-- Improved handling of external data source records: stale records removed if the data source is removed.
-- A “Kubernetes Service Account Token File” route setting.
-- Clickable “From” URL on the routes list page.
-
-##### Fixed
-
-- Newly-created entities might not appear right away in list pages.
-- Table contents overlap on list pages.
-- Chart tooltip flicker.
-- Potential error on the “Runtime” dashboard page.
-
-##### Changed
-
+- Integrate with FleetDM to support policy enforcement based on device state.
+- Improve handling of external data source records; stale records are removed.
+- Add a “Kubernetes Service Account Token File” route setting.
+- Make the “From” URL on the routes list page into a link.
+- Fix an issue where newly-created entities might not appear right away in list pages.
+- Fix table content overlap and tooltip flicker in charts.
+- Fix a potential error on the “Runtime” dashboard.
 - Rename the “Identity Provider” settings tab to “Directory Sync.”
 
 ### v0.26.0
 
-#### Before you upgrade
-
-###### New
-
-- Policy builder can reference a client certificate’s Subject Alternative Names (DNS name, URI, or email).
-- A new “Require Trusted Client Certificate” toggle.
-- Numerical comparison operators (`<`, `<=`, etc.) in external data sources.
-- External data sources can be keyed by client certificate fingerprint.
-- License metrics (`mau.usage`, `mau.limit`, `license.expires_in`) for monitoring.
-- Direct response routes (HTTP status & body).
-- Support for Rego’s `print()` function (debug logging).
-
-###### Fixed
-
-- Deployments page indicates changes made via user impersonation.
-- Improved logout detection.
-- Various UI fixes.
+- Expanded policy builder functionality: reference client certificate Subject Alternative Names; require trusted client certificate per route; numeric comparisons in external data sources; external data keyed by client certificate fingerprint; direct-response routes; new Rego `print()` debugging.
+- Various UI fixes, improved logout detection, license usage metrics, etc.
 
 ### v0.25.0
 
@@ -378,7 +349,7 @@ As with Core, the `certificates` key no longer supports inline base64. Use a fil
 
 ###### Remove Debug Option
 
-We’ve removed the Debug setting. To pretty-print logs, pipe JSON logs into `jq`.
+We’ve removed the Debug setting. If you prefer pretty-print logs, pipe JSON logs into `jq`.
 
 ##### New
 
@@ -386,25 +357,15 @@ We’ve removed the Debug setting. To pretty-print logs, pipe JSON logs into `jq
 
 For self-hosted deployments, the flow is more like v0.20. For Hosted Authenticate, it continues with the flow from v0.21.
 
-###### Removed support for `debug`
-
-No separate toggles for debugging the console. Use normal logs plus `jq` for pretty-print.
-
-###### Fixed
-
-- Updated route import to support `allow_public_unauthenticated_access`, `allow_any_authenticated_user`, and `allowed_idp_claims`.
-
-###### Changed
-
-- An optional global [Pass Identity Headers](/docs/reference/pass-identity-headers) setting.
-- Removed support for [Secure Cookie](https://en.wikipedia.org/wiki/Secure_cookie). Always enabled by default.
+- Remove support for the `debug` option in the Console.
+- Various UI improvements to route import, which now supports `allow_public_unauthenticated_access`, `allow_any_authenticated_user`, and `allowed_idp_claims`.
+- Adds an optional, global-level [Pass Identity Headers](/docs/reference/pass-identity-headers) setting (always had per-route, now also global).
+- Removed support for the [Secure Cookie](https://en.wikipedia.org/wiki/Secure_cookie) setting; it’s always enabled by default.
 - Multiple Open Telemetry improvements.
 
 ### v0.25.1
 
-##### Fixed
-
-- Removes the “cookie secure” backend logic from the Enterprise Console.
+- Removes the **cookie secure** backend logic from the Enterprise Console.
 
 ### 0.24.0
 
@@ -414,25 +375,11 @@ No separate toggles for debugging the console. Use normal logs plus `jq` for pre
 
 - `set_authorization_header` was removed. Use [Set Request Headers](/docs/reference/routes/headers#set-request-headers) for ID tokens.
 
-###### Removed support for the deprecated `set_authorization_header`
-
-- You can pass IdP tokens to upstream services in any header with [Set Request Headers].
-
-###### Security
-
-- Console no longer logs gRPC payload data.
-
-###### New
-
-- Device auth with client certificates via the Console’s PPL builder.
+- Removed support for the deprecated `set_authorization_header`.
+- The Enterprise Console no longer logs gRPC payload data.
+- PPL builder can now configure device auth via client certificates.
 - Performance improvements with configuration and service account syncs.
-
-###### Fixed
-
-- Various UI improvements, plus fixes for missing policy criteria during route migrations.
-
-###### Changed
-
+- Various UI improvements, plus a fix to prevent missing policy criteria during route migrations.
 - Various Telemetry fixes in the Console.
 
 ### 0.23.0
@@ -443,15 +390,10 @@ No separate toggles for debugging the console. Use normal logs plus `jq` for pre
 
 - For [`set_request_headers`](/docs/reference/routes/headers#set-request-headers), replace `$` with `$$` to avoid variable substitution.
 
-###### New
-
-- [Set Request Headers](/docs/reference/routes/headers#set-request-headers) includes new token substitutions (client cert fingerprint, ID token, access token).
+- New token substitutions in [Set Request Headers](/docs/reference/routes/headers#set-request-headers): client cert fingerprint, ID token, and access token.
 - [Access Log Fields](/docs/reference/access-log-fields) and [Authorize Log Fields](/docs/reference/authorize-log-fields) can be customized.
-- [Cookies SameSite](/docs/reference/cookies#cookie-samesite) is configurable.
-
-###### Breaking
-
-- `$` must be escaped with `$$` in `set_request_headers`.
+- [Cookies SameSite](/docs/reference/cookies#cookie-samesite) is configurable in the Console.
+- `$` must be escaped with `$$` in set_request_headers.
 
 ### 0.22.0
 
@@ -465,17 +407,17 @@ No separate toggles for debugging the console. Use normal logs plus `jq` for pre
 
 ##### Fixes
 
-- Device credential reference cleanup in the Console.
-- External data source link displayed only if the provider is configured.
+- Changes to device credential references and external data source links in the Console.
 
 ##### Changed
 
-- DNS Lookup Families, default `V4_PREFERRED`.
-- Namespaces now require a name.
+- Adds DNS Lookup Families and requires a name for new Namespaces.
 
-###### Security patch
-
-- Upgraded to [Go v1.20.3](https://groups.google.com/g/golang-announce/c/Xdv6JL9ENs8/m/OV40vnafAwAJ) and [Envoy v1.24.5](https://groups.google.com/g/envoy-announce/c/o_W9gYVU2js/m/kU77ha6tBAAJ).
+- Security patch updates to Go v1.20.3 and Envoy v1.24.5.
+- Removes user references when a device credential is deleted.
+- External data source link only if provider is configured.
+- DNS Lookup Families default to V4_PREFERRED.
+- Namespaces require a name.
 
 ### 0.21.0
 
@@ -486,22 +428,15 @@ No separate toggles for debugging the console. Use normal logs plus `jq` for pre
 - Re-enroll devices: device identity changed in a non-forward-compatible way.
 - `--derive-tls` can auto-generate internal TLS certs from `shared_secret`.
 
-###### New
-
-- Auto TLS for Console/Databroker gRPC endpoints.
-- TLS renegotiation for upstream clusters.
-
-###### Fixed
-
-- Various Enterprise Console and gRPC fixes.
+- Auto TLS support for Console/Databroker gRPC endpoints.
+- Client TLS renegotiation for upstream clusters.
+- Various console UI fixes.
 
 ### v0.21.1
 
-##### Fixed
-
-- UI issues (empty headers, custom text fields).
+- Fix empty headers, custom text fields, and other UI errors.
 - Pass TLS options to HTTP clients.
-- Remove device credential references from the user/session.
+- Remove device credential references from user/session.
 
 ### 0.20.0
 
@@ -509,23 +444,13 @@ No separate toggles for debugging the console. Use normal logs plus `jq` for pre
 
 ##### Groups & directory sync
 
-Moved to [External Data Sources](/docs/capabilities/integrations/). Remove references to `idp_service_account`. Instead, configure directory sync from Settings > Identity Provider in the Enterprise Console.
+Moved to [External Data Sources](/docs/capabilities/integrations/). Remove references to `idp_service_account` in config. Instead, configure directory sync from Settings > Identity Provider in the Enterprise Console.
 
-###### Breaking
-
-- Groups & Directory sync managed from external data sources.
-
-###### Fixed
-
-- UI bugs in policy builder, performance improvements.
-
-###### Updated
-
+- Groups & directory sync is now managed from external data sources.
+- UI improvements, bug fixes in policy builder, and performance improvements.
 - Envoy updated to v1.23.1.
 
 ### v0.20.1
-
-##### Fixed
 
 - UI fixes and improvements to branding settings.
 
@@ -537,19 +462,13 @@ No breaking changes. See [v0.19 Changelog](/docs/deploy/enterprise/changelog#019
 
 #### Before you upgrade
 
-- Use [Postgres](/docs/internals/data-storage#postgres) for `external-data` integration. Redis is deprecated.
+- Use [Postgres](/docs/internals/data-storage#postgres) for `external-data` integration. Redis is deprecated for storage.
 
-###### New
-
-- External data sources, simplified Kubernetes ingress.
-
-###### Updated
-
-- Postgres Databroker, Envoy 1.21.1, on-demand Authorize data queries.
-
-###### Fixed
-
-- Internal URL, forward auth, and Databroker in-memory bugs.
+- Support for external data sources.
+- Simplified Kubernetes ingress.
+- Postgres databroker backend and Envoy 1.21.1.
+- Data in the Authorize service is queried on-demand.
+- Various internal URL, forward auth, and in-memory datastore fixes.
 
 ### 0.17.0
 
@@ -557,77 +476,50 @@ No breaking changes. See [v0.19 Changelog](/docs/deploy/enterprise/changelog#019
 
 - `license-key` is now required.
 
-###### New
-
-- Pomerium Enterprise requires a valid license to start.
-
-###### Updated
-
-- Route/Policy screens redesigned for better UX.
+- Pomerium Enterprise now requires a valid license to start.
+- Route and Policy screens redesigned for better UX.
 
 ### 0.16.0
 
 #### Before you upgrade
 
-- `signing-key` replaced with `authenticate-service-url`. Keeping `signing-key` breaks device enrollment.
+- `signing-key` replaced with `authenticate-service-url`. If you keep `signing-key`, device enrollment won’t work. Use the self-hosted or hosted Authenticate service URL instead.
 
-###### New
-
-- Device enrollment and device identity in policy.
+- Devices can be managed, enrolled, and used in policy.
 - Signing keys can be pulled from the Authenticate service’s JWKS endpoint.
-- PPL policy for HTTP method and path.
-
-###### Updated
-
-- Incorporate device identity/approval into routes.
+- Added ability to write policy for HTTP method/path contexts.
 - Envoy upgraded to 1.20.1.
-- Various UI fixes.
-
-###### Fixed
-
-- `--tls-insecure-skip-verify` not applied to databroker connections.
-- Host rewrite bug.
-- Timeout/ordering bugs.
+- Various UI and bug fixes.
 
 ### 0.15.0
 
 #### Before you upgrade
 
-- `signing-key` is now required; must match Core’s `signing_key`.
+- `signing-key` is now required to secure requests from Pomerium Core. Must match Core’s own `signing_key`.
 - `audience` must match the external hostname for the Enterprise Console.
 
 ##### Helm Installations
 
-- Use `pomerium/pomerium-console` chart instead of `pomerium-enterprise`. Share the same `signing-key` with Core.
+- Helm charts are consolidated. Use `pomerium/pomerium-console` instead of `pomerium-enterprise` charts. Make sure to share the same `signing-key` with Core.
 
-###### New
-
-- Real-time metrics and status from Pomerium in the Console.
-- Extended policy language with non-identity conditions.
-- Google Cloud Serverless and SPDY route configs.
-- More consistent resource filtering/sorting.
-
-###### Updated
-
-- No overlapping SANs in certs.
+- Real-time metrics in the Console.
+- New extended policy language for non-identity-based conditions.
+- Support for Google Cloud Serverless and SPDY routes.
+- Overlapping SANs not permitted.
 - Time-based criteria in policies.
-- Rego-based policies only editable by admins.
-- Service accounts have simpler UI, now with token expiration and namespaces.
+- Only global admins may manage Rego-based policies.
+- Simplified service accounts with token expiration and namespaces.
 - Session-based impersonation.
 
 ### v0.15.1
 
-##### Fixed
-
-- Tracing settings persist.
-- Multiple audiences supported.
+- Tracing settings now persist correctly.
+- Support multiple audiences.
 - Better validation and UI fixes.
 
 ### v0.15.2
 
-##### Fixed
-
-- A regression in the Deployments page loading.
+- Fix a regression in the Deployments page loading.
 
 </TabItem>
 

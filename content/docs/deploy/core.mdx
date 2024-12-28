@@ -27,24 +27,11 @@ Pomerium Core (often referred to as _Pomerium Open Source_) is the primary serve
 2. **Docker Images**
 3. **Building from Source**
 
-After installation, see how to configure Pomerium using a minimal example, plus notes on starting and running the service.
-
-## Prerequisites
-
-- A configured [Identity Provider](/docs/identity-providers)
-- Properly [TLS certificates](/docs/guides/certificates) if you plan to serve on `443` or otherwise require HTTPS
-
-:::note
-
-In a local development or proof-of-concept scenario, you can use [mkcert](https://mkcert.dev/) or other self-signed certificate solutions. For production, consider Let’s Encrypt or a private CA in your organization.
-
-:::
-
-## 1. Pre-Built Binaries
+## Pre-Built Binaries
 
 We publish official binaries for Linux and macOS on our [GitHub Releases](https://github.com/pomerium/pomerium/releases) page, as well as OS packages (`deb` and `rpm`) via [Cloudsmith](https://cloudsmith.io/~pomerium/repos/pomerium/packages/).
 
-### 1.1 Standalone Binary
+### Standalone Binary
 
 1. **Download**  
    Go to [GitHub Releases](https://github.com/pomerium/pomerium/releases) and look for the tarball corresponding to your operating system and architecture. For example:
@@ -64,7 +51,7 @@ We publish official binaries for Linux and macOS on our [GitHub Releases](https:
    ./pomerium -config config.yaml
    ```
 
-### 1.2 Linux Packages
+### Linux Packages
 
 We provide OS packages via [Cloudsmith](https://cloudsmith.io/~pomerium/repos/pomerium/setup/). Supported formats:
 
@@ -102,7 +89,7 @@ yum install pomerium
 apt-get update && apt-get install pomerium
 ```
 
-## 2. Docker Images
+## Docker Images
 
 We also provide container images on [Docker Hub](https://hub.docker.com/r/pomerium/pomerium) and [GitHub Packages](https://github.com/pomerium/pomerium/pkgs/container/pomerium). Common tags:
 
@@ -121,7 +108,7 @@ docker run --rm -it -p 443:443 pomerium/pomerium:latest --version
 
 If you plan to run on port 443 in a rootless environment, you may need extra [capabilities](https://linux-audit.com/linux-capabilities-hardening-linux-binaries-by-removing-setuid/) or choose a non-privileged port.
 
-## 3. Building From Source
+## Building From Source (~~Hard~~ Fun mode!)
 
 If you prefer building from source:
 
