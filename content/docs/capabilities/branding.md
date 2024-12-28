@@ -1,14 +1,14 @@
 ---
-title: "Whitelabeling" 
-sidebar_label: "Whitelabeling"
+title: 'Whitelabeling'
+sidebar_label: 'Whitelabeling'
 description: "Customize Pomerium's user-facing and administrative UI with your organization's branding."
 keywords:
-  - "pomerium"
-  - "custom branding"
-  - "white labeling"
-  - "beyondcorp"
-  - "zero trust"
-  - "compliance"
+  - 'pomerium'
+  - 'custom branding'
+  - 'white labeling'
+  - 'beyondcorp'
+  - 'zero trust'
+  - 'compliance'
 ---
 
 # White Labeling

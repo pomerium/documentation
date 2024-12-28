@@ -4,7 +4,8 @@
 title: Pomerium's Security Policy & Threat Model
 sidebar_label: Security
 lang: en-US
-keywords: [pomerium, security, disclosure, vulnerabilities,cryptography,encryption]
+keywords:
+  [pomerium, security, disclosure, vulnerabilities, cryptography, encryption]
 toc_max_heading_level: 2
 ---
 
@@ -101,8 +102,6 @@ While researching, we'd like you to refrain from:
 - Any attacks against Pomerium's physical property or data centers.
 
 This page contains the most current version of our security guidelines, but we may revise them from time to time.
-
-
 
 ## Cryptography
 

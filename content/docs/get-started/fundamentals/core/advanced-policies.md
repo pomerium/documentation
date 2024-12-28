@@ -61,7 +61,7 @@ While running your Docker containers, access the Verify service. Under **Signed 
 
 Find the **Name** claim and copy the value.
 
-2. **Update your policy**
+1. **Update your policy**
 
 Right now, your policy consists of one `allow` block with the `and` logical operator.
 

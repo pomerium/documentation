@@ -2,7 +2,7 @@
 # cSpell:ignore yourcompany
 
 title: Namespacing
-sidebar: Namespaces
+sidebar: Resource Workspaces
 lang: en-US
 keywords:
   [
@@ -16,90 +16,61 @@ keywords:
     rbac,
     abac,
   ]
-description: This page describes the concept of namespaces and why it's important for enabling self-service and RBAC.
+description: This page describes the concept of namespaces, why they're important for enabling self-service, and how they enforce RBAC.
 ---
 
 ## Namespaces
 
-In Pomerium Enterprise, a **Namespace** is a cornerstone organization unit. They are container objects that behave similar to a unix directory structure.
+In Pomerium Enterprise, a **Namespace** is a fundamental organizational unit that helps structure access control. You can think of it like a directory structure: you can nest namespaces, delegate rights to teams, and set parent-level policies that child namespaces inherit.
 
-In each Namespace, administrators can create organizational units where users and groups can be added. Namespaces enable fine-grained role based access control and management (**RBAC**) to managing Pomerium. The structure and hierarchy of namespaces empower teams to self-service the routes and policies pertinent to them. Namespaces can can also be used to optionally or mandatorily inherit from their parent permission or policies.
+Namespaces allow you to:
 
-Namespaces enable:
+- Organize resources and teams in a way that matches your organization’s structure.
+- Enable self-service for application owners without granting them full admin privileges.
+- Enforce hierarchical policy (optional or mandatory).
+- Apply [RBAC](https://en.wikipedia.org/wiki/Role-based_access_control) to the Pomerium Enterprise Console itself.
 
-- Self-Service.
-- Hierarchical policy enforcement (both enforced, and optional),
-- Policy organization.
-- [RBAC](https://en.wikipedia.org/wiki/Role-based_access_control) for the Enterprise Console itself.
+:::enterprise
 
-Each of these sub-concepts are related and build on each other to form a unified security model.
+**Directory Sync** is a Pomerium Enterprise feature. [Contact us](https://www.pomerium.com/enterprise-sales/) to upgrade today.
+
+:::
 
 ### Self-Service Capabilities
 
-One of the benefits of an identity-aware access proxy is that, once in place, developers and owners of enterprise applications have an incentive to configure their services to be accessible via the proxy.
-
-Self-service has [several benefits](https://www.usenix.org/system/files/login/articles/login_winter16_05_cittadini.pdf):
-
-- Frees global administrators from continuously modifying the configuration per user requests
-- Encourages service owners to own their own route configuration and policy
-- Ensures a reasonable compromise between development velocity and security controls
-
-Unlike with a VPN, or network driven access control mechanisms, application owners (with limited access permissions managed through namespaces) can maintain route and policy configuration for their own services, while higher level operations, security, and identity teams are able to enforce higher level authorization and access policies.
+Once you place your applications behind an identity-aware proxy, application owners have a strong incentive to configure routes through it. With Namespaces, you can delegate route and policy configuration to the teams that own the applications, reducing the burden on global administrators. This boosts development velocity while preserving security because top-level admins can still enforce high-level security requirements.
 
 ### Hierarchical Policy Enforcement
 
-Hierarchical policy lets administrators enforce inheritable authorization policy. Policies can be optional (self-select), or mandatory.
+Namespaces let you set policies at higher levels and inherit them downstream. You can define mandatory policies at the top level (like requiring a `yourcompany.com` email address or blocking known bad IPs) while still allowing application owners to apply more detailed rules for their specific routes.
 
-Identities and their group memberships are defined by your Identity Provider (**IdP**). Pomerium looks to your IdP for identity information, so policies defined using groups are always up-to-date with the access management defined upstream.
-
-:::tip
-
-When using an IdP without directory sync or when working with non-domain users, they will not show up in the look-ahead search. See [Non-Domain Users](/docs/concepts/access-control#non-domain-users) for more information.
-
-:::
-
-Consider this scenario: you want to enable your security team to manage high level corporate policy while enabling application owners to set finer grained user access to their specific applications. Pomerium can help you do that!
-
-Your security team can enact top level security policies to ensure, everyone:
-
-- has a `yourcompany.com` email account,
-- isn't coming from a known bad actor IP address,
-
-From there, the security team delegates management of child [Namespaces](#namespaces) to application teams, providing flexibility to self-manage their own application [Routes](/docs/capabilities/routing) and [Policies](/docs/capabilities/ppl).
-
-For example, a developer group can be given control to determine who has access to their Namespace, and create or edit Routes within it. They can provide authentication and authorization to their WiP app without writing new authorization code.
-
-Meanwhile, the CFO is given [manager](#manager) permissions over the "Accounting" Namespace, and can set enforced or optional policies for the services within.
+Because Pomerium relies on your Identity Provider for user and group data, your policies remain in sync with whatever user management system you already use.
 
 ### RBAC for Enterprise Console Users
 
-- Namespaces are also used to achieve Role Based Access Control (**RBAC**) in the console itself.
-- There are three different roles:
+Namespaces are central to how Pomerium Enterprise controls who can do what in the console. Pomerium defines three primary roles:
 
-#### Guest (no role)
+**Guest (no role)**  
+- Can authenticate into Pomerium but only see a list of namespaces.  
+- Cannot modify or view details of any resources.
 
-Users who are authenticated by your IdP but do not have a role assigned in Pomerium Enterprise can still view the list of Namespaces, but nothing else.
+**Viewer**  
+- Can view resources (Routes, Policies, Certificates) in a namespace and its children.  
+- Can see traffic dashboards and activity logs.
 
-#### Viewer
-
-A user with the Viewer role can:
-
-- view all resources in a Namespace (Routes, Policies, Certificates), including child Namespaces
-- view traffic dashboard for routes in the Namespace, including child Namespaces
-- view the activity log for a namespace.
-
-#### Manager
-
-In addition to the access provided by the Viewer role, a Manager can create, read, update, and delete routes, policies, and certificates in a Namespace (as well as its children). A Manager may also reference policies and certificates in the parent Namespace.
+**Manager**  
+- Can create, edit, and delete routes, policies, and certificates for a namespace (and its children).
+- Can reference policies and certificates from parent namespaces.
 
 :::caution
 
-Managers in any Namespace should note: while creating a route for an [upstream](/docs/internals/glossary#upstream--downstream) path prevents additional routes to that path _in the same namespace_, Managers in other namespaces can create alternate routes to the same path.
-
-If you need to ensure that access to a service is only accessible from a single route, consider implementing [Mutual Authentication](/docs/concepts/mutual-auth) between Pomerium and the upstream service. This can be achieved using one of several methods, including [mTLS](/docs/capabilities/mtls-services) and [JWT verification](/docs/deploy/jwt-verification-with-envoy). You can also utilize a service mesh like [Istio](/docs/guides/istio)
+Managers can create routes to a given upstream path in **their** namespace, but Managers in other namespaces can also create routes to the same path. To ensure only a single route can reach a service, use [Mutual Authentication](/docs/concepts/mutual-auth) techniques like [mTLS](/docs/capabilities/mtls-services) or [JWT verification](/docs/deploy/jwt-verification-with-envoy) on your upstream. Another option is using a service mesh like [Istio](/docs/guides/istio).
 
 :::
 
-#### Admin
+**Admin**  
+- Can manage all namespaces.
+- Has global access to settings, sessions, and [service accounts](/docs/capabilities/service-accounts).
+- Can see events and runtime data across the organization.
 
-An Admin user has permissions across all Namespaces. They can manage global settings, sessions, and [service accounts](/docs/capabilities/service-accounts), as well as view events and runtime data.
+With these roles, Namespaces provide a powerful way to control who can view or modify Pomerium Enterprise resources, while still allowing each team the freedom to manage its own space.

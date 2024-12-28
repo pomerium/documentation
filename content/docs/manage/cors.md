@@ -68,7 +68,7 @@ func main() {
 Create a file `index.html`:
 
 ```html
-<!DOCTYPE html>
+<!doctype html>
 <html>
   <head>
     <title>Example Application</title>
