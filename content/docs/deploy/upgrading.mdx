@@ -1,0 +1,405 @@
+---
+id: upgrading-pomerium
+title: 'Upgrading Pomerium'
+hide_table_of_contents: true
+description: 'Upgrade notes for both Pomerium Core and Enterprise'
+---
+
+# Upgrading Pomerium
+
+Below are upgrade notes for both **Pomerium Core** (the open-source edition) and **Pomerium Enterprise**.
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import UpgradeNotice from '@site/content/docs/admonitions/_upgrade-versions.mdx';
+
+<Tabs>
+
+<TabItem value="core" label="Pomerium Core">
+
+## Upgrade Guide (Core Edition)
+
+This page contains the list of deprecations and important or breaking changes for Pomerium Core. Please read it carefully before upgrading.
+
+### 0.28.0
+
+There are no breaking changes in v0.28.
+
+### 0.27.0
+
+#### Breaking
+
+##### Deprecated JWT endpoint
+
+The `/.pomerium/jwt` endpoint is now deprecated and disabled by default. You can temporarily opt out of this deprecation by setting the runtime flag [`pomerium_jwt_endpoint`](/docs/reference/runtime-flags) to `true`. This flag will be removed in a future release.
+
+- **Context**: This endpoint was originally added for single-page web apps to get information about the currently signed-in user, but that same user data can be fetched without a signed JWT.
+- **New approach**: A new `/.pomerium/user` endpoint provides user data as plaintext JSON. If you use Pomerium’s [JavaScript SDK](https://github.com/pomerium/js-sdk), version 1.1.0 includes `getBrowserUser()`, which replaces `verifyBrowserUser()`.
+
+##### Upgrading Pomerium Zero deployments in Kubernetes
+
+For Pomerium Zero in Kubernetes, we updated the manifest to use a **Deployment** instead of a StatefulSet. Before upgrading, delete your old StatefulSet:
+
+```bash
+kubectl delete statefulset/pomerium -n pomerium-zero
+```
+
+Then apply the new deployment:
+
+```bash
+kubectl apply -k github.com/pomerium/pomerium/k8s/zero
+```
+
+### 0.26.0
+
+##### Routes port matching
+
+- **Previous Behavior**: Pomerium required the request’s `Host` header to match the route’s `from` URL exactly, including port.
+- **New Behavior**: If your `from` URL does not include an explicit port, Pomerium ignores the incoming port. This helps with NAT or load balancers that change the request port.
+- **Note**: You can revert to the old behavior by setting the runtime flag `match_any_incoming_port=false`.
+
+##### Host header rewrite
+
+Pomerium now rewrites the host header to match the `to` URL consistently, including port if specified. Use [Preserve Host Header](/docs/reference/routes/headers#1-preserve-host-header) if you need to keep the original host.
+
+##### Session refresh reliability
+
+- Pomerium’s approach to refreshing OAuth tokens changed to be more reliable, potentially increasing the rate of requests to your identity provider.
+- You can restore the previous approach with runtime flag `legacy_identity_manager=true`.
+
+##### Deprecations
+
+- `client_ca` is removed. Use `downstream_mtls.ca` or `DOWNSTREAM_MTLS_CA` instead.
+
+### 0.25.0
+
+#### Breaking
+
+##### Base64-encoded Certificates
+
+The `certificates` key no longer supports base64-encoded cert data (this was undocumented). Provide a file location instead.
+
+**Note**: The singular `certificate` key still supports base64-encoded cert data.
+
+##### Remove Debug Option
+
+Support for a `Debug` setting was removed. If you prefer pretty-print logs, pipe JSON logs into `jq`.
+
+#### New
+
+##### Authentication Flows
+
+- For self-hosted deployments, the flow reverts to a v0.20–like approach.
+- For Hosted Authenticate, it continues with the flow introduced in v0.21.
+
+### 0.24.0
+
+#### Breaking
+
+##### Remove `set_authorization_header`
+
+Use [Set Request Headers](/docs/reference/routes/headers#set-request-headers) with variable substitution to pass ID tokens upstream.
+
+##### Base64-encoded `certificates` Key
+
+Support was removed (the second mention). Provide a file path instead.
+
+##### Redis Storage
+
+Redis was deprecated as a data storage backend, replaced by PostgreSQL since v0.18. Redis is now removed.
+
+### 0.23.0
+
+#### Logging Configs
+
+- [Access Log Fields](/docs/reference/access-log-fields) and [Authorize Log Fields](/docs/reference/authorize-log-fields) let you customize what fields are logged.
+
+#### Downstream mTLS Settings
+
+- Moved to a new `downstream_mtls` block.
+- Support for CRLs, a new [Enforcement Mode](/docs/reference/downstream-mtls-settings#enforcement-mode), and optional [Match Subject Alt Names](/docs/reference/downstream-mtls-settings#match-sans).
+- The [TLS Downstream Client Certificate Authority](/docs/reference/routes/tls#tls-downstream-client-certificate-authority) setting is deprecated.
+
+##### Breaking
+
+###### Set Request Headers `$` Substitution
+
+To avoid `$` being interpreted as a variable start, you may need to escape `$` with `$$`.
+
+### 0.22.0
+
+#### New
+
+- [Hosted Authenticate Service](/docs/capabilities/authentication) is the default for SSO (no identity config needed).
+- [Wildcard From Routes](/docs/reference/routes/from#wildcard-from-routes) in Beta.
+- Improved memory usage in dynamic config environments.
+
+##### Breaking
+
+- Devices must be re-enrolled (internal data model changes).
+- Forward auth is removed (subpar security).
+- Bastion Host for TCP routes is now supported in a new way.
+
+### 0.21.0
+
+#### Breaking
+
+- Re-enroll devices (data model changed, not forward compatible).
+- Forward auth was removed in v0.21.
+- Bastion host support for TCP routes.
+- Internal TLS by default if you run Pomerium Enterprise.
+
+### 0.20.0
+
+#### Breaking
+
+- `allowed_groups` and `groups` PPL criteria are removed for open source. Use IdP claims instead.
+- IdP directory sync has moved to [External Data Sources](/docs/capabilities/integrations/) in Pomerium Enterprise. For open source, group membership must come from ID tokens.
+
+### 0.19.0 / 0.18.0
+
+No changes required.
+
+### 0.17.0
+
+#### Per Route OIDC
+
+- `idp_client_id` and `idp_client_secret` can now be specified per route.
+
+### 0.16.0
+
+#### Breaking
+
+- Self-signed fallback certificates are newly generated if no match is found for service URLs.
+- OIDC flow no longer sets default `access_type=offline` except for Google.
+- Removed `signing_key_algorithm` option.
+- Some GitHub group IDs changed from integer to slug with the new GraphQL approach.
+
+### 0.15.0
+
+#### Breaking
+
+- Removed unused options: `grpc_server_max_connection_age`, `grpc_server_max_connection_age_grace`, `refresh_cooldown`.
+- Ed25519 signing keys are no longer supported.
+- Expanded PPL route syntax in `routes`.
+
+### 0.14.0
+
+#### Breaking
+
+- Programmatic login domain whitelist introduced: default `localhost`. Use `programmatic_redirect_domain_whitelist` to configure.
+- GitHub team IDs now use slugs instead of numeric IDs.
+- `allowed_users` by ID no longer includes the identity provider prefix.
+
+### 0.13.0
+
+#### Breaking
+
+- User impersonation and client-side service accounts removed (server-side approach in Enterprise now).
+- `administrators` config option removed.
+
+### 0.12.0
+
+- **TCP Proxying** introduced.
+
+### 0.11.0
+
+#### Breaking
+
+- `enable_user_impersonation=false` by default.
+- `cache_service_url` renamed to `databroker_service_url`.
+
+### 0.10.0
+
+#### Breaking
+
+- Service accounts are required for group/directory data.
+- `cache` service becomes `databroker`, storing identity data.
+- `pass_identity_headers` must be explicitly set true if you want identity headers.
+
+### 0.9.0
+
+#### Breaking
+
+- Default log level is `info`.
+- HTTP 1.0 not supported. For HAProxy health checks, set `HTTP/1.1\r\nHost:pomerium`.
+
+### 0.8.0
+
+#### Breaking
+
+- `from` routes with a path are no longer valid (use `prefix` instead).
+
+### 0.7.0
+
+#### Breaking
+
+- By default, removed the `x-pomerium-authenticated-user-*` headers; replaced by `X-Pomerium-Jwt-Assertion` unless you set `jwt_claims_headers`.
+
+### 0.6.0
+
+#### Breaking
+
+- A new `cache` service is introduced for back-end session data.
+
+### 0.5.0
+
+#### Breaking
+
+- Subdomain requirement dropped; you can proxy any domain.
+- Some IdPs (Okta, Azure, OneLogin) require group membership updates.
+- Programmatic Access API changed from `/api/v1/token` to a per-route OAuth2 flow.
+- Forward-auth route verification changed from path-based to query string-based.
+
+### 0.4.0
+
+#### Breaking
+
+- `authorize_service_url` is no longer needed in all-in-one mode.
+- `AUTHENTICATE_INTERNAL_URL` is removed.
+- No default certificate location.
+- Authorize service health checks are not HTTP-based in distributed mode.
+
+### 0.3.0 / 0.2.0 / 0.1.0 / 0.0.5
+
+#### Breaking Highlights
+
+- Policy `from` field must contain a valid scheme (0.1.0).
+- `POLICY_FILE` removed (0.0.5).
+
+</TabItem>
+
+<TabItem value="enterprise" label="Pomerium Enterprise">
+
+## Upgrading Pomerium Enterprise
+
+Please review these deprecations and important changes for Pomerium Enterprise before upgrading.
+
+:::caution
+
+<UpgradeNotice />
+:::
+
+### v0.28.0
+
+No breaking changes in v0.28.
+
+### v0.27.0
+
+#### Before you upgrade
+
+##### New
+
+- A “Report Issue” feedback widget in the Enterprise Console, loaded from a third-party script. Disable with [`--disable-feedback-widget`](/docs/deploy/enterprise/configure#disable-feedback-widget).
+
+##### Changed
+
+- `--disable-validation` is now deprecated. Use [`--validation-mode=none`](/docs/deploy/enterprise/configure#validation_mode) to preserve existing behavior, or [`--validation-mode=static`](/docs/deploy/enterprise/configure#validation_mode). We’ll remove `--disable-validation` in a future release.
+
+### v0.25.0
+
+#### Before you upgrade
+
+##### Breaking
+
+###### Base64-encoded Certificates
+
+As with Core, the `certificates` key no longer supports inline base64. Use a file location.
+
+###### Remove Debug Option
+
+We’ve removed the Debug setting. To pretty-print logs, pipe JSON logs into `jq`.
+
+##### New
+
+###### Authentication Flows
+
+For self-hosted deployments, the flow is more like v0.20. For Hosted Authenticate, it continues with the flow from v0.21.
+
+### 0.24.0
+
+#### Before you upgrade
+
+##### Breaking
+
+- `set_authorization_header` was removed. Use [Set Request Headers](/docs/reference/routes/headers#set-request-headers) for ID tokens.
+
+### 0.23.0
+
+#### Before you upgrade
+
+##### Breaking
+
+- For [`set_request_headers`](/docs/reference/routes/headers#set-request-headers), replace `$` with `$$` to avoid variable substitution.
+
+### 0.22.0
+
+#### Before you upgrade
+
+##### New
+
+- Hosted Authenticate Service enabled by default.
+- Wildcard From Routes (beta).
+- Memory usage improvements.
+
+##### Fixes
+
+- Changes to device credential references and external data source links in the Console.
+
+##### Changed
+
+- Adds DNS Lookup Families and requires a name for new Namespaces.
+
+### 0.21.0
+
+#### Before you upgrade
+
+##### Breaking
+
+- Re-enroll devices: device identity changed in a non-forward-compatible way.
+- `--derive-tls` can auto-generate internal TLS certs from `shared_secret`.
+
+### 0.20.0
+
+#### Before you upgrade
+
+##### Groups & directory sync
+
+Moved to [External Data Sources](/docs/capabilities/integrations/). Remove references to `idp_service_account` in config. Instead, configure directory sync from Settings > Identity Provider in the Enterprise Console.
+
+### 0.19.0
+
+No breaking changes. See [v0.19 Changelog](/docs/deploy/enterprise/changelog#0190).
+
+### 0.18.0
+
+#### Before you upgrade
+
+- Use [Postgres](/docs/internals/data-storage#postgres) for `external-data` integration. Redis is deprecated for storage.
+
+### 0.17.0
+
+#### Before you upgrade
+
+- `license-key` is now required.
+
+### 0.16.0
+
+#### Before you upgrade
+
+- `signing-key` replaced with `authenticate-service-url`. If you keep `signing-key`, device enrollment won’t work. Use the self-hosted or hosted Authenticate service URL instead.
+
+### 0.15.0
+
+#### Before you upgrade
+
+- `signing-key` is now required to secure requests from Pomerium Core. Must match Core’s own `signing_key`.
+- `audience` must match the external hostname for the Enterprise Console.
+
+##### Helm Installations
+
+- Helm charts are consolidated. Use `pomerium/pomerium-console` instead of `pomerium-enterprise` charts. Make sure to share the same `signing-key` with Core.
+
+</TabItem>
+
+</Tabs>
