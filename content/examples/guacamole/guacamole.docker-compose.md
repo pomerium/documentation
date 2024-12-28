@@ -57,7 +57,7 @@ services:
 
   # pomerium
   pomerium:
-    image: cr.pomerium.com/pomerium/pomerium:latest
+    image: pomerium.com/pomerium/pomerium:latest
     volumes:
       - ./config.yaml:/pomerium/config.yaml:ro
     ports:

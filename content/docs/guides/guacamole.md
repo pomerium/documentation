@@ -34,7 +34,7 @@ To complete this guide, you need:
 
 :::note
 
-This guide uses the [Hosted Authenticate Service](/docs/capabilities/hosted-authenticate-service.md), which provides its own hosted identity provider and authenticate service URL. If you prefer to configure your own identity provider, see [Self-Hosted Authenticate Service](/docs/capabilities/self-hosted-authenticate-service).
+This guide uses the [Hosted Authenticate Service](/docs/capabilities/authentication.mdxx), which provides its own hosted identity provider and authenticate service URL. If you prefer to configure your own identity provider, see [Self-Hosted Authenticate Service](/docs/capabilities/authentication).
 
 :::
 
@@ -122,7 +122,7 @@ In your Docker Compose file, replace `nginx` with Pomerium Core:
 
    ```yaml showLineNumbers
    pomerium:
-     image: cr.pomerium.com/pomerium/pomerium:latest
+     image: pomerium.com/pomerium/pomerium:latest
      # highlight-start
      # Mount your config file
      volumes:

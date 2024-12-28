@@ -116,7 +116,7 @@ In your Docker Compose file, bind mount your wildcard certificates as a volume i
 ```yaml title="docker-compose.yaml"
 services:
   pomerium:
-    image: cr.pomerium.com/pomerium/pomerium:latest
+    image: pomerium.com/pomerium/pomerium:latest
     volumes:
       # Mount your wildcard certificates:
       - ./_wildcard.localhost.pomerium.io-key.pem:/pomerium/key.pem:ro

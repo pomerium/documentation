@@ -29,7 +29,7 @@ import ConfigDocker from '@site/content/examples/config/config.docker.yaml.md'; 
 
 Run Pomerium Core with Docker containers in **under 5 minutes**.
 
-The Core quickstart uses Pomerium's [**Hosted Authenticate Service**](/docs/capabilities/hosted-authenticate-service), but you can also configure a [**self-hosted authenticate service**](/docs/capabilities/self-hosted-authenticate-service) to integrate with Pomerium.
+The Core quickstart uses Pomerium's [**Hosted Authenticate Service**](/docs/capabilities/hosted-authenticate-service), but you can also configure a [**self-hosted authenticate service**](/docs/capabilities/authentication) to integrate with Pomerium.
 
 ## Prerequisites
 

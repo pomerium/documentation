@@ -97,7 +97,7 @@ In your `docker-compose.yaml` file, add the following services:
 ```yaml
 services:
   pomerium:
-    image: cr.pomerium.com/pomerium/pomerium:latest
+    image: pomerium.com/pomerium/pomerium:latest
     volumes:
       # Mount your certificates
       - ./_wildcard.localhost.pomerium.io.pem:/pomerium/cert.pem:ro

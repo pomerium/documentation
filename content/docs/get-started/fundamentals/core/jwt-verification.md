@@ -208,7 +208,7 @@ In your Docker Compose file, add the following environment variable to your Veri
 
 ```yaml title="docker-compose"
 verify:
-  image: cr.pomerium.com/pomerium/verify:latest
+  image: pomerium.com/pomerium/verify:latest
   expose:
     - 8000
   environment:
@@ -338,13 +338,13 @@ Docker Compose
 ```yaml
 services:
   pomerium:
-    image: cr.pomerium.com/pomerium/pomerium:latest
+    image: pomerium.com/pomerium/pomerium:latest
     volumes:
       - ./config.yaml:/pomerium/config.yaml:ro
     ports:
       - 443:443
   verify:
-    image: cr.pomerium.com/pomerium/verify:latest
+    image: pomerium.com/pomerium/verify:latest
     expose:
       - 8000
     environment:
