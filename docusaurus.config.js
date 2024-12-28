@@ -265,22 +265,22 @@ const config = {
         id: process.env.GTM,
       },
     ],
-    async function customPlugin(context, opts) {
-      return {
-        name: 'custom-plugin',
-        configureWebpack(config, isServer, utils, content) {
-          return {
-            plugins: [
-              new webpack.DefinePlugin({
-                // IMPORTANT: To fix debug library‘s bug
-                // {}.DEBUG = namespaces; // SyntaxError: Unexpected token '.'
-                'process.env.DEBUG': 'process.env.DEBUG',
-              }),
-            ],
-          };
-        },
-      };
-    },
+    // async function customPlugin(context, opts) {
+    //   return {
+    //     name: 'custom-plugin',
+    //     configureWebpack(config, isServer, utils, content) {
+    //       return {
+    //         plugins: [
+    //           new webpack.DefinePlugin({
+    //             // IMPORTANT: To fix debug library‘s bug
+    //             // {}.DEBUG = namespaces; // SyntaxError: Unexpected token '.'
+    //             'process.env.DEBUG': 'process.env.DEBUG',
+    //           }),
+    //         ],
+    //       };
+    //     },
+    //   };
+    // },
     [
       'docusaurus-pushfeedback',
       {
