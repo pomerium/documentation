@@ -1,7 +1,7 @@
 ---
 id: oidc
-title: "Keycloak + Pomerium: Configuring an Identity-Aware Proxy"
-description: "Learn how to set up Keycloak as your OpenID Connect (OIDC) provider and integrate it with Pomerium for a secure, identity-aware proxy configuration."
+title: 'Keycloak + Pomerium: Configuring an Identity-Aware Proxy'
+description: 'Learn how to set up Keycloak as your OpenID Connect (OIDC) provider and integrate it with Pomerium for a secure, identity-aware proxy configuration.'
 keywords:
   [
     keycloak,
@@ -10,7 +10,7 @@ keywords:
     oidc,
     generic oidc,
     zero trust,
-    openid connect
+    openid connect,
   ]
 sidebar_label: Keycloak
 lang: en-US
@@ -28,7 +28,6 @@ This guide shows how to integrate a self-hosted Keycloak instance as your OIDC p
 
 - [Docker](https://docs.docker.com/install/)
 - [Docker Compose](https://docs.docker.com/compose/install/)
-
 
 ## Docker Compose Configuration
 
@@ -84,13 +83,12 @@ Sign in with `admin` / `admin`.
 1. Enter a username and **Create**.
 1. Select **Credentials**, then **Set password** and disable **Temporary**.
 
-![Create a user](./img/keycloak/keycloak-create-a-user.gif)
-![Set the user's password](./img/keycloak/keycloak-set-password.png)
+![Create a user](./img/keycloak/keycloak-create-a-user.gif) ![Set the user's password](./img/keycloak/keycloak-set-password.png)
 
 ### Create a Client
 
 1. Go to **Clients** > **Create client**.
-1. **Client type**: **OpenID Connect**.  
+1. **Client type**: **OpenID Connect**.
 1. **Client ID**: `mynewclient`.
 1. Enable **Standard flow** and **Direct access grants**.
 1. **Save**.
@@ -116,7 +114,7 @@ authenticate_service_url: https://authenticate.localhost.pomerium.io
 
 idp_provider: oidc
 idp_client_id: 'mynewclient'
-idp_client_secret: 'your_client_secret'  # Replace with the actual secret
+idp_client_secret: 'your_client_secret' # Replace with the actual secret
 idp_provider_url: 'http://keycloak.localhost.pomerium.io:8080/realms/Pomerium'
 
 signing_key: LS0tLS1CRUdJTiBFQyBQUklWQVRFIEtFWS0tLS0tCk1IY0NBUUVFSVA2TUN5UFI5OUNmSEVkU0s4cVdzbk51Q0RyMVZ3ay93RER1RVhyQitELzZvQW9HQ0NxR1NNNDkKQXdFSG9VUURRZ0FFQ0JTK3gyQnJRNVJqNHJFcU5PSEVsUFVESXJiRlNhRitoWEhEL1RYby9rQWVKU1lJSjJHVwpZMnE0a0NPNTU4RmdoYmxDTUplYVdjV1luT3JuZkpxeXRnPT0KLS0tLS1FTkQgRUMgUFJJVkFURSBLRVktLS0tLQo=
@@ -128,22 +126,20 @@ routes:
     pass_identity_headers: true
 ```
 
-:::caution
-Do **not** reuse this sample `signing_key` in production.
-:::
+:::caution Do **not** reuse this sample `signing_key` in production. :::
 
 ## Test the Integration
 
 Visit [https://verify.localhost.pomerium.io](https://verify.localhost.pomerium.io).
 
 :::tip
+
 <SelfSignedCertWarning />
 :::
 
 You’ll be redirected to Keycloak to sign in, then back to the Verify service:
 
-![Sign in to Keycloak Realm](./img/keycloak/keycloak-login.png)
-![Access Verify app](./img/keycloak/keycloak-verify-app.png)
+![Sign in to Keycloak Realm](./img/keycloak/keycloak-login.png) ![Access Verify app](./img/keycloak/keycloak-verify-app.png)
 
 You can see user claims from Keycloak in the JWT payload, confirming that Pomerium has authenticated and authorized your request.
 
