@@ -86,7 +86,7 @@ In the **External Data** dashboard, you can import, view, and manage [external d
 | [Directory Sync](/docs/capabilities/directory-sync) | <ClearIcon /> | ![Pomerium checkmark](./img/pomerium-checkmark.svg) |
 | [User Impersonation](/docs/capabilities/impersonation) | <ClearIcon /> | ![Pomerium checkmark](./img/pomerium-checkmark.svg) |
 | [Deployment History](/docs/capabilities/metrics#changesets-and-deployments) | <ClearIcon /> | ![Pomerium checkmark](./img/pomerium-checkmark.svg) |
-| [Device Identity](/docs/capabilities/device-identity) | <ClearIcon /> | ![Pomerium checkmark](./img/pomerium-checkmark.svg) |
+| [Device Identity](/docs/integrations/device-context/device-identit) | <ClearIcon /> | ![Pomerium checkmark](./img/pomerium-checkmark.svg) |
 | [Custom Branding](/docs/capabilities/branding) | <ClearIcon /> | ![Pomerium checkmark](./img/pomerium-checkmark.svg) |
 | [Service Accounts](/docs/capabilities/service-accounts) | <ClearIcon /> | ![Pomerium checkmark](./img/pomerium-checkmark.svg) |
 | [Metrics](/docs/capabilities/metrics) | <ClearIcon /> | ![Pomerium checkmark](./img/pomerium-checkmark.svg) |
