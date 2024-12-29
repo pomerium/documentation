@@ -28,13 +28,13 @@ Well, there's a few things you can do:
 
 - Review our Capabilities section to see what other features are available. Here are a few suggestions:
   - Configure [Single Sign-out](https://www.pomerium.com/docs/capabilities/single-sign-out)
-  - Add client-side mTLS, also known as [Downstream mTLS](https://www.pomerium.com/docs/capabilities/mtls-clients)
+  - Add client-side mTLS, also known as [Downstream mTLS](https://www.pomerium.com/docs/internals/certificates-and-tls)
   - Test out logging in Pomerium with our [Audit Logs](https://www.pomerium.com/docs/capabilities/audit-logs)
   - Explore global and route-level settings on our [Reference](https://www.pomerium.com/docs/reference) page
 - Check out our [Guides](https://www.pomerium.com/docs/guides) to learn how to secure other services behind Pomerium
 - Read some of our [Blog posts](https://www.pomerium.com/blog/) to see what's happening in the greater Zero Trust community and at Pomerium
 - Import your existing Pomerium Core configuration to Pomerium Zero
   - Pomerium Zero provides a hosted configuration UI for managing your Pomerium configurations.
-  - See [**Import Core Config to Zero**](/docs/zero/import) for more information.
+  - See [**Import Core Config to Zero**](/docs/deploy/cloud/import) for more information.
 
 You're bound to have some questions and feedback along the way. Visit our [Discuss page](https://discuss.pomerium.com/) to ask questions, see what our users are up to, and let us know what you thought of our Guided Tutorials!

@@ -117,7 +117,7 @@ The process above, an example of [north-south traffic](https://en.wikipedia.org/
 1. The server validates the client certificate signing authority against its trusted keystore or authorized client CA.
 1. Once authorized, the server resumes normal encrypted communication with the client.
 
-See [client-side mTLS](/docs/capabilities/mtls-clients) and [upstream mTLS](/docs/capabilities/mtls-services) for more information.
+See [client-side mTLS](/docs/internals/certificates-and-tls) and [upstream mTLS](/docs/internals/certificates-and-tls) for more information.
 
 ### East-west mTLS
 

@@ -29,8 +29,8 @@ Make sure you've completed the following tutorials:
 - [**Identity Verification with JWTs**](/docs/get-started/fundamentals/core/jwt-verification)
 - [**Build Advanced Policies**](/docs/get-started/fundamentals/core/advanced-policies)
 - [**Build Advanced Routes**](/docs/get-started/fundamentals/core/advanced-routes)
-- [**Build TCP Routes**](/docs/get-started/fundamentals/tcp-routes)
-- [**Self-Host Pomerium**](/docs/get-started/fundamentals/self-hosted-pomerium)
+- [**Build TCP Routes**](/docs/get-started/fundamentals/core/tcp-routes)
+- [**Self-Host Pomerium**](/docs/get-started/fundamentals/core/self-hosted-pomerium)
 
 Each tutorial builds on the same configuration files. In this tutorial, you'll learn how to enable Autocert to manage TLS certificate automation for your upstream services.
 

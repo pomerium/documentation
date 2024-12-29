@@ -34,7 +34,7 @@ To complete this guide, you need:
 
 :::note
 
-This guide uses the [Hosted Authenticate Service](/docs/capabilities/authentication.mdxx), which provides its own hosted identity provider and authenticate service URL. If you prefer to configure your own identity provider, see [Self-Hosted Authenticate Service](/docs/capabilities/authentication).
+This guide uses the [Hosted Authenticate Service](/docs/capabilities/authentication), which provides its own hosted identity provider and authenticate service URL. If you prefer to configure your own identity provider, see [Self-Hosted Authenticate Service](/docs/capabilities/authentication).
 
 :::
 

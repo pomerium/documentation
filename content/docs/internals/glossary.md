@@ -162,7 +162,7 @@ User and group data fetched from your IdP. Pomerium caches this data to avoid ra
 
 ## Zero Trust
 
-A security model that assumes any network or user can be compromised. It requires continuous verification of identity, device posture, and context. See our [Zero Trust Background](/docs/concepts/zero-trust).
+A security model that assumes any network or user can be compromised. It requires continuous verification of identity, device posture, and context. See our [Zero Trust Background](/docs/internals/zero-trust).
 
 ## Zero-trust Access
 

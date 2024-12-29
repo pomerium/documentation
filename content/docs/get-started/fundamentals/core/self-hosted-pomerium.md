@@ -31,7 +31,7 @@ Make sure you've completed the following tutorials:
 - [**Identity Verification with JWTs**](/docs/get-started/fundamentals/core/jwt-verification)
 - [**Build Advanced Policies**](/docs/get-started/fundamentals/core/advanced-policies)
 - [**Build Advanced Routes**](/docs/get-started/fundamentals/core/advanced-routes)
-- [**Build TCP Routes**](/docs/get-started/fundamentals/tcp-routes)
+- [**Build TCP Routes**](/docs/get-started/fundamentals/core/tcp-routes)
 
 Each tutorial builds on the same configuration files. In this tutorial, you'll replace the Hosted Authenticate service with your own self-hosted authenticate service.
 
@@ -257,4 +257,4 @@ This means your Pomerium instance is hosted in a private network. Because you ha
 
 This setting will secure connections between Pomerium and the upstream service, and it's the final piece you need to self-host a production-ready Pomerium deployment.
 
-**Next up**: [Production Certificates With Autocert](/docs/get-started/fundamentals/production-certificates)
+**Next up**: [Production Certificates With Autocert](/docs/capabilities/authentication)

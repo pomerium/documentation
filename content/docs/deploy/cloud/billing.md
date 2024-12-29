@@ -75,7 +75,7 @@ See the [Pricing page](https://www.pomerium.com/pricing) for a thorough breakdow
 
 At some point, you may require higher quotas to accommodate your use case.
 
-If you're using a professional account and you need to increase the quota for a given entity, [contact us](/docs/community). We will increase quotas on an as-needed basis.
+If you're using a professional account and you need to increase the quota for a given entity contact us. We will increase quotas on an as-needed basis.
 
 If you're using a personal account, you must upgrade to increase quotas.
 
