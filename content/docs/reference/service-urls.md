@@ -79,7 +79,7 @@ AUTHENTICATE_SERVICE_URL=https://authenticate.corp.example.com
 </TabItem>
 <TabItem value="Kubernetes" label="Kubernetes">
 
-| **[Parameter name](/docs/deploy/k8s//reference#spec** | **Type** | **Usage** |
+| **[Parameter name](/docs/deploy/k8s/reference#spec** | **Type** | **Usage** |
 | :-- | :-- | :-- |
 | `authenticate.url` | `URL` | **optional** |
 
@@ -90,7 +90,7 @@ authenticate:
   url: https://authenticate.corp.example.com
 ```
 
-See the [Kubernetes - Global Configuration](/docs/deploy/k8s//configure#authenticate-endpoint) for more information.
+See the [Kubernetes - Global Configuration](/docs/deploy/k8s/configure#authenticate-endpoint) for more information.
 
 </TabItem>
 </Tabs>

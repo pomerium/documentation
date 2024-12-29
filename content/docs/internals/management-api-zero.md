@@ -1,9 +1,8 @@
 ---
 # cSpell:ignore bwjk, Zwxb, NXBQH, Bbxt, Wxgvn, Mehb, PJRSZWSB, Jbsv, Kjvn, Rpmww
 
-id: zero-api-guide
 title: Get Started With the Pomerium Zero API
-sidebar_label: API User Guide
+sidebar_label: 'API for Zero'
 description: This page shows you how to create a route and policy with the Pomerium Zero API.
 ---
 

@@ -48,7 +48,7 @@ Integration with your Identity Provider is configured using [`identityProvider`]
 
 ### Authenticate endpoint
 
-Each Pomerium installation has a special route that unauthenticated users are redirected to that handles sign-in via your Identity Provider. It is configured via the [`authenticate`](/docs/deploy/k8s//reference#authenticate) parameter of the [CRD](./reference#authenticate).
+Each Pomerium installation has a special route that unauthenticated users are redirected to that handles sign-in via your Identity Provider. It is configured via the [`authenticate`](/docs/deploy/k8s/reference#authenticate) parameter of the [CRD](./reference#authenticate).
 
 The authenticate endpoint DNS address should resolve to an external IP address assigned by your Kubernetes Load Balancer to the `pomerium-proxy` service. If you use `external-dns`, that may be [done automatically](#external-dns).
 
