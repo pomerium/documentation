@@ -45,7 +45,7 @@ Before you begin, confirm you are in the correct Namespace. You can only use a s
 
    See the following pages for more information:
 
-   - [**Directory Sync**](/docs/capabilities/directory-sync)
+   - [**Directory Sync**](/docs/integrations/user-standing/directory-sync)
    - [**User Impersonation**](/docs/capabilities/impersonation)
 
    :::

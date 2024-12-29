@@ -35,7 +35,7 @@ We'll configure these files together in the next section.
 
 :::info What is **Pomerium Core**?
 
-[**Pomerium Core**](/docs/core) is our open-source, identity-aware reverse gateway. Pomerium consists of **4 service** identities (that can be deployed together or independently), including the:
+[**Pomerium Core**](/docs/deploy/core) is our open-source, identity-aware reverse gateway. Pomerium consists of **4 service** identities (that can be deployed together or independently), including the:
 
 - **Proxy** service — the red-linen rope
 - **Authentication** service — the bouncer checking the user's ID to see if they are who they say they are
@@ -158,7 +158,7 @@ In a later tutorial, you will configure Pomerium and the Verify service to succe
 
 Great job! If you got this far, then you have everything you need to run Pomerium and continue on with our guided tutorials.
 
-In the next section, we will dive deeper into [**Routes**](/docs/get-started/fundamentals/build-routes) with Pomerium.
+In the next section, we will dive deeper into [**Routes**](/docs/get-started/fundamentals/core/build-routes) with Pomerium.
 
 ### Configuration file state:
 

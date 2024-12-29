@@ -72,7 +72,7 @@ When filtering by route, select:
 <Tabs>
 <TabItem value="zero" label="Zero">
 
-Pomerium Zero collects traffic metrics at the [cluster](/docs/manage/clusters) level, which includes active replicas. To review the traffic dashboard in Pomerium Zero:
+Pomerium Zero collects traffic metrics at the [cluster](/docs/internals/clusters) level, which includes active replicas. To review the traffic dashboard in Pomerium Zero:
 
 1. In the left-hand sidebar, select **Reports**.
 1. Select **Traffic**.
@@ -82,7 +82,7 @@ Pomerium Zero collects traffic metrics at the [cluster](/docs/manage/clusters) l
 </TabItem>
 <TabItem value="enterprise" label="Enterprise">
 
-When you access the Enterprise Console, you'll land on the traffic dashboard. Pomerium Enterprise organizes traffic metrics in your deployment with [namespaces](/docs/capabilities/namespacing).
+When you access the Enterprise Console, you'll land on the traffic dashboard. Pomerium Enterprise organizes traffic metrics in your deployment with [namespaces](/docs/internals/namespacing).
 
 Namespaces follow a hierarchical system. You can view traffic metrics for all namespaces, or a specific namespace, using the namespace dropdown menu. You can filter by:
 
@@ -119,7 +119,7 @@ The **Total requests** chart shows the total number of proxied requests. The **A
 
 The **Healthy Endpoints** chart displays the number of healthy upstream endpoints, and roughly correlates with the number of routes defined in your deployment.
 
-For example, if a route's **To** definition includes [multiple upstream resources](/docs/reference/routes/to#target-multiple-upstream-resources), Pomerium includes these resources in the total sum of healthy endpoints. Pomerium excludes unhealthy endpoints from this total. See Load Balancing - [Active Health Checks](/docs/capabilities/load-balancing#active-health-checks) and [Passive Health Checks](/docs/capabilities/load-balancing#passive-health-checks) for more information.
+For example, if a route's **To** definition includes [multiple upstream resources](/docs/reference/routes/to#target-multiple-upstream-resources), Pomerium includes these resources in the total sum of healthy endpoints. Pomerium excludes unhealthy endpoints from this total. See Load Balancing - [Active Health Checks](/docs/capabilities/routing#active-health-checks) and [Passive Health Checks](/docs/capabilities/routing#passive-health-checks) for more information.
 
 ![Viewing the total and authorized request charts in the Enterprise Console](./img/metrics/enterprise-total-requests.png)
 

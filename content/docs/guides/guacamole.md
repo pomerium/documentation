@@ -29,7 +29,7 @@ This guide provides steps to secure access to the Guacamole gateway behind Pomer
 
 To complete this guide, you need:
 
-- [Pomerium Core](/docs/core)
+- [Pomerium Core](/docs/deploy/core)
 - [Docker](https://docs.docker.com/install/) and [Docker Compose](https://docs.docker.com/compose/install/)
 
 :::note

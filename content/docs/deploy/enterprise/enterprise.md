@@ -35,7 +35,7 @@ The **Enterprise Console** provides a dashboard where you can view traffic and l
 
 The **Enterprise API** helps you manage your configuration with your preferred programming language or infrastructure management tool.
 
-Everything that is manageable in the Enterprise Console can also be driven programmatically through the [Enterprise API](/docs/capabilities/enterprise-api).
+Everything that is manageable in the Enterprise Console can also be driven programmatically through the [Enterprise API](/docs/internals/management-api-enterprise).
 
 ### Session Management
 
@@ -51,7 +51,7 @@ Ready to upgrade to Pomerium Enterprise? [**Contact us**](https://www.pomerium.c
 
 ### Namespaces and Self-Service
 
-The **Namespaces** dashboard is where you configure user roles and permissions for routes, policies, and the Enterprise Console itself. Once you've configured a [Namespace](/docs/capabilities/namespacing), members of that namespace can self-manage access to the infrastructure they build from or depend on.
+The **Namespaces** dashboard is where you configure user roles and permissions for routes, policies, and the Enterprise Console itself. Once you've configured a [Namespace](/docs/internals/namespacing), members of that namespace can self-manage access to the infrastructure they build from or depend on.
 
 Pomerium Enterprise allows you to import groups defined by your identity provider. This allows you to build stable policies that don't require adjustments as your company changes.
 
@@ -65,7 +65,7 @@ The **Deployments** dashboard allows you to view and export change logs from the
 
 ### Directory Sync
 
-Pomerium Enterprise's [**Directory Sync**](/docs/capabilities/directory-sync) feature allows you to import your identity provider's directory data. After a successful sync, you can use your internal groups and teams data when building policies. ![Viewing the Identity Providers settings for a directory sync in the Enterprise Console](./img/directory-sync-2.png)
+Pomerium Enterprise's [**Directory Sync**](/docs/integrations/user-standing/directory-sync) feature allows you to import your identity provider's directory data. After a successful sync, you can use your internal groups and teams data when building policies. ![Viewing the Identity Providers settings for a directory sync in the Enterprise Console](./img/directory-sync-2.png)
 
 ### External Data Sources
 
@@ -80,13 +80,13 @@ In the **External Data** dashboard, you can import, view, and manage [external d
 | Declarative Authorization Policy | ![Pomerium checkmark](./img/pomerium-checkmark.svg) | ![Pomerium checkmark](./img/pomerium-checkmark.svg) |
 | TCP Support | ![Pomerium checkmark](./img/pomerium-checkmark.svg) | ![Pomerium checkmark](./img/pomerium-checkmark.svg) |
 | Enterprise Console | <ClearIcon /> | ![Pomerium checkmark](./img/pomerium-checkmark.svg) |
-| [Enterprise API](/docs/capabilities/enterprise-api) | <ClearIcon /> | ![Pomerium checkmark](./img/pomerium-checkmark.svg) |
+| [Enterprise API](/docs/internals/management-api-enterprise) | <ClearIcon /> | ![Pomerium checkmark](./img/pomerium-checkmark.svg) |
 | [Session Management](/docs/capabilities/metrics#sessions) | <ClearIcon /> | ![Pomerium checkmark](./img/pomerium-checkmark.svg) |
-| [Namespaces](/docs/capabilities/namespacing) | <ClearIcon /> | ![Pomerium checkmark](./img/pomerium-checkmark.svg) |
-| [Directory Sync](/docs/capabilities/directory-sync) | <ClearIcon /> | ![Pomerium checkmark](./img/pomerium-checkmark.svg) |
+| [Namespaces](/docs/internals/namespacing) | <ClearIcon /> | ![Pomerium checkmark](./img/pomerium-checkmark.svg) |
+| [Directory Sync](/docs/integrations/user-standing/directory-sync) | <ClearIcon /> | ![Pomerium checkmark](./img/pomerium-checkmark.svg) |
 | [User Impersonation](/docs/capabilities/impersonation) | <ClearIcon /> | ![Pomerium checkmark](./img/pomerium-checkmark.svg) |
 | [Deployment History](/docs/capabilities/metrics#changesets-and-deployments) | <ClearIcon /> | ![Pomerium checkmark](./img/pomerium-checkmark.svg) |
-| [Device Identity](/docs/integrations/device-context/device-identit) | <ClearIcon /> | ![Pomerium checkmark](./img/pomerium-checkmark.svg) |
+| [Device Identity](/docs/integrations/device-context/device-identity) | <ClearIcon /> | ![Pomerium checkmark](./img/pomerium-checkmark.svg) |
 | [Custom Branding](/docs/capabilities/branding) | <ClearIcon /> | ![Pomerium checkmark](./img/pomerium-checkmark.svg) |
 | [Service Accounts](/docs/capabilities/service-accounts) | <ClearIcon /> | ![Pomerium checkmark](./img/pomerium-checkmark.svg) |
 | [Metrics](/docs/capabilities/metrics) | <ClearIcon /> | ![Pomerium checkmark](./img/pomerium-checkmark.svg) |

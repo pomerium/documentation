@@ -44,7 +44,7 @@ Bootstrap secrets are provisioned via `secrets` property of the [CRD](/docs/depl
 
 ### Identity Provider
 
-Integration with your Identity Provider is configured using [`identityProvider`](/docs/identity-providers) parameter.
+Integration with your Identity Provider is configured using [`identityProvider`](/docs/integrations/user-identity/identity-providers) parameter.
 
 ### Authenticate endpoint
 

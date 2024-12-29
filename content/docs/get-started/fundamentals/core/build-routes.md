@@ -13,7 +13,7 @@ In this tutorial, you'll learn about **Routing** in Pomerium. By the end, you'll
 
 :::note **Before You Start**
 
-Make sure you've completed the [**Get Started**](/docs/get-started/fundamentals/get-started) tutorial.
+Make sure you've completed the [**Get Started**](/docs/get-started/fundamentals/core/get-started) tutorial.
 
 If you already did, you should have:
 

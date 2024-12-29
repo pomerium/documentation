@@ -82,7 +82,7 @@ A principle of granting only the minimal set of privileges necessary for a user'
 
 ## Mutual Authentication
 
-Requires both client and server to authenticate each other. Reduces the risk of impersonation by attackers. See [Pomerium's mutual auth docs](/docs/concepts/mutual-auth).
+Requires both client and server to authenticate each other. Reduces the risk of impersonation by attackers. See [Pomerium's mutual auth docs](/docs/internals/mutual-auth).
 
 ## Namespace
 

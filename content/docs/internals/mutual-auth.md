@@ -170,8 +170,8 @@ In this example:
 - Rather than build authentication into the `API` server, both users and admin apps must access it with the sidecar.
 - The sidecar only accepts mTLS-authenticated connections from the proxy, so both apps connect to the API through Pomerium.
 
-[binaries]: /docs/core
-[device identity verification]: /docs/integrations/device-context/device-identit
+[binaries]: /docs/deploy/core
+[device identity verification]: /docs/integrations/device-context/device-identity
 [grafana]: /docs/guides/grafana
 [jwt-rfc]: https://datatracker.ietf.org/doc/html/rfc7519
 [`pass_identity_headers`]: /docs/reference/routes/pass-identity-headers-per-route

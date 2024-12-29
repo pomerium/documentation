@@ -22,7 +22,7 @@ While Pomerium itself is not an IdP, it supports conventional IdP solutions and 
 
 :::tip
 
-See [identity providers](/docs/identity-providers) for step-by-step guides on how to integrate supported IdPs with Pomerium.
+See [identity providers](/docs/integrations/user-identity/identity-providers) for step-by-step guides on how to integrate supported IdPs with Pomerium.
 
 :::
 
@@ -38,7 +38,7 @@ After Pomerium's Authentication service obtains OAuth and ID tokens and OIDC cla
 
 Pomerium mints a new Pomerium JWT based on the claims and scopes in the OAuth and ID tokens and signs the JWT with a private key so the upstream application can verify the incoming request came from Pomerium.
 
-Although [JWT verification](/docs/manage/verify-jwt) is optional, Pomerium provides a way for you to [verify a user's identity](/docs/capabilities/getting-users-identity) on the application level by forwarding [JWT claim headers](/docs/reference/jwt-claim-headers) with proxied requests to upstream applications.
+Although [JWT verification](/docs/capabilities/getting-users-identity.mdx) is optional, Pomerium provides a way for you to [verify a user's identity](/docs/capabilities/getting-users-identity) on the application level by forwarding [JWT claim headers](/docs/reference/jwt-claim-headers) with proxied requests to upstream applications.
 
 Pomerium offers frontend and backend SDKs to simplify JWT verification for application developers:
 
@@ -88,7 +88,7 @@ Pomerium's hosted authenticate service removes the tedium of configuring your ow
 
 ### Faster proof of concept
 
-If you're testing Pomerium for the first time, run [Pomerium with Docker](/docs/core/quickstart) using our hosted authenticate service – you can run Pomerium Core in **under 5 minutes** with minimal setup.
+If you're testing Pomerium for the first time, run [Pomerium with Docker](/docs/get-started/fundamentals/core/get-started) using our hosted authenticate service – you can run Pomerium Core in **under 5 minutes** with minimal setup.
 
 :::enterprise
 
@@ -187,7 +187,7 @@ The self-hosted authenticate service is available for open-source Pomerium, Pome
 
 :::info
 
-The _authenticate service_ is one of the [four logical services](/docs/internals/architecture#component-level) that make up Pomerium. The authenticate service is unique in that Pomerium can either run this service itself, or instead use the [Hosted Authenticate Service](/docs/capabilities/hosted-authenticate-service).
+The _authenticate service_ is one of the [four logical services](/docs/internals/architecture#component-level) that make up Pomerium. The authenticate service is unique in that Pomerium can either run this service itself, or instead use the [Hosted Authenticate Service](/docs/capabilities/authentication).
 
 :::
 
@@ -218,7 +218,7 @@ In a typical OIDC authentication flow, all redirect URLs must be pre-registered 
 
 Pomerium relies on an IdP to authenticate users. Pomerium can use any IdP that implements the OpenID Connect (OIDC) protocol.
 
-The steps to configure your IdP will vary depending on the specific provider. See [**Identity Providers**](/docs/identity-providers) for a list of guides to configure commonly-used IdPs.
+The steps to configure your IdP will vary depending on the specific provider. See [**Identity Providers**](/docs/integrations/user-identity/identity-providers) for a list of guides to configure commonly-used IdPs.
 
 You will generally need to configure your IdP client to allow an OAuth redirect URL based on your chosen authenticate service URL, with the path `/oauth2/callback` appended to it.
 
@@ -297,7 +297,7 @@ Note, a CSRF token is required for the single sign out endpoint (despite support
 
 ### Single sign-out example with Pomerium
 
-The example below demonstrates how to correctly implement SSO using the [JavaScript SDK](/docs/manage/verify-jwt):
+The example below demonstrates how to correctly implement SSO using the [JavaScript SDK](/docs/capabilities/getting-users-identity.mdx):
 
 ```js
 export const signOut = (redirectUrl) => {

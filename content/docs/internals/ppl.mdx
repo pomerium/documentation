@@ -153,7 +153,7 @@ Entries marked with `*` denote criteria that are only available in the [Enterpri
 | `device` | [Device matcher] | Returns true if the incoming request includes a valid device ID or type. |
 | `domain` | [String Matcher] | Returns true if the logged-in user's email address domain (the part after `@`) matches the given value. |
 | `email` | [String Matcher] | Returns true if the logged-in user's email address matches the given value. |
-| \* `groups` | [String List Matcher] | Returns true if a user's group ID matches the supplied value **exactly**. `groups` data is only available after a successful directory sync. See [Identity Providers](/docs/identity-providers) for vendor-specific directory sync steps. |
+| \* `groups` | [String List Matcher] | Returns true if a user's group ID matches the supplied value **exactly**. `groups` data is only available after a successful directory sync. See [Identity Providers](/docs/integrations/user-identity/identity-providers) for vendor-specific directory sync steps. |
 | `http_method` | [String Matcher] | Returns true if the HTTP method matches the given value. |
 | `http_path` | [String Matcher] | Returns true if the HTTP path matches the given value. |
 | `invalid_client_certificate` | Anything. Typically `true`. | Returns true if the incoming request does not have a trusted client certificate. By default, a `deny` rule using this criterion is added to all Pomerium policies when [downstream mTLS] is configured (but this default can be changed using the [Enforcement Mode](/docs/reference/downstream-mtls-settings#enforcement-mode) setting.) |
@@ -315,7 +315,7 @@ Compare to a policy that only allows a set of specific devices:
 
 :::tip
 
-Users can [find their device IDs](/docs/integrations/device-context/device-identit#find-the-device-id) at the `/.pomerium` endpoint from any route.
+Users can [find their device IDs](/docs/integrations/device-context/device-identity#find-the-device-id) at the `/.pomerium` endpoint from any route.
 
 :::
 
@@ -323,7 +323,7 @@ Users can [find their device IDs](/docs/integrations/device-context/device-ident
 
 The record matcher is an object that uses operators as keys. It points to records collected from an [external data source](/docs/capabilities/integrations) defined in the Enterprise Console. Pomerium matches requests to a specific external data source using a record's [foreign key](/docs/capabilities/integrations#foreign-key). You can use data stored in a record as external context in an authorization policy.
 
-The record matcher supports all of the [String Matcher](/docs/capabilities/ppl#string-matcher) and [String List Matcher](/docs/capabilities/ppl#string-list-matcher) operators. However, the following operators are specific to the record matcher:
+The record matcher supports all of the [String Matcher](/docs/internals/ppl#string-matcher) and [String List Matcher](/docs/internals/ppl#string-list-matcher) operators. However, the following operators are specific to the record matcher:
 
 - `type`: Identifies the [Record Type](/docs/capabilities/integrations#record-type) as it's defined in the Enterprise Console
 - `field`: Specifies the field name as defined by the external data source
@@ -459,7 +459,7 @@ allow:
 
 :::caution Rego Usage Requires Extreme Care
 
-Rego policies can be powerful, but improper usage may unintentionally open unauthorized access, deny valid requests, or even leak sensitive data. **Whenever possible, use [PPL](/docs/capabilities/ppl) instead**. If you're unsure whether your use case requires Rego, work with your Pomerium account representative or [contact support](mailto:support@pomerium.com) to see if your needs can be met using PPL-based policy criteria.
+Rego policies can be powerful, but improper usage may unintentionally open unauthorized access, deny valid requests, or even leak sensitive data. **Whenever possible, use [PPL](/docs/internals/ppl) instead**. If you're unsure whether your use case requires Rego, work with your Pomerium account representative or [contact support](mailto:support@pomerium.com) to see if your needs can be met using PPL-based policy criteria.
 
 :::
 
@@ -497,7 +497,7 @@ allow := true
 deny := true
 ```
 
-Pomerium grants access according to the same rules as [PPL](/docs/capabilities/ppl#actions):
+Pomerium grants access according to the same rules as [PPL](/docs/internals/ppl#actions):
 
 > Only two actions are supported: allow and deny. deny takes precedence over allow. More precisely: a user will have access to a route if at least one allow rule matches and no deny rules match.
 

@@ -23,12 +23,12 @@ In this tutorial, you'll add production certificates with Autocert to your Pomer
 
 Make sure you've completed the following tutorials:
 
-- [**Get Started**](/docs/get-started/fundamentals/get-started)
-- [**Build a Simple Route**](/docs/get-started/fundamentals/build-routes)
-- [**Build a Simple Policy**](/docs/get-started/fundamentals/build-policies)
-- [**Identity Verification with JWTs**](/docs/get-started/fundamentals/jwt-verification)
-- [**Build Advanced Policies**](/docs/get-started/fundamentals/advanced-policies)
-- [**Build Advanced Routes**](/docs/get-started/fundamentals/advanced-routes)
+- [**Get Started**](/docs/get-started/fundamentals/core/get-started)
+- [**Build a Simple Route**](/docs/get-started/fundamentals/core/build-routes)
+- [**Build a Simple Policy**](/docs/get-started/fundamentals/core/build-policies)
+- [**Identity Verification with JWTs**](/docs/get-started/fundamentals/core/jwt-verification)
+- [**Build Advanced Policies**](/docs/get-started/fundamentals/core/advanced-policies)
+- [**Build Advanced Routes**](/docs/get-started/fundamentals/core/advanced-routes)
 - [**Build TCP Routes**](/docs/get-started/fundamentals/tcp-routes)
 - [**Self-Host Pomerium**](/docs/get-started/fundamentals/self-hosted-pomerium)
 

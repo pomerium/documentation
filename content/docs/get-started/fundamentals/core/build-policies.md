@@ -32,8 +32,8 @@ Specifically, we'll cover:
 
 Make sure you've completed the following tutorials:
 
-- [**Get Started**](/docs/get-started/fundamentals/get-started)
-- [**Build a Simple Route**](/docs/get-started/fundamentals/build-routes)
+- [**Get Started**](/docs/get-started/fundamentals/core/get-started)
+- [**Build a Simple Route**](/docs/get-started/fundamentals/core/build-routes)
 
 If you completed these tutorials, you should have:
 
@@ -102,7 +102,7 @@ Matchers can be used with logical operators like criteria. PPL offers a variety 
 - String Matcher
 - Time of Day Matcher
 
-For an in-depth look at how PPL works, see the [Policy Language](/docs/capabilities/ppl#at-a-glance) page.
+For an in-depth look at how PPL works, see the [Policy Language](/docs/internals/ppl#at-a-glance) page.
 
 ## Example policies with PPL
 

@@ -17,7 +17,7 @@ const FeatureList = [
   },
   {
     title: 'Connect',
-    path: '/docs/identity-providers/',
+    path: '/docs/integrations/user-identity/identity-providers/',
     icon: 'link',
     description: <>Connect Pomerium to your Identity Provider</>,
   },

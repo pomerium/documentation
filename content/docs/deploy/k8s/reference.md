@@ -574,7 +574,7 @@ IdentityProvider configure single-sign-on authentication and user identity detai
                 </p>
                 <p>
                     
-                    URL is the base path to an identity provider's OpenID connect discovery document. See <a href="https://pomerium.com/docs/identity-providers">Identity Providers</a> guides for details.
+                    URL is the base path to an identity provider's OpenID connect discovery document. See <a href="https://pomerium.com/docs/integrations/user-identity/identity-providers">Identity Providers</a> guides for details.
                 </p>
                 
                     Format: an URI as parsed by Golang net/url.ParseRequestURI.

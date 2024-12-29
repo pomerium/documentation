@@ -28,9 +28,9 @@ But first, a bit of background on JWTs and their application in Pomerium…
 
 Make sure you've completed the following tutorials:
 
-- [**Get Started**](/docs/get-started/fundamentals/get-started)
-- [**Build a Simple Route**](/docs/get-started/fundamentals/build-routes)
-- [**Build a Simple Policy**](/docs/get-started/fundamentals/build-policies)
+- [**Get Started**](/docs/get-started/fundamentals/core/get-started)
+- [**Build a Simple Route**](/docs/get-started/fundamentals/core/build-routes)
+- [**Build a Simple Policy**](/docs/get-started/fundamentals/core/build-policies)
 
 If you completed these tutorials, you should have:
 
@@ -290,7 +290,7 @@ Great! With these steps, you can manually verify the JWT's signature and that th
 
 :::note
 
-Pomerium offers [**front- and back-end SDKs**](/docs/manage/verify-jwt) with built-in JWT libraries.
+Pomerium offers [**front- and back-end SDKs**](/docs/capabilities/getting-users-identity.mdx) with built-in JWT libraries.
 
 You can use these libraries in your own applications to work easily with Pomerium's JWT flow, or implement your own solution.
 

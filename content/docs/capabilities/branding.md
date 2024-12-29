@@ -23,7 +23,7 @@ This article describes a use case available to [Pomerium Enterprise](/docs/deplo
 
 Pomerium Enterprise allows you to visually align your identity-aware proxy with your organization's brand identity. You can replace Pomerium's default logos, change color themes, and add your own favicon to ensure that all administrative pages and user-facing prompts feel like a natural extension of your existing portals.
 
-For instructions on customizing error pages and enabling user self-remediation, see [Self-Remediation & Custom Error Pages](/docs/enterprise/capabilities/custom-error-pages).
+For instructions on customizing error pages and enabling user self-remediation, see [Self-Remediation & Custom Error Pages](/docs/capabilities/self-remediation).
 
 ## Settings
 

@@ -23,7 +23,7 @@ The [Pomerium Kubernetes Ingress Controller](https://github.com/pomerium/ingress
 
 Pomerium's Ingress Controller for Kubernetes enables you to dynamically provision routes from Ingress resources and set authorization policy on those routes with Ingress annotations. By defining routes as Ingress resources in the Kubernetes API, you can easily create and remove those routes from your Pomerium configuration.
 
-If you've tested Pomerium using the [all-in-one binary](/docs/core), you're probably familiar with configuring routes in Pomerium's [`config.yaml`](/docs/internals/configuration) file. When using the Pomerium Ingress Controller, each route is defined as an Ingress resource in the Kubernetes API.
+If you've tested Pomerium using the [all-in-one binary](/docs/deploy/core), you're probably familiar with configuring routes in Pomerium's [`config.yaml`](/docs/internals/configuration) file. When using the Pomerium Ingress Controller, each route is defined as an Ingress resource in the Kubernetes API.
 
 This document shows you how to configure an Ingress resource that's compatible with the Pomerium Ingress Controller.
 
@@ -179,13 +179,13 @@ The remaining annotations are specific to or behave differently than they do whe
 | `ingress.pomerium.io/tls_client_secret` | Name of Kubernetes `tls` Secret containing a [client certificate][tls_client_certificate] for connecting to the upstream. |
 | `ingress.pomerium.io/tls_custom_ca_secret` | Name of Kubernetes `tls` Secret containing a custom [CA certificate][`tls_custom_ca_secret`] for the upstream. |
 | `ingress.pomerium.io/tls_downstream_client_ca_secret` | Name of Kubernetes `tls` Secret containing a [Client CA][client-certificate-authority] for validating downstream clients. |
-| `ingress.pomerium.io/policy` | [Pomerium Policy Language](/docs/capabilities/ppl) YAML or JSON block (as string) |
+| `ingress.pomerium.io/policy` | [Pomerium Policy Language](/docs/internals/ppl) YAML or JSON block (as string) |
 | `ingress.pomerium.io/allow_any_authenticated_user` | When set to `"true"`, allows access to any user that was successfully authenticated with your Identity Provider. |
 | `ingress.pomerium.io/allow_public_unauthenticated_access` | When set to `"true"`, does not require authentication, grants public access |
 
 ### Set authorization policy
 
-The `ingress.pomerium.io/policy` annotation allows you to build an authorization policy and apply it to a route. To build your authorization policy, apply [Pomerium Policy Language (PPL)](https://www.pomerium.com/docs/capabilities/ppl) inside a YAML or JSON block (as strings).
+The `ingress.pomerium.io/policy` annotation allows you to build an authorization policy and apply it to a route. To build your authorization policy, apply [Pomerium Policy Language (PPL)](https://www.pomerium.com/docs/internals/ppl) inside a YAML or JSON block (as strings).
 
 #### Ingress authorization policy examples
 
@@ -323,7 +323,7 @@ Each Ingress should be backed by a Service. Pomerium supports certain extensions
 
 Pomerium is capable of creating secure connections to services like SSH, Databases, and more by creating a TCP tunnel to the service with a local client.
 
-The example route below defines a route providing a tunneled TCP connection to an upstream service listening for non-web traffic. Pomerium provides [command line and GUI](/docs/capabilities/tcp/client) clients to interact with the TCP services.
+The example route below defines a route providing a tunneled TCP connection to an upstream service listening for non-web traffic. Pomerium provides [command line and GUI](/docs/capabilities/non-http/client) clients to interact with the TCP services.
 
 ```yaml
 apiVersion: networking.k8s.io/v1
@@ -351,7 +351,7 @@ The important points to note in this example:
 - The annotation `ingress.pomerium.io/tcp_upstream:` is set to `"true"`,
 - `spec.rules.[].http.paths.[].path` is omitted,
 - `spec.rules.[].http.paths.[].pathType` is set to `ImplementationSpecific`,
-- `spec.rules.[].host` and `spec.rules.[].paths.[].backend.service.port.name/number` together define the address used when connecting to the route using the [Pomerium Desktop or CLI clients](/docs/capabilities/tcp/client),
+- `spec.rules.[].host` and `spec.rules.[].paths.[].backend.service.port.name/number` together define the address used when connecting to the route using the [Pomerium Desktop or CLI clients](/docs/capabilities/non-http/client),
 - You may apply standard access control annotations to define access restrictions to the service.
 
 :::note
@@ -370,7 +370,7 @@ ingress.pomerium.io/service_proxy_upstream: 'true'
 
 ### Load Balancing
 
-Unless you disabled direct traffic to Endpoints, Pomerium would load balance the requests to the upstream endpoints. See the [Load Balancing](/docs/capabilities/load-balancing) guide for details, and use relevant Ingress annotations to fine tune load balancing and health checks.
+Unless you disabled direct traffic to Endpoints, Pomerium would load balance the requests to the upstream endpoints. See the [Load Balancing](/docs/capabilities/routing) guide for details, and use relevant Ingress annotations to fine tune load balancing and health checks.
 
 ```yaml
 ingress.pomerium.io/lb_policy: 'lb_policy_option'

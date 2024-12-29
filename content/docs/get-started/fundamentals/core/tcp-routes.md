@@ -19,12 +19,12 @@ Specifically,  we'll create a [Redis](https://redis.io/) service and route user
 
 Make sure you've completed the following tutorials:
 
-- [**Get Started**](/docs/get-started/fundamentals/get-started)
-- [**Build a Simple Route**](/docs/get-started/fundamentals/build-routes)
-- [**Build a Simple Policy**](/docs/get-started/fundamentals/build-policies)
-- [**Identity Verification with JWTs**](/docs/get-started/fundamentals/jwt-verification)
-- [**Build Advanced Policies**](/docs/get-started/fundamentals/advanced-policies)
-- [**Build Advanced Routes**](/docs/get-started/fundamentals/advanced-routes)
+- [**Get Started**](/docs/get-started/fundamentals/core/get-started)
+- [**Build a Simple Route**](/docs/get-started/fundamentals/core/build-routes)
+- [**Build a Simple Policy**](/docs/get-started/fundamentals/core/build-policies)
+- [**Identity Verification with JWTs**](/docs/get-started/fundamentals/core/jwt-verification)
+- [**Build Advanced Policies**](/docs/get-started/fundamentals/core/advanced-policies)
+- [**Build Advanced Routes**](/docs/get-started/fundamentals/core/advanced-routes)
 
 Each tutorial builds on the same configuration files. In this tutorial, you'll build routes to several services and proxy TCP connections to these services with Pomerium CLI.
 
@@ -32,7 +32,7 @@ Each tutorial builds on the same configuration files. In this tutorial, you'll b
 
 ## Background
 
-When replacing a traditional VPN, there are often non-HTTP based applications you still need to reach. Pomerium can provide the same type of protection to these services with [Pomerium CLI](/docs/clients/pomerium-cli), a client-side application to proxy TCP connections.
+When replacing a traditional VPN, there are often non-HTTP based applications you still need to reach. Pomerium can provide the same type of protection to these services with [Pomerium CLI](/docs/capabilities/non-http/client), a client-side application to proxy TCP connections.
 
 In this tutorial, you'll secure a backend Redis service behind Pomerium and access it by connecting to it with a TCP route.
 
@@ -42,7 +42,7 @@ Pomerium's CLI client comes with a `tcp` command that you can use to secure this
 
 To complete this tutorial, you need:
 
-- [Pomerium CLI](/docs/clients/pomerium-cli) to proxy TCP connections between end-users and services behind Pomerium
+- [Pomerium CLI](/docs/capabilities/non-http/client) to proxy TCP connections between end-users and services behind Pomerium
 - [mkcert](https://github.com/FiloSottile/mkcert) to generate a locally trusted Certificate Authority and certificates (for development purposes only)
 
 :::note

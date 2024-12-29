@@ -39,7 +39,7 @@ Device identity links a cryptographically unique ID to each device, letting you 
 
 ## Device Identity with Pomerium
 
-As of [Pomerium v0.16.0](/docs/core/upgrading#policy-for-device-identity) and higher, you can require [WebAuthn](https://www.w3.org/TR/webauthn-2) for device identity checks. This means:
+As of [Pomerium v0.16.0](/docs/deploy/upgrading.mdx#policy-for-device-identity) and higher, you can require [WebAuthn](https://www.w3.org/TR/webauthn-2) for device identity checks. This means:
 
 - Users can register their devices as a [trusted execution environment](/docs/concepts/device-identity#authenticated-device-types).
 - Admins can configure policy restricting route access to _only_ devices that have been authenticated through WebAuthn.
@@ -91,11 +91,11 @@ If a device is **Deleted**, it's effectively revoked. Any associated link become
 
 ## Enroll Devices as an Administrator (Enterprise)
 
-In **Enterprise**, you can enforce policies that only allow routes to approved devices. (See [Device Matcher](/docs/capabilities/ppl#device-matcher).)
+In **Enterprise**, you can enforce policies that only allow routes to approved devices. (See [Device Matcher](/docs/internals/ppl#device-matcher).)
 
 The **Manage Devices** GUI lets you create enrollment links for directory-synced users.
 
-:::enterprise Ensure [directory sync](/docs/capabilities/directory-sync) is configured to populate user data. :::
+:::enterprise Ensure [directory sync](/docs/integrations/user-standing/directory-sync) is configured to populate user data. :::
 
 **Steps**:
 
@@ -121,7 +121,7 @@ The **Manage Devices** GUI lets you create enrollment links for directory-synced
 
 ## Enroll Device as a User
 
-If a Pomerium route [requires device identity](/docs/capabilities/ppl#device-matcher), users will be prompted to register a device. This flow is similar in **Core** and **Enterprise** (though Enterprise can also allow admin pre-approval).
+If a Pomerium route [requires device identity](/docs/internals/ppl#device-matcher), users will be prompted to register a device. This flow is similar in **Core** and **Enterprise** (though Enterprise can also allow admin pre-approval).
 
 1. When visiting a route requiring device identity, users see a device registration screen:
 

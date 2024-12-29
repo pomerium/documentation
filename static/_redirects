@@ -69,39 +69,39 @@ https://0-20-0.docs.pomerium.com/category/guides https://0-20-0.docs.pomerium.co
 /recipes/kubernetes.html https://0-20-0.docs.pomerium.com/docs/guides/kubernetes 301!
 
 # /guides/ redirects to capabilities pages
-/docs/guides/enroll-device /docs/integrations/device-context/device-identit
-/docs/guides/enroll-device.html /docs/integrations/device-context/device-identit
-/docs/guides/admin-enroll-device.html /docs/integrations/device-context/device-identit
-/docs/guides/admin-enroll-device /docs/integrations/device-context/device-identit
+/docs/guides/enroll-device /docs/integrations/device-context/device-identity
+/docs/guides/enroll-device.html /docs/integrations/device-context/device-identity
+/docs/guides/admin-enroll-device.html /docs/integrations/device-context/device-identity
+/docs/guides/admin-enroll-device /docs/integrations/device-context/device-identity
 /docs/guides/mtls /docs/capabilities/mtls-clients
 /docs/guides/mtls.html /docs/capabilities/mtls-clients
 /docs/guides/upstream-mtls /docs/capabilities/mtls-services
 /docs/guides/upstream-mtls.html /docs/capabilities/mtls-services
-/guides/tcp /docs/capabilities/tcp
+/guides/tcp /docs/capabilities/non-http
 /recipes/* /docs/guides/:splat
 /category/guides /docs/guides
 
 # /guides/ splat
 /guides/* /docs/guides/:splat
 /docs/guides/tcp /docs/guides/securing-tcp
-/docs/guides/securing-tcp /docs/capabilities/tcp
+/docs/guides/securing-tcp /docs/capabilities/non-http
 /docs/guides/tcp.html /docs/guides/securing-tcp
 /guides/vs-code-server.html /docs/guides/code-server
 /docs/guides/vs-code-server.html /docs/guides/code-server
 /guides/local-oidc.html /docs/guides/local-oidc
-/docs/guides/local-oidc /docs/identity-providers/oidc
-/docs/identity-providers/dex-freeipa /docs 410
+/docs/guides/local-oidc /docs/integrations/user-identity/identity-providers/oidc
+/docs/integrations/user-identity/identity-providers/dex-freeipa /docs 410
 
 # Reference, capabilities, topics, concepts links
 /docs/reference/readme.html /docs/
-/docs/concepts/namespacing /docs/capabilities/namespacing
+/docs/concepts/namespacing /docs/internals/namespacing
 /docs/concepts/policies /docs/internals/glossary#policy
 /docs/concepts/routes /docs/internals/glossary#route
 /docs/concepts/service-accounts /docs/internals/glossary#service-account
 # Redirects incorrectly
 /docs/reference/certificates.html /docs/topics/certificates
 /docs/topics/certificates /docs/concepts/certificates
-/docs/concepts/certificates /docs/guides/certificates
+/docs/concepts/certificates /docs/internals/certificates-and-tls
 
 # This link requires multiple redirects
 /docs/reference/data-storage.html /docs/topics/data-storage
@@ -170,10 +170,10 @@ https://0-20-0.docs.pomerium.com/category/guides https://0-20-0.docs.pomerium.co
 /enterprise/* /docs/enterprise/:splat
 
 # /docs/releases/ and /docs/deploying/ splats for v22 sidebar restructure
-/docs/releases/changelog /docs/core/changelog
-/docs/releases/upgrading /docs/core/upgrading
-/docs/deploying/binary /docs/core/binary
-/docs/deploying/from-source /docs/core/from-source
+/docs/releases/changelog /docs/deploy/core/changelog
+/docs/releases/upgrading /docs/deploy/upgrading.mdx
+/docs/deploying/binary /docs/deploy/core/binary
+/docs/deploying/from-source /docs/deploy/core/from-source
 /enterprise/about /docs/enterprise
 /docs/enterprise/about /docs/enterprise
 /docs/releases/enterprise /docs/enterprise
@@ -194,12 +194,12 @@ https://0-20-0.docs.pomerium.com/category/guides https://0-20-0.docs.pomerium.co
 # Zero sidebar restructure
 /docs/deploy/enterprise /docs/enterprise
 /docs/deploy/enterprise/* /docs/enterprise/:splat
-/docs/deploy/core /docs/core
-/docs/deploy/core/* /docs/core/:splat
+/docs/deploy/core /docs/deploy/core
+/docs/deploy/core/* /docs/deploy/core/:splat
 /docs/deploy/k8s /docs/deploy/k8s/quickstart
 /docs/deploy/k8s/* /docs/deploy/k8s/:splat
 /docs/zero/cluster-status /docs/troubleshooting/cluster-status
-/docs/zero/upgrading /docs/zero/install
+/docs/zero/upgrading /docs/get-started/quickstart
 
 #  Installation and deployment methods redirects
 /docs/enterprise/install/docker /docs/enterprise/install
@@ -211,12 +211,12 @@ https://0-20-0.docs.pomerium.com/category/guides https://0-20-0.docs.pomerium.co
 /docs/quick-start /docs/get-started/quickstart
 /docs/install /docs/get-started/quickstart
 
-/docs/quick-start/binary /docs/core
-/docs/quick-start/binary.html /docs/core
-/docs/install/binary /docs/core
-/docs/releases/core /docs/core
+/docs/quick-start/binary /docs/deploy/core
+/docs/quick-start/binary.html /docs/deploy/core
+/docs/install/binary /docs/deploy/core
+/docs/releases/core /docs/deploy/core
 
-/docs/install/binary.html /docs/core/binary
+/docs/install/binary.html /docs/deploy/core/binary
 
 # Helm links
 /docs/quick-start/helm.html /docs/deploy/k8s/helm
@@ -256,8 +256,8 @@ https://0-20-0.docs.pomerium.com/category/guides https://0-20-0.docs.pomerium.co
 /docs/enterprise/api.html /docs/capabilities/enterprise-api
 /docs/enterprise/api /docs/capabilities/enterprise-api
 
-# redirects all /docs/enterprise/identity-providers to /docs/identity-providers
-/docs/enterprise/identity-providers/* /docs/identity-providers/:splat
+# redirects all /docs/enterprise/identity-providers to /docs/integrations/user-identity/identity-providers
+/docs/enterprise/identity-providers/* /docs/integrations/user-identity/identity-providers/:splat
 
 #redirects External Data examples
 /docs/enterprise/external-data/* /docs/integrations/:splat
@@ -265,21 +265,21 @@ https://0-20-0.docs.pomerium.com/category/guides https://0-20-0.docs.pomerium.co
 # TCP links
 /topics/tcp-support.html /docs/tcp
 /docs/topics/tcp-support.html /docs/tcp/
-/docs/tcp /docs/capabilities/tcp
+/docs/tcp /docs/capabilities/non-http
 /docs/topics/tcp-support /docs/tcp/
-/docs/tcp /docs/capabilities/tcp
+/docs/tcp /docs/capabilities/non-http
 
 
 # /docs/client.html uses multiple redirects
 /docs/client.html /docs/tcp/client
-/docs/tcp/client.html /docs/capabilities/tcp/client
-/docs/tcp/client /docs/capabilities/tcp/client
+/docs/tcp/client.html /docs/capabilities/non-http/client
+/docs/tcp/client /docs/capabilities/non-http/client
 
-/docs/capabilities/tcp/reference/tcp-cli-reference /docs/capabilities/tcp/reference
-/docs/capabilities/tcp/examples/service-template.html /docs/capabilities/tcp
+/docs/capabilities/non-http/tcp-cli-reference /docs/capabilities/non-http
+/docs/capabilities/non-http/examples/service-template.html /docs/capabilities/non-http
 # splats
-/docs/tcp/examples/* /docs/capabilities/tcp/examples/:splat
-/docs/tcp/* /docs/capabilities/tcp/examples/:splat
+/docs/tcp/examples/* /docs/capabilities/non-http/examples/:splat
+/docs/tcp/* /docs/capabilities/non-http/examples/:splat
 
 # Enterprise metrics links
 /docs/enterprise/metrics.html /docs/capabilities/metrics
@@ -288,7 +288,7 @@ https://0-20-0.docs.pomerium.com/category/guides https://0-20-0.docs.pomerium.co
 # redirects /examples/ links
 /examples/js-sdk/express-server /docs/capabilities/jwt-verification
 /docs/guides/js-sdk /docs/capabilities/jwt-verification
-/docs/capabilities/jwt-verification /docs/manage/verify-jwt
+/docs/capabilities/jwt-verification /docs/capabilities/getting-users-identity.mdx
 
 # Kubernetes links
 # /docs/topics/kubernetes-integration.html uses multiple redirects
@@ -338,7 +338,7 @@ https://0-20-0.docs.pomerium.com/category/guides https://0-20-0.docs.pomerium.co
 /docs/overview/changelog /docs/releases/changelog
 # Redirects are case sensitive https://answers.netlify.com/t/case-sensitivity-with-redirects/956/2
 /docs/CHANGELOG /docs/releases/changelog
-/docs/CHANGELOG.html /docs/core/changelog
+/docs/CHANGELOG.html /docs/deploy/core/changelog
 
 # Consolidated Reference Page redirects
 # Autocert
@@ -488,14 +488,14 @@ https://0-20-0.docs.pomerium.com/category/guides https://0-20-0.docs.pomerium.co
 /docs/topics/ /docs/concepts/access-control
 /docs/topics/* /docs/concepts/:splat 301!
 /docs/topics/device-identity /docs/concepts/device-identity
-/docs/topics/mutual-auth /docs/concepts/mutual-auth
+/docs/topics/mutual-auth /docs/internals/mutual-auth
 
 /docs/topics/original-request-context /docs/concepts/original-request-context
 /docs/concepts/original-request-context /docs/capabilities/original-request-context
 /docs/topics/ppl /docs/concepts/ppl
-/docs/concepts/ppl /docs/capabilities/ppl
+/docs/concepts/ppl /docs/internals/ppl
 /docs/topics/ppl.html /docs/concepts/ppl.html
-/docs/concepts/ppl.html /docs/capabilities/ppl.html
+/docs/concepts/ppl.html /docs/internals/ppl.html
 /docs/topics/load-balancing /docs/concepts/load-balancing
 /docs/concepts/load-balancing /docs/capabilities/routing
 

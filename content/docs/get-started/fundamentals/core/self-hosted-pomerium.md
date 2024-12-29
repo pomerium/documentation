@@ -25,12 +25,12 @@ To do this, you must:
 
 Make sure you've completed the following tutorials:
 
-- [**Get Started**](/docs/get-started/fundamentals/get-started)
-- [**Build a Simple Route**](/docs/get-started/fundamentals/build-routes)
-- [**Build a Simple Policy**](/docs/get-started/fundamentals/build-policies)
-- [**Identity Verification with JWTs**](/docs/get-started/fundamentals/jwt-verification)
-- [**Build Advanced Policies**](/docs/get-started/fundamentals/advanced-policies)
-- [**Build Advanced Routes**](/docs/get-started/fundamentals/advanced-routes)
+- [**Get Started**](/docs/get-started/fundamentals/core/get-started)
+- [**Build a Simple Route**](/docs/get-started/fundamentals/core/build-routes)
+- [**Build a Simple Policy**](/docs/get-started/fundamentals/core/build-policies)
+- [**Identity Verification with JWTs**](/docs/get-started/fundamentals/core/jwt-verification)
+- [**Build Advanced Policies**](/docs/get-started/fundamentals/core/advanced-policies)
+- [**Build Advanced Routes**](/docs/get-started/fundamentals/core/advanced-routes)
 - [**Build TCP Routes**](/docs/get-started/fundamentals/tcp-routes)
 
 Each tutorial builds on the same configuration files. In this tutorial, you'll replace the Hosted Authenticate service with your own self-hosted authenticate service.
@@ -109,7 +109,7 @@ You can integrate Pomerium with any identity provider (IdP) that supports OAuth2
 - Okta OneLogin
 - Ping
 
-For the purposes of this guide, we will use GitHub as the IdP (the configuration is simpler than other IdPs). See our [GitHub](/docs/integrations/github) guide for detailed instructions.
+For the purposes of this guide, we will use GitHub as the IdP (the configuration is simpler than other IdPs). See our [GitHub](/docs/integrations/user-identity/github) guide for detailed instructions.
 
 :::tip **About the Authorization Callback URL**
 
