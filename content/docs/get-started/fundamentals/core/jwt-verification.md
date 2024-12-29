@@ -2,7 +2,7 @@
 # cSpell:ignore ecparam, pubout, mypomerium
 id: jwt-verification
 title: Identity Verification with JWTs
-description: In lesson 4, you’ll learn how to set up Pomerium to verify a user’s identity with JSON Web Tokens (JWTs).
+description: In lesson 4, you'll learn how to set up Pomerium to verify a user's identity with JSON Web Tokens (JWTs).
 keywords:
   [
     reverse proxy,
@@ -20,13 +20,13 @@ sidebar_position: 4
 
 # Identity Verification With JWTs
 
-In this tutorial, you’ll learn how to set up Pomerium to verify a user’s identity with JSON Web Tokens (JWTs).
+In this tutorial, you'll learn how to set up Pomerium to verify a user's identity with JSON Web Tokens (JWTs).
 
 But first, a bit of background on JWTs and their application in Pomerium…
 
 :::note **Before You Start**
 
-Make sure you’ve completed the following tutorials:
+Make sure you've completed the following tutorials:
 
 - [**Get Started**](/docs/get-started/fundamentals/get-started)
 - [**Build a Simple Route**](/docs/get-started/fundamentals/build-routes)
@@ -37,13 +37,13 @@ If you completed these tutorials, you should have:
 - 2 routes pointing to Grafana and the Verify service
 - 2 policies (one policy per route) to control access to these services
 
-Each tutorial builds on the same configuration files. In this tutorial, you’ll configure Pomerium to send the Pomerium JWT to an upstream service to verify a user’s identity.
+Each tutorial builds on the same configuration files. In this tutorial, you'll configure Pomerium to send the Pomerium JWT to an upstream service to verify a user's identity.
 
 :::
 
 ## Background
 
-JWT verification (and, by extension, identity verification) **does not** replace Pomerium’s initial authentication flow with an identity provider. Identity verification is just an additional security layer that helps the upstream application verify that Pomerium handled the request and the user’s JWT.
+JWT verification (and, by extension, identity verification) **does not** replace Pomerium's initial authentication flow with an identity provider. Identity verification is just an additional security layer that helps the upstream application verify that Pomerium handled the request and the user's JWT.
 
 :::info **Simplifying JWTs and Pomerium**
 
@@ -51,15 +51,15 @@ If it helps, think of the upstream app as the airplane at an airport and TLS as 
 
 But, what if someone found a way to skip the security checkpoint and went straight to the airplane?
 
-The airplane, like the upstream app, has no way of knowing that a passenger didn’t come through the secure connection — the TLS tunnel — but the airline attendants can check that the passenger has a stamp on their boarding pass.
+The airplane, like the upstream app, has no way of knowing that a passenger didn't come through the secure connection — the TLS tunnel — but the airline attendants can check that the passenger has a stamp on their boarding pass.
 
-A user’s signed JWT acts as the stamp: In the event of other network configuration mistakes, the app can still grant or deny users if they don’t have a signed JWT to verify their identity.
+A user's signed JWT acts as the stamp: In the event of other network configuration mistakes, the app can still grant or deny users if they don't have a signed JWT to verify their identity.
 
 :::
 
 ## What is a JWT?
 
-If you’re unfamiliar with JWTs, here’s a quick definition sourced from [JWT.io](https://jwt.io/):
+If you're unfamiliar with JWTs, here's a quick definition sourced from [JWT.io](https://jwt.io/):
 
 “JSON Web Tokens are an open, industry standard [RFC 7519](https://tools.ietf.org/html/rfc7519) method for representing claims securely between two parties.”
 
@@ -73,13 +73,13 @@ Check out [**this article**](https://jwt.io/introduction) to learn more about th
 
 ## How do JWTs work with Pomerium?
 
-You can configure Pomerium to send the user’s JWT as a signed HTTP header in the request to access a service behind Pomerium.
+You can configure Pomerium to send the user's JWT as a signed HTTP header in the request to access a service behind Pomerium.
 
-Here’s how the JWT authentication flow looks at a high level:
+Here's how the JWT authentication flow looks at a high level:
 
 1. End User connects to Pomerium
 
-2. Pomerium redirects the client to the IdP, the client signs in, and Pomerium gets the user’s ID, Access, and Refresh tokens
+2. Pomerium redirects the client to the IdP, the client signs in, and Pomerium gets the user's ID, Access, and Refresh tokens
 
 3. Two important actions happen here:
 
@@ -90,7 +90,7 @@ Here’s how the JWT authentication flow looks at a high level:
 
 ![Diagram of JWT flow in Pomerium](./img/jwt-verification/jwt-verification-diagram.svg)
 
-If that’s a lot to take in, don’t worry, Pomerium handles a lot of it for you! This is just for those that are interested in what’s happening behind the scenes.
+If that's a lot to take in, don't worry, Pomerium handles a lot of it for you! This is just for those that are interested in what's happening behind the scenes.
 
 ## Configure identity verification with JWTs
 
@@ -112,7 +112,7 @@ Configuring identity verification is a great example of how you should organize 
 - **Signing Key** is a global-level setting. Any time a user sends a request to an upstream service, Pomerium will look for a signing key.
 - **Pass Identity Headers** is a route-level setting. It tells Pomerium to send the signed header to a certain route.
 
-In this way, global and route level settings allow you to fine tune your configuration to suit a service’s use case.
+In this way, global and route level settings allow you to fine tune your configuration to suit a service's use case.
 
 :::
 
@@ -140,7 +140,7 @@ routes:
                 is: example.com
 ```
 
-You **must** add `pass_identity_headers` to a route for identity verification to work. Otherwise, Pomerium won’t forward the signed JWT Assertion Header in the request.
+You **must** add `pass_identity_headers` to a route for identity verification to work. Otherwise, Pomerium won't forward the signed JWT Assertion Header in the request.
 
 ### Add a signing key
 
@@ -148,12 +148,12 @@ You **must** add `pass_identity_headers` to a route for identity verification to
 
 <summary><b>Public/Private Key Pairs</b></summary>
 
-You might be asking, “What exactly is a signing key?” Put simply, a signing key is the private key counterpart in a public/private key pair. These keys correspond to one another cryptographically. See SmallStep’s [PKI blog post](https://smallstep.com/blog/everything-pki/) for more information on the technologies that power public/private key pairs.
+You might be asking, “What exactly is a signing key?” Put simply, a signing key is the private key counterpart in a public/private key pair. These keys correspond to one another cryptographically. See SmallStep's [PKI blog post](https://smallstep.com/blog/everything-pki/) for more information on the technologies that power public/private key pairs.
 
-Here’s a few things to keep in mind:
+Here's a few things to keep in mind:
 
 - A private key is assigned to a user, and should not be shared with anyone else
-- A user’s private key can function as a signing key to cryptographically sign their JWT
+- A user's private key can function as a signing key to cryptographically sign their JWT
 - A public key can be given to anyone (hence the name)
 - The public key can verify that a JWT was signed by its corresponding private key without revealing the value of the signing key (this ensures the private key is protected)
 
@@ -163,7 +163,7 @@ This section covers how you can add a signing key to your configuration file. Bu
 
 To generate a signing key:
 
-1. In your project’s terminal, run the following command:
+1. In your project's terminal, run the following command:
 
 ```bash
 openssl ecparam -genkey -name prime256v1 -noout -out ec_private.pem
@@ -200,7 +200,7 @@ signing_key: LS0tLS1CRUdJTiBFQyBQUklWQVRFIEtFWS0tLS0tCk1IY0NBUUVFSUVSNThaeDA2SHJ
 
 ### Update Docker Compose
 
-Next, you need to update your service’s in Docker Compose so they can fetch the public key. This step relies on what’s called a JSON Web Key Set (JWKS) endpoint.
+Next, you need to update your service's in Docker Compose so they can fetch the public key. This step relies on what's called a JSON Web Key Set (JWKS) endpoint.
 
 The JWKS endpoint is an internal Pomerium URL that provides the public key the upstream service needs to verify a private key.
 
@@ -235,16 +235,16 @@ Under **Signed Identity Token**, you should see a list claims:
 
 Pomerium sources these claims from the ID token it gets from your identity provider and uses them to generate a new “Pomerium” JWT. This ensures the original ID token is never leaked.
 
-You’re doing great! Let’s summarize what you’ve configured Pomerium to do so far:
+You're doing great! Let's summarize what you've configured Pomerium to do so far:
 
 - You accessed the upstream Verify service behind Pomerium
 - Pomerium redirected to the identity provider and prompted you to sign in
 - After signing in, Pomerium mints a new JWT based on the original ID token
-- Because you’ve added a **Signing Key** and **Pass Identity Headers**, Pomerium signs the JWT and forwards it in a JWT Assertion Header to the Verify service
+- Because you've added a **Signing Key** and **Pass Identity Headers**, Pomerium signs the JWT and forwards it in a JWT Assertion Header to the Verify service
 
 But, how does the upstream service verify the JWT?
 
-Let’s walk through the steps of manually verifying a JWT below.
+Let's walk through the steps of manually verifying a JWT below.
 
 ## Manually verify the JWT
 
@@ -286,13 +286,13 @@ In JWT.io under **VERIFY SIGNATURE**, enter the public key. The “Invalid Signa
 
 ![JWT signature verification](./img/jwt-verification/04-jwt-signature-verified.png)
 
-Great! With these steps, you can manually verify the JWT’s signature and that the request was handled by Pomerium.
+Great! With these steps, you can manually verify the JWT's signature and that the request was handled by Pomerium.
 
 :::note
 
 Pomerium offers [**front- and back-end SDKs**](/docs/manage/verify-jwt) with built-in JWT libraries.
 
-You can use these libraries in your own applications to work easily with Pomerium’s JWT flow, or implement your own solution.
+You can use these libraries in your own applications to work easily with Pomerium's JWT flow, or implement your own solution.
 
 :::
 

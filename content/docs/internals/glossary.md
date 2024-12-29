@@ -18,7 +18,7 @@ description: A reference glossary of commonly used Pomerium terms, consolidated 
 
 # Glossary
 
-Below is a consolidated list of key networking, security, and identity & access management (IAM) terms used throughout Pomerium’s documentation. If you find unfamiliar terms not listed here, please let us know in our [Discuss support forum](https://discuss.pomerium.com/c/support/9) so we can add them.
+Below is a consolidated list of key networking, security, and identity & access management (IAM) terms used throughout Pomerium's documentation. If you find unfamiliar terms not listed here, please let us know in our [Discuss support forum](https://discuss.pomerium.com/c/support/9) so we can add them.
 
 ## Access Token
 
@@ -26,11 +26,11 @@ A string that grants the holder certain permissions. Issued by an [Identity Prov
 
 ## Audit Logs
 
-Records of activity in your environment. [Pomerium’s audit logs](/docs/capabilities/audit-logs) help track anomalies and revoke compromised access.
+Records of activity in your environment. [Pomerium's audit logs](/docs/capabilities/audit-logs) help track anomalies and revoke compromised access.
 
 ## Authentication (AuthN)
 
-Confirms a user’s or device’s identity (i.e., Are you who you say you are?). Pomerium delegates authentication to external IdPs like Google or Okta, which issue a [JWT](#json-web-token-jwt).
+Confirms a user's or device's identity (i.e., Are you who you say you are?). Pomerium delegates authentication to external IdPs like Google or Okta, which issue a [JWT](#json-web-token-jwt).
 
 ## Authorization (AuthZ)
 
@@ -38,7 +38,7 @@ Determines if a user can access a specific resource (i.e., Do you have permissio
 
 ## Context-aware Proxy
 
-A type of [Reverse Proxy](#reverse-proxy) that allows or denies access based on factors such as user identity, device state, or time of day. Pomerium acts as a context-aware proxy by validating a user’s [JWT](#json-web-token-jwt) and optional device signals.
+A type of [Reverse Proxy](#reverse-proxy) that allows or denies access based on factors such as user identity, device state, or time of day. Pomerium acts as a context-aware proxy by validating a user's [JWT](#json-web-token-jwt) and optional device signals.
 
 ## Custom Resource Definition (CRD)
 
@@ -46,7 +46,7 @@ A Kubernetes mechanism for extending its API with custom objects. For example, c
 
 ## Device Identity
 
-Confirms the security posture of a user’s device. Pomerium can check secure enclaves, certificates, or MDM signals to ensure only known, compliant devices can reach protected resources.
+Confirms the security posture of a user's device. Pomerium can check secure enclaves, certificates, or MDM signals to ensure only known, compliant devices can reach protected resources.
 
 ## East-west Traffic
 
@@ -58,7 +58,7 @@ A policy instructing clients (usually browsers) to only connect over TLS for a s
 
 ## Identity and Access Management (IAM)
 
-A framework for verifying a user’s identity (AuthN) and managing permissions (AuthZ). Pomerium implements IAM by delegating authentication to IdPs and using policy-based rules for authorization.
+A framework for verifying a user's identity (AuthN) and managing permissions (AuthZ). Pomerium implements IAM by delegating authentication to IdPs and using policy-based rules for authorization.
 
 ## Identity Provider (IdP)
 
@@ -78,11 +78,11 @@ A [JSON](#javascript-object-notation-json)-formatted token that encodes user cla
 
 ## Least User Privilege
 
-A principle of granting only the minimal set of privileges necessary for a user’s job function. If credentials are compromised, blast radius is limited.
+A principle of granting only the minimal set of privileges necessary for a user's job function. If credentials are compromised, blast radius is limited.
 
 ## Mutual Authentication
 
-Requires both client and server to authenticate each other. Reduces the risk of impersonation by attackers. See [Pomerium’s mutual auth docs](/docs/concepts/mutual-auth).
+Requires both client and server to authenticate each other. Reduces the risk of impersonation by attackers. See [Pomerium's mutual auth docs](/docs/concepts/mutual-auth).
 
 ## Namespace
 
@@ -93,7 +93,7 @@ A segmentation mechanism with different meanings:
 
 ## Non-domain Users
 
-Users who need access but aren’t part of your main IdP domain (e.g., contractors). You can create a special IdP group that includes them or manually add their unique ID in a [Namespace](#namespace) or [Policy](#policy). This approach applies the [Pomerium Policy Language (PPL)](#pomerium-policy-language-ppl) consistently for all users.
+Users who need access but aren't part of your main IdP domain (e.g., contractors). You can create a special IdP group that includes them or manually add their unique ID in a [Namespace](#namespace) or [Policy](#policy). This approach applies the [Pomerium Policy Language (PPL)](#pomerium-policy-language-ppl) consistently for all users.
 
 ## North-south Traffic
 
@@ -121,7 +121,7 @@ A declarative language for writing [Authorization](#authorization-authz) policie
 
 ## Reverse Proxy
 
-A server that sits between internal services and clients, forwarding traffic to the correct backend. Unlike a forward proxy (used by clients to reach external services), a reverse proxy is set up by the service owner. Pomerium’s reverse proxy enforces [Authentication](#authentication-authn) and [Authorization](#authorization-authz), and handles TLS termination.
+A server that sits between internal services and clients, forwarding traffic to the correct backend. Unlike a forward proxy (used by clients to reach external services), a reverse proxy is set up by the service owner. Pomerium's reverse proxy enforces [Authentication](#authentication-authn) and [Authorization](#authorization-authz), and handles TLS termination.
 
 ## Route
 
@@ -145,7 +145,7 @@ A system where one login grants access to multiple services. Pomerium supports S
 
 ## Stateless
 
-Describes how Pomerium’s Proxy, Authenticate, and Authorize services rely on Databroker for persistence. They can be replaced or scaled horizontally without losing data.
+Describes how Pomerium's Proxy, Authenticate, and Authorize services rely on Databroker for persistence. They can be replaced or scaled horizontally without losing data.
 
 ## Trusted Execution Environment (TEE)
 

@@ -39,7 +39,7 @@ There are no breaking changes in v0.28.
 The `/.pomerium/jwt` endpoint is now deprecated and disabled by default. You can temporarily opt out of this deprecation by setting the runtime flag [`pomerium_jwt_endpoint`](/docs/reference/runtime-flags) to `true`. This flag will be removed in a future release.
 
 - **Context**: This endpoint was originally added for single-page web apps to get information about the currently signed-in user, but that same user data can be fetched without a signed JWT.
-- **New approach**: A new `/.pomerium/user` endpoint provides user data as plaintext JSON. If you use Pomerium’s [JavaScript SDK](https://github.com/pomerium/js-sdk), version 1.1.0 includes `getBrowserUser()`, which replaces `verifyBrowserUser()`.
+- **New approach**: A new `/.pomerium/user` endpoint provides user data as plaintext JSON. If you use Pomerium's [JavaScript SDK](https://github.com/pomerium/js-sdk), version 1.1.0 includes `getBrowserUser()`, which replaces `verifyBrowserUser()`.
 
 ##### Upgrading Pomerium Zero deployments in Kubernetes
 
@@ -59,7 +59,7 @@ kubectl apply -k github.com/pomerium/pomerium/k8s/zero
 
 ##### Routes port matching
 
-- **Previous Behavior**: Pomerium required the request’s `Host` header to match the route’s `from` URL exactly, including port.
+- **Previous Behavior**: Pomerium required the request's `Host` header to match the route's `from` URL exactly, including port.
 - **New Behavior**: If your `from` URL does not include an explicit port, Pomerium ignores the incoming port. This helps with NAT or load balancers that change the request port.
 - **Note**: You can revert to the old behavior by setting the runtime flag `match_any_incoming_port=false`.
 
@@ -69,7 +69,7 @@ Pomerium now rewrites the host header to match the `to` URL consistently, includ
 
 ##### Session refresh reliability
 
-- Pomerium’s approach to refreshing OAuth tokens changed to be more reliable, potentially increasing the rate of requests to your identity provider.
+- Pomerium's approach to refreshing OAuth tokens changed to be more reliable, potentially increasing the rate of requests to your identity provider.
 - You can restore the previous approach with runtime flag `legacy_identity_manager=true`.
 
 ##### Deprecations
@@ -299,7 +299,7 @@ No breaking changes in v0.28.
 
 ##### Changed
 
-- `--disable-validation` is now deprecated. Use [`--validation-mode=none`](/docs/deploy/enterprise/configure#validation_mode) to preserve existing behavior, or [`--validation-mode=static`](/docs/deploy/enterprise/configure#validation_mode). We’ll remove `--disable-validation` in a future release.
+- `--disable-validation` is now deprecated. Use [`--validation-mode=none`](/docs/deploy/enterprise/configure#validation_mode) to preserve existing behavior, or [`--validation-mode=static`](/docs/deploy/enterprise/configure#validation_mode). We'll remove `--disable-validation` in a future release.
 
 - The Enterprise Console now includes a “Report issue” feedback widget, allowing you to easily report any problems you may encounter.
 - IdP directory sync performance has been improved, especially when using Okta.
@@ -349,7 +349,7 @@ As with Core, the `certificates` key no longer supports inline base64. Use a fil
 
 ###### Remove Debug Option
 
-We’ve removed the Debug setting. If you prefer pretty-print logs, pipe JSON logs into `jq`.
+We've removed the Debug setting. If you prefer pretty-print logs, pipe JSON logs into `jq`.
 
 ##### New
 
@@ -360,7 +360,7 @@ For self-hosted deployments, the flow is more like v0.20. For Hosted Authenticat
 - Remove support for the `debug` option in the Console.
 - Various UI improvements to route import, which now supports `allow_public_unauthenticated_access`, `allow_any_authenticated_user`, and `allowed_idp_claims`.
 - Adds an optional, global-level [Pass Identity Headers](/docs/reference/pass-identity-headers) setting (always had per-route, now also global).
-- Removed support for the [Secure Cookie](https://en.wikipedia.org/wiki/Secure_cookie) setting; it’s always enabled by default.
+- Removed support for the [Secure Cookie](https://en.wikipedia.org/wiki/Secure_cookie) setting; it's always enabled by default.
 - Multiple Open Telemetry improvements.
 
 ### v0.25.1
@@ -483,10 +483,10 @@ No breaking changes. See [v0.19 Changelog](/docs/deploy/enterprise/changelog#019
 
 #### Before you upgrade
 
-- `signing-key` replaced with `authenticate-service-url`. If you keep `signing-key`, device enrollment won’t work. Use the self-hosted or hosted Authenticate service URL instead.
+- `signing-key` replaced with `authenticate-service-url`. If you keep `signing-key`, device enrollment won't work. Use the self-hosted or hosted Authenticate service URL instead.
 
 - Devices can be managed, enrolled, and used in policy.
-- Signing keys can be pulled from the Authenticate service’s JWKS endpoint.
+- Signing keys can be pulled from the Authenticate service's JWKS endpoint.
 - Added ability to write policy for HTTP method/path contexts.
 - Envoy upgraded to 1.20.1.
 - Various UI and bug fixes.
@@ -495,7 +495,7 @@ No breaking changes. See [v0.19 Changelog](/docs/deploy/enterprise/changelog#019
 
 #### Before you upgrade
 
-- `signing-key` is now required to secure requests from Pomerium Core. Must match Core’s own `signing_key`.
+- `signing-key` is now required to secure requests from Pomerium Core. Must match Core's own `signing_key`.
 - `audience` must match the external hostname for the Enterprise Console.
 
 ##### Helm Installations

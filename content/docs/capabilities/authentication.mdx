@@ -1,5 +1,5 @@
 ---
-sidebar_label: Authentication & SSO
+sidebar_label: Authentication
 description: Learn how Pomerium provides identity verification, authentication, and single-sign on to all services it manages.
 keywords:
   [
@@ -34,11 +34,11 @@ After Pomerium has verified and authenticated the user, the Authentication servi
 
 ### JWT verification and upstream applications
 
-After Pomerium’s Authentication service obtains OAuth and ID tokens and OIDC claims from your IdP, it stores that session data in the Databroker service, never leaking it to the client or the upstream application. This provides an extra layer of security, as it prevents the application from using OAuth tokens provided by the IdP.
+After Pomerium's Authentication service obtains OAuth and ID tokens and OIDC claims from your IdP, it stores that session data in the Databroker service, never leaking it to the client or the upstream application. This provides an extra layer of security, as it prevents the application from using OAuth tokens provided by the IdP.
 
 Pomerium mints a new Pomerium JWT based on the claims and scopes in the OAuth and ID tokens and signs the JWT with a private key so the upstream application can verify the incoming request came from Pomerium.
 
-Although [JWT verification](/docs/manage/verify-jwt) is optional, Pomerium provides a way for you to [verify a user’s identity](/docs/capabilities/getting-users-identity) on the application level by forwarding [JWT claim headers](/docs/reference/jwt-claim-headers) with proxied requests to upstream applications.
+Although [JWT verification](/docs/manage/verify-jwt) is optional, Pomerium provides a way for you to [verify a user's identity](/docs/capabilities/getting-users-identity) on the application level by forwarding [JWT claim headers](/docs/reference/jwt-claim-headers) with proxied requests to upstream applications.
 
 Pomerium offers frontend and backend SDKs to simplify JWT verification for application developers:
 
@@ -50,13 +50,13 @@ Pomerium offers frontend and backend SDKs to simplify JWT verification for appli
 
 Legacy apps that may not directly support SSO are still compatible with Pomerium. As a reverse proxy, Pomerium is designed to sit in front of your applications.
 
-By configuring your applications to route requests to Pomerium’s Proxy service, Pomerium can manage the authentication flow and secure your legacy app with minimal to no work on your end.
+By configuring your applications to route requests to Pomerium's Proxy service, Pomerium can manage the authentication flow and secure your legacy app with minimal to no work on your end.
 
 ## External data sources (Enterprise)
 
 :::enterprise
 
-[Enterprise customers](https://www.pomerium.com/enterprise-sales/) can enforce context-aware access with Pomerium’s [external data sources](/docs/capabilities/integrations) feature (directory sync).
+[Enterprise customers](https://www.pomerium.com/enterprise-sales/) can enforce context-aware access with Pomerium's [external data sources](/docs/capabilities/integrations) feature (directory sync).
 
 :::
 
@@ -244,7 +244,7 @@ Pomerium supports Front-Channel Logout as described in [OpenID Connect Front-Cha
 
 ### Identity provider support
 
-See if your identity provider (IdP) supports Front-Channel Logout by checking your IdP’s `/.well-known/openid-configuration` endpoint. If your IdP supports it, you may see something similar to the JSON data below:
+See if your identity provider (IdP) supports Front-Channel Logout by checking your IdP's `/.well-known/openid-configuration` endpoint. If your IdP supports it, you may see something similar to the JSON data below:
 
 ```json
 {
@@ -261,7 +261,7 @@ The `frontchannel_logout_uri` must match the external route in your policy. For 
 If configured correctly, the following actions occur:
 
 1. The proxy service receives the sign-out request and clears the local Pomerium session
-2. The proxy service redirects the request to the authenticate service URL’s `/.pomerium/sign_out` endpoint
+2. The proxy service redirects the request to the authenticate service URL's `/.pomerium/sign_out` endpoint
 3. The authentication service clears the remote application session
 
 ![Single sign-out flow](./img/single-sign-out/sign-out-flow.svg)
@@ -270,7 +270,7 @@ If configured correctly, the following actions occur:
 
 While it is possible to implement SSO using the **authenticate service URL** and the `/.pomerium/sign_out` endpoint, this method is not recommended.
 
-Signing out with the authenticate service URL won’t delete the session cookie on the route itself. To terminate the remote application and Pomerium sessions, you must point sign-out requests to the external route.
+Signing out with the authenticate service URL won't delete the session cookie on the route itself. To terminate the remote application and Pomerium sessions, you must point sign-out requests to the external route.
 
 :::
 

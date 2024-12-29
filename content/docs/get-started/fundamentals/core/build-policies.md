@@ -19,9 +19,9 @@ sidebar_position: 3
 
 # Build a Simple Policy
 
-In this guide, you’ll learn about **Authorization Policies** in Pomerium.
+In this guide, you'll learn about **Authorization Policies** in Pomerium.
 
-Specifically, we’ll cover:
+Specifically, we'll cover:
 
 - What an authorization policy is
 - Why you need policies to enforce access control
@@ -30,7 +30,7 @@ Specifically, we’ll cover:
 
 :::note **Before You Start**
 
-Make sure you’ve completed the following tutorials:
+Make sure you've completed the following tutorials:
 
 - [**Get Started**](/docs/get-started/fundamentals/get-started)
 - [**Build a Simple Route**](/docs/get-started/fundamentals/build-routes)
@@ -40,21 +40,21 @@ If you completed these tutorials, you should have:
 - A route pointing to Grafana
 - A route pointing to the Verify service
 
-Each tutorial builds on the same configuration files. In this tutorial, you’ll build simple policies to secure your services.
+Each tutorial builds on the same configuration files. In this tutorial, you'll build simple policies to secure your services.
 
 :::
 
 ## What is an Authorization Policy?
 
-An **Authorization Policy** defines what resources a user (or group of users) can access within an organization. It’s the logic that tells Pomerium, “this HR employee isn’t authorized to access the engineering staging app.”
+An **Authorization Policy** defines what resources a user (or group of users) can access within an organization. It's the logic that tells Pomerium, “this HR employee isn't authorized to access the engineering staging app.”
 
 From a purely functional point of view, authorization policies seem like a simple concept: They help _manages access_ to apps and services in your organization. But, they can get pretty complicated as your organization scales.
 
 To help you ease into building policies with Pomerium, you should first learn how to build policies in Pomerium with **Pomerium Policy Language** (PPL).
 
-After that, you’ll check out some PPL examples and write your own policies for your routes.
+After that, you'll check out some PPL examples and write your own policies for your routes.
 
-Let’s get started!
+Let's get started!
 
 ### What is Pomerium Policy Language (PPL)?
 
@@ -62,7 +62,7 @@ PPL is a YAML-based notation for creating easy and flexible authorization polici
 
 PPL allows administrators to express authorization policy in a high-level, declarative language that promotes safe, performant, fine-grained controls.
 
-You can think of it as coded instructions to tell Pomerium how authorization decisions are made for capturing all niche and edge-case scenarios. It’s as flexible as you want it to be!
+You can think of it as coded instructions to tell Pomerium how authorization decisions are made for capturing all niche and edge-case scenarios. It's as flexible as you want it to be!
 
 ### How does PPL work?
 
@@ -106,7 +106,7 @@ For an in-depth look at how PPL works, see the [Policy Language](/docs/capabilit
 
 ## Example policies with PPL
 
-Now that you’ve briefly covered PPL, let’s jump into some simple examples:
+Now that you've briefly covered PPL, let's jump into some simple examples:
 
 **Example 1**: Allow access if the user's `email` address exactly matches the criterion's value
 
@@ -126,7 +126,7 @@ Requiring an exact email address is one way to secure an app, but it won't let a
 
 Instead of specifying the entire email address, you can write a policy that allows access if a user has the required `domain` in their email address (the part after `@`).
 
-The example below instructs Pomerium to only grant a user access if their email address matches the **domain** criterion’s value.
+The example below instructs Pomerium to only grant a user access if their email address matches the **domain** criterion's value.
 
 ```yaml
 policy:
@@ -136,7 +136,7 @@ policy:
           is: example.com
 ```
 
-Again, the domain criterion checks for the domain portion of the user’s email address. Using the example above, if your email were `bob@gmail.com`, Pomerium would deny you access; if your email were `bob@example.com`, Pomerium would grant you access.
+Again, the domain criterion checks for the domain portion of the user's email address. Using the example above, if your email were `bob@gmail.com`, Pomerium would deny you access; if your email were `bob@example.com`, Pomerium would grant you access.
 
 **Example 3**: Use logical operators to allow access based on `username` _or_ `domain` criteria
 
@@ -172,13 +172,13 @@ policy:
 
 :::
 
-Now that we’ve covered some examples, it’s time to attach a policy to a route.
+Now that we've covered some examples, it's time to attach a policy to a route.
 
 ## Build policies for your routes
 
 By now, your configuration file should have routes for the Verify service and Grafana. You may have noticed that these routes have the `allow_any_authenticated_user` setting attached to them.
 
-That’s a great setting to test a route with, but we want to secure these routes with policies now.
+That's a great setting to test a route with, but we want to secure these routes with policies now.
 
 In your Pomerium configuration file:
 
@@ -202,7 +202,7 @@ Great job!
 
 ## Summary
 
-Now that you’ve built a route and policy to control access, you have the basic building blocks in place to start using Pomerium.
+Now that you've built a route and policy to control access, you have the basic building blocks in place to start using Pomerium.
 
 To sum up what you have so far:
 

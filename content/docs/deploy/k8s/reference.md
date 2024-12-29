@@ -791,7 +791,7 @@ Timeout specifies the <a href="https://www.pomerium.com/docs/reference/global-ti
                 </p>
                 <p>
                     
-                    Write specifies max stream duration is the maximum time that a stream’s lifetime will span. An HTTP request/response exchange fully consumes a single stream. Therefore, this value must be greater than read_timeout as it covers both request and response time.
+                    Write specifies max stream duration is the maximum time that a stream's lifetime will span. An HTTP request/response exchange fully consumes a single stream. Therefore, this value must be greater than read_timeout as it covers both request and response time.
                 </p>
                 
                     Format: a duration string like "22s" as parsed by Golang time.ParseDuration.

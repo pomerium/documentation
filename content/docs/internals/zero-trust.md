@@ -19,7 +19,7 @@ keywords:
 
 ## History
 
-For years, security has been synonymous with the perimeter security model. This model relies on the strength of its outer defenses. That is, your corporate network is safe so long as your perimeter is impenetrable. Perimeter security typically incorporates tools like firewalls, network segmentation, and VPNs. But perimeter security’s shortcomings have become apparent as:
+For years, security has been synonymous with the perimeter security model. This model relies on the strength of its outer defenses. That is, your corporate network is safe so long as your perimeter is impenetrable. Perimeter security typically incorporates tools like firewalls, network segmentation, and VPNs. But perimeter security's shortcomings have become apparent as:
 
 - Software is shipped differently now. Organizations now deploy code outside their perimeter, in public and private clouds.
 - Workforce habits are changing. A majority of the global workforce now works remotely at least one day a week.
@@ -96,7 +96,7 @@ The zero trust security model was first articulated by [John Kindervag](http://w
   - [Zero Trust Maturity Rubric and Tool Matrix](https://www.pomerium.com/blog/zero-trust-maturity-rubric-and-tool-matrix/)
   - [Benefits of Zero Trust Architecture](https://www.pomerium.com/blog/what-are-the-benefits-zero-trust-brings-to-organizations/)
   - [Children's Introduction Guide to Zero Trust](https://www.pomerium.com/blog/childrens-introduction-guide-to-zero-trust/)
-  - [Analyzing the US Government’s Adoption of Zero Trust](https://www.pomerium.com/blog/analyzing-the-us-government-adoption-of-zero-trust/)
+  - [Analyzing the US Government's Adoption of Zero Trust](https://www.pomerium.com/blog/analyzing-the-us-government-adoption-of-zero-trust/)
   - [Q&A with Zero Trust Architecture Writers from NIST](https://www.pomerium.com/blog/zta-qa-nist/)
   - [Demystifying Zero Trust](https://www.pomerium.com/blog/demystifying-zero-trust/)
 

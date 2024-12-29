@@ -14,9 +14,9 @@ Pomerium enables you to configure mutual authentication on both the application 
 
 ## What Is Mutual Authentication?
 
-Mutual authentication is when two parties authenticate each other’s identities before communicating over a computer network. In the context of Pomerium, that typically means a client and an upstream server must authenticate each other before the server will communicate with the client over HTTPS.
+Mutual authentication is when two parties authenticate each other's identities before communicating over a computer network. In the context of Pomerium, that typically means a client and an upstream server must authenticate each other before the server will communicate with the client over HTTPS.
 
-While mutual authentication is simple in theory, applying it may be complex depending on your organization’s needs. This guide explains how Pomerium supports mutual authentication and can help you build a [zero trust] architecture where both clients and services are mutually authenticated.
+While mutual authentication is simple in theory, applying it may be complex depending on your organization's needs. This guide explains how Pomerium supports mutual authentication and can help you build a [zero trust] architecture where both clients and services are mutually authenticated.
 
 This guide covers the following mutual authentication methods with Pomerium:
 
@@ -66,7 +66,7 @@ JWT authentication with Pomerium enables the upstream service to verify that:
 - The JWT itself was intended for the upstream service
 - The user is authorized to access the upstream service
 
-To verify a JWT, the upstream service must check that the JWT was signed by a trusted authority – in this case, that’s Pomerium. Pomerium requires a user’s private key to sign the JWT and stores the corresponding public key in a **JSON web key set** (JWKS). The upstream service can access Pomerium’s JWKS endpoint to fetch the public key and verify that Pomerium signed the JWT.
+To verify a JWT, the upstream service must check that the JWT was signed by a trusted authority – in this case, that's Pomerium. Pomerium requires a user's private key to sign the JWT and stores the corresponding public key in a **JSON web key set** (JWKS). The upstream service can access Pomerium's JWKS endpoint to fetch the public key and verify that Pomerium signed the JWT.
 
 See the diagram below for a step-by-step example:
 
@@ -99,7 +99,7 @@ For more information on how Pomerium implements JWT verification, see the follow
 
 ### North-south mTLS
 
-Transport Layer Security (TLS) is a security protocol that encrypts HTTP traffic between a server and a client using the server’s TLS certificate. The server validates its identity with its TLS certificate and the certificate authority (CA) that signed it.
+Transport Layer Security (TLS) is a security protocol that encrypts HTTP traffic between a server and a client using the server's TLS certificate. The server validates its identity with its TLS certificate and the certificate authority (CA) that signed it.
 
 ![North-south mTLS](./img/mutual-authentication/north-south-mutual-auth.svg)
 

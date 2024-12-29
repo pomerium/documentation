@@ -97,7 +97,7 @@ See the [Kubernetes - Global Configuration](/docs/deploy/k8s//configure#authenti
 
 ## Authenticate Internal Service URL
 
-The **Authenticate Internal Service URL** setting is only required for split-service mode deployments where Pomerium can’t access the public Authenticate Service URL.
+The **Authenticate Internal Service URL** setting is only required for split-service mode deployments where Pomerium can't access the public Authenticate Service URL.
 
 If set, the Authenticate Internal Service URL will be used for communication between other Pomerium services and the authenticate service.
 
@@ -186,7 +186,7 @@ The `authorize_service_url` is not customizable in all-in-one mode with the CRD
 
 ## Authorize Internal Service URL
 
-The **Authorize Internal Service URL** setting is only required for split-service mode deployments where Pomerium can’t access the public Authorize Service URL.
+The **Authorize Internal Service URL** setting is only required for split-service mode deployments where Pomerium can't access the public Authorize Service URL.
 
 If included, Authorize Internal Service URL will override Authorize Service URL.
 

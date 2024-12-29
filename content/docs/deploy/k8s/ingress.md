@@ -17,15 +17,15 @@ keywords:
 pagination_next: null
 ---
 
-The [Pomerium Kubernetes Ingress Controller](https://github.com/pomerium/ingress-controller) is Pomerium’s official, open-source controller for Kubernetes environments. Pomerium's Ingress Controller builds secure access to Kubernetes Services by enforcing access control policies based on user identity; Enterprise users can build access control policies that include criteria like device, location, and other contextual factors."
+The [Pomerium Kubernetes Ingress Controller](https://github.com/pomerium/ingress-controller) is Pomerium's official, open-source controller for Kubernetes environments. Pomerium's Ingress Controller builds secure access to Kubernetes Services by enforcing access control policies based on user identity; Enterprise users can build access control policies that include criteria like device, location, and other contextual factors."
 
 ## How Pomerium Ingress Controller works
 
-Pomerium’s Ingress Controller for Kubernetes enables you to dynamically provision routes from Ingress resources and set authorization policy on those routes with Ingress annotations. By defining routes as Ingress resources in the Kubernetes API, you can easily create and remove those routes from your Pomerium configuration.
+Pomerium's Ingress Controller for Kubernetes enables you to dynamically provision routes from Ingress resources and set authorization policy on those routes with Ingress annotations. By defining routes as Ingress resources in the Kubernetes API, you can easily create and remove those routes from your Pomerium configuration.
 
 If you've tested Pomerium using the [all-in-one binary](/docs/core), you're probably familiar with configuring routes in Pomerium's [`config.yaml`](/docs/internals/configuration) file. When using the Pomerium Ingress Controller, each route is defined as an Ingress resource in the Kubernetes API.
 
-This document shows you how to configure an Ingress resource that’s compatible with the Pomerium Ingress Controller.
+This document shows you how to configure an Ingress resource that's compatible with the Pomerium Ingress Controller.
 
 **Before you start:**
 

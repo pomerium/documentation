@@ -218,7 +218,7 @@ Ensure that the Proxy service knows about and trusts the certificate authority t
   COPY --from=builder /etc/ssl/certs/your-cert-bundle.crt /etc/ssl/certs/ca-certificates.crt
   ```
 
-- Finally, ensure that you aren't being man-in-the-middle'd or that some eager router isn't injecting its own certificate along the way. Use openssl to verify that your Proxy service is getting the certificate you think it’s getting.
+- Finally, ensure that you aren't being man-in-the-middle'd or that some eager router isn't injecting its own certificate along the way. Use openssl to verify that your Proxy service is getting the certificate you think it's getting.
 
   ```bash
   openssl s_client -servername pomerium.io -connect pomerium.io:443 </dev/null \
@@ -579,7 +579,7 @@ cookie_http_only: false
 
 #### Share the Cookie
 
-If both subdomains share a parent domain, you can set a cookie domain such as `cookie_domain: '.localhost.pomerium.io'`. The browser will then share cookies among subdomains. You’ll still need to configure your JavaScript client to send credentials:
+If both subdomains share a parent domain, you can set a cookie domain such as `cookie_domain: '.localhost.pomerium.io'`. The browser will then share cookies among subdomains. You'll still need to configure your JavaScript client to send credentials:
 
 ```javascript
 (async () => {

@@ -9,11 +9,11 @@ sidebar_position: 8
 
 # Self-Hosted Authenticate Service
 
-So far, you’ve been using the Hosted Authenticate service, which provides an authenticate service URL (`authenticate.pomerium.app`) and a hosted identity provider (Cognito) to authenticate users.
+So far, you've been using the Hosted Authenticate service, which provides an authenticate service URL (`authenticate.pomerium.app`) and a hosted identity provider (Cognito) to authenticate users.
 
-We’ve also used the `*.localhost.pomerium.io` URL to host our services locally. (This wildcard domain points to `127.0.0.1`.)
+We've also used the `*.localhost.pomerium.io` URL to host our services locally. (This wildcard domain points to `127.0.0.1`.)
 
-In this tutorial, you’ll replace the Hosted Authenticate service with your own self-hosted authenticate service.
+In this tutorial, you'll replace the Hosted Authenticate service with your own self-hosted authenticate service.
 
 To do this, you must:
 
@@ -23,7 +23,7 @@ To do this, you must:
 
 :::note **Before You Start**
 
-Make sure you’ve completed the following tutorials:
+Make sure you've completed the following tutorials:
 
 - [**Get Started**](/docs/get-started/fundamentals/get-started)
 - [**Build a Simple Route**](/docs/get-started/fundamentals/build-routes)
@@ -33,7 +33,7 @@ Make sure you’ve completed the following tutorials:
 - [**Build Advanced Routes**](/docs/get-started/fundamentals/advanced-routes)
 - [**Build TCP Routes**](/docs/get-started/fundamentals/tcp-routes)
 
-Each tutorial builds on the same configuration files. In this tutorial, you’ll replace the Hosted Authenticate service with your own self-hosted authenticate service.
+Each tutorial builds on the same configuration files. In this tutorial, you'll replace the Hosted Authenticate service with your own self-hosted authenticate service.
 
 :::
 
@@ -43,31 +43,31 @@ This next step requires you to set up a VM instance where you will configure and
 
 ### Create a Virtual Machine Instance
 
-To self-host the authenticate service, you need a domain that you own. You also need to point your domain’s DNS servers to your VM’s public IP address.
+To self-host the authenticate service, you need a domain that you own. You also need to point your domain's DNS servers to your VM's public IP address.
 
-One straightforward way to do this is to use Google’s Compute Engine API to spin up a virtual machine (VM):
+One straightforward way to do this is to use Google's Compute Engine API to spin up a virtual machine (VM):
 
-1. Use Google’s Cloud Domains service to register a domain (the cost varies depending on the domain)
+1. Use Google's Cloud Domains service to register a domain (the cost varies depending on the domain)
 
-1. Create a VM instance with Google’s Compute Engine service (for this tutorial, choose Debian Bullseye)
+1. Create a VM instance with Google's Compute Engine service (for this tutorial, choose Debian Bullseye)
 
 1. Enable HTTP and HTTPS traffic as part of your Firewall rules
 
-1. Use Google’s Cloud DNS service to set up a DNS zone with a DNS name
+1. Use Google's Cloud DNS service to set up a DNS zone with a DNS name
 
 1. In the DNS zone, create a wildcard DNS type A record (for example, `*.example.sandbox.com`)
 
-1. In the **IPv4 Address 1** field, enter your VM’s **External IPv4 Address** (a publicly routable IP)
+1. In the **IPv4 Address 1** field, enter your VM's **External IPv4 Address** (a publicly routable IP)
 
 If set up correctly, you can SSH into the VM and configure Pomerium.
 
-After you’re in the VM, it’s time to set up Pomerium.
+After you're in the VM, it's time to set up Pomerium.
 
 :::note **Your VM Setup**
 
 This tutorial will be using a Compute Engine VM instance running Debian 11 (”bullseye”) to self-host Pomerium.
 
-You don’t have to use this environment if you don’t want to, but we will assume you’re running a VM to self-host Pomerium — and that you have a domain you registered and own — going forward.
+You don't have to use this environment if you don't want to, but we will assume you're running a VM to self-host Pomerium — and that you have a domain you registered and own — going forward.
 
 Certain steps will vary depending on your VM and Cloud provider.
 
@@ -75,13 +75,13 @@ Certain steps will vary depending on your VM and Cloud provider.
 
 ### Install Pomerium
 
-If you set up a VM using Debian, you can use Pomerium’s Debian OS package to install the latest version:
+If you set up a VM using Debian, you can use Pomerium's Debian OS package to install the latest version:
 
 1. Go to [Cloudsmith.io](https://cloudsmith.io/~pomerium/repos/pomerium/groups/) and select the **Set Me Up** dropdown menu
 
 2. Select **Debian**
 
-3. Copy the following curl command and run it in your VM’s terminal:
+3. Copy the following curl command and run it in your VM's terminal:
 
 ```sh
 curl -1sLf \
@@ -113,7 +113,7 @@ For the purposes of this guide, we will use GitHub as the IdP (the configuration
 
 :::tip **About the Authorization Callback URL**
 
-Now that you have your own domain, make sure you attach the `/oauth2/callback` path to GitHub’s Authorization URL.
+Now that you have your own domain, make sure you attach the `/oauth2/callback` path to GitHub's Authorization URL.
 
 For example, if your domain is `authenticate.domain.com`, the callback URL would look like:
 
@@ -123,7 +123,7 @@ For example, if your domain is `authenticate.domain.com`, the callback URL would
 
 ### Configure Pomerium
 
-Now that you’ve configured your IdP, you can update your Pomerium configuration file.
+Now that you've configured your IdP, you can update your Pomerium configuration file.
 
 We will configure Pomerium in a Vim text editor. To do that, run this command:
 
@@ -167,11 +167,11 @@ In the next tutorial you will add **Autocert** to manage production certificates
 
 1. **Remove cookie secret and shared secret settings**
 
-You only need these settings if you’re setting up the Enterprise Console.  For now, it’s safe to remove them.
+You only need these settings if you're setting up the Enterprise Console.  For now, it's safe to remove them.
 
 1. **Add IdP configuration keys**
 
-If you’re using GitHub as the IdP, you only need the following IdP keys:
+If you're using GitHub as the IdP, you only need the following IdP keys:
 
 ```yaml title="config.yaml"
 idp_provider: 'github'
@@ -196,7 +196,7 @@ For example:
 
 :::note **About the Verify `to:` URL**
 
-In the route above, the internal `to:` URL points to `verify.pomerium.com`. This domain is hosted by Pomerium. While you can deploy your own Verify instance, we will use the hosted instance in this tutorial so you don’t have to configure one yourself.
+In the route above, the internal `to:` URL points to `verify.pomerium.com`. This domain is hosted by Pomerium. While you can deploy your own Verify instance, we will use the hosted instance in this tutorial so you don't have to configure one yourself.
 
 :::
 
@@ -212,7 +212,7 @@ policy:
         is: user@example.com
 ```
 
-Save and quit the Vim editor (run `:wq` if you’re not familiar).
+Save and quit the Vim editor (run `:wq` if you're not familiar).
 
 1. **Edit Pomerium service file**
 
@@ -247,14 +247,14 @@ After signing in, Pomerium will redirect you to the **User Details** page:
 
 ![The User Details page](./img/self-hosted-pomerium/user-details-page.png)
 
-Awesome! You’ve successfully configured Pomerium to run in a Compute Engine VM instance running Debian.
+Awesome! You've successfully configured Pomerium to run in a Compute Engine VM instance running Debian.
 
 ## Summary
 
 If you got this far, then you learned how to successfully run Pomerium in a VM!
 
-This means your Pomerium instance is hosted in a private network. Because you have a domain with a wildcard DNS record that points to your VM’s _public_ IPv4 address, you can now configure Pomerium to run an **automated certificate management environment** (ACME) with Autocert.
+This means your Pomerium instance is hosted in a private network. Because you have a domain with a wildcard DNS record that points to your VM's _public_ IPv4 address, you can now configure Pomerium to run an **automated certificate management environment** (ACME) with Autocert.
 
-This setting will secure connections between Pomerium and the upstream service, and it’s the final piece you need to self-host a production-ready Pomerium deployment.
+This setting will secure connections between Pomerium and the upstream service, and it's the final piece you need to self-host a production-ready Pomerium deployment.
 
 **Next up**: [Production Certificates With Autocert](/docs/get-started/fundamentals/production-certificates)

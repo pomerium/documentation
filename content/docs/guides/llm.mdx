@@ -15,7 +15,7 @@ description: Secure a self-hosted LLM web interface (Open WebUI) behind Pomerium
 
 # Self-Hosted LLM Behind Pomerium
 
-This guide shows how to run a self-hosted LLM web interface (e.g., [Open WebUI](https://github.com/open-webui/open-webui)) and protect it behind Pomerium. Similar to the [code-server guide](https://www.pomerium.com/docs/guides/code-server), this setup applies enterprise-grade access controls to a local LLM, while passing user identity information through trusted headers so the upstream application knows who’s accessing it.
+This guide shows how to run a self-hosted LLM web interface (e.g., [Open WebUI](https://github.com/open-webui/open-webui)) and protect it behind Pomerium. Similar to the [code-server guide](https://www.pomerium.com/docs/guides/code-server), this setup applies enterprise-grade access controls to a local LLM, while passing user identity information through trusted headers so the upstream application knows who's accessing it.
 
 ## Why Use Open WebUI?
 
@@ -47,7 +47,7 @@ Pomerium injects trusted identity information, so Open WebUI can recognize authe
 - Docker and Docker Compose
 - A machine capable of running your chosen LLM backend
 
-For GPU acceleration, follow Open WebUI’s CUDA instructions.
+For GPU acceleration, follow Open WebUI's CUDA instructions.
 
 ## Configure Pomerium Zero
 
@@ -100,7 +100,7 @@ With these settings, Open WebUI trusts the identity headers and can attribute ac
 
 ## Example Docker Compose
 
-Use placeholders for secrets and adjust `WEBUI_URL` to your external route. If you trust Pomerium’s headers, set `WEBUI_AUTH=False` in Open WebUI.
+Use placeholders for secrets and adjust `WEBUI_URL` to your external route. If you trust Pomerium's headers, set `WEBUI_AUTH=False` in Open WebUI.
 
 ```yaml
 version: '3.9'
@@ -158,7 +158,7 @@ Visit `https://llm.your-domain.pomerium.app`. After authenticating via your IdP,
 
 - Load a model, prompt it, and interact.
 - Your identity is passed through; Open WebUI sees your user email. No extra passwords needed.
-- The entire session is protected behind Pomerium’s authentication and authorization.
+- The entire session is protected behind Pomerium's authentication and authorization.
 
 ### Example of a Secured UI
 
@@ -170,4 +170,4 @@ Visit `https://llm.your-domain.pomerium.app`. After authenticating via your IdP,
 - Integrate different backends: Adjust `OLLAMA_BASE_URL` or `OPENAI_API_KEY`.
 - Add more routes behind Pomerium to scale your secure environment.
 
-You’ve successfully secured a self-hosted LLM WebUI using Pomerium, with identity-aware access control and automatic user recognition upstream.
+You've successfully secured a self-hosted LLM WebUI using Pomerium, with identity-aware access control and automatic user recognition upstream.

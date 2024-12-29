@@ -75,9 +75,9 @@ See the [Pricing page](https://www.pomerium.com/pricing) for a thorough breakdow
 
 At some point, you may require higher quotas to accommodate your use case.
 
-If you’re using a professional account and you need to increase the quota for a given entity, [contact us](/docs/community). We will increase quotas on an as-needed basis.
+If you're using a professional account and you need to increase the quota for a given entity, [contact us](/docs/community). We will increase quotas on an as-needed basis.
 
-If you’re using a personal account, you must upgrade to increase quotas.
+If you're using a personal account, you must upgrade to increase quotas.
 
 ## How billing works
 
@@ -150,10 +150,10 @@ Upgrading does not replace your personal account. It creates an additional profe
 
 ### Downgrade subscription
 
-You can downgrade your subscription from a Business plan to a Free plan. If you do, you’ll be charged at the end of the billing period for any usage up to the time you downgraded.
+You can downgrade your subscription from a Business plan to a Free plan. If you do, you'll be charged at the end of the billing period for any usage up to the time you downgraded.
 
 ### Missed payments
 
-If you can’t pay your bill for any reason, your subscription will lapse and Pomerium Zero will switch into read-only mode. In read-only mode, your clusters will continue to work, but you won’t be able to make changes to your configuration.
+If you can't pay your bill for any reason, your subscription will lapse and Pomerium Zero will switch into read-only mode. In read-only mode, your clusters will continue to work, but you won't be able to make changes to your configuration.
 
 When Pomerium receives full payment for any outstanding bills under your account, you can resume using Pomerium Zero as normal.

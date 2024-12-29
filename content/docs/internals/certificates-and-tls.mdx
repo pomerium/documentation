@@ -19,7 +19,7 @@ This page covers **downstream TLS** (the connection between end users and Pomeri
 
 ## Downstream TLS
 
-Downstream mTLS refers to a requirement that **end users present a trusted client certificate** when connecting to services secured by Pomerium. With ordinary TLS, only the server presents a certificate. With mTLS, the client must also present a certificate, and the server will only allow requests if the client’s certificate is trusted.
+Downstream mTLS refers to a requirement that **end users present a trusted client certificate** when connecting to services secured by Pomerium. With ordinary TLS, only the server presents a certificate. With mTLS, the client must also present a certificate, and the server will only allow requests if the client's certificate is trusted.
 
 :::note
 
@@ -101,7 +101,7 @@ Pomerium now requires a client certificate for any route. Browsers without a val
 3. Enter the default password **`changeit`** (from mkcert).
 4. A new “org-mkcert development certificate” entry appears in your certificate list.
 
-When you visit a route like `https://verify.localhost.pomerium.io`, Chrome should prompt you to select the newly imported certificate. If everything is correct, you’ll be granted access.
+When you visit a route like `https://verify.localhost.pomerium.io`, Chrome should prompt you to select the newly imported certificate. If everything is correct, you'll be granted access.
 
 ![chrome settings](img/mtls/01-chrome-settings-certificates.png)
 
@@ -197,13 +197,13 @@ This guide demonstrates a proof-of-concept using `mkcert` to generate self-signe
 
    Now the upstream expects a client certificate from its connection peer.
 
-5. **Provide Pomerium’s Client Certificate**  
+5. **Provide Pomerium's Client Certificate**  
    Update the route to include:
    ```yaml
    tls_client_cert_file: /etc/pomerium/pomerium@localhost-client.pem
    tls_client_key_file: /etc/pomerium/pomerium@localhost-client-key.pem
    ```
-   Refresh `https://openssl.localhost.pomerium.io`. The OpenSSL server’s output should now show a validated client certificate from Pomerium.
+   Refresh `https://openssl.localhost.pomerium.io`. The OpenSSL server's output should now show a validated client certificate from Pomerium.
 
 ### More Resources
 

@@ -1,162 +1,185 @@
 ---
-# cSpell:ignore abac, gset, nxon, unvalidated
-
-title: Authorization & Policy
+title: 'Authorization and Policy Enforcement with Pomerium'
+sidebar_label: 'Authorization'
 lang: en-US
-sidebar_label: Authorization
-description: Build authorization policy with Pomerium and apply them to routes and namespaces.
+description: 'Learn how Pomerium enforces context-aware, continuous authorization using route-level policies, namespaces, device-based constraints, and more.'
 keywords:
   [
     pomerium,
-    context-aware proxy,
-    authorization proxy,
-    access decision point,
-    rbac,
-    abac,
-    dynamic access,
+    authorization,
+    zero trust,
+    policy enforcement,
     ppl,
+    rego,
     namespaces,
+    device identity,
+    clusters,
   ]
 ---
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
+import SelfSignedCertWarning from '@site/content/docs/admonitions/_handle-self-signed-certificate-warning.mdx';
 
-# Authorization Policy
+# Pomerium's Authorization and Policy Enforcement
 
-An authorization policy defines what resources a user or group can access within an organization. When applying an authorization policy, factors like access management to on-premises or cloud services, authentication flows, and device identity introduce complexity that only scales with organization size.
+Pomerium enforces dynamic, context-aware authorization on every request. This capability extends across deployments of any size or complexity, from single-route use cases to multi-namespace or multi-cluster enterprise environments.
 
-Pomerium meets you where you are by allowing you to configure granular policies that support or extend your existing policies on a per-route, per-request basis.
+Below, we cover how to write and apply policies with **Pomerium Policy Language (PPL)**, when to use **Rego**, and how **Namespaces** (Enterprise) and **Clusters** (Pomerium Zero) fit into the picture.
 
-## Pomerium authorization policy
+## Introduction: Authorization at Every Layer
 
-You can apply policies in Pomerium to [Namespaces](/docs/capabilities/namespacing) or [Routes](/docs/capabilities/routing).
+Pomerium's approach to authorization is continuous and context-aware, integrating identity information from your IdP, device identity, or external data sources.
+
+- **Route-based** control in all editions
+- **Namespace-based** and **cluster-based** organization in Enterprise and Zero
+- **Policy languages**: [PPL](#pomerium-policy-language-ppl) for most use cases, [Rego](#rego-policies) for advanced logic
+
+<iframe
+  width="100%"
+  height="600"
+  src="https://www.youtube.com/embed/3MJrNvQ7aIE"
+  title="Pomerium authorization video"
+  frameborder="0"
+  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+  allowfullscreen></iframe>
+
+## Where Policies Live
+
+1. **Routes**  
+   Policies can be attached to each route, controlling who and what can access the upstream service.
+
+2. **Namespaces**  
+   A namespace is an organizational unit. Policy can be applied once and inherited by child namespaces or routes. Admins can delegate control so teams manage their own routes without harming global security.
+
+3. **Clusters**  
+   Zero-managed clusters pull their config (routes, policies, certificates) from a hosted control plane. Each cluster has its own environment. You can define policies in the Zero console, and they're synced to local Pomerium Core replicas.
+
+## Policy Configuration Approaches
+
+### Pomerium Policy Language (PPL)
+
+[Pomerium Policy Language](/docs/internals/ppl) is YAML-based and covers the majority of use cases.
+
+- **Actions**: `allow` or `deny`
+- **Logical Operators**: `and`, `or`, `not`, `nor`
+- **Criteria**: email, domain, groups, day of week, device, etc.
+
+A minimal example:
+
+```yaml
+allow:
+  and:
+    - domain:
+        is: example.com
+deny:
+  or:
+    - email:
+        is: spammer@example.com
+    - email:
+        is: malicious@example.com
+```
+
+**Deny** overrides **allow**. Requests must pass at least one `allow` rule and no `deny` rules.
+
+#### PPL in Pomerium Enterprise
+
+Enterprise adds a visual **Policy Builder** and extended criteria (like time-of-day or external data records). You can build policy via GUI or raw PPL:
+
+![Build an authorization policy with PPL in the Enterprise Console](./img/authorization/ppl-edit-policy.png)
+
+Reapply policies across multiple routes or namespaces:
+
+![Reapply policies to multiple routes or namespaces](./img/authorization/apply-policies-to-routes.png)
+
+### Rego Policies
+
+:::enterprise
+
+**Rego** is available to Enterprise customers who need advanced, custom logic beyond what PPL offers.
+
+:::
+
+[Rego](https://www.openpolicyagent.org/docs/latest/#rego) is the language used by [Open Policy Agent (OPA)](https://www.openpolicyagent.org/). In Pomerium, you can write Rego modules that produce `allow` or `deny` outcomes. For example:
+
+```rego
+allow := true
+```
+
+or:
+
+```rego
+deny := [true, "unauthorized"]
+```
+
+You can inspect request data under `input.http` (method, headers, path), or session details under `input.http.session`. Learn more in the [Rego docs](/docs/internals/ppl#rego).
+
+![Apply Rego in Console editor](./img/authorization/ppl-rego-policy.png)
+
+## Enterprise Features
 
 ### Namespaces
 
 :::enterprise
 
-Namespace support is available only for [Enterprise customers](https://www.pomerium.com/enterprise-sales/).
+Namespaces group resources and teams in a hierarchical structure. A parent namespace can enforce global rules while child namespaces add local restrictions.
 
 :::
 
-Administrators can create a namespace, add users, groups, and routes to it, and configure a policy that applies to that specific namespace.
+Key benefits:
 
-### Routes
+- **Self-Service**: Team leads can manage their own routes and policies.
+- **Hierarchical**: Global admins set top-level constraints (like requiring a `@yourcompany.com` email).
+- **RBAC**: Access is granted via roles: **Guest**, **Viewer**, **Manager**, **Admin**.
 
-You can build TLS-encrypted routes to upstream applications and configure policy that restricts access based on the policy criteria.
+## Pomerium Zero & Clusters
 
-Pomerium Enterprise and Core customers can configure and apply policies to routes.
+**Pomerium Zero** uses a _cluster_ model. Each cluster is a local deployment of Pomerium Core, connected to a hosted control plane. Clusters fetch routes, policies, and certificates from the Zero console:
 
-### Continuous verification
+- **Starter domain**: Each cluster gets a unique domain with automatic TLS.
+- **Custom domains**: Switch from the starter domain to your own.
+- **Scalability**: Add more replicas to handle more traffic.
+- **Storage**: Use a persistent PostgreSQL database in production for reliability.
 
-<iframe
-  width="560"
-  height="315"
-  src="https://www.youtube.com/embed/3MJrNvQ7aIE"
-  title="YouTube video player"
-  frameborder="0"
-  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-  allowfullscreen></iframe>
+For more details, see the [**Clusters**](/docs/internals/clusters) documentation.
 
-Pomerium continuously evaluates policy on every request.
+## Policy Overrides
 
-Policy applied to any route or namespace will enforce authorization checks throughout a session, ensuring that only the intended user with the right context can access a protected resource.
+Regardless of PPL or Rego, Pomerium provides quick overrides:
 
-## Apply authorization policy
-
-Pomerium offers three methods to configure and apply policies:
-
-- [Pomerium Policy Language (PPL)](#pomerium-policy-language-ppl)
-- [Enterprise Console GUI](#enterprise-console-gui)
-- [Rego](/docs/capabilities/rego)
-
-### Pomerium Policy Language (PPL)
-
-[Pomerium Policy Language (PPL)](/docs/capabilities/ppl) is a declarative, YAML-based access control policy language you can use to configure authorization policies.
-
-PPL is intuitive by design and defines policy with one or more rules composed of actions, logical operators, and criteria. Each criterion has a name and corresponding data.
-
-<Tabs>
-<TabItem value="Core" label="Core">
-
-In Pomerium Core, you can build a policy with PPL and apply it to a route in your configuration file:
-
-```yaml title="pomerium-config.yaml"
-policy:
-  - allow:
-      or:
-        - email:
-            is: user@example.com
-```
-
-In this example, only a user with the email `user@example.com` can access the target application.
-
-</TabItem>
-<TabItem value="Enterprise" label="Enterprise">
-
-In the Enterprise Console, you can use the **EDITOR** to manually configure policy with PPL:
-
-![Build an authorization policy with PPL in the Enterprise Console](./img/authorization/ppl-edit-policy.png)
-
-In this example, Pomerium will grant a user access if their email address ends in `example.com` and their `groups` ID matches `00gso9nxonHI4YfbM4x6`. Pomerium will deny the user access on Saturdays and Sundays.
-
-</TabItem>
-</Tabs>
-
-### Enterprise Console GUI
-
-:::enterprise
-
-The Enterprise Console provides a policy builder GUI so you can build policies and reapply them to multiple routes and namespaces. See our [**Enterprise**](/docs/deploy/enterprise) page to learn more.
-
-:::
-
-Use the **BUILDER** tab to build your policy:
-
-![Build policy with Console GUI](./img/authorization/ppl-gui-policy.png)
-
-In this example, a user will have access if their email address ends in `example.com` and their device ID matches the ID in the **Value** field.
-
-#### Reapply policies
-
-Reapply policies as necessary to any route or namespace:
-
-![Reapply policies to multiple routes or namespaces](./img/authorization/apply-policies-to-routes.png)
-
-### Policy overrides
-
-Pomerium Core and Enterprise offer the following options for overriding your authorization policy:
-
-- **Any Authenticated User**: Allows access to a route with this policy attached to any user who can authenticate to your identity provider
-- **CORS Preflight**: Allows unauthenticated HTTP OPTIONS requests as per the CORS spec
-- **Public Access**: Allows complete, unrestricted access to an associated route (use this setting with caution)
+- **Any Authenticated User**: Bypasses all other policy logic and admits any logged-in user.
+- **CORS Preflight**: Lets `OPTIONS` requests pass unauthenticated.
+- **Public Access**: No authentication required. Use with caution.
 
 :::note robots.txt behavior
 
-By default, Pomerium serves a **robots.txt** response directly, instructing search engines _not_ to crawl the route domain:
-
-```txt
-User-agent: *
-Disallow: /
-```
-
-For routes with policies that allow public, unauthenticated access, Pomerium _will not_ serve **robots.txt** directly. Instead, Pomerium will proxy requests for `/robots.txt` to the upstream service.
+If a route is fully public, `robots.txt` will be proxied from upstream (instead of returning a disallow-by-default).
 
 :::
 
-## Manage devices
+## Putting It All Together
 
-:::enterprise
+1. **Plan Your Structure**
 
-[Device identity](/docs/integrations/device-context/device-identit) is an Enterprise feature. Check out our [Enterprise](/docs/deploy/enterprise) page to learn more.
+   - Small setups: attach a PPL policy directly to each route in Core.
+   - Larger orgs: use **Namespaces** (Enterprise) to group resources.
+   - Multi-deployment: use **Clusters** (Pomerium Zero) to unify config.
 
-:::
+2. **Decide on Language**
 
-The **Manage Devices** feature in the Enterprise Console allows you to enroll and manage user devices for policy-based authorization.
+   - **PPL**: YAML, easy to read, covers most use cases.
+   - **Rego** (Enterprise): advanced logic, OPA-based.
 
-![Enroll devices](./img/authorization/enroll-device.png)
+3. **Continuously Verify**
+   - Pomerium reevaluates the user's context (IdP claims, device posture, location) on every request.
 
-The **Devices List** displays enrolled devices for each user and the approval status. Administrators can inspect, approve, or delete registered devices from this table.
+## Learn More
 
-![List of user devices](./img/authorization/console-devices.png)
+- [**Routing**](/docs/capabilities/routing)
+- [**Policy Language (PPL)**](/docs/internals/ppl)
+- [**Rego**](/docs/internals/ppl)
+- [**Namespaces**](/docs/capabilities/namespaces)
+- [**Clusters**](/docs/internals/clusters)
+- [**Device Identity**](/docs/capabilities/device-identity)
+
+Use Pomerium's robust, context-driven authorization to unify your security posture, whether you're looking to secure a few routes or an entire global infrastructure.

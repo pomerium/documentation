@@ -51,9 +51,9 @@ Ready to upgrade to Pomerium Enterprise? [**Contact us**](https://www.pomerium.c
 
 ### Namespaces and Self-Service
 
-The **Namespaces** dashboard is where you configure user roles and permissions for routes, policies, and the Enterprise Console itself. Once you’ve configured a [Namespace](/docs/capabilities/namespacing), members of that namespace can self-manage access to the infrastructure they build from or depend on.
+The **Namespaces** dashboard is where you configure user roles and permissions for routes, policies, and the Enterprise Console itself. Once you've configured a [Namespace](/docs/capabilities/namespacing), members of that namespace can self-manage access to the infrastructure they build from or depend on.
 
-Pomerium Enterprise allows you to import groups defined by your identity provider. This allows you to build stable policies that don’t require adjustments as your company changes.
+Pomerium Enterprise allows you to import groups defined by your identity provider. This allows you to build stable policies that don't require adjustments as your company changes.
 
 ![Manage Namespaces in the Enterprise Console's Namespaces dashboard](./img/manage-namespaces.gif)
 

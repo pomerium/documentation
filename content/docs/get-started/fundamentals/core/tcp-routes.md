@@ -11,13 +11,13 @@ sidebar_position: 7
 
 # Build TCP Routes
 
-Now that you’ve built several routes, it's time to proxy TCP connections with Pomerium.
+Now that you've built several routes, it's time to proxy TCP connections with Pomerium.
 
-Specifically,  we’ll create a [Redis](https://redis.io/) service and route users to it with a TCP connection.
+Specifically,  we'll create a [Redis](https://redis.io/) service and route users to it with a TCP connection.
 
 :::note **Before You Start**
 
-Make sure you’ve completed the following tutorials:
+Make sure you've completed the following tutorials:
 
 - [**Get Started**](/docs/get-started/fundamentals/get-started)
 - [**Build a Simple Route**](/docs/get-started/fundamentals/build-routes)
@@ -26,7 +26,7 @@ Make sure you’ve completed the following tutorials:
 - [**Build Advanced Policies**](/docs/get-started/fundamentals/advanced-policies)
 - [**Build Advanced Routes**](/docs/get-started/fundamentals/advanced-routes)
 
-Each tutorial builds on the same configuration files. In this tutorial, you’ll build routes to several services and proxy TCP connections to these services with Pomerium CLI.
+Each tutorial builds on the same configuration files. In this tutorial, you'll build routes to several services and proxy TCP connections to these services with Pomerium CLI.
 
 :::
 
@@ -34,9 +34,9 @@ Each tutorial builds on the same configuration files. In this tutorial, you’ll
 
 When replacing a traditional VPN, there are often non-HTTP based applications you still need to reach. Pomerium can provide the same type of protection to these services with [Pomerium CLI](/docs/clients/pomerium-cli), a client-side application to proxy TCP connections.
 
-In this tutorial, you’ll secure a backend Redis service behind Pomerium and access it by connecting to it with a TCP route.
+In this tutorial, you'll secure a backend Redis service behind Pomerium and access it by connecting to it with a TCP route.
 
-Pomerium’s CLI client comes with a `tcp` command that you can use to secure this connection.
+Pomerium's CLI client comes with a `tcp` command that you can use to secure this connection.
 
 ## Prerequisites
 
@@ -53,7 +53,7 @@ For this tutorial, install Pomerium CLI to your system instead of using the Pome
 
 ### Test Pomerium CLI
 
-Once you’ve installed Pomerium CLI, test the installation by running `pomerium-cli`:
+Once you've installed Pomerium CLI, test the installation by running `pomerium-cli`:
 
 ```shell-session
 $ pomerium-cli
@@ -86,7 +86,7 @@ Install `mkcert`:
 mkcert -install
 ```
 
-This command will install `mkcert` and generate a `rootCA.pem` file in your system’s trust store.
+This command will install `mkcert` and generate a `rootCA.pem` file in your system's trust store.
 
 Generate wildcard certificates:
 
@@ -94,7 +94,7 @@ Generate wildcard certificates:
 `mkcert "*.localhost.pomerium.io"`
 ```
 
-This command will generate the following certificates in your project’s root directory:
+This command will generate the following certificates in your project's root directory:
 
 - `_wildcard.localhost.pomerium.io.pem`
 - `_wildcard.localhost.pomerium.io-key.pem`
@@ -155,7 +155,7 @@ Add the Redis route to your service in your Pomerium configuration file using th
 
 ### Connect with Pomerium CLI
 
-Now, use Pomerium CLI’s `tcp` command to connect to the Redis service
+Now, use Pomerium CLI's `tcp` command to connect to the Redis service
 
 ```shell-session
 $ pomerium-cli tcp redis.localhost.pomerium.io:6379 --listen localhost:6379
@@ -198,6 +198,6 @@ io_threads_active:0
 
 In this tutorial, you secured a TCP connection to Redis. To secure the connection, you used the `pomerium-cli` `tcp` command.
 
-At this point, we’ve done all we can do with a hosted Pomerium instance in a Dockerized environment. You now know all the necessary basics for running Pomerium itself, so let’s take it out of Docker and into the wild!
+At this point, we've done all we can do with a hosted Pomerium instance in a Dockerized environment. You now know all the necessary basics for running Pomerium itself, so let's take it out of Docker and into the wild!
 
 In the next tutorial, we will turn to Google Cloud Platform (GCP) to spin up a Virtual Machine instance, register a domain using Cloud Domains, and wire it up with Cloud DNS. This way, you can self-host your own domain and Pomerium.

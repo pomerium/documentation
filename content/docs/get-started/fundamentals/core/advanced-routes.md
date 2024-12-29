@@ -10,11 +10,11 @@ sidebar_position: 6
 
 # Build Advanced Routes
 
-Now that you’ve built advanced policies, let’s build on your routes a bit more.
+Now that you've built advanced policies, let's build on your routes a bit more.
 
 :::note **Before You Start**
 
-Make sure you’ve completed the following tutorials:
+Make sure you've completed the following tutorials:
 
 - [**Get Started**](/docs/get-started/fundamentals/get-started)
 - [**Build a Simple Route**](/docs/get-started/fundamentals/build-routes)
@@ -22,7 +22,7 @@ Make sure you’ve completed the following tutorials:
 - [**Identity Verification with JWTs**](/docs/get-started/fundamentals/jwt-verification)
 - [**Build Advanced Policies**](/docs/get-started/fundamentals/advanced-policies)
 
-Each tutorial builds on the same configuration files. In this tutorial, you’ll build new routes with some of Pomerium’s route-level settings.
+Each tutorial builds on the same configuration files. In this tutorial, you'll build new routes with some of Pomerium's route-level settings.
 
 :::
 
@@ -40,7 +40,7 @@ For the purposes of this tutorial, we will only review the following settings to
 
 ### Configure HTTPBin
 
-To see how some of these settings work, we will configure Pomerium and Docker Compose to host an HTTPBin server. If you’re not familiar with [HTTPBin](https://httpbin.org/), it’s a call-and-response HTTP server you can use to test (you guessed it) HTTP requests and responses.
+To see how some of these settings work, we will configure Pomerium and Docker Compose to host an HTTPBin server. If you're not familiar with [HTTPBin](https://httpbin.org/), it's a call-and-response HTTP server you can use to test (you guessed it) HTTP requests and responses.
 
 Add the `httpbin` service to your Docker Compose file:
 
@@ -113,7 +113,7 @@ Now, scroll down to **Response body**. You should see a payload like this:
 
 Because we added `pass_identity_headers`, we can see that the request includes the `X-Pomerium-Jwt-Assertion` header. This tells us that the identity header has been correctly passed to the upstream application (in this case, to HTTPBin).
 
-Since we’re forwarding the JWT, let’s try adding the JWT Claims Headers global setting to your configuration file, right under the signing_key:
+Since we're forwarding the JWT, let's try adding the JWT Claims Headers global setting to your configuration file, right under the signing_key:
 
 ```yaml
 signing_key: LS0tLS1CRUdJTiBFQyBQUklWQVRFIEtFWS0tLS0tCk1IY0NBUUVFSUVSNThaeDA2SHJXTW9PUTRaNjlMaDdMZUtFZW5TSmJZcHJvZ3V3TEl0blNvQW9HQ0NxR1NNNDkKQXdFSG9VUURRZ0FFK1FtamZKQ2ovdzkrOUhrRDVlbTlIZFhRM3ViUEhIdWNOMTlNOXJxR05PeEpTRmR3VHgvaAphdVkvcVFSWWR0YVpnVEpEUWZSYVQ2Q1pPYndSYTl2TXNnPT0KLS0tLS1FTkQgRUMgUFJJVkFURSBLRVktLS0tLQo=
@@ -124,13 +124,13 @@ jwt_claims_headers:
   X-Pomerium-Claim-Name: name
 ```
 
-This setting sends JWT claims as _unsigned_ headers to the upstream application (unlike the _signed_ JWT assertion header). If you restart the Pomerium Docker instance and send another request to HTTPBin, you’ll notice these claims are included in the request:
+This setting sends JWT claims as _unsigned_ headers to the upstream application (unlike the _signed_ JWT assertion header). If you restart the Pomerium Docker instance and send another request to HTTPBin, you'll notice these claims are included in the request:
 
 ![View JWT claims as unsigned headers in the request](./img/advanced-routes/httpbin-jwt-claims-headers.png)
 
 So, this adds headers from the JWT to our request, but what if you wanted to remove them for privacy or security reasons? Or what if you wanted to add other headers to your request?
 
-This is where Pomerium’s flexibility comes in! Let’s try a few examples using our header settings.
+This is where Pomerium's flexibility comes in! Let's try a few examples using our header settings.
 
 ### Set and remove request headers
 
@@ -146,9 +146,9 @@ Under your `httpbin` route, add the following settings:
       - X-Pomerium-Claim-Name
 ```
 
-We’re telling Pomerium to add a header to the request called `X-Set-Request-Headers` with a value of `X-Value`. We’re also telling Pomerium to remove the `User` and `Name` claims that are included as unsigned claims headers. This ensures that these specific headers do _not_ reach the upstream application.
+We're telling Pomerium to add a header to the request called `X-Set-Request-Headers` with a value of `X-Value`. We're also telling Pomerium to remove the `User` and `Name` claims that are included as unsigned claims headers. This ensures that these specific headers do _not_ reach the upstream application.
 
-If you run `docker compose up` and check HTTPBin again, you’ll notice both the claims headers have been removed, and the test `X-Set-Request-Headers` header is there, too.
+If you run `docker compose up` and check HTTPBin again, you'll notice both the claims headers have been removed, and the test `X-Set-Request-Headers` header is there, too.
 
 ### Set response headers
 
@@ -166,17 +166,17 @@ Similarly, you can configure responses as well:
       - X-Pomerium-Claim-Name
 ```
 
-If you go HTTPBin’s **Response inspection** row and test a request, you’ll notice the test `X-Set-Response-Headers` header is included in the response.
+If you go HTTPBin's **Response inspection** row and test a request, you'll notice the test `X-Set-Response-Headers` header is included in the response.
 
 ![View response headers](./img/advanced-routes/response-header.png)
 
 ### Set the Host header
 
-You can also control the `Host:` header’s behavior, which is useful if your upstream server expects a certain value for this header.
+You can also control the `Host:` header's behavior, which is useful if your upstream server expects a certain value for this header.
 
 For example, the value of the Host header is currently `httpbin`.
 
-However, if you add `preserve_host_header` and set it to `true`, you’ll notice the value changes from `httpbin` to `httpbin.localhost.pomerium.io`:
+However, if you add `preserve_host_header` and set it to `true`, you'll notice the value changes from `httpbin` to `httpbin.localhost.pomerium.io`:
 
 ```yaml title="config.yaml"
 - from: https://httpbin.localhost.pomerium.io
@@ -191,9 +191,9 @@ However, if you add `preserve_host_header` and set it to `true`, you’ll notice
     preserve_host_header: true
 ```
 
-That’s because this setting preserves the Host header from the proxied request instead of taking the value from the destination’s hostname.
+That's because this setting preserves the Host header from the proxied request instead of taking the value from the destination's hostname.
 
-Alternatively, you can also use `host_rewrite_header` to change the Host header’s value to that of any incoming request (in this case, it would still be `httpbin.localhost.pomerium.io`).
+Alternatively, you can also use `host_rewrite_header` to change the Host header's value to that of any incoming request (in this case, it would still be `httpbin.localhost.pomerium.io`).
 
 ```yaml title="config.yaml"
 - from: https://httpbin.localhost.pomerium.io
@@ -342,7 +342,7 @@ routes:
               is: example.com
 ```
 
-Now, `cd` back into your root project and run the following command to build your Node server so it’s accessible inside your container:
+Now, `cd` back into your root project and run the following command to build your Node server so it's accessible inside your container:
 
 ```bash
 docker compose up --build
@@ -362,11 +362,11 @@ Next, in your Pomerium configuration file, add the `prefix:` setting and give it
     prefix: /admin
 ```
 
-Restart Docker and navigate to `https://nodeserver.localhost.pomerium.io`. Because this URL doesn’t include the `/admin` prefix in its path, Pomerium won’t match the route, which results in a `404` error.
+Restart Docker and navigate to `https://nodeserver.localhost.pomerium.io`. Because this URL doesn't include the `/admin` prefix in its path, Pomerium won't match the route, which results in a `404` error.
 
 The `prefix` setting will only match the route if the request has the prefix in its path. So, if you try `https://nodeserver.localhost.pomerium.io/admin`, Pomerium should direct you to the `/admin` only page.
 
-Next, let’s add `prefix_rewrite`. To use it, give `prefix_rewrite` the value of `/`. If the incoming request’s prefix matches the value of `prefix` (`/admin`), Pomerium will rewrite `prefix` to match the value of `prefix_rewrite`:
+Next, let's add `prefix_rewrite`. To use it, give `prefix_rewrite` the value of `/`. If the incoming request's prefix matches the value of `prefix` (`/admin`), Pomerium will rewrite `prefix` to match the value of `prefix_rewrite`:
 
 ```yaml
 - from: https://nodeserver.localhost.pomerium.io
@@ -377,18 +377,18 @@ Next, let’s add `prefix_rewrite`. To use it, give `prefix_rewrite` the value o
 
 Now, if you navigate to `https://nodeserver.localhost.pomerium.io/admin`, Pomerium will redirect you to the `/` page.
 
-If you don’t include the `/admin` prefix, the request will `404`.
+If you don't include the `/admin` prefix, the request will `404`.
 
 ## Clean up
 
-This was just to show you Pomerium’s flexibility when it comes to advanced routes. We won’t be using the HTTPbin or Node server services going forward. To keep your configuration files clean and easy to manage, remove the following services and routes:
+This was just to show you Pomerium's flexibility when it comes to advanced routes. We won't be using the HTTPbin or Node server services going forward. To keep your configuration files clean and easy to manage, remove the following services and routes:
 
 In your configuration file:
 
 - Remove the `httpbin` and `nodeserver` routes and their attached policies from `- routes`
 - Remove `jwt_claims_headers`
 
-In your project’s root folder:
+In your project's root folder:
 
 - Delete `app` and its contents
 
@@ -402,7 +402,7 @@ In this tutorial, you added several new services and built routes to them.
 
 You also added per-route settings that handle redirects _and_ modify requests, responses, header values, and URL paths and prefixes.
 
-Now that you’ve seen what you can do with routes, it’s time to learn how to proxy TCP connections with Pomerium!
+Now that you've seen what you can do with routes, it's time to learn how to proxy TCP connections with Pomerium!
 
 ### Configuration file state
 

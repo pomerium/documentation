@@ -32,15 +32,15 @@ Each guide builds on the same configuration files. In this guide, you'll build a
 
 ## What is an Authorization Policy?
 
-An **Authorization Policy** defines what resources a user (or group of users) can access within a cluster. It’s the logic that tells Pomerium, “this HR employee isn’t authorized to access the engineering staging app.”
+An **Authorization Policy** defines what resources a user (or group of users) can access within a cluster. It's the logic that tells Pomerium, “this HR employee isn't authorized to access the engineering staging app.”
 
 As you might imagine, managing policies can get complicated as you add more members to your organization, or as you add more routes to your cluster.
 
 To ease you into building policies with Pomerium, you should first learn about **Pomerium Policy Language** (PPL).
 
-After that, you’ll check out some PPL examples and write your own policies for your routes.
+After that, you'll check out some PPL examples and write your own policies for your routes.
 
-Let’s get started!
+Let's get started!
 
 ### What is Pomerium Policy Language (PPL)?
 
@@ -58,7 +58,7 @@ We will cover each of these concepts in the examples below.
 
 ### PPL examples
 
-Now that you’ve had a chance to learn about PPL, let’s jump into some simple examples:
+Now that you've had a chance to learn about PPL, let's jump into some simple examples:
 
 **Example 1**: Allow access if the user's email address matches the `email` criterion value
 
@@ -90,18 +90,18 @@ Requiring an exact email address is one way to secure an app, but it won't let a
 
 Instead of specifying the entire email address, you can write a policy that allows access if a user has the required `domain` in their email address (the part after `@`).
 
-The example below instructs Pomerium to only grant a user access if their email address matches the **domain** criterion’s value.
+The example below instructs Pomerium to only grant a user access if their email address matches the **domain** criterion's value.
 
     ![Creating a policy in Zero Console that only grants access if the user has matching domain in email address](./img/zero-policies/pz-courses-ppl-example-2.png)
 
-Again, the domain criterion checks for the domain portion of the user’s email address. Using the example above:
+Again, the domain criterion checks for the domain portion of the user's email address. Using the example above:
 
 - If your email is `bob@gmail.com`, Pomerium will deny you access
 - If your email is `bob@example.com`, Pomerium will grant you access
 
 **Example 3**: TODO - Currently, `user` criterion isn't an option in Zero. Wait until Custom IdP is implemented to use "Groups" claim
 
-Now that we’ve covered some examples, it’s time to attach a policy to a route.
+Now that we've covered some examples, it's time to attach a policy to a route.
 
 ## Build a policy
 
@@ -113,7 +113,7 @@ By now, your Pomerium Zero cluster should have routes for the following services
 
 Currently, these routes secure access with the `Allow <user>@pomerium.com ` setting.
 
-That’s a great setting to test a route with, but we want to secure these routes with policies now.
+That's a great setting to test a route with, but we want to secure these routes with policies now.
 
 **Learning Opportunity**:
 
