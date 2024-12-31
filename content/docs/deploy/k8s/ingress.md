@@ -323,7 +323,7 @@ Each Ingress should be backed by a Service. Pomerium supports certain extensions
 
 Pomerium is capable of creating secure connections to services like SSH, Databases, and more by creating a TCP tunnel to the service with a local client.
 
-The example route below defines a route providing a tunneled TCP connection to an upstream service listening for non-web traffic. Pomerium provides [command line and GUI](/docs/capabilities/non-http/client) clients to interact with the TCP services.
+The example route below defines a route providing a tunneled TCP connection to an upstream service listening for non-web traffic. Pomerium provides [command line and GUI](/docs/deploy/clients) clients to interact with the TCP services.
 
 ```yaml
 apiVersion: networking.k8s.io/v1
@@ -351,7 +351,7 @@ The important points to note in this example:
 - The annotation `ingress.pomerium.io/tcp_upstream:` is set to `"true"`,
 - `spec.rules.[].http.paths.[].path` is omitted,
 - `spec.rules.[].http.paths.[].pathType` is set to `ImplementationSpecific`,
-- `spec.rules.[].host` and `spec.rules.[].paths.[].backend.service.port.name/number` together define the address used when connecting to the route using the [Pomerium Desktop or CLI clients](/docs/capabilities/non-http/client),
+- `spec.rules.[].host` and `spec.rules.[].paths.[].backend.service.port.name/number` together define the address used when connecting to the route using the [Pomerium Desktop or CLI clients](/docs/deploy/clients),
 - You may apply standard access control annotations to define access restrictions to the service.
 
 :::note
