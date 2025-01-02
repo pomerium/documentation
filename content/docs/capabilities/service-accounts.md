@@ -19,7 +19,7 @@ Service accounts offer a protected and standardized method of authenticating mac
 
 :::enterprise
 
-Service Accounts are a Pomerium Enterprise feature. The steps below show you how to create and use a Service Account in the Enterprise Console. See our [Pomerium Enterprise](/docs/enterprise) page for more information.
+Service Accounts are a Pomerium Enterprise feature. The steps below show you how to create and use a Service Account in the Enterprise Console. See our [Pomerium Enterprise](/docs/deploy/enterprise) page for more information.
 
 :::
 
@@ -45,7 +45,7 @@ Before you begin, confirm you are in the correct Namespace. You can only use a s
 
    See the following pages for more information:
 
-   - [**Directory Sync**](/docs/capabilities/directory-sync)
+   - [**Directory Sync**](/docs/integrations/user-standing/directory-sync)
    - [**User Impersonation**](/docs/capabilities/impersonation)
 
    :::

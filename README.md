@@ -6,8 +6,6 @@ Pomerium's documentation is built using [Docusaurus 2](https://docusaurus.io/). 
 
 ## Contributing
 
-See [Contributing](https://pomerium.com/docs/community/contributing) for more information on contributing to this project.
-
 The steps below detail the installation of this site locally for development.
 
 ### Installation

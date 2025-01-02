@@ -53,7 +53,7 @@ Set **To** in the Console:
 </TabItem>
 <TabItem value="Kubernetes" label="Kubernetes">
 
-See Kubernetes [Ingress](/docs/k8s/ingress) for more information.
+See Kubernetes [Ingress](/docs/deploy/k8s/ingress) for more information.
 
 </TabItem>
 </Tabs>
@@ -71,7 +71,7 @@ Multiple upstream resources can be targeted by using a list instead of a single 
 
 ### Set load balancing weight
 
-A load balancing weight may be associated with a particular upstream by appending `,[weight]` to the URL. The exact behavior depends on your [`lb_policy`](/docs/reference/routes/load-balancing#load-balancing-policy) setting. See [Load Balancing](/docs/capabilities/load-balancing) for example [configurations](/docs/capabilities/load-balancing#load-balancing-weight).
+A load balancing weight may be associated with a particular upstream by appending `,[weight]` to the URL. The exact behavior depends on your [`lb_policy`](/docs/reference/routes/load-balancing#load-balancing-policy) setting. See [Load Balancing](/docs/capabilities/routing) for example [configurations](/docs/capabilities/routing#load-balancing-weight).
 
 ```yaml
 - from: https://example.com
@@ -102,7 +102,7 @@ One use case is connecting to an insecure gRPC server. As gRPC requires HTTP/2, 
 
 ### TCP Routes
 
-You can configure Pomerium to handle a [TCP route](/docs/capabilities/tcp) in one of two different ways.
+You can configure Pomerium to handle a [TCP route](/docs/capabilities/non-http) in one of two different ways.
 
 If you specify a `to` URL with the `tcp://` scheme, Pomerium will proxy the raw TCP connection to the upstream service:
 
@@ -124,7 +124,7 @@ If you specify a list of multiple `to` URLs in one route, you may not include bo
 
 ### UDP Routes
 
-Starting in v0.29, you can configure Pomerium to handle a [UDP route](/docs/capabilities/udp) in one of two different ways.
+Starting in v0.29, you can configure Pomerium to handle a [UDP route](/docs/capabilities/non-http/udp) in one of two different ways.
 
 If you specify a `to` URL with the `udp://` scheme, Pomerium will proxy the raw UDP connection to the upstream service:
 
