@@ -10,21 +10,25 @@ import LongLivedConnections from '@site/content/docs/admonitions/_long-lived-con
 
 # Connection Lifecycle
 
-Pomerium enables proxying of HTTP and TCP connections, uniformly applying [access policies](/docs/capabilities/authorization) across these connections.
+Pomerium enables proxying of HTTP, TCP, and UDP traffic, uniformly applying [access policies](/docs/capabilities/authorization) across the routed traffic.
 
 The primary focus of this document is the management of transport layer connections in Pomerium, particularly HTTP requests.
 
-## HTTP and TCP connection lifecyle
+## HTTP connection lifecyle
+
+TCP and UDP traffic is tunneled over HTTP, so let's focus on the HTTP connection lifecycle.
 
 ### 1. **Downstream connection and TLS termination**
 
-A client, usually a web browser, initiates a connection to Pomerium.
-
-- This connection can be HTTP/1.1 or HTTP/2.
+- A client, usually a web browser, [Pomerium CLI](/docs/clients/pomerium-cli), or [Pomerium Desktop App](/docs/clients/pomerium-desktop), initiates a connection to Pomerium. This connection can be HTTP/1.1, HTTP/2, or HTTP/3.
 
 :::tip **Note**
 
-Pomerium currently does not support QUIC or HTTP/3 transports. Most modern browsers default to HTTP/2 connections for significant performance benefits. In rare circumstances, you may need to force HTTP/1.1 using the [`codec_type`](/docs/reference/codec-type) parameter.
+HTTP/2 and HTTP/1.1 are allowed by default, with most modern browsers defaulting to HTTP/2.
+
+HTTP/3 can be enabled by setting the [`codec_type`](/docs/reference/codec-type) parameter. This is recommended when proxying UDP traffic.
+
+In rare circumstances, you may need to force HTTP/1.1 using the [`codec_type`](/docs/reference/codec-type) parameter.
 
 :::
 
@@ -34,7 +38,7 @@ Pomerium currently does not support QUIC or HTTP/3 transports. Most modern brows
 
 ### 2. **Request initiation**
 
-After the transport layer connection is established, the downstream client sends an HTTP request. The proxy parses this request, matches it against the configuration, and determines the upstream service to which the request should be forwarded.
+After TLS handshakes are complete, the downstream client sends an HTTP request. The proxy parses this request, matches it against the configured routes, and determines the upstream service to which the request should be forwarded.
 
 ### 3. **Request authorization**
 
