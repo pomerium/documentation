@@ -1,0 +1,392 @@
+---
+# cSpell:ignore interconnectivity
+
+id: clusters
+title: Clusters
+description: This document describes Clusters in Pomerium Zero.
+keywords: [clusters, pomerium zero]
+sidebar_label: Clusters
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Clusters in Pomerium Zero
+
+This document provides an overview of Clusters in Pomerium Zero.
+
+## Overview
+
+When you install Pomerium Zero, you get your own **Cluster**. A cluster consists of one or more replicas of [Pomerium Core](/docs/deploy/core), the primary server component that secures your services. Clusters are deployed locally and managed through Pomerium Zero's hosted control plane.
+
+## Why clusters?
+
+A cluster model reduces the complexity of managing Pomerium: All of a cluster's configuration, including settings, routes, policies, and certificates, are managed from a central control plane hosted in the Pomerium Zero cloud. This allows you to manage multiple isolated Pomerium Core deployments, each with its own configuration.
+
+Configuration changes applied in the hosted control plane are communicated over a streaming connection to your local cluster. Each cluster is connected to its own storage backend, which synchronizes state across replicas.
+
+    ![A diagram depicting how clusters communicate with the Zero Console](./img/clusters/clusters-architecture.png)
+
+Each replica runs Pomerium Core in an all-in-one mode, meaning the services that comprise Core are deployed together and share session state. Similarly, replicas communicate with each other to synchronize state across a cluster. The interconnectivity between replicas enables you to horizontally scale your cluster to support multiple workloads and higher availability.
+
+This model affords the following benefits:
+
+- Simplified configuration
+- Enhanced data privacy
+- Improved scalability
+
+## Cluster benefits
+
+### Simplified configuration
+
+Cluster configuration is fully managed in Pomerium Zero. Configuration changes applied in Pomerium Zero are fetched and applied locally by your cluster.
+
+This model ensures that:
+
+- Your cluster remains synchronized with Pomerium Zero as changes are applied
+- You don't have to manage cluster configuration files or environment variables
+- Pomerium Zero persists your cluster's last-known configuration
+
+### Enhanced data privacy
+
+Pomerium can't monitor your organization's traffic or collect private user data. However, Pomerium does need to store configuration details required to maintain the hosted control plane.
+
+Pomerium also stores deployment and configuration details required to control access to your services, such as routes, policies, TLS certificates, and sensitive encrypted data when appropriate.
+
+### Improved scalability
+
+Replicas within a cluster synchronize records over a streaming connection, which keeps the cluster abreast of configuration changes. In this way, you can deploy multiple replicas to meet the needs of your infrastructure and organization.
+
+See [**Persistence and scalability**](#persistence-and-scalability) below for more information.
+
+## Deploy your cluster
+
+### Cluster token
+
+When you deploy a cluster in Pomerium Zero, a **Cluster Token** is generated for you. The cluster token environment variable instructs Pomerium to run in a special "Zero-managed" mode, wherein your cluster connects to the Pomerium Zero cloud.
+
+You can generate a new cluster token at any time. See the [**Rotate cluster token**](#rotate-cluster-token) steps below for more information.
+
+#### Rotate cluster token
+
+A cluster token does not have a set expiration time. However, you may want to rotate the cluster token for security reasons. For example:
+
+- A cluster token was accidentally exposed
+- You may lose track of the existing token, and want a new one
+
+:::caution
+
+Rotating the cluster token invalidates the current token, and shuts your cluster down.
+
+:::
+
+To rotate your cluster token:
+
+<Tabs>
+<TabItem label="Zero Console" value="zero-console">
+
+1. From the navigation bar, select **Manage Clusters**
+1. Under **Actions**, select **Rotate Token**
+1. In the confirmation modal, select **Confirm**
+1. Copy the token value and store it somewhere safe
+
+![Rotating the cluster token in the Zero Console](./img/clusters/update-cluster-token.png)
+
+</TabItem>
+<TabItem label="Zero API" value="zero-api">
+
+Send a `POST` request to the `/token` endpoint:
+
+```curl
+curl 'https://console.pomerium.app/api/v0/organizations/{organizationId}/clusters/{clusterId}/token' \
+--header 'Authorization: Bearer {ID-TOKEN}'
+```
+
+You'll receive a response with a new cluster `refreshToken`:
+
+```json
+{
+  "refreshToken": "token"
+}
+```
+
+</TabItem>
+</Tabs>
+
+After rotating the cluster token, you must pass it into your configuration and run Pomerium. See the steps below for your deployment environment.
+
+<Tabs>
+<TabItem value="linux" label="Linux">
+
+In the shell script below, replace `<cluster_token>` with your new cluster token before running the command:
+
+```bash
+curl https://console.pomerium.app/install.bash | env POMERIUM_ZERO_TOKEN=<cluster_token> bash -s install
+```
+
+</TabItem>
+<TabItem value="docker" label="Docker">
+
+1. In your `docker-compose.yaml` file, replace `<CLUSTER_TOKEN>` with your new token:
+
+```yaml title="docker-compose.yaml" {8} showLineNumbers
+services:
+  pomerium:
+    image: pomerium/pomerium:latest
+    ports:
+      - 443:443
+    restart: always
+    environment:
+      POMERIUM_ZERO_TOKEN: <CLUSTER_TOKEN>
+      XDG_CACHE_HOME: /var/cache
+    volumes:
+      - pomerium-cache:/var/cache
+    networks:
+      main: {}
+
+networks:
+  main: {}
+
+volumes:
+  pomerium-cache:
+```
+
+1. Run `docker compose up -d`
+
+</TabItem>
+<TabItem value="kubernetes" label="Kubernetes">
+
+1. Run the following command, replacing `cluster_token` with your new cluster token:
+
+```bash
+$ export POMERIUM_ZERO_TOKEN=<cluster_token>
+```
+
+1. Then, to write the new cluster token to the Kubernetes secret, run:
+
+```bash
+kubectl -n pomerium patch secret pomerium-zero-token -p "{\"stringData\":{\"pomerium_zero_token\":\"${POMERIUM_ZERO_TOKEN}\"}}"
+```
+
+</TabItem>
+</Tabs>
+
+### Detected and Override IP Address
+
+When you first deploy a cluster, it connects itself to the Pomerium Zero cloud, and Pomerium Zero automatically assigns the cluster a unique [**Starter Domain**](#starter-domain). During this process, Pomerium Zero attempts to detect the cluster's outbound IP address to connect to it.
+
+Once Pomerium Zero successfully connects to the cluster's **Detected IP Address**, it sets A (IPv4) or AAAA (IPv6) records for the starter domain. Depending on your environment, the detected IP address may not be reachable by you, the end-user. This could be the case if, for example, you're running a cluster:
+
+- Locally from your laptop behind a NAT-enabled router
+- Inside a corporate intranet
+- Behind a firewall
+- In a Kubernetes server where the ingress load balancer IP address doesn't match the egress IP address
+
+In such cases, you may see one of the following errors:
+
+- `ERR_CONNECTION_REFUSED`
+- `DNS_PROBE_FINISHED_NXDOMAIN` (when accessing a route)
+
+The `ERR_CONNECTION_REFUSED` error means that your cluster is running, but Pomerium Zero can't reach it with the detected IP address. The `DNS_PROBE_FINISHED_NXDOMAIN` error means that there is no DNS record available for the domain. This could mean that the domain name changes haven't finished propagating yet, or that the cluster never connected to Pomerium Zero because the IP address couldn't be detected.
+
+As a workaround, we've provided the **Override IP Address** field, which allows you to manually set the IP address so that Pomerium Zero can connect to your cluster.
+
+![Manually setting the cluster IP address in the Zero Console](./img/clusters/cluster-ip-address-settings.png)
+
+## Manage cluster configuration
+
+### Starter domain
+
+Pomerium Zero generates and assigns a unique **Starter Domain** to your cluster. A starter domain is a randomly generated domain name that follows this format:
+
+`<CLUSTER-SUBDOMAIN-XXXX>.pomerium.app`
+
+For example: `voracious-ape-1578.pomerium.app`
+
+The starter domain comes with its own DNS records and TLS certificates so you can quickly test Pomerium Zero before adding your own custom domain.
+
+:::info Add Custom Domain
+
+See the [**Custom Domains**](/docs/capabilities/custom-domains) page for more information on how to add custom domains to a cluster.
+
+:::
+
+### Cluster name
+
+The **Cluster Name** is a customizable identifier for your cluster. It defaults to the randomly generated subdomain of your cluster domain, but you can change it at any time. Changing the cluster name does not affect your starter domain.
+
+If you want to change the cluster name, you can update it in your cluster settings:
+
+1. From the navigation bar dropdown, select **Manage Clusters**
+1. Under **Actions**, select the **edit** icon
+1. In the **Cluster Name** field, enter your preferred cluster name
+1. Save your changes and apply the changeset
+
+![Viewing the new cluster name in the Zero Console](./img/clusters/cluster-name-table.png)
+
+### Routes, policies, and certificates
+
+Routes and policies defined in a cluster are scoped only to that cluster, and are not available in other clusters.
+
+Pomerium Zero automatically provisions and renews wildcard TLS certificates issued by ZeroSSL for each cluster. Like routes and policies, certificates are scoped to a cluster and are not available in other clusters.
+
+:::info
+
+To learn more about routing, policies, and certificates in Pomerium, see the following docs:
+
+- [**Routing**](/docs/capabilities/routing)
+- [**Policy Language**](/docs/internals/ppl)
+- [**Certificates**](/docs/reference/certificates)
+
+:::
+
+## Persistence and scalability
+
+### Persistence
+
+By default, Pomerium uses an in-memory storage backend to synchronize a cluster's configuration and session state. This is suitable for test environments, but not for production. In the event of a service outage, your cluster can't fetch its configuration from the cloud, so it can't serve traffic.
+
+To avoid service outages, we recommend that you deploy a PostgreSQL database to persist your cluster's configuration state. Since all replicas share the same storage connection, the database will persist cluster state if a replica restarts due to a service outage.
+
+To configure a database connection in Pomerium Zero:
+
+1. Select **Settings**
+1. Go to the **General** tab
+1. Enter the connection string in the [**Databroker Storage Connection String**](/docs/reference/databroker#databroker-storage-connection-string) field
+
+![Entering the databroker storage connection string in the Zero Console](./img/clusters/zero-databroker-connection-string.png)
+
+### Replicas
+
+To deploy a replica, run the Pomerium Zero installation script using the same [cluster token](#cluster-token) you used to deploy your cluster. This will generate another replica, which you can verify on the [**Status**](https://console.pomerium.app/app/reports/status) page.
+
+:::note
+
+Replicas left inactive for over 24 hours will not appear on the Status page.
+
+:::
+
+![Reviewing Replica status in the Zero Console](./img/clusters/replica-status.png)
+
+## Cluster Status / Troubleshooting
+
+The [Status](https://console.pomerium.app/app/reports/status) page of the Zero Console displays notifications and alerts regarding the health of a cluster. If you see an alert in the Status page, it means something may be wrong with your cluster and you should take steps to resolve it.
+
+We've addressed all the cluster status alerts below. Refer to the relevant alert to learn how to fix it.
+
+### Certificates are expired or invalid {#certificates_current}
+
+This cluster status alert inspects a cluster's certificates to see if they expire within 10 days. It runs daily, and every time the cluster configuration is updated.
+
+**What causes this alert**:
+
+- If your cluster uses managed certificates provisioned by Pomerium, then this error is a bug. Please [contact support](https://discuss.pomerium.com/).
+- If you manually uploaded your own custom certificate, then you must upload a new certificate.
+
+**Steps to resolve**: Upload a valid certificate, or allow Pomerium to automate certificate management for you by adding a [Custom Domain](/docs/capabilities/custom-domains).
+
+### Hostnames do not have matching certificates {#certificates_match_hostnames}
+
+This cluster status alert ensures that all the hostnames available in a cluster's configuration have matching certificates. It runs every time the cluster configuration is updated.
+
+**What causes this alert**: Either the [From URL](/docs/reference/routes/from) in a route block is incorrect, or the certificate is missing.
+
+**Steps to resolve**: Make sure all [From URLs](/docs/reference/routes/from) are correct, and that the hostnames have matching certificates.
+
+:::info
+
+For more information on certificates in Pomerium, see the following pages:
+
+- [**Certificates**](/docs/internals/certificates-and-tls)
+- [**Certificates reference**](/docs/reference/certificates)
+
+:::
+
+### Cluster configuration is not current {#cluster_config_current}
+
+This cluster status alert makes sure the cluster is running the latest changeset. It runs daily to check for the latest configuration, or every time the cluster configuration is updated.
+
+**What causes this alert**: This cluster status alert may indicate cluster connectivity issues. Specifically, Pomerium Zero can't connect to the cluster to apply the latest changeset to its configuration.
+
+**Steps to resolve**: Restart the cluster. If that doesn't resolve the issue, please [contact support](https://discuss.pomerium.com/).
+
+### Cluster version is not current {#cluster_version_current}
+
+This cluster status alert makes sure the cluster replica is running the latest release. It runs daily.
+
+**What causes this alert**: The replica is not running the latest version of Pomerium Zero.
+
+**Steps to resolve**: Update your Pomerium Zero cluster configuration to run the latest version of Pomerium.
+
+### Cluster using an in-memory storage backend {#persistent_backend}
+
+This cluster status alert throws an error if it detects a cluster isn't connected to a persistent storage backend. It runs every time the cluster configuration is updated.
+
+**What causes this alert**:
+
+By default, a cluster uses an in-memory storage backend to synchronize replicas. This does not persist your configuration. For production environments, we recommend connecting each cluster instance to its own dedicated PostgreSQL database. See the [**Persistence**](/docs/internals/data-storage#backends) page for instructions.
+
+**Steps to resolve**: See the [**Databroker Storage Connection String**](/docs/reference/databroker#databroker-storage-connection-string) reference page to learn how to connect to a database instance in Pomerium.
+
+### Incompatible configuration {#config.databroker.build}
+
+This cluster status alert looks for configuration incompatibilities in a replica. It runs every time the cluster configuration is updated.
+
+**What causes this alert**: This is caused by a version incompatibility in the cluster configuration. For example, you somehow apply a configuration change that isn't compatible with your version of Pomerium Zero.
+
+**Steps to resolve**: If you see this warning, please [contact support](https://discuss.pomerium.com/).
+
+### Cluster can't communicate with the storage backend {#storage.backend}
+
+This cluster status alert monitors the connection to a PostgreSQL database. It runs every time the cluster configuration is updated.
+
+**What causes this alert**: Pomerium can't connect to your PostgreSQL database.
+
+**Steps to resolve**: Check the parameters of your [**Databroker Storage Connection String**](/docs/reference/databroker#databroker-storage-connection-string).
+
+### There's an issue with cluster configuration {#xds.cluster}
+
+This cluster status alert tells you if Envoy accepted the cluster configuration or not after a configuration update.
+
+**What causes this alert**: If you see this warning, please [contact support](https://discuss.pomerium.com/).
+
+### There's an issue with the network listener {#xds.listener}
+
+This cluster status alert makes sure the network listener is configured correctly. It runs every time the cluster configuration is updated.
+
+**What causes this alert**: Typically, this error is caused when Pomerium's network listener can't bind to the cluster's port. The error may also be the result of a non-root process with insufficient permissions attempting to bind to a privileged port.
+
+**Steps to resolve**:
+
+- If this is a port binding error, you may need to kill a process running on that port or specify a port to bind to.
+- If this is a permissions issue, you may need to add the `CAP_NET_BIND_SERVICE` capability to the process.
+
+### There's an issue with the route configuration {#xds.route-configuration}
+
+This cluster status alert verifies the route configuration. It runs every time the cluster configuration is updated.
+
+**What causes this alert**: A route misconfiguration in a cluster.
+
+**Steps to resolve**: If you see this warning, it's likely a problem with Pomerium. Please [contact support](https://discuss.pomerium.com/).
+
+### There's an issue with the configuration {#xds.other}
+
+This cluster status alert monitors [xDS](https://www.envoyproxy.io/docs/envoy/latest/api-docs/xds_protocol) issues in a replica. It runs every time the cluster configuration is updated.
+
+**What causes this alert**: If you see this warning, it's likely a problem with Pomerium. Please [contact support](https://discuss.pomerium.com/).
+
+### Pomerium can't write some of its cache files {#zero.bootstrap-config.save}
+
+This cluster status alert makes sure Pomerium can persist a replica's bootstrap configuration. It runs when you start a cluster, or every time the cluster configuration is updated.
+
+**What causes this alert**: Pomerium doesn't have sufficient permissions to read from a replica's configuration file.
+
+**Steps to resolve**: Check your file permissions to make sure Pomerium has read access.
+
+### Cluster connectivity issues with the cloud {#zero.connect}
+
+This cluster status alert monitors the connection between the Pomerium Zero cloud and a cluster. It maintains a consistent streaming connection.
+
+**What causes this alert**: Connectivity issues between Pomerium Zero and a cluster.
+
+**Steps to resolve**: You may experience this issue if you're accessing Pomerium Zero behind a firewall. Check your firewall settings to make sure it allows HTTP and HTTPS traffic.

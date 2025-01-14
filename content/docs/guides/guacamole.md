@@ -29,12 +29,12 @@ This guide provides steps to secure access to the Guacamole gateway behind Pomer
 
 To complete this guide, you need:
 
-- [Pomerium Core](/docs/core)
+- [Pomerium Core](/docs/deploy/core)
 - [Docker](https://docs.docker.com/install/) and [Docker Compose](https://docs.docker.com/compose/install/)
 
 :::note
 
-This guide uses the [Hosted Authenticate Service](/docs/capabilities/hosted-authenticate-service.md), which provides its own hosted identity provider and authenticate service URL. If you prefer to configure your own identity provider, see [Self-Hosted Authenticate Service](/docs/capabilities/self-hosted-authenticate-service).
+This guide uses the [Hosted Authenticate Service](/docs/capabilities/authentication), which provides its own hosted identity provider and authenticate service URL. If you prefer to configure your own identity provider, see [Self-Hosted Authenticate Service](/docs/capabilities/authentication).
 
 :::
 
@@ -122,7 +122,7 @@ In your Docker Compose file, replace `nginx` with Pomerium Core:
 
    ```yaml showLineNumbers
    pomerium:
-     image: cr.pomerium.com/pomerium/pomerium:latest
+     image: pomerium.com/pomerium/pomerium:latest
      # highlight-start
      # Mount your config file
      volumes:

@@ -32,7 +32,7 @@ import Tabs from '@theme/Tabs'; import TabItem from '@theme/TabItem'; import Pom
 
 Pomerium's service URL settings control how the different [Pomerium services](/docs/internals/architecture#component-level) communicate with each other.
 
-The [authenticate service URL](#authenticate-service-url) setting also controls whether Pomerium will run its own authenticate service or use the [Hosted Authenticate Service](/docs/capabilities/hosted-authenticate-service).
+The [authenticate service URL](#authenticate-service-url) setting also controls whether Pomerium will run its own authenticate service or use the [Hosted Authenticate Service](/docs/capabilities/authentication).
 
 The other service URL settings are needed only for split service deployments. When running in all-in-one mode (which is the recommended mode), these settings are not needed.
 
@@ -40,9 +40,9 @@ The other service URL settings are needed only for split service deployments. Wh
 
 The **Authenticate Service URL** setting defines the externally accessible URL where Pomerium redirects end users (clients) to authenticate against an identity provider.
 
-If not set, Pomerium will use the [Hosted Authenticate Service](/docs/capabilities/hosted-authenticate-service).
+If not set, Pomerium will use the [Hosted Authenticate Service](/docs/capabilities/authentication).
 
-If you prefer to use your own [identity provider](/docs/identity-providers), you'll need to set an authenticate service URL, and you will need this URL when configuring your identity provider client's OAuth callback URL.
+If you prefer to use your own [identity provider](/docs/integrations/user-identity/identity-providers), you'll need to set an authenticate service URL, and you will need this URL when configuring your identity provider client's OAuth callback URL.
 
 If Pomerium is running in [split-service mode](/docs/internals/configuration#all-in-one-vs-split-service-mode), each Pomerium service requires the authenticate service URL in its configuration.
 
@@ -79,9 +79,9 @@ AUTHENTICATE_SERVICE_URL=https://authenticate.corp.example.com
 </TabItem>
 <TabItem value="Kubernetes" label="Kubernetes">
 
-| **[Parameter name](/docs/k8s/reference#spec** | **Type** | **Usage**    |
-| :-------------------------------------------- | :------- | :----------- |
-| `authenticate.url`                            | `URL`    | **optional** |
+| **[Parameter name](/docs/deploy/k8s/reference#spec** | **Type** | **Usage** |
+| :-- | :-- | :-- |
+| `authenticate.url` | `URL` | **optional** |
 
 ### Examples
 
@@ -90,14 +90,14 @@ authenticate:
   url: https://authenticate.corp.example.com
 ```
 
-See the [Kubernetes - Global Configuration](/docs/k8s/configure#authenticate-endpoint) for more information.
+See the [Kubernetes - Global Configuration](/docs/deploy/k8s/configure#authenticate-endpoint) for more information.
 
 </TabItem>
 </Tabs>
 
 ## Authenticate Internal Service URL
 
-The **Authenticate Internal Service URL** setting is only required for split-service mode deployments where Pomerium can’t access the public Authenticate Service URL.
+The **Authenticate Internal Service URL** setting is only required for split-service mode deployments where Pomerium can't access the public Authenticate Service URL.
 
 If set, the Authenticate Internal Service URL will be used for communication between other Pomerium services and the authenticate service.
 
@@ -110,7 +110,7 @@ If set, the Authenticate Internal Service URL will be used for communication bet
 | :-- | :-- | :-- | :-- |
 | `authenticate_internal_service_url` | `AUTHENTICATE_INTERNAL_SERVICE_URL` | `URL` | \***optional** |
 
-\* Excluding the `authenticate_internal_service_url` defaults to the [hosted authenticated service](/docs/capabilities/hosted-authenticate-service) if `authenticate_service_url` isn't defined.
+\* Excluding the `authenticate_internal_service_url` defaults to the [hosted authenticated service](/docs/capabilities/authentication) if `authenticate_service_url` isn't defined.
 
 ### Examples
 
@@ -186,7 +186,7 @@ The `authorize_service_url` is not customizable in all-in-one mode with the CRD
 
 ## Authorize Internal Service URL
 
-The **Authorize Internal Service URL** setting is only required for split-service mode deployments where Pomerium can’t access the public Authorize Service URL.
+The **Authorize Internal Service URL** setting is only required for split-service mode deployments where Pomerium can't access the public Authorize Service URL.
 
 If included, Authorize Internal Service URL will override Authorize Service URL.
 

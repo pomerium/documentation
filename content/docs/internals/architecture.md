@@ -23,9 +23,9 @@ The following steps outline how the Proxy service handles a request at a high le
 
 1. The client makes a request to access the target resource
 1. The Proxy service receives the request and sends a gRPC call to the Authorization service, which evaluates policy
-1. If the Authorization service doesn’t see a session cookie, the Proxy service redirects the request to the Authentication service to verify the client’s identity
-1. After the Authentication service verifies the client’s identity and saves a local session cookie, the Proxy service sends the session data to the Databroker service over a gRPC call
-1. Before redirecting the client to the target resource, the Proxy service checks permissions with the Authorization service, then maps a route based on the internal and external routes defined in the route’s policy
+1. If the Authorization service doesn't see a session cookie, the Proxy service redirects the request to the Authentication service to verify the client's identity
+1. After the Authentication service verifies the client's identity and saves a local session cookie, the Proxy service sends the session data to the Databroker service over a gRPC call
+1. Before redirecting the client to the target resource, the Proxy service checks permissions with the Authorization service, then maps a route based on the internal and external routes defined in the route's policy
 
 ### Authentication service
 
@@ -44,7 +44,7 @@ The Authorization service processes policies to determine what permissions the c
 
 When the Authorization service receives a request from the Proxy service, the following actions take place:
 
-1. The Authorization service first looks for a session cookie, which contains the client’s JWT. If no session cookie is present, the Authorization service returns a redirect response, prompting the browser to authenticate through the Authentication service to establish session identity.
+1. The Authorization service first looks for a session cookie, which contains the client's JWT. If no session cookie is present, the Authorization service returns a redirect response, prompting the browser to authenticate through the Authentication service to establish session identity.
 1. Once a session cookie is in place, the Proxy service makes a gRPC call to the Authorization service so it can determine permissions based on JWT claims and policy.
 1. The Authorization service then constructs security headers based on JWT claims, which the Proxy service forwards to upstream applications.
 1. With each subsequent request, the Authorization service employs on-demand caching to query the Databroker service for updates to session state.
@@ -53,7 +53,7 @@ When the Authorization service receives a request from the Proxy service, the fo
 
 The Databroker service persists session and identity-related data. It also functions as an identity manager in that it's responsible for refreshing user sessions against the IdP until a Pomerium session has expired.
 
-The points below outline the Databroker’s role in the request and session lifecycle:
+The points below outline the Databroker's role in the request and session lifecycle:
 
 - Once a client is authenticated, the Proxy server makes a gRPC call to the Databroker to persist session data and identity information.
 - The Authorization service queries the Databroker on-demand to keep the two services in sync.

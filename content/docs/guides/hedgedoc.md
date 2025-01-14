@@ -32,7 +32,7 @@ To complete this guide, you need:
 
 :::note
 
-If you completed our [**Quickstart guide**](/docs/quickstart), you should have a working Pomerium project with the following YAML files:
+If you completed our [**Quickstart guide**](/docs/get-started/quickstart), you should have a working Pomerium project with the following YAML files:
 
 - `config.yaml`
 - `docker-compose.yaml`
@@ -97,7 +97,7 @@ In your `docker-compose.yaml` file, add the following services:
 ```yaml
 services:
   pomerium:
-    image: cr.pomerium.com/pomerium/pomerium:latest
+    image: pomerium.com/pomerium/pomerium:latest
     volumes:
       # Mount your certificates
       - ./_wildcard.localhost.pomerium.io.pem:/pomerium/cert.pem:ro

@@ -27,7 +27,7 @@ This reference covers all of Pomerium's TLS route settings:
 
 If specified, Pomerium will present this client certificate to upstream services when requested to enforce [mutual authentication](https://en.wikipedia.org/wiki/Mutual_authentication) (mTLS).
 
-For more details, see our [mTLS example repository](https://github.com/pomerium/pomerium/tree/main/examples/mutual-tls) and the [Upstream mTLS With Pomerium](/docs/capabilities/mtls-services) guide.
+For more details, see our [mTLS example repository](https://github.com/pomerium/pomerium/tree/main/examples/mutual-tls) and the [Upstream mTLS With Pomerium](/docs/internals/certificates-and-tls) guide.
 
 ### How to configure {#how-to-configure-tls-client-certificate}
 
@@ -60,7 +60,7 @@ Set the **TLS Client Certificate** under **TLS Settings** in the Console:
 </TabItem>
 <TabItem value="Kubernetes" label="Kubernetes">
 
-See Kubernetes [TLS Certificates](/docs/k8s/ingress#tls-certificates) for more information
+See Kubernetes [TLS Certificates](/docs/deploy/k8s/ingress#tls-certificates) for more information
 
 </TabItem>
 </Tabs>
@@ -97,7 +97,7 @@ Set **TLS Custom Certificate Authority** in the Console:
 </TabItem>
 <TabItem value="Kubernetes" label="Kubernetes">
 
-See Kubernetes [TLS Certificates](/docs/k8s/ingress#tls-certificates) for more information
+See Kubernetes [TLS Certificates](/docs/deploy/k8s/ingress#tls-certificates) for more information
 
 </TabItem>
 </Tabs>
@@ -110,7 +110,7 @@ This setting is deprecated, and will be removed in a future release.
 
 If you previously used this setting to require client certificates only on certain routes, you can achieve this same behavior by setting the new downstream mTLS [**Enforcement Mode**](/docs/reference/downstream-mtls-settings#enforcement-mode) option to the value `policy` and adding a policy deny rule with the `invalid_client_certificate` criterion on all routes that should require client certificates.
 
-If you want to enforce an allowlist or denylist of specific certificates on a particular route, you can use the new [`client_certificate`](/docs/capabilities/ppl#certificate-matcher) policy criterion.
+If you want to enforce an allowlist or denylist of specific certificates on a particular route, you can use the new [`client_certificate`](/docs/internals/ppl#certificate-matcher) policy criterion.
 
 If you do need to set completely different trusted client CAs for different routes, we recommend running separate Pomerium clusters for each set of trusted client CAs.
 
@@ -118,7 +118,7 @@ If you do need to set completely different trusted client CAs for different rout
 
 If specified, downstream clients (like a user's browser) will be required to provide a valid client TLS certificate. This overrides the global `downstream_mtls.ca` option for this route.
 
-See [Client-Side mTLS With Pomerium](/docs/concepts/mutual-auth.md) for more information.
+See [Client-Side mTLS With Pomerium](/docs/internals/mutual-auth.md) for more information.
 
 ### How to configure {#how-to-configure-tls-downstream-client-certificate-authority}
 
@@ -146,7 +146,7 @@ Set **TLS Downstream Client CA** in the Console:
 </TabItem>
 <TabItem value="Kubernetes" label="Kubernetes">
 
-See Kubernetes [TLS Certificates](/docs/k8s/ingress#tls-certificates) for more information
+See Kubernetes [TLS Certificates](/docs/deploy/k8s/ingress#tls-certificates) for more information
 
 </TabItem>
 </Tabs>
@@ -212,7 +212,7 @@ Enable **TLS Skip Verify** in the Console:
 </TabItem>
 <TabItem value="Kubernetes" label="Kubernetes">
 
-| **[Annotation name](/docs/k8s/ingress#set-ingress-annotations)** | **Type** | **Default** |
+| **[Annotation name](/docs/deploy/k8s/ingress#set-ingress-annotations)** | **Type** | **Default** |
 | :-- | :-- | :-- |
 | `tls_skip_verify` | `boolean` | `false` |
 
@@ -231,7 +231,7 @@ ingress.pomerium.io/tls_skip_verify: 'true'
 
 :::warning
 
-TLS renegotiation is considered insecure and shouldn’t be used unless absolutely necessary.
+TLS renegotiation is considered insecure and shouldn't be used unless absolutely necessary.
 
 :::
 

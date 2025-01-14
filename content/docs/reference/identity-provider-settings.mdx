@@ -23,23 +23,23 @@ This reference covers all of Pomerium's **Identity Provider Settings**:
 
 :::tip **Note:**
 
-Pomerium uses the [**Hosted Authenticate Service**](/docs/capabilities/hosted-authenticate-service) by default.
+Pomerium uses the [**Hosted Authenticate Service**](/docs/capabilities/authentication) by default.
 
-If you want to run Pomerium with a self-hosted authenticate service, include an [**identity provider**](/docs/identity-providers) and [**authenticate service URL**](/docs/reference/service-urls#authenticate-service-url) in your configuration.
+If you want to run Pomerium with a self-hosted authenticate service, include an [**identity provider**](/docs/integrations/user-identity/identity-providers) and [**authenticate service URL**](/docs/reference/service-urls#authenticate-service-url) in your configuration.
 
-See [**Self-Hosted Authenticate Service**](/docs/capabilities/self-hosted-authenticate-service) for more information.
+See [**Self-Hosted Authenticate Service**](/docs/capabilities/authentication) for more information.
 
 :::
 
 ## Supported identity providers {#supported-identity-providers}
 
-Pomerium supports all major single-sign on (SSO) identity providers. See the [identity providers](/docs/identity-providers) page for a list of supported SSO providers and guides to integrate each provider with Pomerium.
+Pomerium supports all major single-sign on (SSO) identity providers. See the [identity providers](/docs/integrations/user-identity/identity-providers) page for a list of supported SSO providers and guides to integrate each provider with Pomerium.
 
 Pomerium can also integrate with any identity provider that supports OAuth 2.0 and OIDC protocols.
 
 ## Identity Provider Client ID {#identity-provider-client-id}
 
-**Identity Provider Client ID** is the OAuth 2.0 Client Identifier retrieved from your identity provider. See your identity provider's documentation, and Pomerium's [identity provider](/docs/identity-providers/) docs for details.
+**Identity Provider Client ID** is the OAuth 2.0 Client Identifier retrieved from your identity provider. See your identity provider's documentation, and Pomerium's identity provider docs for details.
 
 ### How to configure {#identity-provider-client-id-how-to-configure}
 
@@ -70,14 +70,14 @@ Configure **Identity Provider Client ID** under **IDP Options** in the Console:
 </TabItem>
 <TabItem value="Kubernetes" label="Kubernetes">
 
-See [`identityProvider.secret`](/docs/k8s/reference#identityprovider)
+See [`identityProvider.secret`](/docs/deploy/k8s/reference#identityprovider)
 
 </TabItem>
 </Tabs>
 
 ## Identity Provider Client Secret {#identity-provider-client-secret}
 
-**Identity Provider Client Secret** is the OAuth 2.0 Secret Identifier retrieved from your identity provider. See your identity provider's documentation, and Pomerium's [identity provider](/docs/identity-providers/) docs for details.
+**Identity Provider Client Secret** is the OAuth 2.0 Secret Identifier retrieved from your identity provider. See your identity provider's documentation, and Pomerium's identity provider docs for details.
 
 ### How to configure {#identity-provider-client-secret-how-to-configure}
 
@@ -108,14 +108,14 @@ Configure **Identity Provider Client Secret** under **IDP Settings** in the Cons
 </TabItem>
 <TabItem value="Kubernetes" label="Kubernetes">
 
-See [`identityProvider.secret`](/docs/k8s/reference#identityprovider) for more information
+See [`identityProvider.secret`](/docs/deploy/k8s/reference#identityprovider) for more information
 
 </TabItem>
 </Tabs>
 
 ## Identity Provider Client Secret File {#identity-provider-client-secret-file}
 
-**Identity Provider Client Secret File** is the OAuth 2.0 Secret Identifier retrieved from your identity provider. See your identity provider's documentation, and Pomerium's [identity provider](/docs/identity-providers/) docs for details.
+**Identity Provider Client Secret File** is the OAuth 2.0 Secret Identifier retrieved from your identity provider. See your identity provider's documentation, and Pomerium's identity provider docs for details.
 
 The identity provider client secret file points to a file containing the secret. This is useful when deploying in environments that provide secret management like [Docker Swarm](https://docs.docker.com/engine/swarm/secrets/).
 
@@ -146,7 +146,7 @@ IDP_CLIENT_SECRET_FILE='/run/secrets/POMERIUM_CLIENT_SECRET'
 </TabItem>
 <TabItem value="Kubernetes" label="Kubernetes">
 
-See [`identityProvider.secret`](/docs/k8s/reference#identityprovider) for more information.
+See [`identityProvider.secret`](/docs/deploy/k8s/reference#identityprovider) for more information.
 
 </TabItem>
 </Tabs>
@@ -155,7 +155,7 @@ See [`identityProvider.secret`](/docs/k8s/reference#identityprovider) for more i
 
 **Identity Provider Name** is the short-hand name of a built-in OpenID Connect (OIDC) identity provider used for authentication.
 
-See [identity provider](/docs/identity-providers/) for details.
+See identity provider for details.
 
 The supported values for this setting are:
 
@@ -178,7 +178,7 @@ The supported values for this setting are:
 
 | **Config file keys** | **Environment variables** | **Type** | **Usage** |
 | :-- | :-- | :-- | :-- |
-| `idp_provider` | `IDP_PROVIDER` | `string` | **required** (if [self-hosting](/docs/capabilities/self-hosted-authenticate-service)) |
+| `idp_provider` | `IDP_PROVIDER` | `string` | **required** (if [self-hosting](/docs/capabilities/authentication)) |
 
 #### Examples {#identity-provider-name-examples}
 
@@ -200,7 +200,7 @@ Set **Identity Provider Name** under the **Identity Provider** options in the Co
 </TabItem>
 <TabItem value="Kubernetes" label="Kubernetes">
 
-See [`identityProvider.provider`](/docs/k8s/reference#identityprovider) for more information
+See [`identityProvider.provider`](/docs/deploy/k8s/reference#identityprovider) for more information
 
 </TabItem>
 </Tabs>
@@ -241,7 +241,7 @@ Configure **Identity Provider Request Params** under **Authenticate** settings i
 </TabItem>
 <TabItem value="Kubernetes" label="Kubernetes">
 
-See Kubernetes [`identityProvider.requestParams` and `identityProvider.requestParamsSecret`](/docs/k8s/reference#identityprovider) for more information
+See Kubernetes [`identityProvider.requestParams` and `identityProvider.requestParamsSecret`](/docs/deploy/k8s/reference#identityprovider) for more information
 
 </TabItem>
 </Tabs>
@@ -312,7 +312,7 @@ Configure **Identity Provider Scopes** under **Authenticate** settings in the Co
 </TabItem>
 <TabItem value="Kubernetes" label="Kubernetes">
 
-See Kubernetes [`identityProvider.scopes`](/docs/k8s/reference#identityprovider) for more information
+See Kubernetes [`identityProvider.scopes`](/docs/deploy/k8s/reference#identityprovider) for more information
 
 </TabItem>
 </Tabs>
@@ -361,7 +361,7 @@ Set the **Identity Provider URL** under **IDP Options** settings in the Console:
 </TabItem>
 <TabItem value="Kubernetes" label="Kubernetes">
 
-See Kubernetes [`identityProvider.url`](/docs/k8s/reference#identityprovider) for more information
+See Kubernetes [`identityProvider.url`](/docs/deploy/k8s/reference#identityprovider) for more information
 
 </TabItem>
 </Tabs>

@@ -16,7 +16,7 @@ Just-In-Time (JIT) access is an approach to security where access to application
 
 ## Implementing Just-In-Time Access with Pomerium PPL
 
-The Pomerium Policy Language (PPL) supports time-limited access via the [`date`](/docs/capabilities/ppl#date-matcher) criterion. When coupled with a `user` or `email` criterion, users can be granted time-limited access:
+The Pomerium Policy Language (PPL) supports time-limited access via the [`date`](/docs/internals/ppl#date-matcher) criterion. When coupled with a `user` or `email` criterion, users can be granted time-limited access:
 
 ```yaml
 allow:

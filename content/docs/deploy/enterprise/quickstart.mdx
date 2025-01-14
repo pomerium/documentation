@@ -1,0 +1,104 @@
+---
+# cSpell:ignore pygpgme makecache disablerepo enablerepo
+
+title: Run Pomerium Enterprise With Docker
+sidebar_label: Quickstart
+description: Demo Pomerium Enterprise
+sidebar_position: 1
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import HostedConfig from '/content/examples/enterprise/hosted-auth-config.yaml.md';
+import HostedCompose from '/content/examples/enterprise/hosted-auth-docker.yaml.md';
+
+# Run Pomerium Enterprise With Docker
+
+Run Pomerium Enterprise with Docker containers and connect to the Console.
+
+This guide uses our [**Hosted Authenticate Service**](/docs/capabilities/authentication). If you use our hosted service and have a license key, you can complete this guide in **under 5 minutes**.
+
+See the [Self-Hosted Authenticate Service](/docs/capabilities/authentication) page if you want to self-host Pomerium.
+
+## Prerequisites
+
+To complete this guide, you need:
+
+- [Pomerium Core](/docs/get-started/quickstart)
+- [Docker](https://docs.docker.com/get-docker/) and [Docker Compose](https://docs.docker.com/compose/install/)
+
+:::note
+
+This guide assumes you've already registered for Pomerium Enterprise and have credentials to access the private **Cloudsmith.io** Docker registry, and a **license key**. If you haven't registered for Pomerium Enterprise, [sign up here](https://www.pomerium.com/enterprise-sales/) for a free trial. Then, follow the steps below to install the Enterprise Console with Docker.
+
+<details>
+  <summary>Install Pomerium Enterprise with Docker</summary>
+    <div>
+1. In your terminal, run the following command:
+
+```shell
+docker login docker.cloudsmith.io
+```
+
+2. Enter your <b>username</b> and <b>password</b>:
+
+```shell
+% docker login docker.cloudsmith.io
+Username: <username>
+Password: <password>
+```
+
+3. Pull a specific tagged release of the Pomerium Enterprise image:
+
+```shell
+docker pull docker.cloudsmith.io/pomerium/enterprise/pomerium-console:${vX.X.X}
+```
+
+   </div>
+</details>
+
+:::
+
+## Configure Pomerium Core
+
+If you haven't, create a file called `config.yaml` and add the following code:
+
+<HostedConfig />
+
+Replace `user@example.com` with your email address.
+
+## Configure Pomerium Enterprise Console
+
+Create a file called `console-config.yaml` and update the following values:
+
+```title="console-config.yaml"
+administrators: admin@example.com
+license_key: REPLACE_ME
+```
+
+You must configure at least one administrator for console access. This user (or users) can then configure additional administrators in the console UI.
+
+Multiple administrators are defined as a comma-separated string.
+
+## Configure Docker Compose services
+
+Create a file called `docker-compose.yaml` in your project's root folder and add the configuration below:
+
+<HostedCompose />
+
+Below are a few points to note about services running in `docker-compose.yaml`:
+
+- `pomerium_console` exposes ports `8701` and `9090`. In your `config.yaml` file, you define port `8701` in a route that connects to the Pomerium Enterprise Console. Port `9090` is the [default port](https://prometheus.io/docs/introduction/first_steps/#configuring-prometheus) used by Prometheus to scrape metrics.
+- The healthcheck parameter ensures the database is ready to receive requests. Without a healthcheck, other containers that depend on the database service (like Pomerium Console) will attempt to connect to the database before it is in a ready state, **which will crash the container**. (See the [Docker healthcheck](https://docs.docker.com/engine/reference/builder/#healthcheck) docs for more information.)
+
+## Connect to Pomerium Enterprise Console
+
+Run `docker compose up`.
+
+Go to `https://console.localhost.pomerium.io` to access your Console.
+
+## Next Steps
+
+If you want to try connecting Pomerium with other services, see some of our [Guides](/docs/guides).
+
+**Did you finish this quickstart guide?** We'd love to hear what you think. Get in touch with us on our [Discuss forum](https://discuss.pomerium.com/), message us on [Twitter](https://twitter.com/pomerium_io), [LinkedIn](https://www.linkedin.com/company/pomerium-inc), or check out our [Community](https://discuss.pomerium.com/) page.
