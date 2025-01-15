@@ -105,6 +105,37 @@ When attempting to initiate the auth flow, an error was encountered, which was r
 
 Clicking on the span that recorded the error will show the error message - we are missing a trailing slash in the issuer URL!
 
+### Tracing upstream applications
+
+If upstream applications also have OpenTelemetry support, traces will propagate through Pomerium to those applications and the combined trace data will be visible.
+
+#### Example: Grafana
+
+[Grafana](https://grafana.com/) is a good example of an upstream application that has tracing support and is easily integrated with Pomerium.
+
+The [Securing Grafana with Pomerium](../guides/grafana.mdx) guide can help you get started with a new Grafana deployment.
+
+To enable OpenTelemetry traces in Grafana, set the environment variable `GF_TRACING_OPENTELEMETRY_OTLP_ADDRESS` to the same ip:port (without scheme) as the OTLP endpoint configured in Pomerium.
+
+Alternatively, this can be set in the Grafana config file:
+```ini
+# grafana.ini
+[tracing.opentelemetry.otlp]
+address = x.x.x.x:4317
+```
+
+Note that at the time of writing, Grafana only supports exporting OTLP traces with the GRPC protocol. Most tracing backends, like Jaeger or the OTel Collector, support both protocols however.
+
+With tracing enabled in both Pomerium and Grafana, navigate to your Grafana route. After a few seconds, the combined traces should be visible in Jaeger:
+
+![Grafana traces in Jaeger](./img/tracing/grafana-trace-list.png)
+
+The bottom trace (occured first) is the initial unauthenticated request to Pomerium. The top trace is the authenticated request, after the user signed in and was redirected. This trace includes spans exported by Grafana itself, which we can see in detail:
+
+![Grafana trace details](./img/tracing/grafana-trace.png)
+
+Grafana exports very detailed traces, which can be helpful in debugging complex issues. The combined trace data helps easily visualize the request flow between Pomerium and Grafana, or any other upstream application.
+
 ### Visualizing the Pomerium auth flow
 
 Pomerium can trace a request's entire journey through the authentication process, across multiple individual redirects between Pomerium services and the Identity Provider.
@@ -118,4 +149,3 @@ The trace above ends with a final redirect to repeat the original request, but t
 ![Auth flow 2](./img/tracing/auth-flow-2.png)
 
 This trace ends with the proxied request to the upstream server.
-
