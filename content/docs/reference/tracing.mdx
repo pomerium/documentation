@@ -16,8 +16,7 @@ import TabItem from '@theme/TabItem';
 
 ## Summary
 
-Pomerium has comprehensive support for OpenTelemetry tracing, allowing detailed introspection into requests and authorization flows.
-You can use tracing to debug errors and latency issues in your applications.
+Pomerium has comprehensive support for OpenTelemetry tracing, allowing detailed introspection into requests and authorization flows. You can use tracing to debug errors and latency issues in your applications.
 
 ## Configuration
 
@@ -27,13 +26,14 @@ You can use tracing to debug errors and latency issues in your applications.
 ### Environment Variables
 
 The recommended way to configure tracing is by using the standard OpenTelemetry environment variables:
+
 - [SDK environment variables](https://opentelemetry.io/docs/specs/otel/configuration/sdk-environment-variables/#general-sdk-configuration)
 - [OTLP exporter environment variables](https://opentelemetry.io/docs/languages/sdk-configuration/otlp-exporter/)
 
 The main variables used to configure tracing in Pomerium are the following:
 
 | Name | Description | Default |
-| :--- | :---------- | :------ |
+| :-- | :-- | :-- |
 | [`OTEL_TRACES_EXPORTER`](https://opentelemetry.io/docs/specs/otel/configuration/sdk-environment-variables/#exporter-selection) | Trace exporter to be used. <br/> Valid values are `"otlp"` or `"none"` | `"none"` |
 | [`OTEL_EXPORTER_OTLP_ENDPOINT`](https://opentelemetry.io/docs/languages/sdk-configuration/otlp-exporter/#otel_exporter_otlp_endpoint) or <br/> [`OTEL_EXPORTER_OTLP_TRACES_ENDPOINT`](https://opentelemetry.io/docs/languages/sdk-configuration/otlp-exporter/#otel_exporter_otlp_traces_endpoint) | See [Endpoint Configuration](https://opentelemetry.io/docs/languages/sdk-configuration/otlp-exporter/#endpoint-configuration). |
 | [`OTEL_EXPORTER_OTLP_PROTOCOL`](https://opentelemetry.io/docs/languages/sdk-configuration/otlp-exporter/#otel_exporter_otlp_protocol) or <br/> [`OTEL_EXPORTER_OTLP_TRACES_PROTOCOL`](https://opentelemetry.io/docs/languages/sdk-configuration/otlp-exporter/#otel_exporter_otlp_traces_protocol) | See [Protocol Configuration](https://opentelemetry.io/docs/languages/sdk-configuration/otlp-exporter/#protocol-configuration). <br/> Valid values are `"grpc"` or `"http/protobuf"`. <br/>If unset, Pomerium will attempt to determine the protocol based on the endpoint port number (the standard ports are 4317 for GRPC, 4318 for HTTP), otherwise it will default to `"http/protobuf"`. | (auto) |
@@ -44,7 +44,7 @@ The main variables used to configure tracing in Pomerium are the following:
 Tracing can also be configured using the Pomerium config file if desired:
 
 | Config Key | Equivalent Environment Variable |
-| :--- | :---------- |
+| :-- | :-- |
 | `tracing_provider` | [`OTEL_TRACES_EXPORTER`](https://opentelemetry.io/docs/specs/otel/configuration/sdk-environment-variables/#exporter-selection) |
 | `tracing_otlp_endpoint` | [`OTEL_EXPORTER_OTLP_TRACES_ENDPOINT`](https://opentelemetry.io/docs/languages/sdk-configuration/otlp-exporter/#otel_exporter_otlp_traces_endpoint) |
 | `tracing_otlp_protocol` | [`OTEL_EXPORTER_OTLP_TRACES_PROTOCOL`](https://opentelemetry.io/docs/languages/sdk-configuration/otlp-exporter/#otel_exporter_otlp_traces_protocol) |
@@ -62,6 +62,7 @@ Tracing can also be configured using the Pomerium config file if desired:
 4. Optionally, enter a protocol ("grpc" or "http/protobuf"). If the endpoint uses port 4317 or 4318, the protocol will be selected automatically. Port 4317 is the standard for OTLP GRPC, and 4318 for OTLP HTTP.
 
 ![Enterprise tracing config](./img/tracing/tracing-otlp.png)
+
 </TabItem>
 </Tabs>
 
@@ -82,6 +83,7 @@ $ docker run -d --name jaeger \
 ```
 
 2. Run Pomerium with OpenTelemetry environment variables set:
+
 ```bash
 $ OTEL_TRACES_EXPORTER=otlp OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:4317 pomerium --config path/to/your/config.yaml`
 ```
@@ -92,14 +94,11 @@ $ OTEL_TRACES_EXPORTER=otlp OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:4317 po
 
 ### Tracing errors
 
-A typo in the OAuth2 issuer URL configuration is a common mistake that can lead to unexpected errors.
-A user attempting to navigate to a Pomerium route that requires authentication might see an error page instead of being redirected to the Identity Provider.
-In the Jaeger UI, traces that contain errors are highlighted and easy to find:
+A typo in the OAuth2 issuer URL configuration is a common mistake that can lead to unexpected errors. A user attempting to navigate to a Pomerium route that requires authentication might see an error page instead of being redirected to the Identity Provider. In the Jaeger UI, traces that contain errors are highlighted and easy to find:
 
 ![Jaeger trace list](./img/tracing/jaeger-trace-list-err.png)
 
-Clicking on this trace will show us the original unauthenticated request (`GET https://verify.localhost.pomerium.io/`) and that it was redirected to sign in.
-When attempting to initiate the auth flow, an error was encountered, which was recorded in the trace:
+Clicking on this trace will show us the original unauthenticated request (`GET https://verify.localhost.pomerium.io/`) and that it was redirected to sign in. When attempting to initiate the auth flow, an error was encountered, which was recorded in the trace:
 
 ![Jaeger error trace](./img/tracing/error-flow.png)
 
@@ -118,6 +117,7 @@ The [Securing Grafana with Pomerium](../guides/grafana.mdx) guide can help you g
 To enable OpenTelemetry traces in Grafana, set the environment variable `GF_TRACING_OPENTELEMETRY_OTLP_ADDRESS` to the same ip:port (without scheme) as the OTLP endpoint configured in Pomerium.
 
 Alternatively, this can be set in the Grafana config file:
+
 ```ini
 # grafana.ini
 [tracing.opentelemetry.otlp]
@@ -130,7 +130,7 @@ With tracing enabled in both Pomerium and Grafana, navigate to your Grafana rout
 
 ![Grafana traces in Jaeger](./img/tracing/grafana-trace-list.png)
 
-The bottom trace (occured first) is the initial unauthenticated request to Pomerium. The top trace is the authenticated request, after the user signed in and was redirected. This trace includes spans exported by Grafana itself, which we can see in detail:
+The bottom trace (occurred first) is the initial unauthenticated request to Pomerium. The top trace is the authenticated request, after the user signed in and was redirected. This trace includes spans exported by Grafana itself, which we can see in detail:
 
 ![Grafana trace details](./img/tracing/grafana-trace.png)
 
