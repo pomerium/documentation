@@ -110,7 +110,7 @@ PomeriumSpec defines Pomerium-specific configuration parameters.
         <tr>
             <td>
                 <p>
-                <code>codec_type</code>&#160;&#160;
+                <code>codecType</code>&#160;&#160;
                 
                     <strong>string</strong>&#160;
                 
