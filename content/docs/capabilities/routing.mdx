@@ -1,9 +1,9 @@
 ---
 # cSpell:ignore cm9vdDpodW50ZXI0Mg
 
-title: Routing
+title: Routing, Proxying, and Load Balancing with Pomerium
 lang: en-US
-sidebar_label: Routing
+sidebar_label: 'Proxying & Routing'
 description: How to get Pomerium's CLI which be used to proxy TCP services and kubernetes commands
 keywords:
   [
@@ -20,18 +20,16 @@ keywords:
   ]
 ---
 
-# Routing, Proxying, and Load Balancing
-
-## Routes
-
 <iframe
   width="100%"
-  height="500"
+  height="600"
   src="https://www.youtube.com/embed/-wAKnj_cY-E"
   frameborder="0"
   webkitallowfullscreen="true"
   mozallowfullscreen="true"
   allowfullscreen="true"></iframe>
+
+## Routing
 
 A **Route** defines how to access a service running behind Pomerium. This includes authentication (both for Pomerium and passed through to the service), rewrites, header management, load balancing, etc.
 
@@ -51,7 +49,7 @@ The sections below cover the options available when creating or editing a route.
 
 ### General
 
-The **General** tab defines the route path, both from the internet and to the internal service, and the policies attached. Note that policies enforced on a [Namespace](/docs/capabilities/namespacing#hierarchical-policy-enforcement) the route resides in will also be applied.
+The **General** tab defines the route path, both from the internet and to the internal service, and the policies attached. Note that policies enforced on a [Namespace](/docs/internals/namespacing#hierarchical-policy-enforcement) the route resides in will also be applied.
 
 #### Name
 
@@ -61,7 +59,7 @@ This value is only visible in the Console UI.
 
 `From` is the externally accessible URL for the proxied request.
 
-Specifying `tcp+https` for the scheme enables [TCP proxying](/docs/capabilities/tcp) support for the route. You may map more than one port through the same hostname by specifying a different `:port` in the URL.
+Specifying `tcp+https` or `udp+https` for the scheme enables [TCP proxying](/docs/capabilities/non-http) or [UDP proxying](/docs/capabilities/non-http/udp) support for the route. You may map more than one port through the same hostname by specifying a different `:port` in the URL.
 
 :::warning
 
@@ -84,13 +82,13 @@ Once a Route is created, the Metric Name field will populate. You can use this n
     - https://b.example.com
 ```
 
-A load balancing weight may be associated with a particular upstream by appending `,[weight]` to the URL. The exact behavior depends on your [`lb_policy`](/docs/reference/routes/load-balancing#load-balancing-policy) setting. See [Load Balancing](/docs/capabilities/load-balancing) for example [configurations](/docs/capabilities/load-balancing#load-balancing-weight).
+A load balancing weight may be associated with a particular upstream by appending `,[weight]` to the URL. The exact behavior depends on your [`lb_policy`](#load-balancing-method) setting.
 
-Must be `tcp` if `from` is `tcp+https`.
+> **For more details and examples, see our dedicated [Upstream Load Balancing page](/docs/capabilities/routing).**
 
-:::warning
+Should be `tcp://` if `from` is `tcp+https://`, or `udp://` if `from` is `udp+https://`.
 
-Be careful with trailing slash.
+:::warning Be careful with trailing slash.
 
 With rule:
 
@@ -99,7 +97,8 @@ With rule:
   to: https://verify.pomerium.com/anything
 ```
 
-Requests to `https://verify.corp.example.com` will be forwarded to `https://verify.pomerium.com/anything`, while requests to `https://verify.corp.example.com/foo` will be forwarded to `https://verify.pomerium.com/anythingfoo`.To make the request forwarded to `https://httbin.org/anything/foo`, you can use double slashes in your request `https://httbin.corp.example.com//foo`.
+Requests to `https://verify.corp.example.com` will be forwarded to `https://verify.pomerium.com/anything`, while requests to `https://verify.corp.example.com/foo` will be forwarded to `https://verify.pomerium.com/anythingfoo`.  
+To make the request forwarded to `https://httbin.org/anything/foo`, you can use double slashes in your request `https://httbin.corp.example.com//foo`.
 
 While the rule:
 
@@ -108,7 +107,7 @@ While the rule:
   to: https://verify.pomerium.com/anything/
 ```
 
-All requests to `https://verify.corp.example.com/*` will be forwarded to `https://verify.pomerium.com/anything/*`. That means accessing to `https://verify.corp.example.com` will be forwarded to `https://verify.pomerium.com/anything/`. That said, if your application does not handle trailing slash, the request will end up with 404 not found.
+All requests to `https://verify.corp.example.com/*` will be forwarded to `https://verify.pomerium.com/anything/*`. That means accessing `https://verify.corp.example.com` will be forwarded to `https://verify.pomerium.com/anything/`. That said, if your application does not handle trailing slash, the request will end up with 404 not found.
 
 Either `redirect` or `to` must be set.
 
@@ -140,13 +139,9 @@ When enabled, this option will pass identity headers to upstream applications. T
 
 Add or remove Policies to be applied to the Route. Note that Policies enforced in the Route's Namespace will be applied automatically.
 
-:::note
+:::note See the [**Policy setting**](/docs/reference/routes/policy) page to learn how to apply a PPL policy to a route.
 
-See the [**Policy setting**](/docs/reference/routes/policy) page to learn how to apply a PPL policy to a route.
-
-For information and examples related to PPL, see [**Policy Language**](/docs/capabilities/ppl).
-
-:::
+For information and examples related to PPL, see [**Policy Language**](/docs/internals/ppl). :::
 
 #### Enable Google Cloud Serverless Authentication
 
@@ -313,15 +308,16 @@ routes:
 
 :::tip
 
-In the presence of multiple upstream servers, make sure to specify either an active or passive health check, or both, to avoid requests being served to an unhealthy backend.
+In the presence of multiple upstream servers, make sure to specify either an **active** or **passive** health check, or both, to avoid requests being served to an unhealthy backend.
 
 :::
 
-###### Active Health Checks
+#### Active Health Checks
 
-Active health checks issue periodic requests to each upstream to determine its health. See [Health Checking](https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/upstream/health_checking) for a comprehensive overview.
+Active health checks issue periodic requests to each upstream to determine its health. See [Envoy Health Checking](https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/upstream/health_checking) for more details.
 
-#### HTTP Example
+<details>
+<summary>HTTP Example</summary>
 
 ```yaml
 routes:
@@ -338,7 +334,10 @@ routes:
           path: '/'
 ```
 
-#### TCP Example
+</details>
+
+<details>
+<summary>TCP Example</summary>
 
 ```yaml
 routes:
@@ -358,9 +357,11 @@ routes:
             text: '504F4E47' #PONG
 ```
 
+</details>
+
 #### Passive Health Checks
 
-Passive health check tries to deduce upstream server health based on recent observed responses. See [Outlier Detection](https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/upstream/outlier) for comprehensive overview.
+Passive health check tries to deduce upstream server health based on recent observed responses. See [Outlier Detection](https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/upstream/outlier) for a comprehensive overview.
 
 ```yaml
 routes:
@@ -376,12 +377,17 @@ routes:
 `lb_policy` should be set to [one of the values](https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/upstream/load_balancing/load_balancers):
 
 - [`ROUND_ROBIN`](https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/upstream/load_balancing/load_balancers#weighted-round-robin) (default)
-- [`LEAST_REQUEST`](https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/upstream/load_balancing/load_balancers#weighted-least-request) and may be further configured using [`least_request_lb_config`](https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/cluster/v3/cluster.proto#envoy-v3-api-msg-config-cluster-v3-cluster-leastrequestlbconfig)
-- [`RING_HASH`](https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/upstream/load_balancing/load_balancers#ring-hash) and may be further configured using [`ring_hash_lb_config`](https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/cluster/v3/cluster.proto#config-cluster-v3-cluster-ringhashlbconfig) option
+- [`LEAST_REQUEST`](https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/upstream/load_balancing/load_balancers#weighted-least-request)  
+  _May be further configured via [`least_request_lb_config`](https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/cluster/v3/cluster.proto#envoy-v3-api-msg-config-cluster-v3-cluster-leastrequestlbconfig)._
+- [`RING_HASH`](https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/upstream/load_balancing/load_balancers#ring-hash)  
+  _May be further configured via [`ring_hash_lb_config`](https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/cluster/v3/cluster.proto#config-cluster-v3-cluster-ringhashlbconfig)._
 - [`RANDOM`](https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/upstream/load_balancing/load_balancers#random)
-- [`MAGLEV`](https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/upstream/load_balancing/load_balancers#maglev) and may be further configured using [`maglev_lb_config`](https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/cluster/v3/cluster.proto#envoy-v3-api-msg-config-cluster-v3-cluster-maglevlbconfig) option
+- [`MAGLEV`](https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/upstream/load_balancing/load_balancers#maglev)  
+  _May be further configured via [`maglev_lb_config`](https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/cluster/v3/cluster.proto#envoy-v3-api-msg-config-cluster-v3-cluster-maglevlbconfig)._
 
-#### Example
+> **Some policy types support additional advanced configuration**, such as [least request randomization](/docs/reference/routes/load-balancing-policy-config). See [Load Balancing Policy Config](/docs/reference/routes/load-balancing-policy-config) for details.
+
+##### Example
 
 ```yaml
 routes:
@@ -401,9 +407,7 @@ routes:
 
 When a list of upstream URLs is specified in the `to` field, you may append an optional load balancing weight parameter. The individual [`lb_policy`](#load-balancing-method) settings will take this weighting into account when making routing decisions.
 
-#### Example
-
-This configuration uses the default `round_robin` load balancer policy but specifies different frequency of selection be applied to the upstream servers.
+##### Example
 
 ```yaml
 routes:
@@ -416,7 +420,7 @@ routes:
       - http://myapp-srv-5:8080,10
 ```
 
-## Route matching order
+### Route matching order
 
 Pomerium matches routes in a specific order; an incoming request will be sent to the first route that matches.
 
@@ -425,9 +429,9 @@ Pomerium considers routes defined in a configuration file first, in the order in
 Routes from the Enterprise Console or Ingress Controller are sorted in the following order:
 
 1. Ascending by `host`
-1. Descending by `path`
-1. Descending by `regex`
-1. Descending by `prefix`
+2. Descending by `path`
+3. Descending by `regex`
+4. Descending by `prefix`
 
 The example below defines two routes in a configuration file that both point to the same domain. The first route contains a prefix (`api`).
 
@@ -443,24 +447,6 @@ If Pomerium receives a request to access `https://a.example.com:8080`, Pomerium 
   to: http://example:8080
   allow_any_authenticated_user: true
 ```
-
-## Further reading
-
-- [Introduction to modern network load balancing and proxying](https://blog.envoyproxy.io/introduction-to-modern-network-load-balancing-and-proxying-a57f6ff80236)
-
-#### Load Balancing Policy
-
-In presence of multiple upstream servers, defines load balancing strategy between them.
-
-See [Envoy documentation](https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/cluster/v3/cluster.proto#envoy-v3-api-enum-config-cluster-v3-cluster-lbpolicy) for more details.
-
-- [`ROUND_ROBIN`](https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/upstream/load_balancing/load_balancers#weighted-round-robin) (default)
-- [`LEAST_REQUEST`](https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/upstream/load_balancing/load_balancers#weighted-least-request) and may be further configured using [`least_request_lb_config`](https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/cluster/v3/cluster.proto#envoy-v3-api-msg-config-cluster-v3-cluster-leastrequestlbconfig)
-- [`RING_HASH`](https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/upstream/load_balancing/load_balancers#ring-hash) and may be further configured using [`ring_hash_lb_config`](https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/cluster/v3/cluster.proto#config-cluster-v3-cluster-ringhashlbconfig) option
-- [`RANDOM`](https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/upstream/load_balancing/load_balancers#random)
-- [`MAGLEV`](https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/upstream/load_balancing/load_balancers#maglev) and may be further configured using [`maglev_lb_config`](https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/cluster/v3/cluster.proto#envoy-v3-api-msg-config-cluster-v3-cluster-maglevlbconfig) option
-
-Some policy types support additional [configuration](/docs/reference/routes/load-balancing-policy-config).
 
 ## Certificates
 

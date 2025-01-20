@@ -1,0 +1,179 @@
+---
+description: This article describes how to leverage pomerium for TCP proxying.
+sidebar_label: TCP
+sidebar_position: 1
+keywords:
+  [
+    pomerium,
+    pomerium-cli,
+    proxy,
+    identity access proxy,
+    ssh,
+    tcp,
+    postgres,
+    database,
+    redis,
+    mysql,
+    application,
+    non http,
+    tunnel,
+  ]
+---
+
+import LongLivedConnections from '@site/content/docs/admonitions/_long-lived-connections.mdx';
+
+# TCP over HTTP Support
+
+In addition to managing HTTP based applications, Pomerium can be used to protect non-HTTP systems with the same consistent authorization policy. This is achieved by tunneling TCP over HTTP with the help of a client side command built into [`pomerium-cli`](/docs/deploy/clients).
+
+Operations and engineering teams frequently require access to lower level administrative and data protocols such as SSH, RDP, Postgres, MySQL, Redis, etc.
+
+Internally, Pomerium uses the [`CONNECT` method](https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/CONNECT) to establish the TCP tunnel.
+
+:::caution
+
+To minimize issues with TCP support, Pomerium should not be placed behind another HTTP proxy. Instead, configure your load balancer in L4 or TCP mode.
+
+Otherwise, the HTTP proxy in front of Pomerium must know how to properly handle the `CONNECT` command and proxy it upstream. This capability will be specific to each proxy implementation.
+
+:::
+
+## Configure TCP routes
+
+TCP configuration is simple. Just specify the correct scheme and ports in your route [`to`](/docs/reference/routes/to) and [`from`](/docs/reference/routes/from) fields.
+
+Example:
+
+```yaml
+routes:
+  - from: tcp+https://redis.corp.example.com:6379
+    to: tcp://redis.internal.example.com:6379
+    policy:
+      - allow:
+          or:
+            - email:
+                is: contractor@not-example.com
+            - claim/groups: 'datascience@example.com'
+```
+
+When creating TCP routes, note the following:
+
+- When configuring a TCP route, any HTTP specific settings such as `regex_rewrite_pattern` or `set_request_headers` have no effect.
+- While data is encrypted from a user system to Pomerium's proxy, the underlying application protocol must also support encryption for data to be fully encrypted end-to-end. Otherwise, traffic from the Pomerium Proxy service to the upstream service will be unencrypted.
+- The ports in `from` and `to` are independent. Users only need to know the `from` URL to connect. The `to` can be changed without end user participation.
+- The port defined in `from` does not dictate what port the tunneled traffic uses. This will always be the port defined by [`address`](/docs/reference/address) in your Pomerium configuration (`443` by default). The port instead differentiates multiple routes to the same hostname for different services.
+
+## Connect to TCP Routes
+
+While HTTP routes can be consumed with just a normal browser, `pomerium-cli` or Pomerium Desktop must serve as a proxy for TCP routes. See [Pomerium Desktop and CLI Clients](/docs/deploy/clients) for more information.
+
+To connect, you normally need just the external hostname and port of your TCP route:
+
+```shell-session
+$ pomerium-cli tcp redis.localhost.pomerium.io:6739
+2023/10/02 11:19:59 listening on 127.0.0.1:52046
+```
+
+By default, `pomerium-cli` will start a listener on loopback on a random port.
+
+On first connection, you will be sent through a standard Pomerium HTTP authentication flow. After completing this, your TCP connection should be established!
+
+```shell-session
+$ redis-cli -h localhost -p 52046
+localhost:52046> keys *
+(empty array)
+localhost:52046>
+```
+
+:::note Long-lived connections behavior
+
+<LongLivedConnections />
+
+:::
+
+## Advanced capabilities
+
+### Listen configuration
+
+You may specify an optional address and port for the `tcp` command to listen on.
+
+`-` specifies that STDIN and STDOUT should be directly attached to the remote TCP connection. This is useful for [SSH](./examples/ssh#tunnel-and-connect-simultaneously) or for sending data through a shell pipe.
+
+### Bastion host
+
+If the Pomerium proxy is not reachable through port `443` or the route is not in external DNS, you can use Pomerium as a bastion host using the extended TCP URL syntax in your route definition:
+
+```yaml
+from: tcp+https://proxy.corp.example.com:8443/redis.internal.example.com:6379
+```
+
+And then using the same URL in the pomerium-cli command invocation:
+
+```bash
+pomerium-cli tcp tcp+https://proxy.corp.example.com:8443/redis.internal.example.com:6379
+```
+
+The command above connects to `https://pomerium.corp.example.com:8443` and then requests the TCP route for `redis.internal.example.com:6379`.
+
+### Client certificates
+
+If Pomerium is configured to require client certificates, you will also need to provide a client certificate and private key when invoking the `pomerium-cli` command.
+
+You can specify these either by using PEM files, or (new in [v0.23.0](https://github.com/pomerium/cli/releases/tag/v0.23.0)) by searching for a certificate in the system trust store (on **macOS** and **Windows** only).
+
+To specify a client certificate and key using PEM files:
+
+```bash
+pomerium-cli tcp --client-cert cert.pem --client-key key.pem redis.corp.example.com:6379
+```
+
+To search for a client certificate in the system trust store:
+
+```bash
+pomerium-cli tcp --client-cert-from-store redis.corp.example.com:6379
+```
+
+This will search the Keychain (on macOS) or the Windows certificate store (on Windows) for a client certificate and private key, based on the trusted CA names advertised by Pomerium in the TLS handshake.
+
+If you need to select between multiple matching client certificates, you can additionally filter based on the Distinguished Name of the certificate's Issuer and/or the certificate Subject.
+
+For example, to filter for a certificate directly issued by a CA with the Common Name "My Trusted CA":
+
+```bash
+pomerium-cli tcp --client-cert-from-store --client-cert-issuer "CN=My Trusted CA" redis.corp.example.com:6379
+```
+
+Or, to filter for a certificate whose Subject contains the Organizational Unit Name "My Department":
+
+```bash
+pomerium-cli tcp --client-cert-from-store --client-cert-subject "OU=My Department" redis.corp.example.com:6379
+```
+
+See the [reference page](/docs/capabilities/non-http) for more details about the certificate name filter syntax.
+
+### Proxy chaining support
+
+The TCP route example above uses a `to` URL with the scheme `tcp://`. For a TCP route like this, Pomerium will open a raw TCP connection to the upstream service.
+
+Alternatively, you can configure a TCP route to proxy an HTTP CONNECT request to the upstream service. This is useful if you want to place another HTTP-to-TCP proxy behind Pomerium.
+
+To configure Pomerium to chain TCP connection requests:
+
+```yaml
+routes:
+  - from: tcp+https://example.corp.com:10002
+    to: http://second-proxy.example.corp.com:10003
+```
+
+:::info TCP examples
+
+The guides below demonstrate how to proxy TCP tunnels with Pomerium to well-known services:
+
+- [**Git**](./examples/git)
+- [**Microsoft SQL**](./examples/ms-sql)
+- [**MySQL and MariaDB**](./examples/mysql)
+- [**RDP**](./examples/rdp)
+- [**Redis**](./examples/redis)
+- [**SSH**](./examples/ssh)
+
+:::

@@ -14,7 +14,7 @@ autocert_use_staging: true
 # certificate_file: /home/user/.local/share/mkcert/rootCA.pem
 # certificate_key_file: /user/alex/.local/share/mkcert/rootCA-key.pem
 
-# identity provider settings : https://www.pomerium.com/docs/identity-providers.html
+# identity provider settings : https://www.pomerium.com/docs/integrations/user-identity/identity-providers.html
 idp_provider: google
 idp_client_id: REPLACE_ME
 idp_client_secret: REPLACE_ME

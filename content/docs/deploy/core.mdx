@@ -1,0 +1,192 @@
+---
+title: 'Pomerium Core (Self-managed)'
+description: 'Learn how to obtain, configure, and run the open-source Pomerium server through pre-built binaries, Linux packages, Docker images, or building from source.'
+sidebar_label: 'Pomerium Core'
+lang: en-US
+keywords:
+  - pomerium
+  - server
+  - proxy
+  - context-aware proxy
+  - open source
+  - identity aware proxy
+  - deployment
+  - pre-built binaries
+  - from source
+  - reverse proxy
+sidebar_position: 1
+pagination_prev: null
+pagination_next: null
+---
+
+# Pomerium Core (Self-managed)
+
+Pomerium Core (often referred to as _Pomerium Open Source_) is the primary server component in a self-hosted environment. All other Pomerium products build upon it. This document describes several ways to install and run Pomerium Core:
+
+1. **Pre-Built Binaries** (manual or OS-package installations)
+2. **Docker Images**
+3. **Building from Source**
+
+## Pre-Built Binaries
+
+We publish official binaries for Linux and macOS on our [GitHub Releases](https://github.com/pomerium/pomerium/releases) page, as well as OS packages (`deb` and `rpm`) via [Cloudsmith](https://cloudsmith.io/~pomerium/repos/pomerium/packages/).
+
+### Standalone Binary
+
+1. **Download**  
+   Go to [GitHub Releases](https://github.com/pomerium/pomerium/releases) and look for the tarball corresponding to your operating system and architecture. For example:
+
+   ```bash
+   ARCH=[amd64 or arm64]
+   OS=[linux or darwin]
+   VERSION=[desired version]
+   curl -L https://github.com/pomerium/pomerium/releases/download/${VERSION}/pomerium-${OS}-${ARCH}.tar.gz \
+       | tar -z -x
+   ```
+
+2. **Run**  
+   Once extracted, you have a `pomerium` binary. Supply configuration via environment variables or a config file:
+
+   ```bash
+   ./pomerium -config config.yaml
+   ```
+
+### Linux Packages
+
+We provide OS packages via [Cloudsmith](https://cloudsmith.io/~pomerium/repos/pomerium/setup/). Supported formats:
+
+- `rpm` (Yum, DNF)
+- `deb` (Apt)
+
+For example, to add a Yum repo (`rpm`-based):
+
+```abnf title="/etc/yum.repos.d/pomerium-pomerium.repo"
+[pomerium-pomerium]
+name=pomerium-pomerium
+baseurl=https://dl.cloudsmith.io/public/pomerium/pomerium/rpm/el/$releasever/$basearch
+repo_gpgcheck=1
+enabled=1
+gpgkey=https://dl.cloudsmith.io/public/pomerium/pomerium/gpg.6E388440B94E1407.key
+gpgcheck=1
+sslverify=1
+pkg_gpgcheck=1
+```
+
+Or for Debian/Ubuntu (`deb`-based):
+
+```bash
+curl -1sLf 'https://dl.cloudsmith.io/public/pomerium/pomerium/gpg.6E388440B94E1407.key' | apt-key add -
+echo "deb https://dl.cloudsmith.io/public/pomerium/pomerium/deb/debian buster main" > /etc/apt/sources.list.d/pomerium-pomerium.list
+```
+
+Then install Pomerium via your package manager:
+
+```bash
+# For yum-based systems:
+yum install pomerium
+
+# For apt-based systems:
+apt-get update && apt-get install pomerium
+```
+
+## Docker Images
+
+We also provide container images on [Docker Hub](https://hub.docker.com/r/pomerium/pomerium) and [GitHub Packages](https://github.com/pomerium/pomerium/pkgs/container/pomerium). Common tags:
+
+- **`:latest`** → The most recent stable release
+- **`:vX.Y.Z`** → A specific release
+- **`:main`** → Nightly builds from the main branch
+- **`:nonroot-*`** → Variants that run Pomerium as a `nonroot` user
+- **`:debug-*`** → Variants that include extra debugging utilities
+
+Example usage:
+
+```bash
+docker pull pomerium/pomerium:latest
+docker run --rm -it -p 443:443 pomerium/pomerium:latest --version
+```
+
+If you plan to run on port 443 in a rootless environment, you may need extra [capabilities](https://linux-audit.com/linux-capabilities-hardening-linux-binaries-by-removing-setuid/) or choose a non-privileged port.
+
+## Building From Source (~~Hard~~ Fun mode!)
+
+If you prefer building from source:
+
+1. **Clone the Repository**
+   ```bash
+   git clone https://github.com/pomerium/pomerium.git $HOME/pomerium
+   cd $HOME/pomerium
+   ```
+2. **(Optional) Generate Local Certs**  
+   For local development, use [mkcert](https://mkcert.dev/):
+   ```bash
+   go install filippo.io/mkcert@latest
+   mkcert -install
+   mkcert '*.localhost.pomerium.io'
+   ```
+3. **Build**
+   ```bash
+   make
+   ```
+   This compiles the `pomerium` binary under `./bin`. If you don't have test prerequisites installed (Docker, Redis, etc.), run `make build` to skip them.
+4. **Run**
+   ```bash
+   ./bin/pomerium -config config.yaml
+   ```
+
+## Configuration
+
+Pomerium is configured via [configuration variables](/docs/reference) (environment variables) or a YAML file (`config.yaml`). Below is a minimal example referencing a single route and an identity provider:
+
+```yaml title="config.yaml"
+# Minimal example route
+shared_secret: REPLACE_ME
+cookie_secret: REPLACE_ME
+idp_provider: google
+idp_client_id: REPLACE_ME
+idp_client_secret: REPLACE_ME
+address: :443
+
+routes:
+  - from: https://verify.localhost.pomerium.io
+    to: https://verify.pomerium.com
+    policy:
+      - allow:
+          or:
+            - domain:
+                is: myorg.com
+```
+
+:::info
+
+For local testing, specify the `certificate_file` and `certificate_key_file` if using mkcert or other local certs. In production, you may rely on Let's Encrypt or external cert manager. See [TLS certificates](/docs/internals/certificates-and-tls) for details.
+
+:::
+
+## Running Pomerium
+
+### Systemd Service (OS Packages)
+
+If you installed via `rpm` or `deb`, we ship a systemd service unit:
+
+1. **Bind to Port 443**  
+   Allow the `pomerium` service to listen on a privileged port:
+   ```bash
+   echo -e "[Service]\nAmbientCapabilities=CAP_NET_BIND_SERVICE" | sudo SYSTEMD_EDITOR=tee systemctl edit pomerium
+   ```
+2. **Enable & Start**
+   ```bash
+   sudo systemctl enable --now pomerium.service
+   ```
+
+### Manual Launch
+
+If using the standalone binary (or building from source):
+
+```bash
+./pomerium -config config.yaml
+```
+
+Any environment variables or custom settings can be set before this command.
+
+Once deployed and configured, you can verify that Pomerium is running by accessing the domain of one of your routes. If your logs show successful user authentication, you're ready to protect more apps with Pomerium Core.

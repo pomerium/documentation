@@ -11,7 +11,7 @@ authenticate_service_url: https://authenticate.pomerium.app
 
 ####################################################################################
 # If self-hosting, you must configure an identity provider.                        #
-# See identity provider settings: https://www.pomerium.com/docs/identity-providers/#
+# See identity provider settings: https://www.pomerium.com/docs/integrations/#
 ####################################################################################
 
 # https://pomerium.com/reference/#routes

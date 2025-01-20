@@ -17,7 +17,7 @@ const FeatureList = [
   },
   {
     title: 'Connect',
-    path: '/docs/identity-providers/',
+    path: '/docs/integrations/user-identity/identity-providers/',
     icon: 'link',
     description: <>Connect Pomerium to your Identity Provider</>,
   },
@@ -35,7 +35,7 @@ const FeatureList = [
   },
   {
     title: 'Enterprise',
-    path: '/docs/enterprise/about',
+    path: '/docs/deploy/enterprise/about',
     icon: 'space_dashboard',
     description: <>Scale your access management to match your business</>,
   },

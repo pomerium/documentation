@@ -1,83 +1,62 @@
 ---
-description: Add custom colors, logos, and error messages.
+title: 'Whitelabeling'
+sidebar_label: 'Whitelabeling'
+description: "Customize Pomerium's user-facing and administrative UI with your organization's branding."
+keywords:
+  - 'pomerium'
+  - 'custom branding'
+  - 'white labeling'
+  - 'beyondcorp'
+  - 'zero trust'
+  - 'compliance'
 ---
 
-# Custom Branding (White Labeling)
+# White Labeling
 
 :::enterprise
 
-This article describes a use case available to [Pomerium Enterprise](/docs/enterprise/install) customers.
+This article describes a use case available to [Pomerium Enterprise](/docs/deploy/enterprise/install) customers.
 
 :::
 
-Pomerium's user and administrative facing GUI and error messages can be customized to meet your organization's needs.
+## Overview
+
+Pomerium Enterprise allows you to visually align your identity-aware proxy with your organization's brand identity. You can replace Pomerium's default logos, change color themes, and add your own favicon to ensure that all administrative pages and user-facing prompts feel like a natural extension of your existing portals.
+
+For instructions on customizing error pages and enabling user self-remediation, see [Self-Remediation & Custom Error Pages](/docs/capabilities/self-remediation).
 
 ## Settings
 
-Most of the Branding settings are located in the Branding Tab of the main Settings Page.
+Most Branding options reside in the **Branding** tab of the **Settings** page:
 
 ![Branding Settings in Pomerium Enterprise](./img/branding/no_branding_settings.png)
 
-There is also a setting to enable Error Details on Edit Route's General Tab.
+### Colors
 
-![Enable Error Details on a Route](./img/branding/enable_error_details.png)
-
-Policies have two new fields, explanation and remediation.
-
-Explanation is an optional short description of why the user would have been denied. Likewise, remediation is an optional field to cover how the user can self-remediate their state. Oftentimes, this will be a link to your internal help desk support site or knowledge base repo.
-
-![Add custom error messages.](./img/branding/policy_with_explanation_and_remediation.png)
-
-## Colors
-
-Adding a [hex code](https://color.adobe.com/create/color-wheel) to the Primary Color setting will affect the majority of the theming on the console. For more details on how the types of colors will impact the look and feel of Pomerium, see Material Designs' [color documentation](https://material.io/resources/color/#!/?view.left=0&view.right=0)'s color documentation.
+By adding a [hex code](https://color.adobe.com/create/color-wheel) in **Primary Color** and **Secondary Color**, you can seamlessly alter the console's UI to match your brand guidelines.
 
 ![Primary Color Pomerium Enterprise](./img/branding/branded_colors_console.png)
 
-There is also a secondary color that is used for a few things such as certain button colors.
-
-![Secondary Color Pomerium Enterprise](./img/branding/secondary_color.png)
-
-Choosing colors also affects the majority of webpages served by Pomerium Core.
-
-![Error Pages and User Info](./img/branding/branded_colors_error_details.png)
-
-You can also set different colors for users using dark mode.
+If you have users who prefer dark mode, you can add a different primary/secondary palette for dark mode:
 
 ![Dark Mode Colors](./img/branding/branded_colors_darkmode_console.png)
 
-## Logo
+This ensures a consistent brand experience whether someone is an admin in the console or a user landing on Pomerium's sign-in pages.
 
-You may add a URL to link to your logo and favicon which will replace the Pomerium defaults.
+### Logo
+
+You can replace Pomerium's default logo and favicon by specifying a custom URL:
 
 ![Replace the Logo and Favicon in Pomerium Enterprise](./img/branding/svg_logo_console.png)
 
-It will also appear for all the user-facing webpages too.
+Both administrative and user-facing pages will use your organization's imagery:
 
 ![Replace the Logo and Favicon in Open Source webpages](./img/branding/svg_logo_error_details.png)
 
-## Error Details
+## Why White Labeling?
 
-It is possible to customize the error messages displayed on 403 unauthorized pages.
+- **Professional Appearance**: Present a unified front to end users, ensuring they associate your secure portal with your organization's branding.
+- **Trust & Familiarity**: A consistent identity lowers user confusion, especially for teams already accustomed to your internal brand or product suite.
+- **Easier User Adoption**: When Pomerium “feels” like part of your standard workflow, employees are more likely to comply with zero-trust and security measures.
 
-This feature is enabled on a per Route basis by toggling the setting in the General Tab of the Route settings.
-
-![Enable Error Details](./img/branding/enable_error_details.png)
-
-Error Message will appear similar to this example.
-
-![Extra Error Details](./img/branding/error_details_enabled.png)
-
-Policies without an explanation or remediation field will show the policy ID.
-
-If the explanation or remediation fields are added to the policy they will show up in the error details.
-
-![Policy Settings](./img/branding/policy_with_explanation_and_remediation.png)
-
-You can additionally add a Header paragraph that supports markdown to all error pages in the General Settings (same place you add colors and logos).
-
-![Markdown Header](./img/branding/first_paragraph_setting.png)
-
-You can see the link added to the Error Page.
-
-![Markdown Header](./img/branding/includes_first_paragraph.png)
+White labeling is not merely cosmetic; it's a critical step to assure teams that they're accessing official, trusted corporate resources—enhancing user confidence and security posture.

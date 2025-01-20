@@ -1,0 +1,636 @@
+---
+# cSpell:ignore doqu outform pkey pubin yourdomain
+
+title: Policy Language
+sidebar_label: 'Policy Enforcement'
+description: Learn how to use Pomerium Policy Language to build context-aware authorization policies for routes.
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Pomerium Policy Language
+
+<iframe
+  width="100%"
+  height="500"
+  src="https://www.youtube.com/embed/lRpkd20psbk"
+  frameborder="0"
+  webkitallowfullscreen="true"
+  mozallowfullscreen="true"
+  allowfullscreen="true"></iframe>
+
+Pomerium Policy Language (**PPL**) is a [yaml]-based notation for creating easy and flexible authorization policies. This document covers the usage of PPL and provides several example policies.
+
+PPL allows administrators to express authorization policy in a high-level, declarative language that promotes safe, performant, fine-grained controls.
+
+:::note
+
+See the [**Policy setting**](/docs/reference/routes/policy) page to learn how to apply a PPL policy to a route.
+
+:::
+
+## At a Glance
+
+Each PPL policy has at the top level a set of `allow` or `deny` actions, with a list of logical operators, criteria, matchers, and values underneath. For example:
+
+```yaml
+allow:
+  and:
+    - domain:
+        is: example.com
+deny:
+  or:
+    - email:
+        is: user2@example.com
+    - email:
+        is: user3@example.com
+```
+
+This policy grants access only if the domain portion of a user's email address matches the specified value, `example.com`.
+
+It will deny access to users with a `user2@example.com` **or** `user3@example.com` email address.
+
+## Rules
+
+A PPL document is either an object or an array of objects. The object represents a rule where the action is the key and the value is an object containing the logical operators.
+
+## Actions
+
+Only two actions are supported: `allow` and `deny`. `deny` takes precedence over `allow`. More precisely: a user will have access to a route if **at least one** `allow` rule matches and **no** `deny` rules match.
+
+## Logical Operators
+
+A logical operator combines multiple criteria together for the evaluation of a rule. There are 4 logical operators: `and`, `or`, `not` and `nor`.
+
+<details>
+  <summary>More on Logical Operators</summary>
+  <div>
+
+Given the following example with `OPERATOR` replaced:
+
+```yaml
+allow:
+  OPERATOR:
+    - domain:
+        is: example.com
+    - claim/groups: admin
+```
+
+If `and` is used, the user will have access if their email address ends in `example.com` **and** they are a member of the admin group. **(A ∧ B)**
+
+If `or` is used, the user will have access if their email address ends in `example.com` **or** they are a member of the admin group. **(A ∨ B)**
+
+If `not` is used, the user will have access if their email address does not end in `example.com` **and** they are not a member of the `admin` group. **(¬A ∧ ¬B) = ¬(A ∨ B)** (This operation is traditionally called **NOR** in the Boolean algebra.)
+
+If `nor` is used, the user will have access if their email address does not end in `example.com` **or** they are not a member of the admin group. **(¬A ∨ ¬B) = ¬(A ∧ B)** (This operation is traditionally called **NAND** in the Boolean algebra.)
+
+  </div>
+</details>
+
+### Multiple Operators in a Rule
+
+You _can_ add multiple operators under the same rule, and it would be valid PPL.
+
+For example, this policy would grant access to anyone with a `family_name: Smith` claim, **or** users with email addresses ending in `domain1` or `domain2`:
+
+```yaml
+allow:
+  and:
+    - claim/family_name: Smith
+  or:
+    - domain:
+        is: domain1.com
+    - domain:
+        is: domain2.com
+```
+
+However, you could write an equivalent policy with multiple `allow` blocks:
+
+```yaml
+- allow:
+    and:
+      - claim/family_name: Smith
+- allow:
+    or:
+      - domain:
+          is: domain1.com
+      - domain:
+          is: domain2.com
+```
+
+Although these policies are equally effective, we recommend using just one operator per rule.
+
+## Criteria
+
+Criteria in PPL are represented as an object where the key is the name and optional sub-path of the criterion, and the value changes depending on which criterion is used. A sub-path is indicated with a `/` in the name:
+
+```yaml
+allow:
+  and:
+    - claim/family_name: Smith
+deny:
+  not:
+    - http_method:
+        is: GET
+```
+
+### Supported PPL Criteria
+
+Below is an exhaustive list of PPL criteria.
+
+Entries marked with `*` denote criteria that are only available in the [Enterprise Console](/docs/deploy/enterprise) PPL builder. All other entries are available in both Pomerium Core and Pomerium Enterprise.
+
+| Criterion Name | Data Format | Description |
+| --- | --- | --- |
+| `accept` | Anything. Typically `true`. | Always returns true, thus always allowing access. Equivalent to the [`allow_public_unauthenticated_access`] option. |
+| `authenticated_user` | Anything. Typically `true`. | Always returns true for logged-in users. Equivalent to the [`allow_any_authenticated_user`] option. |
+| `claim` | Anything. Typically a string. | Returns true if a token claim matches the supplied value **exactly**. The claim to check is determined via the sub-path. <br/> For example, `claim/family_name: Smith` matches if the user's `family_name` claim is `Smith`. |
+| `client_certificate` | [Certificate matcher] | Returns true if a client presented a TLS certificate matching the provided condition. |
+| `cors_preflight` | Anything. Typically `true`. | Returns true if the incoming request uses the `OPTIONS` method and has both the `Access-Control-Request-Method` and `Origin` headers. Used to allow [CORS pre-flight requests]. |
+| \* `date` | [Date Matcher] | Returns true if the time of the request matches the constraints. |
+| \* `day_of_week` | [Day of Week Matcher] | Returns true if the day of the request matches the constraints. |
+| `device` | [Device matcher] | Returns true if the incoming request includes a valid device ID or type. |
+| `domain` | [String Matcher] | Returns true if the logged-in user's email address domain (the part after `@`) matches the given value. |
+| `email` | [String Matcher] | Returns true if the logged-in user's email address matches the given value. |
+| \* `groups` | [String List Matcher] | Returns true if a user's group ID matches the supplied value **exactly**. `groups` data is only available after a successful directory sync. See [Identity Providers](/docs/integrations/user-identity/identity-providers) for vendor-specific directory sync steps. |
+| `http_method` | [String Matcher] | Returns true if the HTTP method matches the given value. |
+| `http_path` | [String Matcher] | Returns true if the HTTP path matches the given value. |
+| `invalid_client_certificate` | Anything. Typically `true`. | Returns true if the incoming request does not have a trusted client certificate. By default, a `deny` rule using this criterion is added to all Pomerium policies when [downstream mTLS] is configured (but this default can be changed using the [Enforcement Mode](/docs/reference/downstream-mtls-settings#enforcement-mode) setting.) |
+| `pomerium_routes` | Anything. Typically `true`. | Returns true if the incoming request is for the special `.pomerium` routes. A default `allow` rule using this criterion is added to all Pomerium policies. |
+| \* `record` | variable | Allows policies to be extended using data from [external data sources](/docs/capabilities/integrations). See [Record Matcher](#record-matcher) for more information. |
+| `reject` | Anything. Typically `true`. | Always returns false. The opposite of `accept`. |
+| \* `time_of_day` | [Time of Day Matcher] | Returns true if the time of the request (for the current day) matches the constraints. |
+| `user` | [String Matcher] | Returns `true` if the logged-in user's ID matches the supplied value. (The actual value of the user ID claim depends on how the identity provider sets this value.) |
+
+Entries marked with `*` denote criteria that are only available in the [Enterprise Console](/docs/deploy/enterprise) PPL builder. All other entries are available in both Pomerium Core and Pomerium Enterprise.
+
+## Matchers
+
+### Certificate Matcher
+
+:::caution
+
+The certificate matcher is a beta feature. The syntax and capabilities are subject to change in a future Pomerium release.
+
+:::
+
+A certificate matcher can be used to allow or deny certain TLS certificates. This matcher is represented as an object that may have the following key/value entries:
+
+| Key Name | Value Type | Description |
+| --- | --- | --- |
+| `fingerprint` | string or array of strings | The certificate's SHA-256 fingerprint must match one of the provided values. |
+| `san_dns` | [String Matcher] | The certificate must contain a Subject Alternative Name with a DNS name satisfying the provided condition. |
+| `san_email` | [String Matcher] | The certificate must contain a Subject Alternative Name with an email address satisfying the provided condition. |
+| `san_uri` | [String Matcher] | The certificate must contain a Subject Alternative Name with a URI satisfying the provided condition. |
+| `spki_hash` | string or array of strings | The base64-encoded SHA-256 hash of the certificate's Subject Public Key Info must match one of the provided values. |
+
+<details>
+<summary>Notes on certificate fingerprint</summary>
+
+The certificate fingerprint is a SHA-256 hash of the entire certificate. You can compute a certificate's fingerprint using the `openssl` command:
+
+```shell-session
+$ openssl x509 -in path/to/certificate.pem -noout -fingerprint -sha256
+sha256 Fingerprint=17:85:92:73:E8:A9:80:63:1D:36:7B:2D:5A:6A:66:35:41:2B:0F:22:83:5F:69:E4:7B:3F:65:62:45:46:A7:04
+```
+
+This is the "long" form of a certificate fingerprint (32 uppercase hexadecimal bytes separated by colons). A "short" form is also acceptable (32 lowercase hexadecimal bytes, without colons). You can also compute this form using the `openssl` command:
+
+```shell-session
+$ openssl x509 -in path/to/certificate.pem -outform DER | openssl dgst -sha256
+SHA2-256(stdin)= 17859273e8a980631d367b2d5a6a6635412b0f22835f69e47b3f65624546a704
+```
+
+</details>
+
+<details>
+<summary>Notes on SPKI hash</summary>
+
+The SPKI hash is a base64-encoded SHA-256 hash of the Subject Public Key Info section of the certificate. You can compute a certificate's SPKI hash using a sequence of `openssl` commands:
+
+```shell-session
+$ openssl x509 -in path/to/certificate.pem -noout -pubkey \
+  | openssl pkey -pubin -outform DER \
+  | openssl dgst -sha256 -binary \
+  | openssl enc -base64
+FsDbM0rUYIiL3V339eIKqiz6HPSB+Pz2WeAWhqlqh8U=
+```
+
+The advantage of using the SPKI hash rather than the certificate fingerprint is that the SPKI hash may be stable across certificate renewals (if the public/private key pair is the same).
+
+</details>
+
+For example, to allow only certificates containing a Subject Alternative Name with an email address ending in `@yourdomain.com` (while also requiring the user to sign in with the configured identity provider):
+
+```yaml
+allow:
+  and:
+    - authenticated_user: true
+    - client_certificate:
+        san_email:
+          ends_with: '@yourdomain.com'
+```
+
+Or, to allow only one specific trusted certificate (again, while still requiring the user to sign in with the configured identity provider):
+
+```yaml
+allow:
+  and:
+    - authenticated_user: true
+    - client_certificate:
+        fingerprint: '17859273e8a980631d367b2d5a6a6635412b0f22835f69e47b3f65624546a704'
+```
+
+Or, to enforce an allowlist of trusted certificate key pairs:
+
+```yaml
+allow:
+  and:
+    - authenticated_user: true
+    - client_certificate:
+        spki_hash:
+          - 'FsDbM0rUYIiL3V339eIKqiz6HPSB+Pz2WeAWhqlqh8U='
+          - 'pbdFxDXEtpabt3MZiik71farokMg6ZIn2azvsdXtZYA='
+          - 'WTu9ETBS1/v/ll20erWcf+TAj7rzrJix/oCUv5GMPtg='
+            ...
+```
+
+### Day of Week Matcher
+
+The day of week matcher is a **string**. The string can either be `*`, a comma-separated list of days, or a dash-separated list of days.
+
+- `*` matches all days.
+- `,` matches either day (e.g. `mon,wed,fri`).
+- `-` matches a range of days. (e.g. `mon-fri`). Days can be specified as English full day names, or as 3 character abbreviations. For example:
+
+  ```yaml
+  allow:
+    and:
+      - day_of_week: tue-fri
+  ```
+
+### Date Matcher
+
+The date matcher is an object with operators as keys. It supports the following operators: `after` and `before`. The values are [ISO-8601](https://en.wikipedia.org/wiki/ISO_8601) date strings. `after` means that the time of the request must be after the supplied date and `before` means that the time of the request must be before the supplied date. For example:
+
+```yaml
+allow:
+  and:
+    - date:
+        after: 2020-01-02T16:20:00
+        before: 2150-01-02T16:20:00
+```
+
+### Device Matcher
+
+A device matcher is an object with operators as keys. It supports the following operators:
+
+- `is` - an exact match of the device ID.
+- `approved` - true if the device has been approved. This is an enterprise-only feature.
+- `type` - Specifies the type of device to match on. The available types are `enclave_only` and `any`.
+  - `enclave_only` will only match [platform authenticators](/docs/integrations/device-context/device-identity#secure-enclaves). These include TPM modules and hardware-backed keystores built into mobile devices.
+  - `any` will also match [hardware security keys](/docs/integrations/device-context/device-identity#hardware-security-keys).
+
+For example, a policy to allow any user with a registered device:
+
+```yaml
+- allow:
+    or:
+      - device:
+          type: any
+```
+
+Compare to a policy that only allows a set of specific devices:
+
+<!-- prettier-ignore -->
+```yaml
+- allow:
+    or:
+      - device:
+          is: "5Vn3...C1RS"
+      - device:
+          is: "GAtL...doqu"
+```
+
+:::tip
+
+Users can [find their device IDs](/docs/integrations/device-context/device-identity#find-the-device-id) at the `/.pomerium` endpoint from any route.
+
+:::
+
+### Record Matcher
+
+The record matcher is an object that uses operators as keys. It points to records collected from an [external data source](/docs/capabilities/integrations) defined in the Enterprise Console. Pomerium matches requests to a specific external data source using a record's [foreign key](/docs/capabilities/integrations#foreign-key). You can use data stored in a record as external context in an authorization policy.
+
+The record matcher supports all of the [String Matcher](/docs/internals/ppl#string-matcher) and [String List Matcher](/docs/internals/ppl#string-list-matcher) operators. However, the following operators are specific to the record matcher:
+
+- `type`: Identifies the [Record Type](/docs/capabilities/integrations#record-type) as it's defined in the Enterprise Console
+- `field`: Specifies the field name as defined by the external data source
+- [Exists operator](#exists-operator)
+- [Numerical comparison operators](#numerical-comparison-operators) (`<`, `<=`, `=`, `>`, `>=`)
+
+#### Exists operator
+
+The “exists” operator is a **boolean**:
+
+- When set to `true`, it returns `ok` if it can find the corresponding external data source record in the Enterprise Console.
+- When set to `false`, it returns `ok` if it can't find the corresponding external data source record in the Enterprise Console.
+
+:::note
+
+The "exists" operator does not require a "field" key.
+
+:::
+
+<Tabs>
+<TabItem value="policy-builder" label="Policy Builder">
+
+![Builds an authorization policy using the exists operator with an external data source](./img/ppl/exists-operator.png)
+
+</TabItem>
+<TabItem value="policy-editor" label="Policy Editor">
+
+```yaml
+allow:
+  and:
+    - record:
+        type: pomerium.io/ExternalDataSource
+        exists: true
+```
+
+</TabItem>
+</Tabs>
+
+#### Numerical comparison operators
+
+The numerical comparison operators (`<`, `<=`, `=`, `>`, `>=`) can be used to express conditions for external data sources with numerical fields.
+
+<Tabs>
+<TabItem value="policy-builder" label="Policy Builder">
+
+![Building a policy using the a numerical comparison operator with an external data source](./img/ppl/numerical-comparison-operators.png)
+
+</TabItem>
+<TabItem value="policy-editor" label="Policy Editor">
+
+```yaml
+allow:
+  and:
+    - record:
+        type: pomerium.io/ExternalDataSource
+        field: trust_score
+        '>=': 5
+```
+
+</TabItem>
+</Tabs>
+
+### String Matcher
+
+A string matcher is an object with operators as keys. It supports the following operators: `contains`, `ends_with`, `is` and `starts_with`.
+
+For example:
+
+```yaml
+allow:
+  and:
+    - email:
+        starts_with: 'admin@'
+```
+
+Or:
+
+```yaml
+allow:
+  and:
+    - record:
+        type: example.com/geoip
+        field: country
+        is: 'US'
+```
+
+A string matcher can also be used with an array, a string, a number or a boolean, in which case it is the same as the `is` operator.
+
+### String List Matcher
+
+A string list matcher is an object that supports a single `has` operator as a key. The `has` operator checks that a given string is present in a list of strings.
+
+The `groups` and `record` criteria both support the `has` operator.
+
+For example, using the `groups` criterion:
+
+```yaml
+allow:
+  and:
+    - groups:
+        has: '00gv40ki4gmtCyl5d4x6'
+```
+
+Using the `record` criterion:
+
+```yaml
+- record:
+    type: example.com/hr_user
+    field: departments
+    has: 'engineering'
+```
+
+A string list matcher can also be used with an array, a string, a number or a boolean, in which case it is the same as the `has` operator.
+
+### Time of Day Matcher
+
+The time of day matcher is an object with operators as keys. It supports the following operators: `timezone`, `after`, and `before`.
+
+`timezone` is required and specifies the timezone to use when interpreting the supplied times. It is recommended to use city names (like `America/Phoenix`) instead of standard timezone abbreviations because standard timezones change throughout the year (i.e. EST becomes EDT and back again).
+
+`after` means the time of the request must be after the supplied time and `before` means that the time of the request must be before the supplied time. For example:
+
+```yaml
+allow:
+  and:
+    - time_of_day:
+        timezone: UTC
+        after: 2:20:00
+        before: 4:30PM
+```
+
+## Rego
+
+:::caution Rego Usage Requires Extreme Care
+
+Rego policies can be powerful, but improper usage may unintentionally open unauthorized access, deny valid requests, or even leak sensitive data. **Whenever possible, use [PPL](/docs/internals/ppl) instead**. If you're unsure whether your use case requires Rego, work with your Pomerium account representative or [contact support](mailto:support@pomerium.com) to see if your needs can be met using PPL-based policy criteria.
+
+:::
+
+Pomerium supports policies expressed in [Rego](https://www.openpolicyagent.org/docs/latest/#rego) for organizations that prefer to use [OPA](https://www.openpolicyagent.org/).
+
+See the [Outputs](#outputs), [Inputs](#inputs), and [Functions](#functions) reference sections below to learn how Rego policies apply to policy evaluation.
+
+:::enterprise
+
+Custom Rego policies is a [Pomerium Enterprise](/docs/deploy/enterprise) feature.
+
+:::
+
+In the [Enterprise Console](/docs/deploy/enterprise#enterprise-console), you can write custom Rego policies in the Rego Editor:
+
+![Apply Rego in Console editor](./img/ppl/ppl-rego-policy.png)
+
+:::note
+
+A policy can only support PPL or Rego. Once one is set, the other tab is disabled.
+
+:::
+
+## Outputs
+
+Authorization policy written in Rego is expected to return results in `allow` and/or `deny` rules:
+
+```rego
+# a policy that always allows access
+allow := true
+```
+
+```rego
+# a policy that always denies access
+deny := true
+```
+
+Pomerium grants access according to the same rules as [PPL](/docs/internals/ppl#actions):
+
+> Only two actions are supported: allow and deny. deny takes precedence over allow. More precisely: a user will have access to a route if at least one allow rule matches and no deny rules match.
+
+`allow` and `deny` rules support four forms:
+
+1. A simple boolean:
+
+```rego
+allow := true
+```
+
+2. An array with a single boolean value:
+
+```rego
+deny := [true]
+```
+
+3. An array with two values: a boolean and a **reason**:
+
+```rego
+allow := [false, "user-unauthorized"]
+```
+
+4. An array with three values: a boolean, a reason, and additional data:
+
+```rego
+allow := [false, "user-unauthorized", { "key": "value" }]
+```
+
+The **reason** value is useful for debugging, since it appears in [authorization logs](/docs/reference/authorize-log-fields#find-authorize-logs). There are two special reasons that trigger functionality in Pomerium:
+
+- `user-unauthenticated` indicates that the user needs to sign in, and results in a redirect to the Authenticate service
+- `device-unauthenticated` indicates that the user needs to register a new device
+
+## Inputs
+
+Rego scripts are evaluated with inputs available on the `input` object:
+
+```rego
+allow if input.http.method == "POST"
+```
+
+Rego defines the following inputs:
+
+| **Input name** | **Type** | **Description** |
+| :-- | :-- | :-- |
+| `http` | Object | Represents the HTTP request |
+| `http.method` | String | The method used in the HTTP request |
+| `http.hostname` | String | The hostname in the HTTP request |
+| `http.path` | String | The path in the HTTP request |
+| `http.url` | String | The full URL in the HTTP request |
+| `http.headers` | Object | The headers in the HTTP request |
+| `http.client_certificate` | Object | The client certificate details |
+| `http.client_certificate.presented` | Boolean | `true` if the client presented a certificate |
+| `http.client_certificate.leaf` | String | The leaf certificated provided by the client (unvalidated) |
+| `http.client_certificate.intermediates` | String | The remainder of the client certificate chain |
+| `http.ip` | String | The user's IP address |
+| `http.session` | Object | Represents the user's session |
+| `http.session.id` | String | The session ID |
+| `http.is_valid_client_certificate` | Boolean | `true` if the presented client certificate is valid |
+
+## Functions
+
+The function below is available in Rego scripts:
+
+- `get_databroker_record(record_type, record_id)`: Returns data from the Databroker service.
+
+For example:
+
+```rego
+session := get_databroker_record("type.googleapis.com/session.Session", input.session.id)
+```
+
+### Example Rego policy
+
+This example policy compares the `given_name` claim from a user's session against a list of popular first names, and only allows the 100 most popular first names.
+
+```rego
+package pomerium.policy
+session = s {
+  s = gset_databroker_record("type.googleapis.com/user.ServiceAccount", input.session.id)
+  s != null
+} else = s {
+  s = get_databroker_record("type.googleapis.com/session.Session", input.session.id)
+  s != null
+} else = {} {
+  true
+}
+user = u {
+  u = get_databroker_record("type.googleapis.com/user.User", session.user_id)
+} else = {} {
+  true
+}
+allow = [true, {"custom-rego-authorized"}] {
+  # grab all the claims from the user and session objects
+  session_claims := object.get(session, "claims", {})
+  user_claims := object.get(user, "claims", {})
+  all_claims := object.union(session_claims, user_claims)
+  # get the given_name claim. claim values are always an array of strings
+  given_names := object.get(all_claims, "given_name", [])
+  # query a JSON dump of the most popular baby names from 2020
+  response := http.send({
+    "method": "GET",
+    "url": "https://raw.githubusercontent.com/aruljohn/popular-baby-names/master/2020/boy_names_2020.json",
+    "force_json_decode": true,
+  })
+  # only include the top 100 names
+  all_names := response.body.names
+  popular_names := array.slice(all_names, 0, 99)
+  # check that there's a given name in the popular names
+  some i
+  some j
+  popular_names[i] == given_names[j]
+} else = [false, {"custom-rego-unauthorized"}] {
+  session.id != ""
+} else = [false, {"user-unauthenticated"}] {
+  true
+}
+```
+
+This example pulls session data from the Databroker service using `type.googleapis.com/session.Session` for users and `type.googleapis.com/user.ServiceAccount` for service accounts.
+
+[`allow_public_unauthenticated_access`]: /docs/reference/routes/public-access
+[`allow_any_authenticated_user`]: /docs/reference/routes/allow-any-authenticated-user
+[cors pre-flight requests]: https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS#preflighted_requests
+[downstream mtls]: /docs/reference/downstream-mtls-settings
+[pomerium enterprise]: /docs/deploy/enterprise/install
+[yaml]: https://en.wikipedia.org/wiki/YAML
+[string matcher]: #string-matcher
+[string list matcher]: #string-list-matcher
+[date matcher]: #date-matcher
+[day of week matcher]: #day-of-week-matcher
+[time of day matcher]: #time-of-day-matcher
+[list matcher]: #list-matcher
+[certificate matcher]: #certificate-matcher
+[device matcher]: #device-matcher

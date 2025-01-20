@@ -1,9 +1,8 @@
 // @ts-check
 // Note: type annotations allow type checking and IDEs autocompletion
 
-const githubCodeTheme = require('prism-react-renderer/themes/github');
-const draculaCodeTheme = require('prism-react-renderer/themes/dracula');
 const dotenv = require('dotenv');
+const webpack = require('webpack');
 
 dotenv.config();
 
@@ -120,23 +119,6 @@ const config = {
           to: '/docs/reference/',
         },
         {
-          type: 'dropdown',
-          position: 'right',
-          label: 'APIs',
-          items: [
-            {
-              docId: 'docs/api',
-              label: 'Zero API',
-              to: '/docs/api/',
-            },
-            {
-              docId: 'docs/capabilities/enterprise-api',
-              label: 'Enterprise API',
-              to: 'docs/capabilities/enterprise-api',
-            },
-          ],
-        },
-        {
           type: 'docSidebar',
           sidebarId: 'guides',
           position: 'right',
@@ -154,12 +136,8 @@ const config = {
           dropdownActiveClassDisabled: true,
           dropdownItemsAfter: [
             {
-              to: 'https://0-27-0.docs.pomerium.com/docs',
-              label: 'v0.27',
-            },
-            {
-              to: 'https://0-26-0.docs.pomerium.com/docs',
-              label: 'v0.26',
+              to: 'https://0-28-0.docs.pomerium.com/docs',
+              label: 'v0.28 (latest)',
             },
             {
               type: 'html',
@@ -259,7 +237,22 @@ const config = {
         id: process.env.GTM,
       },
     ],
-    './docusaurus-plugins/src/webpackDebugFix.js',
+    // async function customPlugin(context, opts) {
+    //   return {
+    //     name: 'custom-plugin',
+    //     configureWebpack(config, isServer, utils, content) {
+    //       return {
+    //         plugins: [
+    //           new webpack.DefinePlugin({
+    //             // IMPORTANT: To fix debug library‘s bug
+    //             // {}.DEBUG = namespaces; // SyntaxError: Unexpected token '.'
+    //             'process.env.DEBUG': 'process.env.DEBUG',
+    //           }),
+    //         ],
+    //       };
+    //     },
+    //   };
+    // },
     [
       'docusaurus-pushfeedback',
       {
@@ -277,18 +270,19 @@ const config = {
 // token types, so define our own styles for these types here.
 function lightCodeTheme() {
   return {
-    ...githubCodeTheme,
-    styles: githubCodeTheme.styles.concat([
+    ...require('prism-react-renderer').themes.github,
+    styles: require('prism-react-renderer').themes.github.styles.concat([
       {types: ['shell-symbol'], style: {color: '#5d36c6'}},
       {types: ['command'], style: {color: '#1c1e21'}},
       {types: ['output'], style: {color: '#133369'}},
     ]),
   };
 }
+
 function darkCodeTheme() {
   return {
-    ...draculaCodeTheme,
-    styles: draculaCodeTheme.styles.concat([
+    ...require('prism-react-renderer').themes.dracula,
+    styles: require('prism-react-renderer').themes.dracula.styles.concat([
       {types: ['shell-symbol'], style: {color: '#c0a9ff'}},
       {types: ['output'], style: {color: '#e4e4c4'}},
     ]),

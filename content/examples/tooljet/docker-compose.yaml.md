@@ -3,7 +3,7 @@ networks:
   main: {}
 services:
   pomerium:
-    image: cr.pomerium.com/pomerium/pomerium:latest
+    image: pomerium.com/pomerium/pomerium:latest
     volumes:
       ## Mount your config file: https://www.pomerium.com/docs/reference/
       - ./config.yaml:/pomerium/config.yaml:ro
@@ -18,7 +18,7 @@ services:
   verify:
     networks:
       main: {}
-    image: cr.pomerium.com/pomerium/verify:latest
+    image: pomerium.com/pomerium/verify:latest
     expose:
       - 8000
   tooljet:

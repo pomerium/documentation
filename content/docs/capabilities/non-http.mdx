@@ -1,0 +1,49 @@
+---
+title: Tunneling Non-HTTP Protocols
+sidebar_label: Tunneling Non-HTTP Protocols
+description: 'Consolidated documentation for using Pomerium to protect and access non-HTTP protocols (TCP and UDP) over HTTP.'
+keywords:
+  - pomerium
+  - identity access proxy
+  - pomerium desktop
+  - pomerium cli
+  - tcp
+  - udp
+  - ssh
+  - redis
+  - mysql
+  - rdp
+  - database
+  - bastion
+sidebar_position: 0
+lang: en-US
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Non-HTTP Protocols
+
+Pomerium supports tunneling **non-HTTP protocols** (such as TCP- and UDP-based services) over HTTP, allowing you to secure and authenticate connections to those services using your existing identity provider.
+
+Common uses include:
+
+- Administrative connections (SSH, RDP)
+- Data services (Redis, MySQL, Postgres)
+- UDP-based protocols (e.g., time servers, Factorio game server)
+
+Below, you'll find details on how it works, how to create routes, and how to use the Pomerium CLI or Desktop client to connect.
+
+## How It Works
+
+Pomerium uses HTTP tunneling methods described in relevant RFCs:
+
+- **TCP**: Uses the [`CONNECT`](https://httpwg.org/specs/rfc9110.html#CONNECT) method to establish a tunnel.
+- **UDP**: Uses [`CONNECT-UDP`](https://datatracker.ietf.org/doc/html/rfc9298) to tunnel UDP traffic over HTTP/2 or HTTP/3.
+
+:::caution
+
+To minimize issues with TCP support, **do not** place Pomerium behind another HTTP proxy.  
+Instead, configure your load balancer in L4/TCP mode. If you must proxy HTTP to Pomerium, the upstream proxy must support forwarding `CONNECT` or `CONNECT-UDP` traffic.
+
+:::
