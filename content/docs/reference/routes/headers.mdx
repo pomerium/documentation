@@ -65,7 +65,7 @@ Configure **Host Rewrite** settings in the route **Headers** settings in the Con
 </TabItem>
 <TabItem value="Kubernetes" label="Kubernetes">
 
-| **[Annotation name](/docs/k8s/ingress#set-ingress-annotations)** | **Type** | **Usage** |
+| **[Annotation name](/docs/deploy/k8s/ingress#set-ingress-annotations)** | **Type** | **Usage** |
 | :-- | :-- | :-- |
 | `host_rewrite` | `string` | **optional** |
 
@@ -177,7 +177,7 @@ Configure **Set Request Headers** in the Console:
 </TabItem>
 <TabItem value="Kubernetes" label="Kubernetes">
 
-| **[Annotation name](/docs/k8s/ingress#set-ingress-annotations)** | **Type** | **Usage** |
+| **[Annotation name](/docs/deploy/k8s/ingress#set-ingress-annotations)** | **Type** | **Usage** |
 | :-- | :-- | :-- |
 | `set_request_headers` | map of key-value pairs | **optional** |
 
@@ -196,11 +196,11 @@ The following token substitutions are available:
 | **Token** | **Value** |
 | :-- | :-- |
 | `${pomerium.access_token}` | OAuth access token from the identity provider\* |
-| `${pomerium.client_cert_fingerprint}` | Short form SHA-256 fingerprint of the presented client certificate (if [downstream mTLS](/docs/capabilities/mtls-clients) is enabled) |
+| `${pomerium.client_cert_fingerprint}` | Short form SHA-256 fingerprint of the presented client certificate (if [downstream mTLS](/docs/internals/certificates-and-tls) is enabled) |
 | `${pomerium.id_token}` | OIDC ID token from the identity provider\* |
 | `${pomerium.jwt}` | [Pomerium JWT](/docs/capabilities/getting-users-identity) (this is the same value as in the [`X-Pomerium-Jwt-Assertion` header](/docs/reference/routes/pass-identity-headers-per-route)) |
 
-\*The ID token and access token are not available when using the [Hosted Authenticate](/docs/capabilities/hosted-authenticate-service) service.
+\*The ID token and access token are not available when using the [Hosted Authenticate](/docs/capabilities/authentication) service.
 
 **Note:** Token values must use the `${pomerium.<token>}` syntax. To include a literal `$` character in a header value, use `$$`.
 
@@ -248,7 +248,7 @@ Set **Remove Request Headers** in the Console:
 </TabItem>
 <TabItem value="Kubernetes" label="Kubernetes">
 
-| **[Annotation name](/docs/k8s/ingress#set-ingress-annotations)** | **Type** | **Usage** |
+| **[Annotation name](/docs/deploy/k8s/ingress#set-ingress-annotations)** | **Type** | **Usage** |
 | :-- | :-- | :-- |
 | `remove_request_headers` | `string` | **optional** |
 
@@ -291,7 +291,7 @@ Configure **Set Response Headers** in the Console:
 </TabItem>
 <TabItem value="Kubernetes" label="Kubernetes">
 
-| **[Annotation name](/docs/k8s/ingress#set-ingress-annotations)** | **Type** | **Usage** |
+| **[Annotation name](/docs/deploy/k8s/ingress#set-ingress-annotations)** | **Type** | **Usage** |
 | :-- | :-- | :-- |
 | `set_response_headers` | `string` | **optional** |
 
@@ -345,7 +345,7 @@ Configure **Rewrite Response Headers** in the Console:
 </TabItem>
 <TabItem value="Kubernetes" label="Kubernetes">
 
-| **[Annotation name](/docs/k8s/ingress#set-ingress-annotations)** | **Type** | **Usage** |
+| **[Annotation name](/docs/deploy/k8s/ingress#set-ingress-annotations)** | **Type** | **Usage** |
 | :-- | :-- | :-- |
 | `rewrite_response_headers` | `object` | **optional** |
 
