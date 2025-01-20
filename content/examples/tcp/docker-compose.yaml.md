@@ -1,7 +1,7 @@
 ```yaml title="docker-compose.md"
 services:
   pomerium:
-    image: cr.pomerium.com/pomerium/pomerium:latest
+    image: pomerium.com/pomerium/pomerium:latest
     volumes:
       # Uncomment to mount certificates (optional)
       # - ./_wildcard.localhost.pomerium.io.pem:/pomerium/cert.pem:ro

@@ -3,7 +3,7 @@ networks:
   main: {}
 services:
   pomerium:
-    image: cr.pomerium.com/pomerium/pomerium:v0.21.1
+    image: pomerium.com/pomerium/pomerium:v0.21.1
     volumes:
       - ./config.yaml:/pomerium/config.yaml:ro
     ports:
@@ -68,7 +68,7 @@ services:
   verify:
     networks:
       main: {}
-    image: cr.pomerium.com/pomerium/verify:latest
+    image: pomerium.com/pomerium/verify:latest
     expose:
       - 8000
     restart: always
