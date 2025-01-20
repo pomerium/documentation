@@ -110,6 +110,22 @@ PomeriumSpec defines Pomerium-specific configuration parameters.
         <tr>
             <td>
                 <p>
+                <code>codecType</code>&#160;&#160;
+                
+                    <strong>string</strong>&#160;
+                
+                </p>
+                <p>
+                    
+                    CodecType sets the <a href="https://www.pomerium.com/docs/reference/codec-type">Codec Type</a>.
+                </p>
+                
+            </td>
+        </tr>
+    
+        <tr>
+            <td>
+                <p>
                 <code>cookie</code>&#160;&#160;
                 
                     <strong>object</strong>&#160;
