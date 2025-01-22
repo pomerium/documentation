@@ -102,8 +102,13 @@ We also provide container images on [Docker Hub](https://hub.docker.com/r/pomeri
 Example usage:
 
 ```bash
+# config.yaml is your Pomerium configuration.
+# See https://www.pomerium.com/docs/deploy/core#configuration
 docker pull pomerium/pomerium:latest
-docker run --rm -it -p 443:443 pomerium/pomerium:latest --version
+docker run --rm -it \
+  -p 8443:443 \
+  -v $(pwd)/config.yaml:/pomerium/config.yaml \
+  pomerium/pomerium:latest
 ```
 
 If you plan to run on port 443 in a rootless environment, you may need extra [capabilities](https://linux-audit.com/linux-capabilities-hardening-linux-binaries-by-removing-setuid/) or choose a non-privileged port.
