@@ -139,6 +139,7 @@ If you prefer building from source:
 Pomerium is configured via [configuration variables](/docs/reference) (environment variables) or a YAML file (`config.yaml`). Below is a minimal example referencing a single route and an identity provider:
 
 ```yaml title="config.yaml"
+# Minimal example route
 #
 # Generate a shared secret by running head -c32 /dev/urandom | base64
 # More on shared secrets at https://www.pomerium.com/docs/reference/shared-secret
@@ -148,8 +149,12 @@ shared_secret: REPLACE_ME
 # More on cookie secrets at https://www.pomerium.com/docs/reference/cookies#cookie-secret
 cookie_secret: REPLACE_ME
 
-# If these settings are omitted, the Pomerium Hosted Authenticate Service will be used.
-# idp_provider can be e.g. google
+# If the Authenticate Service URL is not set, the Pomerium Hosted Authenticate Service will be used.
+# See https://www.pomerium.com/docs/reference/service-urls#authenticate-service-url
+#
+# authenticate_service_url: REPLACE_ME
+#
+# For more information on identity provider settings, see https://pomerium.com/docs/reference/identity-provider-settings
 #
 # idp_provider: REPLACE_ME
 # idp_client_id: REPLACE_ME
