@@ -1,9 +1,9 @@
 ---
 # cSpell:ignore ecparam genkey noout pubout secp256r1 QCN7adG2AmIK3UdHJvVJkldsUc6XeBRz83Z4rXX8Va4 ary66nrvA55TpaiWADq8b3O1CYIbvjqIHpXCY envoyproxy Jklds Tpai Ibvjq Lamda
 
-title: Continious Identity Verification at the Application Layer
+title: Continuous Identity Verification at the Application Layer
 description: Learn how Pomerium uses JWTs for identity and context verification, how it fits into a zero trust environment, and four ways to validate the JWT in your upstream service.
-sidebar_label: Continious Identity Verification
+sidebar_label: Continuous Identity Verification
 keywords:
   - jwt
   - jwt authentication
@@ -54,13 +54,13 @@ This article explains **why** identity & context verification at the application
 
 ![A diagram that shows how Pomerium forwards JWTs to an upstream application](./img/jwt-authn/jwt-authentication.svg)
 
-1. **User authenticates**  
+1. **User authenticates**
    Pomerium redirects the user to your OIDC-compliant identity provider (IdP).
-2. **Pomerium issues a signed JWT**  
+2. **Pomerium issues a signed JWT**
    After the user is authenticated, Pomerium mints a **new** JWT.
-3. **JWT assertion header**  
+3. **JWT assertion header**
    The JWT goes in the `X-Pomerium-Jwt-Assertion` header, following [RFC7519](https://datatracker.ietf.org/doc/html/rfc7519) encoding.
-4. **Upstream service verifies**  
+4. **Upstream service verifies**
    Your application (or a helper process) confirms the JWT's signature, audience, issuer, and timestamps.
 
 If everything checks out, your service can trust the identity data in the token for additional authorization or logging.
