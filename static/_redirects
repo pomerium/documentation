@@ -2,17 +2,17 @@
 # https://docs.netlify.com/routing/redirects/
 
 # Releases
-/docs/releases /docs/deploy/releases
-/docs/deploy/releases /docs/community/contributing
+/docs/releases /docs/versions
+/docs/releases/changelog /docs/deploy/upgrading
 
-# Configuration & Settings Reference (reference links redirect correctly)
+# Configuration & Settings Reference
 /docs/reference/reference /docs/reference
 /docs/reference/reference.html /docs/reference
 /docs/configuration/ /docs/reference
 /docs/config-reference.html /docs/reference
 /configuration/ /docs/reference
 
-# Community links (community links redirect correctly)
+# Community links
 /community/ /docs/community/
 /community/index.html /docs/community/
 /community/contributing /docs/community/contributing
@@ -26,20 +26,18 @@
 /docs/security.html /docs/internals/security
 /docs/community/security.html /docs/internals/security
 
-# Guide and examples links
+# Guide and examples
 /guide/ /docs/quick-start/
 /guide/kubernetes.html /docs/deploy/k8s/
 /guide/kubernetes /docs/deploy/k8s/
-/docs/deploy/k8s/ /docs/deploying/k8s/quickstart
 /guide/synology /docs/guides/synology
 /guide/synology.html /docs/guides/synology
 /docs/quick-start/synology.html /docs/guides/synology
 /docs/guides/jwt-verification /docs/deploy/jwt-verification-with-envoy
-
 /docs/examples.html /docs/guides
 /docs/examples /docs/guides
 
-# 301 deprecated guides in v21 to v20 guides
+# Deprecated guides in v21→v20
 /docs/guides/nginx https://0-20-0.docs.pomerium.com/docs/guides/nginx 301!
 /docs/guides/nginx.html https://0-20-0.docs.pomerium.com/docs/guides/nginx 301!
 /docs/guides/traefik-ingress https://0-20-0.docs.pomerium.com/docs/guides/traefik-ingress 301!
@@ -58,7 +56,7 @@ https://0-20-0.docs.pomerium.com/category/guides https://0-20-0.docs.pomerium.co
 # Removed in v25
 /docs/reference/debug https://0-24-0.docs.pomerium.com/docs/reference/debug
 
-# 301 Helm and Kubernetes redirects
+# Helm and Kubernetes to older docs
 /docs/guides/helm https://0-19-0.docs.pomerium.com/docs/guides/helm 301!
 /docs/releases/enterprise/install/helm https://0-19-0.docs.pomerium.com/docs/enterprise/install/helm 301!
 /docs/enterprise/install/helm.html https://0-19-0.docs.pomerium.com/docs/enterprise/install/helm 301!
@@ -68,7 +66,7 @@ https://0-20-0.docs.pomerium.com/category/guides https://0-20-0.docs.pomerium.co
 /guides/kubernetes-dashboard.html https://0-19-0.docs.pomerium.com/docs/guides/kubernetes-dashboard 301!
 /recipes/kubernetes.html https://0-20-0.docs.pomerium.com/docs/guides/kubernetes 301!
 
-# /guides/ redirects to capabilities pages
+# Guides → device identity, mTLS, etc.
 /docs/guides/enroll-device /docs/integrations/device-context/device-identity
 /docs/guides/enroll-device.html /docs/integrations/device-context/device-identity
 /docs/guides/admin-enroll-device.html /docs/integrations/device-context/device-identity
@@ -81,7 +79,7 @@ https://0-20-0.docs.pomerium.com/category/guides https://0-20-0.docs.pomerium.co
 /recipes/* /docs/guides/:splat
 /category/guides /docs/guides
 
-# /guides/ splat
+# Additional /guides/ splats
 /guides/* /docs/guides/:splat
 /docs/guides/tcp /docs/guides/securing-tcp
 /docs/guides/securing-tcp /docs/capabilities/non-http
@@ -92,28 +90,29 @@ https://0-20-0.docs.pomerium.com/category/guides https://0-20-0.docs.pomerium.co
 /docs/guides/local-oidc /docs/integrations/user-identity/identity-providers/oidc
 /docs/integrations/user-identity/identity-providers/dex-freeipa /docs 410
 
-# Reference, capabilities, topics, concepts links
+# Reference and concepts
 /docs/reference/readme.html /docs/
 /docs/concepts/namespacing /docs/internals/namespacing
 /docs/concepts/policies /docs/internals/glossary#policy
 /docs/concepts/routes /docs/internals/glossary#route
 /docs/concepts/service-accounts /docs/internals/glossary#service-account
-# Redirects incorrectly
 /docs/reference/certificates.html /docs/topics/certificates
 /docs/topics/certificates /docs/concepts/certificates
 /docs/concepts/certificates /docs/internals/certificates-and-tls
 
-# This link requires multiple redirects
+# Multi-hop data-storage link
 /docs/reference/data-storage.html /docs/topics/data-storage
 /docs/topics/data-storage /docs/concepts/data-storage
 /docs/concepts/data-storage /docs/internals/data-storage
 /docs/topics/data-storage.html /docs/internals/data-storage
 
-# This link requires multiple redirects
+# Multi-hop getting-users-identity
 /docs/reference/getting-users-identity.html /docs/topics/getting-users-identity
 /docs/topics/getting-users-identity /docs/concepts/getting-users-identity
 /docs/concepts/getting-users-identity /docs/capabilities/getting-users-identity
 /docs/topics/getting-users-identity.html /docs/capabilities/getting-users-identity
+
+# Old production-deployment references to 410
 /docs/reference/production-deployment.html /docs 410
 /docs/topics/production-deployment /docs 410
 /docs/topics/production-deployment.html /docs 410
@@ -122,13 +121,11 @@ https://0-20-0.docs.pomerium.com/category/guides https://0-20-0.docs.pomerium.co
 /docs/production/security /docs 410
 /docs/production/production-deployment /docs 410
 
-# This links requires multiple redirects
+# Multi-hop programmatic-access
 /docs/reference/programmatic-access.html /docs/topics/programmatic-access
 /docs/topics/programmatic-access /docs/concepts/programmatic-access
 /docs/concepts/programmatic-access /docs/capabilities/programmatic-access
-
 /docs/topics/programmatic-access.html /docs/capabilities/programmatic-access
-
 
 # Blog posts
 /posts/2020/06/01/release-0-9/ /blog/posts-2020-06-01-release-0-9/
@@ -139,12 +136,13 @@ https://0-20-0.docs.pomerium.com/category/guides https://0-20-0.docs.pomerium.co
 /blog/tag/kubernetes /blog
 /blog/tag/istio /blog
 /blog/author/pomerium/feed /blog
+
 # Careers
 /jobs/ /careers/
 /jobs/Frontend-Engineer.html /careers/frontend-engineer/
 /jobs/Backend-Engineer.html /careers/backend-engineer/
 
-# Redirects enterprise links
+# Enterprise links
 /enterprise/ /docs/enterprise
 /docs/enterprise /docs/releases/enterprise/about
 /enterprise/service-accounts/ /docs/capabilities/service-accounts
@@ -159,19 +157,17 @@ https://0-20-0.docs.pomerium.com/category/guides https://0-20-0.docs.pomerium.co
 /enterprise/reference/configure.html /docs/enterprise/configure
 /enterprise/reference/config.html /docs/enterprise/configure
 /enterprise/concepts.html /docs/concepts/access-control
-# /docs/enterprise/about uses multiple redirects
 /docs/enterprise/about /docs/releases/enterprise
 /docs/releases/enterprise /docs/releases/enterprise/about
 /docs/releases/enterprise/about /docs/enterprise
 /enterprise/reference/reports.html /docs/capabilities/reports
 /docs/capabilities/reports /docs/capabilities/metrics
 
-/enterprise/install/helm.html /docs/releases/enterprise/install/helm
+/enterprise/install/helm.html /docs/guides/helm
 /enterprise/* /docs/enterprise/:splat
 
-# /docs/releases/ and /docs/deploying/ splats for v22 sidebar restructure
-/docs/releases/changelog /docs/deploy/core/changelog
-/docs/releases/upgrading /docs/deploy/upgrading.mdx
+# v22 structure
+/docs/releases/upgrading /docs/deploy/upgrading
 /docs/deploying/binary /docs/deploy/core/binary
 /docs/deploying/from-source /docs/deploy/core/from-source
 /enterprise/about /docs/enterprise
@@ -185,52 +181,43 @@ https://0-20-0.docs.pomerium.com/category/guides https://0-20-0.docs.pomerium.co
 /docs/releases/* /docs/deploy/:splat
 /docs/deploying/* /docs/deploy/:splat
 
-# client redirects
+# Client redirects
 /docs/deploy/pomerium-cli /docs/deploy/clients/pomerium-cli
 /docs/deploy/pomerium-desktop /docs/deploy/clients/pomerium-desktop
 /docs/deploy/clients /docs/clients
 /docs/deploy/clients/* /docs/clients/:splat
 
-# Zero sidebar restructure
+# Zero restructure
 /docs/deploy/enterprise /docs/enterprise
 /docs/deploy/enterprise/* /docs/enterprise/:splat
-/docs/deploy/core /docs/deploy/core
-/docs/deploy/core/* /docs/deploy/core/:splat
+# The next two lines are effectively no-ops; removing to avoid confusion
+# /docs/deploy/core /docs/deploy/core
+# /docs/deploy/core/* /docs/deploy/core/:splat
 /docs/deploy/k8s /docs/deploy/k8s/quickstart
 /docs/deploy/k8s/* /docs/deploy/k8s/:splat
 /docs/zero/cluster-status /docs/troubleshooting/cluster-status
 /docs/zero/upgrading /docs/get-started/quickstart
 
-#  Installation and deployment methods redirects
-/docs/enterprise/install/docker /docs/enterprise/install
-/docs/enterprise/install/kustomize /docs/enterprise/install
-/docs/enterprise/install/os-packages /docs/enterprise/install
-
+# Installation and deployment
 /docs/installation.html /docs/get-started/quickstart
 /docs/installation /docs/get-started/quickstart
 /docs/quick-start /docs/get-started/quickstart
 /docs/install /docs/get-started/quickstart
-
 /docs/quick-start/binary /docs/deploy/core
 /docs/quick-start/binary.html /docs/deploy/core
 /docs/install/binary /docs/deploy/core
 /docs/releases/core /docs/deploy/core
-
 /docs/install/binary.html /docs/deploy/core/binary
 
-# Helm links
-/docs/quick-start/helm.html /docs/deploy/k8s/helm
-/docs/deploy/k8s/helm /docs/guides/helm
+# Consolidate Helm links → /docs/guides/helm
+/docs/quick-start/helm.html /docs/guides/helm
 /docs/enterprise/install/helm /docs/guides/helm
-
-# /docs/install/helm.html uses multiple redirects
-/docs/install/helm.html /docs/deploy/k8s/helm
+/docs/install/helm.html /docs/guides/helm
+/docs/install/helm /docs/guides/helm
 /docs/deploy/k8s/helm /docs/guides/helm
-
 /docs/deploy/k8s/helm.html /docs/guides/helm
-/docs/install/helm /docs/releases/enterprise/install/helm
 
-# From-source links
+# From-source
 /docs/quick-start/from-source.html /docs/install/from-source
 /docs/install/from-source /docs/deploying/from-source
 /docs/install/from-source.html /docs/deploying/from-source
@@ -256,10 +243,10 @@ https://0-20-0.docs.pomerium.com/category/guides https://0-20-0.docs.pomerium.co
 /docs/enterprise/api.html /docs/capabilities/enterprise-api
 /docs/enterprise/api /docs/capabilities/enterprise-api
 
-# redirects all /docs/enterprise/identity-providers to /docs/integrations/user-identity/identity-providers
+# Enterprise IdP → user-identity
 /docs/enterprise/identity-providers/* /docs/integrations/user-identity/identity-providers/:splat
 
-#redirects External Data examples
+# External data → /docs/integrations
 /docs/enterprise/external-data/* /docs/integrations/:splat
 
 # TCP links
@@ -269,78 +256,62 @@ https://0-20-0.docs.pomerium.com/category/guides https://0-20-0.docs.pomerium.co
 /docs/topics/tcp-support /docs/tcp/
 /docs/tcp /docs/capabilities/non-http
 
-
-# /docs/client.html uses multiple redirects
+# /docs/client.html multi-hop
 /docs/client.html /docs/tcp/client
 /docs/tcp/client.html /docs/capabilities/non-http/client
 /docs/tcp/client /docs/capabilities/non-http/client
 
 /docs/capabilities/non-http/tcp-cli-reference /docs/capabilities/non-http
 /docs/capabilities/non-http/examples/service-template.html /docs/capabilities/non-http
-# splats
 /docs/tcp/examples/* /docs/capabilities/non-http/examples/:splat
 /docs/tcp/* /docs/capabilities/non-http/examples/:splat
 
-# Enterprise metrics links
+# Enterprise metrics
 /docs/enterprise/metrics.html /docs/capabilities/metrics
 /docs/enterprise/metrics /docs/capabilities/metrics
 
-# redirects /examples/ links
+# JS/Go examples → JWT docs
 /examples/js-sdk/express-server /docs/capabilities/jwt-verification
 /docs/guides/js-sdk /docs/capabilities/jwt-verification
 /docs/capabilities/jwt-verification /docs/capabilities/getting-users-identity.mdx
 
-# Kubernetes links
-# /docs/topics/kubernetes-integration.html uses multiple redirects
+# Kubernetes
 /docs/topics/kubernetes-integration.html /docs/deploy/k8s/
 /docs/deploying/k8s/install /docs/deploy/k8s/install
 /docs/quick-start/kubernetes.html /docs/deploy/k8s/quickstart
-
 /docs/deploy/k8s/configure /docs/deploying/k8s/configure
 /docs/topics/kubernetes-integration /docs/deploying/k8s/quickstart
 /docs/topics/ingress /docs/deploy/k8s/ingress
-# Still 404s...
 /kubernetes/ /docs/deploying/k8s/quickstart
 
-# Troubleshooting and FAQs
+# Troubleshooting and FAQ
 /docs/FAQ.html /docs/troubleshooting
 /docs/internals/troubleshooting /docs/troubleshooting
 /docs/internals/troubleshooting.html /docs/troubleshooting
 /docs/faq /docs/troubleshooting
 
-# /docs/glossary.html uses multiple redirects
+# Glossary multi-hop
 /docs/glossary.html /docs/overview/glossary
 /docs/glossary /docs/internals/glossary
 /docs/overview/glossary /docs/internals/glossary
 
-
-# Releases and upgrading guides
-# /docs/releases.html has multiple redirects
+# Architecture, background, upgrading, changelog
 /docs/releases.html /docs/overview/releases
 /docs/overview/releases /docs/releases
-# /docs/architecture.html has multiple redirects
 /docs/architecture.html /docs/overview/architecture
 /docs/overview/architecture /docs/internals/architecture
-
 /docs/architecture /docs/internals/architecture
-# /docs/background.html has multiple redirects
 /docs/background /docs/concepts/zero-trust
 /docs/background.html /docs/overview/background
 /docs/overview/background /docs/concepts/zero-trust
-
 /docs/upgrading.html /docs/overview/upgrading
 /docs/upgrading /docs/releases/upgrading
-# /docs/changelog.html has multiple redirects
 /docs/changelog.html /docs/overview/changelog
-/docs/overview/changelog /docs/releases/changelog
-# /docs/changelog has multiple redirects
 /docs/changelog /docs/overview/changelog
 /docs/overview/changelog /docs/releases/changelog
-# Redirects are case sensitive https://answers.netlify.com/t/case-sensitivity-with-redirects/956/2
 /docs/CHANGELOG /docs/releases/changelog
-/docs/CHANGELOG.html /docs/deploy/core/changelog
+/docs/CHANGELOG.html /docs/deploy/enterprise/changelog
 
-# Consolidated Reference Page redirects
 # Autocert
 /docs/reference/autocert/autocert-ca /docs/reference/autocert#autocert-ca
 /docs/reference/autocert-directory /docs/reference/autocert#autocert-directory
@@ -462,7 +433,7 @@ https://0-20-0.docs.pomerium.com/category/guides https://0-20-0.docs.pomerium.co
 /docs/reference/global-pass-identity-headers /docs/reference/pass-identity-headers
 /docs/reference/routes/pass-identity-headers /docs/reference/routes/pass-identity-headers-per-route
 
-# X-Forwarded-For Settings
+# X-Forwarded-For
 /docs/reference/x-forwarded-for-http-header /docs/reference/x-forwarded-for-settings#skip-xff-append
 /docs/reference/the-number-of-trusted-hops /docs/reference/x-forwarded-for-settings#xff-number-of-trusted-hops
 
@@ -472,12 +443,10 @@ https://0-20-0.docs.pomerium.com/category/guides https://0-20-0.docs.pomerium.co
 # Shared Secret
 /docs/reference/shared-secret-file /docs/reference/shared-secret
 
-# Topics links - now concepts
+# Topics → new pages
 /docs/topics/auth-logs /docs/capabilities/audit-logs
 /docs/topics/single-sign-out.html /docs/capabilities/single-sign-out
 /docs/topics/single-sign-out /docs/capabilities/single-sign-out
-
-#redirects topics
 /docs/topics/original-request-context.html /docs/concepts/original-request-context
 /docs/concepts/original-request-context /docs/capabilities/original-request-context
 /docs/topics/load-balancing.html /docs/capabilities/routing
@@ -489,7 +458,6 @@ https://0-20-0.docs.pomerium.com/category/guides https://0-20-0.docs.pomerium.co
 /docs/topics/* /docs/concepts/:splat 301!
 /docs/topics/device-identity /docs/concepts/device-identity
 /docs/topics/mutual-auth /docs/internals/mutual-auth
-
 /docs/topics/original-request-context /docs/concepts/original-request-context
 /docs/concepts/original-request-context /docs/capabilities/original-request-context
 /docs/topics/ppl /docs/concepts/ppl
@@ -499,16 +467,15 @@ https://0-20-0.docs.pomerium.com/category/guides https://0-20-0.docs.pomerium.co
 /docs/topics/load-balancing /docs/concepts/load-balancing
 /docs/concepts/load-balancing /docs/capabilities/routing
 
-# flattened the changelog, and upgrading guide
-/docs/overview/upgrading/archive  /docs/overview/upgrading
-/docs/overview/changelog/archive  /docs/overview/upgrading
+# Flattened changelog & upgrading
+/docs/overview/upgrading/archive /docs/overview/upgrading
+/docs/overview/changelog/archive /docs/overview/upgrading
 /docs/overview/upgrading /docs/releases/upgrading
 /enterprise/changelog /docs/releases/enterprise/changelog
 /docs/enterprise/changelog /docs/releases/enterprise/changelog
 /docs/enterprise/changelog.html /docs/releases/enterprise/changelog
 
-# domain
-# redirect all the `.io` domains to `com` for latest docs
+# Domain-level
 http://docs.pomerium.io/* https://docs.pomerium.com/:splat 301!
 https://docs.pomerium.io/* https://docs.pomerium.com/:splat 301!
 
@@ -520,156 +487,121 @@ https://0-12-0.docs.pomerium.io/ https://0-12-0.docs.pomerium.com/:splat 301!
 https://0-11-0.docs.pomerium.io/ https://0-11-0.docs.pomerium.com/:splat 301!
 https://0-10-0.docs.pomerium.io/ https://0-10-0.docs.pomerium.com/:splat 301!
 
-# Avoid the index flicker in the browser
+# Avoid flicker
 / /docs
 
-# Newly renamed pages from bdd/2024-reorg-andconsolidate
-/_generate-recovery-token               /docs/admonitions/_generate-recovery-token
-/_generate-recovery-token.html          /docs/admonitions/_generate-recovery-token
+# Newly renamed pages (post-2024 reorg)
+/_generate-recovery-token /docs/admonitions/_generate-recovery-token
+/_generate-recovery-token.html /docs/admonitions/_generate-recovery-token
+/_install-mkcert /docs/admonitions/_install-mkcert
+/_install-mkcert.html /docs/admonitions/_install-mkcert
+/docs/manage/custom-domains /docs/capabilities/custom-domains
+/docs/manage/custom-domains.html /docs/capabilities/custom-domains
 
-/_install-mkcert                        /docs/admonitions/_install-mkcert
-/_install-mkcert.html                   /docs/admonitions/_install-mkcert
+/docs/get-started/fundamentals/advanced-policies /docs/get-started/fundamentals/core/advanced-policies
+/docs/get-started/fundamentals/advanced-policies.html /docs/get-started/fundamentals/core/advanced-policies
+/docs/get-started/fundamentals/advanced-routes /docs/get-started/fundamentals/core/advanced-routes
+/docs/get-started/fundamentals/advanced-routes.html /docs/get-started/fundamentals/core/advanced-routes
+/docs/get-started/fundamentals/build-policies /docs/get-started/fundamentals/core/build-policies
+/docs/get-started/fundamentals/build-policies.html /docs/get-started/fundamentals/core/build-policies
+/docs/get-started/fundamentals/build-routes /docs/get-started/fundamentals/core/build-routes
+/docs/get-started/fundamentals/build-routes.html /docs/get-started/fundamentals/core/build-routes
+/docs/get-started/fundamentals/conclusion /docs/get-started/fundamentals/core/conclusion
+/docs/get-started/fundamentals/conclusion.html /docs/get-started/fundamentals/core/conclusion
+/docs/get-started/fundamentals/get-started /docs/get-started/fundamentals/core/get-started
+/docs/get-started/fundamentals/get-started.html /docs/get-started/fundamentals/core/get-started
+/docs/get-started/fundamentals/jwt-verification /docs/get-started/fundamentals/core/jwt-verification
+/docs/get-started/fundamentals/jwt-verification.html /docs/get-started/fundamentals/core/jwt-verification
+/docs/get-started/fundamentals/production-certificates /docs/get-started/fundamentals/core/production-certificates
+/docs/get-started/fundamentals/production-certificates.html /docs/get-started/fundamentals/core/production-certificates
+/docs/get-started/fundamentals/self-hosted-pomerium /docs/get-started/fundamentals/core/self-hosted-pomerium
+/docs/get-started/fundamentals/self-hosted-pomerium.html /docs/get-started/fundamentals/core/self-hosted-pomerium
+/docs/get-started/fundamentals/tcp-routes /docs/get-started/fundamentals/core/tcp-routes
+/docs/get-started/fundamentals/tcp-routes.html /docs/get-started/fundamentals/core/tcp-routes
 
-/docs/manage/custom-domains             /docs/capabilities/custom-domains
-/docs/manage/custom-domains.html        /docs/capabilities/custom-domains
+/docs/get-started/fundamentals/zero-advanced-policies /docs/get-started/fundamentals/zero/zero-advanced-policies
+/docs/get-started/fundamentals/zero-advanced-policies.html /docs/get-started/fundamentals/zero/zero-advanced-policies
+/docs/get-started/fundamentals/zero-advanced-routes /docs/get-started/fundamentals/zero/zero-advanced-routes
+/docs/get-started/fundamentals/zero-advanced-routes.html /docs/get-started/fundamentals/zero/zero-advanced-routes
+/docs/get-started/fundamentals/zero-build-policies /docs/get-started/fundamentals/zero/zero-build-policies
+/docs/get-started/fundamentals/zero-build-policies.html /docs/get-started/fundamentals/zero/zero-build-policies
+/docs/get-started/fundamentals/zero-build-routes /docs/get-started/fundamentals/zero/zero-build-routes
+/docs/get-started/fundamentals/zero-build-routes.html /docs/get-started/fundamentals/zero/zero-build-routes
+/docs/get-started/fundamentals/zero-custom-idp /docs/get-started/fundamentals/zero/zero-custom-idp
+/docs/get-started/fundamentals/zero-custom-idp.html /docs/get-started/fundamentals/zero/zero-custom-idp
+/docs/get-started/fundamentals/zero-single-sign-on /docs/get-started/fundamentals/zero/zero-single-sign-on
+/docs/get-started/fundamentals/zero-single-sign-on.html /docs/get-started/fundamentals/zero/zero-single-sign-on
+/docs/get-started/fundamentals/zero-tcp-routes /docs/get-started/fundamentals/zero/zero-tcp-routes
+/docs/get-started/fundamentals/zero-tcp-routes.html /docs/get-started/fundamentals/zero/zero-tcp-routes
 
-/docs/get-started/fundamentals/advanced-policies              /docs/get-started/fundamentals/core/advanced-policies
-/docs/get-started/fundamentals/advanced-policies.html         /docs/get-started/fundamentals/core/advanced-policies
+/docs/integrations/integrations /docs/integrations
+/docs/integrations/integrations.html /docs/integrations
+/docs/integrations/fleetdm /docs/integrations/device-context/fleetdm
+/docs/integrations/fleetdm.html /docs/integrations/device-context/fleetdm
+/docs/integrations/geoip /docs/integrations/request-context/geoip
+/docs/integrations/geoip.html /docs/integrations/request-context/geoip
+/docs/integrations/ip-ranges /docs/integrations/request-context/ip-ranges
+/docs/integrations/ip-ranges.html /docs/integrations/request-context/ip-ranges
+/docs/integrations/tor-exit-nodes /docs/integrations/request-context/tor-exit-nodes
+/docs/integrations/tor-exit-nodes.html /docs/integrations/request-context/tor-exit-nodes
+/docs/integrations/vpn-providers /docs/integrations/request-context/vpn-providers
+/docs/integrations/vpn-providers.html /docs/integrations/request-context/vpn-providers
+/docs/integrations/apple /docs/integrations/user-identity/apple
+/docs/integrations/apple.html /docs/integrations/user-identity/apple
+/docs/integrations/auth0 /docs/integrations/user-identity/auth0
+/docs/integrations/auth0.html /docs/integrations/user-identity/auth0
+/docs/integrations/azure /docs/integrations/user-identity/azure
+/docs/integrations/azure.html /docs/integrations/user-identity/azure
+/docs/integrations/cognito /docs/integrations/user-identity/cognito
+/docs/integrations/cognito.html /docs/integrations/user-identity/cognito
+/docs/integrations/github /docs/integrations/user-identity/github
+/docs/integrations/github.html /docs/integrations/user-identity/github
+/docs/integrations/gitlab /docs/integrations/user-identity/gitlab
+/docs/integrations/gitlab.html /docs/integrations/user-identity/gitlab
+/docs/integrations/google /docs/integrations/user-identity/google
+/docs/integrations/google.html /docs/integrations/user-identity/google
+/docs/integrations/index /docs/integrations/user-identity/identity-providers
+/docs/integrations/index.html /docs/integrations/user-identity/identity-providers
+/docs/integrations/okta /docs/integrations/user-identity/okta
+/docs/integrations/okta.html /docs/integrations/user-identity/okta
+/docs/integrations/one-login /docs/integrations/user-identity/one-login
+/docs/integrations/one-login.html /docs/integrations/user-identity/one-login
+/docs/integrations/ping /docs/integrations/user-identity/ping
+/docs/integrations/ping.html /docs/integrations/user-identity/ping
+/docs/integrations/bamboohr /docs/integrations/user-standing/bamboohr
+/docs/integrations/bamboohr.html /docs/integrations/user-standing/bamboohr
+/docs/capabilities/directory-sync /docs/integrations/user-standing/directory-sync
+/docs/capabilities/directory-sync.html /docs/integrations/user-standing/directory-sync
+/docs/integrations/zenefits /docs/integrations/user-standing/zenefits
+/docs/integrations/zenefits.html /docs/integrations/user-standing/zenefits
 
-/docs/get-started/fundamentals/advanced-routes                /docs/get-started/fundamentals/core/advanced-routes
-/docs/get-started/fundamentals/advanced-routes.html           /docs/get-started/fundamentals/core/advanced-routes
+/docs/capabilities/certificates-and-tls /docs/internals/certificates-and-tls
+/docs/capabilities/certificates-and-tls.html /docs/internals/certificates-and-tls
+/docs/manage/clusters /docs/internals/clusters
+/docs/manage/clusters.html /docs/internals/clusters
+/docs/capabilities/high-availability /docs/internals/configuration
+/docs/capabilities/high-availability.html /docs/internals/configuration
+/docs/capabilities/enterprise-api /docs/internals/management-api-enterprise
+/docs/capabilities/enterprise-api.html /docs/internals/management-api-enterprise
+/docs/deploy/cloud/api-guide /docs/internals/management-api-zero
+/docs/deploy/cloud/api-guide.html /docs/internals/management-api-zero
+/docs/capabilities/metrics /docs/internals/metrics
+/docs/capabilities/metrics.html /docs/internals/metrics
+/docs/manage/mutual-auth /docs/internals/mutual-auth
+/docs/manage/mutual-auth.html /docs/internals/mutual-auth
+/docs/capabilities/ppl /docs/internals/ppl
+/docs/capabilities/ppl.html /docs/internals/ppl
+/docs/capabilities/programmatic-access /docs/internals/programmatic-access
+/docs/capabilities/programmatic-access.html /docs/internals/programmatic-access
+/docs/manage/troubleshooting /docs/internals/troubleshooting
+/docs/manage/troubleshooting.html /docs/internals/troubleshooting
 
-/docs/get-started/fundamentals/build-policies                 /docs/get-started/fundamentals/core/build-policies
-/docs/get-started/fundamentals/build-policies.html            /docs/get-started/fundamentals/core/build-policies
-
-/docs/get-started/fundamentals/build-routes                   /docs/get-started/fundamentals/core/build-routes
-/docs/get-started/fundamentals/build-routes.html              /docs/get-started/fundamentals/core/build-routes
-
-/docs/get-started/fundamentals/conclusion                     /docs/get-started/fundamentals/core/conclusion
-/docs/get-started/fundamentals/conclusion.html                /docs/get-started/fundamentals/core/conclusion
-
-/docs/get-started/fundamentals/get-started                    /docs/get-started/fundamentals/core/get-started
-/docs/get-started/fundamentals/get-started.html               /docs/get-started/fundamentals/core/get-started
-
-/docs/get-started/fundamentals/jwt-verification               /docs/get-started/fundamentals/core/jwt-verification
-/docs/get-started/fundamentals/jwt-verification.html          /docs/get-started/fundamentals/core/jwt-verification
-
-/docs/get-started/fundamentals/production-certificates        /docs/get-started/fundamentals/core/production-certificates
-/docs/get-started/fundamentals/production-certificates.html   /docs/get-started/fundamentals/core/production-certificates
-
-/docs/get-started/fundamentals/self-hosted-pomerium           /docs/get-started/fundamentals/core/self-hosted-pomerium
-/docs/get-started/fundamentals/self-hosted-pomerium.html      /docs/get-started/fundamentals/core/self-hosted-pomerium
-
-/docs/get-started/fundamentals/tcp-routes                     /docs/get-started/fundamentals/core/tcp-routes
-/docs/get-started/fundamentals/tcp-routes.html                /docs/get-started/fundamentals/core/tcp-routes
-
-/docs/get-started/fundamentals/zero-advanced-policies         /docs/get-started/fundamentals/zero/zero-advanced-policies
-/docs/get-started/fundamentals/zero-advanced-policies.html    /docs/get-started/fundamentals/zero/zero-advanced-policies
-
-/docs/get-started/fundamentals/zero-advanced-routes           /docs/get-started/fundamentals/zero/zero-advanced-routes
-/docs/get-started/fundamentals/zero-advanced-routes.html      /docs/get-started/fundamentals/zero/zero-advanced-routes
-
-/docs/get-started/fundamentals/zero-build-policies            /docs/get-started/fundamentals/zero/zero-build-policies
-/docs/get-started/fundamentals/zero-build-policies.html       /docs/get-started/fundamentals/zero/zero-build-policies
-
-/docs/get-started/fundamentals/zero-build-routes              /docs/get-started/fundamentals/zero/zero-build-routes
-/docs/get-started/fundamentals/zero-build-routes.html         /docs/get-started/fundamentals/zero/zero-build-routes
-
-/docs/get-started/fundamentals/zero-custom-idp                /docs/get-started/fundamentals/zero/zero-custom-idp
-/docs/get-started/fundamentals/zero-custom-idp.html           /docs/get-started/fundamentals/zero/zero-custom-idp
-
-/docs/get-started/fundamentals/zero-single-sign-on            /docs/get-started/fundamentals/zero/zero-single-sign-on
-/docs/get-started/fundamentals/zero-single-sign-on.html       /docs/get-started/fundamentals/zero/zero-single-sign-on
-
-/docs/get-started/fundamentals/zero-tcp-routes                /docs/get-started/fundamentals/zero/zero-tcp-routes
-/docs/get-started/fundamentals/zero-tcp-routes.html           /docs/get-started/fundamentals/zero/zero-tcp-routes
-
-/docs/integrations/integrations                               /docs/integrations
-/docs/integrations/integrations.html                          /docs/integrations
-
-/docs/integrations/fleetdm                                    /docs/integrations/device-context/fleetdm
-/docs/integrations/fleetdm.html                               /docs/integrations/device-context/fleetdm
-
-/docs/integrations/geoip                                      /docs/integrations/request-context/geoip
-/docs/integrations/geoip.html                                 /docs/integrations/request-context/geoip
-
-/docs/integrations/ip-ranges                                  /docs/integrations/request-context/ip-ranges
-/docs/integrations/ip-ranges.html                             /docs/integrations/request-context/ip-ranges
-
-/docs/integrations/tor-exit-nodes                             /docs/integrations/request-context/tor-exit-nodes
-/docs/integrations/tor-exit-nodes.html                        /docs/integrations/request-context/tor-exit-nodes
-
-/docs/integrations/vpn-providers                              /docs/integrations/request-context/vpn-providers
-/docs/integrations/vpn-providers.html                         /docs/integrations/request-context/vpn-providers
-
-/docs/integrations/apple                                      /docs/integrations/user-identity/apple
-/docs/integrations/apple.html                                 /docs/integrations/user-identity/apple
-
-/docs/integrations/auth0                                      /docs/integrations/user-identity/auth0
-/docs/integrations/auth0.html                                 /docs/integrations/user-identity/auth0
-
-/docs/integrations/azure                                      /docs/integrations/user-identity/azure
-/docs/integrations/azure.html                                 /docs/integrations/user-identity/azure
-
-/docs/integrations/cognito                                    /docs/integrations/user-identity/cognito
-/docs/integrations/cognito.html                               /docs/integrations/user-identity/cognito
-
-/docs/integrations/github                                     /docs/integrations/user-identity/github
-/docs/integrations/github.html                                /docs/integrations/user-identity/github
-
-/docs/integrations/gitlab                                     /docs/integrations/user-identity/gitlab
-/docs/integrations/gitlab.html                                /docs/integrations/user-identity/gitlab
-
-/docs/integrations/google                                     /docs/integrations/user-identity/google
-/docs/integrations/google.html                                /docs/integrations/user-identity/google
-
-/docs/integrations/index                                      /docs/integrations/user-identity/identity-providers
-/docs/integrations/index.html                                 /docs/integrations/user-identity/identity-providers
-
-/docs/integrations/okta                                       /docs/integrations/user-identity/okta
-/docs/integrations/okta.html                                  /docs/integrations/user-identity/okta
-
-/docs/integrations/one-login                                  /docs/integrations/user-identity/one-login
-/docs/integrations/one-login.html                             /docs/integrations/user-identity/one-login
-
-/docs/integrations/ping                                       /docs/integrations/user-identity/ping
-/docs/integrations/ping.html                                  /docs/integrations/user-identity/ping
-
-/docs/integrations/bamboohr                                  /docs/integrations/user-standing/bamboohr
-/docs/integrations/bamboohr.html                             /docs/integrations/user-standing/bamboohr
-
-/docs/capabilities/directory-sync                             /docs/integrations/user-standing/directory-sync
-/docs/capabilities/directory-sync.html                        /docs/integrations/user-standing/directory-sync
-
-/docs/integrations/zenefits                                  /docs/integrations/user-standing/zenefits
-/docs/integrations/zenefits.html                             /docs/integrations/user-standing/zenefits
-
-/docs/capabilities/certificates-and-tls                      /docs/internals/certificates-and-tls
-/docs/capabilities/certificates-and-tls.html                 /docs/internals/certificates-and-tls
-
-/docs/manage/clusters                                        /docs/internals/clusters
-/docs/manage/clusters.html                                   /docs/internals/clusters
-
-/docs/capabilities/high-availability                          /docs/internals/configuration
-/docs/capabilities/high-availability.html                     /docs/internals/configuration
-
-/docs/capabilities/enterprise-api                             /docs/internals/management-api-enterprise
-/docs/capabilities/enterprise-api.html                        /docs/internals/management-api-enterprise
-
-/docs/deploy/cloud/api-guide                                  /docs/internals/management-api-zero
-/docs/deploy/cloud/api-guide.html                             /docs/internals/management-api-zero
-
-/docs/capabilities/metrics                                    /docs/internals/metrics
-/docs/capabilities/metrics.html                               /docs/internals/metrics
-
-/docs/manage/mutual-auth                                      /docs/internals/mutual-auth
-/docs/manage/mutual-auth.html                                 /docs/internals/mutual-auth
-
-/docs/capabilities/ppl                                        /docs/internals/ppl
-/docs/capabilities/ppl.html                                   /docs/internals/ppl
-
-/docs/capabilities/programmatic-access                        /docs/internals/programmatic-access
-/docs/capabilities/programmatic-access.html                   /docs/internals/programmatic-access
-
-/docs/manage/troubleshooting                                  /docs/internals/troubleshooting
-/docs/manage/troubleshooting.html                             /docs/internals/troubleshooting
+# Additional fixes for pages that 404 after reorg
+/docs/quickstart /docs/get-started/quickstart
+/docs/capabilities/tcp /docs/capabilities/non-http
+/docs/capabilities/tcp/examples/* /docs/capabilities/non-http/examples/:splat
+/docs/capabilities/device-identity /docs/integrations/device-context/device-identity
+/docs/capabilities/mtls-clients /docs/internals/mutual-auth
+/docs/capabilities/mtls-services /docs/internals/mutual-auth
+/docs/capabilities/hosted-authenticate-service /docs/capabilities/authentication
+/docs/capabilities/self-hosted-authenticate-service /docs/capabilities/authentication
