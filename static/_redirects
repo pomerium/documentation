@@ -1,123 +1,75 @@
 # Netlify Redirects
 # https://docs.netlify.com/routing/redirects/
 
-###############################
-# Domain-level & legacy doc references
-###############################
-
-# Root domain => new docs
+# Domain-level references
 http://docs.pomerium.io/* https://docs.pomerium.com/:splat 301!
 https://docs.pomerium.io/* https://docs.pomerium.com/:splat 301!
 
-###############################
 # Root => /docs
-###############################
 / /docs
 
-###############################
 # Releases & Versions
-###############################
 /docs/releases /docs/versions
 /docs/releases/changelog /docs/deploy/upgrading
 /docs/releases/upgrading /docs/deploy/upgrading
-
-# Consolidate old "changelog" => /docs/deploy/upgrading
 /docs/changelog /docs/deploy/upgrading
 /docs/changelog.html /docs/deploy/upgrading
 /docs/CHANGELOG /docs/deploy/upgrading
 /docs/CHANGELOG.html /docs/deploy/upgrading
 
-###############################
 # Old debug => new Troubleshooting
-###############################
 /docs/reference/debug /docs/internals/troubleshooting
 
-###############################
-# Guide references => new pages
-###############################
+# Guides => new pages
 /guide/ /docs/get-started/quickstart
 /guide/kubernetes.html /docs/deploy/k8s
 /guide/kubernetes /docs/deploy/k8s
 /docs/deploy/k8s/ /docs/deploy/k8s/quickstart
-
-# Synology
 /guide/synology /docs/guides/synology
 /guide/synology.html /docs/guides/synology
 /docs/quick-start/synology.html /docs/guides/synology
-
-# JWT verification => "getting-users-identity"
 /docs/guides/jwt-verification /docs/capabilities/getting-users-identity
 /docs/guides/jwt-verification.html /docs/capabilities/getting-users-identity
-
-# Catch-all for /guides
 /guides/* /docs/guides/:splat
-
-# Additional direct re-routes
 /docs/guides/tcp /docs/capabilities/non-http
 /guides/vs-code-server.html /docs/guides/code-server
 /docs/guides/vs-code-server.html /docs/guides/code-server
 /guides/local-oidc.html /docs/guides/local-oidc
 /docs/guides/local-oidc /docs/integrations/user-identity/oidc
 
-###############################
 # Programmatic access
-###############################
 /docs/reference/programmatic-access.html /docs/capabilities/programmatic-access
 
-###############################
 # Enterprise => /docs/deploy/enterprise
-###############################
 /enterprise /docs/deploy/enterprise
 /docs/enterprise /docs/deploy/enterprise
-
-# Old service-accounts => new capabilities
 /enterprise/service-accounts /docs/capabilities/service-accounts
 /enterprise/service-accounts.html /docs/capabilities/service-accounts
-
-# Old Prometheus references => new "configure-metrics"
 /enterprise/prometheus /docs/deploy/enterprise/configure-metrics
 /enterprise/prometheus.html /docs/deploy/enterprise/configure-metrics
-
-# Old "concepts" => "authentication"
 /docs/enterprise/concepts.html /docs/capabilities/authentication
 /docs/enterprise/concepts /docs/capabilities/authentication
-
-# Old "about" => enterprise root
 /docs/enterprise/about /docs/deploy/enterprise
-
-# Old "reports" => "audit-logs"
 /docs/capabilities/reports /docs/capabilities/audit-logs
-
-# Enterprise quickstart
 /docs/enterprise/install/quickstart /docs/deploy/enterprise/quickstart
 /docs/enterprise/install/quickstart.html /docs/deploy/enterprise/quickstart
 /docs/enterprise/install /docs/deploy/enterprise/quickstart
 /enterprise/install/ /docs/deploy/enterprise/quickstart
-
-# Old enterprise changelog => new /docs/versions
 /docs/enterprise/changelog /docs/versions
 /docs/enterprise/changelog.html /docs/versions
-
-# Catch-all for enterprise subpaths
 /enterprise/* /docs/deploy/enterprise/:splat
 
-###############################
 # Clients
-###############################
 /docs/deploy/pomerium-cli /docs/deploy/clients
 /docs/deploy/pomerium-desktop /docs/deploy/clients
 /docs/deploy/clients /docs/deploy/clients
 /docs/deploy/clients/* /docs/deploy/clients
 
-###############################
 # Zero references
-###############################
 /docs/zero/cluster-status /docs/troubleshooting/cluster-status
 /docs/zero/upgrading /docs/deploy/upgrading
 
-###############################
-# Old "quickstart" => /get-started/quickstart
-###############################
+# Old quickstart => /get-started/quickstart
 /docs/quick-start /docs/get-started/quickstart
 /docs/quickstart /docs/get-started/quickstart
 /docs/install /docs/get-started/quickstart
@@ -132,23 +84,19 @@ https://docs.pomerium.io/* https://docs.pomerium.com/:splat 301!
 /docs/install/binary.html /docs/deploy/core
 /docs/quick-start/binary /docs/deploy/core
 /docs/quick-start/binary.html /docs/deploy/core
-
-# Helm references
-/docs/quick-start/helm.html /docs/deploy/k8s/helm
-/docs/deploy/k8s/helm /docs/guides/helm
-/docs/enterprise/install/helm /docs/guides/helm
-/docs/install/helm /docs/guides/helm
-/docs/install/helm.html /docs/guides/helm
-/docs/deploy/k8s/helm.html /docs/guides/helm
-
-# From-source => /docs/deploy/core
 /docs/quick-start/from-source.html /docs/deploy/core
 /docs/install/from-source /docs/deploy/core
 /docs/install/from-source.html /docs/deploy/core
 
-###############################
+# Helm => /docs/deploy/k8s/install (no /docs/guides/helm in current sitemap)
+/docs/quick-start/helm.html /docs/deploy/k8s/install
+/docs/deploy/k8s/helm /docs/deploy/k8s/install
+/docs/enterprise/install/helm /docs/deploy/k8s/install
+/docs/install/helm /docs/deploy/k8s/install
+/docs/install/helm.html /docs/deploy/k8s/install
+/docs/deploy/k8s/helm.html /docs/deploy/k8s/install
+
 # TCP & Non-HTTP
-###############################
 /docs/tcp /docs/capabilities/non-http
 /docs/tcp/client /docs/capabilities/non-http/client
 /docs/tcp/client.html /docs/capabilities/non-http/client
@@ -157,14 +105,10 @@ https://docs.pomerium.io/* https://docs.pomerium.com/:splat 301!
 /docs/tcp/examples/* /docs/capabilities/non-http/examples/:splat
 /docs/tcp/* /docs/capabilities/non-http/examples/:splat
 
-###############################
-# /examples/
-###############################
+# /examples
 /examples/js-sdk/express-server /docs/capabilities/getting-users-identity
 
-###############################
 # K8s references
-###############################
 /docs/topics/kubernetes-integration.html /docs/deploy/k8s
 /docs/deploying/k8s/install /docs/deploy/k8s/install
 /docs/quick-start/kubernetes.html /docs/deploy/k8s/quickstart
@@ -173,17 +117,13 @@ https://docs.pomerium.io/* https://docs.pomerium.com/:splat 301!
 /docs/topics/ingress /docs/deploy/k8s/ingress
 /kubernetes/ /docs/deploy/k8s/quickstart
 
-###############################
 # Troubleshooting & FAQ
-###############################
 /docs/FAQ.html /docs/internals/troubleshooting
 /docs/faq /docs/internals/troubleshooting
 /docs/internals/troubleshooting /docs/internals/troubleshooting
 /docs/internals/troubleshooting.html /docs/internals/troubleshooting
 
-###############################
 # Architecture / background / upgrading
-###############################
 /docs/architecture.html /docs/internals/architecture
 /docs/architecture /docs/internals/architecture
 /docs/background /docs/internals/zero-trust
@@ -191,17 +131,13 @@ https://docs.pomerium.io/* https://docs.pomerium.com/:splat 301!
 /docs/upgrading.html /docs/deploy/upgrading
 /docs/upgrading /docs/deploy/upgrading
 
-###############################
 # Newly renamed pages
-###############################
 /_generate-recovery-token /docs/admonitions/_generate-recovery-token
 /_generate-recovery-token.html /docs/admonitions/_generate-recovery-token
 /_install-mkcert /docs/admonitions/_install-mkcert
 /_install-mkcert.html /docs/admonitions/_install-mkcert
-
 /docs/manage/custom-domains /docs/capabilities/custom-domains
 /docs/manage/custom-domains.html /docs/capabilities/custom-domains
-
 /docs/get-started/fundamentals/advanced-policies /docs/get-started/fundamentals/core/advanced-policies
 /docs/get-started/fundamentals/advanced-policies.html /docs/get-started/fundamentals/core/advanced-policies
 /docs/get-started/fundamentals/advanced-routes /docs/get-started/fundamentals/core/advanced-routes
@@ -236,11 +172,8 @@ https://docs.pomerium.io/* https://docs.pomerium.com/:splat 301!
 /docs/get-started/fundamentals/zero-single-sign-on.html /docs/get-started/fundamentals/zero/zero-single-sign-on
 /docs/get-started/fundamentals/zero-tcp-routes /docs/get-started/fundamentals/zero/zero-tcp-routes
 /docs/get-started/fundamentals/zero-tcp-routes.html /docs/get-started/fundamentals/zero/zero-tcp-routes
-
 /docs/integrations/integrations /docs/capabilities/integrations
 /docs/integrations/integrations.html /docs/capabilities/integrations
-
-# Fleets, geoip, ip-ranges => new "request-context" or "device-context"
 /docs/integrations/fleetdm /docs/integrations/device-context/fleetdm
 /docs/integrations/fleetdm.html /docs/integrations/device-context/fleetdm
 /docs/integrations/geoip /docs/integrations/request-context/geoip
@@ -251,8 +184,6 @@ https://docs.pomerium.io/* https://docs.pomerium.com/:splat 301!
 /docs/integrations/tor-exit-nodes.html /docs/integrations/request-context/tor-exit-nodes
 /docs/integrations/vpn-providers /docs/integrations/request-context/vpn-providers
 /docs/integrations/vpn-providers.html /docs/integrations/request-context/vpn-providers
-
-# OIDC, Okta, Ping, etc. => new "user-identity"
 /docs/integrations/apple /docs/integrations/user-identity/apple
 /docs/integrations/apple.html /docs/integrations/user-identity/apple
 /docs/integrations/auth0 /docs/integrations/user-identity/auth0
@@ -275,16 +206,12 @@ https://docs.pomerium.io/* https://docs.pomerium.com/:splat 301!
 /docs/integrations/one-login.html /docs/integrations/user-identity/one-login
 /docs/integrations/ping /docs/integrations/user-identity/ping
 /docs/integrations/ping.html /docs/integrations/user-identity/ping
-
-# BambooHR, directory-sync => user-standing
 /docs/integrations/bamboohr /docs/integrations/user-standing/bamboohr
 /docs/integrations/bamboohr.html /docs/integrations/user-standing/bamboohr
 /docs/capabilities/directory-sync /docs/integrations/user-standing/directory-sync
 /docs/capabilities/directory-sync.html /docs/integrations/user-standing/directory-sync
 /docs/integrations/zenefits /docs/integrations/user-standing/zenefits
 /docs/integrations/zenefits.html /docs/integrations/user-standing/zenefits
-
-# TLS, clusters, mutual-auth => new "internals"
 /docs/capabilities/certificates-and-tls /docs/internals/certificates-and-tls
 /docs/capabilities/certificates-and-tls.html /docs/internals/certificates-and-tls
 /docs/manage/clusters /docs/internals/clusters
@@ -297,17 +224,11 @@ https://docs.pomerium.io/* https://docs.pomerium.com/:splat 301!
 /docs/deploy/cloud/api-guide.html /docs/internals/management-api-zero
 /docs/manage/mutual-auth /docs/internals/mutual-auth
 /docs/manage/mutual-auth.html /docs/internals/mutual-auth
-
-# "metrics" => internals or enterprise config
 /docs/capabilities/metrics /docs/internals/metrics
 /docs/capabilities/metrics.html /docs/internals/metrics
-
-# PPL, programmatic
 /docs/capabilities/ppl /docs/internals/ppl
 /docs/capabilities/ppl.html /docs/internals/ppl
 /docs/capabilities/programmatic-access /docs/internals/programmatic-access
 /docs/capabilities/programmatic-access.html /docs/internals/programmatic-access
-
-# Troubleshooting
 /docs/manage/troubleshooting /docs/internals/troubleshooting
 /docs/manage/troubleshooting.html /docs/internals/troubleshooting
