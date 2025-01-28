@@ -16,7 +16,7 @@ import TabItem from '@theme/TabItem';
 
 ## Summary
 
-Pomerium has comprehensive support for OpenTelemetry tracing, allowing detailed introspection into requests and authorization flows. You can use tracing to debug errors and latency issues in your applications.
+Pomerium has comprehensive support for OpenTelemetry (OTel) tracing, allowing detailed introspection into requests and authorization flows. You can use tracing to debug errors and latency issues in your applications.
 
 ## Configuration
 
@@ -32,23 +32,41 @@ The recommended way to configure tracing is by using the standard OpenTelemetry 
 
 The main variables used to configure tracing in Pomerium are the following:
 
-| Name | Description | Default |
-| :-- | :-- | :-- |
-| [`OTEL_TRACES_EXPORTER`](https://opentelemetry.io/docs/specs/otel/configuration/sdk-environment-variables/#exporter-selection) | Trace exporter to be used. <br/> Valid values are `"otlp"` or `"none"` | `"none"` |
-| [`OTEL_EXPORTER_OTLP_ENDPOINT`](https://opentelemetry.io/docs/languages/sdk-configuration/otlp-exporter/#otel_exporter_otlp_endpoint) or <br/> [`OTEL_EXPORTER_OTLP_TRACES_ENDPOINT`](https://opentelemetry.io/docs/languages/sdk-configuration/otlp-exporter/#otel_exporter_otlp_traces_endpoint) | See [Endpoint Configuration](https://opentelemetry.io/docs/languages/sdk-configuration/otlp-exporter/#endpoint-configuration). |
-| [`OTEL_EXPORTER_OTLP_PROTOCOL`](https://opentelemetry.io/docs/languages/sdk-configuration/otlp-exporter/#otel_exporter_otlp_protocol) or <br/> [`OTEL_EXPORTER_OTLP_TRACES_PROTOCOL`](https://opentelemetry.io/docs/languages/sdk-configuration/otlp-exporter/#otel_exporter_otlp_traces_protocol) | See [Protocol Configuration](https://opentelemetry.io/docs/languages/sdk-configuration/otlp-exporter/#protocol-configuration). <br/> Valid values are `"grpc"` or `"http/protobuf"`. <br/>If unset, Pomerium will attempt to determine the protocol based on the endpoint port number (the standard ports are 4317 for GRPC, 4318 for HTTP), otherwise it will default to `"http/protobuf"`. | (auto) |
-| [`OTEL_TRACES_SAMPLER_ARG`](https://opentelemetry.io/docs/languages/sdk-configuration/general/#otel_traces_sampler_arg) | Sampling probability, a number in the \[0..1\] range, e.g. `1.0` (sample all traces) or `0.25` (sample 25% of traces) | `1.0` |
+| Name | Description | Type | Default |
+| :-- | :-- | :-- | :-- |
+| [`OTEL_TRACES_EXPORTER`](https://opentelemetry.io/docs/specs/otel/configuration/sdk-environment-variables/#exporter-selection) | Trace exporter to be used. <br/> Valid values are `"otlp"` or `"none"`. | `string` | `"none"` |
+| [`OTEL_EXPORTER_OTLP_ENDPOINT`](https://opentelemetry.io/docs/languages/sdk-configuration/otlp-exporter/#otel_exporter_otlp_endpoint) or <br/> [`OTEL_EXPORTER_OTLP_TRACES_ENDPOINT`](https://opentelemetry.io/docs/languages/sdk-configuration/otlp-exporter/#otel_exporter_otlp_traces_endpoint) | See [Endpoint Configuration](https://opentelemetry.io/docs/languages/sdk-configuration/otlp-exporter/#endpoint-configuration). | `string` |  |
+| [`OTEL_EXPORTER_OTLP_PROTOCOL`](https://opentelemetry.io/docs/languages/sdk-configuration/otlp-exporter/#otel_exporter_otlp_protocol) or <br/> [`OTEL_EXPORTER_OTLP_TRACES_PROTOCOL`](https://opentelemetry.io/docs/languages/sdk-configuration/otlp-exporter/#otel_exporter_otlp_traces_protocol) | See [Protocol Configuration](https://opentelemetry.io/docs/languages/sdk-configuration/otlp-exporter/#protocol-configuration). <br/> Valid values are `"grpc"` or `"http/protobuf"`. <br/>If unset, Pomerium will attempt to determine the protocol based on the endpoint port number (the standard ports are 4317 for GRPC, 4318 for HTTP), otherwise it will default to `"http/protobuf"`. | `string` |  |
+| [`OTEL_EXPORTER_OTLP_HEADERS`](https://opentelemetry.io/docs/languages/sdk-configuration/otlp-exporter/#otel_exporter_otlp_headers) or <br/> [`OTEL_EXPORTER_OTLP_TRACES_HEADERS`](https://opentelemetry.io/docs/languages/sdk-configuration/otlp-exporter/#otel_exporter_otlp_traces_headers) | See [Header Configuration](https://opentelemetry.io/docs/languages/sdk-configuration/otlp-exporter/#header-configuration). | `[]string` | |
+| [`OTEL_EXPORTER_OTLP_TIMEOUT`](https://opentelemetry.io/docs/languages/sdk-configuration/otlp-exporter/#otel_exporter_otlp_timeout) or <br/> [`OTEL_EXPORTER_OTLP_TRACES_TIMEOUT`](https://opentelemetry.io/docs/languages/sdk-configuration/otlp-exporter/#otel_exporter_otlp_traces_timeout) | See [Timeout Configuration](https://opentelemetry.io/docs/languages/sdk-configuration/otlp-exporter/#timeout-configuration). | `int64` | `10000` (ms) |
+| [`OTEL_TRACES_SAMPLER_ARG`](https://opentelemetry.io/docs/languages/sdk-configuration/general/#otel_traces_sampler_arg) | Sampling probability, a number in the \[0..1\] range, e.g. `1.0` (sample all traces) or `0.25` (sample 25% of traces). | `float64` | `1.0` |
+| [`OTEL_RESOURCE_ATTRIBUTES`](https://opentelemetry.io/docs/languages/sdk-configuration/general/#otel_resource_attributes) | Key-value pairs of additional resource attributes. | `[]string` |  |
+| [`OTEL_BSP_SCHEDULE_DELAY`](https://opentelemetry.io/docs/specs/otel/configuration/sdk-environment-variables/#batch-span-processor) | Interval in milliseconds at which pending spans (if any) are exported. Minimum 100 (ms). | `int32` | `5000` (ms) |
+| [`OTEL_BSP_MAX_EXPORT_BATCH_SIZE`](https://opentelemetry.io/docs/specs/otel/configuration/sdk-environment-variables/#batch-span-processor) | Number of pending spans needed to automatically trigger an export. Note that spans are still exported on a fixed interval, even if this limit is not reached. Minimum 1; maximum 2048. | `int32` | `512` |
+| [`OTEL_LOG_LEVEL`](https://opentelemetry.io/docs/specs/otel/configuration/sdk-environment-variables/#general-sdk-configuration) | OTel SDK internal log level. | `string` | `"info"` |
+| [`OTEL_ATTRIBUTE_VALUE_LENGTH_LIMIT`](https://opentelemetry.io/docs/specs/otel/configuration/sdk-environment-variables/#attribute-limits) | Maximum allowed attribute value size. <br/> Increase this to prevent long URLs in span attributes from being truncated. | `int32` | `256` |
 
 ### Config file
 
-Tracing can also be configured using the Pomerium config file if desired:
+Tracing can also be configured using the Pomerium config file if desired. The field names in the config file are identical to the environment variable names, but in lowercase.
 
 | Config Key | Equivalent Environment Variable |
 | :-- | :-- |
-| `tracing_provider` | [`OTEL_TRACES_EXPORTER`](https://opentelemetry.io/docs/specs/otel/configuration/sdk-environment-variables/#exporter-selection) |
-| `tracing_otlp_endpoint` | [`OTEL_EXPORTER_OTLP_TRACES_ENDPOINT`](https://opentelemetry.io/docs/languages/sdk-configuration/otlp-exporter/#otel_exporter_otlp_traces_endpoint) |
-| `tracing_otlp_protocol` | [`OTEL_EXPORTER_OTLP_TRACES_PROTOCOL`](https://opentelemetry.io/docs/languages/sdk-configuration/otlp-exporter/#otel_exporter_otlp_traces_protocol) |
-| `tracing_sample_rate` | [`OTEL_TRACES_SAMPLER_ARG`](https://opentelemetry.io/docs/languages/sdk-configuration/general/#otel_traces_sampler_arg) |
+| `otel_traces_exporter` | [`OTEL_TRACES_EXPORTER`](https://opentelemetry.io/docs/specs/otel/configuration/sdk-environment-variables/#exporter-selection) |
+| `otel_exporter_otlp_endpoint` | [`OTEL_EXPORTER_OTLP_ENDPOINT`](https://opentelemetry.io/docs/languages/sdk-configuration/otlp-exporter/#otel_exporter_otlp_endpoint) |
+| `otel_exporter_otlp_traces_endpoint` | [`OTEL_EXPORTER_OTLP_TRACES_ENDPOINT`](https://opentelemetry.io/docs/languages/sdk-configuration/otlp-exporter/#otel_exporter_otlp_traces_endpoint) |
+| `otel_exporter_otlp_protocol` | [`OTEL_EXPORTER_OTLP_PROTOCOL`](https://opentelemetry.io/docs/languages/sdk-configuration/otlp-exporter/#otel_exporter_otlp_protocol) |
+| `otel_exporter_otlp_traces_protocol` | [`OTEL_EXPORTER_OTLP_TRACES_PROTOCOL`](https://opentelemetry.io/docs/languages/sdk-configuration/otlp-exporter/#otel_exporter_otlp_traces_protocol) |
+| `otel_exporter_otlp_headers` | [`OTEL_EXPORTER_OTLP_HEADERS`](https://opentelemetry.io/docs/languages/sdk-configuration/otlp-exporter/#otel_exporter_otlp_headers) |
+| `otel_exporter_otlp_traces_headers` | [`OTEL_EXPORTER_OTLP_TRACES_HEADERS`](https://opentelemetry.io/docs/languages/sdk-configuration/otlp-exporter/#otel_exporter_otlp_traces_headers) |
+| `otel_exporter_otlp_timeout` | [`OTEL_EXPORTER_OTLP_TIMEOUT`](https://opentelemetry.io/docs/languages/sdk-configuration/otlp-exporter/#otel_exporter_otlp_timeout) |
+| `otel_exporter_otlp_traces_timeout` | [`OTEL_EXPORTER_OTLP_TRACES_TIMEOUT`](https://opentelemetry.io/docs/languages/sdk-configuration/otlp-exporter/#otel_exporter_otlp_traces_timeout) |
+| `otel_traces_sampler_arg` | [`OTEL_TRACES_SAMPLER_ARG`](https://opentelemetry.io/docs/languages/sdk-configuration/general/#otel_traces_sampler_arg) |
+| `otel_resource_attributes` | [`OTEL_RESOURCE_ATTRIBUTES`](https://opentelemetry.io/docs/languages/sdk-configuration/general/#otel_resource_attributes) |
+| `otel_bsp_schedule_delay` | [`OTEL_BSP_SCHEDULE_DELAY`](https://opentelemetry.io/docs/specs/otel/configuration/sdk-environment-variables/#batch-span-processor) |
+| `otel_bsp_max_export_batch_size` | [`OTEL_BSP_MAX_EXPORT_BATCH_SIZE`](https://opentelemetry.io/docs/specs/otel/configuration/sdk-environment-variables/#batch-span-processor) |
+| `otel_log_level` |  [`OTEL_LOG_LEVEL`](https://opentelemetry.io/docs/specs/otel/configuration/sdk-environment-variables/#general-sdk-configuration) |
+| `otel_attribute_value_length_limit` | [`OTEL_ATTRIBUTE_VALUE_LENGTH_LIMIT`](https://opentelemetry.io/docs/specs/otel/configuration/sdk-environment-variables/#attribute-limits) |
 
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
@@ -61,7 +79,20 @@ Tracing can also be configured using the Pomerium config file if desired:
 
 4. Optionally, enter a protocol ("grpc" or "http/protobuf"). If the endpoint uses port 4317 or 4318, the protocol will be selected automatically. Port 4317 is the standard for OTLP GRPC, and 4318 for OTLP HTTP.
 
-![Enterprise tracing config](./img/tracing/tracing-otlp.png)
+![Enterprise tracing config](./img/tracing/tracing-enterprise.png)
+
+</TabItem>
+<TabItem value="Zero" label="Zero">
+
+1. In the Zero dashboard, navigate to Settings > Tracing
+
+2. In the "Tracing Provider" dropdown, select "OTLP"
+
+3. Enter your desired sample rate and OTLP endpoint
+
+4. Optionally, enter a protocol ("grpc" or "http/protobuf"). If the endpoint uses port 4317 or 4318, the protocol will be selected automatically. Port 4317 is the standard for OTLP GRPC, and 4318 for OTLP HTTP.
+
+![Zero tracing config](./img/tracing/tracing-zero.png)
 
 </TabItem>
 </Tabs>
