@@ -21,7 +21,7 @@
     "id": "address",
     "title": "Address",
     "path": "/address",
-    "description": "Specifies the Host and Port to serve HTTP requests from.",
+    "description": "Specifies the IP Address and Port to serve HTTP requests from.",
     "short_description": "",
     "type": "string",
     "services": ["proxy"]
@@ -439,7 +439,7 @@
     "id": "http-redirect-address",
     "title": "HTTP Redirect Address",
     "path": "/http-redirect-address",
-    "description": "If set, HTTP Redirect Address specifies the Host and Port to redirect HTTP to HTTPS traffic on.",
+    "description": "If set, HTTP Redirect Address specifies the IP Address and Port to redirect HTTP to HTTPS traffic on.",
     "services": [],
     "type": "string"
   },
@@ -546,17 +546,24 @@
     "path": "/tracing",
     "services": []
   },
-  "tracing-provider": {
-    "id": "tracing-provider",
+  "tracing-otlp-endpoint": {
+    "id": "tracing-otlp-endpoint",
     "title": "Tracing Provider",
-    "description": "The name of the tracing provider. For example, Jaeger or Zipkin. Required.",
+    "description": "Endpoint URL for OTLP trace data. Required.",
+    "path": "/tracing",
+    "services": []
+  },
+  "tracing-otlp-protocol": {
+    "id": "tracing-otlp-endpoint",
+    "title": "Tracing Provider",
+    "description": "Transport protocol to be used for OTLP trace data.",
     "path": "/tracing",
     "services": []
   },
   "tracing-sample-rate": {
     "id": "tracing-sample-rate",
     "title": "Tracing Sample Rate",
-    "description": "The percentage of requests to sample in decimal notation. Default is 0.0001, or .01%. Optional.",
+    "description": "The percentage of requests to sample. Default is 100%.",
     "path": "/tracing",
     "services": []
   },
@@ -774,6 +781,34 @@
     "services": [],
     "type": "string"
   },
+  "data-broker-storage-certificate-file": {
+    "id": "data-broker-storage-certificate-file",
+    "title": "Databroker Storage Certificate File",
+    "path": "/databroker#databroker-storage-certificate-file",
+    "services": [],
+    "type": "relative file location"
+  },
+  "data-broker-storage-certificate-key-file": {
+    "id": "data-broker-storage-certificate-key-file",
+    "title": "Databroker Storage Certificate Key File",
+    "path": "/databroker#databroker-storage-certificate-key-file",
+    "services": [],
+    "type": "relative file location"
+  },
+  "data-broker-storage-certificate-authority": {
+    "id": "data-broker-storage-certificate-authority",
+    "title": "Databroker Storage Certificate Authority",
+    "path": "/databroker#databroker-storage-certificate-authority",
+    "services": [],
+    "type": "relative file location"
+  },
+  "data-broker-storage-tls-skip-verify": {
+    "id": "data-broker-storage-tls-skip-verify",
+    "title": "Databroker Storage TLS Skip Verify",
+    "path": "/databroker#databroker-storage-tls-skip-verify",
+    "services": [],
+    "type": "bool"
+  },
   "allow-any-authenticated-user": {
     "id": "allow-any-authenticated-user",
     "title": "Allow Any Authenticated User",
@@ -796,6 +831,14 @@
     "services": ["proxy"],
     "description": "Allows unauthenticated HTTP OPTIONS requests.",
     "type": "bool"
+  },
+  "description": {
+    "id": "description",
+    "title": "Description",
+    "path": "/routes/description",
+    "services": ["proxy"],
+    "description": "Description of the route.",
+    "type": "string"
   },
   "enable-google-cloud-serverless-authentication": {
     "id": "enable-google-cloud-serverless-authentication",
@@ -1317,6 +1360,14 @@
     "services": ["proxy"],
     "description": "Modifies response headers before they are returned to the client. 'Header' matches the HTTP header name; 'prefix' will be replaced with 'value'.",
     "type": "object"
+  },
+  "route-logo-url": {
+    "id": "route-logo-url",
+    "title": "Logo URL",
+    "path": "/routes/logo-url",
+    "services": ["proxy"],
+    "description": "The route logo URL.",
+    "type": "string"
   },
   "route-timeout": {
     "id": "route-timeout",
