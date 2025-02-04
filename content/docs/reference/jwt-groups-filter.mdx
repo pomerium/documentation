@@ -1,0 +1,56 @@
+---
+id: jwt-groups-filter
+title: JWT Groups Filter
+description: |
+  The JWT Groups Filter setting allows you to reduce the size of the groups claim in the Pomerium JWT.
+keywords:
+  - reference
+  - JWT Groups Filter
+pagination_prev: null
+pagination_next: null
+toc_max_heading_level: 2
+---
+
+:::enterprise
+
+This setting is available only in [Pomerium Enterprise](/docs/deploy/enterprise).
+
+:::
+
+## Summary
+
+The **JWT Groups Filter** setting allows you to reduce the size of the groups claim in the [Pomerium JWT](/docs/capabilities/getting-users-identity) when used in combination with [directory sync]. This may be useful for organizations with large numbers of directory groups.
+
+When directory sync is enabled, Pomerium will include directory groups membership information in a `groups` claim in the Pomerium JWT. By default, all of a user's groups are included in this claim. However, if the average number of groups is very large, this may grow unwieldy and potentially lead to HTTP header size issues with some upstream services.
+
+This feature allows you to limit the size of the `groups` claim by specifying a subset of groups that are relevant for your deployment. Only groups belonging to this subset will be included in the `groups` claim in the Pomerium JWT.
+
+The groups eligible for inclusion may be specified explicitly, or inferred automatically from the policies that apply to a given route.
+
+The setting also applies to the `Impersonate-Group` header, for Kubernetes API server authentication.
+
+This setting can also be customized for a particular route, see [**JWT Groups Filter (per route)**](/docs/reference/routes/jwt-groups-filter).
+
+## How to configure
+
+The **JWT Groups Filter** setting is available in the Enterprise Console on the "Settings" page, under the "Proxy" tab.
+
+![screenshot of JWT Groups Filter setting](./img/jwt-groups-filter.png)
+
+Select the "Filter to groups referenced in policies" option if you want to automatically filter based on any group IDs referenced in any policies associated with a specific route. Or you can enter specific groups using the "Filter to specific groups" input field.
+
+If both are specified, a group will be eligible for inclusion in the Pomerium JWT if it is _either_ referenced in an associated policy, or present in the list of specific groups.
+
+:::info
+
+This setting has no effect if [directory sync] is not enabled.
+
+:::
+
+## Logging
+
+When this feature is enabled, a new field `removed-groups-count` will be present in the [authorize logs](/docs/reference/authorize-log-fields). This field will indicate the number of groups that were removed by groups filtering for a specific request.
+
+To verify that groups filtering is working as expected, you can also set the [log level](/docs/reference/log-level) to "debug." At this level, Pomerium will log an additional entry with the message `JWT group filtering removed groups` along with the IDs of all removed and included groups.
+
+[directory sync]: /docs/integrations/user-standing/directory-sync
