@@ -167,13 +167,13 @@ Docker Compose:
 ```yaml
 services:
   pomerium:
-    image: pomerium.com/pomerium/pomerium:latest
+    image: pomerium/pomerium:latest
     volumes:
       - ./config.yaml:/pomerium/config.yaml:ro
     ports:
       - 443:443
   verify:
-    image: pomerium.com/pomerium/verify:latest
+    image: pomerium/verify:latest
     expose:
       - 8000
     environment:
