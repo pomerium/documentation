@@ -21,7 +21,7 @@
     "id": "address",
     "title": "Address",
     "path": "/address",
-    "description": "Specifies the Host and Port to serve HTTP requests from.",
+    "description": "Specifies the IP Address and Port to serve HTTP requests from.",
     "short_description": "",
     "type": "string",
     "services": ["proxy"]
@@ -439,7 +439,7 @@
     "id": "http-redirect-address",
     "title": "HTTP Redirect Address",
     "path": "/http-redirect-address",
-    "description": "If set, HTTP Redirect Address specifies the Host and Port to redirect HTTP to HTTPS traffic on.",
+    "description": "If set, HTTP Redirect Address specifies the IP Address and Port to redirect HTTP to HTTPS traffic on.",
     "services": [],
     "type": "string"
   },
@@ -543,13 +543,6 @@
   "tracing": {
     "id": "tracing",
     "title": "Tracing",
-    "path": "/tracing",
-    "services": []
-  },
-  "tracing-provider": {
-    "id": "tracing-provider",
-    "title": "Tracing Provider",
-    "description": "The name of the tracing provider.",
     "path": "/tracing",
     "services": []
   },
@@ -725,9 +718,16 @@
   "jwt-groups-filter": {
     "id": "jwt-groups-filter",
     "title": "JWT Groups Filter",
-    "description": "If set, filters the set of group memberships in the Pomerium JWT and Impersonate-Group headers to this subset of groups (based on an exact string match).",
-    "services": [],
-    "type": "array of string"
+    "path": "/jwt-groups-filter",
+    "description": "Restricts the set of groups allowed in the Pomerium JWT and Impersonate-Group headers, either based on applied policies or using a specific list of groups.",
+    "services": []
+  },
+  "jwt-groups-filter-route": {
+    "id": "jwt-groups-filter-route",
+    "title": "JWT Groups Filter (per route)",
+    "path": "/routes/jwt-groups-filter",
+    "description": "Restricts the set of groups allowed in the Pomerium JWT and Impersonate-Group headers, either based on applied policies or using a specific list of groups.",
+    "services": []
   },
   "override-certificate-name": {
     "id": "override-certificate-name",
@@ -817,6 +817,14 @@
     "services": ["proxy"],
     "description": "Allows unauthenticated HTTP OPTIONS requests.",
     "type": "bool"
+  },
+  "description": {
+    "id": "description",
+    "title": "Description",
+    "path": "/routes/description",
+    "services": ["proxy"],
+    "description": "Description of the route.",
+    "type": "string"
   },
   "enable-google-cloud-serverless-authentication": {
     "id": "enable-google-cloud-serverless-authentication",
@@ -1078,9 +1086,9 @@
   },
   "logo-url": {
     "id": "logo-url",
-    "title": "Logo Url",
+    "title": "Logo URL",
     "path": "/branding#logo-url",
-    "description": "A Url pointing to your logo. Defaults to Pomerium's Logo.",
+    "description": "A URL pointing to your logo. Defaults to Pomerium's Logo.",
     "services": [],
     "type": "URL"
   },
@@ -1338,6 +1346,14 @@
     "services": ["proxy"],
     "description": "Modifies response headers before they are returned to the client. 'Header' matches the HTTP header name; 'prefix' will be replaced with 'value'.",
     "type": "object"
+  },
+  "route-logo-url": {
+    "id": "route-logo-url",
+    "title": "Route Logo URL",
+    "path": "/routes/logo-url",
+    "services": ["proxy"],
+    "description": "The route logo URL.",
+    "type": "URL"
   },
   "route-timeout": {
     "id": "route-timeout",

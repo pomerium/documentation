@@ -122,7 +122,7 @@ In your Docker Compose file, replace `nginx` with Pomerium Core:
 
    ```yaml showLineNumbers
    pomerium:
-     image: pomerium.com/pomerium/pomerium:latest
+     image: pomerium/pomerium:latest
      # highlight-start
      # Mount your config file
      volumes:
