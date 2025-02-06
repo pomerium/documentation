@@ -43,6 +43,7 @@ const sidebars = {
         'docs/capabilities/authorization',
         'docs/capabilities/getting-users-identity',
         'docs/capabilities/routing',
+        'docs/capabilities/routes-portal',
         'docs/capabilities/custom-domains',
         // secondary capabilities
         {
