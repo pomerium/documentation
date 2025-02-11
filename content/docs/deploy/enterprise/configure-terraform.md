@@ -63,7 +63,11 @@ provider "pomerium" {
 }
 ```
 
-:::warning The Bootstrap Service Account method requires setting `BOOTSTRAP_SERVICE_ACCOUNT=true` in your Enterprise Console configuration. :::
+:::warning
+
+The Bootstrap Service Account method requires setting `BOOTSTRAP_SERVICE_ACCOUNT=true` in your Enterprise Console configuration.
+
+:::
 
 ## Example
 
