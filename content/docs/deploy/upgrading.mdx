@@ -10,7 +10,6 @@ Below are upgrade notes for both **Pomerium Core** (the open-source edition) and
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
-import UpgradeNotice from '@site/content/docs/admonitions/_upgrade-versions.mdx';
 
 <Tabs>
 
@@ -278,12 +277,26 @@ No changes required.
 
 ## Upgrading Pomerium Enterprise
 
-Please review these deprecations and important changes for Pomerium Enterprise before upgrading.
+:::info
 
-:::caution
+Your Pomerium Enterprise version should always match the same **minor version number** as your Pomerium Core version. For example:  
+✅ Core **v0.27.0** with Enterprise **v0.27.3** is a supported configuration.  
+❌ Core **v0.27.0** with Enterprise **v0.28.0** is not supported.
 
-<UpgradeNotice />
 :::
+
+To **upgrade** a Pomerium Enterprise deployment, we recommend that you:
+1. First review the version-specific upgrade notes on this page for **both** Pomerium Core and Pomerium Enterprise for any changes that might pertain to your deployment. (If you're not sure, please don't hesitate to reach out and ask for clarification.)
+1. Take a database backup of the Pomerium Enterprise database.
+1. Upgrade Pomerium Core to the new version. For a replicated deployment, instances can be updated one at a time to avoid downtime.
+1. Upgrade Pomerium Enterprise to the new version.
+1. Verify that your deployment continues to behave as expected.
+
+In case of trouble during the upgrade process, follow these steps to **roll back** to the previous version:
+1. Stop Pomerium Enterprise.
+1. Restore the Pomerium Enterprise database from a backup taken before the upgrade.
+1. Downgrade Pomerium Core to the previous version.
+1. Start the previous version of Pomerium Enterprise.
 
 ### v0.28.0
 
