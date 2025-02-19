@@ -1,7 +1,7 @@
 ```yaml title="docker-compose.yaml"
 services:
   pomerium:
-    image: pomerium.com/pomerium/pomerium:latest
+    image: pomerium/pomerium:latest
     volumes:
       # Use a volume to store ACME certificates
       - ./config.yaml:/pomerium/config.yaml:ro
