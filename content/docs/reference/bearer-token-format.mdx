@@ -1,0 +1,89 @@
+---
+id: bearer-token-format
+title: Bearer Token Format
+description: |
+  Bearer token format controls how HTTP bearer token authentication is handled.
+keywords:
+  - reference
+  - Bearer Token Format
+pagination_prev: null
+pagination_next: null
+toc_max_heading_level: 2
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Bearer Token Format
+
+## Summary
+
+**Bearer Token Format** controls how HTTP bearer token authentication is handled. There are 3 possible options: `default`, `idp_access_token` and `idp_identity_token`.
+
+HTTP bearer tokens are tokens stored in the `Authorization` header prefixed by `Bearer `:
+
+```text
+GET / HTTP/1.1
+Authorization: Bearer Token
+```
+
+Pomerium's `default` behavior is to pass bearer tokens to upstream applications without interpreting them. Pomerium also supports creating sessions from tokens issued by an identity provider without needing to initiate an interactive login. If the `idp_access_token` option is used, then the bearer token will be interpreted as an IdP-issued access token. If the `idp_identity_token` option is used, then the bearer token will be interpreted as an IdP-issued identity token.
+
+Currently only [Microsoft Entra](../integrations/user-identity/azure) is supported with this option.
+
+This option can also be configured at the route-level.
+
+## Additional Headers
+
+Pomerium also always supports passing IdP access and identity tokens via the following headers (replacing `<TOKEN>` with the issued token):
+
+- `X-Pomerium-IDP-Access-Token: <TOKEN>`
+- `Authorization: Pomerium-IDP-Access-Token <TOKEN>`
+- `Authorization: Bearer Pomerium-IDP-Access-Token-<TOKEN>`
+- `X-Pomerium-IDP-Identity-Token: <TOKEN>`
+- `Authorization: Pomerium-IDP-Identity-Token <TOKEN>`
+- `Authorization: Bearer Pomerium-IDP-Identity-Token-<TOKEN>`
+
+## How to Configure
+
+<Tabs>
+<TabItem value="Core" label="Core">
+
+| **Config file keys**  | **Environment variables** | **Type** | **Default** |
+| :-------------------- | :------------------------ | :------- | :---------- |
+| `bearer_token_format` | `BEARER_TOKEN_FORMAT`     | `string` | `default`   |
+
+### Examples
+
+```yaml
+bearer_token_format: idp_access_token
+```
+
+```bash
+BEARER_TOKEN_FORMAT=idp_access_token
+```
+
+### Options
+
+- `default`
+- `idp_access_token`
+- `idp_identity_token`
+
+</TabItem>
+<TabItem value="Enterprise" label="Enterprise">
+
+Set **Bearer Token Format** under **Proxy** settings in the Console:
+
+![Set bearer token format in the Console](./img/global-settings/bearer-token-format.png)
+
+</TabItem>
+<TabItem value="Kubernetes" label="Kubernetes">
+
+```yaml
+bearerTokenFormat: idp_access_token
+```
+
+See [Kubernetes - Global Configuration](/docs/deploy/k8s/configure) for more information.
+
+</TabItem>
+</Tabs>
