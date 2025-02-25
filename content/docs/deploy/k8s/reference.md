@@ -75,6 +75,22 @@ PomeriumSpec defines Pomerium-specific configuration parameters.
         <tr>
             <td>
                 <p>
+                <code>bearerTokenFormat</code>&#160;&#160;
+                
+                    <strong>string</strong>&#160;
+                
+                </p>
+                <p>
+                    
+                    BearerTokenFormat sets the <a href="https://www.pomerium.com/docs/reference/bearer-token-format">Bearer Token Format</a>.
+                </p>
+                
+            </td>
+        </tr>
+    
+        <tr>
+            <td>
+                <p>
                 <code>caSecrets</code>&#160;&#160;
                 
                     <strong>[]string</strong>&#160;
@@ -151,7 +167,23 @@ PomeriumSpec defines Pomerium-specific configuration parameters.
                 </p>
                 <p>
                     
-                    IdentityProvider configure single-sign-on authentication and user identity details by integrating with your <a href="https://www.pomerium.com/docs/integrations/">Identity Provider</a>
+                    IdentityProvider configure single-sign-on authentication and user identity details by integrating with your <a href="https://www.pomerium.com/docs/identity-providers/">Identity Provider</a>
+                </p>
+                
+            </td>
+        </tr>
+    
+        <tr>
+            <td>
+                <p>
+                <code>idpAccessTokenAllowedAudiences</code>&#160;&#160;
+                
+                    <strong>[]string</strong>&#160;
+                
+                </p>
+                <p>
+                    
+                    IDPAccessTokenAllowedAudiences specifies the <a href="https://www.pomerium.com/docs/reference/idp-access-token-allowed-audiences">idp access token allowed audiences</a> list.
                 </p>
                 
             </td>
@@ -392,7 +424,7 @@ Cookie defines Pomerium session cookie options.
                 </p>
                 <p>
                     
-                    Expire sets cookie and Pomerium session expiration time. Once session expires, users would have to re-login. If you change this parameter, existing sessions are not affected. <p>See <a href="https://www.pomerium.com/docs/deploy/enterprise/about#session-management">Session Management</a> (Enterprise) for a more fine-grained session controls.</p> <p>Defaults to 14 hours.</p>
+                    Expire sets cookie and Pomerium session expiration time. Once session expires, users would have to re-login. If you change this parameter, existing sessions are not affected. <p>See <a href="https://www.pomerium.com/docs/enterprise/about#session-management">Session Management</a> (Enterprise) for a more fine-grained session controls.</p> <p>Defaults to 14 hours.</p>
                 </p>
                 
                     Format: a duration string like "22s" as parsed by Golang time.ParseDuration.
@@ -453,7 +485,7 @@ Cookie defines Pomerium session cookie options.
 
 ### `identityProvider`
 
-IdentityProvider configure single-sign-on authentication and user identity details by integrating with your <a href="https://www.pomerium.com/docs/integrations/">Identity Provider</a>
+IdentityProvider configure single-sign-on authentication and user identity details by integrating with your <a href="https://www.pomerium.com/docs/identity-providers/">Identity Provider</a>
 
 <table>
     <thead>
@@ -590,7 +622,7 @@ IdentityProvider configure single-sign-on authentication and user identity detai
                 </p>
                 <p>
                     
-                    URL is the base path to an identity provider's OpenID connect discovery document. See <a href="https://pomerium.com/docs/integrations/user-identity/identity-providers">Identity Providers</a> guides for details.
+                    URL is the base path to an identity provider's OpenID connect discovery document. See <a href="https://pomerium.com/docs/identity-providers">Identity Providers</a> guides for details.
                 </p>
                 
                     Format: an URI as parsed by Golang net/url.ParseRequestURI.
@@ -807,7 +839,7 @@ Timeout specifies the <a href="https://www.pomerium.com/docs/reference/global-ti
                 </p>
                 <p>
                     
-                    Write specifies max stream duration is the maximum time that a stream's lifetime will span. An HTTP request/response exchange fully consumes a single stream. Therefore, this value must be greater than read_timeout as it covers both request and response time.
+                    Write specifies max stream duration is the maximum time that a stream’s lifetime will span. An HTTP request/response exchange fully consumes a single stream. Therefore, this value must be greater than read_timeout as it covers both request and response time.
                 </p>
                 
                     Format: a duration string like "22s" as parsed by Golang time.ParseDuration.
