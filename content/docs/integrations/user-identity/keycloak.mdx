@@ -143,6 +143,24 @@ You'll be redirected to Keycloak to sign in, then back to the Verify service:
 
 You can see user claims from Keycloak in the JWT payload, confirming that Pomerium has authenticated and authorized your request.
 
+### Directory Sync (Enterprise)
+
+## Setting Up Directory Sync
+
+### Configure Client Credentials
+
+To allow the client credentials configured above to be used for directory sync, under **Capability config**, turn on "Service accounts roles".
+
+![Capability config](./img/keycloak/keycloak-sync-capability-config.png)
+
+Then under the **Service accounts roles** tab, add the `view-users` and `view-groups` roles.
+
+![Service accounts roles](./img/keycloak/keycloak-sync-service-accounts-roles.png)
+
+### Configure Pomerium Enterprise Console
+
+Under **Settings → Identity Providers**, select "Keycloak" as the identity provider and set the Client ID, Client Secret, Realm and URL.
+
 ## Additional Resources
 
 - [Identity Provider Settings](/docs/reference/identity-provider-settings)
