@@ -7,12 +7,13 @@ keywords:
   - configuration
   - settings
   - environment variables
-  - split service mode
   - docker compose
   - all-in-one mode
   - advanced pomerium config
 lang: en-US
 ---
+
+import InstallMkcert from '@site/content/docs/admonitions/_install-mkcert.md';
 
 # Configuration & Settings
 
@@ -32,15 +33,13 @@ See the [reference](/docs/reference) page for a complete list of available optio
 
 ## All-In-One vs Split Service mode
 
-When running Pomerium as a single system service or container, all the options on this page can be set in a single `config.yaml` file, or passed to the single instance as environment variables.
+Pomerium's default mode is all-in-one mode. It run all the indivudual [components](/docs/internals/architecture#component-level) in a single container or under a single system service. This is our suggested way to run Pomerium.  Alternatively, each of those component services can be configured and run separately in split mode.
 
-When running Pomerium in a distributed environment where there are multiple processes, each handling separate [components](/docs/internals/architecture#component-level), all services can still share a single config file or set of environment variables.
+All-in-one mode has the easiest configuration and successfully used in large production environments.  All the configuration goes in a single `config.yaml` file or single set of environment variables.
+When running Pomerium as a single system service or container, all the options on this page can be set in a single `config.yaml` file, or passed to the single instance as environment variables. Internal communication is configured automatically requiring no addtional setup. 
 
-Alternately, you can create individual config files or sets of environment variables for each service. When doing so, each file or set can define which component a process will run as using the [service mode](/docs/reference/service-mode) key.
+Alternatively, each component can be run separately in split-mode using the [service mode](/docs/reference/service-mode) key to specify which component to run.  Each of these needs to be configured separately, and communication between components must be explicitly configured including managing tls certificates.
 
-The table contains all config options for Pomerium Core. You can also browse each key using the index on the left.
-
-import InstallMkcert from '@site/content/docs/admonitions/_install-mkcert.md';
 
 ## Service Mode
 
@@ -56,10 +55,13 @@ Any production deployment with more than one instance of Pomerium (in any combin
 
 ### All-in-One
 
-It may be desirable to run in "all-in-one" mode in smaller deployments or while testing. This reduces the resource footprint and simplifies DNS configuration. An all-in-one instances may also be scaled for better performance. All URLs point at the same Pomerium service instance.
+For almost all use cases it's desirable to run in "all-in-one" mode. This reduces the resource footprint and simplifies DNS configuration. An all-in-one instances may also be scaled for better performance. All URLs point at the same Pomerium service instance.
 
 ### Discrete Services
 
+Split service mode is only advised for learning how the components interact, extremely security constrained environments or to workaround constraints in host environment.
+
+The split service mode can limit the blast radius in the event of a compromised container and can enable independet scaling of components.  These features come with some downsides. There will be increased latency to the authorize service, which is consulted on every request. In addition to complicating upgrades, the additional configuration makes debugging configuration errors more difficult.
 In larger footprints, it is recommended to run Pomerium as a collection of discrete service clusters. This limits blast radius in the event of vulnerabilities and allows for per-service [scaling](#scaling) and monitoring.
 
 Please also see [Architecture](/docs/internals/architecture) for information on component interactions.
