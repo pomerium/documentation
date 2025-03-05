@@ -63,11 +63,19 @@ bearer_token_format: idp_access_token
 BEARER_TOKEN_FORMAT=idp_access_token
 ```
 
+#### Microsoft Entra
+
+The `az` CLI can be used to get an access-token:
+
+```bash
+curl -H "Authorization: $(az account get-access-token --query accessToken --output tsv)" https://example.localhost.pomerium.io
+```
+
 ### Options
 
-- `default`
-- `idp_access_token`
-- `idp_identity_token`
+- `default`: Pass bearer tokens to upstream applications without interpreting them.
+- `idp_access_token`: The bearer token will be interpreted as an IdP-issued access token.
+- `idp_identity_token`: The bearer token will be interpreted as an IdP-issued identity token.
 
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
@@ -75,6 +83,14 @@ BEARER_TOKEN_FORMAT=idp_access_token
 Set **Bearer Token Format** under **Proxy** settings in the Console:
 
 ![Set bearer token format in the Console](./img/global-settings/bearer-token-format.png)
+
+### Options
+
+- _Unset_: At the route level, use the global setting. At the global level, use "Default".
+- "Unknown": Same as "Default".
+- "Default": Pass bearer tokens to upstream applications without interpreting them.
+- "IDP Access Token": The bearer token will be interpreted as an IdP-issued access token.
+- "IDP Identity Token": The bearer token will be interpreted as an IdP-issued identity token.
 
 </TabItem>
 <TabItem value="Kubernetes" label="Kubernetes">
