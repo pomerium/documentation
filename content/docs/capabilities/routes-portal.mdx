@@ -3,14 +3,57 @@ title: Pomerium Routes Portal
 lang: en-US
 sidebar_label: 'Routes Portal'
 description: How to quickly view the routes you have access to in Pomerium.
-keywords: [pomerium, routing, portal]
+keywords: [pomerium, routes, portal, cli, desktop client, JSON API]
 ---
 
-The Pomerium Routes Portal allows a user to see all the routes they have access to. It is available on any domain frontend by Pomerium at the special `/.pomerium/routes` endpoint.
+The Pomerium Routes Portal allows a user to see all the routes they have access to and easily navigate or connect to them. The Routes Portal is personalized for each user based on their authorization to the configured routes. For non-HTTP routes, such as SSH or plain TCP connections, the portal provides corresponding Pomerium CLI commands that can be used to connect to the resources.
+
+We recommend using the Routes Portal to help onboard new users to Pomerium and to provide a central location for users to access all their resources.
+
+## Ways of Accessing the Routes Portal
+
+The Routes Portal is available in the following ways:
+
+- [**Web Page**](#web-page) - Generally useful for quickly navigating to available web applications or identifying non-HTTP CLI commands
+- [**Desktop Client**](#desktop-client) - Best for setting up non-HTTP connections such as SSH or databases
+- [**CLI**](#cli) - Can be used programmatically to list routes and then connect to them
+- [**JSON API**](#json-api) - Can be used to integrate with your own systems and processes
+
+:::note Identifying Your Pomerium Domain
+
+The Routes Portal is available on all Pomerium cluster domains. New users should contact their Pomerium administrator to identify their organization's Pomerium domain. The domain could be a Pomerium provided domain such as `curious-cat-9999.pomerium.app` or a custom domain.
+
+:::
+
+### Web Page
+
+The web page version of the Routes Portal is accessible via a web browser at `https://<your-pomerium-domain>/.pomerium/routes`. Accessing the page when not authenticated will redirect you to the configured Identity Provider for authentication. Once logged in, you will see a list of all the routes you have access to.
 
 ![Routes Portal](./img/routes-portal/routes-portal.png)
 
-This data is also available as JSON at `/.pomerium/api/v1/routes`.
+### Desktop Client
+
+The Pomerium Desktop Client can automatically create connections using the Routes Portal. While static route lists can be exported, shared, and imported by users looking to set up their Pomerium Desktop Client, the portal provides a more dynamic way of loading available route configuration. After providing your Pomerium cluster domain, the Desktop Client will automatically load all the routes you have access to. You may optionally specify a tag for the loaded routes to identify the ones created by this process.
+
+:::note Updating Routes in the Desktop Client
+
+The Desktop Client does not automatically update the routes list when changes are made to the Pomerium configuration. An updated routes list can be loaded by performing the same process again.
+
+:::
+
+![Desktop Client](./img/routes-portal/desktop-client.png)
+
+### CLI
+
+The Pomerium CLI can list routes via the `routes list` subcommand:
+
+```bash
+pomerium-cli routes list https://<your-pomerium-domain>
+```
+
+### JSON API
+
+Accessible via a JSON API at `https://<your-pomerium-domain>/.pomerium/api/v1/routes`
 
 ```json
 {
@@ -34,16 +77,22 @@ This data is also available as JSON at `/.pomerium/api/v1/routes`.
 }
 ```
 
-### CLI
+## FAQ
 
-The Pomerium CLI can list routes via the `routes list` subcommand:
+### Is the Routes Portal publicly available?
 
-```bash
-pomerium-cli routes list https://curious-cat-9999.pomerium.app
-```
+Yes, the Routes Portal is publicly available, but only authenticated users will be able to see the routes they have access to. Unauthenticated users will be forced to authenticate.
 
-### Desktop Client
+### Can I disable the Routes Portal?
 
-The Pomerium Desktop Client can automatically create connections using the Routes Portal.
+No, the Routes Portal is a core feature of Pomerium and cannot be disabled. If you have concerns about the security of the portal, please contact security@pomerium.com.
 
-![Desktop Client](./img/routes-portal/desktop-client.png)
+### Can I customize the Routes Portal?
+
+The routes which are displayed in the Routes Portal are based on the user's authorization and can be controlled by modifying the applied Pomerium policies for each given route. If you are interested in further customization, please contact support@pomerium.com
+
+### How can I find my Routes Portal domain?
+
+The Routes Portal is available on all Pomerium cluster domains. If you know the URL of one of your routes, the domain of this route is your Pomerium domain.
+
+New users should contact their Pomerium administrator to identify their organization's Pomerium domain. The domain could be a Pomerium provided domain such as curious-cat-9999.pomerium.app or a custom domain configured by an administrator.
