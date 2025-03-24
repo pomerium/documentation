@@ -99,24 +99,26 @@ There are two settings that you need to configure to implement identity verifica
 - [Pass Identity Headers](/docs/reference/routes/pass-identity-headers-per-route)
 - [Signing Key](/docs/reference/signing-key)
 
-:::info **Global and Route Settings**
+:::info **Global vs Route-specific settings**
 
 Pomerium provides two types of settings: **Global** and **Route** settings.
 
-Global settings are settings you add _outside_ of your route and policy blocks.
+Global settings are settings that will apply to ALL resources protected by Pomerium. Global settings are added _outside_ of your route and policy blocks.
 
-Route settings must be attached to the route itself.
+Route settings must be attached to the route itself and will only apply to that specific route/policy block.
 
 Configuring identity verification is a great example of how you should organize these settings in your configuration files:
 
-- **Signing Key** is a global-level setting. Any time a user sends a request to an upstream service, Pomerium will look for a signing key.
-- **Pass Identity Headers** is a route-level setting. It tells Pomerium to send the signed header to a certain route.
+- **Signing Key** is typically a global-level setting. Any time a user sends a request to an upstream service, Pomerium will look for a signing key.
+- **Pass Identity Headers** can be configured as a global or route-specific setting. It tells Pomerium to send the signed header to a certain route.
 
 In this way, global and route level settings allow you to fine tune your configuration to suit a service's use case.
 
 :::
 
 ### Add pass identity headers
+
+This example will include the `pass_identity_headers` configuration option as a route-specific setting.
 
 In your Pomerium configuration file, add Pass Identity Headers to your routes:
 
@@ -174,39 +176,30 @@ This command generates a public/private key pair in your project:
 
 ![Public and private keys in the root project directory](./img/jwt-verification/00-root-project-files.png)
 
-2. Next, convert the signing key to a Base64-encoded format:
-
-```bash
-
-cat ec_private.pem | base64
-
-```
-
-Your terminal will output a value like this:
-
-```bash
-
-LS0tLS1CRUdJTiBFQyBQUklWQVRFIEtFWS0tLS0tCk1IY0NBUUVFSUVSNThaeDA2SHJXTW9PUTRaNjlMaDdMZUtFZW5TSmJZcHJvZ3V3TEl0blNvQW9HQ0NxR1NNNDkKQXdFSG9VUURRZ0FFK1FtamZKQ2ovdzkrOUhrRDVlbTlIZFhRM3ViUEhIdWNOMTlNOXJxR05PeEpTRmR3VHgvaAphdVkvcVFSWWR0YVpnVEpEUWZSYVQ2Q1pPYndSYTl2TXNnPT0KLS0tLS1FTkQgRUMgUFJJVkFURSBLRVktLS0tLQo=
-
-```
-
-3. In your configuration file, add the `signing_key:` setting and paste the value of your base64-encoded private key:
+2. In your configuration file, add the `signing_key_file:` setting and provide the _internal_ path to your newly-genearated `ec_private.pem`.
 
 ```yaml title="config.yaml"
 authenticate_service_url: https://authenticate.pomerium.app
 # Add your signing key as a global setting:
-signing_key: LS0tLS1CRUdJTiBFQyBQUklWQVRFIEtFWS0tLS0tCk1IY0NBUUVFSUVSNThaeDA2SHJXTW9PUTRaNjlMaDdMZUtFZW5TSmJZcHJvZ3V3TEl0blNvQW9HQ0NxR1NNNDkKQXdFSG9VUURRZ0FFK1FtamZKQ2ovdzkrOUhrRDVlbTlIZFhRM3ViUEhIdWNOMTlNOXJxR05PeEpTRmR3VHgvaAphdVkvcVFSWWR0YVpnVEpEUWZSYVQ2Q1pPYndSYTl2TXNnPT0KLS0tLS1FTkQgRUMgUFJJVkFURSBLRVktLS0tLQo=
+signing_key_file: '/pomerium/ec_private.pem'
 ```
 
 ### Update Docker Compose
 
-Next, you need to update your service's in Docker Compose so they can fetch the public key. This step relies on what's called a JSON Web Key Set (JWKS) endpoint.
+Next, you need to update Docker Compose to provide the container your the signing key, and to include a new environment variable. JWT verification relies on what's called a JSON Web Key Set (JWKS) endpoint.
 
-The JWKS endpoint is an internal Pomerium URL that provides the public key the upstream service needs to verify a private key.
+The JWKS endpoint is an internal Pomerium URL that provides the public key the upstream service needs to verify the signature was generated with the provided private key.
 
-In your Docker Compose file, add the following environment variable to your Verify service:
+In your Docker Compose file, edit the pomerium service to include your .pem file, and add the following environment variable to your Verify service:
 
 ```yaml title="docker-compose"
+pomerium:
+  image: pomerium/pomerium:latest
+  volumes:
+    - ./config.yaml:/pomerium/config.yaml:ro
+    - ./ec_private.pem:/pomerium/ec_private.pem:ro
+  ports:
+    - 443:443
 verify:
   image: pomerium/verify:latest
   expose:
@@ -312,7 +305,7 @@ By now, your configuration files should look similar to this:
 ```yaml
 authenticate_service_url: https://authenticate.pomerium.app
 
-signing_key: LS0tLS1CRUdJTiBFQyBQUklWQVRFIEtFWS0tLS0tCk1IY0NBUUVFSUVSNThaeDA2SHJXTW9PUTRaNjlMaDdMZUtFZW5TSmJZcHJvZ3V3TEl0blNvQW9HQ0NxR1NNNDkKQXdFSG9VUURRZ0FFK1FtamZKQ2ovdzkrOUhrRDVlbTlIZFhRM3ViUEhIdWNOMTlNOXJxR05PeEpTRmR3VHgvaAphdVkvcVFSWWR0YVpnVEpEUWZSYVQ2Q1pPYndSYTl2TXNnPT0KLS0tLS1FTkQgRUMgUFJJVkFURSBLRVktLS0tLQo=
+signing_key_file: '/pomerium/ec_private.pem'
 
 routes:
   - from: https://verify.localhost.pomerium.io
@@ -341,6 +334,7 @@ services:
     image: pomerium/pomerium:latest
     volumes:
       - ./config.yaml:/pomerium/config.yaml:ro
+      - ./ec_private.pem:/pomerium/ec_private.pem:ro
     ports:
       - 443:443
   verify:
