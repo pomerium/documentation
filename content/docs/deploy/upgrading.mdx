@@ -25,6 +25,27 @@ Changelog notes for Pomerium Core can be found on [GitHub](https://github.com/po
 
 This page contains the list of deprecations and important or breaking changes for Pomerium Core. Please read it carefully before upgrading.
 
+### 0.29.0
+
+#### Tracing Configuration
+
+Pomerium no longer supports OpenCensus based tracing. Instead, Pomerium now supports OpenTelemetry based tracing. In order to trace requests in Pomerium 0.29.0 or later, you should configure OpenTelemetry tracing using environment variables or a configuration file.
+
+See [OpenTelemetry tracing](/docs/reference/tracing) for configuration details and examples.
+
+##### Removed Tracing Options
+
+If your Pomerium configuration has any of the following tracing options, you should remove them from your Pomerium configuration file or environment variables:
+
+- `tracing_datadog_address`
+- `tracing_jaeger_collector_endpoint`
+- `tracing_jaeger_agent_endpoint`
+- `tracing_zipkin_endpoint`
+- `tracing_provider`
+- `tracing_sample_rate`
+
+#### Enterprise API
+
 ### 0.28.0
 
 There are no breaking changes in v0.28.
@@ -279,8 +300,8 @@ No changes required.
 
 :::info
 
-Your Pomerium Enterprise version should always match the same **minor version number** as your Pomerium Core version. For example:  
-✅ Core **v0.27.0** with Enterprise **v0.27.3** is a supported configuration.  
+Your Pomerium Enterprise version should always match the same **minor version number** as your Pomerium Core version. For example:
+✅ Core **v0.27.0** with Enterprise **v0.27.3** is a supported configuration.
 ❌ Core **v0.27.0** with Enterprise **v0.28.0** is not supported.
 
 :::
@@ -300,6 +321,36 @@ In case of trouble during the upgrade process, follow these steps to **roll back
 1. Restore the Pomerium Enterprise database from a backup taken before the upgrade.
 1. Downgrade Pomerium Core to the previous version.
 1. Start the previous version of Pomerium Enterprise.
+
+### v0.29.0
+
+#### Tracing Configuration
+
+Pomerium no longer supports OpenCensus based tracing. Instead, Pomerium now supports OpenTelemetry based tracing. In order to trace requests in Pomerium 0.29.0 or later, you should configure OpenTelemetry tracing using environment variables or a configuration file.
+
+See [OpenTelemetry tracing](/docs/reference/tracing) for configuration details and examples.
+
+##### Removed Tracing Options
+
+Existing OpenCensus tracing configurations are automatically removed upon upgrading Pomerium Console to version 0.29.0 or later.
+
+#### Enterprise API Type Changes
+
+Code generation of gRPC clients was simplified by removing the dependency on Envoy. This included several changes to the Enterprise API types in v0.29.0. If you are using Pomerium's [enterprise-client-go](https://github.com/pomerium/enterprise-client-go) or [enterprise-client-python](https://github.com/pomerium/enterprise-client-python), update your client to 0.29.0.
+
+The following changes were made to the Enterprise API types:
+
+- [Route](https://github.com/pomerium/enterprise-client/blob/main/API.md#route)
+  - Removed `envoy_opts`
+  - Added `load_balancing_policy`
+  - Added `health_checks`
+  - Replaced `RedirectAction`
+
+Our full [Pomerium Enterprise gRPC API Reference](https://github.com/pomerium/enterprise-client/blob/main/API.md) is available for review as well.
+
+#### Removed Audit Logging
+
+Audit logging is no longer supported. This rarely used feature is unrelated to authorization or access logging functionality that is still supported. If you rely on Pomerium's audit logging capability, reach out to us at [support@pomerium.com](mailto:support@pomerium.com) before upgrading to 0.29.0 or later.
 
 ### v0.28.0
 
