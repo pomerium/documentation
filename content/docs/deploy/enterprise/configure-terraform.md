@@ -120,6 +120,9 @@ The Bootstrap Service Account method requires setting `BOOTSTRAP_SERVICE_ACCOUNT
     namespace = pomerium_namespace.engineering.id
     from = "https://tools.example.com"
     to = ["https://internal-tools.local"]
+    policies = [
+      pomerium_policy.engineering_policy.id
+    ]
   }
 ```
 
