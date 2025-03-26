@@ -4,15 +4,15 @@ Pomerium's proxy service reserves the `/.pomerium` path for internal endpoints t
 
 Below is a summary of the special `/.pomerium` routes, including their HTTP methods, purpose, and whether an existing authenticated session is required:
 
-| **Endpoint**                                | **Method(s)** | **Requires Auth?**            | **Purpose**                                                                                                                   |
-| ------------------------------------------ | ------------- | ----------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
-| [`/.pomerium/`](#user-info-page)           | `GET`         | Yes (must be logged in)       | User info page (HTML) showing current identity, session details, and device identities.                                       |
-| [`/.pomerium/user`](#user-data-endpoint)   | `GET`         | Yes (must be logged in)       | Return current user information in JSON format (plain claims data).                                                           |
-| [`/.pomerium/jwt`](#jwt-retrieval-endpoint) | `GET`         | Yes (logged in; *deprecated*) | Return the Pomerium JWT (attestation token) for the current session. Disabled by default in newer versions.                   |
-| [`/.pomerium/api/v1/login`](#programmatic-login-url-api) | `GET`         | No (initiates login)          | Generate a one-time **programmatic login** URL to start an OAuth2 login flow and obtain a Pomerium session token (JWT).       |
-| [`/.pomerium/sign_out`](#single-sign-out-endpoint) | `GET`, `POST` | Yes (CSRF token required)     | Log the user out of Pomerium (and IdP session if applicable), clearing session cookies and redirecting to a post-logout page. |
-| [`/.pomerium/webauthn`](#device-enrollment-endpoint) | `GET`, `POST` | Yes (must be logged in)       | Initiate or complete a **device enrollment** via WebAuthn for device identity verification.                                   |
-| [`/.pomerium/device-enrolled`](#device-enrollment-callback) | `GET`         | Yes (must be logged in)       | Finalize device enrollment. Typically used by Pomerium to confirm a device was successfully registered.                       |
+| **Endpoint** | **Method(s)** | **Requires Auth?** | **Purpose** |
+| --- | --- | --- | --- |
+| [`/.pomerium/`](#user-info-page) | `GET` | Yes (must be logged in) | User info page (HTML) showing current identity, session details, and device identities. |
+| [`/.pomerium/user`](#user-data-endpoint) | `GET` | Yes (must be logged in) | Return current user information in JSON format (plain claims data). |
+| [`/.pomerium/jwt`](#jwt-retrieval-endpoint) | `GET` | Yes (logged in; _deprecated_) | Return the Pomerium JWT (attestation token) for the current session. Disabled by default in newer versions. |
+| [`/.pomerium/api/v1/login`](#programmatic-login-url-api) | `GET` | No (initiates login) | Generate a one-time **programmatic login** URL to start an OAuth2 login flow and obtain a Pomerium session token (JWT). |
+| [`/.pomerium/sign_out`](#single-sign-out-endpoint) | `GET`, `POST` | Yes (CSRF token required) | Log the user out of Pomerium (and IdP session if applicable), clearing session cookies and redirecting to a post-logout page. |
+| [`/.pomerium/webauthn`](#device-enrollment-endpoint) | `GET`, `POST` | Yes (must be logged in) | Initiate or complete a **device enrollment** via WebAuthn for device identity verification. |
+| [`/.pomerium/device-enrolled`](#device-enrollment-callback) | `GET` | Yes (must be logged in) | Finalize device enrollment. Typically used by Pomerium to confirm a device was successfully registered. |
 
 Below are details for each special route, including how and when to use them, what they return, and any relevant query parameters or considerations:
 
@@ -40,7 +40,7 @@ This endpoint is particularly useful for single-page applications that need to f
 
 ## JWT Retrieval Endpoint
 
-*Deprecated in newer versions*
+_Deprecated in newer versions_
 
 The `/.pomerium/jwt` endpoint returns the attestation JWT for the current session - the signed token Pomerium uses to convey user identity to upstream services via the `X-Pomerium-Jwt-Assertion` header.
 
@@ -53,6 +53,7 @@ In Pomerium v0.27.0 and later, this endpoint is disabled by default and will be 
 The `/.pomerium/api/v1/login` endpoint initiates a programmatic login flow by generating a one-time sign-in URL. It's designed for CLI tools, scripts, or other non-browser clients that need to obtain Pomerium credentials via OAuth login.
 
 This approach is valuable when you need an access token for an automated client. The process works in three steps:
+
 1. Your application calls this endpoint with a `pomerium_redirect_uri` parameter to get a sign-in URL
 2. The user opens this URL in a browser, which triggers the authentication flow
 3. After successful authentication, the browser redirects to your specified URI with a `pomerium_jwt` query parameter
@@ -60,7 +61,8 @@ This approach is valuable when you need an access token for an automated client.
 
 Unlike other endpoints, this one doesn't require an existing session - it's specifically designed to initiate the login process.
 
-**Example:**  
+**Example:**
+
 ```bash
 curl "https://<your-app>/.pomerium/api/v1/login?pomerium_redirect_uri=http://localhost:5000/callback"
 ```
@@ -70,6 +72,7 @@ curl "https://<your-app>/.pomerium/api/v1/login?pomerium_redirect_uri=http://loc
 The `/.pomerium/sign_out` endpoint logs the user out of Pomerium and optionally out of the identity provider as well. It clears session cookies and redirects to a post-logout page.
 
 This endpoint is typically invoked when a user clicks "Logout" in your application or when you need a programmatic sign-out. The logout process follows these steps:
+
 1. Pomerium clears the user's session cookie
 2. The request redirects to the authenticate service's sign-out endpoint
 3. The user is sent to a configured post-logout page, which can be specified via the `pomerium_redirect_uri` parameter
@@ -81,6 +84,7 @@ This endpoint supports front-channel logout when integrated with identity provid
 The `/.pomerium/webauthn` endpoint handles device enrollment and attestation via WebAuthn as part of Pomerium's device identity feature. It manages the challenge/response flow between the user's browser and Pomerium.
 
 This process is typically initiated when a user clicks a "Register Device" button, which starts the WebAuthn flow. The endpoint works differently depending on the HTTP method:
+
 - A `GET` request provides a WebAuthn challenge to the browser
 - A `POST` request accepts the attestation response from the browser, verifying and enrolling the device
 
@@ -96,9 +100,10 @@ Users don't typically access this endpoint directly. Instead, the browser is aut
 
 For further details on programmatic login flows, device enrollment, and session management, refer to the associated sections in Pomerium's documentation. This reference page is intended to consolidate all internal endpoints for easier troubleshooting and integration.
 
-**References:**  
-- [Programmatic Access Documentation](https://www.pomerium.com/docs/internals/programmatic-access)  
-- [Pomerium Authentication & SSO](https://www.pomerium.com/docs/authentication-sso)  
+**References:**
+
+- [Programmatic Access Documentation](https://www.pomerium.com/docs/internals/programmatic-access)
+- [Pomerium Authentication & SSO](https://www.pomerium.com/docs/authentication-sso)
 - [Device Identity and WebAuthn Integration](https://www.pomerium.com/docs/internals/device-identity)
 
-*Note: Some endpoints may be deprecated or disabled by default in newer Pomerium versions. Always refer to the upgrade notes for the latest changes.*
+_Note: Some endpoints may be deprecated or disabled by default in newer Pomerium versions. Always refer to the upgrade notes for the latest changes._
