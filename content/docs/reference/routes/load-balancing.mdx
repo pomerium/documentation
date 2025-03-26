@@ -70,6 +70,25 @@ ingress.pomerium.io/least_request_lb_config: '{"choice_count": 2}'
 See [Kubernetes - Ingress Configuration](/docs/deploy/k8s/ingress) for more information.
 
 </TabItem>
+<TabItem value="Terraform" label="Terraform">
+
+| **Config file keys** | **Type** | **Usage**    | **Default**   |
+| :------------------- | :------- | :----------- | :------------ |
+| `load_balancing_policy`          | String   | **optional** | `round_robin` |
+
+### Examples {#examples-load-balancing-policy}
+
+```yaml
+resource "pomerium_route" "verify_route" {
+  name         = "verify-route"
+  namespace_id = pomerium_namespace.test_namespace.id
+  from         = "https://verify.localhost.pomerium.io"
+  to           = ["https://verify.pomerium.com"]
+  load_balancing_policy = "least_request"
+}
+```
+
+</TabItem>
 </Tabs>
 
 ### Load Balancing Policy options {#load-balancing-policy-options}

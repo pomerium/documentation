@@ -86,6 +86,26 @@ Configure **Prefix Rewrite** in the Console:
 | `prefix_rewrite` | `string` | **optional** |
 
 </TabItem>
+<TabItem value="Terraform" label="Terraform">
+
+| **Parameter name** | **Type** | **Usage**    |
+| :------------------------ | :------- | :----------- |
+| `prefix_rewrite`          | String | **optional** |
+
+### Examples {#examples-prefix-rewrite}
+
+```yaml
+resource "pomerium_route" "verify_route" {
+  name         = "verify-route"
+  namespace_id = pomerium_namespace.test_namespace.id
+  from         = "https://verify.localhost.pomerium.io"
+  to           = ["https://verify.pomerium.com"]
+  prefix = "/admin"
+  prefix_rewrite = "/"
+}
+```
+
+</TabItem>
 </Tabs>
 
 A request to `https://from.example.com/admin` would be forwarded to `https://to.example.com/`.
@@ -122,6 +142,21 @@ Set **Regex Rewrite** pattern and substitution in the Console:
 <TabItem value="Kubernetes" label="Kubernetes">
 
 Kubernetes does not support **Regex Rewrite**
+
+</TabItem>
+<TabItem value="Terraform" label="Terraform">
+
+| **Parameter name**   | **Type** | **Usage**    |
+| :--------------------------- | :------- | :----------- |
+| `host_path_regex_rewrite_pattern`      | String | **optional** |
+| `host_path_regex_rewrite_substitution ` | String | **optional** |
+
+### Examples {#examples-regex-rewrite}
+
+```yaml
+host_path_regex_rewrite_pattern = "^/service/([^/]+)(/.*)$"
+host_path_regex_rewrite_substitution = "\\2/instance/\\1"
+```
 
 </TabItem>
 </Tabs>
