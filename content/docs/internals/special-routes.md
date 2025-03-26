@@ -1,3 +1,25 @@
+---
+title: Special Routes
+lang: en-US
+keywords:
+  [
+    pomerium,
+    identity access proxy,
+    special routes,
+    authentication endpoints,
+    api,
+    user information,
+    session management,
+    device identity,
+    webauthn,
+    programmatic access,
+    logout flow,
+    jwt,
+  ]
+description: Learn about Pomerium's reserved endpoints that handle authentication flows, session management, and user information retrieval.
+sidebar_position: 5
+---
+
 # Special Routes
 
 Pomerium's proxy service reserves the `/.pomerium` path for internal endpoints that facilitate authentication flows, session management, and user information retrieval. Any request to a route ending in `/.pomerium/...` is intercepted by Pomerium (not forwarded to upstream apps) and handled by these special endpoints. This page documents all such endpoints, their purpose, and usage for end-users and developers integrating with Pomerium.
