@@ -64,6 +64,23 @@ Set **To** in the Console:
 See Kubernetes [Ingress](/docs/deploy/k8s/ingress) for more information.
 
 </TabItem>
+<TabItem value="Terraform" label="Terraform">
+
+| **Parameter name** | **Type** | **Usage** | **Schemes** |
+| :-- | :-- | :-- | :-- |
+| `to` | Set of String | **optional** | `http`, `https`, `h2c`, `tcp`, `udp` |
+
+### Examples
+
+```yaml
+resource "pomerium_route" "example_route" {
+  name         = "example-route"
+  namespace_id = pomerium_namespace.test_namespace.id
+  from         = "https://example.com"
+  to           = ["https://a.example.com", "https://b.example.com", "https://c.example.com"]
+}
+```
+</TabItem>
 </Tabs>
 
 ### Target multiple upstream resources

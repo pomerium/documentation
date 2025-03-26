@@ -17,13 +17,32 @@ import TabItem from '@theme/TabItem';
 If true, **Show Error Details** allows you apply your custom [error message header](/docs/reference/branding) to a route.
 
 ## How to configure
-
-| **Type**  | **Default** |
-| :-------- | :---------- |
-| `boolean` | `false`     |
-
+<Tabs>
+<TabItem value="Enterprise" label="Enterprise">
 ### Examples
 
 Enable **Show Error Details** on a route in the Console:
 
 ![Show error details](../branding/img/branding-show-error-details.png)
+
+</TabItem>
+<TabItem value="Terraform" label="Terraform">
+
+| **Parameter name**| **Type** | **Default**    |
+| :------------------------ | :------- | :----------- |
+| `show_error_details `    | Boolean | `false`|
+
+### Examples
+
+```yaml
+resource "pomerium_route" "verify_route" {
+  name         = "verify-route"
+  namespace_id = pomerium_namespace.test_namespace.id
+  from         = "https://verify.localhost.pomerium.io"
+  to           = ["https://verify.pomerium.com"]
+  policies     = [pomerium_policy.test_policy.id]
+  show_error_details = true
+}
+```
+</TabItem>
+</Tabs>
