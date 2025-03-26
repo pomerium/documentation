@@ -69,6 +69,33 @@ Tracing can also be configured using the Pomerium config file if desired. The fi
 | `otel_attribute_value_length_limit` | [`OTEL_ATTRIBUTE_VALUE_LENGTH_LIMIT`][env/otel_attribute_value_length_limit] | `int32` |
 
 </TabItem>
+<TabItem value="Ingress Controller" label="Ingress Controller">
+OpenTelemetry tracing options can be configured in the `Pomerium` CRD, for example:
+
+```yaml
+apiVersion: ingress.pomerium.io/v1
+kind: Pomerium
+metadata:
+  name: example
+spec:
+  ...
+  otel:
+    endpoint: http://jaeger-collector:4317
+    protocol: grpc
+    headers:
+      key: value
+    timeout: 10s
+    sampling: 1.0
+    resourceAttributes:
+      key: value
+    bspScheduleDelay: 5s
+    bspMaxExportBatchSize: 512
+    logLevel: info
+```
+
+See the [CRD Definition](https://www.pomerium.com/docs/deploy/k8s/reference#otel) for additional details.
+
+</TabItem>
 <TabItem value="Enterprise" label="Enterprise">
 
 1. In the Enterprise Console, navigate to Settings > Tracing
