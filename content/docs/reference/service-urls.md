@@ -93,6 +93,18 @@ authenticate:
 See the [Kubernetes - Global Configuration](/docs/deploy/k8s/configure#authenticate-endpoint) for more information.
 
 </TabItem>
+<TabItem value="Terraform" label="Terraform">
+
+| **[Parameter name](https://registry.terraform.io/providers/pomerium/pomerium/latest/docs/resources/settings) | **Type** | **Usage** |
+| :-- | :-- | :-- |
+| `authenticate_service_url` | `URL` | **optional** |
+
+### Examples
+
+```yaml
+authenticate_service_url = "https://authenticate.corp.example.com"
+```
+</TabItem>
 </Tabs>
 
 ## Authenticate Internal Service URL
@@ -182,6 +194,18 @@ AUTHORIZE_SERVICE_URL=https://pomerium-authorize-service.default.svc.cluster.loc
 The `authorize_service_url` is not customizable in all-in-one mode with the CRD
 
 </TabItem>
+<TabItem value="Terraform" label="Terraform">
+
+| [Parameter name](https://registry.terraform.io/providers/pomerium/pomerium/latest/docs/resources/settings) | **Type** | **Usage** |
+| :-- | :-- | :-- |
+| `authorize_service_url` | `URL` | **optional** |
+
+### Examples
+
+```yaml
+authorize_service_url = "https://localhost:5443"
+```
+</TabItem>
 </Tabs>
 
 ## Authorize Internal Service URL
@@ -197,7 +221,7 @@ If included, Authorize Internal Service URL will override Authorize Service URL.
 
 | **Config file keys** | **Environment variables** | **Type** | **Usage** |
 | :-- | :-- | :-- | :-- |
-| `authorize_internal_service_url` | `AUTHORIZE_INTERNAL_SERVICE_URL` | `URL` | **required** (Inferred in all-in-one mode to be localhost) |
+| `authorize_internal_service_url` | `AUTHORIZE_INTERNAL_SERVICE_URL` | `URL` | **required** (Inferred in all-in-one mode to be localhost)|
 
 ### Examples
 
@@ -258,6 +282,18 @@ DATABROKER_SERVICE_URL=https://databroker.corp.example.com
 
 `databroker_service_url` is not customizable in Kubernetes for all-in-one mode deployments
 
+</TabItem>
+<TabItem value="Terraform" label="Terraform">
+
+| [Parameter name](https://registry.terraform.io/providers/pomerium/pomerium/latest/docs/resources/settings) | **Type** | **Usage** |
+| :-- | :-- | :-- |
+| `databroker_service_url` | `String` | **optional** |
+
+### Examples
+
+```yaml
+databroker_service_url = "http://databroker.corp.example1.com"
+```
 </TabItem>
 </Tabs>
 
