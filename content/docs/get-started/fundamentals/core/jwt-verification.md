@@ -109,7 +109,7 @@ Route settings must be attached to the route itself and will only apply to that 
 
 Configuring identity verification is a great example of how you should organize these settings in your configuration files:
 
-- **Signing Key** is typically a global-level setting. Any time a user sends a request to an upstream service, Pomerium will look for a signing key.
+- **Signing Key** is a global-level setting. Pomerium will use this key to sign all of the JWTs that it sends to an upstream service.
 - **Pass Identity Headers** can be configured as a global or route-specific setting. It tells Pomerium to send the signed header to a certain route.
 
 In this way, global and route level settings allow you to fine tune your configuration to suit a service's use case.
