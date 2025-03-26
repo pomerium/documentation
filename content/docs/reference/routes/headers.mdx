@@ -22,34 +22,69 @@ import TabItem from '@theme/TabItem';
 
 This reference covers all of Pomerium's **Headers Settings**:
 
-- [Host Rewrite](#host-rewrite)
+- [Host Header Settings](#host-rewrite)
 - [Set Request Headers](#set-request-headers)
 - [Remove Request Headers](#remove-request-headers)
 - [Set Response Headers](#set-response-headers)
 - [Rewrite Response Headers](#rewrite-response-headers)
 
-## Host Rewrite {#host-rewrite}
+## Host Header Settings {#host-rewrite}
 
-The **Host Rewrite** setting preserves the **Host** header with the `preserve_host_header` setting. You can customize the Host Rewrite setting with the following options:
+By default, Pomerium will set the `Host` header of an upstream request according to the host specified in the [**To**](/docs/reference/routes/to) URL for the route.
 
-- [Preserve Host Header](#1-preserve-host-header)
-- [Host Rewrite](#2-host-rewrite)
-- [Host Rewrite Header](#3-host-rewrite-header)
-- [Host Path Regex Rewrite Pattern](#4-host-path-regex-rewrite-patternsubstitution)
+(Strictly speaking, the `Host` header is used only with HTTP/1.1. For HTTP/2 and HTTP/3 the `:authority` pseudo-header is used instead. These settings affect both identically.)
+
+You can change how Pomerium sets this header using the following settings:
+
+### 1. Preserve Host Header {#1-preserve-host-header}
+
+`preserve_host_header` passes the Host header from the incoming request to the upstream service, instead of the host from the route's To URL.
+
+This is like the Apache httpd [ProxyPreserveHost](http://httpd.apache.org/docs/2.0/mod/mod_proxy.html#proxypreservehost) directive.
+
+### 2. Host Rewrite {#2-host-rewrite}
+
+`host_rewrite` rewrites the Host header to a fixed value.
+
+### 3. Host Rewrite Header {#3-host-rewrite-header}
+
+`host_rewrite_header` rewrites the Host header using the value of some other header from the incoming request. For example:
+
+```yaml
+host_rewrite_header: X-My-Host
+```
+
+For an incoming request with the header `X-My-Host: foo.example.com`, this would rewrite the Host header to `foo.example.com`.
+
+### 4. Host Path Regex Rewrite Pattern/Substitution {#4-host-path-regex-rewrite-patternsubstitution}
+
+`host_path_regex_rewrite_pattern` and `host_path_regex_rewrite_substitution` rewrite the Host header based on a regular expression substitution using the URL path as the input. For example:
+
+```yaml
+host_path_regex_rewrite_pattern: '^/(.+)/.+$'
+host_path_regex_rewrite_substitution: \1
+```
+
+For a request URL with the path `/example.com/some/path`, this would rewrite the Host header to `example.com`.
 
 ### How to configure {#how-to-configure-host-rewrite}
 
 <Tabs>
 <TabItem value="Core" label="Core">
 
-| **YAML**/**JSON** settings             | **Type** | **Usage**    |
-| :------------------------------------- | :------- | :----------- |
-| `host_rewrite`                         | `string` | **optional** |
-| `host_rewrite_header`                  | `string` | **optional** |
-| `host_path_regex_rewrite_pattern`      | `string` | **optional** |
-| `host_path_regex_rewrite_substitution` | `string` | **optional** |
+| **YAML**/**JSON** settings             | **Type**  | **Usage**    |
+| :------------------------------------- | :-------- | :----------- |
+| `preserve_host_header`                 | `boolean` | **optional** |
+| `host_rewrite`                         | `string`  | **optional** |
+| `host_rewrite_header`                  | `string`  | **optional** |
+| `host_path_regex_rewrite_pattern`      | `string`  | **optional** |
+| `host_path_regex_rewrite_substitution` | `string`  | **optional** |
 
 ### Examples {#examples-host-rewrite}
+
+```yaml
+preserve_host_header: true
+```
 
 ```yaml
 host_rewrite: 'example.com'
@@ -58,7 +93,7 @@ host_rewrite: 'example.com'
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
 
-Configure **Host Rewrite** settings in the route **Headers** settings in the Console:
+Configure **Host Header** settings in the route **Headers** settings in the Console:
 
 ![Configure host rewrite in the console](../img/routes/headers/rewrite-host-header.gif)
 
@@ -78,35 +113,6 @@ ingress.pomerium.io/host_rewrite: 'example.com'
 </TabItem>
 </Tabs>
 
-### Host Rewrite options {#host-rewrite-options}
-
-#### 1. Preserve Host Header {#1-preserve-host-header}
-
-`preserve_host_header` passes the Host header from the incoming request to the proxied host, instead of the destination hostname. It's an optional parameter of type `boolean` that defaults to `false`.
-
-See [ProxyPreserveHost](http://httpd.apache.org/docs/2.0/mod/mod_proxy.html#proxypreservehost).
-
-#### 2. Host Rewrite {#2-host-rewrite}
-
-`host_rewrite` rewrites the Host to a new literal value.
-
-#### 3. Host Rewrite Header {#3-host-rewrite-header}
-
-`host_rewrite_header` rewrites the Host to match an incoming header value.
-
-#### 4. Host Path Regex Rewrite Pattern/Substitution {#4-host-path-regex-rewrite-patternsubstitution}
-
-`host_path_regex_rewrite_pattern` and `host_path_regex_rewrite_substitution` rewrite the Host according to a regex matching the path. For example:
-
-```yaml
-host_path_regex_rewrite_pattern: '^/(.+)/.+$'
-host_path_regex_rewrite_substitution: \1
-```
-
-This configuration would rewrite the Host header to `example.com` given the path `/example.com/some/path`.
-
-The 2nd, 3rd, and 4th options correspond to the Envoy [route action host](https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/route/v3/route_components.proto.html#config-route-v3-routeaction) related options.
-
 ## Set Request Headers {#set-request-headers}
 
 **Set Request Headers** allows you to set both static and dynamic values for given request headers. Static values can be useful if you want to pass along additional information to upstream applications as headers, or to set a fixed authentication header on the request.
@@ -117,7 +123,7 @@ To pass dynamic values from the user's OIDC claim to an upstream service, see [J
 
 :::caution
 
-Neither HTTP/2 [pseudo-headers](https://www.rfc-editor.org/rfc/rfc9113.html#PseudoHeaderFields) (for example, `:authority`) nor the `Host:` header may be modified via this mechanism. Those headers may instead be modified via [`prefix_rewrite`](/docs/reference/routes/path-rewriting#prefix-rewrite), [`regex_rewrite`](/docs/reference/routes/path-rewriting#regex-rewrite), and [`host_rewrite`](/docs/reference/routes/headers#host-rewrite).
+Neither HTTP/2 [pseudo-headers](https://www.rfc-editor.org/rfc/rfc9113.html#PseudoHeaderFields) (for example, `:authority`) nor the `Host` header may be modified via this mechanism. The request path may instead be modified using the [Path Rewriting Settings](/docs/reference/routes/path-rewriting) and the `Host` header may be modified using the [Host Header Settings](#host-rewrite) above.
 
 :::
 
