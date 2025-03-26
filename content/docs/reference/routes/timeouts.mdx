@@ -68,9 +68,9 @@ ingress.pomerium.io/allow_websockets: 'true'
 </TabItem>
 <TabItem value="Terraform" label="Terraform">
 
-| **Parameter name** | **Type**  | **Default** |
-| :------------------------ | :-------- | :---------- |
-| `allow_websockets`        | Boolean | `false`     |
+| **Parameter name** | **Type** | **Default** |
+| :----------------- | :------- | :---------- |
+| `allow_websockets` | Boolean  | `false`     |
 
 ### Examples {#examples-websocket-connections}
 
@@ -125,9 +125,9 @@ See [Kubernetes - Ingress Configuration](/docs/deploy/k8s/ingress) for more info
 </TabItem>
 <TabItem value="Terraform" label="Terraform">
 
-| **YAML**/**JSON** setting | **Type**  | **Default** |
-| :------------------------ | :-------- | :---------- |
-| `allow_spdy`              | Boolean | `false`     |
+| **YAML**/**JSON** setting | **Type** | **Default** |
+| :------------------------ | :------- | :---------- |
+| `allow_spdy`              | Boolean  | `false`     |
 
 ### Examples {#examples-spdy}
 
@@ -180,9 +180,9 @@ ingress.pomerium.io/timeout: '30s'
 </TabItem>
 <TabItem value="Terraform" label="Terraform">
 
-| **Parameter name** | **Type** | **Usage** | **Default** |
-| :-- | :-- | :-- | :-- |
-| `timeout` | String | **optional** | `30s` |
+| **Parameter name** | **Type** | **Usage**    | **Default** |
+| :----------------- | :------- | :----------- | :---------- |
+| `timeout`          | String   | **optional** | `30s`       |
 
 ### Examples {#examples-route-timeout}
 
@@ -242,22 +242,14 @@ ingress.pomerium.io/idle_timeout: '5m'
 </TabItem>
 <TabItem value="Terraform" label="Terraform">
 
-| **Parameter name** | **Type** | **Usage** | **Default** |
-| :-- | :-- | :-- | :-- |
-| `idle_timeout` | String | **optional** | `5m` |
+| **Parameter name** | **Type** | **Usage**    | **Default** |
+| :----------------- | :------- | :----------- | :---------- |
+| `idle_timeout`     | String   | **optional** | `5m`        |
 
 ### Examples
 
 ```yaml
-resource "pomerium_route" "verify_route" {
-  name         = "verify-route"
-  namespace_id = pomerium_namespace.test_namespace.id
-  from         = "https://verify.localhost.pomerium.io"
-  to           = ["https://verify.pomerium.com"]
-  policies     = [pomerium_policy.test_policy.id]
-  idle_timeout = 5m
-}
-    
+resource "pomerium_route" "verify_route" { name         = "verify-route" namespace_id = pomerium_namespace.test_namespace.id from         = "https://verify.localhost.pomerium.io" to           = ["https://verify.pomerium.com"] policies     = [pomerium_policy.test_policy.id] idle_timeout = 5m }
 ```
 
 </TabItem>
