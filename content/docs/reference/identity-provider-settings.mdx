@@ -73,6 +73,17 @@ Configure **Identity Provider Client ID** under **IDP Options** in the Console:
 See [`identityProvider.secret`](/docs/deploy/k8s/reference#identityprovider)
 
 </TabItem>
+<TabItem value="Terraform" label="Terraform">
+
+| **[Parameter name](https://registry.terraform.io/providers/pomerium/pomerium/latest/docs/resources/settings)** | **Type** | **Usage** |
+| :-- | :-- | :-- |
+| `idp_client_id` | String | **required** (if self-hosting) |
+### Examples
+
+```yaml
+idp_client_id = idp_client_id
+```
+</TabItem>
 </Tabs>
 
 ## Identity Provider Client Secret {#identity-provider-client-secret}
@@ -110,6 +121,17 @@ Configure **Identity Provider Client Secret** under **IDP Settings** in the Cons
 
 See [`identityProvider.secret`](/docs/deploy/k8s/reference#identityprovider) for more information
 
+</TabItem>
+<TabItem value="Terraform" label="Terraform">
+
+| **[Parameter name](https://registry.terraform.io/providers/pomerium/pomerium/latest/docs/resources/settings)** | **Type** | **Usage** |
+| :-- | :-- | :-- |
+| `idp_client_secret` | String | **required** (unless using [idp_client_secret_file](#identity-provider-client-secret-file)) |
+### Examples
+
+```yaml
+idp_client_secret = idp_client_secret
+```
 </TabItem>
 </Tabs>
 
@@ -203,6 +225,17 @@ Set **Identity Provider Name** under the **Identity Provider** options in the Co
 See [`identityProvider.provider`](/docs/deploy/k8s/reference#identityprovider) for more information
 
 </TabItem>
+<TabItem value="Terraform" label="Terraform">
+
+| **[Parameter name](https://registry.terraform.io/providers/pomerium/pomerium/latest/docs/resources/settings)** | **Type** | **Usage** |
+| :-- | :-- | :-- |
+| `idp_provider` | String | **required** (if [self-hosting](/docs/capabilities/authentication)) |
+### Examples
+
+```yaml
+idp_provider = "auth0"
+```
+</TabItem>
 </Tabs>
 
 ## Identity Provider Request Params {#identity-provider-request-params}
@@ -243,6 +276,17 @@ Configure **Identity Provider Request Params** under **Authenticate** settings i
 
 See Kubernetes [`identityProvider.requestParams` and `identityProvider.requestParamsSecret`](/docs/deploy/k8s/reference#identityprovider) for more information
 
+</TabItem>
+<TabItem value="Terraform" label="Terraform">
+
+| **[Parameter name](https://registry.terraform.io/providers/pomerium/pomerium/latest/docs/resources/settings)** | **Type** | **Usage** |
+| :-- | :-- | :-- |
+| `request_params` | Map of String | **optional** |
+### Examples
+
+```yaml
+request_params = {"client_id": "client_id", "response_type": "response_type", "redirect_uri": "redirect_uri"}  
+```
 </TabItem>
 </Tabs>
 
@@ -315,6 +359,17 @@ Configure **Identity Provider Scopes** under **Authenticate** settings in the Co
 See Kubernetes [`identityProvider.scopes`](/docs/deploy/k8s/reference#identityprovider) for more information
 
 </TabItem>
+<TabItem value="Terraform" label="Terraform">
+
+| **[Parameter name](https://registry.terraform.io/providers/pomerium/pomerium/latest/docs/resources/settings)** | **Type** | **Usage** |
+| :-- | :-- | :-- |
+| `scopes` | Set of String | **optional** |
+### Examples
+
+```yaml
+scopes = ["openid", "profile", "offline_access", "email"] 
+```
+</TabItem>
 </Tabs>
 
 ### Defaults {#identity-provider-scopes-defaults}
@@ -363,6 +418,17 @@ Set the **Identity Provider URL** under **IDP Options** settings in the Console:
 
 See Kubernetes [`identityProvider.url`](/docs/deploy/k8s/reference#identityprovider) for more information
 
+</TabItem>
+<TabItem value="Terraform" label="Terraform">
+
+| **[Parameter name](https://registry.terraform.io/providers/pomerium/pomerium/latest/docs/resources/settings)** | **Type** | **Usage** |
+| :-- | :-- | :-- |
+| `idp_provider_url` | String | **required** (depending on identity provider) |
+### Examples
+
+```yaml
+idp_provider_url = "https://awesome-company.auth0.com"
+```
 </TabItem>
 </Tabs>
 
