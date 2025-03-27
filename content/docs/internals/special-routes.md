@@ -1,5 +1,6 @@
 ---
-title: Special Routes
+title: 'Special Routes'
+sidebar_label: 'Special Routes'
 lang: en-US
 keywords:
   [
@@ -24,7 +25,6 @@ keywords:
     hpke,
   ]
 description: Learn about Pomerium's reserved endpoints that handle authentication, session management, user information, health checks, and discovery.
-sidebar_position: 5
 ---
 
 # Special Routes
