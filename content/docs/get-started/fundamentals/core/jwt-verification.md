@@ -176,7 +176,7 @@ This command generates a public/private key pair in your project:
 
 ![Public and private keys in the root project directory](./img/jwt-verification/00-root-project-files.png)
 
-2. In your configuration file, add the `signing_key_file:` setting and provide the _internal_ path to your newly-genearated `ec_private.pem`.
+2. In your configuration file, add the `signing_key_file:` setting and provide the _internal_ path to your newly-generated `ec_private.pem`.
 
 ```yaml title="config.yaml"
 authenticate_service_url: https://authenticate.pomerium.app
