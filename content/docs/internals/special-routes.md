@@ -68,7 +68,7 @@ If device identity is enabled, the page will list unique Device IDs associated w
 
 The `/.pomerium/user` endpoint returns information about the currently signed-in user in plaintext JSON format. It provides the same claims that Pomerium asserts about the user (email, ID, name, groups) but in a direct JSON object format rather than a signed token.
 
-This endpoint is particularly useful for single-page applications that need to fetch user identity data without parsing a JWT. A front-end application can simply call `fetch('/.pomerium/user')` to display the user's email or perform client-side logic based on group claims.
+This endpoint is particularly useful for single-page applications that need to fetch user identity data without parsing a JWT. A front-end application can simply call `fetch('/.pomerium/user')` to display the user's email or perform client-side logic based on group claims. Note that this endpoint should only be used for UI customization - never rely on this frontend data for security decisions or permissions checks, which must always be enforced by your backend services.
 
 ```json
 {
@@ -84,7 +84,7 @@ _Deprecated in newer versions_
 
 The `/.pomerium/jwt` endpoint returns the attestation JWT for the current session - the signed token Pomerium uses to convey user identity to upstream services via the `X-Pomerium-Jwt-Assertion` header.
 
-Historically, single-page applications used this to decode user info from a JWT, but in modern usage, the `/.pomerium/user` endpoint generally replaces this functionality.
+Historically, single-page applications used this to decode user info from a JWT, but in modern usage, the `/.pomerium/user` endpoint generally replaces this functionality. The Pomerium JWT is meant to function as a signed attestation of an authorization policy decision, which is incompatible with how this endpoint was intended to be used.
 
 In Pomerium v0.27.0 and later, this endpoint is disabled by default and will be removed in a future release, though it can be temporarily re-enabled with a runtime flag.
 
@@ -106,6 +106,8 @@ Unlike other `/.pomerium` endpoints, this one doesn't require an existing sessio
 ```bash
 curl "https://<your-app>/.pomerium/api/v1/login?pomerium_redirect_uri=http://localhost:5000/callback"
 ```
+
+See the [Programmatic Access](/docs/internals/programmatic-access) page for more detailed information about implementing programmatic authentication flows.
 
 ### Single Sign-Out Endpoint
 
@@ -182,20 +184,10 @@ In the stateless flow, the Pomerium proxy needs to securely transmit information
 
 This endpoint is handled by Pomerium's control plane HTTP server and is crucial for initiating the stateless authentication handshake securely.
 
----
-
-**References:**
-
-- [Programmatic Access][programmatic-access]
-- [Authentication & SSO][authentication-sso]
-- [Device Identity and WebAuthn][device-identity]
-- [JWTs and Identity Headers][identity-headers]
-- [Stateless Authentication][stateless-auth]
+For further information about specific features and integrations, see:
+- [Authentication & SSO](/docs/authentication-sso)
+- [Device Identity and WebAuthn](/docs/internals/device-identity)
+- [JWTs and Identity Headers](/docs/topics/getting-users-identity)
+- [Stateless Authentication](/docs/reference/configuration#use-stateless-mode)
 
 _Note: Some endpoints may be deprecated or disabled by default in newer Pomerium versions. Always refer to the upgrade notes for the latest changes._
-
-[programmatic-access]: /docs/internals/programmatic-access
-[authentication-sso]: /docs/authentication-sso
-[device-identity]: /docs/internals/device-identity
-[identity-headers]: /docs/topics/getting-users-identity
-[stateless-auth]: /docs/reference/configuration#use-stateless-mode
