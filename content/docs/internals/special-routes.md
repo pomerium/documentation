@@ -77,7 +77,6 @@ This endpoint is particularly useful for single-page applications that need to f
 }
 ```
 
-
 ### Programmatic Login URL API
 
 The `/.pomerium/api/v1/login` endpoint initiates a programmatic login flow by generating a one-time sign-in URL. It's designed for CLI tools, scripts, or other non-browser clients that need to obtain Pomerium credentials via OAuth login.
@@ -175,6 +174,7 @@ In the stateless flow, the Pomerium proxy needs to securely transmit information
 This endpoint is handled by Pomerium's control plane HTTP server and is crucial for initiating the stateless authentication handshake securely.
 
 For further information about specific features and integrations, see:
+
 - [Authentication & SSO](/docs/authentication-sso)
 - [Device Identity and WebAuthn](/docs/internals/device-identity)
 - [JWTs and Identity Headers](/docs/topics/getting-users-identity)
