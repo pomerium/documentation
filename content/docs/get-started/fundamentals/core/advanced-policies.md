@@ -136,7 +136,7 @@ By now, your configuration files should look similar to this:
 ```yaml
 authenticate_service_url: https://authenticate.pomerium.app
 
-signing_key: LS0tLS1CRUdJTiBFQyBQUklWQVRFIEtFWS0tLS0tCk1IY0NBUUVFSUVSNThaeDA2SHJXTW9PUTRaNjlMaDdMZUtFZW5TSmJZcHJvZ3V3TEl0blNvQW9HQ0NxR1NNNDkKQXdFSG9VUURRZ0FFK1FtamZKQ2ovdzkrOUhrRDVlbTlIZFhRM3ViUEhIdWNOMTlNOXJxR05PeEpTRmR3VHgvaAphdVkvcVFSWWR0YVpnVEpEUWZSYVQ2Q1pPYndSYTl2TXNnPT0KLS0tLS1FTkQgRUMgUFJJVkFURSBLRVktLS0tLQo=
+signing_key_file: '/pomerium/ec_private.pem'
 
 routes:
   - from: https://verify.localhost.pomerium.io
@@ -170,6 +170,7 @@ services:
     image: pomerium/pomerium:latest
     volumes:
       - ./config.yaml:/pomerium/config.yaml:ro
+      - ./ec_private.pem:/pomerium/ec_private.pem:ro
     ports:
       - 443:443
   verify:
