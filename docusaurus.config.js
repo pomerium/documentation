@@ -224,6 +224,7 @@ const config = {
         'nginx',
         'rego',
         'shell-session',
+        'hcl',
       ],
     },
     mermaid: {
