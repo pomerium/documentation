@@ -180,4 +180,6 @@ Pomerium uses special internal routes for various functions. Understanding these
 - **Authentication Flow:** Learn how Pomerium integrates with your IdP for [SSO Authentication](/docs/capabilities/authentication).
 - **Device Trust:** Pomerium can leverage [Device Identity](/docs/integrations/device-context/device-identity) for enhanced security postures.
 - **User Information:** See how to access [user identity details](/docs/capabilities/getting-users-identity) passed upstream.
-- **Configuration:** Some special routes behave differently depending on whether you [use stateless mode](/docs/internals/configuration#use-stateless-mode). _Note: Some endpoints may be deprecated or disabled by default in newer Pomerium versions. Always refer to the upgrade notes for the latest changes._
+- **Configuration:** Some special routes behave differently depending on whether you [use stateless mode](/docs/internals/configuration#use-stateless-mode).
+
+_Note: Some endpoints may be deprecated or disabled by default in newer Pomerium versions. Always refer to the upgrade notes for the latest changes._
