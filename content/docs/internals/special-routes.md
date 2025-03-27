@@ -43,7 +43,6 @@ Below is a summary of the special routes:
 | :-- | :-- | :-- | :-- |
 | [`/.pomerium/`](#user-info-page) | `GET` | Yes (logged in) | User info page (HTML) showing current identity, session details, and device identities. |
 | [`/.pomerium/user`](#user-data-endpoint) | `GET` | Yes (logged in) | Return current user information in JSON format (plain claims data). |
-| [`/.pomerium/jwt`](#jwt-retrieval-endpoint) | `GET` | Yes (logged in; _deprecated_) | Return the Pomerium JWT (attestation token) for the current session. Disabled by default in newer versions. |
 | [`/.pomerium/api/v1/login`](#programmatic-login-url-api) | `GET` | No (initiates login) | Generate a one-time **programmatic login** URL to start an OAuth2 login flow and obtain a Pomerium session token (JWT). |
 | [`/.pomerium/sign_out`](#single-sign-out-endpoint) | `GET`, `POST` | Yes (CSRF token) | Log the user out of Pomerium (and IdP session if applicable), clearing session cookies and redirecting. |
 | [`/.pomerium/webauthn`](#device-enrollment-endpoint) | `GET`, `POST` | Yes (logged in) | Initiate or complete a **device enrollment** via WebAuthn for device identity verification. |
@@ -78,15 +77,6 @@ This endpoint is particularly useful for single-page applications that need to f
 }
 ```
 
-### JWT Retrieval Endpoint
-
-_Deprecated in newer versions_
-
-The `/.pomerium/jwt` endpoint returns the attestation JWT for the current session - the signed token Pomerium uses to convey user identity to upstream services via the `X-Pomerium-Jwt-Assertion` header.
-
-Historically, single-page applications used this to decode user info from a JWT, but in modern usage, the `/.pomerium/user` endpoint generally replaces this functionality. The Pomerium JWT is meant to function as a signed attestation of an authorization policy decision, which is incompatible with how this endpoint was intended to be used.
-
-In Pomerium v0.27.0 and later, this endpoint is disabled by default and will be removed in a future release, though it can be temporarily re-enabled with a runtime flag.
 
 ### Programmatic Login URL API
 
