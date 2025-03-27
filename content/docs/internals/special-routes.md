@@ -31,7 +31,7 @@ Below is a summary of the special `/.pomerium` routes, including their HTTP meth
 | [`/.pomerium/`](#user-info-page) | `GET` | Yes (must be logged in) | User info page (HTML) showing current identity, session details, and device identities. |
 | [`/.pomerium/user`](#user-data-endpoint) | `GET` | Yes (must be logged in) | Return current user information in JSON format (plain claims data). |
 | [`/.pomerium/jwt`](#jwt-retrieval-endpoint) | `GET` | Yes (logged in; _deprecated_) | Return the Pomerium JWT (attestation token) for the current session. Disabled by default in newer versions. |
-| [`/.pomerium/api/v1/login`](#programmatic-login-url-api) | `GET` | No (initiates login) | Generate a one-time **programmatic login** URL to start an OAuth2 login flow and obtain a Pomerium session token (JWT). |
+| [`/.pomerium/api/v1/login`](#programmatic-login-url-api) | `GET` | No (initiates login) | Generate a one-time **programmatic login** URL to start an OAuth2 login flow and obtain a Pomerium session token. |
 | [`/.pomerium/sign_out`](#single-sign-out-endpoint) | `GET`, `POST` | Yes (CSRF token required) | Log the user out of Pomerium (and IdP session if applicable), clearing session cookies and redirecting to a post-logout page. |
 | [`/.pomerium/webauthn`](#device-enrollment-endpoint) | `GET`, `POST` | Yes (must be logged in) | Initiate or complete a **device enrollment** via WebAuthn for device identity verification. |
 | [`/.pomerium/device-enrolled`](#device-enrollment-callback) | `GET` | Yes (must be logged in) | Finalize device enrollment. Typically used by Pomerium to confirm a device was successfully registered. |
