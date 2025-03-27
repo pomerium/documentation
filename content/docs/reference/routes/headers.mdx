@@ -113,11 +113,11 @@ ingress.pomerium.io/host_rewrite: 'example.com'
 </TabItem>
 <TabItem value="Enterprise via Terraform" label="Enterprise via Terraform">
 
-| **Parameter name** | **Type** | **Usage** |
-| :-- | :-- | :-- |
-| `host_rewrite` | `String` | **optional** |
-| `host_rewrite_header` | `String` | **optional** |
-| `host_path_regex_rewrite_pattern` | `String` | **optional** |
+| **Parameter name**                     | **Type** | **Usage**    |
+| :------------------------------------- | :------- | :----------- |
+| `host_rewrite`                         | `String` | **optional** |
+| `host_rewrite_header`                  | `String` | **optional** |
+| `host_path_regex_rewrite_pattern`      | `String` | **optional** |
 | `host_path_regex_rewrite_substitution` | `String` | **optional** |
 
 ### Examples
@@ -212,8 +212,8 @@ ingress.pomerium.io/set_request_headers: |
 
 <TabItem value="Enterprise via Terraform" label="Enterprise via Terraform">
 
-| **Parameter name** | **Type** | **Usage** |
-| :-- | :-- | :-- |
+| **Parameter name**    | **Type**      | **Usage**    |
+| :-------------------- | :------------ | :----------- |
 | `set_request_headers` | Map of String | **optional** |
 
 ### Examples
@@ -224,9 +224,10 @@ resource "pomerium_route" "verify_route" {
   namespace_id = pomerium_namespace.test_namespace.id
   from         = "https://verify.localhost.pomerium.io"
   to           = ["https://verify.pomerium.com"]
-  set_request_headers = {"Pomerium-jwt": "$${pomerium.jwt}", "X-Your-favorite-authenticating-Proxy": "Pomerium"} 
+  set_request_headers = {"Pomerium-jwt": "$${pomerium.jwt}", "X-Your-favorite-authenticating-Proxy": "Pomerium"}
 }
 ```
+
 </TabItem>
 </Tabs>
 
@@ -311,8 +312,8 @@ ingress.pomerium.io/remove_request_headers: |
 </TabItem>
 <TabItem value="Enterprise via Terraform" label="Enterprise via Terraform">
 
-| **YAML**/**JSON** setting | **Type** | **Usage**    |
-| :------------------------ | :------- | :----------- |
+| **YAML**/**JSON** setting | **Type**      | **Usage**    |
+| :------------------------ | :------------ | :----------- |
 | `remove_request_headers`  | Set of String | **optional** |
 
 ### Examples {#examples-remove-request-headers}
@@ -323,7 +324,7 @@ resource "pomerium_route" "verify_route" {
   namespace_id = pomerium_namespace.test_namespace.id
   from         = "https://verify.localhost.pomerium.io"
   to           = ["https://verify.pomerium.com"]
-  remove_request_headers = ["X-Email", "X-User"] 
+  remove_request_headers = ["X-Email", "X-User"]
 }
 ```
 
@@ -372,9 +373,9 @@ ingress.pomerium.io/set_response_headers: |
 </TabItem>
 <TabItem value="Enterprise via Terraform" label="Enterprise via Terraform">
 
-| **YAML**/**JSON** setting | **Type** | **Usage**    |
-| :------------------------ | :------- | :----------- |
-| `set_response_headers`  | Map of String | **optional** |
+| **YAML**/**JSON** setting | **Type**      | **Usage**    |
+| :------------------------ | :------------ | :----------- |
+| `set_response_headers`    | Map of String | **optional** |
 
 ### Examples {#examples-remove-request-headers}
 
@@ -384,7 +385,7 @@ resource "pomerium_route" "verify_route" {
   namespace_id = pomerium_namespace.test_namespace.id
   from         = "https://verify.localhost.pomerium.io"
   to           = ["https://verify.pomerium.com"]
-  set_response_headers = {"X-Test": "X-Value"} 
+  set_response_headers = {"X-Test": "X-Value"}
 }
 ```
 
@@ -459,9 +460,9 @@ The browser would be redirected to: `http://frontend/one/some/path/`. This is si
 </TabItem>
 <TabItem value="Enterprise via Terraform" label="Enterprise via Terraform">
 
-| **YAML**/**JSON** setting | **Type** | **Usage**    |
-| :------------------------ | :------- | :----------- |
-| `rewrite_response_headers`  | Map of String | **optional** |
+| **YAML**/**JSON** setting  | **Type**      | **Usage**    |
+| :------------------------- | :------------ | :----------- |
+| `rewrite_response_headers` | Map of String | **optional** |
 
 ### Examples {#examples-remove-request-headers}
 
@@ -471,7 +472,7 @@ resource "pomerium_route" "verify_route" {
   namespace_id = pomerium_namespace.test_namespace.id
   from         = "https://verify.localhost.pomerium.io"
   to           = ["https://verify.pomerium.com"]
-  rewrite_response_headers = {"X-Test": "X-New-Value"} 
+  rewrite_response_headers = {"X-Test": "X-New-Value"}
 }
 ```
 
