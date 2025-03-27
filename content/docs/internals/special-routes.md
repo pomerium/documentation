@@ -186,10 +186,16 @@ This endpoint is handled by Pomerium's control plane HTTP server and is crucial 
 
 **References:**
 
-- [Programmatic Access Documentation](https://www.pomerium.com/docs/internals/programmatic-access)
-- [Pomerium Authentication & SSO](https://www.pomerium.com/docs/authentication-sso)
-- [Device Identity and WebAuthn Integration](https://www.pomerium.com/docs/internals/device-identity)
-- [JWTs and Identity Headers](https://www.pomerium.com/docs/topics/getting-users-identity)
-- [Stateless Authentication Flow](https://www.pomerium.com/docs/reference/configuration#use-stateless-mode)
+- [Programmatic Access][programmatic-access]
+- [Authentication & SSO][authentication-sso]
+- [Device Identity and WebAuthn][device-identity]
+- [JWTs and Identity Headers][identity-headers]
+- [Stateless Authentication][stateless-auth]
 
 _Note: Some endpoints may be deprecated or disabled by default in newer Pomerium versions. Always refer to the upgrade notes for the latest changes._
+
+[programmatic-access]: /docs/internals/programmatic-access
+[authentication-sso]: /docs/authentication-sso
+[device-identity]: /docs/internals/device-identity
+[identity-headers]: /docs/topics/getting-users-identity
+[stateless-auth]: /docs/reference/configuration#use-stateless-mode
