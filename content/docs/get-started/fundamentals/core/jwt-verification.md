@@ -186,7 +186,7 @@ signing_key_file: '/pomerium/ec_private.pem'
 
 ### Update Docker Compose
 
-Next, you need to update Docker Compose to provide the container your the signing key, and to include a new environment variable. JWT verification relies on what's called a JSON Web Key Set (JWKS) endpoint.
+Next, you need to update Docker Compose to provide the container the signing key, and to include a new environment variable. JWT verification relies on what's called a JSON Web Key Set (JWKS) endpoint.
 
 The JWKS endpoint is an internal Pomerium URL that provides the public key the upstream service needs to verify the signature was generated with the provided private key.
 
