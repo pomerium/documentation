@@ -79,7 +79,7 @@ AUTHENTICATE_SERVICE_URL=https://authenticate.corp.example.com
 </TabItem>
 <TabItem value="Kubernetes" label="Kubernetes">
 
-| **[Parameter name](/docs/deploy/k8s/reference#spec** | **Type** | **Usage** |
+| **[Parameter name](/docs/deploy/k8s/reference#spec)** | **Type** | **Usage** |
 | :-- | :-- | :-- |
 | `authenticate.url` | `URL` | **optional** |
 
@@ -93,17 +93,18 @@ authenticate:
 See the [Kubernetes - Global Configuration](/docs/deploy/k8s/configure#authenticate-endpoint) for more information.
 
 </TabItem>
-<TabItem value="Terraform" label="Terraform">
+<TabItem value="Enterprise via Terraform" label="Enterprise via Terraform">
 
-| **[Parameter name](https://registry.terraform.io/providers/pomerium/pomerium/latest/docs/resources/settings) | **Type** | **Usage** |
+| **[Parameter name](https://registry.terraform.io/providers/pomerium/pomerium/latest/docs/resources/settings)** | **Type** | **Usage** |
 | :-- | :-- | :-- |
 | `authenticate_service_url` | `URL` | **optional** |
 
 ### Examples
 
-```yaml
+```hcl
 authenticate_service_url = "https://authenticate.corp.example.com"
 ```
+
 </TabItem>
 </Tabs>
 
@@ -194,7 +195,7 @@ AUTHORIZE_SERVICE_URL=https://pomerium-authorize-service.default.svc.cluster.loc
 The `authorize_service_url` is not customizable in all-in-one mode with the CRD
 
 </TabItem>
-<TabItem value="Terraform" label="Terraform">
+<TabItem value="Enterprise via Terraform" label="Enterprise via Terraform">
 
 | [Parameter name](https://registry.terraform.io/providers/pomerium/pomerium/latest/docs/resources/settings) | **Type** | **Usage** |
 | :-- | :-- | :-- |
@@ -202,9 +203,10 @@ The `authorize_service_url` is not customizable in all-in-one mode with the CRD
 
 ### Examples
 
-```yaml
+```hcl
 authorize_service_url = "https://localhost:5443"
 ```
+
 </TabItem>
 </Tabs>
 
@@ -221,7 +223,7 @@ If included, Authorize Internal Service URL will override Authorize Service URL.
 
 | **Config file keys** | **Environment variables** | **Type** | **Usage** |
 | :-- | :-- | :-- | :-- |
-| `authorize_internal_service_url` | `AUTHORIZE_INTERNAL_SERVICE_URL` | `URL` | **required** (Inferred in all-in-one mode to be localhost)|
+| `authorize_internal_service_url` | `AUTHORIZE_INTERNAL_SERVICE_URL` | `URL` | **required** (Inferred in all-in-one mode to be localhost) |
 
 ### Examples
 
@@ -283,7 +285,7 @@ DATABROKER_SERVICE_URL=https://databroker.corp.example.com
 `databroker_service_url` is not customizable in Kubernetes for all-in-one mode deployments
 
 </TabItem>
-<TabItem value="Terraform" label="Terraform">
+<TabItem value="Enterprise via Terraform" label="Enterprise via Terraform">
 
 | [Parameter name](https://registry.terraform.io/providers/pomerium/pomerium/latest/docs/resources/settings) | **Type** | **Usage** |
 | :-- | :-- | :-- |
@@ -291,9 +293,10 @@ DATABROKER_SERVICE_URL=https://databroker.corp.example.com
 
 ### Examples
 
-```yaml
+```hcl
 databroker_service_url = "http://databroker.corp.example1.com"
 ```
+
 </TabItem>
 </Tabs>
 
