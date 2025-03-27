@@ -175,9 +175,9 @@ This endpoint is handled by Pomerium's control plane HTTP server and is crucial 
 
 For further information about specific features and integrations, see:
 
-- [Authentication & SSO](/docs/authentication-sso)
-- [Device Identity and WebAuthn](/docs/internals/device-identity)
-- [JWTs and Identity Headers](/docs/topics/getting-users-identity)
-- [Stateless Authentication](/docs/reference/configuration#use-stateless-mode)
+- [Authentication](/docs/capabilities/authentication)
+- [Device Identity](/docs/capabilities/device-identity)
+- [JWTs and Identity Headers](/docs/capabilities/getting-users-identity)
+- [Stateless Authentication](/docs/reference/stateless)
 
 _Note: Some endpoints may be deprecated or disabled by default in newer Pomerium versions. Always refer to the upgrade notes for the latest changes._
