@@ -173,11 +173,11 @@ In the stateless flow, the Pomerium proxy needs to securely transmit information
 
 This endpoint is handled by Pomerium's control plane HTTP server and is crucial for initiating the stateless authentication handshake securely.
 
-For further information about specific features and integrations, see:
+## Related Concepts
 
-- [Authentication](/docs/capabilities/authentication)
-- [Device Identity](/docs/capabilities/device-identity)
-- [JWTs and Identity Headers](/docs/capabilities/getting-users-identity)
-- [Stateless Authentication](/docs/reference/stateless)
+Pomerium uses special internal routes for various functions. Understanding these is key to grasping the overall architecture.
 
-_Note: Some endpoints may be deprecated or disabled by default in newer Pomerium versions. Always refer to the upgrade notes for the latest changes._
+- **Authentication Flow:** Learn how Pomerium integrates with your IdP for [SSO Authentication](/docs/capabilities/authentication).
+- **Device Trust:** Pomerium can leverage [Device Identity](/docs/integrations/device-context/device-identity) for enhanced security postures.
+- **User Information:** See how to access [user identity details](/docs/capabilities/getting-users-identity) passed upstream.
+- **Configuration:** Some special routes behave differently depending on whether you [use stateless mode](/docs/internals/configuration#use-stateless-mode). _Note: Some endpoints may be deprecated or disabled by default in newer Pomerium versions. Always refer to the upgrade notes for the latest changes._
