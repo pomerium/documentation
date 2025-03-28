@@ -208,6 +208,23 @@ PomeriumSpec defines Pomerium-specific configuration parameters.
         <tr>
             <td>
                 <p>
+                <code>otel</code>&#160;&#160;
+                
+                    <strong>object</strong>&#160;
+                    (<a href="#otel">otel</a>)
+                
+                </p>
+                <p>
+                    
+                    OTEL sets the <a href="https://www.pomerium.com/docs/reference/tracing.mdx">OpenTelemetry Tracing</a>.
+                </p>
+                
+            </td>
+        </tr>
+    
+        <tr>
+            <td>
+                <p>
                 <code>passIdentityHeaders</code>&#160;&#160;
                 
                     <strong>boolean</strong>&#160;
@@ -626,6 +643,168 @@ IdentityProvider configure single-sign-on authentication and user identity detai
                 </p>
                 
                     Format: an URI as parsed by Golang net/url.ParseRequestURI.
+                
+            </td>
+        </tr>
+    
+    </tbody>
+</table>
+
+### `otel`
+
+OTEL sets the <a href="https://www.pomerium.com/docs/reference/tracing.mdx">OpenTelemetry Tracing</a>.
+
+<table>
+    <thead>
+    </thead>
+    <tbody>
+    
+        <tr>
+            <td>
+                <p>
+                <code>bspMaxExportBatchSize</code>&#160;&#160;
+                
+                    <strong>integer</strong>&#160;
+                
+                </p>
+                <p>
+                    
+                    BSPMaxExportBatchSize sets the maximum number of spans to export in a single batch
+                </p>
+                
+            </td>
+        </tr>
+    
+        <tr>
+            <td>
+                <p>
+                <code>bspScheduleDelay</code>&#160;&#160;
+                
+                    <strong>string</strong>&#160;
+                    (duration)
+                
+                </p>
+                <p>
+                    
+                    BSPScheduleDelay sets interval between two consecutive exports
+                </p>
+                
+                    Format: a duration string like "22s" as parsed by Golang time.ParseDuration.
+                
+            </td>
+        </tr>
+    
+        <tr>
+            <td>
+                <p>
+                <code>endpoint</code>&#160;&#160;
+                
+                    <strong>string</strong>&#160;
+                
+                </p>
+                <p>
+                    <strong>Required.</strong>&#160;
+                    An OTLP/gRPC or OTLP/HTTP base endpoint URL with optional port.<br/>Example: `http://localhost:4318`
+                </p>
+                
+            </td>
+        </tr>
+    
+        <tr>
+            <td>
+                <p>
+                <code>headers</code>&#160;&#160;
+                
+                    <strong>map[string]string</strong>
+                
+                </p>
+                <p>
+                    
+                    Extra headers
+                </p>
+                
+            </td>
+        </tr>
+    
+        <tr>
+            <td>
+                <p>
+                <code>logLevel</code>&#160;&#160;
+                
+                    <strong>string</strong>&#160;
+                
+                </p>
+                <p>
+                    
+                    LogLevel sets the log level for the OpenTelemetry SDK.
+                </p>
+                
+            </td>
+        </tr>
+    
+        <tr>
+            <td>
+                <p>
+                <code>protocol</code>&#160;&#160;
+                
+                    <strong>string</strong>&#160;
+                
+                </p>
+                <p>
+                    <strong>Required.</strong>&#160;
+                    Valid values are `"grpc"` or `"http/protobuf"`.
+                </p>
+                
+            </td>
+        </tr>
+    
+        <tr>
+            <td>
+                <p>
+                <code>resourceAttributes</code>&#160;&#160;
+                
+                    <strong>map[string]string</strong>
+                
+                </p>
+                <p>
+                    
+                    ResourceAttributes sets the additional attributes to be added to the trace.
+                </p>
+                
+            </td>
+        </tr>
+    
+        <tr>
+            <td>
+                <p>
+                <code>sampling</code>&#160;&#160;
+                
+                    <strong>string</strong>&#160;
+                
+                </p>
+                <p>
+                    
+                    Sampling sets sampling probability between [0, 1].
+                </p>
+                
+            </td>
+        </tr>
+    
+        <tr>
+            <td>
+                <p>
+                <code>timeout</code>&#160;&#160;
+                
+                    <strong>string</strong>&#160;
+                    (duration)
+                
+                </p>
+                <p>
+                    
+                    Export request timeout duration
+                </p>
+                
+                    Format: a duration string like "22s" as parsed by Golang time.ParseDuration.
                 
             </td>
         </tr>
