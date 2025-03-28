@@ -80,4 +80,23 @@ ingress.pomerium.io/policy: |
 ```
 
 </TabItem>
+<TabItem value="Enterprise via Terraform" label="Enterprise via Terraform">
+
+| **Parameter name** | **Type**      | **Usage**    |
+| :----------------- | :------------ | :----------- |
+| `policies `        | Set of String | **optional** |
+
+### Examples
+
+```hcl
+resource "pomerium_route" "verify_route" {
+  name         = "verify-route"
+  namespace_id = pomerium_namespace.test_namespace.id
+  from         = "https://verify.localhost.pomerium.io"
+  to           = ["https://verify.pomerium.com"]
+  policies     = [pomerium_policy.test_policy.id]
+}
+```
+
+</TabItem>
 </Tabs>
