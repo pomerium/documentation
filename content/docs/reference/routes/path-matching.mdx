@@ -54,6 +54,25 @@ Set **Path** under **Path Matching** settings in the Console:
 See Kubernetes [Ingress](/docs/deploy/k8s/ingress#regular-expressions-path-matching) for more information
 
 </TabItem>
+<TabItem value="Enterprise via Terraform" label="Enterprise via Terraform">
+
+| **YAML**/**JSON** setting | **Type** | **Usage**    |
+| :------------------------ | :------- | :----------- |
+| `path`                    | String   | **optional** |
+
+### Examples {#examples-path}
+
+```hcl
+resource "pomerium_route" "verify_route" {
+  name         = "verify-route"
+  namespace_id = pomerium_namespace.test_namespace.id
+  from         = "https://verify.localhost.pomerium.io"
+  to           = ["https://verify.pomerium.com"]
+  path = "/admin/some/exact/path"
+}
+```
+
+</TabItem>
 </Tabs>
 
 ## Prefix {#prefix}
@@ -110,6 +129,25 @@ spec:
 See Kubernetes [Ingress](/docs/deploy/k8s/ingress#annotations) for more information
 
 </TabItem>
+<TabItem value="Enterprise via Terraform" label="Enterprise via Terraform">
+
+| **YAML**/**JSON** setting | **Type** | **Usage**    |
+| :------------------------ | :------- | :----------- |
+| `prefix`                  | String   | **optional** |
+
+### Examples {#examples-path}
+
+```hcl
+resource "pomerium_route" "verify_route" {
+  name         = "verify-route"
+  namespace_id = pomerium_namespace.test_namespace.id
+  from         = "https://verify.localhost.pomerium.io"
+  to           = ["https://verify.pomerium.com"]
+  prefix = "/admin"
+}
+```
+
+</TabItem>
 </Tabs>
 
 ## Regex {#regex}
@@ -163,6 +201,19 @@ spec:
                   name: http
             path: ^/(admin|superuser)/.*$
             pathType: ImplementationSpecific
+```
+
+</TabItem>
+<TabItem value="Enterprise via Terraform" label="Enterprise via Terraform">
+
+| **Parameter name** | **Type** | **Usage**    |
+| :----------------- | :------- | :----------- |
+| `regex`            | String   | **optional** |
+
+### Examples {#examples-regex}
+
+```hcl
+regex = "^/(admin|superuser)/.*$"
 ```
 
 </TabItem>

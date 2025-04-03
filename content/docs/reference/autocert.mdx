@@ -13,6 +13,9 @@ pagination_prev: null
 pagination_next: null
 ---
 
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
 # Autocert Settings
 
 The Autocert settings configure Pomerium to manage public-facing TLS certificates automatically, by integrating with a certificate authority (CA) that supports the [ACME protocol](https://datatracker.ietf.org/doc/html/rfc8555), such as [Let's Encrypt](https://letsencrypt.org/).
@@ -54,6 +57,9 @@ If you use Let's Encrypt as your CA, you agree to the [Let's Encrypt Subscriber 
 
 ### How to configure {#autocert-how-to-configure}
 
+<Tabs>
+<TabItem label="Core" value="Core">
+
 | **Config file keys** | **Environment variables** | **Type**  | **Usage**    |
 | :------------------- | :------------------------ | :-------- | :----------- |
 | `autocert`           | `AUTOCERT`                | `boolean` | **optional** |
@@ -67,6 +73,22 @@ autocert: true
 ```bash
 AUTOCERT=TRUE
 ```
+
+</TabItem>
+<TabItem label="Enterprise via Terraform" value="Enterprise via Terraform">
+
+| **[Parameter name](https://registry.terraform.io/providers/pomerium/pomerium/latest/docs/resources/settings)** | **Type** | **Usage** |
+| :-- | :-- | :-- |
+| `autocert` | Boolean | **optional** |
+
+### Examples
+
+```hcl
+autocert = true
+```
+
+</TabItem>
+</Tabs>
 
 ## Autocert CA {#autocert-ca}
 
@@ -100,6 +122,9 @@ AUTOCERT_CA=https://acme.zerossl.com/v2/DV90
 
 ### How to configure {#autocert-directory-how-to-configure}
 
+<Tabs>
+<TabItem label="Core" value="Core">
+
 | **Config file keys** | **Environment variables** | **Type** | **Usage** |
 | :-- | :-- | :-- | :-- |
 | `autocert_dir` | `AUTOCERT_DIR` | \*`string` | \*\* **optional** |
@@ -129,6 +154,43 @@ autocert_dir: gs://your-bucket/some/prefix
 ```
 
 Credentials are sourced from [Google Application Default Credentials](https://cloud.google.com/docs/authentication/application-default-credentials).
+
+</TabItem>
+
+<TabItem label="Enterprise via Terraform" value="Enterprise via Terraform">
+
+| **[Parameter name](https://registry.terraform.io/providers/pomerium/pomerium/latest/docs/resources/settings)** | **Type** | **Usage** |
+| :-- | :-- | :-- |
+| `autocert_dir` | \*`String` | \*\* **optional** |
+
+\* `String` must point to the directory path or URL of an S3 or GCS bucket.
+
+\*\* If you don't specify an Autocert directory, Pomerium will generate a directory by default based on your runtime environment. See [Defaults](#autocert-directory-defaults) for more information.
+
+#### Examples {#autocert-directory-examples}
+
+##### S3 bucket
+
+An S3 bucket can be used as storage by using a URL like:
+
+```hcl
+autocert_dir = "s3://your-bucket.s3.us-east-1.amazonaws.com/some/prefix"
+```
+
+Credentials are sourced from [the environment](https://pkg.go.dev/github.com/aws/aws-sdk-go-v2/config#EnvConfig).
+
+##### GCS bucket
+
+A Google Cloud Storage bucket can be used as storage by using a URL like:
+
+```hcl
+autocert_dir = "gs://your-bucket/some/prefix"
+```
+
+Credentials are sourced from [Google Application Default Credentials](https://cloud.google.com/docs/authentication/application-default-credentials).
+
+</TabItem>
+</Tabs>
 
 ### Defaults {#autocert-directory-defaults}
 
