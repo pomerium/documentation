@@ -67,7 +67,7 @@ host_path_regex_rewrite_substitution: \1
 
 For a request URL with the path `/example.com/some/path`, this would rewrite the Host header to `example.com`.
 
-### How to configure {#how-to-configure-host-rewrite}
+### How to Configure {#how-to-configure-host-rewrite}
 
 <Tabs>
 <TabItem value="Core" label="Core">
@@ -127,7 +127,7 @@ Neither HTTP/2 [pseudo-headers](https://www.rfc-editor.org/rfc/rfc9113.html#Pseu
 
 :::
 
-### How to configure {#how-to-configure-set-request-headers}
+### How to Configure {#how-to-configure-set-request-headers}
 
 <Tabs>
 <TabItem value="Core" label="Core">
@@ -195,7 +195,7 @@ ingress.pomerium.io/set_request_headers: |
 </TabItem>
 </Tabs>
 
-### Pass dynamic tokens in headers {#pass-dynamic-tokens-in-headers}
+### Pass Dynamic Tokens in Headers {#pass-dynamic-tokens-in-headers}
 
 The following token substitutions are available:
 
@@ -216,11 +216,20 @@ Be very careful when passing access tokens to an upstream application. This may 
 
 :::
 
+### Rewrite Request Headers {#rewrite-request-headers}
+
+In addition to token substitutions, request headers can be rewritten using `${pomerium.request.headers["HEADER-NAME"]}`. For example if a request had a header `X-Jwt: JWT` and you would like to send it as `Authorization: Bearer JWT`, you could do so using:
+
+```yaml
+set_request_headers:
+  Authorization: Bearer ${pomerium.request.headers["X-Jwt"]}
+```
+
 ## Remove Request Headers {#remove-request-headers}
 
 **Remove Request Headers** allows you to remove given request headers. This can be useful if you want to prevent privacy information from being passed to downstream applications.
 
-### How to configure {#how-to-configure-remove-request-headers}
+### How to Configure {#how-to-configure-remove-request-headers}
 
 <Tabs>
 <TabItem value="Core" label="Core">
@@ -271,7 +280,7 @@ ingress.pomerium.io/remove_request_headers: |
 
 **Set Response Headers** allows you to set static values for the given response headers. These headers will take precedence over the global [`set_response_headers`](/docs/reference/set-response-headers).
 
-### How to configure {#how-to-configure-set-response-headers}
+### How to Configure {#how-to-configure-set-response-headers}
 
 <Tabs>
 <TabItem value="Core" label="Core">
@@ -313,7 +322,7 @@ ingress.pomerium.io/set_response_headers: |
 
 **Rewrite Response Headers** allows you to modify response headers before they are returned to the client. The `header` field will match the HTTP header name, and `prefix` will be replaced with `value`.
 
-### How to configure {#how-to-configure-rewrite-response-headers}
+### How to Configure {#how-to-configure-rewrite-response-headers}
 
 <Tabs>
 <TabItem value="Core" label="Core">
