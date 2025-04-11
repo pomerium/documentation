@@ -19,7 +19,7 @@ Service accounts offer a protected and standardized method of authenticating mac
 
 :::enterprise
 
-Service Accounts are a Pomerium Enterprise feature. The steps below show you how to create and use a Service Account in the Enterprise Console. See our [Pomerium Enterprise](/docs/deploy/enterprise) page for more information.
+Service Accounts are a Pomerium Enterprise and Pomerium Zero feature. The steps below show you how to create and use a Service Account in the Enterprise Console or in Pomerium Zero.
 
 :::
 
@@ -62,7 +62,29 @@ Before you begin, confirm you are in the correct Namespace. You can only use a s
 
    ![An example policy for a service account in the policy builder](./img/service-accounts/create-policy-2.png)
 
-### Authenticate with the Service Account JWT
+## Add a Service Account in Pomerium Zero
+
+### Add a Service Account
+
+1. In the **Service Accounts** dashboard, select **+ New Service Account**:
+
+   ![Service Account Dashboard](./img/service-accounts/zero-dashboard.png)
+
+1. Give the service account a unique **User ID**, or use the ID of an existing user. Optionally, set an expiration date. The user ID set here corresponds to the `User` criteria when editing a policy.
+
+   ![Add Service Account](./img/service-accounts/zero-add-service-account.png)
+
+### Save the Service Account JWT
+
+1. After you click **Save**, the modal presents the JSON web token (**JWT**) to authenticate the service account. Save it somewhere secure, as you won't be able to view it again:
+
+   ![Service Account Added](./img/service-accounts/zero-service-account-token.png)
+
+1. Edit or create policies to give the service account access to the internal service:
+
+   ![An Example Policy for a Service Account](./img/service-accounts/zero-policy.png)
+
+## Authenticate with the Service Account JWT
 
 Pomerium provides three methods to authenticate with a Service Account JWT:
 
