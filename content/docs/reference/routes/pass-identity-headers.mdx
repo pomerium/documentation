@@ -62,4 +62,21 @@ ingress.pomerium.io/pass_identity_headers: 'true'
 ```
 
 </TabItem>
+<TabItem value="Enterprise via Terraform" label="Enterprise via Terraform">
+
+| **Parameter namespace_id** | **Type** | **Usage**    | **Default** |
+| :------------------------- | :------- | :----------- | :---------- |
+| `pass_identity_headers`    | Boolean  | **optional** | `false`     |
+
+```hcl
+resource "pomerium_route" "verify_route" {
+  name         = "verify-route"
+  namespace_id = pomerium_namespace.test_namespace.id
+  from         = "https://verify.localhost.pomerium.io"
+  to           = ["https://verify.pomerium.com"]
+  pass_identity_headers = true
+}
+```
+
+</TabItem>
 </Tabs>
