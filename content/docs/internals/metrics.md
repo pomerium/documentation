@@ -233,3 +233,233 @@ In the **Runtime** dashboard, you can monitor how many system resources Pomerium
 
 </TabItem>
 </Tabs>
+
+## Configuration Settings
+
+This reference covers all of Pomerium's **Metrics Settings**:
+
+- [Metrics Address](#metrics-address)
+- [Metrics Basic Authentication](#metrics-basic-authentication)
+- [Metrics Certificate](#metrics-certificate)
+- [Metrics Client Certificate Authority](#metrics-client-certificate-authority)
+
+### Metrics Address {#metrics-address}
+
+**Metrics Address** exposes a Prometheus endpoint on the specified port.
+
+:::warning
+
+**Use with caution:** the endpoint can expose frontend and backend server names or addresses. Do not externally expose the metrics if this is sensitive information.
+
+:::
+
+#### How to configure {#how-to-configure-metrics-address}
+
+<Tabs>
+<TabItem value="Core" label="Core">
+
+| **Config file keys** | **Environment variables** | **Type** | **Usage** | **Default** |
+| :-- | :-- | :-- | :-- | :-- |
+| `metrics_address` | `METRICS_ADDRESS` | `string` | **optional** | `disabled` |
+
+##### Examples {#examples-metrics-address}
+
+```yaml
+metrics_address: :9090
+```
+
+```bash
+METRICS_ADDRESS: 127.0.0.1:9090
+```
+
+</TabItem>
+<TabItem value="Enterprise" label="Enterprise">
+
+`metrics_address` is a bootstrap configuration setting and is not configurable in the Console.
+
+</TabItem>
+<TabItem value="Kubernetes" label="Kubernetes">
+
+See Kubernetes [Metrics](/docs/deploy/k8s/install#metrics)
+
+</TabItem>
+</Tabs>
+
+#### Pomerium Metrics Tracked
+
+Each metric exposed by Pomerium has a `pomerium` prefix, which is omitted in the table below for brevity.
+
+| Name | Type | Description |
+| --- | --- | --- |
+| build_info | Gauge | Pomerium build metadata by git revision, service, version and go version |
+| config_checksum_int64 | Gauge | Currently loaded configuration checksum by service |
+| config_last_reload_success | Gauge | Whether the last configuration reload succeeded by service |
+| config_last_reload_success_timestamp | Gauge | The timestamp of the last successful configuration reload by service |
+| grpc_client_request_duration_ms | Histogram | GRPC client request duration by service |
+| grpc_client_request_size_bytes | Histogram | GRPC client request size by service |
+| grpc_client_requests_total | Counter | Total GRPC client requests made by service |
+| grpc_client_response_size_bytes | Histogram | GRPC client response size by service |
+| grpc_server_request_duration_ms | Histogram | GRPC server request duration by service |
+| grpc_server_request_size_bytes | Histogram | GRPC server request size by service |
+| grpc_server_requests_total | Counter | Total GRPC server requests made by service |
+| grpc_server_response_size_bytes | Histogram | GRPC server response size by service |
+| http_client_request_duration_ms | Histogram | HTTP client request duration by service |
+| http_client_request_size_bytes | Histogram | HTTP client request size by service |
+| http_client_requests_total | Counter | Total HTTP client requests made by service |
+| http_client_response_size_bytes | Histogram | HTTP client response size by service |
+| http_server_request_duration_ms | Histogram | HTTP server request duration by service |
+| http_server_request_size_bytes | Histogram | HTTP server request size by service |
+| http_server_requests_total | Counter | Total HTTP server requests handled by service |
+| http_server_response_size_bytes | Histogram | HTTP server response size by service |
+| storage_operation_duration_ms | Histogram | Storage operation duration by operation, result, backend and service |
+
+#### Identity Manager
+
+Identity manager metrics have a `pomerium_identity_manager` prefix.
+
+| Name | Type | Description |
+| --- | --- | --- |
+| last_refresh_timestamp | Gauge | Timestamp of last directory refresh operation. |
+| session_refresh_error_timestamp | Gauge | Timestamp of last session refresh ended in an error. |
+| session_refresh_errors | Counter | Session refresh error counter. |
+| session_refresh_success | Counter | Session refresh success counter. |
+| session_refresh_success_timestamp | Gauge | Timestamp of last successful session refresh. |
+| user_group_refresh_error_timestamp | Gauge | Timestamp of last user group refresh ended in an error. |
+| user_group_refresh_errors | Counter | User group refresh error counter. |
+| user_group_refresh_success | Counter | User group refresh success counter. |
+| user_group_refresh_success_timestamp | Gauge | Timestamp of last group successful user refresh. |
+| user_refresh_error_timestamp | Gauge | Timestamp of last user refresh ended in an error. |
+| user_refresh_errors | Counter | User refresh error counter. |
+| user_refresh_success | Counter | User refresh success counter. |
+| user_refresh_success_timestamp | Gauge | Timestamp of last successful user refresh. |
+
+#### Envoy Proxy Metrics
+
+As of `v0.9`, Pomerium uses [Envoy](https://www.envoyproxy.io/) for the data plane. As such, proxy related metrics are sourced from Envoy, and use Envoy's internal [stats data model](https://www.envoyproxy.io/docs/envoy/latest/operations/stats_overview). Please see Envoy's documentation for information about specific metrics.
+
+All metrics coming from Envoy will be labeled with `service="pomerium"` or `service="pomerium-proxy"`, depending if you're running all-in-one or distributed service mode and have `pomerium` prefix added to the standard envoy metric name.
+
+See [Configuration & Settings](/docs/internals/configuration#all-in-one-vs-split-service-mode) for more information configuration environments.
+
+### Metrics Basic Authentication {#metrics-basic-authentication}
+
+**Metrics Basic Authentication** requires [Basic HTTP Authentication](https://tools.ietf.org/html/rfc7617) to access the metrics endpoint.
+
+To support this in Prometheus, consult the `basic_auth` option in the [`scrape_config`](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#scrape_config) documentation.
+
+#### How to configure {#how-to-configure-metrics-basic-authentication}
+
+<Tabs>
+<TabItem value="Core" label="Core">
+
+| **Config file keys** | **Environment variables** | **Type** | **Usage** |
+| :-- | :-- | :-- | :-- |
+| `metrics_basic_authentication` | `METRICS_BASIC_AUTHENTICATION` | `string` ([base64 encoded](https://en.wikipedia.org/wiki/Base64)) | **optional** |
+
+##### Examples {#examples-metrics-basic-authentication}
+
+```yaml
+# for username: x and password: y
+metrics_basic_authentication: eDp5
+```
+
+```bash
+# for username: x and password: y
+METRICS_BASIC_AUTHENTICATION=eDp5
+```
+
+</TabItem>
+<TabItem value="Enterprise" label="Enterprise">
+
+`metrics_basic_authentication` is a bootstrap configuration setting and is not configurable in the Console.
+
+</TabItem>
+<TabItem value="Kubernetes" label="Kubernetes">
+
+Kubernetes does not support `metrics_basic_authentication`
+
+</TabItem>
+</Tabs>
+
+### Metrics Certificate {#metrics-certificate}
+
+**Metrics Certificate** uses a certificate to secure the metrics endpoint.
+
+A Certificate is an X.509 _public-key_ and _private-key_ pair.
+
+:::tip **Note:**
+
+All certificates supplied to Pomerium must be in **PEM** format.
+
+:::
+
+#### How to configure {#how-to-configure-metrics-certificate}
+
+<Tabs>
+<TabItem value="Core" label="Core">
+
+| **Config file keys** | **Environment variables** | **Type** | **Usage** |
+| :-- | :-- | :-- | :-- |
+| `metrics_certificate` and `metrics_certificate_key` | `METRICS_CERTIFICATE` and `METRICS_CERTIFICATE_KEY` | `string` | **optional** |
+| `metrics_certificate_file` and `metrics_certificate_key_file` | `METRICS_CERTIFICATE_FILE` and `METRICS_CERTIFICATE_KEY_FILE` | `string` | **optional** |
+
+##### Examples {#examples-metrics-certificate}
+
+```yaml
+metrics_certificate: base64-encoded-string
+metrics_certificate_key: base64-encoded-string
+```
+
+```bash
+METRICS_CERTIFICATE_FILE=/relative/file/location
+METRICS_CERTIFICATE_FILE_KEY=/relative/file/location
+```
+
+</TabItem>
+<TabItem value="Enterprise" label="Enterprise">
+
+**Metrics Certificate** settings are bootstrap configuration settings and are not configurable in the Console.
+
+</TabItem>
+<TabItem value="Kubernetes" label="Kubernetes">
+
+Kubernetes does not support **Metrics Certificate**
+
+</TabItem>
+</Tabs>
+
+### Metrics Client Certificate Authority {#metrics-client-certificate-authority}
+
+**Metrics Client Certificate Authority** is the X.509 _public-key_ used to validate [mTLS](https://en.wikipedia.org/wiki/Mutual_authentication) client certificates for the metrics endpoint. If not set, no client certificate will be required.
+
+#### How to configure {#how-to-configure-metrics-client-certificate-authority}
+
+<Tabs>
+<TabItem value="Core" label="Core">
+
+| **Config file keys** | **Environment variables** | **Type** | **Usage** |
+| :-- | :-- | :-- | :-- |
+| `metrics_client_ca` and `metrics_client_ca_file` | `METRICS_CLIENT_CA` and `METRICS_CLIENT_CA_FILE` | `string` | **optional** |
+
+##### Examples {#examples-metrics-client-certificate-authority}
+
+```yaml
+metrics_client_ca: base64-encoded-string
+```
+
+```bash
+METRICS_CLIENT_CA_FILE=/relative/file/location
+```
+
+</TabItem>
+<TabItem value="Enterprise" label="Enterprise">
+
+`metrics_client_ca` and `metrics_client_ca_file` are bootstrap configuration settings and are not configurable in the Console.
+
+</TabItem>
+<TabItem value="Kubernetes" label="Kubernetes">
+
+Kubernetes does not support **Metrics Client Certificate Authority**
+
+</TabItem>
+</Tabs>

@@ -76,3 +76,53 @@ See [Kubernetes - Global Configuration](/docs/deploy/k8s/configure) for more inf
 </Tabs>
 
 \* If neither the **global** _nor_ **route-level** `pass_identity_headers` settings are defined, both settings will default to `false`.
+
+## Route-Level Configuration
+
+When set to true, the **Pass Identity Headers (per route)** setting will pass identity headers to the upstream application.
+
+The default value for this setting is controlled by the [global-level Pass Identity Headers](/docs/reference/pass-identity-headers) setting.
+
+Identity headers include:
+
+- `X-Pomerium-Jwt-Assertion`
+- `X-Pomerium-Claim-*` (see [JWT Claim Headers](/docs/reference/jwt-claim-headers) for more information)
+
+### How to configure {#how-to-configure-route-level}
+
+<Tabs>
+<TabItem value="Core" label="Core">
+
+| **YAML**/**JSON** setting | **Type**  | **Usage**    |
+| :------------------------ | :-------- | :----------- |
+| `pass_identity_headers`   | `boolean` | **optional** |
+
+#### Examples {#examples-route-level}
+
+```yaml
+routes:
+  - from: https://verify.localhost.pomerium.io
+    to: http://verify:8000
+    pass_identity_headers: true
+```
+
+</TabItem>
+<TabItem value="Enterprise" label="Enterprise">
+
+Set **Pass Identity Headers** under **General** route settings in the Console:
+
+![Set pass identity headers in the Console](../img/routes/identity-headers/pass-identity-headers.png)
+
+</TabItem>
+<TabItem value="Kubernetes" label="Kubernetes">
+
+| **[Annotation name](/docs/deploy/k8s/ingress#set-ingress-annotations)** | **Type** | **Usage** | **Default** |
+| :-- | :-- | :-- | :-- |
+| `pass_identity_headers` | `boolean` | **optional** | `false` |
+
+```yaml
+ingress.pomerium.io/pass_identity_headers: 'true'
+```
+
+</TabItem>
+</Tabs>

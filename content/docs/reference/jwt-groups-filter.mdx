@@ -53,4 +53,18 @@ When this feature is enabled, a new field `removed-groups-count` will be present
 
 To verify that groups filtering is working as expected, you can also set the [log level](/docs/reference/log-level) to "debug." At this level, Pomerium will log an additional entry with the message `JWT group filtering removed groups` along with the IDs of all removed and included groups.
 
+## Route-Level Configuration
+
+The **JWT Groups Filter (per route)** setting allows you to reduce the size of the groups claim in the [Pomerium JWT](/docs/capabilities/getting-users-identity). See the global [**JWT Groups Filter**](/docs/reference/jwt-groups-filter) reference page for more information about this feature.
+
+When the global setting is enabled, the per-route option will _expand_ the set of allowed groups. A group will be eligible for inclusion in the groups claim if is allowed by either the global setting or the per-route setting.
+
+When the global setting is not enabled, the per-route option will enable groups filtering for a specific route.
+
+### How to configure {#how-to-configure-route-level}
+
+The **JWT Groups Filter** setting is available in the Enterprise Console on the route settings page, under the "Headers" tab.
+
+![screenshot of JWT Groups Filter setting](../img/jwt-groups-filter.png)
+
 [directory sync]: /docs/integrations/user-standing/directory-sync
