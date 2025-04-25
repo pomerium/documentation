@@ -19,7 +19,7 @@ services:
         condition: service_healthy
       pomerium:
         condition: service_started
-    image: docker.cloudsmith.io/pomerium/enterprise/pomerium-console:v0.27.2
+    image: docker.cloudsmith.io/pomerium/enterprise/pomerium-console:v0.29.0
     command:
       - 'serve'
       - '--config'

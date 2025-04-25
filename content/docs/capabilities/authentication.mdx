@@ -52,6 +52,24 @@ Legacy apps that may not directly support SSO are still compatible with Pomerium
 
 By configuring your applications to route requests to Pomerium's Proxy service, Pomerium can manage the authentication flow and secure your legacy app with minimal to no work on your end.
 
+## Direct IdP Token Authentication
+
+Pomerium also supports authenticating users using an Identity Provider’s access token directly, without a full OAuth browser redirect flow. If a user or service has already obtained a valid access token from Microsoft Entra ID, they can present it to Pomerium to gain access, rather than going through the usual login redirect. Pomerium will validate the token with the IdP and create a session for the associated user.
+
+### Benefits
+
+**Streamlined CLI and Service Auth:** This feature is great for command-line tools and automated workflows. For example, a developer who has run `az login` (Azure CLI) and has an access token can use that token to authenticate with Pomerium via an `Authorization: Bearer <token>` header or through the Pomerium CLI. This avoids needing a browser during CLI use, making automation smoother.
+
+**Use Existing Tokens:** In scenarios where another system has already obtained a user token (for instance, an external authenticator or a device that can’t easily do interactive logins), Pomerium can now accept that token directly. This opens up integration possibilities where Pomerium acts as a resource server in an OAuth flow.
+
+**Secure Validation:** Pomerium verifies the token’s signature and claims with the IdP (ensuring it’s not expired, issued for the correct client, etc.) before trusting it. Only tokens from configured, trusted IdPs are accepted.
+
+### Limitations
+
+Microsoft Entra ID is supported, but future Pomerium updates may expand direct token support to other providers.
+
+Direct IdP token authentication is an opt-in capability that can be enabled through [Pomerium configuration](/docs/reference/bearer-token-format). This enhancement makes Pomerium even more flexible in hybrid environments where not all clients are web browsers.
+
 ## External data sources (Enterprise)
 
 :::enterprise

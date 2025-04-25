@@ -57,6 +57,12 @@ Pomerium Enterprise allows you to import groups defined by your identity provide
 
 ![Manage Namespaces in the Enterprise Console's Namespaces dashboard](./img/manage-namespaces.gif)
 
+### Clusters
+
+In the **Namespaces** dashboard you can also add [**Clusters**](/docs/internals/clusters-for-enterprise) &mdash; independent installations of [Pomerium Core](/docs/deploy/core), each with their own set of routes, certificates, and policies.
+
+![Add Cluster](../../internals/img/clusters/enterprise-add-cluster.png)
+
 ### Deployment History and Audit Logs
 
 The **Deployments** dashboard allows you to view and export change logs from the Enterprise Console. Select a change to review which user applied it and when.

@@ -113,10 +113,10 @@ Now, scroll down to **Response body**. You should see a payload like this:
 
 Because we added `pass_identity_headers`, we can see that the request includes the `X-Pomerium-Jwt-Assertion` header. This tells us that the identity header has been correctly passed to the upstream application (in this case, to HTTPBin).
 
-Since we're forwarding the JWT, let's try adding the JWT Claims Headers global setting to your configuration file, right under the signing_key:
+Since we're forwarding the JWT, let's try adding the JWT Claims Headers global setting to your configuration file, right under the `signing_key_file`:
 
 ```yaml
-signing_key: LS0tLS1CRUdJTiBFQyBQUklWQVRFIEtFWS0tLS0tCk1IY0NBUUVFSUVSNThaeDA2SHJXTW9PUTRaNjlMaDdMZUtFZW5TSmJZcHJvZ3V3TEl0blNvQW9HQ0NxR1NNNDkKQXdFSG9VUURRZ0FFK1FtamZKQ2ovdzkrOUhrRDVlbTlIZFhRM3ViUEhIdWNOMTlNOXJxR05PeEpTRmR3VHgvaAphdVkvcVFSWWR0YVpnVEpEUWZSYVQ2Q1pPYndSYTl2TXNnPT0KLS0tLS1FTkQgRUMgUFJJVkFURSBLRVktLS0tLQo=
+signing_key_file: '/pomerium/ec_private.pem'
 
 jwt_claims_headers:
   X-Pomerium-Claim-Email: email
@@ -411,7 +411,7 @@ After cleaning up your files, your configuration should look similar to this:
 ```yaml
 authenticate_service_url: https://authenticate.pomerium.app
 
-signing_key: LS0tLS1CRUdJTiBFQyBQUklWQVRFIEtFWS0tLS0tCk1IY0NBUUVFSUVSNThaeDA2SHJXTW9PUTRaNjlMaDdMZUtFZW5TSmJZcHJvZ3V3TEl0blNvQW9HQ0NxR1NNNDkKQXdFSG9VUURRZ0FFK1FtamZKQ2ovdzkrOUhrRDVlbTlIZFhRM3ViUEhIdWNOMTlNOXJxR05PeEpTRmR3VHgvaAphdVkvcVFSWWR0YVpnVEpEUWZSYVQ2Q1pPYndSYTl2TXNnPT0KLS0tLS1FTkQgRUMgUFJJVkFURSBLRVktLS0tLQo=
+signing_key_file: '/pomerium/ec_private.pem'
 
 routes:
   - from: https://verify.localhost.pomerium.io
@@ -445,6 +445,7 @@ services:
     image: pomerium/pomerium:latest
     volumes:
       - ./config.yaml:/pomerium/config.yaml:ro
+      - ./ec_private.pem:/pomerium/ec_private.pem:ro
     ports:
       - 443:443
   verify:
