@@ -142,6 +142,7 @@ The expandable list below contains the annotations available, which behave as de
 - [`ingress.pomerium.io/allow_spdy`]
 - [`ingress.pomerium.io/allow_websockets`]
 - [`ingress.pomerium.io/cors_allow_preflight`]
+- [`ingress.pomerium.io/depends_on`]
 - [`ingress.pomerium.io/host_path_regex_rewrite_pattern`]
 - [`ingress.pomerium.io/host_path_regex_rewrite_substitution`]
 - [`ingress.pomerium.io/host_rewrite`]
@@ -651,6 +652,7 @@ For more information on the Pomerium Ingress Controller or the Kubernetes concep
 [`ingress.pomerium.io/allow_spdy`]: /docs/reference/routes/timeouts#spdy
 [`ingress.pomerium.io/allow_websockets`]: /docs/reference/routes/timeouts#websocket-connections
 [`ingress.pomerium.io/cors_allow_preflight`]: /docs/reference/routes/cors-preflight
+[`ingress.pomerium.io/depends_on`]: /docs/reference/routes/additional-login-redirect-hosts
 [`ingress.pomerium.io/health_checks`]: /docs/reference/health-checks
 [`ingress.pomerium.io/host_path_regex_rewrite_pattern`]: /docs/reference/routes/headers#host-rewrite
 [`ingress.pomerium.io/host_path_regex_rewrite_substitution`]: /docs/reference/routes/headers#host-rewrite
