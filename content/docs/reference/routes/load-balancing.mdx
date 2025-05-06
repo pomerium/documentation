@@ -82,6 +82,40 @@ See [Kubernetes - Ingress Configuration](/docs/deploy/k8s/ingress) for more info
 | [`RANDOM`](https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/upstream/load_balancing/load_balancers#random) |
 | [`MAGLEV`](https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/upstream/load_balancing/load_balancers#maglev) (may be further configured using [`maglev_lb_config`](https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/cluster/v3/cluster.proto#envoy-v3-api-msg-config-cluster-v3-cluster-maglevlbconfig) option) |
 
+## Load Balancing Policy Config {#load-balancing-policy-config}
+
+When [`lb_policy`](/docs/reference/routes/load-balancing#load-balancing-policy) is configured, **Load Balancing Policy Config** allows you to further customize policy settings with one of the following options:
+
+- `LEAST_REQUEST`
+- `RING_HASH`
+- `MAGLEV`
+
+### How to configure {#how-to-configure-load-balancing-policy-config}
+
+<Tabs>
+<TabItem value="Core" label="Core">
+
+| **Config file keys** | **Type** | **Usage** |
+| :-- | :-- | :-- |
+| [`least_request_lb_config`](https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/cluster/v3/cluster.proto#envoy-v3-api-msg-config-cluster-v3-cluster-leastrequestlbconfig) | `object` | **optional** |
+| [`ring_hash_lb_config`](https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/cluster/v3/cluster.proto#config-cluster-v3-cluster-ringhashlbconfig) | `object` | **optional** |
+| [`maglev_lb_config`](https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/cluster/v3/cluster.proto#envoy-v3-api-msg-config-cluster-v3-cluster-maglevlbconfig) | `object` | **optional** |
+
+</TabItem>
+<TabItem value="Enterprise" label="Enterprise">
+
+**Load Balancing Policy Config** is a bootstrap configuration setting and is not configurable in the Console.
+
+</TabItem>
+<TabItem value="Kubernetes" label="Kubernetes">
+
+See Kubernetes [Ingress](/docs/deploy/k8s/ingress#load-balancing) for more information
+
+</TabItem>
+</Tabs>
+
+See [Load Balancing](/docs/capabilities/routing) for example [configurations](/docs/capabilities/routing#load-balancing-method)
+
 ## Health Checks {#health-checks}
 
 When defined, **Health Checks** will issue periodic health check requests to upstream servers and unhealthy upstream servers won't serve traffic.
