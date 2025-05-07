@@ -11,6 +11,7 @@ keywords:
     organization,
     subscription,
   ]
+# cSpell:ignore pseudonymously psuedonymized
 ---
 
 Learn how billing works in Pomerium Zero.
@@ -116,6 +117,8 @@ You can monitor MAU in the **Usage** dashboard in Pomerium Zero:
 ![Monitor monthly active users in the Pomerium Zero Usage dashboard](./img/billing/zero-usage-dash.png)
 
 :::
+
+In order to protect Personally Identifiable Information, usage in Pomerium Core is tracked pseudonymously. User IDs and Emails are psuedonymized using a one-way-hash before being submitted to Pomerium Zero. To view these user IDs and emails non-psuedonymized either [consult the authorization logs or query the Databroker Postgres database](/docs/capabilities/audit-logs).
 
 ## Manage subscriptions
 
