@@ -111,6 +111,22 @@ ingress.pomerium.io/host_rewrite: 'example.com'
 ```
 
 </TabItem>
+<TabItem value="Enterprise via Terraform" label="Enterprise via Terraform">
+
+| **Parameter name**                     | **Type** | **Usage**    |
+| :------------------------------------- | :------- | :----------- |
+| `host_rewrite`                         | `String` | **optional** |
+| `host_rewrite_header`                  | `String` | **optional** |
+| `host_path_regex_rewrite_pattern`      | `String` | **optional** |
+| `host_path_regex_rewrite_substitution` | `String` | **optional** |
+
+### Examples
+
+```hcl
+host_rewrite = "example.com"
+```
+
+</TabItem>
 </Tabs>
 
 ## Set Request Headers {#set-request-headers}
@@ -190,6 +206,26 @@ Configure **Set Request Headers** in the Console:
 ```yaml
 ingress.pomerium.io/set_request_headers: |
   X-Test: X-Value
+```
+
+</TabItem>
+
+<TabItem value="Enterprise via Terraform" label="Enterprise via Terraform">
+
+| **Parameter name**    | **Type**      | **Usage**    |
+| :-------------------- | :------------ | :----------- |
+| `set_request_headers` | Map of String | **optional** |
+
+### Examples
+
+```hcl
+resource "pomerium_route" "verify_route" {
+  name         = "verify-route"
+  namespace_id = pomerium_namespace.test_namespace.id
+  from         = "https://verify.localhost.pomerium.io"
+  to           = ["https://verify.pomerium.com"]
+  set_request_headers = {"Pomerium-jwt": "$${pomerium.jwt}", "X-Your-favorite-authenticating-Proxy": "Pomerium"}
+}
 ```
 
 </TabItem>
@@ -274,6 +310,25 @@ ingress.pomerium.io/remove_request_headers: |
 ```
 
 </TabItem>
+<TabItem value="Enterprise via Terraform" label="Enterprise via Terraform">
+
+| **YAML**/**JSON** setting | **Type**      | **Usage**    |
+| :------------------------ | :------------ | :----------- |
+| `remove_request_headers`  | Set of String | **optional** |
+
+### Examples {#examples-remove-request-headers}
+
+```hcl
+resource "pomerium_route" "verify_route" {
+  name         = "verify-route"
+  namespace_id = pomerium_namespace.test_namespace.id
+  from         = "https://verify.localhost.pomerium.io"
+  to           = ["https://verify.pomerium.com"]
+  remove_request_headers = ["X-Email", "X-User"]
+}
+```
+
+</TabItem>
 </Tabs>
 
 ## Set Response Headers {#set-response-headers}
@@ -313,6 +368,25 @@ Configure **Set Response Headers** in the Console:
 ```yaml
 ingress.pomerium.io/set_response_headers: |
   X-Test: X-Value
+```
+
+</TabItem>
+<TabItem value="Enterprise via Terraform" label="Enterprise via Terraform">
+
+| **YAML**/**JSON** setting | **Type**      | **Usage**    |
+| :------------------------ | :------------ | :----------- |
+| `set_response_headers`    | Map of String | **optional** |
+
+### Examples {#examples-remove-request-headers}
+
+```hcl
+resource "pomerium_route" "verify_route" {
+  name         = "verify-route"
+  namespace_id = pomerium_namespace.test_namespace.id
+  from         = "https://verify.localhost.pomerium.io"
+  to           = ["https://verify.pomerium.com"]
+  set_response_headers = {"X-Test": "X-Value"}
+}
 ```
 
 </TabItem>
@@ -382,6 +456,25 @@ ingress.pomerium.io/rewrite_response_headers: |
 ```
 
 The browser would be redirected to: `http://frontend/one/some/path/`. This is similar to nginx's [`proxy_redirect` option](http://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_redirect), but can be used for any header.
+
+</TabItem>
+<TabItem value="Enterprise via Terraform" label="Enterprise via Terraform">
+
+| **YAML**/**JSON** setting  | **Type**      | **Usage**    |
+| :------------------------- | :------------ | :----------- |
+| `rewrite_response_headers` | Map of String | **optional** |
+
+### Examples {#examples-remove-request-headers}
+
+```hcl
+resource "pomerium_route" "verify_route" {
+  name         = "verify-route"
+  namespace_id = pomerium_namespace.test_namespace.id
+  from         = "https://verify.localhost.pomerium.io"
+  to           = ["https://verify.pomerium.com"]
+  rewrite_response_headers = {"X-Test": "X-New-Value"}
+}
+```
 
 </TabItem>
 </Tabs>
