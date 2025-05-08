@@ -159,6 +159,23 @@ PomeriumSpec defines Pomerium-specific configuration parameters.
         <tr>
             <td>
                 <p>
+                <code>downstreamMtls</code>&#160;&#160;
+                
+                    <strong>object</strong>&#160;
+                    (<a href="#downstreammtls">downstreamMtls</a>)
+                
+                </p>
+                <p>
+                    
+                    DownstreamMTLS sets the <a href="https://www.pomerium.com/docs/reference/downstream-mtls-settings">Downstream MTLS Settings</a>.
+                </p>
+                
+            </td>
+        </tr>
+    
+        <tr>
+            <td>
+                <p>
                 <code>identityProvider</code>&#160;&#160;
                 
                     <strong>object</strong>&#160;
@@ -500,6 +517,105 @@ Cookie defines Pomerium session cookie options.
     </tbody>
 </table>
 
+### `downstreamMtls`
+
+DownstreamMTLS sets the <a href="https://www.pomerium.com/docs/reference/downstream-mtls-settings">Downstream MTLS Settings</a>.
+
+<table>
+    <thead>
+    </thead>
+    <tbody>
+    
+        <tr>
+            <td>
+                <p>
+                <code>ca</code>&#160;&#160;
+                
+                    <strong>string</strong>&#160;
+                    (byte)
+                
+                </p>
+                <p>
+                    
+                    CA is a bundle of PEM-encoded X.509 certificates that will be treated as trust anchors when verifying client certificates.
+                </p>
+                
+                    Format: base64 encoded binary data.
+                
+            </td>
+        </tr>
+    
+        <tr>
+            <td>
+                <p>
+                <code>crl</code>&#160;&#160;
+                
+                    <strong>string</strong>&#160;
+                    (byte)
+                
+                </p>
+                <p>
+                    
+                    CRL is a bundle of PEM-encoded certificate revocation lists to be consulted during certificate validation.
+                </p>
+                
+                    Format: base64 encoded binary data.
+                
+            </td>
+        </tr>
+    
+        <tr>
+            <td>
+                <p>
+                <code>enforcement</code>&#160;&#160;
+                
+                    <strong>string</strong>&#160;
+                
+                </p>
+                <p>
+                    
+                    Enforcement controls Pomerium's behavior when a client does not present a trusted client certificate.
+                </p>
+                
+            </td>
+        </tr>
+    
+        <tr>
+            <td>
+                <p>
+                <code>matchSubjectAltNames</code>&#160;&#160;
+                
+                    <strong>object</strong>&#160;
+                    (<a href="#matchsubjectaltnames">matchSubjectAltNames</a>)
+                
+                </p>
+                <p>
+                    
+                    Match Subject Alt Names can be used to add an additional constraint when validating client certificates.
+                </p>
+                
+            </td>
+        </tr>
+    
+        <tr>
+            <td>
+                <p>
+                <code>maxVerifyDepth</code>&#160;&#160;
+                
+                    <strong>integer</strong>&#160;
+                
+                </p>
+                <p>
+                    
+                    MaxVerifyDepth sets a limit on the depth of a certificate chain presented by the client.
+                </p>
+                
+            </td>
+        </tr>
+    
+    </tbody>
+</table>
+
 ### `identityProvider`
 
 IdentityProvider configure single-sign-on authentication and user identity details by integrating with your <a href="https://www.pomerium.com/docs/identity-providers/">Identity Provider</a>
@@ -643,6 +759,98 @@ IdentityProvider configure single-sign-on authentication and user identity detai
                 </p>
                 
                     Format: an URI as parsed by Golang net/url.ParseRequestURI.
+                
+            </td>
+        </tr>
+    
+    </tbody>
+</table>
+
+### `matchSubjectAltNames`
+
+Match Subject Alt Names can be used to add an additional constraint when validating client certificates.
+
+<table>
+    <thead>
+    </thead>
+    <tbody>
+    
+        <tr>
+            <td>
+                <p>
+                <code>dns</code>&#160;&#160;
+                
+                    <strong>string</strong>&#160;
+                
+                </p>
+                <p>
+                    
+                    
+                </p>
+                
+            </td>
+        </tr>
+    
+        <tr>
+            <td>
+                <p>
+                <code>email</code>&#160;&#160;
+                
+                    <strong>string</strong>&#160;
+                
+                </p>
+                <p>
+                    
+                    
+                </p>
+                
+            </td>
+        </tr>
+    
+        <tr>
+            <td>
+                <p>
+                <code>ipAddress</code>&#160;&#160;
+                
+                    <strong>string</strong>&#160;
+                
+                </p>
+                <p>
+                    
+                    
+                </p>
+                
+            </td>
+        </tr>
+    
+        <tr>
+            <td>
+                <p>
+                <code>uri</code>&#160;&#160;
+                
+                    <strong>string</strong>&#160;
+                
+                </p>
+                <p>
+                    
+                    
+                </p>
+                
+            </td>
+        </tr>
+    
+        <tr>
+            <td>
+                <p>
+                <code>userPrincipalName</code>&#160;&#160;
+                
+                    <strong>string</strong>&#160;
+                
+                </p>
+                <p>
+                    
+                    
+                </p>
                 
             </td>
         </tr>
