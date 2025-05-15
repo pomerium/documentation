@@ -54,7 +54,7 @@ By configuring your applications to route requests to Pomerium's Proxy service, 
 
 ## Direct IdP Token Authentication
 
-Pomerium also supports authenticating users using an Identity Provider’s access token directly, without a full OAuth browser redirect flow. If a user or service has already obtained a valid access token from Microsoft Entra ID, they can present it to Pomerium to gain access, rather than going through the usual login redirect. Pomerium will validate the token with the IdP and create a session for the associated user.
+Pomerium also supports authenticating users using an Identity Provider’s access token directly, without a full OAuth browser redirect flow. If a user or service has already obtained a valid access token or identity token, they can present it to Pomerium to gain access, rather than going through the usual login redirect. Pomerium will validate the token with the IdP and create a session for the associated user.
 
 ### Benefits
 
@@ -65,8 +65,6 @@ Pomerium also supports authenticating users using an Identity Provider’s acces
 **Secure Validation:** Pomerium verifies the token’s signature and claims with the IdP (ensuring it’s not expired, issued for the correct client, etc.) before trusting it. Only tokens from configured, trusted IdPs are accepted.
 
 ### Limitations
-
-Microsoft Entra ID is supported, but future Pomerium updates may expand direct token support to other providers.
 
 Direct IdP token authentication is an opt-in capability that can be enabled through [Pomerium configuration](/docs/reference/bearer-token-format). This enhancement makes Pomerium even more flexible in hybrid environments where not all clients are web browsers.
 
