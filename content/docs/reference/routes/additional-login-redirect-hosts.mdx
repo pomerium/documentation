@@ -11,13 +11,15 @@ import TabItem from '@theme/TabItem';
 
 ## Summary
 
-Sometimes a single-page application (SPA) may make use of multiple domains. In this case, CORS restrictions can often prevent Pomerium login from working seamlessly with the application.
+When a single-page application (SPA) uses multiple domains or subdomains, CORS restrictions and cookie isolation can prevent seamless login across those domains.
 
-The **Additional Login Redirect Hosts** option configures a Pomerium route so that when a user logs in at that route domain, they will automatically receive a Pomerium session cookie for several additional domains. This works by setting up a chain of login redirects through the additional domains.
+The **Additional Login Redirect Hosts** option can be used to solve this problem by chaining login redirects across the specified domains, ensuring a session cookie is issued for each domain. This avoids the need for a user to manually visit each domain.
+
+See [Cross-Origin Configuration](/docs/internals/troubleshooting#cross-origin-configuration) for additional discussion of this problem and some other approaches for addressing it.
 
 ### Limitations
 
-- Up to five additional domains can be specified on a single Pomerium route using this option.
+- Up to five additional domains can be specified on a single Pomerium route using this option. (Web browsers limit the total number of redirects they will follow.)
 - All of the additional domains must resolve to the same Pomerium cluster.
 - This option cannot be used in combination with the [Hosted Authenticate Service](/docs/capabilities/authentication#hosted-authenticate-service). You will need to configure an [Identity Provider](/docs/reference/identity-provider-settings).
 - This option cannot be used in combination with the [Cookie Domain](/docs/reference/cookies#cookie-domain) setting.
