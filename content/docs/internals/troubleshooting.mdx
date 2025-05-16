@@ -579,7 +579,15 @@ cookie_http_only: false
 
 #### Share the Cookie
 
-If both subdomains share a parent domain, you can set a cookie domain such as `cookie_domain: '.localhost.pomerium.io'`. The browser will then share cookies among subdomains. You'll still need to configure your JavaScript client to send credentials:
+If all your Pomerium routes share a parent domain, you can use the [Cookie Domain](/docs/reference/cookies#cookie-domain) setting to share a single session cookie across all routes.
+
+:::caution
+
+This option should not be used if you have a mix of sub-domains where some resolve to Pomerium and some do not. Doing so could expose the Pomerium session cookie to upstream services, which could result in session hijacking if an upstream service were to be compromised.
+
+:::
+
+In this example, you can set `cookie_domain: '.localhost.pomerium.io'` to share the Pomerium session cookie across both `api.localhost.pomerium.io` and `app.localhost.pomerium.io`. You'll still need to configure your JavaScript client to send credentials:
 
 ```javascript
 (async () => {
@@ -596,3 +604,26 @@ If both subdomains share a parent domain, you can set a cookie domain such as `c
 ```
 
 > For more details on how cookies and credentials work in fetch or XHR, refer to [XMLHttpRequest/withCredentials on MDN](https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/withCredentials) and [fetch() API documentation](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API).
+
+#### Set up Additional Login Redirects
+
+You can use the [Additional Login Redirect Hosts](/docs/reference/routes/additional-login-redirect-hosts) option to change the login behavior for `app.localhost.pomerium.io` so that logging in at this domain will automatically set a Pomerium session cookie for `api.localhost.pomerium.io` as well:
+
+```yaml
+routes:
+  - from: https://api.localhost.pomerium.io
+    to: http://api:8000
+    allow_any_authenticated_user: true
+    cors_allow_preflight: true
+    set_response_headers:
+      'Access-Control-Allow-Credentials': 'true'
+      'Access-Control-Allow-Origin': 'https://app.localhost.pomerium.io'
+      'Access-Control-Allow-Headers': 'X-Pomerium-Authorization'
+  - from: https://app.localhost.pomerium.io
+    to: http://app:8000
+    allow_any_authenticated_user: true
+    depends_on:
+      - api.localhost.pomerium.io
+```
+
+As in the previous approach, the JavaScript `fetch()` request will still need to set `credentials: 'include'` to make an authenticated request.

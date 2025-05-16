@@ -1,0 +1,78 @@
+---
+title: Additional Login Redirect Hosts
+keywords: [cors]
+pagination_prev: null
+pagination_next: null
+toc_max_heading_level: 2
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+## Summary
+
+When a single-page application (SPA) uses multiple domains or subdomains, CORS restrictions and cookie isolation can prevent seamless login across those domains.
+
+The **Additional Login Redirect Hosts** option can be used to solve this problem by chaining login redirects across the specified domains, ensuring a session cookie is issued for each domain. This avoids the need for a user to manually visit each domain.
+
+See [Cross-Origin Configuration](/docs/internals/troubleshooting#cross-origin-configuration) for additional discussion of this problem and some other approaches for addressing it.
+
+### Limitations
+
+- Up to five additional domains can be specified on a single Pomerium route using this option. (Web browsers limit the total number of redirects they will follow.)
+- All of the additional domains must resolve to the same Pomerium cluster.
+- This option cannot be used in combination with the [Hosted Authenticate Service](/docs/capabilities/authentication#hosted-authenticate-service). You will need to configure an [Identity Provider](/docs/reference/identity-provider-settings).
+- This option cannot be used in combination with the [Cookie Domain](/docs/reference/cookies#cookie-domain) setting.
+- This option does not affect the logout behavior of the `/.pomerium/sign_out` endpoint.
+- If your Pomerium deployment uses a port other than 443 you will need to include this port number in each item in the list.
+
+## How to configure
+
+<Tabs>
+<TabItem value="Core" label="Core">
+
+| Config file key | Environment variable | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `depends_on` | `DEPENDS_ON` | array of strings (`host` or `host:port`) | _none_ |
+
+### Examples
+
+```yaml
+routes:
+  - from: https://my-app.example.com
+    to: https://my-app-server.internal.domain
+    depends_on:
+      - api.my-app.example.com
+      - assets.my-app.example.com
+```
+
+</TabItem>
+<TabItem value="Enterprise" label="Enterprise">
+
+**Additional Login Redirect Hosts** is listed under the "General" section of the route settings.
+
+![screenshot of Additional Login Redirect Hosts setting](../img/additional-login-redirect-hosts.png)
+
+</TabItem>
+<TabItem value="Kubernetes" label="Kubernetes">
+
+| [Annotation name](/docs/deploy/k8s/ingress#set-ingress-annotations) | Type | Usage | Default |
+| :-- | :-- | :-- | :-- |
+| `depends_on` | array of strings (`host` or `host:port`) | **optional** | _none_ |
+
+### Examples
+
+```yaml
+ingress.pomerium.io/depends_on: |
+  - api.my-app.example.com
+  - assets.my-app.example.com
+```
+
+```yaml
+ingress.pomerium.io/depends_on: '["api.my-app.example.com", "assets.my-app.example.com"]'
+```
+
+See [Kubernetes - Ingress Configuration](/docs/deploy/k8s/ingress) for more information.
+
+</TabItem>
+</Tabs>
