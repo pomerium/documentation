@@ -239,3 +239,116 @@ Kubernetes does not support **Metrics Client Certificate Authority**
 
 </TabItem>
 </Tabs>
+
+## Envoy Metrics
+
+Pomerium leverages Envoy as its underlying proxy. Monitoring Envoy is crucial for understanding traffic load, upstream health, resource usage, and security filter performance.
+
+### Standard Labels
+
+Envoy metrics are labeled with standard labels that provide context about the metric source and its environment. Here are some examples of Envoy metrics:
+
+```
+# TYPE envoy_cluster_ext_authz_error counter
+envoy_cluster_ext_authz_error{service="pomerium-proxy",envoy_cluster_name="telemetry-team1-allowed-00008",installation_id="aecd6525-9eaa-448d-93d9-6363c04b1ccb",hostname="pomerium-proxy-55589cc5f-fjhsb"} 34
+```
+
+Each Envoy metric is prefixed with `envoy_`. You may look up the additional metric documentation in the [Envoy documentation](https://www.envoyproxy.io/docs/envoy/latest/operations/stats_overview).
+
+The `envoy_cluster_name` label identifies the upstream cluster of a Pomerium Route, that is set to:
+
+- `name` property of the Route configured via the config file in Core
+- `id` of the Route configured via the Zero Console
+- `Metric Name` of the Route configured via the Pomerium Enterprise Console / API / Terraform.
+
+The `installation_id` identifies the unique Pomerium installation:
+
+- In the vanilla Core, this label is not set
+- In the Pomerium Enterprise, this label is set to the unique installation ID of the Pomerium instance that can be adjusted in the Console under **Global Settings**.
+- In the Pomerium Zero, this label is set to the Cluster ID of the Pomerium Zero cluster, which is automatically generated and can be found in the Zero Console under **Cluster Settings**.
+
+The `hostname` label identifies the hostname of the instance, which is set to the unix hostname.
+
+### Downstream (Ingress) Metrics
+
+These metrics provide insights into the traffic received by Envoy from clients. The HTTP connection manager that serves the end user requests has `envoy_http_conn_manager_prefix="ingress"` label, and the listener that accepts connections has `envoy_listener_address="0.0.0.0_443"` label.
+
+Refer to [Envoy's HTTP connection manager statistics documentation](https://www.envoyproxy.io/docs/envoy/latest/configuration/http/http_conn_man/stats) and [listener statistics documentation](https://www.envoyproxy.io/docs/envoy/latest/configuration/listeners/stats) for more details.
+
+- **Request Rate** – Total incoming requests. In Envoy's metrics this is captured by counters like `envoy_http_downstream_rq_total`, often exposed per HTTP connection manager (listener). Use `rate(envoy_http_downstream_rq_total[1m])` to compute request rate. Also track breakdown by response code: `downstream_rq_2xx`, `4xx`, `5xx` counters represent total responses in each class. For example, a rising `downstream_rq_5xx` indicates more server errors being returned.
+- **Active HTTP Requests** – Gauge for in-flight requests currently being processed. This is `downstream_rq_active` (per listener/connection manager). A high number here could indicate request backlog or slow processing.
+- **Request Duration** – Histogram of end-to-end request latency as observed by Envoy. `downstream_rq_time` measures the total time from request start to response completion in milliseconds. This can be used to calculate p95/p99 latency.
+- **Active Connections** – Gauge for open client connections to Envoy. Each listener exposes `downstream_cx_active`, representing currently active connections on that listener. This is crucial for capacity monitoring (e.g., if it approaches OS or Envoy limits).
+- **Connection Counts** - `downstream_cx_total` (counter) tracks total connections accepted, and `downstream_cx_destroy` tracks total connections closed. These can be used to compute connection churn or **connections per second (CPS)**. For example, a spike in connection churn might indicate clients not reusing connections.
+- **Connection Errors/Overflows** – `downstream_cx_overflow` (counter) counts connections rejected because the listener's connection limit was reached. `downstream_cx_overload_reject` counts connections rejected due to Envoy's overload manager actions. Any non-zero rates of these indicate the proxy is at or beyond capacity and dropping connections.
+- **Listener draining** - `envoy_listener_manager_total_filter_chains_draining` (gauge) indicates if Envoy is currently draining any listeners. This happens when new certificates are loaded that requires existing listeners to be gracefully shut down, potentially waiting for in-flight requests to complete. A non-zero value here indicates that Envoy is in the process of shutting down listeners.
+
+### Upstream (Pomerium Route) Metrics
+
+These metrics describe Envoy's interactions with backend services (clusters), represented by Pomerium Routes. For more details, see [Envoy's cluster manager statistics documentation](https://www.envoyproxy.io/docs/envoy/latest/configuration/upstream/cluster_manager/cluster_stats).
+
+- **Cluster Health** – Each upstream cluster (backend service) has gauges for healthy vs total endpoints. `membership_healthy` is the number of healthy endpoints in the cluster and `membership_total` is the total endpoints. The ratio indicates cluster health (e.g., if healthy drops below total, some endpoints are unhealthy). Endpoint-level health is rolled up in these metrics (Envoy doesn't expose per-endpoint health by default, just counts).
+- **Upstream Request Success/Failure** – `upstream_rq_total` counts requests Envoy has sent to each cluster. Success and error rates can be inferred from response-code-specific metrics (if tagging is enabled, you may see `envoy_cluster_upstream_rq_xx` with code labels). In many setups Envoy provides counters for HTTP status classes per cluster - e.g., `envoy.cluster.<cluster_name>.upstream_rq_2xx/5xx`. These indicate how many requests to the cluster succeeded or failed (server error). Monitoring a rising rate of `upstream_rq_5xx` or `upstream_rq_timeout` (see below) on a cluster is critical for detecting backend issues.
+- **Upstream Request Latency** - `upstream_rq_time` is a histogram of time spent on an upstream request (including waiting and response) in milliseconds. High quantiles here mean the backend is responding slowly. This metric can be broken down per cluster.
+- **Active/Pending Upstream Requests** – `upstream_rq_active` is a gauge of current in-flight requests to a given cluster. `upstream_rq_pending_active` is a gauge of requests queued waiting for a connection (if connection pooling is exhausted). Spikes in pending requests suggest the upstream or Envoy's connection pool is saturated and could indicate bottlenecks.
+- **Upstream Errors** – Key counters for failure modes include `upstream_rq_timeout` (requests to upstream that timed out with no response), `upstream_cx_none_healthy` (connection attempts failed due to no healthy hosts), and `upstream_rq_per_try_timeout` (per-retry timeouts). These should normally be zero; any significant values indicate upstream problems (e.g., `upstream_cx_none_healthy` means Envoy couldn't even find a healthy endpoint to connect).
+- **Retry/Circuit-breaker Metrics** – If Envoy is retrying requests or hitting circuit breaker limits, metrics like `upstream_rq_retry`, `upstream_rq_retry_overflow` (retry budget exceeded), or circuit breaker gauges under `circuit_breakers` (e.g., `remaining_cx`, `remaining_rq`) can be monitored. These are more advanced but can hint at load shedding. For example, Envoy exposes `cluster.<name>.circuit_breakers.default.cx_open` (indicator if connection limit reached) and `rq_open` for request limits - a value of `1` means that circuit breaker is tripped (no more connections or requests will be allowed). You might monitor `remaining_cx`, `remaining_rq` etc., which tell how many resources remain before hitting limits.
+
+### Server Metrics
+
+These metrics relate to the Envoy process itself. Consult [Envoy's server statistics documentation](https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/statistics) for further information.
+
+- **Memory Usage** – Envoy provides gauges for memory in use. `envoy_server_memory_allocated` is the current heap allocated (bytes), and `server.memory_physical_size` is the physical memory used. Tracking these over time helps catch memory leaks or spikes. `server.memory_heap_size` is the heap reserved (which may be larger than allocated). For example, a steadily rising `memory_allocated` gauge could indicate a leak or increasing load.
+- **CPU Utilization** - Envoy does not directly export CPU usage as a stat.
+- **Uptime and Threads** - `envoy_server_uptime` (gauge) shows how long the Envoy process has been up (seconds). `envoy_server_concurrency` is the number of worker threads Envoy is running (typically equals the number of CPU cores or threads allocated). These are mostly informational (uptime resets on restarts; concurrency is fixed at start).
+- **Connection Counts (Overall)** – `envoy_server_total_connections` is a gauge for total open connections (including any inherited from a hot restart, if applicable). This usually should match the sum of active connections on all listeners for a single instance. A very high number relative to expectations can warn of load or connection leaks.
+
+### Overload Manager
+
+Pomerium implements a progressive overload protection system that takes specific actions at different memory usage thresholds:
+
+- 85-95%: Gradually reduces HTTP connection idle timeouts by up to 50%
+- 90%: Forces Envoy to shrink its heap every 10 seconds
+- 90-98%: Starts resetting streams using the most memory; as usage increases, more streams become eligible
+- 95%: Stops accepting new connections while maintaining existing ones
+- 98%: Disables HTTP keepalive, prevents new HTTP/2 streams, and terminates existing HTTP/2 streams
+- 99%: Drops all new requests
+
+These actions are implemented through Envoy's overload manager and are designed to gracefully degrade service during high memory pressure situations while protecting system stability. Note that resource monitoring is only available in the cgroup environment where the limits are set (i.e. Kubernetes, Docker, systemd, etc.).
+
+### Authorization Metrics
+
+Envoy calls `ext_authz` Pomerium endpoint to perform authorization checks for incoming requests. Monitoring these metrics is crucial for understanding how many requests are being authorized or denied, and the performance of the Pomerium authorization service.
+
+- **Monitoring Authorization Handler** - the `pomerium-authorize` is the cluster name used for the authorization service, that exposes standard cluster metrics like `upstream_rq_time`, `upstream_rq_total`, etc. You can monitor the performance of the authorization service by looking at these metrics, which will give you insights into how long it takes to authorize requests and how many requests are being processed.
+- **Overall Authorization Success/Failure/Errors** - statistics across all clusters are reported on the HTTP connection manager level, that have `{envoy_http_conn_manager_prefix="ingress"}` label.
+
+  - `envoy_http_ext_authz_ok` counts requests that were successfully authorized.
+  - `envoy_http_ext_authz_denied` counts requests that were denied by the authorization service.
+  - `envoy_http_ext_authz_error` counts errors encountered while contacting the authorization service (e.g., timeouts, connection failures).
+
+  These metrics are useful for understanding the overall health of the authorization service and how many requests are being processed successfully or denied.
+
+- **Per Pomerium Route Authorization Metrics** – For every Pomerium Route that uses the `ext_authz` filter, Envoy will emit metrics prefixed with `envoy_cluster_ext_authz_`. These metrics are labeled with the cluster name of the Route, and include:
+
+  - `envoy_cluster_ext_authz_ok` – Number of requests successfully authorized.
+  - `envoy_cluster_ext_authz_denied` – Number of requests denied by the authorization service.
+  - `envoy_cluster_ext_authz_error` – Number of errors encountered while contacting the authorization service.
+
+  Example:
+
+  ```prometheus
+  envoy_cluster_ext_authz_ok{service="pomerium-proxy",envoy_cluster_name="telemetry-team1-allowed-00008",installation_id="aecd6525-9eaa-448d-93d9-6363c04b1ccb",hostname="pomerium-proxy-55589cc5f-fjhsb"} 19767
+  ```
+
+  These metrics allow you to monitor authorization performance and success rates on a per-Route basis.
+
+### Key Envoy Documentation Sources:
+
+- [Envoy Statistics Overview](https://www.envoyproxy.io/docs/envoy/latest/operations/stats_overview)
+- [HTTP Connection Manager Stats](https://www.envoyproxy.io/docs/envoy/latest/configuration/http/http_conn_man/stats)
+- [Listener Stats](https://www.envoyproxy.io/docs/envoy/latest/configuration/listeners/stats)
+- [Cluster Manager Stats](https://www.envoyproxy.io/docs/envoy/latest/configuration/upstream/cluster_manager/cluster_stats)
+- [Server Stats](https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/statistics)
+- [External Authorization Filter Stats](https://www.envoyproxy.io/docs/envoy/latest/configuration/http/http_filters/ext_authz_filter)
+- [Stats Configuration (proto)](https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/metrics/v3/stats.proto)
