@@ -388,7 +388,13 @@ allow:
 
 ### String Matcher
 
-A string matcher is an object with operators as keys. It supports the following operators: `contains`, `ends_with`, `is` and `starts_with`.
+A string matcher is an object with operators as keys. It supports the following operators:
+
+- `contains`: Returns true if the string contains the specified substring
+- `ends_with`: Returns true if the string ends with the specified suffix
+- `in`: Returns true if the string is present in the provided array of strings
+- `is`: Returns true if the string exactly matches the specified value
+- `starts_with`: Returns true if the string starts with the specified prefix
 
 For example:
 
@@ -408,6 +414,15 @@ allow:
         type: example.com/geoip
         field: country
         is: 'US'
+```
+
+To check if a user's role is one of several allowed values:
+
+```yaml
+allow:
+  and:
+    - email:
+        in: ['user1@company.com', 'user2.company.com']
 ```
 
 A string matcher can also be used with an array, a string, a number or a boolean, in which case it is the same as the `is` operator.
