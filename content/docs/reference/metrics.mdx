@@ -360,6 +360,35 @@ Pomerium caches lookups to the databroker. The following metrics are reported fo
 - `pomerium_storage_global_cache_misses_total`: number of cache misses
 - `pomerium_storage_global_cache_invalidations_total`: number of cache invalidations
 
+### Database Metrics
+
+Pomerium exposes metrics for its PostgreSQL connection pool, prefixed with `pomerium_pgxpool_`. These metrics help monitor database connection usage, pool health, and performance.
+
+| Name | Type | Description |
+| --- | --- | --- |
+| pgxpool_acquire_duration_nanoseconds_total | Counter | Total duration of all successful acquires from the pool in nanoseconds. |
+| pgxpool_acquired_connections | Gauge | Number of currently acquired (in-use) connections in the pool. |
+| pgxpool_acquires_total | Counter | Cumulative count of successful acquires from the pool. |
+| pgxpool_canceled_acquires_total | Counter | Cumulative count of acquires from the pool that were canceled by a context. |
+| pgxpool_constructing_connections_milliseconds | Gauge | Number of connections with construction in progress in the pool. |
+| pgxpool_empty_acquire_total | Counter | Cumulative count of successful acquires from the pool that waited for a resource to be released or constructed because the pool was empty. |
+| pgxpool_idle_connections | Gauge | Number of currently idle connections in the pool. |
+| pgxpool_max_connections | Gauge | Maximum size of the pool. |
+| pgxpool_max_idle_destroys_total | Counter | Cumulative count of connections destroyed because they exceeded MaxConnectionsIdleTime. |
+| pgxpool_max_lifetime_destroys_total | Counter | Cumulative count of connections destroyed because they exceeded MaxConnectionsLifetime. |
+| pgxpool_new_connections_total | Counter | Cumulative count of new connections opened. |
+| pgxpool_total_connections | Gauge | Total number of resources currently in the pool (sum of constructing, acquired, and idle connections). |
+
+All metrics are labeled with details such as `db_client_connection_pool_name`, `db_system`, and `hostname`.
+
+Example Prometheus output:
+
+```
+# HELP pomerium_pgxpool_acquire_duration_nanoseconds_total Total duration of all successful acquires from the pool in nanoseconds.
+# TYPE pomerium_pgxpool_acquire_duration_nanoseconds_total counter
+pomerium_pgxpool_acquire_duration_nanoseconds_total{db_client_connection_pool_name="localhost:5432/pomerium",db_system="postgresql",otel_scope_name="github.com/exaring/otelpgx",otel_scope_version="v0.9.1",hostname="my-host"} 5.1058702e+07
+```
+
 ### Key Envoy Documentation Sources:
 
 - [Envoy Statistics Overview](https://www.envoyproxy.io/docs/envoy/latest/operations/stats_overview)
