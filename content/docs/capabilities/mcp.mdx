@@ -373,88 +373,6 @@ routes:
 
 For more information on Pomerium's bearer token format, see [Bearer Token Format](/docs/reference/bearer-token-format).
 
-### Testing Setup
-
-Use the provided demo application to test your MCP configuration:
-
-```bash
-# Clone the demo app
-git clone https://github.com/pomerium/mcp-app-demo.git
-
-# Configure environment
-echo "OPENAI_API_KEY=your_api_key_here" > .env
-
-# Update pomerium-config.yaml with your domain
-# Start the demo
-docker compose up -d
-```
-
-Navigate to `https://mcp-app-demo.YOUR-DOMAIN/` to test the integration.
-
-### Example MCP Servers
-
-Pomerium provides a collection of reference MCP server implementations to help you get started:
-
-**Repository**: [https://github.com/pomerium/mcp-servers](https://github.com/pomerium/mcp-servers)
-
-## Best Practices
-
-1. **Use specific scopes**: Only request OAuth scopes your MCP server actually needs
-2. **Implement proper error handling**: Handle authentication failures gracefully
-3. **Monitor token usage**: Track token refresh rates and failures (see [Observability](#observability))
-4. **Apply least privilege**: Use restrictive [policies](#policy-based-tool-access-control) for sensitive MCP servers
-5. **Regular auditing**: Review [access logs](#observability) and user permissions periodically
-6. **Test thoroughly**: Validate all OAuth flows and edge cases
-7. **Document integrations**: Maintain clear documentation for custom MCP servers
-
-For additional security guidance, see [Security Considerations](#security-considerations) and the [Security documentation](/docs/internals/security).
-
-## Future Roadmap
-
-Pomerium's MCP support is actively evolving. Planned enhancements include:
-
-- Enhanced monitoring and analytics for MCP usage
-- Additional OAuth provider templates
-- Improved error handling and diagnostics
-- Support for custom authentication flows
-- Integration with more AI platforms and frameworks
-
-## Related Documentation
-
-### Core Pomerium Concepts
-
-- [Authentication](/docs/capabilities/authentication) - User authentication methods
-- [Authorization](/docs/capabilities/authorization) - Access control and policies
-- [Pomerium Policy Language (PPL)](/docs/internals/ppl) - Policy syntax and examples
-- [Routes Configuration](/docs/reference/routes) - Route setup and options
-- [Identity Verification with JWTs](/docs/get-started/fundamentals/core/jwt-verification) - JWT headers and verification
-
-### Configuration References
-
-- [Route Policy Configuration](/docs/reference/routes/policy) - Policy configuration for routes
-- [Bearer Token Format](/docs/reference/bearer-token-format) - Token structure and validation
-- [Authorize Log Fields](/docs/reference/authorize-log-fields) - Logging configuration
-- [Identity Provider Settings](/docs/reference/identity-provider-settings) - OAuth provider setup
-
-### Observability and Security
-
-- [Metrics](/docs/reference/metrics) - Performance and usage metrics
-- [Tracing](/docs/reference/tracing) - Request tracing and debugging
-- [Security](/docs/internals/security) - Security best practices
-
-### Related Guides
-
-- [Self-Hosted LLM Behind Pomerium](/docs/guides/llm) - Securing LLM interfaces with Pomerium
-
-### Demo and Examples
-
-For complete end-to-end examples and reference implementations:
-
-- **[MCP App Demo](https://github.com/pomerium/mcp-app-demo)**: Full demonstration showing custom UI frontend, MCP server integration, and remote LLM API calling through Pomerium
-- **[MCP Servers](https://github.com/pomerium/mcp-servers)**: Collection of example MCP server implementations with Docker and Pomerium configurations
-
-These repositories provide practical examples of all integration patterns described in this documentation.
-
 ## Observability
 
 Pomerium provides specialized logging capabilities to monitor and audit MCP tool calling activities. By configuring [`authorize_log_fields`](/docs/reference/authorize-log-fields), you can gain detailed insights into AI agent interactions with your MCP servers.
@@ -631,3 +549,39 @@ The authorization logs show different reason codes based on the evaluation:
   "mcp-tool": "admin_function"
 }
 ```
+
+## Related Documentation
+
+### Core Pomerium Concepts
+
+- [Authentication](/docs/capabilities/authentication) - User authentication methods
+- [Authorization](/docs/capabilities/authorization) - Access control and policies
+- [Pomerium Policy Language (PPL)](/docs/internals/ppl) - Policy syntax and examples
+- [Routes Configuration](/docs/reference/routes) - Route setup and options
+- [Identity Verification with JWTs](/docs/get-started/fundamentals/core/jwt-verification) - JWT headers and verification
+
+### Configuration References
+
+- [Route Policy Configuration](/docs/reference/routes/policy) - Policy configuration for routes
+- [Bearer Token Format](/docs/reference/bearer-token-format) - Token structure and validation
+- [Authorize Log Fields](/docs/reference/authorize-log-fields) - Logging configuration
+- [Identity Provider Settings](/docs/reference/identity-provider-settings) - OAuth provider setup
+
+### Observability and Security
+
+- [Metrics](/docs/reference/metrics) - Performance and usage metrics
+- [Tracing](/docs/reference/tracing) - Request tracing and debugging
+- [Security](/docs/internals/security) - Security best practices
+
+### Related Guides
+
+- [Self-Hosted LLM Behind Pomerium](/docs/guides/llm) - Securing LLM interfaces with Pomerium
+
+### Demo and Examples
+
+For complete end-to-end examples and reference implementations:
+
+- **[MCP App Demo](https://github.com/pomerium/mcp-app-demo)**: Full demonstration showing custom UI frontend, MCP server integration, and remote LLM API calling through Pomerium
+- **[MCP Servers](https://github.com/pomerium/mcp-servers)**: Collection of example MCP server implementations with Docker and Pomerium configurations
+
+These repositories provide practical examples of all integration patterns described in this documentation.
