@@ -45,6 +45,7 @@ const sidebars = {
         'docs/capabilities/routing',
         'docs/capabilities/routes-portal',
         'docs/capabilities/custom-domains',
+        'docs/capabilities/mcp',
         // secondary capabilities
         {
           type: 'doc',
