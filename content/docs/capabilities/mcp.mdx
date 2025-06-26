@@ -10,13 +10,31 @@ keywords: [MCP, model context protocol, AI agents, LLM, AI gateway]
 
 Pomerium provides secure access to Model Context Protocol (MCP) servers, enabling AI agents and applications to safely interact with your internal resources through standardized interfaces. This capability allows you to expose local databases, APIs, and services to external AI clients while maintaining strict authentication and authorization controls.
 
+## On This Page
+
+- [Overview](#overview)
+- [Architecture](#architecture) - Three integration patterns
+  - [Exposing Internal MCP Servers](#1-exposing-internal-mcp-servers)
+  - [MCP Servers with Upstream OAuth](#2-mcp-servers-with-upstream-oauth)
+  - [Building MCP-Enabled Applications](#3-building-mcp-enabled-applications)
+- [Bearer Token Types](#bearer-token-types) - External and Internal tokens
+- [Configuration Options](#configuration-options) - Server and client configuration
+- [User Identity and Claims](#user-identity-and-claims) - JWT headers and verification
+- [Security Considerations](#security-considerations) - Access control and token security
+- [Observability](#observability) - Logging and monitoring MCP activities
+- [Policy-Based Tool Access Control](#policy-based-tool-access-control) - Fine-grained tool permissions
+- [Best Practices](#best-practices)
+- [Demo and Examples](#demo-and-examples)
+
 ## Overview
 
 Model Context Protocol (MCP) is an open standard that allows AI agents to securely connect to external data sources and tools. Pomerium's MCP integration acts as a secure gateway between MCP clients (like Claude.ai, OpenAI APIs, or custom applications) and your internal MCP servers.
 
+For an understanding of Pomerium's core capabilities, see [Authentication](/docs/capabilities/authentication) and [Authorization](/docs/capabilities/authorization).
+
 :::warning Experimental Feature
 
-MCP support is currently an experimental feature only available in the `main` branch or Docker images built from `main`. To enable MCP functionality, you must set the following feature flag in your Pomerium configuration:
+MCP support is currently an experimental feature only available in the `main` branch or Docker images built from `main`. To enable MCP functionality, you must set the following feature flag in your [Pomerium configuration](/docs/internals/configuration):
 
 ```yaml
 runtime_flags:
@@ -28,18 +46,20 @@ runtime_flags:
 ### Key Benefits
 
 - **Secure Remote Access**: Expose internal MCP servers to external AI clients without compromising security
-- **OAuth Integration**: Seamlessly handle upstream OAuth flows for services requiring authentication
-- **Centralized Authorization**: Apply consistent access policies across all MCP endpoints
-- **Token Management**: Automatic token refresh and secure credential handling
-- **Observability**: Complete visibility into AI agent interactions with your resources
+- **OAuth Integration**: Seamlessly handle [upstream OAuth flows](#2-mcp-servers-with-upstream-oauth) for services requiring authentication
+- **Centralized Authorization**: Apply consistent [access policies](#policy-based-tool-access-control) across all MCP endpoints
+- **Token Management**: Automatic token refresh and secure [credential handling](#bearer-token-types)
+- **Observability**: Complete visibility into AI agent interactions with your resources through [specialized logging](#observability)
 
 ## Try It Out
 
 Explore the [MCP App Demo](https://github.com/pomerium/mcp-app-demo) for a hands-on example of integrating MCP with Pomerium. The demo shows a full workflow including UI, MCP server, and LLM API integration—perfect for testing and learning.
 
+If you're new to Pomerium, start with the [Quickstart Guide](/docs/get-started/quickstart) to set up your first Pomerium deployment.
+
 ## Architecture
 
-Pomerium supports three primary MCP integration patterns:
+Pomerium supports three primary MCP integration patterns. For detailed route configuration information, see the [Routes reference documentation](/docs/reference/routes).
 
 ### 1. Exposing Internal MCP Servers
 
@@ -89,6 +109,8 @@ When your MCP server needs to access upstream services requiring OAuth authentic
 - Pomerium handles the OAuth flow and token management with the remote upstream service.
 - Your MCP server does not need to implement any of the OAuth logic, as Pomerium will manage the authentication and token refresh.
 - MCP clients only observe the [External Token (TE)](#external-token-te) issued by Pomerium, which is used to access the MCP server. The [Internal Token (TI)](#internal-token-ti) used for upstream OAuth is managed by Pomerium and is never exposed to external clients.
+
+For more details on OAuth configuration options, see [Identity Provider Settings](/docs/reference/identity-provider-settings).
 
 ```mermaid
 sequenceDiagram
@@ -141,8 +163,10 @@ routes:
 For internal applications that need to call MCP servers through AI APIs such as OpenAI or Anthropic, Pomerium provides:
 
 - When a route is designated as `mcp: client`, an External Bearer Tokens would be passed to your application backend in the `Authorization: Bearer` header.
-- Your application backend can [list MCP servers that are available](#listing-available-mcp-servers) on the Pomerium backend and initiate upstream OAuth flows if necessary.
-- An External Token (TE) can be passed to LLM APIs to allow them to call MCP servers on behalf of the user.
+- Your application backend can [list MCP servers that are available](#listing-available-mcp-servers) on the Pomerium backend and initiate [upstream OAuth flows](#initiating-upstream-oauth) if necessary.
+- An [External Token (TE)](#external-token-te) can be passed to LLM APIs to allow them to call MCP servers on behalf of the user.
+
+For a complete working example, see the [MCP App Demo](#demo-and-examples) section.
 
 ```mermaid
 sequenceDiagram
@@ -202,6 +226,8 @@ An internal authentication token that Pomerium obtains from upstream OAuth provi
 
 ## Configuration Options
 
+MCP integration can be configured through route-level settings. For general route configuration guidance, see the [Routes configuration reference](/docs/reference/routes).
+
 ### MCP Server Configuration
 
 For routes hosting MCP servers:
@@ -237,6 +263,8 @@ policy:
           is: database_query
 ```
 
+For more information on route-level policies, see [Route Policy Configuration](/docs/reference/routes/policy). For advanced policy examples, see [Policy-Based Tool Access Control](#policy-based-tool-access-control).
+
 ### MCP Client Configuration
 
 For applications that consume MCP servers:
@@ -248,7 +276,7 @@ mcp:
   client: {}
 ```
 
-For Client routes, Pomerium exposes additional endpoints to manage MCP server discovery and upstream OAuth flows.
+For Client routes, Pomerium exposes additional endpoints to manage MCP server discovery and upstream OAuth flows. See [Building MCP-Enabled Applications](#3-building-mcp-enabled-applications) for architectural details.
 
 #### Listing Available MCP Servers
 
@@ -313,7 +341,11 @@ Both MCP client applications and servers can access authenticated user informati
 
 JWT may be verified using standard [JWT libraries](https://jwt.io/) or Pomerium's SDKs for [Go](https://github.com/pomerium/sdk-go) or [Python](https://github.com/pomerium/js-sdk).
 
+For detailed information about JWT verification in Pomerium, see [Identity Verification with JWTs](/docs/get-started/fundamentals/core/jwt-verification).
+
 ## Security Considerations
+
+For general security best practices with Pomerium, see the [Security documentation](/docs/internals/security).
 
 ### Access Control
 
@@ -334,10 +366,12 @@ routes:
 
 ### Token Security
 
-- External tokens (TE) have limited scope and lifetime
-- Internal tokens (TI) are never exposed to external clients
+- [External tokens (TE)](#external-token-te) have limited scope and lifetime
+- [Internal tokens (TI)](#internal-token-ti) are never exposed to external clients
 - All tokens are automatically refreshed by Pomerium
-- All authorization decisions are logged for audit.
+- All authorization decisions are logged for audit (see [Observability](#observability))
+
+For more information on Pomerium's bearer token format, see [Bearer Token Format](/docs/reference/bearer-token-format).
 
 ### Testing Setup
 
@@ -367,11 +401,13 @@ Pomerium provides a collection of reference MCP server implementations to help y
 
 1. **Use specific scopes**: Only request OAuth scopes your MCP server actually needs
 2. **Implement proper error handling**: Handle authentication failures gracefully
-3. **Monitor token usage**: Track token refresh rates and failures
-4. **Apply least privilege**: Use restrictive policies for sensitive MCP servers
-5. **Regular auditing**: Review access logs and user permissions periodically
+3. **Monitor token usage**: Track token refresh rates and failures (see [Observability](#observability))
+4. **Apply least privilege**: Use restrictive [policies](#policy-based-tool-access-control) for sensitive MCP servers
+5. **Regular auditing**: Review [access logs](#observability) and user permissions periodically
 6. **Test thoroughly**: Validate all OAuth flows and edge cases
 7. **Document integrations**: Maintain clear documentation for custom MCP servers
+
+For additional security guidance, see [Security Considerations](#security-considerations) and the [Security documentation](/docs/internals/security).
 
 ## Future Roadmap
 
@@ -382,6 +418,33 @@ Pomerium's MCP support is actively evolving. Planned enhancements include:
 - Improved error handling and diagnostics
 - Support for custom authentication flows
 - Integration with more AI platforms and frameworks
+
+## Related Documentation
+
+### Core Pomerium Concepts
+
+- [Authentication](/docs/capabilities/authentication) - User authentication methods
+- [Authorization](/docs/capabilities/authorization) - Access control and policies
+- [Pomerium Policy Language (PPL)](/docs/internals/ppl) - Policy syntax and examples
+- [Routes Configuration](/docs/reference/routes) - Route setup and options
+- [Identity Verification with JWTs](/docs/get-started/fundamentals/core/jwt-verification) - JWT headers and verification
+
+### Configuration References
+
+- [Route Policy Configuration](/docs/reference/routes/policy) - Policy configuration for routes
+- [Bearer Token Format](/docs/reference/bearer-token-format) - Token structure and validation
+- [Authorize Log Fields](/docs/reference/authorize-log-fields) - Logging configuration
+- [Identity Provider Settings](/docs/reference/identity-provider-settings) - OAuth provider setup
+
+### Observability and Security
+
+- [Metrics](/docs/reference/metrics) - Performance and usage metrics
+- [Tracing](/docs/reference/tracing) - Request tracing and debugging
+- [Security](/docs/internals/security) - Security best practices
+
+### Related Guides
+
+- [Self-Hosted LLM Behind Pomerium](/docs/guides/llm) - Securing LLM interfaces with Pomerium
 
 ### Demo and Examples
 
@@ -394,7 +457,9 @@ These repositories provide practical examples of all integration patterns descri
 
 ## Observability
 
-Pomerium provides specialized logging capabilities to monitor and audit MCP tool calling activities. By configuring `authorize_log_fields`, you can gain detailed insights into AI agent interactions with your MCP servers.
+Pomerium provides specialized logging capabilities to monitor and audit MCP tool calling activities. By configuring [`authorize_log_fields`](/docs/reference/authorize-log-fields), you can gain detailed insights into AI agent interactions with your MCP servers.
+
+For general observability features, see [Metrics](/docs/reference/metrics) and [Tracing](/docs/reference/tracing).
 
 ### MCP-Specific Authorization Log Fields
 
@@ -408,7 +473,7 @@ Pomerium includes three specialized log fields for MCP monitoring:
 
 ### Configuration
 
-To enable MCP-specific logging, add the desired fields to your `authorize_log_fields` configuration:
+To enable MCP-specific logging, add the desired fields to your [`authorize_log_fields`](/docs/reference/authorize-log-fields) configuration:
 
 ```yaml
 authorize_log_fields:
@@ -448,6 +513,8 @@ When an AI agent calls an MCP tool, Pomerium generates detailed authorization lo
 ```
 
 ### Understanding MCP Authorization Logs
+
+For general information about authorization logs, see [Authorize Log Fields](/docs/reference/authorize-log-fields).
 
 #### Tool Call Authorization
 
@@ -506,7 +573,9 @@ Different MCP methods appear in logs:
 
 ## Policy-Based Tool Access Control
 
-Pomerium provides fine-grained access control for MCP tools through a specialized `mcp_tool` policy criterion in Pomerium Policy Language (PPL). This allows you to control which users can access specific MCP tools, providing granular security for AI agent interactions.
+Pomerium provides fine-grained access control for MCP tools through a specialized `mcp_tool` policy criterion in [Pomerium Policy Language (PPL)](/docs/internals/ppl). This allows you to control which users can access specific MCP tools, providing granular security for AI agent interactions.
+
+For broader policy examples, see the [Authorization documentation](/docs/capabilities/authorization).
 
 ### The `mcp_tool` Criterion
 
@@ -535,6 +604,8 @@ policy:
       - groups:
           has: 'data-analysts'
 ```
+
+For more advanced policy patterns, see the [PPL documentation](/docs/internals/ppl#examples).
 
 ### Understanding Authorization Results
 
