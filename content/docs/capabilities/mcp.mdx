@@ -33,6 +33,10 @@ runtime_flags:
 - **Token Management**: Automatic token refresh and secure credential handling
 - **Observability**: Complete visibility into AI agent interactions with your resources
 
+## Try It Out
+
+Explore the [MCP App Demo](https://github.com/pomerium/mcp-app-demo) for a hands-on example of integrating MCP with Pomerium. The demo shows a full workflow including UI, MCP server, and LLM API integration—perfect for testing and learning.
+
 ## Architecture
 
 Pomerium supports three primary MCP integration patterns:
@@ -40,6 +44,9 @@ Pomerium supports three primary MCP integration patterns:
 ### 1. Exposing Internal MCP Servers
 
 This pattern allows external MCP clients to access your internal MCP servers through Pomerium's secure gateway.
+
+- Your MCP server does not need to implement any specific authentication or authorization logic. Works best with internal services that provide access to shared resource like databases, APIs taking API keys, or other internal tools.
+- MCP clients users must authenticate, and Pomerium enforces access policies for every request.
 
 ```mermaid
 sequenceDiagram
@@ -66,12 +73,22 @@ routes:
     to: http://my-mcp-server.int:8080/mcp
     name: My MCP Server
     mcp:
-      server: {}
+      server: {} # the brackets are significant, they indicate that this is an MCP server route
+    policy:
+      and:
+        - domain:
+            is: company.com
+        - mcp_tool:
+            starts_with: 'read_'
 ```
 
 ### 2. MCP Servers with Upstream OAuth
 
-When your MCP server needs to access upstream services requiring OAuth authentication (GitHub, Google Drive, Notion, etc.), Pomerium handles the OAuth flow and token management.
+When your MCP server needs to access upstream services requiring OAuth authentication (GitHub, Google Drive, Notion, etc.).
+
+- Pomerium handles the OAuth flow and token management with the remote upstream service.
+- Your MCP server does not need to implement any of the OAuth logic, as Pomerium will manage the authentication and token refresh.
+- MCP clients only observe the [External Token (TE)](#external-token-te) issued by Pomerium, which is used to access the MCP server. The [Internal Token (TI)](#internal-token-ti) used for upstream OAuth is managed by Pomerium and is never exposed to external clients.
 
 ```mermaid
 sequenceDiagram
@@ -111,11 +128,21 @@ routes:
           endpoint:
             auth_url: 'https://github.com/login/oauth/authorize'
             token_url: 'https://github.com/login/oauth/access_token'
+    policy:
+      and:
+        - domain:
+            is: company.com
+        - mcp_tool:
+            starts_with: 'read_'
 ```
 
 ### 3. Building MCP-Enabled Applications
 
-For internal applications that need to call MCP servers through AI APIs, Pomerium provides external tokens that can be passed to LLM services.
+For internal applications that need to call MCP servers through AI APIs such as OpenAI or Anthropic, Pomerium provides:
+
+- When a route is designated as `mcp: client`, an External Bearer Tokens would be passed to your application backend in the `Authorization: Bearer` header.
+- Your application backend can [list MCP servers that are available](#listing-available-mcp-servers) on the Pomerium backend and initiate upstream OAuth flows if necessary.
+- An External Token (TE) can be passed to LLM APIs to allow them to call MCP servers on behalf of the user.
 
 ```mermaid
 sequenceDiagram
@@ -148,7 +175,7 @@ routes:
     policy: {}
 ```
 
-## Token Types
+## Bearer Token Types
 
 Understanding Pomerium's token system is crucial for MCP integration:
 
@@ -192,8 +219,22 @@ mcp:
         auth_style: 'header' # or "params"
       scopes: ['scope1', 'scope2']
 
-    # Optional: Maximum request body size (default: 1MB)
+    # Optional: Maximum request body size (default: 4KiB)
     max_request_bytes: 1048576
+```
+
+** Tool Call Authorization **
+
+When using [Pomerium Policy Language (PPL)](/docs/internals/ppl) with MCP routes, you can control access to specific tools, in addition to the standard route policies. For example, to allow only certain users to call a specific MCP tool:
+
+```yaml
+policy:
+  allow:
+    and:
+      - email:
+          is: analyst@company.com
+      - mcp_tool:
+          is: database_query
 ```
 
 ### MCP Client Configuration
@@ -202,19 +243,14 @@ For applications that consume MCP servers:
 
 ```yaml
 mcp:
-  # Provides the application with external tokens for MCP server access
+  # Provides the application with external tokens for MCP server access.
+  # the brackets are significant, they indicate that this is an MCP client route
   client: {}
 ```
 
-### OAuth2 Endpoint Authentication Styles
+For Client routes, Pomerium exposes additional endpoints to manage MCP server discovery and upstream OAuth flows.
 
-- `header`: Client credentials sent in Authorization header
-- `params`: Client credentials sent as form parameters
-- `""` (auto): Let the OAuth2 library choose automatically
-
-## API Endpoints
-
-### Listing Available MCP Servers
+#### Listing Available MCP Servers
 
 Applications can discover available MCP servers by making a request to the `/.pomerium/mcp/routes` endpoint:
 
@@ -245,7 +281,7 @@ Accept: application/json
 
 The `connected` field indicates whether the user has completed all required upstream OAuth flows.
 
-### Initiating Upstream OAuth
+#### Initiating Upstream OAuth
 
 If a server shows `connected: false`, redirect users to complete upstream authentication:
 
@@ -260,7 +296,7 @@ https://mcp-server.your-domain.com/.pomerium/mcp/connect?redirect_url=https://yo
 
 ## User Identity and Claims
 
-Both MCP client applications and servers can access authenticated user information through the `X-Pomerium-Assertion` HTTP header. This header contains a signed JWT with user details including email, name, and other claims.
+Both MCP client applications and servers can access authenticated user information through the [`X-Pomerium-Assertion`](https://www.pomerium.com/docs/get-started/fundamentals/core/jwt-verification#get-the-x-pomerium-jwt-assertion-header) HTTP header. This header contains a signed JWT with user details including email, name, and other claims.
 
 **Example JWT payload:**
 
@@ -274,6 +310,8 @@ Both MCP client applications and servers can access authenticated user informati
   "aud": "your-app.domain.com"
 }
 ```
+
+JWT may be verified using standard [JWT libraries](https://jwt.io/) or Pomerium's SDKs for [Go](https://github.com/pomerium/sdk-go) or [Python](https://github.com/pomerium/js-sdk).
 
 ## Security Considerations
 
@@ -292,8 +330,6 @@ routes:
         and:
           - domain:
               is: trusted-domain.com
-          - groups:
-              has: mcp-users
 ```
 
 ### Token Security
@@ -301,111 +337,7 @@ routes:
 - External tokens (TE) have limited scope and lifetime
 - Internal tokens (TI) are never exposed to external clients
 - All tokens are automatically refreshed by Pomerium
-- Failed authentication attempts are logged for audit
-
-### Network Security
-
-- MCP servers should run on internal networks
-- Use TLS for all external communications
-- Implement proper firewall rules
-- Consider IP allowlisting for sensitive servers
-
-## Common Integration Patterns
-
-### Database Access
-
-```yaml
-routes:
-  - from: https://db-mcp.domain.com
-    to: http://postgres-mcp-server:8080/mcp
-    name: Company Database
-    mcp:
-      server:
-        max_request_bytes: 2097152 # 2MB for larger queries
-    policy:
-      allow:
-        and:
-          - domain:
-              is: company.com
-          - groups:
-              has: data-analysts
-```
-
-### GitHub Integration
-
-```yaml
-routes:
-  - from: https://github-mcp.domain.com
-    to: http://github-mcp-server:8080/mcp
-    name: GitHub Repository Access
-    mcp:
-      server:
-        upstream_oauth2:
-          client_id: 'github-oauth-client-id'
-          client_secret: 'github-oauth-client-secret'
-          endpoint:
-            auth_url: 'https://github.com/login/oauth/authorize'
-            token_url: 'https://github.com/login/oauth/access_token'
-          scopes: ['read:user', 'repo', 'user:email']
-```
-
-### Notion Integration
-
-```yaml
-routes:
-  - from: https://notion-mcp.domain.com
-    to: http://notion-mcp-server:8080/mcp
-    name: Notion Workspace
-    mcp:
-      server:
-        upstream_oauth2:
-          client_id: 'notion-oauth-client-id'
-          client_secret: 'notion-oauth-client-secret'
-          endpoint:
-            auth_url: 'https://api.notion.com/v1/oauth/authorize'
-            token_url: 'https://api.notion.com/v1/oauth/token'
-          scopes: ['read_content', 'read_user_with_email']
-```
-
-## Troubleshooting
-
-### Common Issues
-
-**Server shows as disconnected:**
-
-- Check if upstream OAuth is configured correctly
-- Verify OAuth client credentials
-- Ensure user has completed authentication flow
-- Check Pomerium logs for OAuth errors
-
-**Authentication failures:**
-
-- Verify route policies allow the user
-- Check token expiration and refresh logic
-- Ensure external tokens are properly formatted
-- Review access logs for policy violations
-
-**Request size errors:**
-
-- Increase `max_request_bytes` in server configuration
-- Check for oversized request payloads
-- Consider request compression if supported
-
-### Logging and Monitoring
-
-Enable detailed logging for MCP operations:
-
-```yaml
-log_level: info
-# Additional logging options in global config
-```
-
-Monitor key metrics:
-
-- Authentication success/failure rates
-- Token refresh operations
-- Request latency and error rates
-- Upstream OAuth flow completion
+- All authorization decisions are logged for audit.
 
 ### Testing Setup
 
@@ -580,8 +512,6 @@ Pomerium provides fine-grained access control for MCP tools through a specialize
 
 The `mcp_tool` criterion is designed specifically for MCP routes and allows policy enforcement at the individual tool level. It uses the [String Matcher](/docs/internals/ppl#string-matcher) format and supports all standard string matching operators.
 
-#### Supported Operators
-
 | Operator | Description | Example |
 | --- | --- | --- |
 | `is` | Exact match of the tool name | `mcp_tool: { is: "database_query" }` |
@@ -590,9 +520,7 @@ The `mcp_tool` criterion is designed specifically for MCP routes and allows poli
 | `contains` | Tool name contains the specified substring | `mcp_tool: { contains: "read" }` |
 | `in` | Tool name matches one of the provided values | `mcp_tool: { in: ["list_tables", "describe_table"] }` |
 
-### Policy Examples
-
-#### Allow Specific Tools to Specific Users
+### Example
 
 Grant access to database query tools only to data analysts:
 
@@ -608,90 +536,7 @@ policy:
           has: 'data-analysts'
 ```
 
-#### Restrict Administrative Tools
-
-Allow read-only operations for most users, but restrict administrative tools to administrators:
-
-```yaml
-policy:
-  - allow:
-      and:
-        - domain:
-            is: company.com
-        - mcp_tool:
-            starts_with: 'read_'
-  - allow:
-      and:
-        - groups:
-            has: 'database-admins'
-        - mcp_tool:
-            in: ['create_table', 'drop_table', 'alter_table']
-  - deny:
-      and:
-        - mcp_tool:
-            contains: 'delete'
-        - not:
-            - groups:
-                has: 'senior-admins'
-```
-
-#### Time-Based Tool Access
-
-Restrict sensitive operations to business hours:
-
-```yaml
-policy:
-  - allow:
-      and:
-        - domain:
-            is: company.com
-        - mcp_tool:
-            starts_with: 'read_'
-  - allow:
-      and:
-        - groups:
-            has: 'data-analysts'
-        - mcp_tool:
-            is: 'run_report'
-        - time_of_day:
-            after: '09:00'
-            before: '17:00'
-        - day_of_week:
-            in: ['monday', 'tuesday', 'wednesday', 'thursday', 'friday']
-```
-
-#### Project-Based Tool Access
-
-Control access to tools based on project context using claims:
-
-```yaml
-policy:
-  allow:
-    and:
-      - email:
-          ends_with: '@company.com'
-      - or:
-          - and:
-              - claim/project:
-                  is: 'finance'
-              - mcp_tool:
-                  in: ['financial_query', 'budget_analysis']
-          - and:
-              - claim/project:
-                  is: 'marketing'
-              - mcp_tool:
-                  in: ['campaign_metrics', 'user_analytics']
-```
-
-### Authorization Flow for MCP Tools
-
-When an AI agent attempts to call an MCP tool, Pomerium evaluates the policy in the following order:
-
-1. **Route-level authentication**: User must be authenticated and authorized to access the MCP route
-2. **Tool-level authorization**: If `mcp_tool` criteria are present, the specific tool name is evaluated
-3. **Logging**: Authorization decision is logged with `mcp-tool-ok` or `mcp-tool-unauthorized` reasons
-
-#### Understanding Authorization Results
+### Understanding Authorization Results
 
 The authorization logs show different reason codes based on the evaluation:
 
@@ -713,15 +558,5 @@ The authorization logs show different reason codes based on the evaluation:
   "allow-why-false": ["mcp-tool-unauthorized"],
   "deny": false,
   "mcp-tool": "admin_function"
-}
-```
-
-**Route Access Denied (before tool evaluation):**
-
-```json
-{
-  "allow": false,
-  "allow-why-false": ["domain-unauthorized"],
-  "deny": false
 }
 ```
