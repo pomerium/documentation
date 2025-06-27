@@ -213,6 +213,8 @@ cookie:
 
 **Cookie Expiration** sets the lifetime of session cookies. After this interval, users must reauthenticate.
 
+Pomerium sets its own session timeout (14 hours by default) because it has no way to know if a user simply closed their browser or cleared their cookies. Without an expiration, the server would keep refreshing identity provider tokens for abandoned sessions indefinitely. The timeout acts as a garbage-collection mechanism so that unused session state is eventually cleaned up.
+
 ### How to configure {#cookie-expiration-how-to-configure}
 
 <Tabs>

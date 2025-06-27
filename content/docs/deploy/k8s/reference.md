@@ -567,7 +567,7 @@ Cookie defines Pomerium session cookie options.
                 </p>
                 <p>
                     
-                    Expire sets cookie and Pomerium session expiration time. Once session expires, users would have to re-login. If you change this parameter, existing sessions are not affected. <p>See <a href="https://www.pomerium.com/docs/enterprise/about#session-management">Session Management</a> (Enterprise) for a more fine-grained session controls.</p> <p>Defaults to 14 hours.</p>
+                    Expire sets cookie and Pomerium session expiration time. Once session expires, users would have to re-login. If you change this parameter, existing sessions are not affected. Pomerium imposes its own session TTL (14 hours by default) to clean up abandoned sessions; without a timeout the server would continue refreshing tokens even if a user closed their browser. <p>See <a href="https://www.pomerium.com/docs/enterprise/about#session-management">Session Management</a> (Enterprise) for more fine-grained session controls.</p> <p>Defaults to 14 hours.</p>
                 </p>
                 
                     Format: a duration string like "22s" as parsed by Golang time.ParseDuration.
