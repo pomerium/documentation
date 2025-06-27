@@ -158,7 +158,13 @@ cookie:
 </TabItem>
 </Tabs>
 
-## Cookie HTTP Only {#cookie-http-only}
+## Cookie HTTP Only (Deprecated) {#cookie-http-only}
+
+:::warning Deprecated
+
+The `cookie_http_only` setting is deprecated and will be removed in a future version. The HttpOnly flag will be permanently enabled for security reasons, as disabling it exposes session cookies to JavaScript access and potential XSS attacks.
+
+:::
 
 If true, **Cookie HTTP Only** forbids JavaScript from accessing the cookie.
 
@@ -173,22 +179,36 @@ If true, **Cookie HTTP Only** forbids JavaScript from accessing the cookie.
 
 #### Examples {#cookie-http-only-examples}
 
+:::danger Security Risk
+
+Setting `cookie_http_only: false` is strongly discouraged and this option is deprecated. It will be removed in a future version.
+
+:::
+
 ```yaml
-cookie_http_only: false
+# DEPRECATED - DO NOT USE
+# cookie_http_only: false  # This exposes cookies to JavaScript attacks
 ```
 
 ```bash
-COOKIE_HTTP_ONLY=false
+# DEPRECATED - DO NOT USE
+# COOKIE_HTTP_ONLY=false  # This exposes cookies to JavaScript attacks
 ```
 
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
 
+:::warning Deprecated
+
+The Cookie HTTP Only setting is deprecated. The **Javascript Security** toggle will be removed in a future version, and cookies will always have the HttpOnly flag enabled for security.
+
+:::
+
 Configure **Cookie HTTP Only** with the **Javascript Security** toggle button in the Console. The button has three states:
 
 - **Unset** ("-") uses the value in your configuration file
-- **Checkmark** sets `cookie_http_only` to `true`
-- **Empty** sets `cookie_http_only` to `false`
+- **Checkmark** sets `cookie_http_only` to `true` (recommended)
+- **Empty** sets `cookie_http_only` to `false` (deprecated - security risk)
 
 ![Configure Cookie HTTP only in the Console](./img/cookies/cookie-settings.png)
 
@@ -201,9 +221,16 @@ Configure **Cookie HTTP Only** with the **Javascript Security** toggle button in
 
 #### Examples {#cookie-http-only-examples}
 
+:::danger Security Risk
+
+Setting `httpOnly: false` is strongly discouraged and this option is deprecated. It will be removed in a future version.
+
+:::
+
 ```yaml
-cookie:
-  httpOnly: false
+# DEPRECATED - DO NOT USE
+# cookie:
+#   httpOnly: false  # This exposes cookies to JavaScript attacks
 ```
 
 </TabItem>
