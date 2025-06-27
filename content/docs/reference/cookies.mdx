@@ -162,6 +162,26 @@ cookie:
 
 If true, **Cookie HTTP Only** forbids JavaScript from accessing the cookie.
 
+While the HttpOnly flag is enabled by default for security reasons, some users may choose to disable it for specific use cases that require JavaScript access to cookies. However, disabling HttpOnly cookies significantly increases security risks:
+
+- **XSS Vulnerability**: Without the HttpOnly flag, cookies become accessible to JavaScript code, making them vulnerable to Cross-Site Scripting (XSS) attacks. Malicious scripts could steal session cookies and hijack user sessions.
+- **Client-Side Attacks**: Any compromised or malicious JavaScript running on the page can read and exfiltrate cookie values.
+- **Third-Party Script Risks**: If your application includes third-party JavaScript libraries or scripts, they would also have access to non-HttpOnly cookies.
+
+:::warning Security Warning
+
+Disabling the HttpOnly flag (`cookie_http_only: false`) is strongly discouraged and should only be done when absolutely necessary. If you must disable HttpOnly:
+
+1. Ensure your application has robust XSS protection mechanisms
+2. Regularly audit all JavaScript code, including third-party dependencies
+3. Consider implementing additional security measures like Content Security Policy (CSP)
+4. Limit the scope and lifetime of non-HttpOnly cookies
+5. Monitor for suspicious activity that could indicate cookie theft
+
+The security implications of disabling HttpOnly far outweigh most convenience benefits. Carefully evaluate whether your use case truly requires JavaScript cookie access before making this change.
+
+:::
+
 ### How to configure {#cookie-http-only-how-to-configure}
 
 <Tabs>
