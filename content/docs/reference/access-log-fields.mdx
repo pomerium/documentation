@@ -52,6 +52,22 @@ access_log_fields:
 ACCESS_LOG_FIELDS=headers.user-agent,headers.content-type
 ```
 
+**Extended Envoy fields example:**
+
+```yaml
+access_log_fields:
+  - authority
+  - path
+  - response-code
+  - protocol
+  - upstream-response-time
+  - response-flags
+```
+
+```bash
+ACCESS_LOG_FIELDS=authority,path,response-code,protocol,upstream-response-time,response-flags
+```
+
 </TabItem>
 <TabItem label="Enterprise" value="Enterprise">
 
@@ -79,7 +95,7 @@ accessLogFields:
   - path
 ```
 
-**Custom headers example**
+**Custom headers example:**
 
 ```yaml
 accessLogFields:
@@ -87,12 +103,26 @@ accessLogFields:
   - headers.content-type
 ```
 
+**Extended Envoy fields example:**
+
+```yaml
+accessLogFields:
+  - authority
+  - path
+  - response-code
+  - protocol
+  - upstream-response-time
+  - response-flags
+```
+
 </TabItem>
 </Tabs>
 
 ## Access log fields and defaults
 
-The table below lists all available access log fields:
+The table below lists all available access log fields. These fields are powered by Envoy's access logging capabilities and can be customized to include only the information you need.
+
+### Standard Fields
 
 | **Field name** | **Description** | **Default field** |
 | :-- | :-- | :-- |
@@ -110,11 +140,75 @@ The table below lists all available access log fields:
 | `upstream-cluster` | The cluster the request was sent to (the cluster name is assigned by Pomerium, for example `route-3bb74f76f9d71f9c` or `pomerium-control-plane-http`) | Yes |
 | `user-agent` | The User-Agent field sent by the user's browser | Yes |
 | `query` | The HTTP request query (for example, `?test=one&other=13`) | No |
+
+### Extended Envoy Fields
+
+These additional fields are available through Envoy's access logging system:
+
+| **Field name** | **Description** | **Default field** |
+| :-- | :-- | :-- |
+| `bytes-received` | Total bytes received by Envoy from the downstream client | No |
+| `bytes-sent` | Total bytes sent by Envoy to the downstream client | No |
+| `connection-termination-details` | Connection termination details as set by Envoy (see [Envoy docs](https://www.envoyproxy.io/docs/envoy/latest/api-v3/data/accesslog/v3/accesslog.proto#data-accesslog-v3-connectionproperties)) | No |
+| `downstream-local-address` | Local address of the downstream connection | No |
+| `downstream-remote-address` | Remote address of the downstream connection | No |
+| `protocol` | HTTP protocol version (HTTP/1.1, HTTP/2, etc.) | No |
+| `request-duration` | Time spent receiving the request from the downstream client in milliseconds | No |
+| `response-duration` | Time spent sending the response to the downstream client in milliseconds | No |
+| `response-flags` | Additional details about the response or connection as set by Envoy (see [Envoy docs](https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#config-access-log-format-response-flags)) | No |
+| `route-name` | Name of the route that matched the request | No |
+| `start-time` | Request start time including milliseconds | No |
+| `upstream-host` | The upstream host that handled the request | No |
+| `upstream-local-address` | Local address of the upstream connection | No |
+| `upstream-remote-address` | Remote address of the upstream connection | No |
+| `upstream-request-attempt-count` | Number of times the request was attempted upstream | No |
+| `upstream-response-time` | Time spent waiting for the upstream response in milliseconds | No |
+
+### Custom Fields
+
+| **Field name** | **Description** | **Default field** |
+| :-- | :-- | :-- |
 | [`headers.{CustomHeaderName}`](#log-custom-headers-fields) | An HTTP Request Header identified by the `HeaderName` (for example, `headers.X-Amzn-Trace-Id` might return `Root=1-64c03960-37809588421513e42f260f56`) | No |
 
 :::danger
 
 Query parameters often contain sensitive information. Do not enable the `query` log field without careful consideration.
+
+:::
+
+## Using Extended Envoy Fields
+
+The extended Envoy fields provide additional insights into request processing and can be useful for:
+
+- **Performance monitoring**: Use `request-duration`, `response-duration`, and `upstream-response-time` to identify slow requests
+- **Debugging connectivity**: Use `downstream-local-address`, `upstream-host`, and `response-flags` to troubleshoot connection issues
+- **Protocol analysis**: Use `protocol` to monitor HTTP version usage across your applications
+- **Load balancing**: Use `upstream-request-attempt-count` and `route-name` to understand request routing patterns
+
+### Example with extended fields
+
+When using extended Envoy fields, your access logs might look like this:
+
+```json
+{
+  "level": "info",
+  "service": "envoy",
+  "authority": "verify.pomerium.com",
+  "path": "/api/status",
+  "response-code": 200,
+  "protocol": "HTTP/2",
+  "upstream-response-time": 45,
+  "response-flags": "-",
+  "route-name": "verify-route",
+  "upstream-host": "10.0.1.15:8080",
+  "time": "2023-08-04T12:15:30-04:00",
+  "message": "http-request"
+}
+```
+
+:::tip Performance optimization
+
+Use the timing fields (`request-duration`, `response-duration`, `upstream-response-time`) to identify performance bottlenecks in your application stack.
 
 :::
 
