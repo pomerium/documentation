@@ -342,6 +342,23 @@ PomeriumSpec defines Pomerium-specific configuration parameters.
         <tr>
             <td>
                 <p>
+                <code>ssh</code>&#160;&#160;
+                
+                    <strong>object</strong>&#160;
+                    (<a href="#ssh">ssh</a>)
+                
+                </p>
+                <p>
+                    
+                    SSH sets the ssh settings.
+                </p>
+                
+            </td>
+        </tr>
+    
+        <tr>
+            <td>
+                <p>
                 <code>storage</code>&#160;&#160;
                 
                     <strong>object</strong>&#160;
@@ -1241,6 +1258,50 @@ RefreshDirectory is no longer supported, please see <a href="https://docs.pomeri
                 </p>
                 
                     Format: a duration string like "22s" as parsed by Golang time.ParseDuration.
+                
+            </td>
+        </tr>
+    
+    </tbody>
+</table>
+
+### `ssh`
+
+SSH sets the ssh settings.
+
+<table>
+    <thead>
+    </thead>
+    <tbody>
+    
+        <tr>
+            <td>
+                <p>
+                <code>hostKeySecrets</code>&#160;&#160;
+                
+                    <strong>[]string</strong>&#160;
+                
+                </p>
+                <p>
+                    
+                    
+                </p>
+                
+            </td>
+        </tr>
+    
+        <tr>
+            <td>
+                <p>
+                <code>userCaKeySecret</code>&#160;&#160;
+                
+                    <strong>string</strong>&#160;
+                
+                </p>
+                <p>
+                    
+                    
+                </p>
                 
             </td>
         </tr>
