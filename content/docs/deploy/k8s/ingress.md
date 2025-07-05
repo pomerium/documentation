@@ -148,6 +148,12 @@ The expandable list below contains the annotations available, which behave as de
 - [`ingress.pomerium.io/host_rewrite`]
 - [`ingress.pomerium.io/host_rewrite_header`]
 - [`ingress.pomerium.io/idle_timeout`]
+- [`ingress.pomerium.io/mcp_client`]
+- [`ingress.pomerium.io/mcp_server`]
+- [`ingress.pomerium.io/mcp_server_max_request_bytes`]
+- [`ingress.pomerium.io/mcp_server_upstream_oauth2_secret`]
+- [`ingress.pomerium.io/mcp_server_upstream_oauth2_token_url`]
+- [`ingress.pomerium.io/mcp_server_upstream_oauth2_scopes`]
 - [`ingress.pomerium.io/outlier_detection`]
 - [`ingress.pomerium.io/pass_identity_headers`]
 - [`ingress.pomerium.io/policy`]
@@ -171,6 +177,12 @@ The remaining annotations are specific to or behave differently than they do whe
 | Annotation | Description |
 | --- | --- |
 | `ingress.pomerium.io/kubernetes_service_account_token_secret` | Name of a Kubernetes Secret containing a [Kubernetes Service Account Token](/docs/reference/routes/kubernetes-service-account-token) in a `token` key. |
+| `ingress.pomerium.io/mcp_client` | When set to `"true"`, configures the route as an MCP (Model Context Protocol) client. The URL is defined by the service backend. |
+| `ingress.pomerium.io/mcp_server` | When set to `"true"`, configures the route as an MCP (Model Context Protocol) server. The URL is defined by the service backend. Optional if other MCP server annotations are present. |
+| `ingress.pomerium.io/mcp_server_max_request_bytes` | Sets the maximum request body size for MCP server routes. |
+| `ingress.pomerium.io/mcp_server_upstream_oauth2_secret` | Name of a Kubernetes Secret containing OAuth2 credentials for MCP server upstream authentication. |
+| `ingress.pomerium.io/mcp_server_upstream_oauth2_token_url` | OAuth2 token URL for MCP server upstream authentication. |
+| `ingress.pomerium.io/mcp_server_upstream_oauth2_scopes` | Comma-separated list of OAuth2 scopes for MCP server upstream authentication. |
 | `ingress.pomerium.io/path_regex` | When set to `"true"` enables path regex matching. See the [Regular Expressions Path Matching](#regular-expressions-path-matching) section for more information. |
 | `ingress.pomerium.io/secure_upstream` | When set to `"true"`, use `https` when connecting to the upstream endpoint. |
 | `ingress.pomerium.io/set_request_headers_secret` | Name of Kubernetes Secret containing the contents of the request header to send upstream. When used, `ingress.pomerium.io/set_request_headers` should not contain overlapping keys. |
@@ -682,3 +694,181 @@ For more information on the Pomerium Ingress Controller or the Kubernetes concep
 [re2 regular expression]: https://github.com/google/re2/wiki/Syntax
 [regex101.com]: https://regex101.com
 [tls_client_certificate]: /docs/reference/routes/tls#tls-client-certificate
+
+## MCP (Model Context Protocol) Configuration
+
+The Pomerium Ingress Controller supports Model Context Protocol (MCP) through specific annotations. MCP routes can be configured as either servers or clients, with additional configuration options for OAuth2 upstream authentication.
+
+### MCP Annotations
+
+All MCP annotations use the `ingress.pomerium.io/` prefix.
+
+#### Basic MCP Configuration
+
+**Server Mode:**
+
+- `ingress.pomerium.io/mcp_server: "true"` - Configures the route as an MCP server. Optional if other MCP server annotations are present.
+- `ingress.pomerium.io/mcp_server_max_request_bytes` - Sets the maximum request body size for MCP server routes (optional)
+
+**Client Mode:**
+
+- `ingress.pomerium.io/mcp_client: "true"` - Configures the route as an MCP client
+
+:::note
+
+A route cannot be configured as both MCP server and client.
+
+:::
+
+#### OAuth2 Configuration (Server Mode Only)
+
+For secure upstream authentication in MCP server mode, OAuth2 credentials must be stored in Kubernetes secrets and referenced via annotations:
+
+- `ingress.pomerium.io/mcp_server_upstream_oauth2_secret` - References a Kubernetes secret containing OAuth2 credentials
+- `ingress.pomerium.io/mcp_server_upstream_oauth2_token_url` - OAuth2 token URL for upstream authentication (optional)
+- `ingress.pomerium.io/mcp_server_upstream_oauth2_scopes` - Comma-separated list of OAuth2 scopes (optional)
+
+The secret referenced by `mcp_server_upstream_oauth2_secret` must be of type `Opaque` and can contain:
+
+- `client_id` - OAuth2 client ID (optional if `client_secret` is provided)
+- `client_secret` - OAuth2 client secret (optional if `client_id` is provided)
+
+At least one of `client_id` or `client_secret` must be present in the secret.
+
+### MCP Examples
+
+:::note
+
+The `mcp_server` annotation can be omitted when other MCP server-specific annotations (like `mcp_server_max_request_bytes`) are present. The presence of server-specific annotations automatically enables MCP server mode.
+
+:::
+
+#### Basic MCP Server
+
+```yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: mcp-server
+  annotations:
+    ingress.pomerium.io/mcp_server: 'true'
+spec:
+  ingressClassName: pomerium
+  rules:
+    - host: mcp.example.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: mcp-server-service
+                port:
+                  number: 8080
+  tls:
+    - hosts:
+        - mcp.example.com
+      secretName: mcp-tls
+```
+
+#### MCP Server with OAuth2 Authentication
+
+```yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: mcp-oauth2-credentials
+type: Opaque
+data:
+  client_id: Y2xpZW50LWlk # base64 encoded "client-id"
+  client_secret: Y2xpZW50LXNlY3JldA== # base64 encoded "client-secret"
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: mcp-server-oauth2
+  annotations:
+    ingress.pomerium.io/mcp_server: 'true'
+    ingress.pomerium.io/mcp_server_max_request_bytes: '1048576'
+    ingress.pomerium.io/mcp_server_upstream_oauth2_secret: 'mcp-oauth2-credentials'
+    ingress.pomerium.io/mcp_server_upstream_oauth2_token_url: 'https://auth.example.com/token'
+    ingress.pomerium.io/mcp_server_upstream_oauth2_scopes: 'read,write,admin'
+spec:
+  ingressClassName: pomerium
+  rules:
+    - host: mcp.example.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: mcp-server-service
+                port:
+                  number: 8080
+  tls:
+    - hosts:
+        - mcp.example.com
+      secretName: mcp-tls
+```
+
+#### MCP Server without explicit annotation
+
+When MCP server-specific annotations are used, the `mcp_server` annotation can be omitted:
+
+```yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: mcp-server-implicit
+  annotations:
+    # mcp_server annotation omitted - implicitly enabled by server-specific annotation
+    ingress.pomerium.io/mcp_server_max_request_bytes: '2097152'
+spec:
+  ingressClassName: pomerium
+  rules:
+    - host: mcp.example.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: mcp-server-service
+                port:
+                  number: 8080
+```
+
+#### MCP Client
+
+```yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: mcp-client
+  annotations:
+    ingress.pomerium.io/mcp_client: 'https://mcp-client.example.com'
+spec:
+  ingressClassName: pomerium
+  rules:
+    - host: mcp-client.example.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: mcp-client-service
+                port:
+                  number: 8080
+  tls:
+    - hosts:
+        - mcp-client.example.com
+      secretName: mcp-client-tls
+```
+
+### MCP Security Considerations
+
+- OAuth2 credentials are handled securely through Kubernetes secrets, preventing exposure in annotations
+- The secret must be in the same namespace as the ingress resource
+- Use appropriate RBAC controls to limit access to OAuth2 credential secrets
