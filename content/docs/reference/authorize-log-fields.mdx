@@ -100,6 +100,7 @@ The table below lists all available authorize log fields:
 
 | **Field name** | **Description** | **Default field** |
 | :-- | :-- | :-- |
+| `body` | The HTTP request body. Only available for protocols with request content inspection such as MCP. | No |
 | `check-request-id` | The request ID of the gRPC check call | Yes |
 | `email` | The logged-in user's email address | Yes |
 | `headers` | The complete set of HTTP request headers | No |
@@ -125,7 +126,7 @@ The table below lists all available authorize log fields:
 
 :::danger
 
-Query parameters often contain sensitive information. Do not enable the `query` log field without careful consideration.
+Query parameters and request bodies often contain sensitive information. Do not enable the `query` or `body` log fields without careful consideration.
 
 :::
 
@@ -262,6 +263,39 @@ The custom headers will appear in the `headers` field:
   "deny": false,
   "deny-why-false": [],
   "time": "2023-08-07T10:40:38-04:00",
+  "message": "authorize check"
+}
+```
+
+### Log request body
+
+:::caution
+
+Adding `body` will print the HTTP request body to stdout. Request bodies often contain sensitive information like passwords, tokens, or personal data. Use this field with extreme caution and ensure proper log security measures are in place.
+
+:::
+
+If specified, the `body` option displays the HTTP request body. This can be useful for debugging and audit purposes.
+
+For example, if you add `body`:
+
+```yaml
+authorize_log_fields:
+  - body
+```
+
+Your logs would look similar to the below example:
+
+```json
+{
+  "level": "info",
+  "service": "authorize",
+  "body": "{\"username\":\"user@example.com\",\"action\":\"login\"}",
+  "allow": true,
+  "allow-why-true": ["domain-ok"],
+  "deny": false,
+  "deny-why-false": [],
+  "time": "2023-08-07T10:43:36-04:00",
   "message": "authorize check"
 }
 ```
