@@ -53,6 +53,7 @@ const sidebars = {
           id: 'docs/capabilities/audit-logs',
         },
         'docs/capabilities/kubernetes-access',
+        'docs/capabilities/native-ssh-access',
         {
           type: 'category',
           label: 'Non-HTTP Protocols',
