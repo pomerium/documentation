@@ -239,6 +239,8 @@ const config = {
         id: process.env.GTM,
       },
     ],
+    // Generate llms.txt file for LLM consumption
+    require.resolve('./plugins/llms-txt-plugin'),
     // async function customPlugin(context, opts) {
     //   return {
     //     name: 'custom-plugin',
