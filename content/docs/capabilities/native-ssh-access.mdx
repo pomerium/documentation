@@ -237,7 +237,9 @@ In this mode, Pomerium acts as a virtual jump-host, allowing the client to conne
 
 Pomerium policy still applies when connecting to routes in this way, with the exception of the `ssh_username` criteria.
 
-This feature is disabled by default ([see below](/docs/capabilities/native-ssh-access#enable-proxyjump-support)).
+Upstream servers do not need to be configured to trust Pomerium's User CA key to use this mode.
+
+This feature is disabled by default, and can be enabled using a runtime flag ([see below](/docs/capabilities/native-ssh-access#enable-proxyjump-support)).
 
 ## Configuration Reference
 
@@ -274,10 +276,11 @@ The following SSH-specific PPL criteria are available:
 
 | Criterion Name | Data Format | Description |
 | --- | --- | --- |
-| `ssh_publickey` | [String Matcher] | Matches an SSH public key (authorized_keys format)<br/>(ex: `"ssh-ed25519 AAAA..."`) |
+| `ssh_publickey` | String or String List | Matches the client's SSH public key (authorized_keys format)<br/>(ex: `"ssh-ed25519 AAAA..."`) |
 | `ssh_username` | [String Matcher] | Matches the username requested by the client <br/> (ex: `"ubuntu"` or `["user1", "user2"]`) |
-| `ssh_username_matches_claim` | String | Enforces that the username requested by the client is present within a list of allowed names, obtained from this OAuth token claim <br/>(ex: "allowed_usernames") |
+| `ssh_username_matches_claim` | String | Enforces that the username requested by the client is present within a list of allowed names, obtained from this OAuth token claim <br/>(ex: `"allowed_usernames"`) |
 | `ssh_username_matches_email` | Anything. Typically `true`. | Enforces that the username requested by the client exactly matches the user's email with the '@' and domain omitted <br/>(ex: the email `"bobby@gmail.com"` matches the username `"bobby"`) |
+| `ssh_ca` | String or String List | Enforces that the client's SSH public key is a certificate-key signed by this SSH public key (authorized_keys format). If a list of public keys is configured, the client's SSH public key can be signed by any of them. <br/>(ex: `"ssh-ed25519 AAAA..."`) |
 
 ## Advanced Configuration
 
@@ -291,7 +294,7 @@ There are two SSH specific runtime flags. See [Runtime Flags](/docs/reference/ru
 
 #### Enable `ProxyJump` Support
 
-- **`ssh_allow_direct_tcpip`**: Enables support for Pomerium to act as a jump host if `ProxyJump` (`-J` flag) is used by a client. In this mode, the downstream client will authenticate directly to the upstream, and traffic will be proxied through Pomerium on a `direct-tcpip` channel.
+- **`ssh_allow_direct_tcpip`**: Allows clients to connect to SSH routes using [Jump Host Mode](/docs/capabilities/native-ssh-access#using-jump-host-mode).
 
 ## Policy Examples
 
