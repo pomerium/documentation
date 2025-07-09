@@ -10,6 +10,10 @@ import LongLivedConnections from '@site/content/docs/admonitions/_long-lived-con
 
 # Tunneled SSH Connections
 
+:::info Native SSH Access Available
+Pomerium now supports [**Native SSH Access**](/docs/capabilities/native-ssh-access) with OAuth authentication and ephemeral certificates. This provides a more streamlined SSH experience without requiring tunneling or special clients. See the [comparison table](#native-vs-tunneled-ssh) below to choose the best approach for your use case.
+:::
+
 Bad actors are constantly scanning the internet for exposed SSH services. Changing the default port obfuscates, but doesn't protect the service, and implementing and updating advanced SSH authentication can be cumbersome.
 
 By tunneling SSH connections through your Pomerium service:
@@ -86,6 +90,32 @@ Host *.corp.example.com
 ```
 
 ## More Resources
+
+### Native vs Tunneled SSH
+
+| Feature | Native SSH Access | Tunneled SSH (this guide) |
+|---------|------------------|---------------------------|
+| **Client setup** | None required | Requires pomerium-cli |
+| **Network architecture** | Direct SSH connection | HTTP tunnel over CONNECT |
+| **SSH features** | Full SSH functionality | Full SSH functionality |
+| **Performance** | Native SSH performance | Slight tunnel overhead |
+| **Firewall requirements** | Standard SSH (port 22 or custom) | HTTP/HTTPS (ports 80/443) |
+| **Authentication** | OAuth | OAuth |
+| **Authorization** | Pomerium Policy with SSH rules | Pomerium Policy with HTTP rules |
+| **Key management** | Ephemeral certificates | Traditional SSH keys |
+| **Audit logging** | SSH protocol logging | Pomerium HTTP tunnel logs |
+| **Server configuration** | Requires User CA trust | Standard SSH configuration |
+
+**When to use Native SSH Access:**
+- You want the simplest user experience
+- You want centralized SSH access management and audit logging
+- You prefer ephemeral credentials over static keys
+
+**When to use Tunneled SSH:**
+- You cannot modify SSH server configuration
+- You're migrating gradually from existing SSH setups
+
+### ProxyCommand Resources
 
 For more information on SSH ProxyCommand, see:
 
