@@ -137,8 +137,8 @@ const config = {
           dropdownActiveClassDisabled: true,
           dropdownItemsAfter: [
             {
-              to: 'https://0-29-0.docs.pomerium.com/docs',
-              label: 'v0.29 (latest)',
+              to: 'https://0-30-0.docs.pomerium.com/docs',
+              label: 'v0.30 (latest)',
             },
             {
               type: 'html',
