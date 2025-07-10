@@ -148,6 +148,7 @@ The expandable list below contains the annotations available, which behave as de
 - [`ingress.pomerium.io/host_rewrite`]
 - [`ingress.pomerium.io/host_rewrite_header`]
 - [`ingress.pomerium.io/idle_timeout`]
+- [`ingress.pomerium.io/name`]
 - [`ingress.pomerium.io/mcp_client`]
 - [`ingress.pomerium.io/mcp_server`]
 - [`ingress.pomerium.io/mcp_server_max_request_bytes`]
@@ -274,6 +275,43 @@ If you have Ingresses with potentially overlapping host/path combinations, Pomer
 4. Descending by `prefix`.
 
 This sorting order helps ensure that more restrictive routes for specific paths and regular expressions are applied correctly.
+
+### Route Naming
+
+By default, Pomerium generates route names based on the Ingress namespace, name, and host. You can customize the human-readable route name using the `name` annotation:
+
+```yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: my-app
+  namespace: production
+  annotations:
+    ingress.pomerium.io/name: 'Production App'
+    ingress.pomerium.io/policy: |
+      allow:
+        and:
+          - domain:
+              is: company.com
+spec:
+  ingressClassName: pomerium
+  rules:
+    - host: app.company.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: my-app-service
+                port:
+                  number: 80
+```
+
+In this example:
+
+- The route will display as "Production App" in Pomerium's UI and logs
+- The unique identifier for monitoring and stats remains based on the Ingress resource details
 
 ### Regular Expressions Path Matching
 
