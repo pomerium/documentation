@@ -31,7 +31,7 @@ terraform {
   required_providers {
     pomerium = {
       source  = "pomerium/pomerium"
-      version = "~> 0.29.0"
+      version = "~> 0.30.0"
     }
   }
 }

@@ -1,5 +1,5 @@
 ---
-# cSpell:ignore keepalive
+# cSpell:ignore keepalive tcpip
 id: runtime-flags
 title: Runtime Flags
 description: This page lists Runtime Flags available in Pomerium.
@@ -39,6 +39,8 @@ The available flags are:
 | `grpc_databroker_keepalive` | _(experimental)_ Enables gRPC keep-alive (HTTP/2 PING) requests on the databroker service connection. This may improve service reliability in [split service mode](/docs/internals/configuration#service-mode) deployments where there are multiple firewalls in the connection path between different Pomerium services. | `false` |
 | `match_any_incoming_port` | For a route where the From URL does not contain a port number, allow it to match incoming requests with any port number. See the section on [Port matching behavior](/docs/reference/routes/from#port-matching-behavior) for more details. | `true` |
 | `pomerium_jwt_endpoint` | Temporary opt-out of the `/.pomerium/jwt` deprecation: when set to `true`, Pomerium will continue to issue a JWT from the deprecated `/.pomerium/jwt` endpoint. (This endpoint does not provide the desired security properties for the Pomerium JWT and will be removed in a future release.) | `false` |
+| `ssh_allow_direct_tcpip` | Allows clients to connect to SSH routes using [Jump Host Mode](/docs/capabilities/native-ssh-access#using-jump-host-mode). | `false` |
+| `ssh_routes_portal` | Enables the SSH routes portal, allowing users to select their SSH destination from an interactive menu when SSHing to Pomerium without specifying a route. | `false` |
 
 ### Examples
 
