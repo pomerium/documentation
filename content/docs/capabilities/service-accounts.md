@@ -44,6 +44,7 @@ Before you begin, confirm you are in the correct Namespace. You can only use a s
    Service accounts can be unique and exist only for Pomerium, or impersonate directory users from your identity provider.
 
    See the following pages for more information:
+
    - [**Directory Sync**](/docs/integrations/user-standing/directory-sync)
    - [**User Impersonation**](/docs/capabilities/impersonation)
 

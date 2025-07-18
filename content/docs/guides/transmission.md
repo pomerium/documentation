@@ -80,6 +80,7 @@ Don't forget to switch your terminal prompt to the Transmission host before cont
    ```
 
 1. In your preferred text editor, open `/etc/transmission-daemon/settings.json` with `sudo` or as the root user. Look for the following key/value pairs, and edit appropriately.
+
    - Because we are using Pomerium to authenticate, disable HTTP auth:
 
      ```json
