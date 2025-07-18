@@ -331,7 +331,6 @@ Envoy calls `ext_authz` Pomerium endpoint to perform authorization checks for in
 
 - **Monitoring Authorization Handler** - the `pomerium-authorize` is the cluster name used for the authorization service, that exposes standard cluster metrics like `upstream_rq_time`, `upstream_rq_total`, etc. You can monitor the performance of the authorization service by looking at these metrics, which will give you insights into how long it takes to authorize requests and how many requests are being processed.
 - **Overall Authorization Success/Failure/Errors** - statistics across all clusters are reported on the HTTP connection manager level, that have `{envoy_http_conn_manager_prefix="ingress"}` label.
-
   - `envoy_http_ext_authz_ok` counts requests that were successfully authorized.
   - `envoy_http_ext_authz_denied` counts requests that were denied by the authorization service.
   - `envoy_http_ext_authz_error` counts errors encountered while contacting the authorization service (e.g., timeouts, connection failures).
@@ -339,7 +338,6 @@ Envoy calls `ext_authz` Pomerium endpoint to perform authorization checks for in
   These metrics are useful for understanding the overall health of the authorization service and how many requests are being processed successfully or denied.
 
 - **Per Pomerium Route Authorization Metrics** – For every Pomerium Route that uses the `ext_authz` filter, Envoy will emit metrics prefixed with `envoy_cluster_ext_authz_`. These metrics are labeled with the cluster name of the Route, and include:
-
   - `envoy_cluster_ext_authz_ok` – Number of requests successfully authorized.
   - `envoy_cluster_ext_authz_denied` – Number of requests denied by the authorization service.
   - `envoy_cluster_ext_authz_error` – Number of errors encountered while contacting the authorization service.
