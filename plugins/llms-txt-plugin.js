@@ -7,6 +7,35 @@ const remarkMdx = require('remark-mdx').default;
 const visit = require('unist-util-visit').visit;
 
 /**
+ * Pre-clean Docusaurus MDX files before remark parsing.
+ * - Removes all :::admonition blocks (keeps the content inside)
+ * - Removes <Tabs>...</Tabs> and <TabItem ...>...</TabItem> blocks (keeps content inside)
+ * - Strips any remaining standalone ::: lines
+ */
+function preCleanDocusaurusMDX(raw) {
+  // Remove all Docusaurus import lines
+  raw = raw.replace(/^\s*import\s.*from\s+['"][^'"]+['"];?\s*$/gm, '');
+
+  // Remove <Tabs>, </Tabs>, <TabItem ...>, </TabItem>
+  raw = raw.replace(/<\/?Tabs[^>]*>/g, '');
+  raw = raw.replace(/<\/?TabItem[^>]*>/g, '');
+
+  // Remove all Docusaurus admonition blocks (with all contents)
+  raw = raw.replace(
+    /^:::(info|note|caution|tip|danger|important|success|failure|admonition)[^\n]*\n([\s\S]*?)^:::\s*$/gm,
+    '',
+  );
+
+  // Remove any "orphan" closing or opening :::
+  raw = raw.replace(/^:::\s*$/gm, '');
+
+  // Optionally strip extra blank lines
+  raw = raw.replace(/^\s*\n/gm, '');
+
+  return raw;
+}
+
+/**
  * Clean Markdown/MDX for LLM ingestion using remark AST
  * - Strips YAML frontmatter
  * - Strips import/export statements (MDX)
@@ -603,6 +632,23 @@ async function pluginLlmsTxt(context, options) {
         for (const route of finalRoutes) {
           let srcFile = route.filePath;
           if (!srcFile) continue;
+
+          // Add skip logic here
+          const skipPatterns = [
+            '_template.mdx',
+            /^_/, // files/folders starting with "_",
+            'versions.mdx',
+          ];
+          if (
+            skipPatterns.some((pat) =>
+              typeof pat === 'string'
+                ? srcFile.includes(pat)
+                : pat.test(path.basename(srcFile)),
+            )
+          ) {
+            continue; // Skip this file silently
+          }
+
           // Always copy as .md
           let destRel = path.relative(docsRoot, srcFile).replace(/\\/g, '/');
           destRel = destRel.replace(/\.(mdx|md)$/, '.md');
@@ -615,11 +661,25 @@ async function pluginLlmsTxt(context, options) {
           // Read, clean, and write file
           try {
             const rawContent = await fs.promises.readFile(srcFile, 'utf8');
-            const cleanedContent = await cleanMarkdownForLLM(rawContent);
+            const preCleanedContent = preCleanDocusaurusMDX(rawContent);
+            let cleanedContent;
+            try {
+              cleanedContent = await cleanMarkdownForLLM(preCleanedContent);
+            } catch (err) {
+              console.warn(
+                `Warning: Could not fully process ${srcFile}, writing pre-cleaned version instead:`,
+                err.message,
+              );
+              cleanedContent = preCleanedContent;
+              errors++;
+            }
             await fs.promises.writeFile(destFile, cleanedContent, 'utf8');
             copied++;
           } catch (err) {
-            console.warn(`Warning: Could not process ${srcFile}:`, err.message);
+            console.warn(
+              `Warning: Could not read or write ${srcFile}:`,
+              err.message,
+            );
             errors++;
           }
         }
