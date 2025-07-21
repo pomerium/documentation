@@ -77,15 +77,8 @@ async function cleanMarkdownForLLM(rawContent) {
 
   const result = await processor.process(rawContent);
 
-  // Remove any accidental lingering frontmatter at the start (robust)
-  let cleaned = result.value
-    .replace(/^---[\t ]*\n[\s\S]*?\n---[\t ]*(\n|$)/, '') // Remove YAML frontmatter at very top
-    .replace(/^---[\s\S]*?---+\s*/m, '') // Remove frontmatter with any number of dashes (fallback)
-    .replace(/^(?:-{3,}|\*{3,}|_{3,})\s*\n+/gm, '') // Remove HRs at file start
-    .trim();
-
   // Optionally trim excessive blank lines
-  return cleaned.replace(/\n{3,}/g, '\n\n');
+  return result.value.replace(/\n{3,}/g, '\n\n');
 }
 
 /**
