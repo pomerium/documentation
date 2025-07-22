@@ -94,6 +94,10 @@ const config = {
       contextualSearch: false,
       searchPagePath: false,
     },
+    colorMode: {
+      defaultMode: 'light', // The color mode when user first visits the site. type: 'light' | 'dark' . Default is 'light'.
+      respectPrefersColorScheme: true, // If true, respects the user's OS-level color scheme preference. Default is false.
+    },
     navbar: {
       title: '',
       logo: {
