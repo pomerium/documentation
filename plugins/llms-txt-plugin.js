@@ -13,6 +13,9 @@ const visit = require('unist-util-visit').visit;
  * - Strips any remaining standalone ::: lines
  */
 function preCleanDocusaurusMDX(raw) {
+  // Remove YAML frontmatter at the very top (--- ... ---)
+  raw = raw.replace(/^---[\s\S]*?---\s*(\n|$)/, '');
+
   // Remove all Docusaurus import lines
   raw = raw.replace(/^\s*import\s.*from\s+['"][^'"]+['"];?\s*$/gm, '');
 
@@ -74,14 +77,8 @@ async function cleanMarkdownForLLM(rawContent) {
 
   const result = await processor.process(rawContent);
 
-  // Remove any accidental lingering frontmatter at the start
-  let cleaned = result.value
-    .replace(/^---[\s\S]*?---+\s*/m, '') // Remove frontmatter with any number of dashes
-    .replace(/^(?:-{3,}|\*{3,}|_{3,})\s*\n+/gm, '') // Remove HRs at file start
-    .trim();
-
   // Optionally trim excessive blank lines
-  return cleaned.replace(/\n{3,}/g, '\n\n');
+  return result.value.replace(/\n{3,}/g, '\n\n');
 }
 
 /**
