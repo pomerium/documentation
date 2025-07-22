@@ -97,7 +97,6 @@ const config = {
     },
     colorMode: {
       defaultMode: 'light', // The color mode when user first visits the site. type: 'light' | 'dark' . Default is 'light'.
-      disableSwitch: false, //Hides the switch in the navbar. Useful if you want to support a single color mode.
       respectPrefersColorScheme: true, // If true, respects the user's OS-level color scheme preference. Default is false.
     },
     navbar: {
