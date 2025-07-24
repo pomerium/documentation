@@ -212,3 +212,18 @@ groups:
             3. Monitor goroutine growth rate
             4. Consider service restart if confirmed leak
 
+      - alert: PomeriumPostgresConnectionPoolHigh
+        expr: pomerium_pgxpool_total_connections / pomerium_pgxpool_max_connections > 1
+        for: 1m
+        labels:
+          severity: warning
+          component: pomerium
+          service: database
+        annotations:
+          summary: "PostgreSQL connection pool size a bottleneck"
+          description: "Connection pool usage is {{ $value | humanizePercentage }} of maximum connections"
+          runbook: |
+            1. Increase pool_max_conns in the PostgreSQL connection string configuration
+            2. Review database query performance for long-running queries
+            3. See https://pkg.go.dev/github.com/jackc/pgx/v4/pgxpool#ParseConfig for connection pool configuration details
+
