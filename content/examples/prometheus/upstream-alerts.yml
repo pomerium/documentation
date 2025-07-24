@@ -71,7 +71,7 @@ groups:
           runbook: |
             1. Check network latency and packet loss to upstream
             2. Review upstream service response times
-            3. Consider adjusting connection timeout settings
+            3. Consider adjusting connection timeout settings https://www.pomerium.com/docs/internals/connection#timeouts
             4. Monitor upstream service load and capacity
 
       - alert: NoHealthyUpstreams
@@ -153,4 +153,30 @@ groups:
             3. Review recent deployments or changes
             4. Verify health check endpoint functionality
 
-  
+  - name: upstream-health-composite
+    rules:
+      - alert: UpstreamClusterHealthDegraded
+        expr: |
+          (
+            (sum by (envoy_cluster_name) (envoy_cluster_membership_total{envoy_cluster_name!~"pomerium-.*"}) - 
+             sum by (envoy_cluster_name) (envoy_cluster_membership_healthy{envoy_cluster_name!~"pomerium-.*"})) / 
+            sum by (envoy_cluster_name) (envoy_cluster_membership_total{envoy_cluster_name!~"pomerium-.*"})
+          ) > 0.3
+        for: 2m
+        labels:
+          severity: warning
+          component: envoy
+        annotations:
+          summary: "Upstream Cluster health degraded"
+          description: "{{ $value | humanizePercentage }} of hosts unhealthy in cluster {{ $labels.envoy_cluster_name }}"
+          runbook: |
+            1. Check individual host health in the cluster:
+               - Healthy hosts: envoy_cluster_membership_healthy by envoy_cluster_name
+               - Total hosts: envoy_cluster_membership_total by envoy_cluster_name
+               - Host status changes: rate(envoy_cluster_membership_change[5m])
+            3. Monitor network connectivity and DNS resolution:
+               - Connection failures: rate(envoy_cluster_upstream_cx_connect_fail[5m])
+               - DNS resolution: rate(envoy_cluster_upstream_cx_connect_timeout[5m])
+            4. Verify upstream service capacity:
+               - Active connections: envoy_cluster_upstream_cx_active
+               - Request queuing: envoy_cluster_upstream_rq_pending_active

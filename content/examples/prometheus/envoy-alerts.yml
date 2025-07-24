@@ -1,7 +1,7 @@
 groups:
-  - name: envoy-listeners
+  - name: envoy-listener
     rules:
-      - alert: ListenerConnectionOverflow
+      - alert: IngressListenerConnectionOverflow
         expr: rate(envoy_listener_downstream_cx_overflow[1m]) > 0
         for: 1m
         labels:
@@ -9,27 +9,14 @@ groups:
           component: envoy
         annotations:
           summary: "Listener connection limit exceeded"
-          description: "{{ $value }} connections/sec rejected at listener {{ $labels.envoy_listener_address }}"
+          description: "{{ $value }} connections/sec rejected at the listener {{ $labels.envoy_listener_address }}"
           runbook: |
-            1. Check Envoy resource usage (CPU, memory, file descriptors)
-            2. Review listener connection limits configuration
-            3. Monitor client connection patterns
-            4. Consider scaling Envoy instances or adjusting limits
+            1. Check Envoy resource usage
+               - Memory: envoy_server_memory_allocated, envoy_server_memory_heap_size
+            2. Review listener connection limits: see https://www.pomerium.com/docs/reference/circuit-breaker-thresholds
+            3. Monitor client connection patterns:
+               - Connection duration: envoy_listener_downstream_cx_length_ms
 
-      - alert: GlobalConnectionOverflow
-        expr: rate(envoy_server_downstream_global_cx_overflow[1m]) > 0
-        for: 1m
-        labels:
-          severity: critical
-          component: envoy
-        annotations:
-          summary: "Global connection limit exceeded"
-          description: "{{ $value }} connections/sec rejected due to global connection limits"
-          runbook: |
-            1. Check overall Envoy resource capacity
-            2. Review global connection limit settings
-            3. Monitor total connection usage across all listeners
-            4. Consider horizontal scaling of Envoy instances
 
       - alert: OverloadManagerReject
         expr: rate(envoy_listener_downstream_cx_overload_reject[5m]) > 0
@@ -41,32 +28,11 @@ groups:
           summary: "Overload manager rejecting connections"
           description: "{{ $value }} connections/sec rejected by overload manager"
           runbook: |
-            1. Check Envoy memory and CPU usage immediately
-            2. Review overload manager configuration
-            3. Monitor resource saturation metrics
-            4. Consider emergency scaling or traffic reduction
-
-  - name: envoy-composite-health
-    rules:
-      - alert: ClusterHealthDegraded
-        expr: |
-          (
-            (sum by (envoy_cluster_name) (envoy_cluster_membership_total{envoy_cluster_name!~"pomerium-.*"}) - 
-             sum by (envoy_cluster_name) (envoy_cluster_membership_healthy{envoy_cluster_name!~"pomerium-.*"})) / 
-            sum by (envoy_cluster_name) (envoy_cluster_membership_total{envoy_cluster_name!~"pomerium-.*"})
-          ) > 0.3
-        for: 2m
-        labels:
-          severity: warning
-          component: envoy
-        annotations:
-          summary: "Cluster health significantly degraded"
-          description: "{{ $value | humanizePercentage }} of hosts unhealthy in cluster {{ $labels.envoy_cluster_name }}"
-          runbook: |
-            1. Check individual host health in the cluster
-            2. Review recent deployments or infrastructure changes
-            3. Monitor network connectivity and DNS resolution
-            4. Verify upstream service capacity and health
+            1. Check Envoy resource usage
+               - Memory: envoy_server_memory_allocated, envoy_server_memory_heap_size
+            2. Review listener connection limits: see https://www.pomerium.com/docs/reference/circuit-breaker-thresholds
+            3. Monitor client connection patterns:
+               - Connection duration: envoy_listener_downstream_cx_length_ms
 
       - alert: MultipleClusterFailures
         expr: |
@@ -81,10 +47,15 @@ groups:
           summary: "Multiple clusters are failing simultaneously"
           description: "{{ $value }} clusters have less than 50% healthy members"
           runbook: |
-            1. This indicates a systemic issue - check infrastructure
-            2. Review network connectivity and DNS
-            3. Check for widespread service outages
-            4. Verify Envoy configuration and recent changes
+            1. This indicates a systemic issue - check infrastructure:
+               - Overall cluster health: avg(envoy_cluster_membership_healthy / envoy_cluster_membership_total)
+               - Network partition indicators: rate(envoy_cluster_upstream_cx_connect_fail[5m])
+            2. Review network connectivity and DNS:
+               - DNS failures: rate(envoy_cluster_upstream_cx_connect_timeout[5m])
+               - Connection establishment: rate(envoy_cluster_upstream_cx_total[5m])
+            3. Check for widespread service outages:
+               - Error rate patterns: sum by (envoy_response_code_class) (rate(envoy_cluster_upstream_rq_xx{envoy_response_code_class="5"}[5m]))
+               - Timeout patterns: sum by (envoy_response_code_class) (rate(envoy_cluster_upstream_rq_timeout[5m]))
 
   - name: pomerium-core
     rules:
@@ -100,12 +71,14 @@ groups:
           component: pomerium
         annotations:
           summary: "High GRPC error rate in Pomerium"
-          description: "{{ $value | humanizePercentage }} GRPC error rate for {{ $labels.grpc_service }}"
+          description: "{{ $value | humanizePercentage }} GRPC error rate for {{ $labels.rpc_service }}"
           runbook: |
-            1. Check databroker service health and connectivity
-            2. Review network connectivity between Pomerium components
-            3. Monitor resource usage on GRPC services
-            4. Check for authentication or authorization service issues
+            1. Check failing GRPC method traces for details.
+            2. Check logs for databroker and/or postgres errors.
+            3. Review databroker service responsiveness: histogram_quantile(0.95, pomerium_rpc_client_duration_bucket{rpc_service="databroker"})
+            4. Monitor resource usage on GRPC services:
+               - Request rate: rate(pomerium_rpc_client_requests_per_rpc_count[5m])
+               - Error breakdown: sum by (rpc_grpc_status_code) (rate(pomerium_rpc_client_requests_per_rpc_count[5m]))
 
       - alert: PomeriumHighHTTPLatency
         expr: |
@@ -117,13 +90,22 @@ groups:
           severity: warning
           component: pomerium
         annotations:
-          summary: "High HTTP latency in Pomerium"
+          summary: "High HTTP latency in Pomerium internal routes"
           description: "95th percentile latency is {{ $value }}ms"
           runbook: |
-            1. Check Pomerium service resource usage (CPU, memory)
-            2. Review upstream service response times
-            3. Monitor database performance if using external datastore
-            4. Check for network latency issues
+            1. Check Pomerium service resource usage:
+               - CPU: rate(process_cpu_seconds_total{job="pomerium"}[5m])
+               - Memory: process_resident_memory_bytes{job="pomerium"}
+               - Goroutines: go_goroutines{job="pomerium"}
+            2. Review upstream service response times:
+               - Upstream latency: histogram_quantile(0.95, envoy_cluster_internal_upstream_rq_time_bucket)
+               - Backend response codes: sum by (envoy_response_code_class) (rate(envoy_cluster_upstream_rq_xx{envoy_cluster_name=~"pomerium-.*"}[5m]))
+            3. Monitor database performance if using external datastore:
+               - DB connection pool: pomerium_databroker_db_connections_active
+               - Query duration: pomerium_databroker_db_query_duration_seconds
+            4. Check for network latency issues:
+               - Request queuing: pomerium_http_server_requests_in_flight
+               - Connection establishment: rate(envoy_cluster_upstream_cx_total[5m])
 
       - alert: PomeriumCertificateExpiringSoon
         expr: pomerium_autocert_certificate_next_expires_seconds < 7 * 24 * 3600
@@ -135,10 +117,18 @@ groups:
           summary: "Pomerium certificate expiring soon"
           description: "Certificate expires in {{ $value | humanizeDuration }}"
           runbook: |
-            1. Check autocert configuration and functionality
-            2. Verify DNS challenge is working properly
-            3. Check Let's Encrypt rate limits
-            4. Ensure certificate renewal process is operational
+            1. Check autocert configuration and functionality:
+               - Certificate expiration times: pomerium_autocert_certificate_next_expires_seconds
+               - Renewal attempts: rate(pomerium_autocert_certificate_renewals_total[1h])
+            2. Verify DNS challenge is working properly:
+               - DNS challenge success: pomerium_autocert_dns_challenges_total{status="success"}
+               - DNS provider errors: rate(pomerium_autocert_dns_challenges_total{status="error"}[1h])
+            3. Check Let's Encrypt rate limits:
+               - Renewal frequency: increase(pomerium_autocert_certificate_renewals_total[24h])
+               - Rate limit hits: pomerium_autocert_rate_limit_exceeded_total
+            4. Ensure certificate renewal process is operational:
+               - Last successful renewal: pomerium_autocert_certificate_last_renewal_timestamp
+               - Renewal errors: rate(pomerium_autocert_certificate_renewals_total{status="error"}[1h])
 
   - name: envoy-server-resources
     rules:
@@ -152,10 +142,18 @@ groups:
           summary: "Envoy memory usage is high"
           description: "Envoy is using {{ $value | humanize1024 }}B of memory"
           runbook: |
-            1. Check for memory leaks in Envoy configuration
-            2. Review connection pool sizes and limits
-            3. Monitor request patterns for memory-intensive operations
-            4. Consider scaling or adjusting memory limits
+            1. Check for memory leaks in Envoy configuration:
+               - Memory growth rate: rate(envoy_server_memory_allocated[10m])
+               - Heap fragmentation: envoy_server_memory_heap_size vs envoy_server_memory_allocated
+            2. Review connection pool sizes and limits:
+               - Active connections: sum(envoy_cluster_upstream_cx_active)
+               - Connection pool overflow: rate(envoy_cluster_upstream_cx_pool_overflow[5m])
+            3. Monitor request patterns for memory-intensive operations:
+               - Request rate: rate(envoy_http_downstream_rq_total[5m])
+               - Response patterns: histogram_quantile(0.95, envoy_http_downstream_rq_time_bucket)
+            4. Consider scaling based on:
+               - Memory utilization trend: rate(envoy_server_memory_allocated[1h])
+               - Available memory: envoy_server_memory_physical_size - envoy_server_memory_allocated
 
       - alert: OverloadManagerActive
         expr: rate(envoy_http_rq_overload_local_reply[1m]) > 0
@@ -167,10 +165,17 @@ groups:
           summary: "Envoy overload manager is dropping requests"
           description: "{{ $value }} requests/sec being dropped due to overload protection"
           runbook: |
-            1. Check Envoy memory and CPU usage immediately
-            2. This indicates system is under severe stress
-            3. Consider emergency scaling or traffic reduction
-            4. Review overload manager thresholds and actions
+            1. Check Envoy memory and CPU usage immediately:
+               - Memory: envoy_server_memory_allocated vs envoy_server_memory_physical_size
+            2. This indicates system is under severe stress:
+               - Request drop rate: rate(envoy_http_rq_overload_local_reply[1m])
+               - Stream resets: rate(envoy_envoy_overload_actions_reset_high_memory_stream_count[1m])
+            3. Consider emergency scaling or traffic reduction:
+               - Incoming request rate: rate(envoy_http_downstream_rq_total[1m])
+               - Connection establishment rate: rate(envoy_listener_downstream_cx_total[1m])
+            4. Review overload manager thresholds:
+               - Overload indicators: rate(envoy_http_rq_overload_local_reply[1m]) > 0
+               - Memory pressure actions: rate(envoy_envoy_overload_actions_reset_high_memory_stream_count[1m])
 
       - alert: ListenerDraining
         expr: envoy_listener_manager_total_filter_chains_draining > 0
@@ -182,10 +187,18 @@ groups:
           summary: "Envoy listeners are draining for extended time"
           description: "{{ $value }} filter chains have been draining for over 10 minutes"
           runbook: |
-            1. Check if certificate renewal is stuck
-            2. Monitor graceful shutdown process
-            3. Verify new configuration deployment status
-            4. Check for connection draining issues
+            1. Check if certificate renewal is stuck:
+               - Certificate expiration: pomerium_autocert_certificate_next_expires_seconds
+               - Renewal process status: pomerium_autocert_certificate_renewals_total
+            2. Monitor graceful shutdown process:
+               - Active connections: envoy_listener_downstream_cx_active
+               - Connection drain rate: rate(envoy_listener_downstream_cx_destroy[5m])
+            3. Verify new configuration deployment status:
+               - Config reload attempts: envoy_server_hot_restart_epoch
+               - Listener modification rate: rate(envoy_listener_manager_listener_modified[10m])
+            4. Check for connection draining issues:
+               - Drain timeout: envoy_listener_manager_total_filter_chains_draining
+               - Connection close rate: rate(envoy_listener_downstream_cx_destroy_local[5m])
 
   - name: envoy-upstream-advanced
     rules:
@@ -199,10 +212,18 @@ groups:
           summary: "High rate of upstream request timeouts"
           description: "{{ $value }} timeouts/sec to cluster {{ $labels.envoy_cluster_name }}"
           runbook: |
-            1. Check upstream service response times and health
-            2. Review timeout configuration for the cluster
-            3. Monitor network latency and connectivity
-            4. Consider adjusting timeout settings if appropriate
+            1. Check upstream service response times and health:
+               - Response time distribution: histogram_quantile(0.95, envoy_cluster_internal_upstream_rq_time_bucket{envoy_cluster_name!~"pomerium-.*"})
+               - Upstream health: envoy_cluster_membership_healthy{envoy_cluster_name!~"pomerium-.*"}
+            2. Review timeout configuration for the cluster:
+               - Current timeout settings vs actual response times
+               - Timeout vs success ratio: rate(envoy_cluster_upstream_rq_timeout[5m]) / rate(envoy_cluster_upstream_rq_total[5m])
+            3. Monitor network latency and connectivity:
+               - Connection establishment time: histogram_quantile(0.95, envoy_cluster_upstream_cx_connect_ms_bucket)
+               - DNS resolution failures: rate(envoy_cluster_upstream_cx_connect_timeout[5m])  
+            4. Consider adjusting timeout settings based on:
+               - Baseline response times: histogram_quantile(0.5, envoy_cluster_internal_upstream_rq_time_bucket)
+               - Error rate impact: rate(envoy_cluster_upstream_rq_xx{envoy_response_code_class="5"}[5m])
 
       - alert: UpstreamRetryExhaustion
         expr: rate(envoy_cluster_upstream_rq_retry_overflow{envoy_cluster_name!~"pomerium-.*"}[5m]) > 0
@@ -214,10 +235,18 @@ groups:
           summary: "Upstream retry budget exhausted"
           description: "{{ $value }} requests/sec hitting retry limits for cluster {{ $labels.envoy_cluster_name }}"
           runbook: |
-            1. Check upstream service health and capacity
-            2. Review retry policy configuration
-            3. Monitor for cascade failures
-            4. Consider adjusting retry limits or circuit breaker settings
+            1. Check upstream service health and capacity:
+               - Service health: envoy_cluster_membership_healthy{envoy_cluster_name!~"pomerium-.*"}
+               - Request success rate: rate(envoy_cluster_upstream_rq_xx{envoy_response_code_class="2"}[5m])
+            2. Review retry policy configuration:
+               - Retry attempts: rate(envoy_cluster_upstream_rq_retry[5m])
+               - Retry success rate: rate(envoy_cluster_upstream_rq_retry_success[5m])
+            3. Monitor for cascade failures:
+               - Circuit breaker status: envoy_cluster_circuit_breakers_default_cx_open
+               - Outlier detection: rate(envoy_cluster_outlier_detection_ejections_enforced_total[5m])
+            4. Consider adjusting retry limits based on:
+               - Current retry budget utilization: rate(envoy_cluster_upstream_rq_retry_overflow[5m])
+               - Upstream error patterns: sum by (envoy_response_code_class) (rate(envoy_cluster_upstream_rq_xx[5m]))
 
   - name: envoy-authorization-detailed
     rules:
@@ -235,10 +264,19 @@ groups:
           summary: "High authorization service latency"
           description: "95th percentile authorization latency is {{ $value }}ms"
           runbook: |
-            1. Check authorization service resource usage
-            2. Monitor database performance for policy evaluation
-            3. Review policy complexity and optimization opportunities
-            4. Check for authorization service scaling needs
+            1. Check authorization service resource usage:
+               - CPU: rate(process_cpu_seconds_total{job="pomerium-authorize"}[5m])
+               - Memory: process_resident_memory_bytes{job="pomerium-authorize"}
+               - Goroutines: go_goroutines{job="pomerium-authorize"}
+            2. Monitor database performance for policy evaluation:
+               - Policy cache hit rate: pomerium_authorize_policy_cache_hits / pomerium_authorize_policy_cache_total
+               - Database query time: histogram_quantile(0.95, pomerium_databroker_db_query_duration_seconds_bucket)
+            3. Review policy complexity and optimization opportunities:
+               - Policy evaluation count: rate(pomerium_authorize_check_total[5m])
+               - Complex policy indicators: pomerium_authorize_check_duration_seconds by policy_id
+            4. Check for authorization service scaling needs:
+               - Request queue depth: pomerium_authorize_checks_in_flight
+               - Service instances: up{job="pomerium-authorize"}
 
       - alert: AuthorizationServiceUnavailable
         expr: |
@@ -255,10 +293,18 @@ groups:
           summary: "Authorization service majority unavailable"
           description: "Less than 50% of authorization service instances are healthy"
           runbook: |
-            1. This will block all authenticated traffic
-            2. Check authorization service health immediately
-            3. Verify service deployment and configuration
-            4. Monitor for cascading failures across the system
+            1. This will block all authenticated traffic:
+               - Impact assessment: rate(envoy_http_downstream_rq_total[1m])
+               - Authorization denial rate: rate(pomerium_authorize_check_total{result="deny"}[1m])
+            2. Check authorization service health immediately:
+               - Service availability: up{job="pomerium-authorize"}
+               - Response time: histogram_quantile(0.95, pomerium_authorize_check_duration_seconds_bucket)
+            3. Verify service deployment and configuration:
+               - Recent deployments: changes in envoy_cluster_membership_total{envoy_cluster_name=~".*authz.*"}
+               - Configuration errors: rate(pomerium_config_reload_total{result="error"}[10m])
+            4. Monitor for cascading failures:
+               - Databroker connectivity: pomerium_grpc_client_requests_total{grpc_service="databroker"}
+               - Authentication service impact: rate(pomerium_authenticate_requests_total[5m])
 
   - name: envoy-tls-security
     rules:
@@ -273,10 +319,18 @@ groups:
           summary: "High rate of TLS handshake failures"
           description: "{{ $value }} TLS verification failures/sec on listener {{ $labels.envoy_listener_address }}"
           runbook: |
-            1. Check client certificate configuration
-            2. Review certificate chain and CA configuration
-            3. Monitor for certificate expiration issues
-            4. Check for potential security attacks or misconfigurations
+            1. Check client certificate configuration:
+               - Certificate verification failures: rate(envoy_listener_ssl_fail_verify_error[5m])
+               - Certificate chain issues: rate(envoy_listener_ssl_fail_verify_cert_hash[5m])
+            2. Review certificate chain and CA configuration:
+               - CA certificate validity: envoy_listener_ssl_ciphers by ssl_cipher
+               - Certificate expiration: pomerium_autocert_certificate_next_expires_seconds
+            3. Monitor for certificate expiration issues:
+               - Client cert expiration patterns: envoy_listener_ssl_fail_verify_error by error_type
+               - Server cert renewal status: rate(pomerium_autocert_certificate_renewals_total[1h])
+            4. Check for potential security attacks or misconfigurations:
+               - Failed handshake patterns: rate(envoy_listener_ssl_handshake[5m])
+               - Connection source analysis: envoy_listener_downstream_cx_total
 
       - alert: NoCertificateAvailable
         expr: rate(envoy_listener_ssl_no_certificate[1m]) > 0
@@ -289,7 +343,15 @@ groups:
           summary: "TLS connections failing due to missing certificates"
           description: "{{ $value }} connections/sec failing due to no certificate"
           runbook: |
-            1. Check certificate provisioning and availability
-            2. Verify autocert functionality if enabled
-            3. Review certificate file permissions and accessibility
-            4. Check for certificate renewal failures
+            1. Check certificate provisioning and availability:
+               - Certificate count: count(pomerium_autocert_certificate_next_expires_seconds)
+               - Missing certificates: sum by (envoy_listener_address) (rate(envoy_listener_ssl_no_certificate[1m]))
+            2. Verify autocert functionality if enabled:
+               - Autocert service health: up{job="pomerium-autocert"}
+               - Certificate provisioning rate: rate(pomerium_autocert_certificate_provisions_total[1h])
+            3. Review certificate file permissions and accessibility:
+               - File system access errors: rate(envoy_filesystem_write_failed[5m])
+               - Certificate load failures: rate(envoy_server_ssl_context_update_failure[5m])
+            4. Check for certificate renewal failures:
+               - Renewal error rate: rate(pomerium_autocert_certificate_renewals_total{status="error"}[1h])
+               - DNS challenge failures: rate(pomerium_autocert_dns_challenges_total{status="error"}[1h])

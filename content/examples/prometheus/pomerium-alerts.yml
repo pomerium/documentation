@@ -227,3 +227,45 @@ groups:
             2. Review database query performance for long-running queries
             3. See https://pkg.go.dev/github.com/jackc/pgx/v4/pgxpool#ParseConfig for connection pool configuration details
 
+  - name: pomerium-config
+    rules:
+      - alert: PomeriumEnvoyConfigurationRejected
+        expr: |
+          increase(envoy_http_rds_update_rejected[5m]) > 0 or
+          increase(envoy_cluster_manager_cds_update_rejected[5m]) > 0 or
+          increase(envoy_listener_manager_lds_update_rejected[5m]) > 0
+        for: 1m
+        labels:
+          severity: critical
+          component: envoy
+          service: configuration
+        annotations:
+          summary: "Envoy configuration update rejected"
+          description: "Envoy has rejected configuration updates - RDS: {{ with query \"increase(envoy_http_rds_update_rejected[5m])\" }}{{ . | first | value }}{{ end }}, CDS: {{ with query \"increase(envoy_cluster_manager_cds_update_rejected[5m])\" }}{{ . | first | value }}{{ end }}, LDS: {{ with query \"increase(envoy_listener_manager_lds_update_rejected[5m])\" }}{{ . | first | value }}{{ end }}"
+          runbook: |
+            1. If LDS updates are rejected, check for possible port conflicts.
+            2. It may indicate a bad config change or a bug in Pomerium, and this config is currently in the databroker.
+            3. DO NOT RESTART POMERIUM if this alert is firing, as it will not restart with a bad config moving forward. 
+            4. Review which recent configuration in the enterprise console may have caused this, and roll them back until the issue is resolved.
+            5. Contact Pomerium support if you are unable to resolve the issue, without restarting Pomerium.
+
+  - name: internal-clusters-health
+    rules:
+      - alert: InternalPomeriumClusterHealthDegraded
+        expr: |
+          (
+            (sum by (envoy_cluster_name) (envoy_cluster_membership_total{envoy_cluster_name=~"pomerium-.*"}) - 
+             sum by (envoy_cluster_name) (envoy_cluster_membership_healthy{envoy_cluster_name=~"pomerium-.*"})) / 
+            sum by (envoy_cluster_name) (envoy_cluster_membership_total{envoy_cluster_name=~"pomerium-.*"})
+          ) > 0
+        for: 2m
+        labels:
+          severity: warning
+          component: envoy
+        annotations:
+          summary: "Internal Pomerium cluster health degraded"
+          description: "{{ $value | humanizePercentage }} of hosts unhealthy in cluster {{ $labels.envoy_cluster_name }}"
+          runbook: |
+            1. Consider restarting the Pomerium service
+            2. Check for the errors in the Pomerium logs
+
