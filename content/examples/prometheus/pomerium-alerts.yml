@@ -1,0 +1,214 @@
+groups:
+  - name: envoy-ext-authz
+    rules:
+      - alert: ExtAuthzErrors
+        expr: rate(envoy_http_ext_authz_error[1m]) > 0
+        for: 1m
+        labels:
+          severity: critical
+          component: pomerium
+          service: authorization
+        annotations:
+          summary: "External authorization service errors"
+          description: "{{ $value }} authorization errors/sec"
+          runbook: |
+            1. Check Authorization service logs for detailed error messages
+            2. Check the traces for `ext_authz` calls that are failing and see the root cause
+            3. Check resource utilization (CPU, memory, network)
+            4. Verify external dependencies (IDP and databases)
+
+  - name: pomerium-application
+    rules:
+      - alert: PomeriumGRPCServerErrors
+        expr: rate(pomerium_rpc_server_requests_per_rpc_count{rpc_grpc_status_code!="0"}[5m]) > 0.1
+        for: 2m
+        labels:
+          severity: warning
+          component: pomerium
+          service: grpc
+        annotations:
+          summary: "High GRPC server error rate"
+          description: "GRPC server error rate is {{ $value }} errors/sec for service {{ $labels.grpc_service }}"
+          runbook: |
+            1. Check which service specifically is having issues 
+
+      - alert: PomeriumGRPCServerLatencyHigh
+        expr: histogram_quantile(0.95, rate(pomerium_rpc_server_duration_milliseconds_bucket[5m])) > 1000
+        for: 3m
+        labels:
+          severity: warning
+          component: pomerium
+          service: grpc
+        annotations:
+          summary: "High GRPC server latency"
+          description: "95th percentile GRPC latency is {{ $value }}ms for service {{ $labels.grpc_service }}"
+          runbook: |
+            1. Check traces for the specific service calls that are slow
+
+      - alert: PomeriumHTTPServerErrors
+        expr: rate(pomerium_http_server_requests_total{http_status=~"5.."}[5m]) > 0.1
+        for: 2m
+        labels:
+          severity: warning
+          component: pomerium
+          service: http
+        annotations:
+          summary: "High HTTP server error rate"
+          description: "HTTP 5xx error rate is {{ $value }} errors/sec for host {{ $labels.host }}"
+          runbook: |
+            1. Check proxy logs for specific error messages related to the internal pomerium routes such as `/.pomerium/*` 
+
+      - alert: PomeriumHTTPServerLatencyHigh
+        expr: histogram_quantile(0.95, rate(pomerium_http_server_request_duration_ms_bucket[5m])) > 2000
+        for: 3m
+        labels:
+          severity: warning
+          component: pomerium
+          service: http
+        annotations:
+          summary: "High HTTP server latency"
+          description: "95th percentile HTTP latency is {{ $value }}ms for host {{ $labels.host }}"
+          runbook: |
+            1. Check traces for the specific HTTP requests that are slow
+            2. Check resource utilization (CPU, memory)
+
+      - alert: PomeriumAuthorizationDenialRateHigh
+        expr: rate(envoy_http_ext_authz_denied[5m]) / rate(envoy_http_ext_authz_ok[5m]) > 0.1
+        for: 3m
+        labels:
+          severity: warning
+          component: pomerium
+          service: authorization
+        annotations:
+          summary: "High authorization denial rate"
+          description: "Authorization denial rate is {{ $value | humanizePercentage }} of total requests"
+          runbook: |
+            1. Check for policy configuration changes
+            2. Review user access patterns and permissions
+            3. Verify identity provider integration
+            4. Check for potential security incidents
+
+      - alert: PomeriumAuthorizationEvaluationLatencyHigh
+        expr: histogram_quantile(0.95, rate(pomerium_authorize_evaluator_evaluation_duration_milliseconds_bucket[5m])) > 500
+        for: 3m
+        labels:
+          severity: warning
+          component: pomerium
+          service: authorization
+        annotations:
+          summary: "High authorization evaluation latency"
+          description: "95th percentile authorization evaluation latency is {{ $value }}ms"
+          runbook: |
+            1. Check traces for slow authorization evaluations
+            2. Verify databroker performance
+            3. Review resource utilization
+
+      - alert: PomeriumAutocertCertificateExpiringSoon
+        expr: pomerium_autocert_certificate_next_expires_seconds - time() < 604800
+        for: 1h
+        labels:
+          severity: warning
+          component: pomerium
+          service: autocert
+        annotations:
+          summary: "Autocert certificate expiring soon"
+          description: "Next certificate expires in {{ $value | humanizeDuration }}"
+          runbook: |
+            1. Check autocert renewal logs
+            2. Verify ACME provider connectivity
+            3. Check domain DNS configuration
+            4. Verify autocert storage accessibility
+
+      - alert: PomeriumAutocertRenewalFailures
+        expr: increase(pomerium_autocert_renewals_total[1h]) == 0 and pomerium_autocert_certificate_next_expires_seconds - time() < 2592000
+        for: 2h
+        labels:
+          severity: critical
+          component: pomerium
+          service: autocert
+        annotations:
+          summary: "Autocert certificate renewal failures"
+          description: "No certificate renewals in the last hour with certificates expiring soon"
+          runbook: |
+            1. Check autocert logs for renewal errors
+            2. Verify ACME provider status and rate limits
+            3. Check domain ownership and DNS configuration
+            4. Verify autocert storage permissions
+
+      - alert: PomeriumIdentityManagerSessionRefreshFailures
+        expr: rate(pomerium_identity_manager_session_refresh_errors[5m]) > 0.1
+        for: 5m
+        labels:
+          severity: warning
+          component: pomerium
+          service: identity-manager
+        annotations:
+          summary: "High session refresh failure rate"
+          description: "Session refresh failure rate is {{ $value }} failures/sec"
+          runbook: |
+            1. Check identity provider connectivity and health
+            2. Verify OAuth2/OIDC configuration
+            3. Check token refresh endpoint availability
+            4. Review identity provider rate limits
+
+      - alert: PomeriumIdentityManagerUserRefreshFailures
+        expr: rate(pomerium_identity_manager_last_user_refresh_errors[5m]) > 0.1
+        for: 5m
+        labels:
+          severity: warning
+          component: pomerium
+          service: identity-manager
+        annotations:
+          summary: "High user refresh failure rate"
+          description: "User refresh failure rate is {{ $value }} failures/sec"
+          runbook: |
+            1. Check identity provider user endpoint availability
+            2. Verify API permissions and scopes
+            3. Check identity provider rate limits
+            4. Review user synchronization configuration
+
+      - alert: PomeriumIdentityManagerStaleData
+        expr: time() - pomerium_identity_manager_last_refresh_timestamp > 3600
+        for: 10m
+        labels:
+          severity: warning
+          component: pomerium
+          service: identity-manager
+        annotations:
+          summary: "Identity manager data is stale"
+          description: "Identity data hasn't been refreshed in over 1 hour"
+          runbook: |
+            1. Check logs for errors
+
+      - alert: PomeriumMemoryUsageHigh
+        expr: go_memstats_alloc_bytes / go_memstats_sys_bytes > 0.9
+        for: 5m
+        labels:
+          severity: warning
+          component: pomerium
+          service: runtime
+        annotations:
+          summary: "High memory usage"
+          description: "Memory usage is {{ $value | humanizePercentage }} of allocated memory"
+          runbook: |
+            1. Check for memory leaks in service logs
+            2. Review service scaling configuration
+            3. Check for unusual traffic patterns
+            4. Consider increasing memory limits
+
+      - alert: PomeriumGoroutineLeakSuspected
+        expr: go_goroutines > 1000
+        for: 10m
+        labels:
+          severity: warning
+          component: pomerium
+          service: runtime
+        annotations:
+          summary: "High goroutine count suggests potential leak"
+          description: "Goroutine count is {{ $value }}, potential leak"
+          runbook: |
+            1. Check service logs for connection leaks
+            2. Review service restart patterns
+            3. Monitor goroutine growth rate
+            4. Consider service restart if confirmed leak
+

@@ -181,6 +181,7 @@ The remaining annotations are specific to or behave differently than they do whe
 | `ingress.pomerium.io/mcp_client` | When set to `"true"`, configures the route as an MCP (Model Context Protocol) client. The URL is defined by the service backend. |
 | `ingress.pomerium.io/mcp_server` | When set to `"true"`, configures the route as an MCP (Model Context Protocol) server. The URL is defined by the service backend. Optional if other MCP server annotations are present. |
 | `ingress.pomerium.io/mcp_server_max_request_bytes` | Sets the maximum request body size for MCP server routes. |
+| `ingress.pomerium.io/mcp_server_path` | Sets the path property for MCP server routes, used when returning the server URL in the .mcp/routes endpoint. Defaults to "/" if not specified. |
 | `ingress.pomerium.io/mcp_server_upstream_oauth2_secret` | Name of a Kubernetes Secret containing OAuth2 credentials for MCP server upstream authentication. |
 | `ingress.pomerium.io/mcp_server_upstream_oauth2_token_url` | OAuth2 token URL for MCP server upstream authentication. |
 | `ingress.pomerium.io/mcp_server_upstream_oauth2_scopes` | Comma-separated list of OAuth2 scopes for MCP server upstream authentication. |
@@ -747,6 +748,7 @@ All MCP annotations use the `ingress.pomerium.io/` prefix.
 
 - `ingress.pomerium.io/mcp_server: "true"` - Configures the route as an MCP server. Optional if other MCP server annotations are present.
 - `ingress.pomerium.io/mcp_server_max_request_bytes` - Sets the maximum request body size for MCP server routes (optional)
+- `ingress.pomerium.io/mcp_server_path` - Sets the path property for MCP server routes, used when returning the server URL in the .mcp/routes endpoint. Defaults to "/" if not specified (optional)
 
 **Client Mode:**
 
@@ -790,6 +792,37 @@ metadata:
   name: mcp-server
   annotations:
     ingress.pomerium.io/mcp_server: 'true'
+spec:
+  ingressClassName: pomerium
+  rules:
+    - host: mcp.example.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: mcp-server-service
+                port:
+                  number: 8080
+  tls:
+    - hosts:
+        - mcp.example.com
+      secretName: mcp-tls
+```
+
+#### MCP Server with Custom Path
+
+If your upstream client application makes use of [MCP Routes Enumeration](https://main.docs.pomerium.com/docs/capabilities/mcp#listing-available-mcp-servers) to determine the exact URL the MCP Streaming HTTP is exposed at, you may specify it with this annotation.
+
+```yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: mcp-server-with-path
+  annotations:
+    ingress.pomerium.io/mcp_server: 'true'
+    ingress.pomerium.io/mcp_server_path: '/api/v1/mcp'
 spec:
   ingressClassName: pomerium
   rules:

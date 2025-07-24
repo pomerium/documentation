@@ -1,0 +1,295 @@
+groups:
+  - name: envoy-listeners
+    rules:
+      - alert: ListenerConnectionOverflow
+        expr: rate(envoy_listener_downstream_cx_overflow[1m]) > 0
+        for: 1m
+        labels:
+          severity: critical
+          component: envoy
+        annotations:
+          summary: "Listener connection limit exceeded"
+          description: "{{ $value }} connections/sec rejected at listener {{ $labels.envoy_listener_address }}"
+          runbook: |
+            1. Check Envoy resource usage (CPU, memory, file descriptors)
+            2. Review listener connection limits configuration
+            3. Monitor client connection patterns
+            4. Consider scaling Envoy instances or adjusting limits
+
+      - alert: GlobalConnectionOverflow
+        expr: rate(envoy_server_downstream_global_cx_overflow[1m]) > 0
+        for: 1m
+        labels:
+          severity: critical
+          component: envoy
+        annotations:
+          summary: "Global connection limit exceeded"
+          description: "{{ $value }} connections/sec rejected due to global connection limits"
+          runbook: |
+            1. Check overall Envoy resource capacity
+            2. Review global connection limit settings
+            3. Monitor total connection usage across all listeners
+            4. Consider horizontal scaling of Envoy instances
+
+      - alert: OverloadManagerReject
+        expr: rate(envoy_listener_downstream_cx_overload_reject[5m]) > 0
+        for: 30s
+        labels:
+          severity: critical
+          component: envoy
+        annotations:
+          summary: "Overload manager rejecting connections"
+          description: "{{ $value }} connections/sec rejected by overload manager"
+          runbook: |
+            1. Check Envoy memory and CPU usage immediately
+            2. Review overload manager configuration
+            3. Monitor resource saturation metrics
+            4. Consider emergency scaling or traffic reduction
+
+  - name: envoy-composite-health
+    rules:
+      - alert: ClusterHealthDegraded
+        expr: |
+          (
+            (sum by (envoy_cluster_name) (envoy_cluster_membership_total{envoy_cluster_name!~"pomerium-.*"}) - 
+             sum by (envoy_cluster_name) (envoy_cluster_membership_healthy{envoy_cluster_name!~"pomerium-.*"})) / 
+            sum by (envoy_cluster_name) (envoy_cluster_membership_total{envoy_cluster_name!~"pomerium-.*"})
+          ) > 0.3
+        for: 2m
+        labels:
+          severity: warning
+          component: envoy
+        annotations:
+          summary: "Cluster health significantly degraded"
+          description: "{{ $value | humanizePercentage }} of hosts unhealthy in cluster {{ $labels.envoy_cluster_name }}"
+          runbook: |
+            1. Check individual host health in the cluster
+            2. Review recent deployments or infrastructure changes
+            3. Monitor network connectivity and DNS resolution
+            4. Verify upstream service capacity and health
+
+      - alert: MultipleClusterFailures
+        expr: |
+          count(
+            (envoy_cluster_membership_healthy{envoy_cluster_name!~"pomerium-.*"} / envoy_cluster_membership_total{envoy_cluster_name!~"pomerium-.*"}) < 0.5
+          ) by (envoy_cluster_name) > 2
+        for: 1m
+        labels:
+          severity: critical
+          component: envoy
+        annotations:
+          summary: "Multiple clusters are failing simultaneously"
+          description: "{{ $value }} clusters have less than 50% healthy members"
+          runbook: |
+            1. This indicates a systemic issue - check infrastructure
+            2. Review network connectivity and DNS
+            3. Check for widespread service outages
+            4. Verify Envoy configuration and recent changes
+
+  - name: pomerium-core
+    rules:
+      - alert: PomeriumHighGRPCErrorRate
+        expr: |
+          (
+            rate(pomerium_grpc_client_requests_total{grpc_client_status!="OK"}[5m]) / 
+            clamp_min(rate(pomerium_grpc_client_requests_total[5m]), 1)
+          ) > 0.05
+        for: 2m
+        labels:
+          severity: warning
+          component: pomerium
+        annotations:
+          summary: "High GRPC error rate in Pomerium"
+          description: "{{ $value | humanizePercentage }} GRPC error rate for {{ $labels.grpc_service }}"
+          runbook: |
+            1. Check databroker service health and connectivity
+            2. Review network connectivity between Pomerium components
+            3. Monitor resource usage on GRPC services
+            4. Check for authentication or authorization service issues
+
+      - alert: PomeriumHighHTTPLatency
+        expr: |
+          histogram_quantile(0.95, 
+            sum(rate(pomerium_http_server_request_duration_ms_bucket[5m])) by (le)
+          ) > 1000
+        for: 3m
+        labels:
+          severity: warning
+          component: pomerium
+        annotations:
+          summary: "High HTTP latency in Pomerium"
+          description: "95th percentile latency is {{ $value }}ms"
+          runbook: |
+            1. Check Pomerium service resource usage (CPU, memory)
+            2. Review upstream service response times
+            3. Monitor database performance if using external datastore
+            4. Check for network latency issues
+
+      - alert: PomeriumCertificateExpiringSoon
+        expr: pomerium_autocert_certificate_next_expires_seconds < 7 * 24 * 3600
+        for: 0s
+        labels:
+          severity: warning
+          component: pomerium
+        annotations:
+          summary: "Pomerium certificate expiring soon"
+          description: "Certificate expires in {{ $value | humanizeDuration }}"
+          runbook: |
+            1. Check autocert configuration and functionality
+            2. Verify DNS challenge is working properly
+            3. Check Let's Encrypt rate limits
+            4. Ensure certificate renewal process is operational
+
+  - name: envoy-server-resources
+    rules:
+      - alert: HighMemoryUsage
+        expr: envoy_server_memory_allocated > 1024 * 1024 * 1024
+        for: 5m
+        labels:
+          severity: warning
+          component: envoy
+        annotations:
+          summary: "Envoy memory usage is high"
+          description: "Envoy is using {{ $value | humanize1024 }}B of memory"
+          runbook: |
+            1. Check for memory leaks in Envoy configuration
+            2. Review connection pool sizes and limits
+            3. Monitor request patterns for memory-intensive operations
+            4. Consider scaling or adjusting memory limits
+
+      - alert: OverloadManagerActive
+        expr: rate(envoy_http_rq_overload_local_reply[1m]) > 0
+        for: 30s
+        labels:
+          severity: critical
+          component: envoy
+        annotations:
+          summary: "Envoy overload manager is dropping requests"
+          description: "{{ $value }} requests/sec being dropped due to overload protection"
+          runbook: |
+            1. Check Envoy memory and CPU usage immediately
+            2. This indicates system is under severe stress
+            3. Consider emergency scaling or traffic reduction
+            4. Review overload manager thresholds and actions
+
+      - alert: ListenerDraining
+        expr: envoy_listener_manager_total_filter_chains_draining > 0
+        for: 10m
+        labels:
+          severity: warning
+          component: envoy
+        annotations:
+          summary: "Envoy listeners are draining for extended time"
+          description: "{{ $value }} filter chains have been draining for over 10 minutes"
+          runbook: |
+            1. Check if certificate renewal is stuck
+            2. Monitor graceful shutdown process
+            3. Verify new configuration deployment status
+            4. Check for connection draining issues
+
+  - name: envoy-upstream-advanced
+    rules:
+      - alert: UpstreamRequestTimeouts
+        expr: rate(envoy_cluster_upstream_rq_timeout{envoy_cluster_name!~"pomerium-.*"}[5m]) > 0.1
+        for: 2m
+        labels:
+          severity: warning
+          component: envoy
+        annotations:
+          summary: "High rate of upstream request timeouts"
+          description: "{{ $value }} timeouts/sec to cluster {{ $labels.envoy_cluster_name }}"
+          runbook: |
+            1. Check upstream service response times and health
+            2. Review timeout configuration for the cluster
+            3. Monitor network latency and connectivity
+            4. Consider adjusting timeout settings if appropriate
+
+      - alert: UpstreamRetryExhaustion
+        expr: rate(envoy_cluster_upstream_rq_retry_overflow{envoy_cluster_name!~"pomerium-.*"}[5m]) > 0
+        for: 1m
+        labels:
+          severity: warning
+          component: envoy
+        annotations:
+          summary: "Upstream retry budget exhausted"
+          description: "{{ $value }} requests/sec hitting retry limits for cluster {{ $labels.envoy_cluster_name }}"
+          runbook: |
+            1. Check upstream service health and capacity
+            2. Review retry policy configuration
+            3. Monitor for cascade failures
+            4. Consider adjusting retry limits or circuit breaker settings
+
+  - name: envoy-authorization-detailed
+    rules:
+      - alert: AuthorizationLatencyHigh
+        expr: |
+          histogram_quantile(0.95, 
+            sum(rate(envoy_cluster_internal_upstream_rq_time_bucket{envoy_cluster_name=~".*authz.*|.*auth.*"}[5m])) by (envoy_cluster_name, le)
+          ) > 500
+        for: 3m
+        labels:
+          severity: warning
+          component: envoy
+          service: authorization
+        annotations:
+          summary: "High authorization service latency"
+          description: "95th percentile authorization latency is {{ $value }}ms"
+          runbook: |
+            1. Check authorization service resource usage
+            2. Monitor database performance for policy evaluation
+            3. Review policy complexity and optimization opportunities
+            4. Check for authorization service scaling needs
+
+      - alert: AuthorizationServiceUnavailable
+        expr: |
+          (
+            envoy_cluster_membership_healthy{envoy_cluster_name=~".*authz.*|.*auth.*"} / 
+            envoy_cluster_membership_total{envoy_cluster_name=~".*authz.*|.*auth.*"}
+          ) < 0.5
+        for: 1m
+        labels:
+          severity: critical
+          component: envoy
+          service: authorization
+        annotations:
+          summary: "Authorization service majority unavailable"
+          description: "Less than 50% of authorization service instances are healthy"
+          runbook: |
+            1. This will block all authenticated traffic
+            2. Check authorization service health immediately
+            3. Verify service deployment and configuration
+            4. Monitor for cascading failures across the system
+
+  - name: envoy-tls-security
+    rules:
+      - alert: TLSHandshakeFailures
+        expr: rate(envoy_listener_ssl_fail_verify_error[5m]) > 0.1
+        for: 2m
+        labels:
+          severity: warning
+          component: envoy
+          category: security
+        annotations:
+          summary: "High rate of TLS handshake failures"
+          description: "{{ $value }} TLS verification failures/sec on listener {{ $labels.envoy_listener_address }}"
+          runbook: |
+            1. Check client certificate configuration
+            2. Review certificate chain and CA configuration
+            3. Monitor for certificate expiration issues
+            4. Check for potential security attacks or misconfigurations
+
+      - alert: NoCertificateAvailable
+        expr: rate(envoy_listener_ssl_no_certificate[1m]) > 0
+        for: 1m
+        labels:
+          severity: critical
+          component: envoy
+          category: security
+        annotations:
+          summary: "TLS connections failing due to missing certificates"
+          description: "{{ $value }} connections/sec failing due to no certificate"
+          runbook: |
+            1. Check certificate provisioning and availability
+            2. Verify autocert functionality if enabled
+            3. Review certificate file permissions and accessibility
+            4. Check for certificate renewal failures
