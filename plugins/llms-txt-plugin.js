@@ -1,54 +1,99 @@
 const fs = require('fs');
 const path = require('path');
+const {remark} = require('remark');
+const remarkParse = require('remark-parse').default;
+const remarkStringify = require('remark-stringify').default;
+const remarkMdx = require('remark-mdx').default;
+const visit = require('unist-util-visit').visit;
 
 /**
- * Docusaurus plugin to generate llms.txt file for LLM consumption
- * Based on the actual documentation structure and metadata
+ * Pre-clean Docusaurus MDX files before remark parsing.
+ * - Removes all :::admonition blocks (keeps the content inside)
+ * - Removes <Tabs>...</Tabs> and <TabItem ...>...</TabItem> blocks (keeps content inside)
+ * - Strips any remaining standalone ::: lines
  */
-async function pluginLlmsTxt(context, options) {
-  return {
-    name: 'llms-txt-plugin',
+function preCleanDocusaurusMDX(raw) {
+  // Remove YAML frontmatter at the very top (--- ... ---)
+  raw = raw.replace(/^---[\s\S]*?---\s*(\n|$)/, '');
 
-    async postBuild({outDir, routes, ...buildContext}) {
-      try {
-        // Use Docusaurus routes data instead of manual file scanning
-        const docRoutes = filterDocumentationRoutes(routes);
+  // Remove all Docusaurus import lines
+  raw = raw.replace(/^\s*import\s.*from\s+['"][^'"]+['"];?\s*$/gm, '');
 
-        // If routes are not properly populated, fallback to file scanning
-        let finalRoutes = docRoutes;
-        if (docRoutes.length < 10) {
-          console.log(
-            '⚠️  Routes seem incomplete, falling back to file scanning...',
-          );
-          const contentDir = path.join(context.siteDir, 'content', 'docs');
-          finalRoutes = await scanDocumentationFiles(contentDir);
+  // Remove <Tabs>, </Tabs>, <TabItem ...>, </TabItem>
+  raw = raw.replace(/<\/?Tabs[^>]*>/g, '');
+  raw = raw.replace(/<\/?TabItem[^>]*>/g, '');
+
+  // Remove all Docusaurus admonition blocks (with all contents)
+  raw = raw.replace(
+    /^:::(info|note|caution|tip|danger|important|success|failure|admonition)[^\n]*\n([\s\S]*?)^:::\s*$/gm,
+    '',
+  );
+
+  // Remove any "orphan" closing or opening :::
+  raw = raw.replace(/^:::\s*$/gm, '');
+
+  // Optionally strip extra blank lines
+  raw = raw.replace(/^\s*\n/gm, '');
+
+  return raw;
+}
+
+/**
+ * Clean Markdown/MDX for LLM ingestion using remark AST
+ * - Strips YAML frontmatter
+ * - Strips import/export statements (MDX)
+ * - Strips MDX JSX elements and self-closing components
+ * - Removes images (optional: swap with alt text)
+ * - Leaves code blocks and inline code untouched
+ */
+async function cleanMarkdownForLLM(rawContent) {
+  const processor = remark()
+    .use(remarkParse)
+    .use(remarkMdx)
+    .use(() => (tree) => {
+      // Remove YAML frontmatter
+      tree.children = tree.children.filter(
+        (node) =>
+          node.type !== 'yaml' && // Remove frontmatter
+          node.type !== 'mdxjsEsm' && // Remove import/export
+          node.type !== 'mdxJsxFlowElement' &&
+          node.type !== 'mdxJsxTextElement',
+      );
+      // Remove images
+      visit(tree, (node, index, parent) => {
+        if (node.type === 'image' && parent && typeof index === 'number') {
+          parent.children.splice(index, 1);
         }
+      });
+    })
+    .use(remarkStringify, {
+      fences: true,
+      bullet: '-',
+      rule: '-',
+      listItemIndent: 'one',
+      // Important! Do not stringify YAML nodes (just in case)
+      // This setting may not exist, but keeping for emphasis.
+    });
 
-        // Auto-detect categories from sidebars and route structure
-        const routesByCategory = await groupRoutesByCategoryAuto(
-          finalRoutes,
-          context,
-        );
+  const result = await processor.process(rawContent);
 
-        // Generate the llms.txt content
-        const llmsTxtContent = generateLlmsTxtContent(
-          routesByCategory,
-          context,
-        );
+  // Optionally trim excessive blank lines
+  return result.value.replace(/\n{3,}/g, '\n\n');
+}
 
-        // Write the llms.txt file to the build output
-        const llmsTxtPath = path.join(outDir, 'llms.txt');
-        await fs.promises.writeFile(llmsTxtPath, llmsTxtContent, 'utf8');
-
-        console.log(
-          `✅ Generated llms.txt with ${finalRoutes.length} documentation pages`,
-        );
-      } catch (error) {
-        console.error('❌ Error generating llms.txt:', error);
-        throw error;
-      }
-    },
-  };
+/**
+ * Filter routes to only include documentation routes
+ */
+function filterDocumentationRoutes(routes) {
+  return routes.filter((route) => {
+    return (
+      route.path.startsWith('/docs/') &&
+      route.path !== '/docs/' &&
+      !route.path.includes('/api/') &&
+      !route.path.includes('/_') &&
+      route.component !== '@theme/NotFound/Content'
+    );
+  });
 }
 
 /**
@@ -230,9 +275,6 @@ function isCoreConcept(subsection) {
  * Generate the llms.txt file content
  */
 function generateLlmsTxtContent(routesByCategory, context) {
-  const {siteConfig} = context;
-  const baseUrl = siteConfig.url;
-
   let content = `# Pomerium Documentation
 
 This file contains information about Pomerium's public documentation to help LLMs understand and reference our documentation.
@@ -241,22 +283,36 @@ Pomerium is an identity and context-aware access proxy that provides secure acce
 
 `;
 
-  // Generate sections for each category
   Object.entries(routesByCategory).forEach(([categoryName, routes]) => {
     content += `## ${categoryName}\n\n`;
 
-    // Sort routes for better organization
     const sortedRoutes = sortRoutes(routes);
 
     sortedRoutes.forEach((route) => {
       const title = getRouteTitle(route);
       const description = getRouteDescription(route);
-      const url = `${baseUrl}${route.path}`;
+      let mdFilePath = route.filePath || '';
+      // Make the path relative to the docs root for the link
+      let relPath = '';
+      if (mdFilePath) {
+        const docsRoot = path.join(context.siteDir, 'content', 'docs');
+        relPath = path.relative(docsRoot, mdFilePath).replace(/\\/g, '/');
+        if (relPath.startsWith('..')) {
+          relPath = path.basename(mdFilePath);
+        }
+        // Always output .md extension
+        relPath = relPath.replace(/\.(mdx|md)$/, '.md');
+      }
+      const mdUrl = relPath ? `content/docs/${relPath}` : '';
 
-      if (description) {
-        content += `- [${title}](${url}): ${description}\n`;
+      if (description && mdUrl) {
+        content += `- [${title}](${mdUrl}): ${description}\n`;
+      } else if (mdUrl) {
+        content += `- [${title}](${mdUrl})\n`;
+      } else if (description) {
+        content += `- ${title}: ${description}\n`;
       } else {
-        content += `- [${title}](${url})\n`;
+        content += `- ${title}\n`;
       }
     });
 
@@ -329,25 +385,7 @@ function getRouteDescription(route) {
   if (route.metadata?.description) {
     return route.metadata.description;
   }
-
-  // Could add logic to extract description from frontmatter
-  // or generate default descriptions based on category/path
   return null;
-}
-
-/**
- * Filter routes to only include documentation routes
- */
-function filterDocumentationRoutes(routes) {
-  return routes.filter((route) => {
-    return (
-      route.path.startsWith('/docs/') &&
-      route.path !== '/docs/' &&
-      !route.path.includes('/api/') &&
-      !route.path.includes('/_') &&
-      route.component !== '@theme/NotFound/Content'
-    );
-  });
 }
 
 /**
@@ -544,6 +582,114 @@ function sortCategories(categories) {
   });
 
   return sorted;
+}
+
+/**
+ * Main plugin
+ */
+async function pluginLlmsTxt(context, options) {
+  return {
+    name: 'llms-txt-plugin',
+
+    async postBuild({outDir, routes, ...buildContext}) {
+      try {
+        // Use Docusaurus routes data instead of manual file scanning
+        const docRoutes = filterDocumentationRoutes(routes);
+
+        // If routes are not properly populated, fallback to file scanning
+        let finalRoutes = docRoutes;
+        if (docRoutes.length < 10) {
+          console.log(
+            '⚠️  Routes seem incomplete, falling back to file scanning...',
+          );
+          const contentDir = path.join(context.siteDir, 'content', 'docs');
+          finalRoutes = await scanDocumentationFiles(contentDir);
+        }
+
+        // Auto-detect categories from sidebars and route structure
+        const routesByCategory = await groupRoutesByCategoryAuto(
+          finalRoutes,
+          context,
+        );
+
+        // Generate the llms.txt content
+        const llmsTxtContent = generateLlmsTxtContent(
+          routesByCategory,
+          context,
+        );
+
+        // Write the llms.txt file to the build output
+        const llmsTxtPath = path.join(outDir, 'llms.txt');
+        await fs.promises.writeFile(llmsTxtPath, llmsTxtContent, 'utf8');
+
+        // Copy and CLEAN referenced markdown files to the build output (as .md)
+        const docsRoot = path.join(context.siteDir, 'content', 'docs');
+        let copied = 0,
+          errors = 0;
+        for (const route of finalRoutes) {
+          let srcFile = route.filePath;
+          if (!srcFile) continue;
+
+          // Add skip logic here
+          const skipPatterns = [
+            '_template.mdx',
+            /^_/, // files/folders starting with "_",
+            'versions.mdx',
+          ];
+          if (
+            skipPatterns.some((pat) =>
+              typeof pat === 'string'
+                ? srcFile.includes(pat)
+                : pat.test(path.basename(srcFile)),
+            )
+          ) {
+            continue; // Skip this file silently
+          }
+
+          // Always copy as .md
+          let destRel = path.relative(docsRoot, srcFile).replace(/\\/g, '/');
+          destRel = destRel.replace(/\.(mdx|md)$/, '.md');
+          if (destRel.startsWith('..')) {
+            destRel = path.basename(srcFile).replace(/\.(mdx|md)$/, '.md');
+          }
+          const destFile = path.join(outDir, 'content', 'docs', destRel);
+          // Ensure directory exists
+          await fs.promises.mkdir(path.dirname(destFile), {recursive: true});
+          // Read, clean, and write file
+          try {
+            const rawContent = await fs.promises.readFile(srcFile, 'utf8');
+            const preCleanedContent = preCleanDocusaurusMDX(rawContent);
+            let cleanedContent;
+            try {
+              cleanedContent = await cleanMarkdownForLLM(preCleanedContent);
+            } catch (err) {
+              console.warn(
+                `Warning: Could not fully process ${srcFile}, writing pre-cleaned version instead:`,
+                err.message,
+              );
+              cleanedContent = preCleanedContent;
+              errors++;
+            }
+            await fs.promises.writeFile(destFile, cleanedContent, 'utf8');
+            copied++;
+          } catch (err) {
+            console.warn(
+              `Warning: Could not read or write ${srcFile}:`,
+              err.message,
+            );
+            errors++;
+          }
+        }
+
+        console.log(
+          `✅ Generated llms.txt with ${finalRoutes.length} documentation pages. Copied and cleaned ${copied} markdown sources. ${errors ? `(${errors} errors)` : ''}`,
+        );
+      } catch (error) {
+        console.error('❌ Error generating llms.txt:', error);
+        throw error;
+      }
+    },
+  };
 }
 
 module.exports = pluginLlmsTxt;

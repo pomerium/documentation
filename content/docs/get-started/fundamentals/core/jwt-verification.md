@@ -82,7 +82,6 @@ Here's how the JWT authentication flow looks at a high level:
 2. Pomerium redirects the client to the IdP, the client signs in, and Pomerium gets the user's ID, Access, and Refresh tokens
 
 3. Two important actions happen here:
-
    1. Pomerium mints a new **Pomerium JWT**, which includes the original ID token claims and additional Pomerium-based claims (we never leak the original ID token)
    2. Pomerium checks if the user is authorized to access the upstream service, inserts the Pomerium JWT in the JWT Assertion Header, cryptographically signs the header, and then sends the request to the upstream service
 

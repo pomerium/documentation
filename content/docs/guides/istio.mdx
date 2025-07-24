@@ -168,7 +168,6 @@ Now that Pomerium is installed in the cluster, we can define authentication and 
    ```
 
    This file defines two Custom Resources. The first is a `RequestAuthentication`, and it specifies:
-
    - For objects with the `app.kubernetes.io/name` label matching `nginx`, Istio will check that:
      - the request includes the header `X-Pomerium-Jwt-Assertion`, which provides a JWT,
      - **and** that JWT is issued by the Pomerium Authenticate service,
@@ -177,7 +176,6 @@ Now that Pomerium is installed in the cluster, we can define authentication and 
    If the JWT is found and validated, then the content within can be checked against the `AuthorizationPolicy` below. If the JWT is provided but not validated, it will not pass `RequestAuthentication`. If the JWT is not provided, the request will automatically fail any `AuthorizationPolicy`.
 
    The second resource is an `AuthorizationPolicy`, and it species:
-
    - For objects with the `app.kubernetes.io/name` label matching `nginx`, only allow requests:
      - **if** the request includes a JWT (already validated by `RequestAuthentication`) with the audience key `aud`,
      - **and** the value of the `aud` key matches our known route, `hello.localhost.pomerium.io`.
