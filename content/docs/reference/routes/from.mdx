@@ -21,9 +21,11 @@ The **From** URL is the externally accessible URL for a proxied HTTP request.
 
 Specifying `tcp+https` or `udp+https` for the scheme enables [TCP proxying](/docs/capabilities/non-http/) or [UDP proxying](/docs/capabilities/non-http/udp) (available since v0.29) support for the route. You may map more than one port through the same hostname by specifying a different `:port` in the URL.
 
+Specifying `ssh` for the scheme enables [native SSH proxying](/docs/capabilities/native-ssh-access).
+
 ## How to Configure
 
-The from URL must contain a **scheme** and **hostname**. It can't contain a path. When defining a From URL, you must use `https`, `tcp+https` or `udp+https`. Pomerium only supports secure schemes.
+The from URL must contain a **scheme** and **hostname**. It can't contain a path. When defining a From URL, you must use `https`, `tcp+https`, `udp+https`, or `ssh`. Pomerium only supports secure schemes.
 
 ### Port Matching Behavior
 
@@ -66,7 +68,7 @@ You can revert to the previous behavior by setting the [`match_any_incoming_port
 
 | **YAML**/**JSON** setting | **Type** | **Schemes** | **Usage** |
 | :-- | :-- | :-- | :-- |
-| `from` | `URL` | `https`, `tcp+https`, `udp+https` | **required** |
+| `from` | `URL` | `https`, `tcp+https`, `udp+https`, `ssh` | **required** |
 
 ### Examples
 
@@ -74,7 +76,10 @@ You can revert to the previous behavior by setting the [`match_any_incoming_port
 routes:
   - from: https://verify.corp.example.com
     to: https://example.com
-  # TCP
+  # Native SSH Access
+  - from: ssh://ssh.corp.example.com:22
+    to: ssh://ssh.local:22
+  # TCP tunneling
   - from: tcp+https://ssh.corp.example.com:22
     to: tcp://ssh.local:22
   # UDP

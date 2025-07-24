@@ -95,6 +95,10 @@ const config = {
       contextualSearch: false,
       searchPagePath: false,
     },
+    colorMode: {
+      defaultMode: 'light', // The color mode when user first visits the site. type: 'light' | 'dark' . Default is 'light'.
+      respectPrefersColorScheme: true, // If true, respects the user's OS-level color scheme preference. Default is false.
+    },
     navbar: {
       title: '',
       logo: {
@@ -137,8 +141,8 @@ const config = {
           dropdownActiveClassDisabled: true,
           dropdownItemsAfter: [
             {
-              to: 'https://0-29-0.docs.pomerium.com/docs',
-              label: 'v0.29 (latest)',
+              to: 'https://0-30-0.docs.pomerium.com/docs',
+              label: 'v0.30 (latest)',
             },
             {
               type: 'html',
@@ -239,6 +243,8 @@ const config = {
         id: process.env.GTM,
       },
     ],
+    // Generate llms.txt file for LLM consumption
+    require.resolve('./plugins/llms-txt-plugin'),
     // async function customPlugin(context, opts) {
     //   return {
     //     name: 'custom-plugin',
