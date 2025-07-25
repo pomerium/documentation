@@ -51,7 +51,7 @@ When the Authorization service receives a request from the Proxy service, the fo
 
 ### Databroker service
 
-The Databroker service manages state in Pomerium. It is an essential component that stores sessions, user claims, tokens, devices, directory data, and other external data sources. When using Enterprise Console, Ingress Controller, or Zero, the Databroker also stores Pomerium configuration itself.
+The Databroker service manages state in Pomerium. It is an essential component that stores [sessions](/docs/internals/sessions), user claims, tokens, devices, directory data, and other external data sources. When using Enterprise Console, Ingress Controller, or Zero, the Databroker also stores Pomerium configuration itself.
 
 #### Design
 
@@ -88,9 +88,9 @@ The Databroker's key responsibilities include:
 
 #### Storage Backends
 
-The Databroker supports two storage backends:
+The Databroker supports two [storage backends](/docs/internals/data-storage#backends):
 
-**In-Memory Storage Backend**
+**[In-Memory Storage Backend](/docs/internals/data-storage#in-memory)**
 
 The in-memory backend stores all data in maps, linked-lists, bart tables, and b-trees depending on indexing needs. Key characteristics:
 
@@ -100,7 +100,7 @@ The in-memory backend stores all data in maps, linked-lists, bart tables, and b-
 - All state is lost on restart
 - Each restart generates a new random server version
 
-**Postgres Storage Backend**
+**[Postgres Storage Backend](/docs/internals/data-storage#postgresql)**
 
 The Postgres backend stores all data in indexed SQL tables with operations implemented as SQL queries. Key features:
 
@@ -108,6 +108,8 @@ The Postgres backend stores all data in indexed SQL tables with operations imple
 - Persistence across restarts
 - Change notification between replicas via LISTEN/NOTIFY functions
 - Built-in support for advanced indexing (including CIDR for IP addresses)
+
+For configuration details, see [Databroker Storage Settings](/docs/reference/databroker).
 
 In production deployments, it is recommended that you deploy each component [separately](/docs/reference/service-mode). This allows you to limit external attack surface, as well as scale and manage the services independently.
 
@@ -117,7 +119,7 @@ In test deployments, all four components may run from a [single binary and confi
 
 ## High Availability
 
-Pomerium supports minimum downtime high availability. When using the Postgres storage backend, you can run multiple replicas of each Pomerium service (Authenticate, Authorize, Proxy, and Databroker) to provide redundancy and scale.
+Pomerium supports minimum downtime high availability. When using the [Postgres storage backend](/docs/reference/databroker#databroker-storage-type), you can run multiple replicas of each Pomerium service (Authenticate, Authorize, Proxy, and Databroker) to provide redundancy and scale.
 
 High availability configurations typically involve:
 
