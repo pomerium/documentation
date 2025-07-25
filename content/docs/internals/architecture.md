@@ -136,43 +136,52 @@ A typical multi-cluster Pomerium deployment demonstrates the high availability a
 ---
 title: Pomerium Multi-Cluster Architecture
 ---
-flowchart TD
-  subgraph Pomerium Cluster B
-    pomerium_authenticate_b@{ shape: procs, label: "Authenticate" }
-    pomerium_authorize_b@{ shape: procs, label: "Authorize" }
-    pomerium_databroker_b@{ shape: procs, label: "Databroker" }
-    pomerium_proxy_b@{ shape: procs, label: "Proxy" }
+graph TD
+    Client["Client"] --> LoadBalancer["Load Balancer"]
 
-    pomerium_proxy_b --> pomerium_authorize_b
-    pomerium_proxy_b --> pomerium_databroker_b
-    pomerium_authenticate_b --> pomerium_databroker_b
-    pomerium_authorize_b --> pomerium_databroker_b
-  end
-  subgraph Pomerium Cluster A
-    pomerium_authenticate_a@{ shape: procs, label: "Authenticate" }
-    pomerium_authorize_a@{ shape: procs, label: "Authorize" }
-    pomerium_databroker_a@{ shape: procs, label: "Databroker" }
-    pomerium_proxy_a@{ shape: procs, label: "Proxy" }
+    subgraph ClusterA["Pomerium Cluster A"]
+        ProxyA["Proxy"] --> AuthorizeA["Authorize"]
+        ProxyA --> AuthenticateA["Authenticate"]
+        AuthorizeA --> DatabrokerA["Databroker"]
+        AuthenticateA --> DatabrokerA
+        DatabrokerA --> PostgresA
 
-    pomerium_proxy_a --> pomerium_authorize_a
-    pomerium_proxy_a --> pomerium_databroker_a
-    pomerium_authenticate_a --> pomerium_databroker_a
-    pomerium_authorize_a --> pomerium_databroker_a
-  end
-  subgraph Postgres B
-    postgres_master_b[(Master)] --> postgres_replica_b[(Replica)]
-  end
-  subgraph Postgres A
-    postgres_master_a[(Master)] --> postgres_replica_a[(Replica)]
-  end
-  client[Client] --> load_balancer[Load Balancer]
+        subgraph PostgresA["Postgres A"]
+            MasterA["Master"]
+            MasterA --> ReplicaA["Replica"]
+        end
+    end
 
-  pomerium_databroker_a --> postgres_master_a
-  pomerium_databroker_b --> postgres_master_b
-  load_balancer --> pomerium_proxy_a
-  load_balancer --> pomerium_authenticate_a
-  load_balancer --> pomerium_proxy_b
-  load_balancer --> pomerium_authenticate_b
+    subgraph ClusterB["Pomerium Cluster B"]
+        ProxyB["Proxy"] --> AuthorizeB["Authorize"]
+        ProxyB --> AuthenticateB["Authenticate"]
+        AuthorizeB --> DatabrokerB["Databroker"]
+        AuthenticateB --> DatabrokerB
+        DatabrokerB --> PostgresB
+
+        subgraph PostgresB["Postgres B"]
+            MasterB["Master"]
+            MasterB --> ReplicaB["Replica"]
+        end
+    end
+
+    LoadBalancer --> ProxyA
+    LoadBalancer --> ProxyB
+
+    classDef pomeriumPrimary fill:#7C3AED,stroke:#5B14D7,stroke-width:3px,color:#ffffff
+    classDef pomeriumSecondary fill:#CAFF2C,stroke:#86B300,stroke-width:2px,color:#2E0A6C
+    classDef pomeriumDark fill:#450FA4,stroke:#2E0A6C,stroke-width:2px,color:#ffffff
+    classDef pomeriumDeep fill:#2E0A6C,stroke:#170930,stroke-width:2px,color:#ffffff
+    classDef userNodes fill:#86B300,stroke:#587500,stroke-width:2px,color:#ffffff
+    classDef neutralNodes fill:#64748B,stroke:#475569,stroke-width:2px,color:#ffffff
+    classDef dataNodes fill:#5B14D7,stroke:#450FA4,stroke-width:2px,color:#ffffff
+
+    class Client userNodes
+    class LoadBalancer neutralNodes
+    class ProxyA,ProxyB pomeriumPrimary
+    class AuthorizeA,AuthorizeB,AuthenticateA,AuthenticateB pomeriumDark
+    class DatabrokerA,DatabrokerB pomeriumSecondary
+    class MasterA,MasterB,ReplicaA,ReplicaB dataNodes
 ```
 
 This architecture shows:
