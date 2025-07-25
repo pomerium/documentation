@@ -1,0 +1,182 @@
+groups:
+  - name: upstream-authz
+    rules:
+      - alert: ExtAuthzDeniedRate
+        expr: |
+          (
+            sum(rate(envoy_http_ext_authz_denied[5m])) / 
+            clamp_min(sum(rate(envoy_http_ext_authz_total[5m])), 1)
+          ) > 0.01
+        for: 5m
+        labels:
+          severity: critical
+          component: envoy
+          service: authorization
+        annotations:
+          summary: "High rate of authorization denials"
+          description: "{{ $value | humanizePercentage }} of authorization requests are being denied"
+          runbook: |
+            1. Check authorization service logs for denial patterns
+            2. Review policy changes or updates
+            3. Verify user permissions and access patterns
+            4. Verify the group sync status if using group-based policies
+
+  - name: upstream-errors
+    rules:
+      - alert: Upstream5xxErrorRate
+        expr: |
+          (
+            sum(rate(envoy_cluster_upstream_rq_xx{envoy_response_code_class="5",envoy_cluster_name!~"pomerium-.*"}[5m])) by (envoy_cluster_name) / 
+            clamp_min(sum(rate(envoy_cluster_upstream_rq_total{envoy_cluster_name!~"pomerium-.*"}[5m])) by (envoy_cluster_name), 1)
+          ) > 0.05
+        for: 2m
+        labels:
+          severity: critical
+          component: upstream
+        annotations:
+          summary: "High 5xx error rate from upstream services"
+          description: "Cluster {{ $labels.envoy_cluster_name }} has {{ $value | humanizePercentage }} 5xx error rate"
+          runbook: |
+            1. Check upstream service health and logs
+            2. Verify service capacity and resource availability
+            3. Monitor envoy_cluster_upstream_cx_connect_fail for connection issues
+            4. Review recent deployments or configuration changes
+
+  - name: upstream-connections
+    rules:
+      - alert: UpstreamConnectionFailures
+        expr: rate(envoy_cluster_upstream_cx_connect_fail{envoy_cluster_name!~"pomerium-.*"}[5m]) > 0
+        for: 5m
+        labels:
+          severity: critical
+          component: upstream
+        annotations:
+          summary: "High rate of upstream connection failures"
+          description: "{{ $value }} connection failures/sec to cluster {{ $labels.envoy_cluster_name }}"
+          runbook: |
+            1. Check network connectivity to upstream hosts
+            2. Verify upstream service health and availability
+            3. Review DNS resolution issues
+            4. Monitor envoy_cluster_upstream_cx_connect_timeout for timeout patterns
+
+      - alert: UpstreamConnectionTimeouts
+        expr: rate(envoy_cluster_upstream_cx_connect_timeout{envoy_cluster_name!~"pomerium-.*"}[5m]) > 0
+        for: 5m
+        labels:
+          severity: warning
+          component: upstream
+        annotations:
+          summary: "High rate of upstream connection timeouts"
+          description: "{{ $value }} connection timeouts/sec to cluster {{ $labels.envoy_cluster_name }}"
+          runbook: |
+            1. Check network latency and packet loss to upstream
+            2. Review upstream service response times
+            3. Consider adjusting connection timeout settings https://www.pomerium.com/docs/internals/connection#timeouts
+            4. Monitor upstream service load and capacity
+
+      - alert: NoHealthyUpstreams
+        expr: rate(envoy_cluster_upstream_cx_none_healthy{envoy_cluster_name!~"pomerium-.*"}[1m]) > 0
+        for: 1m
+        labels:
+          severity: critical
+          component: upstream
+        annotations:
+          summary: "No healthy upstream hosts available"
+          description: "{{ $value }} requests attempted with no healthy hosts in cluster {{ $labels.envoy_cluster_name }}"
+          runbook: |
+            1. Check upstream service health immediately
+            2. Review health check configuration and results
+            3. Verify network connectivity to all upstream hosts
+            4. Check envoy_cluster_membership_healthy vs envoy_cluster_membership_total
+
+  - name: upstream-circuit-breakers
+    rules:
+      - alert: ConnectionCircuitBreakerOverflow
+        expr: rate(envoy_cluster_upstream_cx_overflow{envoy_cluster_name!~"pomerium-.*"}[5m]) > 0
+        for: 1m
+        labels:
+          severity: warning
+          component: upstream
+        annotations:
+          summary: "Connection circuit breaker triggered"
+          description: "{{ $value }} connections/sec rejected due to circuit breaker in cluster {{ $labels.envoy_cluster_name }}"
+          runbook: |
+            1. Check upstream service capacity and scaling
+            2. Review connection pool configuration (max_connections)
+            3. Monitor request patterns for traffic spikes
+            4. Consider increasing circuit breaker limits if appropriate
+
+      - alert: RequestPendingOverflow
+        expr: rate(envoy_cluster_upstream_rq_pending_overflow{envoy_cluster_name!~"pomerium-.*"}[5m]) > 0
+        for: 1m
+        labels:
+          severity: warning
+          component: upstream
+        annotations:
+          summary: "Request pending queue overflow"
+          description: "{{ $value }} requests/sec dropped due to pending queue overflow in cluster {{ $labels.envoy_cluster_name }}"
+          runbook: |
+            1. Check upstream service response times and capacity
+            2. Review pending request queue configuration
+            3. Monitor for upstream service bottlenecks
+            4. Consider scaling upstream services
+
+  - name: upstream-health-checks
+    rules:
+      - alert: HealthCheckFailures
+        expr: rate(envoy_cluster_health_check_failure{envoy_cluster_name!~"pomerium-.*"}[5m]) > 0.2
+        for: 3m
+        labels:
+          severity: warning
+          component: upstream
+        annotations:
+          summary: "High rate of health check failures"
+          description: "{{ $value }} health check failures/sec for cluster {{ $labels.envoy_cluster_name }}"
+          runbook: |
+            1. Check upstream service health endpoints
+            2. Review health check configuration (timeout, interval, path)
+            3. Monitor network connectivity issues
+            4. Verify upstream service is responding to health checks
+
+      - alert: NoHealthyHosts
+        expr: envoy_cluster_health_check_healthy{envoy_cluster_name!~"pomerium-.*"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          component: upstream
+        annotations:
+          summary: "No healthy hosts in cluster"
+          description: "Zero healthy hosts in cluster {{ $labels.envoy_cluster_name }}"
+          runbook: |
+            1. Immediate upstream service investigation required
+            2. Check all upstream hosts for availability
+            3. Review recent deployments or changes
+            4. Verify health check endpoint functionality
+
+  - name: upstream-health-composite
+    rules:
+      - alert: UpstreamClusterHealthDegraded
+        expr: |
+          (
+            (sum by (envoy_cluster_name) (envoy_cluster_membership_total{envoy_cluster_name!~"pomerium-.*"}) - 
+             sum by (envoy_cluster_name) (envoy_cluster_membership_healthy{envoy_cluster_name!~"pomerium-.*"})) / 
+            sum by (envoy_cluster_name) (envoy_cluster_membership_total{envoy_cluster_name!~"pomerium-.*"})
+          ) > 0.3
+        for: 2m
+        labels:
+          severity: warning
+          component: envoy
+        annotations:
+          summary: "Upstream Cluster health degraded"
+          description: "{{ $value | humanizePercentage }} of hosts unhealthy in cluster {{ $labels.envoy_cluster_name }}"
+          runbook: |
+            1. Check individual host health in the cluster:
+               - Healthy hosts: envoy_cluster_membership_healthy by envoy_cluster_name
+               - Total hosts: envoy_cluster_membership_total by envoy_cluster_name
+               - Host status changes: rate(envoy_cluster_membership_change[5m])
+            3. Monitor network connectivity and DNS resolution:
+               - Connection failures: rate(envoy_cluster_upstream_cx_connect_fail[5m])
+               - DNS resolution: rate(envoy_cluster_upstream_cx_connect_timeout[5m])
+            4. Verify upstream service capacity:
+               - Active connections: envoy_cluster_upstream_cx_active
+               - Request queuing: envoy_cluster_upstream_rq_pending_active
