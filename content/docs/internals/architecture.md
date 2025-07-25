@@ -51,18 +51,145 @@ When the Authorization service receives a request from the Proxy service, the fo
 
 ### Databroker service
 
-The Databroker service persists session and identity-related data. It also functions as an identity manager in that it's responsible for refreshing user sessions against the IdP until a Pomerium session has expired.
+The Databroker service manages state in Pomerium. It is an essential component that stores [sessions](/docs/internals/sessions), user claims, tokens, devices, directory data, and other external data sources. When using Enterprise Console, Ingress Controller, or Zero, the Databroker also stores Pomerium configuration itself.
 
-The points below outline the Databroker's role in the request and session lifecycle:
+#### Design
 
-- Once a client is authenticated, the Proxy server makes a gRPC call to the Databroker to persist session data and identity information.
-- The Authorization service queries the Databroker on-demand to keep the two services in sync.
+The Databroker is modeled as a key-value store of "records". A record is defined as:
+
+```protobuf
+message Record {
+  uint64 version = 1;
+  string type = 2;
+  string id = 3;
+  google.protobuf.Any data = 4;
+  google.protobuf.Timestamp modified_at = 5;
+  google.protobuf.Timestamp deleted_at = 6;
+}
+```
+
+The Databroker provides a gRPC interface for storing and retrieving records, along with these additional features:
+
+- **Leases**: Ensures only one instance performs certain actions when multiple Pomerium instances are running (e.g., only one databroker refreshes user sessions)
+- **Querying**: Supports efficient indexing including CIDR indexing for GeoIP data
+- **Capacity Limits**: Number of records per type can be limited (e.g., event records limited to last 50 events)
+- **Streaming**: Records can be streamed to clients via:
+  - **Sync**: Stream record changes as they occur (including deletes)
+  - **SyncLatest**: Stream the latest version of each record
+- **Server Versioning**: RPC methods include server version to signal when clients need to reset their state
+
+Clients utilize streaming endpoints to maintain cached, local copies of data, often bypassing the need for direct Databroker queries.
+
+The Databroker's key responsibilities include:
+
+- Once a client is authenticated, the Proxy server makes a gRPC call to the Databroker to persist session data and identity information
+- The Authorization service queries the Databroker on-demand to keep the two services in sync
+- It functions as an identity manager, refreshing user sessions against the IdP until a Pomerium session has expired
+
+#### Storage Backends
+
+The Databroker supports two [storage backends](/docs/internals/data-storage#backends):
+
+**[In-Memory Storage Backend](/docs/internals/data-storage#in-memory)**
+
+The in-memory backend stores all data in maps, linked-lists, bart tables, and b-trees depending on indexing needs. Key characteristics:
+
+- Requires no configuration
+- Provides high performance
+- Supports only a single replica
+- All state is lost on restart
+- Each restart generates a new random server version
+
+**[Postgres Storage Backend](/docs/internals/data-storage#postgresql)**
+
+The Postgres backend stores all data in indexed SQL tables with operations implemented as SQL queries. Key features:
+
+- Support for multiple replicas with read/write capabilities
+- Persistence across restarts
+- Change notification between replicas via LISTEN/NOTIFY functions
+- Built-in support for advanced indexing (including CIDR for IP addresses)
+
+For configuration details, see [Databroker Storage Settings](/docs/reference/databroker).
 
 In production deployments, it is recommended that you deploy each component [separately](/docs/reference/service-mode). This allows you to limit external attack surface, as well as scale and manage the services independently.
 
 In test deployments, all four components may run from a [single binary and configuration](/docs/internals/configuration#all-in-one-vs-split-service-mode).
 
 ![pomerium architecture diagram](./img/architecture/pomerium-container-context-stateless-authn.svg)
+
+## High Availability
+
+Pomerium supports minimum downtime high availability. When using the [Postgres storage backend](/docs/reference/databroker#databroker-storage-type), you can run multiple replicas of each Pomerium service (Authenticate, Authorize, Proxy, and Databroker) to provide redundancy and scale.
+
+High availability configurations typically involve:
+
+- Multiple replicas of each Pomerium service
+- Load balancing across service instances
+- Postgres database with replication for data persistence
+- Geographic distribution for disaster recovery
+
+### Multi-Cluster Deployment
+
+A typical multi-cluster Pomerium deployment demonstrates the high availability architecture:
+
+```mermaid
+---
+title: Pomerium Multi-Cluster Architecture
+---
+graph TD
+    Client["Client"] --> LoadBalancer["Load Balancer"]
+
+    subgraph ClusterA["Pomerium Cluster A"]
+        ProxyA["Proxy"] --> AuthorizeA["Authorize"]
+        ProxyA --> AuthenticateA["Authenticate"]
+        AuthorizeA --> DatabrokerA["Databroker"]
+        AuthenticateA --> DatabrokerA
+        DatabrokerA --> PostgresA
+
+        subgraph PostgresA["Postgres A"]
+            MasterA["Master"]
+            MasterA --> ReplicaA["Replica"]
+        end
+    end
+
+    subgraph ClusterB["Pomerium Cluster B"]
+        ProxyB["Proxy"] --> AuthorizeB["Authorize"]
+        ProxyB --> AuthenticateB["Authenticate"]
+        AuthorizeB --> DatabrokerB["Databroker"]
+        AuthenticateB --> DatabrokerB
+        DatabrokerB --> PostgresB
+
+        subgraph PostgresB["Postgres B"]
+            MasterB["Master"]
+            MasterB --> ReplicaB["Replica"]
+        end
+    end
+
+    LoadBalancer --> ProxyA
+    LoadBalancer --> ProxyB
+
+    classDef pomeriumPrimary fill:#7C3AED,stroke:#5B14D7,stroke-width:3px,color:#ffffff
+    classDef pomeriumSecondary fill:#CAFF2C,stroke:#86B300,stroke-width:2px,color:#2E0A6C
+    classDef pomeriumDark fill:#450FA4,stroke:#2E0A6C,stroke-width:2px,color:#ffffff
+    classDef pomeriumDeep fill:#2E0A6C,stroke:#170930,stroke-width:2px,color:#ffffff
+    classDef userNodes fill:#86B300,stroke:#587500,stroke-width:2px,color:#ffffff
+    classDef neutralNodes fill:#64748B,stroke:#475569,stroke-width:2px,color:#ffffff
+    classDef dataNodes fill:#5B14D7,stroke:#450FA4,stroke-width:2px,color:#ffffff
+
+    class Client userNodes
+    class LoadBalancer neutralNodes
+    class ProxyA,ProxyB pomeriumPrimary
+    class AuthorizeA,AuthorizeB,AuthenticateA,AuthenticateB pomeriumDark
+    class DatabrokerA,DatabrokerB pomeriumSecondary
+    class MasterA,MasterB,ReplicaA,ReplicaB dataNodes
+```
+
+This architecture shows:
+
+- Multiple Pomerium clusters for redundancy
+- Each cluster with its own Postgres instance
+- Load balancer distributing traffic between clusters
+- Independent scaling of each service component
 
 ## The lifecycle of a request
 
