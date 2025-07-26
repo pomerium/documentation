@@ -1,0 +1,118 @@
+---
+id: envoy-admin-interface
+title: Envoy Admin Interface
+keywords:
+  - reference
+  - envoy admin interface
+description: These options can be used to enable and customize the Envoy admin interface.
+pagination_prev: null
+pagination_next: null
+toc_max_heading_level: 2
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Envoy Admin Interface
+
+These settings can be used to enable the [Envoy admin interface](https://www.envoyproxy.io/docs/envoy/latest/operations/admin#operations-admin-interface). The Envoy admin interface can be useful when debugging issues with Pomerium itself.
+
+:::danger
+
+Access to the admin interface must be carefully controlled.
+
+:::
+
+## Envoy Admin Address
+
+**Envoy Admin Address** configures the listener address for the Envoy admin interface. If this setting is unset or empty, the Envoy admin interface will not be enabled.
+
+### How to configure
+
+<Tabs groupId="deployment-type">
+<TabItem value="Core" label="Core">
+
+| **Config file keys**  | **Environment variables** | **Type** |
+| :-------------------- | :------------------------ | :------- |
+| `envoy_admin_address` | `ENVOY_ADMIN_ADDRESS`     | `string` |
+
+### Example
+
+```yaml
+envoy_admin_address: '127.0.0.1:29091'
+```
+
+</TabItem>
+<TabItem value="Enterprise" label="Enterprise">
+
+**Envoy Admin Address** is not configurable in the Enterprise Console.
+
+</TabItem>
+<TabItem value="Kubernetes" label="Kubernetes">
+
+**Envoy Admin Address** is not configurable by the Pomerium Ingress Controller.
+
+</TabItem>
+</Tabs>
+
+## Envoy Admin Access Log Path
+
+**Envoy Admin Access Log Path** enables access logging for requests to the Envoy admin interface.
+
+### How to configure
+
+<Tabs groupId="deployment-type">
+<TabItem value="Core" label="Core">
+
+| **Config file keys**          | **Environment variables**     | **Type** |
+| :---------------------------- | :---------------------------- | :------- |
+| `envoy_admin_access_log_path` | `ENVOY_ADMIN_ACCESS_LOG_PATH` | `string` |
+
+### Example
+
+```yaml
+envoy_admin_access_log_path: /var/log/pomerium/envoy-admin-access.log
+```
+
+</TabItem>
+<TabItem value="Enterprise" label="Enterprise">
+
+**Envoy Admin Access Log Path** is not configurable in the Enterprise Console.
+
+</TabItem>
+<TabItem value="Kubernetes" label="Kubernetes">
+
+**Envoy Admin Access Log Path** is not configurable by the Pomerium Ingress Controller.
+
+</TabItem>
+</Tabs>
+
+## Envoy Admin Profile Path
+
+**Envoy Admin Profile Path** is the output path for CPU profiles taken via the Envoy admin interface.
+
+### How to configure
+
+<Tabs groupId="deployment-type">
+<TabItem value="Core" label="Core">
+
+| **Config file keys**       | **Environment variables**  | **Type** |
+| :------------------------- | :------------------------- | :------- |
+| `envoy_admin_profile_path` | `ENVOY_ADMIN_PROFILE_PATH` | `string` |
+
+```yaml
+envoy_admin_access_log_path: /var/log/pomerium/envoy.prof
+```
+
+</TabItem>
+<TabItem value="Enterprise" label="Enterprise">
+
+**Envoy Admin Profile Path** is not configurable in the Enterprise Console.
+
+</TabItem>
+<TabItem value="Kubernetes" label="Kubernetes">
+
+**Envoy Admin Profile Path** is not configurable by the Pomerium Ingress Controller.
+
+</TabItem>
+</Tabs>
