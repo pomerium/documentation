@@ -1,0 +1,11 @@
+global:
+  scrape_interval: 30s
+
+rule_files:
+  - "upstream-alerts.yml"
+  - "pomerium-alerts.yml"
+
+scrape_configs:
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9098']
