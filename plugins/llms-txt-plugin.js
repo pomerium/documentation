@@ -122,7 +122,8 @@ async function scanDocumentationFiles(contentDir) {
           await scanDirectory(fullPath, relativePath);
         } else if (
           entry.isFile() &&
-          (entry.name.endsWith('.mdx') || entry.name.endsWith('.md'))
+          (entry.name.endsWith('.mdx') || entry.name.endsWith('.md')) &&
+          !entry.name.startsWith('_')
         ) {
           // Create a route-like object from the file
           const urlPath =
