@@ -1,0 +1,76 @@
+---
+title: Sessions
+description: This article describes how sessions work in Pomerium.
+---
+
+# Sessions in Pomerium
+
+This article describes how sessions work in Pomerium.
+
+## Overview
+
+As part of authentication Pomerium creates sessions for users. The process is as follows:
+
+1. A user attempts to access a route handled by the Pomerium Proxy service.
+2. The Authorize service evaluates the policy for that route. If the policy requires a signed-in user, the Authorize service initiates a redirect to the Authenticate service to log the user in.
+3. The Authenticate service initiates a login with the identity provider (IdP) by redirecting the user through an Open ID Connect login flow.
+4. The IdP logs the user in and redirects the user back to the Authenticate service.
+5. The Authenticate service verifies the data from the IdP, creates a session in the Databroker and saves a cookie referencing that session.
+6. The user is redirected back to the original route on the Pomerium Proxy service.
+7. The Authorize service evaluates the policy for the route again. This time it is able to read the session cookie and load the session data from the Databroker.
+
+### Tokens
+
+Pomerium supports several identity providers. Most of these are based on [Open ID Connect](https://openid.net/specs/openid-connect-core-1_0.html). Pomerium is a Relying Part (RP) and uses an ID Token to establish user identity. ID Tokens contain various claims which can be used in Authorization policy either directly via the [claim](/docs/internals/ppl#supported-ppl-criteria) criterion, or implicitly through the `sub` claim identifying a user which can be joined to [directory data](/docs/integrations/user-standing/directory-sync).
+
+An ID Token represents a point-in-time Authentication event. Pomerium also uses claims from the [UserInfo Endpoint](https://openid.net/specs/openid-connect-core-1_0.html#UserInfo), queried during Authentication, as well as periodically to refresh the user with updated claims. Since Pomerium performs authorization on every request this means changes in the identity provider will be picked up without requiring the user to go through another login flow.
+
+As part of Open ID Connect, the identity provider also issues OAuth Access Tokens. These are used to query the user info endpoint, and represent an active session with the identity provider. Access tokens typically also have refresh tokens and Pomerium will periodically refresh the access token. If this fails the corresponding Pomerium session will be terminated.
+
+### Data
+
+A session consists of several properties:
+
+- `id`: The session's ID, typically a random UUID generated during login
+- `user_id`: The session's User ID, corresponding to a user in the IdP
+- `issued_at`: When the session was created
+- `expires_at`: When the session expires (Default is 14 hours after creation)
+- `id_token`: The ID token issued by the IdP
+  - `issuer`: The ID token issuer
+  - `subject`: The ID token subject, typically a user identifier
+  - `issued_at`: When the ID token was issued
+  - `expires_at`: When the ID token expires
+- `oauth_token`: The OAuth token issued by the IdP
+  - `access_token`: The access token used to access IdP endpoints
+  - `refresh_token`: The refresh token used to get retrieve a new access token
+  - `expires_at`: When the OAuth token expires
+- `claims`: A map of the claims from the ID token and user info endpoint
+
+A user object represents a user in Pomerium. A single user may have many sessions, each with the same user id. It consists of:
+
+- `id`: The user ID
+- `name`: The user's `name` claim
+- `email`: The user's `email` claim
+- `claims`: A map of the claims from the ID token and user info endpoint
+
+In addition to the session and user data populated via login (and periodically during refresh), there are directory users and directory groups that come from a directory provider.
+
+A directory user has:
+
+- `id`: The user ID, the same as `user_id` in the session
+- `group_ids`: A list of group IDs corresponding to directory groups
+- `display_name`: The user's display name
+- `email`: The user's email
+
+A directory group has:
+
+- `id`: The group ID, corresponding to the `group_ids` in a directory user
+- `name`: The group name
+- `email`: The group email (most IdPs do not have group emails)
+
+### Configuration Options
+
+There are a couple options related to sessions in Pomerium:
+
+- [`cookie_expire`](/docs/reference/cookies#cookie-expiration): Cookie Expiration sets the lifetime of session cookies. After this interval, users must reauthenticate.
+- [`cookie_domain`](/docs/reference/cookies#cookie-domain): Cookie Domain sets the scope of session cookies issued by Pomerium.
