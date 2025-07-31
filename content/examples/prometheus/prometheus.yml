@@ -4,8 +4,13 @@ global:
 rule_files:
   - "upstream-alerts.yml"
   - "pomerium-alerts.yml"
+  - "envoy-alerts.yml"
+  - "console-alerts.yml"
 
 scrape_configs:
-  - job_name: 'prometheus'
+  - job_name: 'pomerium-core'
     static_configs:
-      - targets: ['localhost:9098']
+      - targets: ['localhost:9090']
+  - job_name: 'pomerium-console'
+    static_configs:
+      - targets: ['localhost:9092']

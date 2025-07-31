@@ -1,0 +1,178 @@
+groups:
+  - name: pomerium-console-core-connectivity
+    rules:
+      - alert: ConsoleGRPCClientErrors
+        expr: rate(pomerium_rpc_client_requests_per_rpc_bucket{rpc_grpc_status_code!="0"}[5m]) > 0.1
+        for: 2m
+        labels:
+          severity: warning
+          component: pomerium-console
+          service: grpc
+        annotations:
+          summary: "High GRPC client error rate in Pomerium Console"
+          description: "Console GRPC client error rate is {{ $value }} errors/sec for service {{ $labels.rpc_service }}"
+          runbook: |
+            1. Check console logs for GRPC error details
+            2. Verify databroker connectivity and authentication
+            3. Check network connectivity to GRPC services
+            4. Monitor resource utilization
+
+      - alert: ConsoleDatabrokerReconcilerErrors
+        expr: increase(pomerium_console_databroker_reconciler_Reconcile_calls_failures[5m]) > 0
+        for: 2m
+        labels:
+          severity: warning
+          component: pomerium-console
+          service: syncer
+        annotations:
+          summary: "Pomerium Console config reconciler failures for config syncer"
+          description: "{{ $value }} databroker reconciler failures for cluster {{ $labels.cluster }} in the last 5 minutes"
+          runbook: |
+            1. Check the root cause of the failure in the logs or traces by filtering for `pomerium_console_databroker_reconciler` calls
+            2. If the failure is due to a specific entity, review configuration validation errors to understand which entity is causing the issue
+
+      - alert: ConsoleDatabrokerReconcilerHighLatency
+        expr: histogram_quantile(0.95, rate(pomerium_console_databroker_reconciler_Reconcile_duration_bucket{component="config-syncer"}[5m])) > 30
+        for: 3m
+        labels:
+          severity: warning
+          component: pomerium-console
+          service: syncer
+        annotations:
+          summary: "High databroker reconciler latency for config syncer"
+          description: "95th percentile databroker reconciler duration is {{ $value }}s"
+          runbook: |
+            1. Check database performance and query times using OTEL Tracing to identify the root cause
+            2. Review databroker performance and connectivity
+
+  - name: pomerium-console-external-data-sources
+    rules:
+      - alert: ExternalDataSourceTaskFailures
+        expr: increase(pomerium_console_datasource_task_calls_failures[5m]) > 0
+        for: 1m
+        labels:
+          severity: warning
+          component: pomerium-console
+          service: external-data-sources
+        annotations:
+          summary: "External data source task failures"
+          description: "{{ $value }} task failures for external data source {{ $labels.id }} {{ $labels.record_type }}"
+          runbook: |
+            1. Check the logs for exact error messages related to the task failures
+            2. Check the external data source URL accessibility
+            3. Verify authentication credentials and headers
+            4. Check network connectivity and DNS resolution
+
+      - alert: ExternalDataSourceHighLatency
+        expr: histogram_quantile(0.95, rate(pomerium_console_datasource_task_duration_bucket[5m])) > 30000
+        for: 3m
+        labels:
+          severity: warning
+          component: pomerium-console
+          service: external-data-sources
+        annotations:
+          summary: "High external data source task latency"
+          description: "95th percentile task duration is {{ $value }}ms for data source {{ $labels.id }} {{ $labels.record_type }}"
+          runbook: |
+            1. Some external data sources may have high latency due to their nature of calling remote APIs and you may need to adjust the polling intervals to let them process the data
+
+      - alert: ExternalDataSourceHTTPErrors
+        expr: rate(pomerium_console_ext_data_source_requests_completed{code!~"200|304"}[5m]) > 0.1
+        for: 2m
+        labels:
+          severity: warning
+          component: pomerium-console
+          service: external-data-sources
+        annotations:
+          summary: "High HTTP error rate for external data sources"
+          description: "{{ $value }} HTTP errors/sec for data source {{ $labels.data_source_id }}"
+          runbook: |
+            1. Check external data source endpoint health
+            2. Verify authentication and authorization
+            3. Check for rate limiting from external endpoints
+
+      - alert: ExternalDataSourceHighRequestLatency
+        expr: histogram_quantile(0.95, rate(pomerium_console_ext_data_source_request_duration_seconds_bucket[5m])) > 10
+        for: 3m
+        labels:
+          severity: warning
+          component: pomerium-console
+          service: external-data-sources
+        annotations:
+          summary: "High HTTP request latency for external data sources"
+          description: "95th percentile HTTP request duration is {{ $value }}s for data source {{ $labels.data_source_id }}"
+          runbook: |
+            1. Check external endpoint response times
+
+  - name: pomerium-console-resources
+    rules:
+      - alert: HighMemoryUsage
+        expr: go_memstats_alloc_bytes / go_memstats_sys_bytes * 100 > 85
+        for: 5m
+        labels:
+          severity: warning
+          component: pomerium-console
+          service: resources
+        annotations:
+          summary: "High memory usage for Pomerium Console"
+          description: "Memory usage is {{ $value }}%"
+          runbook: |
+            1. Consider increasing memory limits
+
+      - alert: HighGoroutineCount
+        expr: go_goroutines > 10000
+        for: 3m
+        labels:
+          severity: warning
+          component: pomerium-console
+          service: resources
+        annotations:
+          summary: "High goroutine count"
+          description: "{{ $value }} goroutines are running"
+          runbook: |
+            1. Contact Pomerium support if this is unexpected (i.e. no active requests to the console)
+
+      - alert: GCPressure
+        expr: rate(go_gc_duration_seconds[5m]) > 0.1
+        for: 3m
+        labels:
+          severity: warning
+          component: pomerium-console
+          service: resources
+        annotations:
+          summary: "High garbage collection pressure"
+          description: "GC duration rate is {{ $value }}s/s"
+          runbook: |
+            1. Contact Pomerium support if this is unexpected (i.e. no active requests to the console)
+
+  - name: pomerium-console-database
+    rules:
+      - alert: DatabaseConnectionErrors
+        expr: rate(pomerium_db_client_operation_duration_count{pgx_operation_type="connect"}[5m]) - rate(pomerium_db_client_operation_duration_bucket{pgx_operation_type="connect",le="+Inf"}[5m]) > 0.1
+        for: 2m
+        labels:
+          severity: critical
+          component: pomerium-console
+          service: database
+        annotations:
+          summary: "Database connection errors"
+          description: "{{ $value }} database connection errors/sec"
+          runbook: |
+            1. Check database connectivity and authentication
+            2. Verify database service availability
+
+      - alert: SlowDatabaseQueries
+        expr: histogram_quantile(0.95, rate(pomerium_db_client_operation_duration_bucket{pgx_operation_type="query"}[5m])) > 5000
+        for: 3m
+        labels:
+          severity: warning
+          component: pomerium-console
+          service: database
+        annotations:
+          summary: "Slow database queries"
+          description: "95th percentile query time is {{ $value }}ms"
+          runbook: |
+            1. Make sure the database is colocated with the Pomerium Console
+            2. Check database instance size and consider scaling if necessary
+            3. Review individual queries via OTEL Tracing to identify slow queries
+
