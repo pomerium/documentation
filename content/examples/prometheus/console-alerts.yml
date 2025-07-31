@@ -18,15 +18,15 @@ groups:
             4. Monitor resource utilization
 
       - alert: ConsoleDatabrokerReconcilerErrors
-        expr: increase(pomerium_console_databroker_reconciler_Reconcile_calls_failures[5m]) > 0
+        expr: increase(pomerium_console_databroker_reconciler_Reconcile_failures_total[5m]) > 0
         for: 2m
         labels:
           severity: warning
           component: pomerium-console
           service: syncer
         annotations:
-          summary: "Pomerium Console config reconciler failures for config syncer"
-          description: "{{ $value }} databroker reconciler failures for cluster {{ $labels.cluster }} in the last 5 minutes"
+          summary: "Pomerium Console config reconciler failures"
+          description: "{{ $value }} databroker reconciler failures for cluster {{ $labels.cluster }} {{ $labels.component }} in the last 5 minutes"
           runbook: |
             1. Check the root cause of the failure in the logs or traces by filtering for `pomerium_console_databroker_reconciler` calls
             2. If the failure is due to a specific entity, review configuration validation errors to understand which entity is causing the issue
@@ -45,10 +45,28 @@ groups:
             1. Check database performance and query times using OTEL Tracing to identify the root cause
             2. Review databroker performance and connectivity
 
+      - alert: ConsoleDatabrokerReconcilerMissing
+        expr: |
+          (
+            count by (cluster_id) (pomerium_console_databroker_reconciler_ReconcileLoop{component="config-syncer"}) +
+            count by (cluster_id) (pomerium_console_databroker_reconciler_ReconcileLoop{component="service-account-syncer"})
+          ) < 2
+        for: 2m
+        labels:
+          severity: critical
+          component: pomerium-console
+          service: syncer
+        annotations:
+          summary: "Some databroker reconciler components are not running"
+          description: "Only {{ $value }} out of 2 expected databroker reconciler components are running for cluster {{ $labels.cluster_id }}"
+          runbook: |
+            1. Check console logs for reconciler startup errors
+            2. Verify databroker connectivity for the affected cluster
+
   - name: pomerium-console-external-data-sources
     rules:
       - alert: ExternalDataSourceTaskFailures
-        expr: increase(pomerium_console_datasource_task_calls_failures[5m]) > 0
+        expr: increase(pomerium_console_datasource_task_calls_failures_total[5m]) > 0
         for: 1m
         labels:
           severity: warning
