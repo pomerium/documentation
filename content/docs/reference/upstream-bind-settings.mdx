@@ -1,0 +1,87 @@
+---
+# cSpell:ignore freebind
+
+id: upstream-bind-settings
+title: Upstream Bind Settings
+keywords:
+  - reference
+  - source address
+  - ip_freebind
+description: These options control which network address Pomerium will use for upstream connections.
+pagination_prev: null
+pagination_next: null
+toc_max_heading_level: 2
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Upstream Bind Settings
+
+These settings affect how Pomerium will connect to an [upstream](/docs/internals/glossary#upstream--downstream) service.
+
+## Source Address
+
+By default, Pomerium relies on the OS to pick an appropriate network interface for outgoing connections to an upstream service.
+
+To override the default, you can set a specific **Source Address**. All connections to upstream services will be bound to this address.
+
+### How to configure
+
+<Tabs groupId="deployment-type">
+<TabItem value="Core" label="Core">
+
+| **Config file key** | **Environment variable** | **Type** |
+| :-- | :-- | :-- |
+| `envoy_bind_config_source_address` | `ENVOY_BIND_CONFIG_SOURCE_ADDRESS` | `string` |
+
+### Example
+
+```yaml
+envoy_bind_config_source_address: 10.1.2.3
+```
+
+</TabItem>
+<TabItem value="Enterprise" label="Enterprise">
+
+**Source Address** is not configurable in the Enterprise Console.
+
+</TabItem>
+<TabItem value="Kubernetes" label="Kubernetes">
+
+**Source Address** is not configurable by the Pomerium Ingress Controller.
+
+</TabItem>
+</Tabs>
+
+## Freebind
+
+The **Freebind** option sets the `IP_FREEBIND` socket option on upstream connections. This option is supported only on Linux.
+
+### How to configure
+
+<Tabs groupId="deployment-type">
+<TabItem value="Core" label="Core">
+
+| **Config file keys**         | **Environment variables**    | **Type**  |
+| :--------------------------- | :--------------------------- | :-------- |
+| `envoy_bind_config_freebind` | `ENVOY_BIND_CONFIG_FREEBIND` | `boolean` |
+
+### Example
+
+```yaml
+envoy_bind_config_freebind: true
+```
+
+</TabItem>
+<TabItem value="Enterprise" label="Enterprise">
+
+**Freebind** is not configurable in the Enterprise Console.
+
+</TabItem>
+<TabItem value="Kubernetes" label="Kubernetes">
+
+**Freebind** is not configurable by the Pomerium Ingress Controller.
+
+</TabItem>
+</Tabs>
