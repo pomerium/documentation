@@ -12,7 +12,8 @@ This guide walks you through creating your first route and policy with the Pomer
 
 :::tip
 
-Throughout this guide, you can refer to either the [**Zero API reference**](/docs/api) or the Zero API playground at `https://console.pomerium.app/openapi`.
+Throughout this guide, you can refer to the Zero API playground at `https://console.pomerium.app/openapi`.
+<!-- TODO: Restore link to [**Zero API reference**](/docs/api) when redocusaurus plugin is re-enabled -->
 
 :::
 
