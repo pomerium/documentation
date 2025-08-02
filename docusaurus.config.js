@@ -6,6 +6,9 @@ const webpack = require('webpack');
 
 dotenv.config();
 
+// Check if we should include redocusaurus (disable in environments with network restrictions)
+const includeRedocusaurus = process.env.DISABLE_REDOCUSAURUS !== 'true';
+
 const config = {
   title: 'Pomerium',
   tagline: 'Documentation',
@@ -79,18 +82,20 @@ const config = {
         },
       },
     ],
-    // Temporarily disabled redocusaurus due to network connectivity issues in test environment
-    // [
-    //   'redocusaurus',
-    //   {
-    //     specs: [
-    //       {
-    //         spec: 'https://console.pomerium.app/openapi.yaml',
-    //         route: '/docs/api/',
-    //       },
-    //     ],
-    //   },
-    // ],
+    // Conditionally include redocusaurus based on environment
+    ...(includeRedocusaurus ? [
+      [
+        'redocusaurus',
+        {
+          specs: [
+            {
+              spec: 'https://console.pomerium.app/openapi.yaml',
+              route: '/docs/api/',
+            },
+          ],
+        },
+      ],
+    ] : []),
   ],
 
   themeConfig: {
