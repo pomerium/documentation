@@ -27,6 +27,14 @@ An ID Token represents a point-in-time Authentication event. Pomerium also uses 
 
 As part of Open ID Connect, the identity provider also issues OAuth Access Tokens. These are used to query the user info endpoint, and represent an active session with the identity provider. Access tokens typically also have refresh tokens and Pomerium will periodically refresh the access token. If this fails the corresponding Pomerium session will be terminated.
 
+#### Token Refresh Scheduling
+
+Pomerium will proactively attempt to refresh the identity provider session shortly before the expiration time of the OAuth access token. Starting in Pomerium v0.31, Pomerium will also attempt to refresh the session shortly before the expiration time of the ID token. This allows Pomerium to maintain a valid ID token over the entire lifetime of a Pomerium session, so long as the identity provider issues a new ID token during refresh. (Not all identity providers will do this.)
+
+This matters only if you are forwarding the ID token to an upstream service using the [Set Request Headers](/docs/reference/routes/headers#set-request-headers) option. Otherwise, if the ID token has a shorter validity period than the access token, there could be several windows of time over the course of a Pomerium session during which an upstream service would observe an expired ID token.
+
+This change in behavior can be reverted by setting the [runtime flag](/docs/reference/runtime-flags) `refresh_session_at_id_token_expiration` to false.
+
 ### Data
 
 A session consists of several properties:
