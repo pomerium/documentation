@@ -1,4 +1,20 @@
 groups:
+  - name: envoy-dns
+    rules:
+      - alert: EnvoyDNSErrors
+        expr: increase(envoy_dns_cares_get_addr_failure[5m]) + increase(envoy_dns_cares_not_found[5m]) + increase(envoy_dns_cares_timeouts[5m]) > 0
+        for: 5m
+        labels:
+          severity: warning
+          component: envoy
+        annotations:
+          summary: "High DNS resolution error rate in Envoy"
+          description: "{{ $value }} DNS resolution failures/sec for {{ $labels.envoy_dns_resolver_name }}"
+          runbook: |
+            1. Check DNS server availability and response times
+            2. Review Envoy DNS resolver configuration
+            3. Monitor network connectivity to DNS servers
+
   - name: envoy-listener
     rules:
       - alert: IngressListenerConnectionOverflow
