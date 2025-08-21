@@ -1,8 +1,8 @@
 groups:
   - name: pomerium-console-core-connectivity
     rules:
-      - alert: ConsoleGRPCClientErrors
-        expr: rate(pomerium_rpc_client_requests_per_rpc_bucket{rpc_grpc_status_code!="0"}[5m]) > 0.1
+      - alert: ConsoleCoreGRPCClientErrors
+        expr: rate(pomerium_rpc_client_requests_per_rpc_count{rpc_grpc_status_code!~"^(0|1|5|6)$"}[5m]) > 0.1
         for: 2m
         labels:
           severity: warning
@@ -66,7 +66,7 @@ groups:
   - name: pomerium-console-external-data-sources
     rules:
       - alert: ExternalDataSourceTaskFailures
-        expr: increase(pomerium_console_datasource_task_calls_failures_total[5m]) > 0
+        expr: increase(pomerium_console_datasource_task_failures_total[5m]) > 0
         for: 1m
         labels:
           severity: warning
