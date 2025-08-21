@@ -131,16 +131,10 @@ const config = {
           to: '/docs/guides/',
         },
         {
-          href: 'https://console.pomerium.app/login',
-          label: 'Sign In',
-          position: 'right',
-          className: 'navbar__cta navbar__cta--sign-in',
-        },
-        {
           href: 'https://console.pomerium.app/create-account',
-          label: 'Create Account',
+          label: 'Try it',
           position: 'right',
-          className: 'navbar__cta navbar__cta--create-account',
+          className: 'navbar__cta',
         },
         {
           type: 'docsVersionDropdown',
