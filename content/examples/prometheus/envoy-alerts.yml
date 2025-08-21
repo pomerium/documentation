@@ -78,8 +78,8 @@ groups:
       - alert: PomeriumHighGRPCErrorRate
         expr: |
           (
-            rate(pomerium_grpc_client_requests_total{grpc_client_status!="OK"}[5m]) / 
-            clamp_min(rate(pomerium_grpc_client_requests_total[5m]), 1)
+            rate(pomerium_rpc_client_requests_per_rpc_count{rpc_grpc_status_code!~"^(0|1|5|6)$"}[5m]) /
+            clamp_min(rate(pomerium_rpc_client_requests_per_rpc_count[5m]), 1)
           ) > 0.05
         for: 2m
         labels:

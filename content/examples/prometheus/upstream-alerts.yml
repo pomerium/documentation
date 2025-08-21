@@ -5,8 +5,8 @@ groups:
         expr: |
           (
             sum(rate(envoy_http_ext_authz_denied[5m])) / 
-            clamp_min(sum(rate(envoy_http_ext_authz_total[5m])), 1)
-          ) > 0.01
+            clamp_min(sum(rate(envoy_http_ext_authz_ok[5m])), 1)
+          ) > 0.05
         for: 5m
         labels:
           severity: critical
