@@ -1,16 +1,18 @@
 ---
-title: Managing Connections
+title: Connections
 lang: en-US
 sidebar_label: Connections
-description: This document outlines connections managed by Pomerium, including TCP and HTTP connections.
-keywords: [pomerium, architecture]
+description: 'How Pomerium proxies HTTP, SSH, and MCP over TCP/UDP: Envoy listeners, TLS/HTTP/3, routing and auth, timeouts, long-lived connections, and safe draining.'
+keywords: [pomerium, architecture, connections, listeners]
 ---
 
 import LongLivedConnections from '@site/content/docs/admonitions/_long-lived-connections.mdx';
 
 # Connections
 
-Pomerium enables proxying of HTTP, TCP, and UDP traffic, uniformly applying [access policies](/docs/capabilities/authorization) across the routed traffic.
+Pomerium enables proxying of protocols such as HTTP, SSH, and even MCP over TCP and UDP, uniformly applying [access policies](/docs/capabilities/authorization) across the routed traffic.
+
+This page provides an overview of how Pomerium manages connections for those protocols. It describes the Envoy listeners Pomerium configures and their key settings, walks through the HTTP connection lifecycle (TLS, routing, authorization, upstream selection, and response), outlines performance considerations, details the applicable timeouts, and explains handling of long-lived connections and safe connection draining during configuration changes. It also notes related metrics and stat prefixes for observability.
 
 ## Listeners
 
@@ -79,9 +81,9 @@ Each listener contributes a stat prefix used in Envoy metrics, helping different
 
 See the Envoy docs: https://www.envoyproxy.io/docs/envoy/latest/configuration/listeners/stats#listener
 
-## HTTP connection lifecyle
+## HTTP connection lifecycle
 
-TCP and UDP traffic is tunneled over HTTP, so let's focus on the HTTP connection lifecycle.
+TCP and UDP traffic can be tunneled over HTTP, so let's focus on the HTTP connection lifecycle.
 
 ### 1. Downstream connection and TLS termination
 
