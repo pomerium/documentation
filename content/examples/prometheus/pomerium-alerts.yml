@@ -89,7 +89,7 @@ groups:
             4. Check for potential security incidents
 
       - alert: PomeriumAuthorizationEvaluationLatencyHigh
-        expr: histogram_quantile(0.95, rate(pomerium_authorize_evaluator_evaluation_duration_milliseconds_bucket[5m])) > 500
+        expr: histogram_quantile(0.95, rate(pomerium_authorize_evaluator_evaluation_duration_bucket[5m])) > 500
         for: 3m
         labels:
           severity: warning
