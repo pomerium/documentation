@@ -12,74 +12,7 @@ import LongLivedConnections from '@site/content/docs/admonitions/_long-lived-con
 
 Pomerium enables proxying of protocols such as HTTP, SSH, and even MCP over TCP and UDP, uniformly applying [access policies](/docs/capabilities/authorization) across the routed traffic.
 
-This page provides an overview of how Pomerium manages connections for those protocols. It describes the Envoy listeners Pomerium configures and their key settings, walks through the HTTP connection lifecycle (TLS, routing, authorization, upstream selection, and response), outlines performance considerations, details the applicable timeouts, and explains handling of long-lived connections and safe connection draining during configuration changes. It also notes related metrics and stat prefixes for observability.
-
-## Listeners
-
-This section describes the network listeners that Pomerium configures in Envoy: what they do, when they are created, and the configuration settings that affect them.
-
-### Summary Table
-
-| Listener Name | Protocol | Purpose | Typical Port | Key Settings |
-| --- | --- | --- | --- | --- |
-| `http-ingress` | TCP/HTTP | Accepts insecure HTTP traffic, ACME/Autocert HTTP-01 challenges, and (if enabled) performs plain-HTTP to HTTPS redirects | 80 | [`address`](../reference/address) with [`insecure_server: true`](../reference/insecure-server) or [`http_redirect_address`](../reference/http-redirect-address) |
-| `https-ingress` | TCP/HTTPS | Primary HTTPS entrypoint (TLS termination) | 443 | [`address`](../reference/address) |
-| `quic-ingress` | UDP/QUIC (HTTP/3) | HTTP/3 listener over QUIC | 443 | [`address`](../reference/address) with [`codec_type: http3`](../reference/codec-type) |
-| `grpc-ingress` | TCP/gRPC | Inbound internal gRPC between Pomerium services | random | [`grpc_addr`](../reference/grpc) |
-| `grpc-egress` | TCP/gRPC | Outbound internal gRPC to other Pomerium services | random | (created automatically) |
-| `envoy-admin` | TCP/HTTP | Envoy administration interface | varies | `envoy_admin_address` |
-| `metrics-ingress` | TCP/HTTP | Prometheus metrics (Pomerium + Envoy) | 9902 (default) | [`metrics_address`](../reference/metrics#metrics-address) |
-| `ssh` | TCP/SSH | Native SSH proxy | 22 (default) | [`ssh_address`](../capabilities/native-ssh-access#ssh-address) |
-
-### Details
-
-#### HTTP Ingress (`http-ingress`)
-
-Handles insecure HTTP traffic when `insecure_server` is enabled, serves ACME / autocert challenges, and otherwise redirects to HTTPS. May also be created when [`http_redirect_address`](../reference/http-redirect-address) is set explicitly.
-
-Protocol: TCP with HTTP connection manager.
-
-#### HTTPS Ingress (`https-ingress`)
-
-Primary secure listener. Terminates TLS and forwards to appropriate upstream clusters.
-
-#### QUIC Ingress (`quic-ingress`)
-
-Enables HTTP/3 over QUIC for improved performance (reduced latency, better performance on lossy networks). Requires UDP port open and [`codec_type: http3`](../reference/codec-type).
-
-#### gRPC Ingress (`grpc-ingress`)
-
-Internal gRPC server endpoint used by other Pomerium services. TLS terminated unless `grpc_insecure` is set.
-
-#### gRPC Egress (`grpc-egress`)
-
-Logical grouping for outbound internal gRPC connections initiated by this instance. Created automatically when internal services are enabled.
-
-#### Envoy Admin (`envoy-admin`)
-
-Provides access to Envoy's admin interface (stats, config dump, etc). Not exposed publicly by default; restrict at the network layer.
-
-#### Metrics Ingress (`metrics-ingress`)
-
-Serves combined Pomerium and Envoy Prometheus metrics at [`metrics_address`](../reference/metrics#metrics-address). Name includes a hash when multiple instances are present. Use for scraping by Prometheus.
-
-#### SSH (`ssh`)
-
-Native SSH proxy listener created when SSH access capability is enabled and [`ssh_address`](../capabilities/native-ssh-access#ssh-address) is set. Supports policy-based access control over SSH.
-
-### Configuration Notes
-
-- All TCP listeners enable SO_REUSEPORT on Linux for better multi-core scaling.
-- Per-connection buffer limits default to 32KB.
-- Listeners are only created when the relevant feature / service is enabled (e.g., no SSH listener unless SSH access configured).
-- QUIC requires UDP reachability and proper ALPN support by clients.
-- The metrics listener may use a hash-based name internally for uniqueness.
-
-### Stat Prefixes
-
-Each listener contributes a stat prefix used in Envoy metrics, helping differentiate traffic classes and drive alerting.
-
-See the Envoy docs: https://www.envoyproxy.io/docs/envoy/latest/configuration/listeners/stats#listener
+This page provides an overview of how Pomerium manages connections for those protocols. It walks through the HTTP connection lifecycle (TLS, routing, authorization, upstream selection, and response), outlines performance considerations, details the applicable timeouts, explains handling of long-lived connections and safe connection draining during configuration changes, and describes the Envoy listeners Pomerium configures and their key settings. It also notes related metrics and stat prefixes for observability.
 
 ## HTTP connection lifecycle
 
@@ -168,3 +101,70 @@ After a grace period for this transition (~10m), any active connections are term
 You may observe the process of connections with `envoy_listener_manager_total_filter_chains_draining` metric gauge representing many draining processes are there. Normally you should see a value of `1` when there's an active draining process, or `0` if there's no draining currently underway.
 
 If your deployment requires long-lived connections, ensure you use long-lived TLS certificates and avoid other significant global configuration changes.
+
+## Listeners
+
+This section describes the network listeners that Pomerium configures in Envoy: what they do, when they are created, and the configuration settings that affect them.
+
+### Summary Table
+
+| Listener Name | Protocol | Purpose | Typical Port | Key Settings |
+| --- | --- | --- | --- | --- |
+| `http-ingress` | TCP/HTTP | Accepts insecure HTTP traffic, ACME/Autocert HTTP-01 challenges, and (if enabled) performs plain-HTTP to HTTPS redirects | 80 | [`address`](../reference/address) with [`insecure_server: true`](../reference/insecure-server) or [`http_redirect_address`](../reference/http-redirect-address) |
+| `https-ingress` | TCP/HTTPS | Primary HTTPS entrypoint (TLS termination) | 443 | [`address`](../reference/address) |
+| `quic-ingress` | UDP/QUIC (HTTP/3) | HTTP/3 listener over QUIC | 443 | [`address`](../reference/address) with [`codec_type: http3`](../reference/codec-type) |
+| `grpc-ingress` | TCP/gRPC | Inbound internal gRPC between Pomerium services | random | [`grpc_addr`](../reference/grpc) |
+| `grpc-egress` | TCP/gRPC | Outbound internal gRPC to other Pomerium services | random | (created automatically) |
+| `envoy-admin` | TCP/HTTP | Envoy administration interface | varies | `envoy_admin_address` |
+| `metrics-ingress` | TCP/HTTP | Prometheus metrics (Pomerium + Envoy) | 9902 (default) | [`metrics_address`](../reference/metrics#metrics-address) |
+| `ssh` | TCP/SSH | Native SSH proxy | 22 (default) | [`ssh_address`](../capabilities/native-ssh-access#ssh-address) |
+
+### Details
+
+#### HTTP Ingress (`http-ingress`)
+
+Handles insecure HTTP traffic when `insecure_server` is enabled, serves ACME / autocert challenges, and otherwise redirects to HTTPS. May also be created when [`http_redirect_address`](../reference/http-redirect-address) is set explicitly.
+
+Protocol: TCP with HTTP connection manager.
+
+#### HTTPS Ingress (`https-ingress`)
+
+Primary secure listener. Terminates TLS and forwards to appropriate upstream clusters.
+
+#### QUIC Ingress (`quic-ingress`)
+
+Enables HTTP/3 over QUIC for improved performance (reduced latency, better performance on lossy networks). Requires UDP port open and [`codec_type: http3`](../reference/codec-type).
+
+#### gRPC Ingress (`grpc-ingress`)
+
+Internal gRPC server endpoint used by other Pomerium services. TLS terminated unless `grpc_insecure` is set.
+
+#### gRPC Egress (`grpc-egress`)
+
+Logical grouping for outbound internal gRPC connections initiated by this instance. Created automatically when internal services are enabled.
+
+#### Envoy Admin (`envoy-admin`)
+
+Provides access to Envoy's admin interface (stats, config dump, etc). Not exposed publicly by default; restrict at the network layer.
+
+#### Metrics Ingress (`metrics-ingress`)
+
+Serves combined Pomerium and Envoy Prometheus metrics at [`metrics_address`](../reference/metrics#metrics-address). Name includes a hash when multiple instances are present. Use for scraping by Prometheus.
+
+#### SSH (`ssh`)
+
+Native SSH proxy listener created when SSH access capability is enabled and [`ssh_address`](../capabilities/native-ssh-access#ssh-address) is set. Supports policy-based access control over SSH.
+
+### Configuration Notes
+
+- All TCP listeners enable SO_REUSEPORT on Linux for better multi-core scaling.
+- Per-connection buffer limits default to 32KB.
+- Listeners are only created when the relevant feature / service is enabled (e.g., no SSH listener unless SSH access configured).
+- QUIC requires UDP reachability and proper ALPN support by clients.
+- The metrics listener may use a hash-based name internally for uniqueness.
+
+### Stat Prefixes
+
+Each listener contributes a stat prefix used in Envoy metrics, helping differentiate traffic classes and drive alerting.
+
+See the Envoy docs: https://www.envoyproxy.io/docs/envoy/latest/configuration/listeners/stats#listener
