@@ -6,12 +6,73 @@ const webpack = require('webpack');
 
 dotenv.config();
 
+// Conditionally include redocusaurus plugin only when not in offline mode
+const getPresets = () => {
+  const basePreset = [
+    '@docusaurus/preset-classic',
+    {
+      docs: {
+        path: 'content',
+        routeBasePath: '/',
+        sidebarPath: require.resolve('./sidebars.js'),
+        editUrl: 'https://github.com/pomerium/documentation/tree/main',
+        admonitions: {
+          keywords: [
+            'note',
+            'tip',
+            'info',
+            'caution',
+            'danger',
+            'enterprise',
+          ],
+          extendDefaults: true,
+        },
+        versions: {
+          current: {
+            label: 'vNext (upcoming release)',
+            badge: true,
+          },
+        },
+      },
+      theme: {
+        customCss: require.resolve('./src/css/custom.css'),
+      },
+      gtag: {
+        trackingID: [`${process.env.GA4}`, `${process.env.GA}`],
+      },
+      sitemap: {
+        filename: 'docs/sitemap.xml',
+        ignorePatterns: ['/docs/examples/**'],
+      },
+    },
+  ];
+
+  const presets = [basePreset];
+
+  // Only add redocusaurus plugin if not in offline mode
+  if (!process.env.POMERIUM_DOCS_OFFLINE) {
+    presets.push([
+      'redocusaurus',
+      {
+        specs: [
+          {
+            spec: 'https://console.pomerium.app/openapi.yaml',
+            route: '/docs/api/',
+          },
+        ],
+      },
+    ]);
+  }
+
+  return presets;
+};
+
 const config = {
   title: 'Pomerium',
   tagline: 'Documentation',
   url: 'https://www.pomerium.com',
   baseUrl: '/',
-  onBrokenLinks: 'throw',
+  onBrokenLinks: process.env.POMERIUM_DOCS_OFFLINE ? 'warn' : 'throw',
   onBrokenMarkdownLinks: 'throw',
   favicon: 'img/favicon.ico',
   organizationName: 'pomerium',
@@ -34,57 +95,7 @@ const config = {
     },
   ],
 
-  presets: [
-    [
-      '@docusaurus/preset-classic',
-      {
-        docs: {
-          path: 'content',
-          routeBasePath: '/',
-          sidebarPath: require.resolve('./sidebars.js'),
-          editUrl: 'https://github.com/pomerium/documentation/tree/main',
-          admonitions: {
-            keywords: [
-              'note',
-              'tip',
-              'info',
-              'caution',
-              'danger',
-              'enterprise',
-            ],
-            extendDefaults: true,
-          },
-          versions: {
-            current: {
-              label: 'vNext (upcoming release)',
-              badge: true,
-            },
-          },
-        },
-        theme: {
-          customCss: require.resolve('./src/css/custom.css'),
-        },
-        gtag: {
-          trackingID: [`${process.env.GA4}`, `${process.env.GA}`],
-        },
-        sitemap: {
-          filename: 'docs/sitemap.xml',
-          ignorePatterns: ['/docs/examples/**'],
-        },
-      },
-    ],
-    [
-      'redocusaurus',
-      {
-        specs: [
-          {
-            spec: 'https://console.pomerium.app/openapi.yaml',
-            route: '/docs/api/',
-          },
-        ],
-      },
-    ],
-  ],
+  presets: getPresets(),
 
   themeConfig: {
     image: 'docs/img/logo.svg',
