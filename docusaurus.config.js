@@ -6,6 +6,9 @@ const webpack = require('webpack');
 
 dotenv.config();
 
+// Check if we should include redocusaurus (disable in environments with network restrictions)
+const includeRedocusaurus = process.env.DISABLE_REDOCUSAURUS !== 'true';
+
 const config = {
   title: 'Pomerium',
   tagline: 'Documentation',
@@ -17,6 +20,12 @@ const config = {
   organizationName: 'pomerium',
   projectName: 'documentation',
   trailingSlash: false,
+
+  // Enable Docusaurus Faster (rspack + persistent caching)
+  future: {
+    experimental_faster: true,
+    v4: true,
+  },
 
   markdown: {
     mermaid: true,
@@ -73,17 +82,20 @@ const config = {
         },
       },
     ],
-    [
-      'redocusaurus',
-      {
-        specs: [
-          {
-            spec: 'https://console.pomerium.app/openapi.yaml',
-            route: '/docs/api/',
-          },
-        ],
-      },
-    ],
+    // Conditionally include redocusaurus based on environment
+    ...(includeRedocusaurus ? [
+      [
+        'redocusaurus',
+        {
+          specs: [
+            {
+              spec: 'https://console.pomerium.app/openapi.yaml',
+              route: '/docs/api/',
+            },
+          ],
+        },
+      ],
+    ] : []),
   ],
 
   themeConfig: {
