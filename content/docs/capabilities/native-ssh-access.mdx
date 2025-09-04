@@ -322,7 +322,7 @@ The following SSH-specific PPL criteria are available:
 
 :::note Policy applicability on SSH
 
-SSH routes support most general PPL criteria (email, domain, user, claim). Enterprise-only criteria supported on SSH: groups, record, date, day_of_week, time_of_day. Not applicable on SSH: http_method, http_path, cors_preflight, client_certificate, invalid_client_certificate, pomerium_routes, device.
+SSH routes support most general PPL criteria (`email`, `domain`, `user`, `claim`). Enterprise-only criteria supported on SSH: `groups`, `record`, `date`, `day_of_week`, `time_of_day`. Not applicable on SSH: `http_method`, `http_path`, `cors_preflight`, `client_certificate`, `invalid_client_certificate`, `pomerium_routes`, `device`.
 
 :::
 
@@ -394,7 +394,7 @@ routes:
 
 ```yaml
 routes:
-  - from: ssh://ops
+  - from: ssh://ops-server
     to: ssh://ops-server.internal:22
     policy:
       - allow:
@@ -406,7 +406,9 @@ routes:
             - day_of_week:
                 is: monday,tuesday,wednesday,thursday,friday
             - ssh_publickey:
-                - ssh-ed25519 AAAAC...example alice@example.com
+                - ssh-ed25519 AAAAC...wbvaC sre1@example.com
+                - ssh-ed25519 AAAAC...jtEql sre2@example.com
+            - ssh_username_matches_email: true
 ```
 
 Note: `groups` and `day_of_week` are Enterprise-only criteria.
