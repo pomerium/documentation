@@ -273,7 +273,7 @@ Any authenticated user can access the internal CLI (similar to the `/.pomerium` 
 
 In this mode, Pomerium acts as a virtual jump-host, allowing the client to connect directly to the upstream server, after authenticating with Pomerium. Instead of Pomerium authenticating to the upstream on behalf of the user, the user authenticates to the upstream directly.
 
-Pomerium policy still applies when connecting to routes in this way, with the exception of the `ssh_username` criteria.
+Pomerium policy still applies when connecting to routes in this way, with the exception of the `ssh_username`, `ssh_username_matches_claim`, and `ssh_username_matches_email` criteria. `ssh_publickey` and `ssh_ca` still apply.
 
 Upstream servers do not need to be configured to trust Pomerium's User CA key to use this mode.
 
@@ -319,6 +319,12 @@ The following SSH-specific PPL criteria are available:
 | `ssh_username` | [String Matcher] | Matches the username requested by the client <br/> (ex: `"ubuntu"` or `["user1", "user2"]`) |
 | `ssh_username_matches_claim` | String | Enforces that the username requested by the client is present within a list of allowed names, obtained from this OAuth token claim <br/>(ex: `"allowed_usernames"`) |
 | `ssh_username_matches_email` | Anything. Typically `true`. | Enforces that the username requested by the client exactly matches the user's email with the '@' and domain omitted <br/>(ex: the email `"bobby@gmail.com"` matches the username `"bobby"`) |
+
+:::note Policy applicability on SSH
+
+SSH routes support most general PPL criteria (email, domain, user, claim). Enterprise-only criteria supported on SSH: groups, record, date, day_of_week, time_of_day. Not applicable on SSH: http_method, http_path, cors_preflight, client_certificate, invalid_client_certificate, pomerium_routes, device.
+
+:::
 
 ## Advanced Configuration
 
@@ -383,6 +389,27 @@ routes:
                 - ssh-ed25519 AAAAC...lhCh5 dev1@example.com
                 - ssh-ed25519 AAAAC...WwAsc dev2@example.com
 ```
+
+### Combined Criteria
+
+```yaml
+routes:
+  - from: ssh://ops
+    to: ssh://ops-server.internal:22
+    policy:
+      - allow:
+          and:
+            - email:
+                ends_with: '@example.com'
+            - groups:
+                has: sre-team
+            - day_of_week:
+                is: monday,tuesday,wednesday,thursday,friday
+            - ssh_publickey:
+                - ssh-ed25519 AAAAC...example alice@example.com
+```
+
+Note: `groups` and `day_of_week` are Enterprise-only criteria.
 
 ### OAuth claim matcher
 
