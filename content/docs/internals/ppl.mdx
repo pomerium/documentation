@@ -165,6 +165,8 @@ Entries marked with `*` denote criteria that are only available in the [Enterpri
 
 Entries marked with `*` denote criteria that are only available in the [Enterprise Console](/docs/deploy/enterprise) PPL builder. All other entries are available in both Pomerium Core and Pomerium Enterprise.
 
+:::note Protocol applicability: SSH On SSH routes, the following PPL criteria do not apply: `http_method`, `http_path`, `cors_preflight`, `client_certificate`, `invalid_client_certificate`, `pomerium_routes`, `device`. For SSH-specific policy criteria, see [SSH Policy Criteria](/docs/capabilities/native-ssh-access#ssh-policy-criteria). :::
+
 ## Matchers
 
 ### Certificate Matcher
@@ -583,6 +585,11 @@ Rego defines the following inputs:
 | `http.session` | Object | Represents the user's session |
 | `http.session.id` | String | The session ID |
 | `http.is_valid_client_certificate` | Boolean | `true` if the presented client certificate is valid |
+| `ssh` | Object | Represents the SSH connection |
+| `ssh.username` | String | The username requested by the client |
+| `ssh.publickey` | String | The client's SSH public key |
+
+:::note On SSH routes, `input.http.*` is not present. Use `input.ssh.*` instead. :::
 
 ## Functions
 
