@@ -14,6 +14,27 @@ The steps below detail the installation of this site locally for development.
 yarn
 ```
 
+### Pre-commit Setup
+
+This project uses pre-commit hooks to ensure code quality. To set up pre-commit:
+
+1. Install pre-commit:
+   ```sh
+   pip install pre-commit
+   ```
+2. Install the git hook scripts:
+
+   ```sh
+   pre-commit install
+   ```
+
+3. (Optional) Run against all files:
+   ```sh
+   pre-commit run --all-files
+   ```
+
+The pre-commit hooks will now run automatically on each commit, running prettier formatting and spell checking.
+
 ### Local Development
 
 ```sh
