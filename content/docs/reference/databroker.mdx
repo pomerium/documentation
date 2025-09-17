@@ -19,13 +19,14 @@ For more information on the databroker service see [Persistence & Data storage](
 **Databroker Storage Type** sets the backend storage type:
 
 - `memory` — data is stored in main memory
+- `file` - data is stored in a local directory
 - `postgres` — data is stored in an external PostgreSQL database
 
 The in-memory option is sufficient for single-replica Pomerium deployments. A PostgreSQL database is required when running multiple replicas of Pomerium, in order to ensure that all replicas share a consistent view of the application state.
 
 For more information see [Persistence & Data storage: Backends](/docs/internals/data-storage#backends).
 
-### How to configure {#databroker-storage-type-how-to-configure}
+### How to Configure {#databroker-storage-type-how-to-configure}
 
 <Tabs>
 <TabItem value="Core" label="Core">
@@ -59,11 +60,39 @@ See Kubernetes [Storage reference](/docs/deploy/k8s/reference#storage) for more 
 
 ## Databroker Storage Connection String {#databroker-storage-connection-string}
 
-**Databroker Storage Connection String** tells Pomerium how to connect to an external PostgreSQL database. This connection string may be provided directly in the configuration or read from a file.
+**Databroker Storage Connection String** tells Pomerium which directory to use for the `file` storage type or how to connect to an external PostgreSQL database for the `postgres` storage type. This connection string may be provided directly in the configuration or read from a file.
 
-This setting is **required** when the storage type is set to `postgres`.
+This setting is **required** when the storage type is set to `file` or `postgres`.
 
-### How to configure {#databroker-storage-connection-string-how-to-configure}
+### How to Configure the File Storage Type
+
+The connection string should use the `file://` schema followed by a path to indicate the directory to store files:
+
+<Tabs>
+<TabItem value="Core" label="Core">
+
+```yaml
+databroker_storage_connection_string: file:///var/pomerium/databroker
+```
+
+```bash
+DATABROKER_STORAGE_CONNECTION_STRING=file:///var/pomerium/databroker
+```
+
+</TabItem>
+<TabItem value="Enterprise" label="Enterprise">
+
+`databroker_storage_connection_string` is a bootstrap configuration setting and is not configurable in the Console.
+
+</TabItem>
+<TabItem value="Kubernetes" label="Kubernetes">
+
+See Kubernetes [Storage reference](/docs/deploy/k8s/reference#storage) for more information.
+
+</TabItem>
+</Tabs>
+
+### How to Configure the Postgres Storage Type {#databroker-storage-connection-string-how-to-configure}
 
 The connection string may be provided in either keyword/value format or URI format:
 
