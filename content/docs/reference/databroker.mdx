@@ -145,3 +145,140 @@ See Kubernetes [Storage reference](/docs/deploy/k8s/reference#storage) for more 
 When using multiple hosts make sure to specify `target_session_attrs=read-write` so that the Databroker does not attempt to write to a read-only replica.
 
 :::
+
+## Clustered Databroker
+
+As of v0.31, Pomerium supports an experimental clustered databroker. The clustered databroker consists of multiple databroker instances. One of those instances is the cluster leader and all the other instances are cluster followers. Databroker commands sent to a follower are forwarded to the leader where they are handled. In addition the clustered databroker supports automatic failure recovery via Raft leader election.
+
+Each databroker instance should have the same shared secret, but its own node id and its own storage backend (the instances should **not** share the same Postgres database).
+
+The following settings are supported by the clustered databroker:
+
+### Databroker Cluster Node ID
+
+The Databroker Cluster Node ID sets the databroker's node id. It should correspond to an entry in the Databroker Cluster Nodes option, and it should be unique for each instance of the databroker.
+
+<Tabs>
+<TabItem value="Core" label="Core">
+
+| **Config file keys**         | **Environment variables**    | **Type** |
+| :--------------------------- | :--------------------------- | :------- |
+| `databroker_cluster_node_id` | `DATABROKER_CLUSTER_NODE_ID` | `string` |
+
+```yaml
+databroker_cluster_node_id: node-1
+```
+
+```bash
+DATABROKER_CLUSTER_NODE_ID=node-1
+```
+
+<TabItem value="Enterprise" label="Enterprise">
+
+`databroker_cluster_node_id` is a bootstrap configuration setting and is not configurable in the Console.
+
+</TabItem>
+<TabItem value="Kubernetes" label="Kubernetes">
+
+`databroker_cluster_node_id` is not supported in Kubernetes.
+
+</TabItem>
+</Tabs>
+
+### Databroker Cluster Leader ID
+
+The Databroker Cluster Leader ID explicitly sets the leader to one of the databroker instances in the Databroker Cluster Nodes option. When this option is used, the Raft leader elector will not be used and a failure of the leader will not result in automatic failure recovery.
+
+<Tabs>
+<TabItem value="Core" label="Core">
+
+| **Config file keys**           | **Environment variables**      | **Type** |
+| :----------------------------- | :----------------------------- | :------- |
+| `databroker_cluster_leader_id` | `DATABROKER_CLUSTER_LEADER_ID` | `string` |
+
+```yaml
+databroker_cluster_leader_id: node-2
+```
+
+```bash
+DATABROKER_CLUSTER_LEADER_ID=node-2
+```
+
+<TabItem value="Enterprise" label="Enterprise">
+
+`databroker_cluster_leader_id` is a bootstrap configuration setting and is not configurable in the Console.
+
+</TabItem>
+<TabItem value="Kubernetes" label="Kubernetes">
+
+`databroker_cluster_leader_id` is not supported in Kubernetes.
+
+</TabItem>
+</Tabs>
+
+### Databroker Cluster Nodes
+
+The Databroker Cluster Nodes option defines the cluster topology of a clustered databroker. It consists of a list of node definitions, each of which has an `id`, `grpc_address` and `raft_address`. Each instance of the databroker that is part of the cluster should have the same cluster nodes definition. When using the Raft leader elector there should be an odd number of at least 3 nodes.
+
+<Tabs>
+<TabItem value="Core" label="Core">
+
+| **Config file keys**       | **Environment variables**  | **Type** |
+| :------------------------- | :------------------------- | :------- |
+| `databroker_cluster_nodes` | `DATABROKER_CLUSTER_NODES` | `string` |
+
+```yaml
+databroker_cluster_nodes:
+  - id: node-1
+    grpc_address: http://node-1:5443
+    raft_address: node-1:5999
+  - id: node-2
+    grpc_address: http://node-2:5443
+    raft_address: node-2:5999
+  - id: node-3
+    grpc_address: http://node-3:5443
+    raft_address: node-2:5999
+```
+
+<TabItem value="Enterprise" label="Enterprise">
+
+`databroker_cluster_nodes` is a bootstrap configuration setting and is not configurable in the Console.
+
+</TabItem>
+<TabItem value="Kubernetes" label="Kubernetes">
+
+`databroker_cluster_nodes` is not supported in Kubernetes.
+
+</TabItem>
+</Tabs>
+
+### Databroker Raft Bind Address
+
+To use the Raft leader elector, each node needs to set a raft bind address which will be used for TCP connections between each instance. This communication is automatically encrypted using TLS with certificates derived from the shared secret. The `raft_address` in the `databroker_cluster_nodes` option for this node should correspond to this address.
+
+<Tabs>
+<TabItem value="Core" label="Core">
+
+| **Config file keys**           | **Environment variables**      | **Type** |
+| :----------------------------- | :----------------------------- | :------- |
+| `databroker_raft_bind_address` | `DATABROKER_RAFT_BIND_ADDRESS` | `string` |
+
+```yaml
+databroker_raft_bind_address: :5999
+```
+
+```bash
+DATABROKER_RAFT_BIND_ADDRESS=:5999
+```
+
+<TabItem value="Enterprise" label="Enterprise">
+
+`databroker_raft_bind_address` is a bootstrap configuration setting and is not configurable in the Console.
+
+</TabItem>
+<TabItem value="Kubernetes" label="Kubernetes">
+
+`databroker_raft_bind_address` is not supported in Kubernetes.
+
+</TabItem>
+</Tabs>
