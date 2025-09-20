@@ -126,14 +126,15 @@ const config = {
         {
           type: 'docSidebar',
           sidebarId: 'guides',
-          position: 'right',
+          position: 'left',
           label: 'Guides',
           to: '/docs/guides/',
         },
         {
-          href: 'https://github.com/pomerium/pomerium ',
-          label: 'GitHub',
+          href: 'https://console.pomerium.app/create-account',
+          label: 'Try it',
           position: 'right',
+          className: 'navbar__cta',
         },
         {
           type: 'docsVersionDropdown',
