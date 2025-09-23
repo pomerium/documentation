@@ -672,6 +672,25 @@ DNS sets the dns settings.
         <tr>
             <td>
                 <p>
+                <code>failureRefreshRate</code>&#160;&#160;
+                
+                    <strong>string</strong>&#160;
+                    (duration)
+                
+                </p>
+                <p>
+                    
+                    FailureRefreshRate is the rate at which DNS lookups are refreshed when requests are failing.
+                </p>
+                
+                    Format: a duration string like "22s" as parsed by Golang time.ParseDuration.
+                
+            </td>
+        </tr>
+    
+        <tr>
+            <td>
+                <p>
                 <code>lookupFamily</code>&#160;&#160;
                 
                     <strong>string</strong>&#160;
@@ -716,6 +735,25 @@ DNS sets the dns settings.
                     
                     QueryTries is the maximum number of query attempts the resolver will make before giving up. Each attempt may use a different name server.
                 </p>
+                
+            </td>
+        </tr>
+    
+        <tr>
+            <td>
+                <p>
+                <code>refreshRate</code>&#160;&#160;
+                
+                    <strong>string</strong>&#160;
+                    (duration)
+                
+                </p>
+                <p>
+                    
+                    RefreshRate is the rate at which DNS lookups are refreshed.
+                </p>
+                
+                    Format: a duration string like "22s" as parsed by Golang time.ParseDuration.
                 
             </td>
         </tr>
@@ -846,6 +884,34 @@ DownstreamMTLS sets the <a href="https://www.pomerium.com/docs/reference/downstr
                 <p>
                     
                     MaxVerifyDepth sets a limit on the depth of a certificate chain presented by the client.
+                </p>
+                
+            </td>
+        </tr>
+    
+    </tbody>
+</table>
+
+### `file`
+
+File specifies file storage options.
+
+<table>
+    <thead>
+    </thead>
+    <tbody>
+    
+        <tr>
+            <td>
+                <p>
+                <code>path</code>&#160;&#160;
+                
+                    <strong>string</strong>&#160;
+                
+                </p>
+                <p>
+                    <strong>Required.</strong>&#160;
+                    Path defines the local file system path to store data.
                 </p>
                 
             </td>
@@ -1429,6 +1495,23 @@ Storage defines persistent storage for sessions and other data. See <a href="htt
     <thead>
     </thead>
     <tbody>
+    
+        <tr>
+            <td>
+                <p>
+                <code>file</code>&#160;&#160;
+                
+                    <strong>object</strong>&#160;
+                    (<a href="#file">file</a>)
+                
+                </p>
+                <p>
+                    
+                    File specifies file storage options.
+                </p>
+                
+            </td>
+        </tr>
     
         <tr>
             <td>

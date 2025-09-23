@@ -33,7 +33,7 @@ To prevent early session loss in production deployments, persistent storage back
 
 The **Databroker Service** stores user session data, and uses an in-memory databroker by default.
 
-Pomerium does not encrypt record values for either the in-memory or Postgres storage backends. When using the Postgres backend we recommend that users configure their own encryption at rest, for example by using full-disk encryption on the volume where Postgres data is stored.
+Pomerium does not encrypt record values for either the in-memory, the file or the Postgres storage backends. When using the file or Postgres backends we recommend that users configure their own encryption at rest, for example by using full-disk encryption on the volume where the file or Postgres data is stored.
 
 :::tip
 
@@ -50,6 +50,21 @@ You can create your own databroker by implementing Pomerium's [**databroker gRPC
 - Data Persistence: `no`
 
 The default storage backend for `databroker` is memory based. This backend provides easy deployment semantics but is not persistent or highly available. Running more than one `databroker` instance configured for memory backed storage is not supported and will lead to non-deterministic behavior.
+
+### File
+
+- Data Broker Service HA: `no`
+- Data Store HA: `no`
+- Data Persistence: `yes`
+
+The file based backend for the `databroker` stores data in a local directory. It supports persistence across restarts but is not highly available and only supports a single instance.
+
+Example configuration:
+
+```yaml
+databroker_storage_type: file
+databroker_storage_connection_string: file:///var/pomerium/databroker
+```
 
 ### Postgres
 

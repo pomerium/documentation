@@ -88,7 +88,7 @@ The Databroker's key responsibilities include:
 
 #### Storage Backends
 
-The Databroker supports two [storage backends](/docs/internals/data-storage#backends):
+The Databroker supports three [storage backends](/docs/internals/data-storage#backends):
 
 **[In-Memory Storage Backend](/docs/internals/data-storage#in-memory)**
 
@@ -100,6 +100,15 @@ The in-memory backend stores all data in maps, linked-lists, bart tables, and b-
 - All state is lost on restart
 - Each restart generates a new random server version
 
+**[File Storage Backend](/docs/internals/data-storage#file)**
+
+The file backend stores all data in a local directory, using the [pebble key-value store](https://github.com/cockroachdb/pebble). Key characteristics:
+
+- Requires minimal configuration
+- Provides high performance
+- Supports only a single replica
+- Persistence across restarts
+
 **[Postgres Storage Backend](/docs/internals/data-storage#postgresql)**
 
 The Postgres backend stores all data in indexed SQL tables with operations implemented as SQL queries. Key features:
@@ -110,10 +119,6 @@ The Postgres backend stores all data in indexed SQL tables with operations imple
 - Built-in support for advanced indexing (including CIDR for IP addresses)
 
 For configuration details, see [Databroker Storage Settings](/docs/reference/databroker).
-
-In production deployments, it is recommended that you deploy each component [separately](/docs/reference/service-mode). This allows you to limit external attack surface, as well as scale and manage the services independently.
-
-In test deployments, all four components may run from a [single binary and configuration](/docs/internals/configuration#all-in-one-vs-split-service-mode).
 
 ![pomerium architecture diagram](./img/architecture/pomerium-container-context-stateless-authn.svg)
 
