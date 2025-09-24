@@ -247,3 +247,34 @@ pomerium health -v
   ]
 }
 ```
+
+## Systemd
+
+When running Pomerium via systemd, health checks are automatically configured. Pomerium communicates its health status to systemd using the sd_notify protocol.
+
+You can view the status with:
+
+```bash
+systemctl status <pomerium-service-name>
+```
+
+If the service is unhealthy, an error with details will be displayed in the status section.
+
+### Disabling
+
+By default, the Pomerium systemd service includes:
+
+```toml
+[Service]
+Type=notify
+#...
+WatchdogSec=30s
+```
+
+To disable systemd health checks, remove these options from the service configuration.
+
+Additionally, since Pomerium sends sd_notify messages when started via systemd, you can explicitly disable this behavior by adding the following to your config.yaml:
+
+```yaml
+health_check_systemd_disabled: true
+```
