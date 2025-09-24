@@ -64,17 +64,41 @@ PPL allows administrators to express authorization policy in a high-level, decla
 
 You can think of it as coded instructions to tell Pomerium how authorization decisions are made for capturing all niche and edge-case scenarios. It's as flexible as you want it to be!
 
+
+
 ### How does PPL work?
 
-PPL consists of **Rules**, **Actions**, **Logical Operators**, **Criteria**, and **Matchers**.
+PPL is made up of **Rules**, **Actions**, **Logical Operators**, **Criteria**, and **Matchers**.
+
+Below is a simple policy example in PPL format that allows access for the email example@domain.com. The following sections will break down each of these components in more detail.
+
+```yaml
+# PPL Example
+policy:
+  # ────────── Rule ──────────
+  allow:                           # Action (at least one must match)
+    and:                           # Logical Operator
+      - email:                     # Criterion
+          is: example@domain.com   # Matcher
+```
 
 #### Rules
 
-A PPL document is either an object or an array of objects. The object represents a rule where the action is the key and the value is an object containing the logical operators.
+A rule is the basic building block of a PPL policy. Each rule says what action to take (allow or deny) and under what conditions.
+
+- The action (allow or deny) is the outcome if the conditions are met.
+- The conditions are expressed using logical operators, criteria, and matchers.
+
+A PPL document can contain:
+- A single rule, or
+- An array of rules (evaluated together).
 
 #### Actions
 
-Only two actions are supported: `allow` and `deny`. `deny` takes precedence over `allow`. More precisely: a user will have access to a route if **at least one** `allow` rule matches and **no** `deny` rules match.
+Actions are one of the two values : `allow` or `deny`. `deny` always takes precedence over `allow`.
+
+Users will have access to a route if **at least one** `allow` rule matches and **no** `deny` rules match.
+
 
 #### Logical Operators
 
@@ -89,7 +113,9 @@ There are four logical operators:
 
 #### Criteria
 
-Criteria in PPL are represented as an object where the key is the name and optional sub-path of the criterion, and the value changes depending on which criterion is used.
+In PPL, a criterion defines a specific condition to evaluate, such as a user’s email or device type.
+ - Each criterion is an object where the key is the criterion name (optionally with a sub-path), and the value specifies what to match or compare.
+- The exact format of the value depends on the type of criterion being used.
 
 #### Matchers
 
