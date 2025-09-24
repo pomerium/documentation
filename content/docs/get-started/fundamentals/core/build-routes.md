@@ -59,7 +59,7 @@ routes:
             - email:
                 is: user@example.com
     pass_identity_headers: true
-# Add Grafana route here:
+  # Add Grafana route here:
   - from: https://grafana.localhost.pomerium.io
     to: http://grafana:3000
     allow_any_authenticated_user: true
