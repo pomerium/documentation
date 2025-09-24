@@ -115,7 +115,7 @@ There are four logical operators:
 
 In PPL, a criterion defines a specific condition to evaluate, such as a user’s email or device type.
 
-- Each criterion is an object where the key is the criterion name (optionally with a sub-path), and the value specifies what to match or compare.
+- Each criterion is an object where the key is the criterion name (optionally with a sub-path, delimited by `/`), and the value specifies what to match or compare.
 - The exact format of the value depends on the type of criterion being used.
 
 #### Matchers
