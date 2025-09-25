@@ -25,7 +25,7 @@ Health checks allow you to automatically monitor Pomerium instances and restart 
 
 In Pomerium, these health checks will report on the status of:
 
-- Readiness and health of the embedded envoy instance
+- Readiness and health of the embedded Envoy instance
 - Health of the configuration syncing mechanisms
 - Health of the configuration management server
 - Storage backend health, where applicable
@@ -74,9 +74,15 @@ The startup endpoint `/startupz` waits for all components to report ready - in p
 
 ### Readiness
 
+The /readyz endpoint ensures that all components are in the RUNNING state and healthy.
+
+If any component reports an error or enters the terminating state, it is treated as a failure.
+
 ### Liveness
 
-The `/healthz` endpoint
+The /healthz endpoint verifies that all components are functioning properly. It also treats the terminating state as healthy to support graceful shutdown.
+
+If any component reports an error, it is treated as a failure.
 
 ### Debugging
 
