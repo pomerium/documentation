@@ -9,7 +9,7 @@ pagination_next: null
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-This page documents configuring an [Auth0] Web Application and Machine to Machine Application for Pomerium to read user data. It assumes you have already [installed Pomerium](/docs/get-started/quickstart).
+This page documents how to configure an [Auth0] application for use with Pomerium. It assumes you have already [installed Pomerium](/docs/get-started/quickstart).
 
 :::caution
 
@@ -17,30 +17,32 @@ While we do our best to keep our documentation up to date, changes to third-part
 
 :::
 
-[Log in to your Auth0 account](https://manage.auth0.com/) and head to your dashboard. Select **Applications → Applications** on the left menu. On the Applications page, click the **Create Application** button to create a new app.
+## Create an Auth0 Application
 
-![Auth0 Applications Dashboard](./img/auth0/dashboard.png)
+1. [Log in to your Auth0 account](https://manage.auth0.com/) and head to your dashboard. Select **Applications → Applications** on the left menu. On the Applications page, click the **Create Application** button.
 
-## Create Regular Web Application
+   ![Auth0 Applications Dashboard](./img/auth0/dashboard.png)
 
-1. On the **Create New Application** page, name your application and select the **Regular Web Application** for your application. This is the application that your users will login to.
+1. On the **Create New Application** page, name your application and select the type **Native**, then click **Create**. This is the application that your users will log in to.
 
    ![Auth0 Create Application Select Platform](./img/auth0/create.png)
 
-1. Under the **Settings** tab, note the **Domain**, **Client ID**, and **Client Secret** values. We'll provide these to Pomerium at the end of the process.
+1. Switch to the **Settings** tab, and note the **Domain**, **Client ID**, and **Client Secret** values. We'll need these later to configure Pomerium.
 
 1. Provide the following information for your application settings:
 
    | Field | Description |
    | --- | --- |
    | Name | The name of your application. |
-   | Application Login URI | [Authenticate Service URL] (e.g. `https://${authenticate_service_url}`) |
-   | Allowed Callback URLs | Redirect URL (e.g. `https://${authenticate_service_url}/oauth2/callback`). |
-   | Allowed Logout URLs | Sign Out URL (e.g. `https://${authenticate_service_url}/.pomerium/signed_out`). |
+   | Application Login URI | [Authenticate Service URL] (e.g. `https://auth.example.com`) |
+   | Allowed Callback URLs | Redirect URL (e.g. `https://auth.example.com/oauth2/callback`). |
+   | Allowed Logout URLs | Sign Out URL (e.g. `https://auth.example.com/.pomerium/signed_out`). |
 
-1. Under **Advanced Settings** → **OAuth**, confirm that **JSON Web Token (JWT) Signature Algorithm** is set to "RS256".
+1. If you want to use Pomerium's [**native SSH access**](/docs/capabilities/native-ssh-access): scroll down to **Advanced Settings** near the bottom of the page, then select the **Grant Types** tab. Make sure the **Device Code** box is checked:
 
-1. Click **Save Changes** at the bottom of the page when you're done.
+   ![Auth0 Applications Dashboard](./img/auth0/device-code.png)
+
+1. Click **Save** at the bottom of the page when you're done.
 
 ## Configure Pomerium
 
@@ -71,7 +73,7 @@ IDP_CLIENT_SECRET="REPLACE_ME" # from the web application
 
 :::tip
 
-Remember to prepend the provider URL from Auth0 with `https://`.
+Remember to prepend the Auth0 **Domain** with `https://` to get the provider URL.
 
 :::
 
