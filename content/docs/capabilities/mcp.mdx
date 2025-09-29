@@ -85,7 +85,7 @@ sequenceDiagram
   P ->> S: Proxy request to MCP Server
 ```
 
-**Route Configuration:**
+**Route Configuration (deny-based blocklist):**
 
 ```yaml
 routes:
@@ -95,11 +95,15 @@ routes:
     mcp:
       server: {} # the brackets are significant, they indicate that this is an MCP server route
     policy:
-      and:
-        - domain:
-            is: company.com
-        - mcp_tool:
-            starts_with: 'read_'
+      allow:
+        and:
+          - domain:
+              is: company.com
+      # Block destructive tools (example: any tool prefixed with admin_)
+      deny:
+        and:
+          - mcp_tool:
+              starts_with: 'admin_'
 ```
 
 ### 2. MCP Servers with Upstream OAuth
@@ -134,7 +138,7 @@ sequenceDiagram
   P ->> S: Proxy request to MCP Server, Bearer (TI)
 ```
 
-**Route Configuration:**
+**Route Configuration (deny-based blocklist):**
 
 ```yaml
 routes:
@@ -151,11 +155,15 @@ routes:
             auth_url: 'https://github.com/login/oauth/authorize'
             token_url: 'https://github.com/login/oauth/access_token'
     policy:
-      and:
-        - domain:
-            is: company.com
-        - mcp_tool:
-            starts_with: 'read_'
+      allow:
+        and:
+          - domain:
+              is: company.com
+      # Block destructive tools (example: any tool prefixed with admin_)
+      deny:
+        and:
+          - mcp_tool:
+              starts_with: 'admin_'
 ```
 
 ### 3. Building MCP-Enabled Applications
@@ -261,6 +269,20 @@ policy:
           is: analyst@company.com
       - mcp_tool:
           is: database_query
+```
+
+Or, using a deny-based blocklist to prevent specific tools:
+
+```yaml
+policy:
+  allow:
+    and:
+      - email:
+          ends_with: '@company.com'
+  deny:
+    and:
+      - mcp_tool:
+          in: ['drop_table', 'truncate_table']
 ```
 
 For more information on route-level policies, see [Route Policy Configuration](/docs/reference/routes/policy). For advanced policy examples, see [Policy-Based Tool Access Control](#policy-based-tool-access-control).
@@ -507,6 +529,53 @@ The `mcp_tool` criterion is designed specifically for MCP routes and allows poli
 | `contains` | Tool name contains the specified substring | `mcp_tool: { contains: "read" }` |
 | `in` | Tool name matches one of the provided values | `mcp_tool: { in: ["list_tables", "describe_table"] }` |
 
+#### Evaluation semantics
+
+- Applies only to MCP JSON-RPC method `tools/call`. For any other MCP method (for example, `tools/list`, `resources/list`), the criterion evaluates to false and won’t match.
+- When the request is not a tool call, you may see a corresponding reason in logs indicating the request was not a tool call; using `mcp_tool` inside a `deny` block ensures those non-tool requests are not inadvertently denied.
+- The tool name used for matching is the `name` sent in the MCP `tools/call` payload (surfaced as `mcp-tool` in [authorize logs](#mcp-specific-authorization-log-fields)).
+
+#### Recommended usage: put `mcp_tool` checks under `deny`
+
+In most deployments, you should keep your positive authorization (identity, groups, domains) in `allow`, and use `mcp_tool` primarily under `deny` to block specific tools or entire classes of tools. This provides two benefits:
+
+- Non-`tools/call` requests (like `tools/list`, `initialize`) are not accidentally blocked just because they don’t match `mcp_tool`.
+- You can layer a clear, explicit blocklist or whitelist around tool names without intertwining it with identity checks.
+
+### Deny‑focused patterns
+
+Block a single tool:
+
+```yaml
+policy:
+  allow:
+    and:
+      - domain:
+          is: company.com
+  deny:
+    and:
+      - mcp_tool:
+          is: drop_table
+```
+
+Block a class of tools by prefix (for example, any destructive admin tools):
+
+```yaml
+policy:
+  allow:
+    and:
+      - groups:
+          has: analysts
+  deny:
+    and:
+      - mcp_tool:
+          starts_with: 'admin_'
+```
+
+Note:
+
+- `mcp_tool` currently works best for deny-based block lists (exact names, prefixes, etc.).
+
 ### Example
 
 Grant access to database query tools only to data analysts:
@@ -515,12 +584,16 @@ Grant access to database query tools only to data analysts:
 policy:
   allow:
     and:
-      - email:
-          ends_with: '@company.com'
-      - mcp_tool:
-          in: ['database_query', 'list_tables', 'describe_table']
+      - domain:
+          is: company.com
       - groups:
           has: 'data-analysts'
+  deny:
+    or:
+      - mcp_tool:
+          in: ['update_data', 'drop_table', 'delete_records']
+      - mcp_tool:
+          starts_with: 'admin_'
 ```
 
 For more advanced policy patterns, see the [PPL documentation](/docs/internals/ppl#examples).
@@ -549,6 +622,10 @@ The authorization logs show different reason codes based on the evaluation:
   "mcp-tool": "admin_function"
 }
 ```
+
+### Gotchas when using `mcp_tool` in `allow`
+
+Putting `mcp_tool` exclusively under `allow` means non-`tools/call` requests (like `tools/list`) won’t satisfy the `allow` condition and could cause the overall decision to be denied unless you add separate `allow` clauses for those operations. Prefer using `mcp_tool` in `deny` to block specific tools while keeping general access (identity, domain, groups) in `allow`.
 
 ## Related Documentation
 

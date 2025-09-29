@@ -156,6 +156,7 @@ Entries marked with `*` denote criteria that are only available in the [Enterpri
 | \* `groups` | [String List Matcher] | Returns true if a user's group ID matches the supplied value **exactly**. `groups` data is only available after a successful directory sync. See [Identity Providers](/docs/integrations/user-identity/identity-providers) for vendor-specific directory sync steps. |
 | `http_method` | [String Matcher] | Returns true if the HTTP method matches the given value. |
 | `http_path` | [String Matcher] | Returns true if the HTTP path matches the given value. |
+| `mcp_tool` | [String Matcher] | Returns true if, for MCP routes, the tool name in a `tools/call` request matches the provided condition. Recommended to use under `deny` to block specific tools or classes of tools without affecting non-tool requests. See [MCP Support](/docs/capabilities/mcp#policy-based-tool-access-control). |
 | `invalid_client_certificate` | Anything. Typically `true`. | Returns true if the incoming request does not have a trusted client certificate. By default, a `deny` rule using this criterion is added to all Pomerium policies when [downstream mTLS] is configured (but this default can be changed using the [Enforcement Mode](/docs/reference/downstream-mtls-settings#enforcement-mode) setting.) |
 | `pomerium_routes` | Anything. Typically `true`. | Returns true if the incoming request is for the special `.pomerium` routes. A default `allow` rule using this criterion is added to all Pomerium policies. |
 | \* `record` | variable | Allows policies to be extended using data from [external data sources](/docs/capabilities/integrations). See [Record Matcher](#record-matcher) for more information. |
@@ -310,7 +311,7 @@ For example, a policy to allow any user with a registered device:
 
 Compare to a policy that only allows a set of specific devices:
 
-<!-- prettier-ignore -->
+{/* prettier-ignore */}
 ```yaml
 - allow:
     or:
