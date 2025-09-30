@@ -150,13 +150,13 @@ When using multiple hosts make sure to specify `target_session_attrs=read-write`
 
 As of v0.31, Pomerium supports an experimental clustered databroker. The clustered databroker consists of multiple databroker instances. One of those instances is the cluster leader and all the other instances are cluster followers. Databroker commands sent to a follower are forwarded to the leader where they are handled. In addition the clustered databroker supports automatic failure recovery via Raft leader election.
 
-Each databroker instance should have the same shared secret, but its own node id and its own storage backend. It is recommended to use the `file` storage backend. If `postgres` is used, the instances should **not** share the same Postgres database.
+Each databroker instance should have the same shared secret, but its own node ID and its own storage backend. It is recommended to use the `file` storage backend. If `postgres` is used, the instances should **not** share the same Postgres database.
 
 The following settings are supported by the clustered databroker:
 
 ### Databroker Cluster Node ID
 
-The Databroker Cluster Node ID sets the databroker's node id. It should correspond to an entry in the Databroker Cluster Nodes option, and it should be unique for each instance of the databroker.
+The Databroker Cluster Node ID sets the databroker's node ID. It should correspond to an entry in the Databroker Cluster Nodes option, and it should be unique for each instance of the databroker.
 
 <Tabs>
 <TabItem value="Core" label="Core">
