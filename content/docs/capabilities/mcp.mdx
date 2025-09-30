@@ -528,6 +528,7 @@ The `mcp_tool` criterion is designed specifically for MCP routes and allows poli
 | `ends_with` | Tool name ends with the specified suffix | `mcp_tool: { ends_with: "_query" }` |
 | `contains` | Tool name contains the specified substring | `mcp_tool: { contains: "read" }` |
 | `in` | Tool name matches one of the provided values | `mcp_tool: { in: ["list_tables", "describe_table"] }` |
+| `not_in` | Tool name does not match any of the provided values (useful to enforce allowlists under `deny`) | `mcp_tool: { not_in: ["query", "list_tables"] }` |
 
 #### Evaluation semantics
 
@@ -575,6 +576,20 @@ policy:
 Note:
 
 - `mcp_tool` currently works best for deny-based block lists (exact names, prefixes, etc.).
+
+To flip this around and implement an allowlist, you can deny any tool name not in the approved set using the `not_in` operator:
+
+```yaml
+policy:
+  allow:
+    and:
+      - domain:
+          is: company.com
+  deny:
+    and:
+      - mcp_tool:
+          not_in: ['query', 'list_tables']
+```
 
 ### Example
 
