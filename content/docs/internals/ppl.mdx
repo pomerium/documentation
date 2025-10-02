@@ -401,6 +401,7 @@ A string matcher is an object with operators as keys. It supports the following 
 - `contains`: Returns true if the string contains the specified substring
 - `ends_with`: Returns true if the string ends with the specified suffix
 - `in`: Returns true if the string is present in the provided array of strings
+- `not_in`: Returns true if the string is not present in the provided array of strings
 - `is`: Returns true if the string exactly matches the specified value
 - `starts_with`: Returns true if the string starts with the specified prefix
 
@@ -434,6 +435,15 @@ allow:
 ```
 
 A string matcher can also be used with an array, a string, a number or a boolean, in which case it is the same as the `is` operator.
+
+To enforce an allowlist by denying any value not in a known-safe set, use `not_in` under a `deny` rule. For example, to only allow specific tool names (see MCP policies):
+
+```yaml
+deny:
+  and:
+    - mcp_tool:
+        not_in: ['query', 'list_tables']
+```
 
 ### String List Matcher
 
