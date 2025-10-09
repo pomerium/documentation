@@ -115,8 +115,10 @@ There are four logical operators:
 
 In PPL, a criterion defines a specific condition to evaluate, such as a user’s email or device type.
 
-- Each criterion is an object where the key is the criterion name (optionally with a sub-path, delimited by `/`), and the value specifies what to match or compare.
-- The exact format of the value depends on the type of criterion being used.
+- Each criterion is represented by an object with a single key/value pair, where the key is the criterion type.
+- For some criteria the key accepts a sub-path, delimited by /. For example: claim/family_name.
+- The format of the criterion value varies depending on the criterion type.
+- Some criteria do not use their value. For example: `accept`, `reject`, and `authenticated_user`. In this case, the value can be anything.
 
 #### Matchers
 
@@ -140,11 +142,11 @@ Now that you've briefly covered PPL, let's jump into some simple examples:
 This example instructs Pomerium to only grant a user access if their email address is `example@domain.com`.
 
 ```yaml title="PPL rule"
-policy: # Policy object starts here
-  allow: # At least one action
-    and: # Logical operator
-      - email: # Criterion
-        is: example@domain.com # Value
+policy:
+  allow:
+    and:
+      - email:
+          is: example@domain.com
 ```
 
 **Example 2**: Allow access based on the domain criterion
@@ -218,7 +220,7 @@ policy:
   allow:
     and:
       - domain:
-        is: example.com
+          is: example.com
 ```
 
 Now, access the route.
