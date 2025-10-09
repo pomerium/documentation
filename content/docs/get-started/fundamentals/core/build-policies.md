@@ -66,15 +66,39 @@ You can think of it as coded instructions to tell Pomerium how authorization dec
 
 ### How does PPL work?
 
-PPL consists of **Rules**, **Actions**, **Logical Operators**, **Criteria**, and **Matchers**.
+PPL is made up of **Rules**, **Actions**, **Logical Operators**, **Criteria**, and **Matchers**.
+
+Below is a simple policy example in PPL format that allows access for the email example@domain.com. The following sections will break down each of these components in more detail.
+
+<!-- prettier-ignore-start -->
+```yaml
+# PPL Example
+policy:
+  # ────────── Rule ──────────
+  allow:                           # Action (at least one must match)
+    and:                           # Logical Operator
+      - email:                     # Criterion
+          is: example@domain.com   # Matcher
+```
+<!-- prettier-ignore-end -->
 
 #### Rules
 
-A PPL document is either an object or an array of objects. The object represents a rule where the action is the key and the value is an object containing the logical operators.
+A rule is the basic building block of a PPL policy. Each rule says what action to take (allow or deny) and under what conditions.
+
+- The action (allow or deny) is the outcome if the conditions are met.
+- The conditions are expressed using logical operators, criteria, and matchers.
+
+A PPL document can contain:
+
+- A single rule, or
+- An array of rules (evaluated together).
 
 #### Actions
 
-Only two actions are supported: `allow` and `deny`. `deny` takes precedence over `allow`. More precisely: a user will have access to a route if **at least one** `allow` rule matches and **no** `deny` rules match.
+Actions are one of the two values : `allow` or `deny`. `deny` always takes precedence over `allow`.
+
+Users will have access to a route if **at least one** `allow` rule matches and **no** `deny` rules match.
 
 #### Logical Operators
 
@@ -89,7 +113,12 @@ There are four logical operators:
 
 #### Criteria
 
-Criteria in PPL are represented as an object where the key is the name and optional sub-path of the criterion, and the value changes depending on which criterion is used.
+In PPL, a criterion defines a specific condition to evaluate, such as a user’s email or device type.
+
+- Each criterion is represented by an object with a single key/value pair, where the key is the criterion type.
+- For some criteria the key accepts a sub-path, delimited by /. For example: claim/family_name.
+- The format of the criterion value varies depending on the criterion type.
+- Some criteria do not use their value. For example: `accept`, `reject`, and `authenticated_user`. In this case, the value can be anything.
 
 #### Matchers
 
@@ -113,11 +142,11 @@ Now that you've briefly covered PPL, let's jump into some simple examples:
 This example instructs Pomerium to only grant a user access if their email address is `example@domain.com`.
 
 ```yaml title="PPL rule"
-policy: # Policy object starts here
-  allow: # At least one action
-    and: # Logical operator
-      - email: # Criterion
-        is: example@domain.com # Value
+policy:
+  allow:
+    and:
+      - email:
+          is: example@domain.com
 ```
 
 **Example 2**: Allow access based on the domain criterion
@@ -191,7 +220,7 @@ policy:
   allow:
     and:
       - domain:
-        is: example.com
+          is: example.com
 ```
 
 Now, access the route.
