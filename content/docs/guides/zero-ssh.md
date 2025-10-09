@@ -65,6 +65,7 @@ On each server you want to provide SSH access to, you'll need to configure SSH t
    Copy the `pomerium_user_ca_key.pub` file to your upstream servers. It can be placed in any root-owned location:
 
    Recommended locations:
+
    - `/var/lib/pomerium/pomerium_user_ca_key.pub`
    - `/etc/pomerium/pomerium_user_ca_key.pub`
    - `/etc/ssh/pomerium_user_ca_key.pub`
@@ -243,6 +244,7 @@ The next step is to secure your SSH route with access policies:
 #### **Policy Overrides**
 
 14. **Configure overrides** (optional):
+
     - **Public Access:** Toggle to allow unauthenticated access (not recommended for SSH)
     - **Any Authenticated User:** Toggle to allow any authenticated user access
     - **CORS Preflight:** Usually not needed for SSH routes
