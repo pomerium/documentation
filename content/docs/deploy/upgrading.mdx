@@ -25,6 +25,27 @@ Changelog notes for Pomerium Core can be found on [GitHub](https://github.com/po
 
 This page contains the list of deprecations and important or breaking changes for Pomerium Core. Please read it carefully before upgrading.
 
+### 0.31.0
+
+#### Removed Authenticate Callback Path Configuration Property
+
+The authenticate callback path is the path/url from the authenticate service
+that will receive the response from your identity provider. This configuration
+property is no longer available. `/oauth2/callback` will be used in all cases.
+
+#### Stricter Internal Health Checking
+
+Review our new documentation on [Health Checks](/docs/internals/health-checks)
+to ensure the health checks are used effectively in your environment.
+
+#### Token Refreshing Considers ID Token Expiration
+
+Pomerium automatically refreshes Access Tokens with the identity provider while Pomerium sessions are still valid.
+Now, Pomerium also ensures ID tokens it provides upstream are not expired by considering the ID Token expiration time.
+ID tokens usually expire more quickly than Access Tokens, so this results in Access Tokens typically being refreshed much earlier than required.
+
+To revert this behavior, set the [Runtime Flag](/docs/reference/runtime-flags) `refresh_session_at_id_token_expiration` to `false`.
+
 ### 0.30.0
 
 There are no breaking changes in v0.30.
@@ -323,6 +344,10 @@ In case of trouble during the upgrade process, follow these steps to **roll back
 1. Restore the Pomerium Enterprise database from a backup taken before the upgrade.
 1. Downgrade Pomerium Core to the previous version.
 1. Start the previous version of Pomerium Enterprise.
+
+### v0.31.0
+
+There are no breaking changes in the Pomerium Console, but be sure to review the changes to Pomerium Core before upgrading.
 
 ### v0.30.0
 

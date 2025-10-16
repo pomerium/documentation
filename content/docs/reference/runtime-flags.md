@@ -42,6 +42,7 @@ The available flags are:
 | `refresh_session_at_id_token_expiration` | Changes the session refresh behavior so that a session will also be refreshed when the ID token is set to expire. If the identity provider issues a new ID token during refresh, this will allow Pomerium to maintain a valid ID token for the entire lifetime of a session. | `true` |
 | `ssh_allow_direct_tcpip` | Allows clients to connect to SSH routes using [Jump Host Mode](/docs/capabilities/native-ssh-access#using-jump-host-mode). | `false` |
 | `ssh_routes_portal` | Enables the SSH routes portal, allowing users to select their SSH destination from an interactive menu when SSHing to Pomerium without specifying a route. | `false` |
+| `refresh_session_at_id_token_expiration` | Enables refreshing of Access and ID token pair ahead of either expiring. If false, only refresh when the Access Token is close to expiring. | `true` |
 
 ### Examples
 
