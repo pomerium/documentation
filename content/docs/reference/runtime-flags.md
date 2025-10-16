@@ -41,6 +41,7 @@ The available flags are:
 | `pomerium_jwt_endpoint` | Temporary opt-out of the `/.pomerium/jwt` deprecation: when set to `true`, Pomerium will continue to issue a JWT from the deprecated `/.pomerium/jwt` endpoint. (This endpoint does not provide the desired security properties for the Pomerium JWT and will be removed in a future release.) | `false` |
 | `ssh_allow_direct_tcpip` | Allows clients to connect to SSH routes using [Jump Host Mode](/docs/capabilities/native-ssh-access#using-jump-host-mode). | `false` |
 | `ssh_routes_portal` | Enables the SSH routes portal, allowing users to select their SSH destination from an interactive menu when SSHing to Pomerium without specifying a route. | `false` |
+| `refresh_session_at_id_token_expiration` | Enables refreshing of Access and ID token pair ahead of either expiring. If false, only refresh when the Access Token is close to expiring. | `false` |
 
 ### Examples
 
