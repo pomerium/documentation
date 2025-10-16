@@ -35,9 +35,9 @@ The authenticate callback path is the path/url from the authenticate service tha
 
 Review our new documentation on [Health Checks](/docs/internals/health-checks) to ensure the health checks are used effectively in your environment.
 
-#### Token Refreshing Considers ID Token Expiration
+#### OIDC Session Refresh Considers ID Token Expiration
 
-Pomerium automatically refreshes Access Tokens with the identity provider while Pomerium sessions are still valid. Now, Pomerium also ensures ID tokens it provides upstream are not expired by considering the ID Token expiration time. ID tokens usually expire more quickly than Access Tokens, so this results in Access Tokens typically being refreshed much earlier than required.
+Pomerium automatically refreshes the OIDC session with the identity provider while a Pomerium session is still valid. Now, Pomerium will also refresh the OIDC session shortly before the expiration time of the ID token. If the identity provider supports refreshing the ID token, this allows Pomerium to maintain a valid ID token for the lifetime of the Pomerium session.
 
 To revert this behavior, set the [Runtime Flag](/docs/reference/runtime-flags) `refresh_session_at_id_token_expiration` to `false`.
 
