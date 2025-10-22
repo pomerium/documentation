@@ -154,8 +154,19 @@ When creating your first SSH route, Pomerium Zero will prompt you to configure g
 
 - **Field:** SSH Address
 - **Value:** Enter the address and port where Pomerium will listen for SSH connections
-- **Example:** `0.0.0.0:22` (to listen on all interfaces, port 22\)
-- **Note:** Use a different port if port 22 is already in use by another service
+- **Example:** `0.0.0.0:2200` (to listen on all interfaces, port 2200\)
+- **Note:** We recommend using port 2200 to avoid conflicts with the standard SSH daemon (sshd) that typically runs on port 22
+
+:::tip Using Port 22
+
+If you want Pomerium to listen on port 22 instead, you'll need to either:
+
+- Stop your existing SSH daemon: `sudo systemctl stop sshd && sudo systemctl disable sshd`
+- Or configure your SSH daemon to listen on a different port by modifying `/etc/ssh/sshd_config` and setting `Port 2200` (or another port), then restart sshd
+
+Keep in mind that using port 22 requires Pomerium to run with elevated privileges to bind to privileged ports (ports below 1024).
+
+:::
 
 #### SSH Host Keys Configuration
 
@@ -337,7 +348,8 @@ After your first SSH route is configured, the global SSH settings are saved. For
 
 **Port configuration issues:**
 
-- If using a non-standard port, ensure you're connecting to Pomerium and not the SSH server already running on port 22
+- Pomerium listens on port 2200 by default (not port 22) to avoid conflicts with existing SSH daemons
+- Ensure you're connecting to Pomerium (port 2200 by default) and not directly to the target SSH server (typically port 22)
 - Verify the SSH Address configured in Pomerium Zero matches the port you're connecting to
 - Check that your DNS or hostname resolves to Pomerium, not directly to the target server
 
