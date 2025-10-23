@@ -45,9 +45,9 @@ Because Pomerium relies on your Identity Provider for user and group data, your 
 
 ### RBAC for Enterprise Console Users
 
-Namespaces are central to how Pomerium Enterprise controls who can do what in the console. Pomerium defines three primary roles:
+Namespaces are central to how Pomerium Enterprise controls who can do what in the console. Pomerium defines three primary roles you can assign to Enterprise Console users. Users without a role are treated as guests:
 
-**Guest (no role)**
+**Guest (no assigned role)**
 
 - Can authenticate into Pomerium but only see a list of namespaces.
 - Cannot modify or view details of any resources.
@@ -70,8 +70,8 @@ Managers can create routes to a given upstream path in **their** namespace, but 
 
 **Admin**
 
-- Can manage all namespaces.
-- Has global access to settings, sessions, and [service accounts](/docs/capabilities/service-accounts).
-- Can see events and runtime data across the organization.
+- Can manage the namespace (and its child namespaces) where the role is assigned.
+- Has access to settings, sessions, and [service accounts](/docs/capabilities/service-accounts) within their administrative scope.
+- When assigned in the Global namespace, can manage all namespaces and global settings, and see organization-wide events and runtime data.
 
 With these roles, Namespaces provide a powerful way to control who can view or modify Pomerium Enterprise resources, while still allowing each team the freedom to manage its own space.
