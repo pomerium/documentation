@@ -161,7 +161,7 @@
     "type": "string"
   },
   "certificate-authority": {
-    "description": "",
+    "description": "Defines a set of root certificate authorities (CAs) that Pomerium uses when communicating with other TLS-protected services.",
     "id": "certificate-authority",
     "path": "/certificates#certificate-authority",
     "services": [],
@@ -175,6 +175,11 @@
     "short_description": "",
     "title": "Certificates Settings",
     "type": "string"
+  },
+  "circuit-breaker-thresholds": {
+    "description": "Customizes circuit-breaking behavior in Pomerium.",
+    "id": "circuit-breaker-thresholds",
+    "title": "Circuit Breaker Thresholds"
   },
   "cluster-identity": {
     "description": "The cluster token that associates this cluster with a personal account or organization.",
@@ -199,6 +204,7 @@
     "title": "Cluster Starter Domain"
   },
   "codec-type": {
+    "description": "Specifies the codec to use for downstream connections. Available options: auto, http1, http2, or http3.",
     "id": "codec-type",
     "path": "/codec-type",
     "services": [],
@@ -256,7 +262,7 @@
     "type": "URL"
   },
   "data-broker-storage-connection-string": {
-    "description": "Sets the database connection string to connect Databroker service to storage backend.",
+    "description": "Sets the connection string for the Databroker storage backend.",
     "id": "data-broker-storage-connection-string",
     "path": "/databroker#databroker-storage-connection-string",
     "services": [],
@@ -285,7 +291,7 @@
     "type": ""
   },
   "description": {
-    "description": "Description of the route.",
+    "description": "An optional description for this route. Displayed on the Routes Portal.",
     "id": "description",
     "path": "/routes/description",
     "services": ["proxy"],
@@ -366,6 +372,7 @@
     "title": "Downstream mTLS Settings"
   },
   "enable-google-cloud-serverless-authentication": {
+    "description": "Enables sending a signed Authorization Header to upstream Google Cloud services.",
     "id": "enable-google-cloud-serverless-authentication",
     "path": "/routes/enable-google-cloud-serverless-authentication",
     "services": ["proxy"],
@@ -934,7 +941,7 @@
     "title": "Manage Devices"
   },
   "metrics-address": {
-    "description": "Expose a prometheus format HTTP endpoint on the specified port.",
+    "description": "Expose a prometheus format HTTP endpoint on the specified address.",
     "id": "metrics-address",
     "path": "/metrics#metrics-address",
     "services": [],
@@ -1308,7 +1315,7 @@
     "type": "duration"
   },
   "route-logo-url": {
-    "description": "The route logo URL.",
+    "description": "An optional logo for this route. Displayed on the Routes Portal.",
     "id": "route-logo-url",
     "path": "/routes/logo-url",
     "services": ["proxy"],
@@ -1388,7 +1395,7 @@
     "type": "string"
   },
   "set-request-headers": {
-    "description": "Sets static and dynamic values for given request headers. Available substitutions: ${pomerium.id_token}, ${pomerium.access_token}, ${pomerium.client_cert_fingerprint}.",
+    "description": "Sets static and dynamic values for given request headers. Available substitutions: ${pomerium.id_token}, ${pomerium.access_token}, ${pomerium.client_cert_fingerprint}, ${pomerium.jwt}.",
     "id": "set-request-headers",
     "path": "/routes/headers#set-request-headers",
     "services": ["proxy"],
