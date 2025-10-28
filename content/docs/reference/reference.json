@@ -8,6 +8,15 @@
     "title": "Access Log Fields",
     "type": "string"
   },
+  "additional-login-redirect-hosts": {
+    "description": "Chain login redirects across specified domains, ensuring a session cookie is issued for each domain",
+    "id": "additional-login-redirect-hosts",
+    "path": "/routes/additional-login-redirect-hosts",
+    "services": [],
+    "short_description": "",
+    "title": "Additional Login Redirect Hosts",
+    "type": "array of string"
+  },
   "address": {
     "description": "Specifies the IP Address and Port to serve HTTP requests from.",
     "id": "address",
@@ -161,7 +170,7 @@
     "type": "string"
   },
   "certificate-authority": {
-    "description": "",
+    "description": "Defines a set of root certificate authorities (CAs) that Pomerium uses when communicating with other TLS-protected services.",
     "id": "certificate-authority",
     "path": "/certificates#certificate-authority",
     "services": [],
@@ -175,6 +184,11 @@
     "short_description": "",
     "title": "Certificates Settings",
     "type": "string"
+  },
+  "circuit-breaker-thresholds": {
+    "description": "Customizes circuit-breaking behavior in Pomerium.",
+    "id": "circuit-breaker-thresholds",
+    "title": "Circuit Breaker Thresholds"
   },
   "cluster-identity": {
     "description": "The cluster token that associates this cluster with a personal account or organization.",
@@ -199,6 +213,7 @@
     "title": "Cluster Starter Domain"
   },
   "codec-type": {
+    "description": "Specifies the codec to use for downstream connections. Available options: auto, http1, http2, or http3.",
     "id": "codec-type",
     "path": "/codec-type",
     "services": [],
@@ -256,7 +271,7 @@
     "type": "URL"
   },
   "data-broker-storage-connection-string": {
-    "description": "Sets the database connection string to connect Databroker service to storage backend.",
+    "description": "Sets the connection string for the Databroker storage backend.",
     "id": "data-broker-storage-connection-string",
     "path": "/databroker#databroker-storage-connection-string",
     "services": [],
@@ -285,7 +300,7 @@
     "type": ""
   },
   "description": {
-    "description": "Description of the route.",
+    "description": "An optional description for this route. Displayed on the Routes Portal.",
     "id": "description",
     "path": "/routes/description",
     "services": ["proxy"],
@@ -366,6 +381,7 @@
     "title": "Downstream mTLS Settings"
   },
   "enable-google-cloud-serverless-authentication": {
+    "description": "Enables sending a signed Authorization Header to upstream Google Cloud services.",
     "id": "enable-google-cloud-serverless-authentication",
     "path": "/routes/enable-google-cloud-serverless-authentication",
     "services": ["proxy"],
@@ -569,6 +585,14 @@
     "path": "/routes/load-balancing#supported-health-checks-parameters",
     "title": "Health Checks Unhealthy Threshold",
     "type": "UInt32Value"
+  },
+  "healthy-panic-threshold": {
+    "description": "If the number of healthy hosts falls below this percentage, traffic will be balanced among all hosts regardless of health, allowing some requests to fail. 0% disables this behavior.",
+    "id": "healthy-panic-threshold",
+    "path": "/routes/load-balancing#health-checks",
+    "services": ["proxy"],
+    "title": "Healthy Panic Threshold",
+    "type": "Integer"
   },
   "host-path-rewrite-header": {
     "description": "Rewrites the Host header according to a regular expression matching the path.",
@@ -933,8 +957,71 @@
     "path": "/../capabilities/device-identity",
     "title": "Manage Devices"
   },
+  "mcp-server-max-request-bytes": {
+    "description": "Maximum MCP request size in bytes. Adjust if you are passing some large payloads that cause errors.",
+    "id": "mcp-server-max-request-bytes",
+    "path": "/../capabilities/mcp#mcp-server-configuration",
+    "title": "MCP Server Max Request Bytes",
+    "type": "integer"
+  },
+  "mcp-server-path": {
+    "description": "The path your MCP server is serving at (i.e. /mcp). Returned in the MCP server discovery to supporting clients.",
+    "id": "mcp-server-path",
+    "path": "/../capabilities/mcp#mcp-server-configuration",
+    "title": "MCP Server Path",
+    "type": "string"
+  },
+  "mcp-server-upstream-oauth2": {
+    "description": "Enable when your MCP server must call an upstream service that uses OAuth. Pomerium runs the OAuth flow and provides your MCP server with the OAuth2 access token that it can use to interact with the upstream API.",
+    "id": "mcp-server-upstream-oauth2",
+    "path": "/../capabilities/mcp#mcp-server-configuration",
+    "title": "MCP Server Upstream OAuth2",
+    "type": "object"
+  },
+  "mcp-server-upstream-oauth2-auth-style": {
+    "description": "How client credentials are sent to the token endpoint: \"header\" (basic auth header) or \"params\" (form body). Usually ok to leave unset to default.",
+    "id": "mcp-server-upstream-oauth2-auth-style",
+    "path": "/../capabilities/mcp#mcp-server-configuration",
+    "title": "MCP Server Upstream OAuth2 Auth Style",
+    "type": "string"
+  },
+  "mcp-server-upstream-oauth2-auth-url": {
+    "description": "OAuth provider authentication URL.",
+    "id": "mcp-server-upstream-oauth2-auth-url",
+    "path": "/../capabilities/mcp#mcp-server-configuration",
+    "title": "MCP Server Upstream OAuth2 Authentication URL",
+    "type": "string"
+  },
+  "mcp-server-upstream-oauth2-client-id": {
+    "description": "OAuth client identifier issued by the upstream provider.",
+    "id": "mcp-server-upstream-oauth2-client-id",
+    "path": "/../capabilities/mcp#mcp-server-configuration",
+    "title": "MCP Server Upstream OAuth2 Client ID",
+    "type": "string"
+  },
+  "mcp-server-upstream-oauth2-client-secret": {
+    "description": "OAuth client secret from the upstream provider.",
+    "id": "mcp-server-upstream-oauth2-client-secret",
+    "path": "/../capabilities/mcp#mcp-server-configuration",
+    "title": "MCP Server Upstream OAuth2 Client Secret",
+    "type": "string"
+  },
+  "mcp-server-upstream-oauth2-scopes": {
+    "description": "OAuth scopes to request from the provider (e.g., read:user, user:email).",
+    "id": "mcp-server-upstream-oauth2-scopes",
+    "path": "/../capabilities/mcp#mcp-server-configuration",
+    "title": "MCP Server Upstream OAuth2 Scopes",
+    "type": "array of strings"
+  },
+  "mcp-server-upstream-oauth2-token-url": {
+    "description": "OAuth provider token url that Pomerium calls to obtain and refresh the OAuth access token.",
+    "id": "mcp-server-upstream-oauth2-token-url",
+    "path": "/../capabilities/mcp#mcp-server-configuration",
+    "title": "MCP Server Upstream OAuth2 Token URL",
+    "type": "string"
+  },
   "metrics-address": {
-    "description": "Expose a prometheus format HTTP endpoint on the specified port.",
+    "description": "Expose a prometheus format HTTP endpoint on the specified address.",
     "id": "metrics-address",
     "path": "/metrics#metrics-address",
     "services": [],
@@ -1308,7 +1395,7 @@
     "type": "duration"
   },
   "route-logo-url": {
-    "description": "The route logo URL.",
+    "description": "An optional logo for this route. Displayed on the Routes Portal.",
     "id": "route-logo-url",
     "path": "/routes/logo-url",
     "services": ["proxy"],
@@ -1388,7 +1475,7 @@
     "type": "string"
   },
   "set-request-headers": {
-    "description": "Sets static and dynamic values for given request headers. Available substitutions: ${pomerium.id_token}, ${pomerium.access_token}, ${pomerium.client_cert_fingerprint}.",
+    "description": "Sets static and dynamic values for given request headers. Available substitutions: ${pomerium.id_token}, ${pomerium.access_token}, ${pomerium.client_cert_fingerprint}, ${pomerium.jwt}.",
     "id": "set-request-headers",
     "path": "/routes/headers#set-request-headers",
     "services": ["proxy"],
@@ -1462,6 +1549,24 @@
     "services": ["proxy"],
     "title": "SPDY",
     "type": "bool"
+  },
+  "ssh-address": {
+    "description": "Address and port to listen for SSH connections on (e.g. 0.0.0.0:22)",
+    "id": "ssh-address",
+    "path": "/../capabilities/native-ssh-access#configuration-reference",
+    "title": "SSH Address"
+  },
+  "ssh-host-keys": {
+    "description": "List of SSH private key files to use as Pomerium's host keys",
+    "id": "ssh-host-keys",
+    "path": "/../capabilities/native-ssh-access#configuration-reference",
+    "title": "SSH Host Keys"
+  },
+  "ssh-user-ca-key": {
+    "description": "Path to the User CA private key file (if no ssh_user_ca_key is provided)",
+    "id": "ssh-user-ca-key",
+    "path": "/../capabilities/native-ssh-access#configuration-reference",
+    "title": "SSH User CA Key"
   },
   "strip-query": {
     "description": "Indicates that during redirection, the Query portion of the URL will be removed. Defaults to false.",
