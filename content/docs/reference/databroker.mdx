@@ -51,6 +51,17 @@ DATABROKER_STORAGE_TYPE=postgres
 `databroker_storage_type` is a bootstrap configuration setting and is not configurable in the Console.
 
 </TabItem>
+<TabItem value="Zero" label="Zero">
+
+In Pomerium Zero, the storage type is **automatically inferred** from the connection string format and does not need to be configured separately:
+
+- `file:///path/to/directory` → file backend
+- `postgres://...` or `postgresql://...` → Postgres backend
+- Empty/unset → in-memory (default)
+
+See [Databroker Storage Connection String](#databroker-storage-connection-string) below for configuration details.
+
+</TabItem>
 <TabItem value="Kubernetes" label="Kubernetes">
 
 See Kubernetes [Storage reference](/docs/deploy/k8s/reference#storage) for more information.
@@ -83,6 +94,21 @@ DATABROKER_STORAGE_CONNECTION_STRING=file:///var/pomerium/databroker
 <TabItem value="Enterprise" label="Enterprise">
 
 `databroker_storage_connection_string` is a bootstrap configuration setting and is not configurable in the Console.
+
+</TabItem>
+<TabItem value="Zero" label="Zero">
+
+In Pomerium Zero, configure the connection string in the **Settings → General** section of the Zero console. The storage type is automatically inferred from the connection string:
+
+```
+file:///var/lib/pomerium
+```
+
+:::note
+
+When using the file backend, ensure the specified directory exists and has appropriate permissions. The in-memory backend (when the field is left empty) does not persist data across restarts.
+
+:::
 
 </TabItem>
 <TabItem value="Kubernetes" label="Kubernetes">
@@ -131,6 +157,29 @@ DATABROKER_STORAGE_CONNECTION_STRING_FILE=/run/secrets/db_connection_string
 <TabItem value="Enterprise" label="Enterprise">
 
 `databroker_storage_connection_string` is a bootstrap configuration setting and is not configurable in the Console.
+
+</TabItem>
+<TabItem value="Zero" label="Zero">
+
+In Pomerium Zero, configure the connection string in the **Settings → General** section of the Zero console. The storage type is automatically inferred from the connection string format:
+
+```
+postgres://user:password@host:5432/database?sslmode=require
+```
+
+or
+
+```
+postgresql://user:password@host:5432/database?sslmode=require
+```
+
+Both `postgres://` and `postgresql://` schemes are supported and automatically detected as Postgres storage.
+
+:::tip
+
+For production deployments, use a managed Postgres service or ensure your database has proper backups configured. Unlike the in-memory backend, Postgres provides persistent, replicated storage suitable for multi-replica deployments.
+
+:::
 
 </TabItem>
 <TabItem value="Kubernetes" label="Kubernetes">
