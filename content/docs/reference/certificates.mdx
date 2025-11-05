@@ -94,6 +94,21 @@ certificates: pomerium/wildcard-localhost
 See Kubernetes [TLS Certificates](/docs/deploy/k8s/ingress#tls-certificates) for more information.
 
 </TabItem>
+<TabItem value="Enterprise via Terraform" label="Enterprise via Terraform">
+
+```hcl
+resource "pomerium_key_pair" "wildcard-localhost" {
+  namespace_id = pomerium_namespace.test_namespace.id
+  name         = "wildcard-localhost-key-pair"
+  certificate  = file("wildcard.localhost.pomerium.io.pem")
+  key          = file("wildcard.localhost.pomerium.io-key.pem")
+}
+```
+
+See Pomerium Terraform Provider [pomerium_key_pair](https://registry.terraform.io/providers/pomerium/pomerium/latest/docs/resources/key_pair) for more information.
+
+</TabItem>
+
 </Tabs>
 
 :::note
@@ -149,6 +164,21 @@ Configure **Certificate Authority** in the Enterprise Console:
 <TabItem value="Kubernetes" label="Kubernetes">
 
 Kubernetes does not support `certificate_authority`
+
+</TabItem>
+<TabItem label="Enterprise via Terraform" value="Enterprise via Terraform">
+
+| **[Parameter name](https://registry.terraform.io/providers/pomerium/pomerium/latest/docs/resources/settings)** | **Type** | **Usage** |
+| :-- | :-- | :-- |
+| `certificate_authority` | String | **optional** |
+| `certificate_authority_file` | String | **optional** |
+
+### Examples
+
+```hcl
+certificate_authority = "base64-encoded-string"
+certificate_authority_file = "/relative/file/location"
+```
 
 </TabItem>
 </Tabs>

@@ -79,7 +79,7 @@ AUTHENTICATE_SERVICE_URL=https://authenticate.corp.example.com
 </TabItem>
 <TabItem value="Kubernetes" label="Kubernetes">
 
-| **[Parameter name](/docs/deploy/k8s/reference#spec** | **Type** | **Usage** |
+| **[Parameter name](/docs/deploy/k8s/reference#spec)** | **Type** | **Usage** |
 | :-- | :-- | :-- |
 | `authenticate.url` | `URL` | **optional** |
 
@@ -91,6 +91,19 @@ authenticate:
 ```
 
 See the [Kubernetes - Global Configuration](/docs/deploy/k8s/configure#authenticate-endpoint) for more information.
+
+</TabItem>
+<TabItem value="Enterprise via Terraform" label="Enterprise via Terraform">
+
+| **[Parameter name](https://registry.terraform.io/providers/pomerium/pomerium/latest/docs/resources/settings)** | **Type** | **Usage** |
+| :-- | :-- | :-- |
+| `authenticate_service_url` | `URL` | **optional** |
+
+### Examples
+
+```hcl
+authenticate_service_url = "https://authenticate.corp.example.com"
+```
 
 </TabItem>
 </Tabs>
@@ -182,6 +195,19 @@ AUTHORIZE_SERVICE_URL=https://pomerium-authorize-service.default.svc.cluster.loc
 The `authorize_service_url` is not customizable in all-in-one mode with the CRD
 
 </TabItem>
+<TabItem value="Enterprise via Terraform" label="Enterprise via Terraform">
+
+| [Parameter name](https://registry.terraform.io/providers/pomerium/pomerium/latest/docs/resources/settings) | **Type** | **Usage** |
+| :-- | :-- | :-- |
+| `authorize_service_url` | `URL` | **optional** |
+
+### Examples
+
+```hcl
+authorize_service_url = "https://localhost:5443"
+```
+
+</TabItem>
 </Tabs>
 
 ## Authorize Internal Service URL
@@ -257,6 +283,19 @@ DATABROKER_SERVICE_URL=https://databroker.corp.example.com
 <TabItem value="Kubernetes" label="Kubernetes">
 
 `databroker_service_url` is not customizable in Kubernetes for all-in-one mode deployments
+
+</TabItem>
+<TabItem value="Enterprise via Terraform" label="Enterprise via Terraform">
+
+| [Parameter name](https://registry.terraform.io/providers/pomerium/pomerium/latest/docs/resources/settings) | **Type** | **Usage** |
+| :-- | :-- | :-- |
+| `databroker_service_url` | `String` | **optional** |
+
+### Examples
+
+```hcl
+databroker_service_url = "http://databroker.corp.example1.com"
+```
 
 </TabItem>
 </Tabs>

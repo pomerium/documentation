@@ -65,6 +65,19 @@ cookie:
 ```
 
 </TabItem>
+<TabItem value="Enterprise via Terraform" label="Enterprise via Terraform">
+
+| **[Parameter name](/docs/deploy/k8s/reference#cookie)** | **Type** | **Default** |
+| :-- | :-- | :-- |
+| `cookie_name` | `string` | `_pomerium` |
+
+#### Examples {#cookie-name-examples}
+
+```hcl
+cookie_name = "cookie_name"
+```
+
+</TabItem>
 </Tabs>
 
 ## Cookie Secret {#cookie-secret}
@@ -107,6 +120,19 @@ COOKIE_SECRET=tdkuWzUelRukP/6VYzopfh6kis7y5u5Ldl3MrIq9ZR0=
 <TabItem value="Kubernetes" label="Kubernetes">
 
 See Kubernetes [bootstrap secrets](/docs/deploy/k8s/configure#bootstrap-secrets) for more information.
+
+</TabItem>
+<TabItem value="Enterprise via Terraform" label="Enterprise via Terraform">
+
+| **[Parameter name](https://registry.terraform.io/providers/pomerium/pomerium/latest/docs/resources/settings)** | **Type** | **Usage** |
+| :-- | :-- | :-- |
+| `cookie_secret` | `String` | **optional** |
+
+#### Examples {#cookie-name-examples}
+
+```hcl
+cookie_secret = "tdkuWzUelRukP/6VYzopfh6kis7y5u5Ldl3MrIq9ZR0="
+```
 
 </TabItem>
 </Tabs>
@@ -153,6 +179,19 @@ COOKIE_DOMAIN=localhost.pomerium.io
 ```yaml
 cookie:
   domain: localhost.pomerium.io
+```
+
+</TabItem>
+<TabItem value="Enterprise via Terraform" label="Enterprise via Terraform">
+
+| **[Parameter name](/docs/deploy/k8s/reference#cookie)** | **Type** | **Usage** | **Default** |
+| :-- | :-- | :-- | :-- |
+| `cookie_domain` | `String` | **optional** | The host that set the cookie |
+
+#### Examples {#cookie-domain-examples}
+
+```hcl
+cookie_domain = "localhost.pomerium.io"
 ```
 
 </TabItem>
@@ -227,6 +266,19 @@ cookie:
 ```
 
 </TabItem>
+<TabItem value="Enterprise via Terraform" label="Enterprise via Terraform">
+
+| **[Parameter name](https://registry.terraform.io/providers/pomerium/pomerium/latest/docs/resources/settings)** | **Type** | **Default** |
+| :-- | :-- | :-- |
+| `cookie_http_only ` | `boolean` | `true` |
+
+#### Examples {#cookie-http-only-examples}
+
+```hcl
+cookie_http_only = false
+```
+
+</TabItem>
 </Tabs>
 
 ## Cookie Expiration {#cookie-expiration}
@@ -271,6 +323,19 @@ Set **Cookie Expiration** in the Console: ![Setting the cookie expiration time i
 ```yaml
 cookie:
   expire: 13h15m0.5s
+```
+
+</TabItem>
+<TabItem value="Enterprise via Terraform" label="Enterprise via Terraform">
+
+| **[Parameter name](https://registry.terraform.io/providers/pomerium/pomerium/latest/docs/resources/settings)** | **Type** | **Default** |
+| :-- | :-- | :-- |
+| `cookie_expire ` | `string` ([Go Duration](https://golang.org/pkg/time/#Duration.String) formatting) | `14h` |
+
+#### Examples {#cookie-expiration-examples}
+
+```hcl
+cookie_expire = "13h15m0.5s"
 ```
 
 </TabItem>
@@ -320,6 +385,19 @@ See [Cookie SameSite Options](#cookie-samesite-options) for more information.
 ```yaml
 cookie:
   sameSite: None
+```
+
+</TabItem>
+<TabItem value="Enterprise via Terraform" label="Enterprise via Terraform">
+
+| **[Parameter name](https://registry.terraform.io/providers/pomerium/pomerium/latest/docs/resources/settings)** | **Type** | **Usage** | **Default** | **Options** |
+| :-- | :-- | :-- | :-- | :-- |
+| `cookie_same_site` | `String` | **optional** | ` Lax` (if unset) | See [Cookie SameSite Options](#cookie-samesite-options) |
+
+#### Examples {#cookie-samesite-examples}
+
+```hcl
+cookie_same_site = "Lax"
 ```
 
 </TabItem>

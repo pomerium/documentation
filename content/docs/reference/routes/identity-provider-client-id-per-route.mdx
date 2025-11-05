@@ -49,4 +49,23 @@ Set **Identity Provider Client ID (per route)** in the Console:
 Kubernetes does not support `idp_client_id` (per route)
 
 </TabItem>
+<TabItem value="Enterprise via Terraform" label="Enterprise via Terraform">
+
+| **Parameter name** | **Type** | **Usage**    |
+| :----------------- | :------- | :----------- |
+| `idp_client_id`    | `String` | **optional** |
+
+### Examples
+
+```hcl
+resource "pomerium_route" "verify_route" {
+  name         = "verify-route"
+  namespace_id = pomerium_namespace.test_namespace.id
+  from         = "https://verify.localhost.pomerium.io"
+  to           = ["https://verify.pomerium.com"]
+  idp_client_id = idp_client_id
+}
+```
+
+</TabItem>
 </Tabs>
