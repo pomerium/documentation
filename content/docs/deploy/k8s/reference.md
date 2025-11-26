@@ -4,10 +4,10 @@ sidebar_label: Reference
 description: Reference for Pomerium settings in Kubernetes deployments.
 ---
 
-Pomerium-specific parameters should be configured via the `ingress.pomerium.io/Pomerium` CRD. The default Pomerium deployment is listening to the CRD `global`, that may be customized via command line parameters.
+Pomerium-specific parameters should be configured via the `ingress.pomerium.io/Pomerium` CRD.
+The default Pomerium deployment is listening to the CRD `global`, that may be customized via command line parameters.
 
 Pomerium posts updates to the CRD <a href="#status">`/status`</a>:
-
 ```shell
 kubectl describe pomerium
 ```
@@ -443,6 +443,8 @@ PomeriumSpec defines Pomerium-specific configuration parameters.
     </tbody>
 </table>
 
+
+
 ### `authenticate`
 
 Authenticate sets authenticate service parameters. If not specified, a Pomerium-hosted authenticate service would be used.
@@ -473,6 +475,8 @@ Authenticate sets authenticate service parameters. If not specified, a Pomerium-
     
     </tbody>
 </table>
+
+
 
 ### `circuitBreakerThresholds`
 
@@ -565,6 +569,8 @@ CircuitBreakerThresholds sets the circuit breaker thresholds settings.
     
     </tbody>
 </table>
+
+
 
 ### `cookie`
 
@@ -661,6 +667,8 @@ Cookie defines Pomerium session cookie options.
     </tbody>
 </table>
 
+
+
 ### `dataBroker`
 
 DataBroker sets the databroker settings.
@@ -688,6 +696,8 @@ DataBroker sets the databroker settings.
     
     </tbody>
 </table>
+
+
 
 ### `dns`
 
@@ -822,6 +832,8 @@ DNS sets the dns settings.
     </tbody>
 </table>
 
+
+
 ### `downstreamMtls`
 
 DownstreamMTLS sets the <a href="https://www.pomerium.com/docs/reference/downstream-mtls-settings">Downstream MTLS Settings</a>.
@@ -921,6 +933,8 @@ DownstreamMTLS sets the <a href="https://www.pomerium.com/docs/reference/downstr
     </tbody>
 </table>
 
+
+
 ### `file`
 
 File specifies file storage options.
@@ -948,6 +962,8 @@ File specifies file storage options.
     
     </tbody>
 </table>
+
+
 
 ### `identityProvider`
 
@@ -1099,6 +1115,8 @@ IdentityProvider configure single-sign-on authentication and user identity detai
     </tbody>
 </table>
 
+
+
 ### `matchSubjectAltNames`
 
 Match Subject Alt Names can be used to add an additional constraint when validating client certificates.
@@ -1190,6 +1208,8 @@ Match Subject Alt Names can be used to add an additional constraint when validat
     
     </tbody>
 </table>
+
+
 
 ### `otel`
 
@@ -1353,6 +1373,8 @@ OTEL sets the <a href="https://www.pomerium.com/docs/reference/tracing.mdx">Open
     </tbody>
 </table>
 
+
+
 ### `postgres`
 
 Postgres specifies PostgreSQL database connection parameters
@@ -1422,6 +1444,8 @@ Postgres specifies PostgreSQL database connection parameters
     </tbody>
 </table>
 
+
+
 ### `refreshDirectory`
 
 RefreshDirectory is no longer supported, please see <a href="https://docs.pomerium.com/docs/overview/upgrading#idp-directory-sync">Upgrade Guide</a>.
@@ -1472,6 +1496,8 @@ RefreshDirectory is no longer supported, please see <a href="https://docs.pomeri
     </tbody>
 </table>
 
+
+
 ### `ssh`
 
 SSH sets the ssh settings.
@@ -1515,6 +1541,8 @@ SSH sets the ssh settings.
     
     </tbody>
 </table>
+
+
 
 ### `storage`
 
@@ -1561,6 +1589,8 @@ Storage defines persistent storage for sessions and other data. See <a href="htt
     
     </tbody>
 </table>
+
+
 
 ### `timeouts`
 
@@ -1631,6 +1661,8 @@ Timeout specifies the <a href="https://www.pomerium.com/docs/reference/global-ti
     </tbody>
 </table>
 
+
+
 ## Status
 
 PomeriumStatus represents configuration and Ingress status.
@@ -1676,6 +1708,8 @@ PomeriumStatus represents configuration and Ingress status.
     
     </tbody>
 </table>
+
+
 
 ### `ingress`
 
@@ -1772,6 +1806,8 @@ ResourceStatus represents the outcome of the latest attempt to reconcile relevan
     </tbody>
 </table>
 
+
+
 ### `settingsStatus`
 
 SettingsStatus represent most recent main configuration reconciliation status.
@@ -1866,3 +1902,6 @@ SettingsStatus represent most recent main configuration reconciliation status.
     
     </tbody>
 </table>
+
+
+
