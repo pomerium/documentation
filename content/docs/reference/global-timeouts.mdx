@@ -23,11 +23,39 @@ import TabItem from '@theme/TabItem';
 
 You can set also set [route-level timeouts](/docs/reference/routes/timeouts).
 
+## Timeout Flow Overview
+
+The following diagram shows how different timeouts apply throughout the request lifecycle:
+
+```mermaid
+sequenceDiagram
+    participant Client
+    participant Pomerium
+    participant Backend (Upstream)
+    Client->>Pomerium: HTTP Request (from client)
+    Note over Client,Pomerium: Read Timeout starts when request begins
+    Pomerium->>Backend (Upstream): Forward request to upstream<br/>(once request is fully received)
+    Note over Pomerium,Backend (Upstream): Default Upstream Timeout starts<br/>after full request is received
+    Backend (Upstream)-->>Pomerium: Upstream Response
+    Pomerium-->>Client: HTTP Response (to client)
+    Note over Pomerium,Client: Write Timeout covers<br/>entire request+response stream
+    Note right of Pomerium: Idle Timeout closes idle connections<br/>with no active requests
+```
+
+## Timeout Settings Overview
+
+| **Timeout** | **Direction** | **Default** | **Purpose** |
+| --- | --- | --- | --- |
+| **Read Timeout** | Downstream | 30s | Time allowed to receive complete request from client |
+| **Write Timeout** | Downstream | 0 (disabled) | Total time for entire request/response cycle |
+| **Idle Timeout** | Bidirectional | 5m | Closes inactive connections when idle |
+| **Default Upstream Timeout** | Upstream | 30s | Time allowed for backend to respond |
+
 ## Read Timeout
 
-**Read Timeout** sets the maximum amount of time for a downstream client to complete a single HTTP request. The time starts when a request is begun and ends either when Pomerium has proxied the entire request body to the upstream service, or when Pomerium has begun sending a response back to the client.
+**Read Timeout** sets the maximum duration allowed for the entire downstream HTTP request to be received. This timeout starts when the downstream client initiates the request and ends when Pomerium has fully received the complete request (including headers and body) from the client.
 
-This timeout is disabled if set to `0`. (This is not recommended, as a malicious client could consume significant resources by beginning many incomplete requests.)
+Setting this timeout to `0` disables it. (This is not recommended, as it could allow malicious clients to consume resources with slow or incomplete requests.)
 
 ### How to configure
 
@@ -85,9 +113,9 @@ timeout_read = "30s"
 
 ## Write Timeout
 
-**Write Timeout** sets the maximum time for a single HTTP request/response pair to fully complete. This should be greater than the [**Read Timeout**](#read-timeout) setting as this includes both the request and response time.
+**Write Timeout** sets the maximum duration allowed for an entire HTTP request/response cycle to complete. This includes both the time to receive the request from the downstream client and the time to send the complete response back. This timeout should be greater than the [**Read Timeout**](#read-timeout) setting as it encompasses the entire request/response lifecycle.
 
-This timeout is disabled if set to `0`.
+Setting this timeout to `0` disables it, meaning there is no time limit for request/response completion.
 
 ### How to configure
 
@@ -145,9 +173,9 @@ timeout_write = "0"
 
 ## Idle Timeout
 
-**Idle Timeout** sets the time at which an upstream or downstream connection will be terminated if there are no active requests/responses.
+**Idle Timeout** sets the duration after which an upstream or downstream connection will be terminated if there are no active requests or responses.
 
-This timeout is disabled if set to `0`.
+Setting this timeout to `0` disables it, allowing connections to remain open indefinitely when idle.
 
 ### How to configure
 
