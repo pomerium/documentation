@@ -4,7 +4,7 @@ lang: en-US
 sidebar_label: Quickstart
 pagination_prev: null
 pagination_next: null
-description: Learn how to install and run Pomerium Zero in a Docker container.
+description: Learn how to install and run Pomerium Zero or Core with Docker.
 keywords:
   [
     pomerium,
@@ -23,9 +23,14 @@ keywords:
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-# Pomerium Zero Quickstart
+# Pomerium Quickstart
 
-The Zero Quickstart shows you how to install and run Pomerium Zero in a Docker container.
+Get started with Pomerium using either our cloud-hosted Zero solution or self-hosted Core.
+
+<Tabs>
+<TabItem value="zero" label="Pomerium Zero" default>
+
+Pomerium Zero is our cloud-hosted solution that simplifies deployment and management.
 
 ## Before you start
 
@@ -193,3 +198,130 @@ To see certificates in your cluster, go to the **Certificates** tab:
 ### [Build your First Route](/docs/get-started/fundamentals/zero/zero-build-routes)
 
 ### [Add a Custom Domain](/docs/capabilities/custom-domains)
+
+</TabItem>
+<TabItem value="core" label="Pomerium Core">
+
+Pomerium Core is our open-source, self-hosted identity-aware reverse proxy.
+
+## Before you start
+
+- Install [Docker](https://docs.docker.com/install/) and [Docker Compose](https://docs.docker.com/compose/install/)
+- Choose an identity provider (Google, GitHub, etc.) for authentication
+
+## Set up your project
+
+Create a new directory for your Pomerium setup:
+
+```bash
+mkdir pomerium_quickstart
+cd pomerium_quickstart
+```
+
+Your project will contain:
+
+- `config.yaml` - Pomerium configuration
+- `docker-compose.yaml` - Docker services configuration
+
+## Configure Pomerium Core
+
+Create a `config.yaml` file with your Pomerium configuration:
+
+```yaml title="config.yaml"
+# Pomerium configuration
+authenticate_service_url: https://authenticate.localhost.pomerium.io
+authorize_service_url: https://authorize.localhost.pomerium.io
+databroker_service_url: https://databroker.localhost.pomerium.io
+
+# Generate a shared secret (use: head -c32 /dev/urandom | base64)
+shared_secret: REPLACE_WITH_RANDOM_STRING
+
+# Generate a cookie secret (use: head -c32 /dev/urandom | base64)
+cookie_secret: REPLACE_WITH_RANDOM_STRING
+
+# Identity provider settings (example with Google)
+idp_provider: google
+idp_client_id: REPLACE_WITH_GOOGLE_CLIENT_ID
+idp_client_secret: REPLACE_WITH_GOOGLE_CLIENT_SECRET
+
+# Routes
+routes:
+  - from: https://verify.localhost.pomerium.io
+    to: http://verify:8000
+    policy:
+      - allow:
+          or:
+            - email:
+                is: user@example.com
+```
+
+## Create Docker Compose configuration
+
+Create a `docker-compose.yaml` file:
+
+```yaml title="docker-compose.yaml"
+version: '3'
+services:
+  pomerium:
+    image: pomerium/pomerium:latest
+    volumes:
+      - ./config.yaml:/pomerium/config.yaml:ro
+    ports:
+      - '443:443'
+      - '80:80'
+    environment:
+      - POMERIUM_DEBUG=true
+
+  verify:
+    image: pomerium/verify:latest
+    expose:
+      - 8000
+```
+
+## Generate secrets
+
+Generate the required secrets for your configuration:
+
+```bash
+# Generate shared secret
+echo "shared_secret: $(head -c32 /dev/urandom | base64)"
+
+# Generate cookie secret
+echo "cookie_secret: $(head -c32 /dev/urandom | base64)"
+```
+
+Update your `config.yaml` with these generated values.
+
+## Set up identity provider
+
+Configure your identity provider (this example uses Google):
+
+1. Go to the [Google Cloud Console](https://console.cloud.google.com/)
+2. Create a new project or select existing
+3. Enable the Google+ API
+4. Create OAuth 2.0 credentials
+5. Add authorized redirect URI: `https://authenticate.localhost.pomerium.io/oauth2/callback`
+6. Update `config.yaml` with your client ID and secret
+
+## Deploy Pomerium Core
+
+Start your Pomerium deployment:
+
+```bash
+docker compose up -d
+```
+
+## Test your setup
+
+1. Navigate to https://verify.localhost.pomerium.io
+2. You'll be redirected to authenticate with your identity provider
+3. After authentication, you should see the Pomerium verify page
+
+## Next Steps
+
+### [Learn Core Fundamentals](/docs/get-started/fundamentals/core/get-started)
+
+### [Configure Advanced Policies](/docs/get-started/fundamentals/core/build-policies)
+
+</TabItem>
+</Tabs>
