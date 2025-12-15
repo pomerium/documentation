@@ -197,6 +197,7 @@ The remaining annotations are specific to or behave differently than they do whe
 | `ingress.pomerium.io/policy` | [Pomerium Policy Language](/docs/internals/ppl) YAML or JSON block (as string) |
 | `ingress.pomerium.io/allow_any_authenticated_user` | When set to `"true"`, allows access to any user that was successfully authenticated with your Identity Provider. |
 | `ingress.pomerium.io/allow_public_unauthenticated_access` | When set to `"true"`, does not require authentication, grants public access |
+| `ingress.pomerium.io/identity_provider_secret` | Name of Kubernetes `opaque` Secret containing `client_id` and `client_secret` to use for the route. |
 
 ### Set authorization policy
 
