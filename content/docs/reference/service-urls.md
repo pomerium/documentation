@@ -252,6 +252,8 @@ Kubernetes does not support `authorize_internal_service_url`
 
 The **Databroker Service URL** settings points to a databroker which is responsible for storing associated authorization context (for example, sessions, users, and user groups).
 
+In all-in-one mode, leave these unset; Pomerium uses `http://localhost:5443`. Set them only when the databroker runs on another host/port (split-service or remote).
+
 ### How to configure {#databroker-service-url-how-to-configure}
 
 <Tabs>
