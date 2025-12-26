@@ -20,6 +20,13 @@ import TabItem from '@theme/TabItem';
 
 The **Configure** section of the Pomerium Enterprise Console houses settings that affect the entirety of the Console environment (across all Namespaces). Adjust these settings with care.
 
+## Outbound network requirements
+
+Pomerium Enterprise Console may require outbound HTTPS (TCP 443) access to:
+
+- `api.keygen.sh` for online license verification
+- `raw.githubusercontent.com` for the Tor exit node list when that data source is enabled
+
 ## Variables
 
 The keys listed below can be applied in Pomerium Console's `config.yaml` file or as environment variables.
@@ -42,7 +49,7 @@ All values are case sensitive unless otherwise noted.
 | <a className="entRef-anchor" id="database-encryption-key-file">#</a><a href='#database-encryption-key-file'>DATABASE_ENCRYPTION_KEY_FILE</a> | Loads base64-encoded `database-encryption-key` secret from a file. | none |
 | <a className="entRef-anchor" id="database-encryption-key-raw-file">#</a><a href='#database-encryption-key-raw-file'>DATABASE_ENCRYPTION_KEY_RAW_FILE</a> | Loads `database-encryption-key` secret from a raw file. Setting this option from a raw file does not require base64 encoding. | none |
 | <a className="entRef-anchor" id="database-url">#</a><a href='#database-url'>DATABASE_URL</a> | The database Pomerium Enterprise Console will use. | `postgresql://pomerium:pomerium`<br/>`@localhost:5432/dashboard?sslmode=disable` |
-| <a className="entRef-anchor" id="databroker-service-url">#</a><a href='#databroker-service-url'>DATABROKER_SERVICE_URL</a> | The databroker service URL. | `http://localhost:5443` |
+| <a className="entRef-anchor" id="databroker-service-url">#</a><a href='#databroker-service-url'>DATABROKER_SERVICE_URL</a> | Databroker service URL for Console to reach Core. Leave unset in the default single-process deployment (Console uses `http://localhost:5443`). Set only when the databroker runs on another host/port or Core is split/remote. | `http://localhost:5443` |
 | <a className="entRef-anchor" id="debug-config-dump">#</a><a href='#debug-config-dump'>DEBUG_CONFIG_DUMP</a> | Dumps the Databroker configuration. This is a debug option to be used only when specified by Pomerium Support. | `false` |
 | <a className="entRef-anchor" id="disable-feedback-widget">#</a><a href='#disable-feedback-widget'>DISABLE_FEEDBACK_WIDGET</a> | Disables third-party feedback widget and removes it from the Enterprise Console. | `false` |
 | <a className="entRef-anchor" id="disable-remote-diagnostics">#</a><a href='#disable-remote-diagnostics'>DISABLE_REMOTE_DIAGNOSTICS</a> | Disable remote diagnostics. | `true` |
@@ -88,7 +95,7 @@ All values are case sensitive unless otherwise noted.
 | <a className="entRef-anchor" id="database-encryption-key-file">#</a><a href='#database-encryption-key-file'>database_encryption_key_file</a> | Loads base64-encoded `database-encryption-key` secret from a file. | none |
 | <a className="entRef-anchor" id="database-encryption-key-raw-file">#</a><a href='#database-encryption-key-raw-file'>database_encryption_key_raw_file</a> | Loads `database-encryption-key` secret from a raw file. Setting this option from a raw file does not require base64 encoding. | none |
 | <a className="entRef-anchor" id="database-url">#</a><a href='#database-url'>database_url</a> | The database Pomerium Enterprise Console will use. | `postgresql://pomerium:pomerium`<br/>`@localhost:5432/dashboard?sslmode=disable` |
-| <a className="entRef-anchor" id="databroker-service-url">#</a><a href='#databroker-service-url'>databroker_service_url</a> | The databroker service URL. | `http://localhost:5443` |
+| <a className="entRef-anchor" id="databroker-service-url">#</a><a href='#databroker-service-url'>databroker_service_url</a> | Databroker service URL for Console to reach Core. Leave unset in the default single-process deployment (Console uses `http://localhost:5443`). Set only when the databroker runs on another host/port or Core is split/remote. | `http://localhost:5443` |
 | <a className="entRef-anchor" id="debug-config-dump">#</a><a href='#debug-config-dump'>debug_config_dump</a> | Dumps the Databroker configuration. This is a debug option to be used only when specified by Pomerium Support. | `false` |
 | <a className="entRef-anchor" id="disable-feedback-widget">#</a><a href='#disable-feedback-widget'>disable_feedback_widget</a> | Disables third-party feedback widget and removes it from the Enterprise Console. | `false` |
 | <a className="entRef-anchor" id="disable-remote-diagnostics">#</a><a href='#disable-remote-diagnostics'>disable_remote_diagnostics</a> | Disable remote diagnostics. | `true` |
