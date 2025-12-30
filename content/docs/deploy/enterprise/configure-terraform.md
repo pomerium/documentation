@@ -94,6 +94,26 @@ The Bootstrap Service Account method requires setting `BOOTSTRAP_SERVICE_ACCOUNT
 
 ## Example
 
+### Namespace permissions
+
+Use the `pomerium_namespace_permission` resource to assign Enterprise Console roles to a namespace. The `role` attribute accepts the following values:
+
+- `viewer`: Read-only access to resources within the namespace hierarchy.
+- `manager`: Can create, edit, and delete routes, policies, and certificates within the namespace hierarchy.
+- `admin`: Full administrative control of the namespace and any child namespaces.
+
+See [RBAC for Enterprise Console users](/docs/internals/namespacing#rbac-for-enterprise-console-users) for more details about each role.
+
+```hcl
+  resource "pomerium_namespace_permission" "engineering_admin" {
+    namespace_id = pomerium_namespace.engineering.id
+    user_id      = "user-id-from-idp"
+    role         = "admin"
+  }
+```
+
+### Resource example
+
 ```hcl
   resource "pomerium_namespace" "engineering" {
     name = "engineering"
