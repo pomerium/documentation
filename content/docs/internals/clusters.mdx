@@ -390,3 +390,63 @@ This cluster status alert monitors the connection between the Pomerium Zero clou
 **What causes this alert**: Connectivity issues between Pomerium Zero and a cluster.
 
 **Steps to resolve**: You may experience this issue if you're accessing Pomerium Zero behind a firewall. Check your firewall settings to make sure it allows HTTP and HTTPS traffic.
+
+### Cluster has no active replicas {#cluster_active_replicas}
+
+This cluster status alert checks whether a cluster has at least one active replica connected to Pomerium Zero. It runs periodically to verify cluster health.
+
+**What causes this alert**: None of the cluster's replicas are currently connected to the Pomerium Zero cloud. This could mean:
+
+- All replicas have been stopped or are unreachable
+- Network connectivity issues are preventing replicas from connecting
+- The cluster token may have been rotated without updating the replicas
+
+**Steps to resolve**: Verify that at least one replica is running and can connect to the Pomerium Zero cloud. Check your replica logs for connection errors and ensure the cluster token is current.
+
+### Configuration build failed {#config_build}
+
+This cluster status alert tracks whether the cluster configuration was successfully built when applying a changeset. It runs every time a configuration change is applied.
+
+**What causes this alert**: There was an error building the cluster configuration. This could be due to:
+
+- An invalid configuration value in a route or policy
+- Missing required configuration fields
+- An internal error during configuration processing
+
+**Steps to resolve**: Review your recent configuration changes for errors. If the configuration appears correct, please [contact support](https://discuss.pomerium.com/).
+
+### Routes are unreachable {#routes.reachable}
+
+This cluster status alert verifies that all configured routes can be reached via DNS and that the Pomerium JWKS endpoint is accessible for each route host. It runs every time the cluster configuration is updated.
+
+**What causes this alert**: One or more route hostnames cannot be resolved or reached. This could mean:
+
+- DNS records for the route hostnames are missing or incorrect
+- The detected or override IP address doesn't match where traffic is being routed
+- Network configuration is preventing access to the route hosts
+
+**Steps to resolve**: Verify that DNS records are correctly configured for all route hostnames. Check that the cluster's [**Detected IP Address or Override IP Address**](#detected-and-override-ip-address) is correctly set. Ensure firewall rules allow traffic to reach your routes.
+
+### Resource bundle application failed {#zero.resource-bundle.config}
+
+This cluster status alert tracks whether Zero resource bundles (configuration packages) were successfully applied to the cluster. It runs when configuration bundles are received from the Pomerium Zero cloud.
+
+**What causes this alert**: A configuration resource bundle could not be applied to the cluster. This could be due to:
+
+- Version incompatibility between the resource bundle and the running Pomerium version
+- Corruption or incomplete transmission of the resource bundle
+- Internal errors during bundle application
+
+**Steps to resolve**: If this error persists, try restarting your cluster replicas. If the issue continues, please [contact support](https://discuss.pomerium.com/).
+
+### Telemetry collection failed {#zero.telemetry.collect-and-send}
+
+This cluster status alert monitors whether telemetry data was successfully collected and sent to the Pomerium Zero cloud. It runs when the cloud requests telemetry data from the cluster.
+
+**What causes this alert**: The cluster was unable to collect or transmit telemetry metrics to Pomerium Zero. This could be due to:
+
+- Connectivity issues between the cluster and Pomerium Zero
+- Internal errors during metrics collection
+- Resource constraints preventing telemetry processing
+
+**Steps to resolve**: This is typically a transient issue that resolves automatically. If the error persists, check network connectivity and restart your cluster replicas. For ongoing issues, please [contact support](https://discuss.pomerium.com/).
