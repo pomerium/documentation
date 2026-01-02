@@ -377,7 +377,14 @@ Pomerium caches lookups to the databroker. The following metrics are reported fo
 
 ### Database Metrics
 
-Pomerium exposes metrics for its PostgreSQL connection pool, prefixed with `pomerium_pgxpool_`. These metrics help monitor database connection usage, pool health, and performance.
+Pomerium exposes different storage metrics depending on the configured databroker storage backend:
+
+- **PostgreSQL storage**: Exposes `pomerium_pgxpool_*` connection pool metrics (documented below)
+- **File-based storage (Pebble)**: Exposes `pomerium_storage_pebble_*` metrics (see [File-Based Storage Metrics](#file-based-storage-metrics))
+
+#### PostgreSQL Metrics
+
+When using PostgreSQL as the databroker storage backend, Pomerium exposes metrics for the connection pool, prefixed with `pomerium_pgxpool_`. These metrics help monitor database connection usage, pool health, and performance.
 
 | Name | Type | Description |
 | --- | --- | --- |
@@ -403,6 +410,78 @@ Example Prometheus output:
 # TYPE pomerium_pgxpool_acquire_duration_nanoseconds_total counter
 pomerium_pgxpool_acquire_duration_nanoseconds_total{db_client_connection_pool_name="localhost:5432/pomerium",db_system="postgresql",otel_scope_name="github.com/exaring/otelpgx",otel_scope_version="v0.9.1",hostname="my-host"} 5.1058702e+07
 ```
+
+#### File-Based Storage Metrics {#file-based-storage-metrics}
+
+When using file-based storage (the default for Pomerium Core or when `databroker_storage_type` is not set to `postgres`), Pomerium uses [Pebble](https://github.com/cockroachdb/pebble), a high-performance key-value store. These metrics are prefixed with `pomerium_storage_pebble_` and provide visibility into the storage engine's performance.
+
+##### Block Cache Metrics
+
+| Name | Type | Description |
+| --- | --- | --- |
+| storage_pebble_block_cache_size | Gauge | The number of bytes in use by the block cache. |
+| storage_pebble_block_cache_count | Gauge | The count of objects (blocks or tables) in the cache. |
+| storage_pebble_block_cache_hits | Gauge | The number of cache hits. |
+| storage_pebble_block_cache_misses | Gauge | The number of cache misses. |
+
+##### Compaction and Flush Metrics
+
+| Name | Type | Description |
+| --- | --- | --- |
+| storage_pebble_compactions | Gauge | The total number of compactions. |
+| storage_pebble_ingestions | Gauge | The total number of ingestions (loading external SSTables). |
+| storage_pebble_flushes | Gauge | The total number of flushes (memtable writes to disk). |
+
+##### Filter Policy Metrics
+
+| Name | Type | Description |
+| --- | --- | --- |
+| storage_pebble_filter_hits | Gauge | The number of times the bloom filter successfully avoided a data block read. |
+| storage_pebble_filter_misses | Gauge | The number of times the bloom filter was checked but could not filter the access. |
+
+##### Memory Table Metrics
+
+| Name | Type | Description |
+| --- | --- | --- |
+| storage_pebble_mem_table_size | Gauge | The number of bytes allocated by memtables and large (flushable) batches. |
+| storage_pebble_mem_table_count | Gauge | The count of memtables. |
+
+##### Write-Ahead Log (WAL) Metrics
+
+| Name | Type | Description |
+| --- | --- | --- |
+| storage_pebble_wal_files | Gauge | Number of live WAL files. |
+| storage_pebble_wal_size | Gauge | Size of live data in the WAL files (in bytes). Note: with WAL recycling this is less than actual on-disk size. |
+
+##### Snapshot Metrics
+
+| Name | Type | Description |
+| --- | --- | --- |
+| storage_pebble_snapshot_count | Gauge | The number of currently open snapshots. |
+
+##### Disk and SSTable Metrics
+
+| Name | Type | Description |
+| --- | --- | --- |
+| storage_pebble_disk_space_usage | Gauge | Total disk space used by the database in bytes, including live and obsolete files. |
+| storage_pebble_tables | Gauge | The total count of SSTables. |
+| storage_pebble_table_size | Gauge | The total size in bytes of SSTables. |
+| storage_pebble_virtual_sstables | Gauge | The number of virtual SSTables in the latest version. |
+| storage_pebble_virtual_size | Gauge | The sum of sizes of virtual SSTables. |
+
+##### LSM Tree Amplification Metrics
+
+| Name | Type | Description |
+| --- | --- | --- |
+| storage_pebble_read_amplification | Gauge | Current read amplification (number of sublevels in L0 + number of non-empty levels below L0). |
+| storage_pebble_sublevels | Gauge | The number of sublevels in L0 (correlates with read amplification). |
+
+##### Checkpoint Metrics
+
+| Name | Type | Description |
+| --- | --- | --- |
+| storage_pebble_checkpoint_server_version | Gauge | The last checkpoint server version recorded by the local databroker storage. |
+| storage_pebble_checkpoint_record_version | Gauge | The last checkpoint record version recorded by the local databroker storage. |
 
 ### Key Envoy Documentation Sources:
 
