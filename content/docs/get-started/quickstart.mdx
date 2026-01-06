@@ -204,10 +204,26 @@ To see certificates in your cluster, go to the **Certificates** tab:
 
 Pomerium Core is our open-source, self-hosted identity-aware reverse proxy.
 
+:::tip Just want to try Pomerium as quickly as possible?
+
+With Pomerium Core, you're assembling the pieces yourself. This quickstart assumes you have a publicly accessible domain with DNS you control.
+
+If you don't have those prerequisites ready, **[Pomerium Zero](https://console.pomerium.app/create-account)** provides a managed experience with automatic certificates and DNS. You can always migrate to self-hosted Core later.
+
+:::
+
 ## Before you start
 
-- Install [Docker](https://docs.docker.com/install/) and [Docker Compose](https://docs.docker.com/compose/install/)
-- Choose an identity provider (Google, GitHub, etc.) for authentication
+- A **publicly accessible server** with ports 443 and 80 available
+- A **domain** with DNS pointing to your server (e.g., `*.pomerium.yourdomain.com`)
+- [Docker](https://docs.docker.com/install/) and [Docker Compose](https://docs.docker.com/compose/install/) installed
+- An [identity provider](/docs/integrations/user-identity/identity-providers) configured for authentication
+
+:::note Other deployment methods
+
+This quickstart uses Docker, but Pomerium Core also supports [binaries, OS packages, and building from source](/docs/deploy/core).
+
+:::
 
 ## Set up your project
 
@@ -223,64 +239,14 @@ Your project will contain:
 - `config.yaml` - Pomerium configuration
 - `docker-compose.yaml` - Docker services configuration
 
-## Configure Pomerium Core
-
-Create a `config.yaml` file with your Pomerium configuration:
-
-```yaml title="config.yaml"
-# Pomerium configuration
-authenticate_service_url: https://authenticate.localhost.pomerium.io
-authorize_service_url: https://authorize.localhost.pomerium.io
-databroker_service_url: https://databroker.localhost.pomerium.io
-
-# Generate a shared secret (use: head -c32 /dev/urandom | base64)
-shared_secret: REPLACE_WITH_RANDOM_STRING
-
-# Generate a cookie secret (use: head -c32 /dev/urandom | base64)
-cookie_secret: REPLACE_WITH_RANDOM_STRING
-
-# Identity provider settings (example with Google)
-idp_provider: google
-idp_client_id: REPLACE_WITH_GOOGLE_CLIENT_ID
-idp_client_secret: REPLACE_WITH_GOOGLE_CLIENT_SECRET
-
-# Routes
-routes:
-  - from: https://verify.localhost.pomerium.io
-    to: http://verify:8000
-    policy:
-      - allow:
-          or:
-            - email:
-                is: user@example.com
-```
-
-## Create Docker Compose configuration
-
-Create a `docker-compose.yaml` file:
-
-```yaml title="docker-compose.yaml"
-version: '3'
-services:
-  pomerium:
-    image: pomerium/pomerium:latest
-    volumes:
-      - ./config.yaml:/pomerium/config.yaml:ro
-    ports:
-      - '443:443'
-      - '80:80'
-    environment:
-      - POMERIUM_DEBUG=true
-
-  verify:
-    image: pomerium/verify:latest
-    expose:
-      - 8000
-```
-
 ## Generate secrets
 
-Generate the required secrets for your configuration:
+Pomerium requires two secrets:
+
+- [**Shared Secret**](/docs/reference/shared-secret): Used to authenticate requests between Pomerium services
+- [**Cookie Secret**](/docs/reference/cookies#cookie-secret): Used to encrypt and sign session cookies
+
+Generate both secrets:
 
 ```bash
 # Generate shared secret
@@ -290,18 +256,78 @@ echo "shared_secret: $(head -c32 /dev/urandom | base64)"
 echo "cookie_secret: $(head -c32 /dev/urandom | base64)"
 ```
 
-Update your `config.yaml` with these generated values.
+Save these values—you'll add them to your config file next.
 
 ## Set up identity provider
 
-Configure your identity provider (this example uses Google):
+Configure your [identity provider](/docs/integrations/user-identity/identity-providers). When setting up OAuth credentials, use this as your redirect URI:
 
-1. Go to the [Google Cloud Console](https://console.cloud.google.com/)
-2. Create a new project or select existing
-3. Enable the Google+ API
-4. Create OAuth 2.0 credentials
-5. Add authorized redirect URI: `https://authenticate.localhost.pomerium.io/oauth2/callback`
-6. Update `config.yaml` with your client ID and secret
+```
+https://authenticate.pomerium.yourdomain.com/oauth2/callback
+```
+
+Replace `yourdomain.com` with your actual domain.
+
+## Configure Pomerium Core
+
+Create a `config.yaml` file with your Pomerium configuration:
+
+```yaml title="config.yaml"
+# Pomerium will automatically obtain certificates from Let's Encrypt
+autocert: true
+
+# Authenticate service URL (must match your DNS)
+authenticate_service_url: https://authenticate.pomerium.yourdomain.com
+
+# Secrets (replace with your generated values)
+shared_secret: REPLACE_WITH_GENERATED_SECRET
+cookie_secret: REPLACE_WITH_GENERATED_SECRET
+
+# Identity provider settings
+idp_provider: REPLACE_WITH_IDP_PROVIDER
+idp_client_id: REPLACE_WITH_IDP_CLIENT_ID
+idp_client_secret: REPLACE_WITH_IDP_CLIENT_SECRET
+
+# Routes
+routes:
+  - from: https://verify.pomerium.yourdomain.com
+    to: http://verify:8000
+    policy:
+      - allow:
+          or:
+            - email:
+                is: user@example.com
+```
+
+Replace:
+- `yourdomain.com` with your domain
+- `REPLACE_WITH_GENERATED_SECRET` values with your generated secrets
+- `REPLACE_WITH_IDP_*` values with your [identity provider](/docs/integrations/user-identity/identity-providers) settings
+- `user@example.com` with your email address
+
+## Create Docker Compose configuration
+
+Create a `docker-compose.yaml` file:
+
+```yaml title="docker-compose.yaml"
+services:
+  pomerium:
+    image: pomerium/pomerium:latest
+    volumes:
+      - ./config.yaml:/pomerium/config.yaml:ro
+      - pomerium-cache:/var/cache/pomerium
+    ports:
+      - '443:443'
+      - '80:80'
+
+  verify:
+    image: pomerium/verify:latest
+
+volumes:
+  pomerium-cache:
+```
+
+The `pomerium-cache` volume stores Let's Encrypt certificates so they persist across container restarts.
 
 ## Deploy Pomerium Core
 
@@ -313,9 +339,9 @@ docker compose up -d
 
 ## Test your setup
 
-1. Navigate to https://verify.localhost.pomerium.io
+1. Navigate to `https://verify.pomerium.yourdomain.com` (using your actual domain)
 2. You'll be redirected to authenticate with your identity provider
-3. After authentication, you should see the Pomerium verify page
+3. After authentication, you should see the Pomerium Verify page displaying your identity details
 
 ## Next Steps
 
