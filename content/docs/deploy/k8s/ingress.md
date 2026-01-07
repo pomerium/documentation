@@ -89,7 +89,7 @@ The default installation adds `pomerium` [IngressClass](https://kubernetes.io/do
 
 It is also possible to [set Pomerium to be a default ingress controller](/docs/deploy/k8s/install#set-pomerium-as-default-ingressclass) cluster-wide.
 
-### Set Ingress annotations
+### Set Ingress annotations {#set-ingress-annotations}
 
 Most configuration keys in non-Kubernetes deployments can be specified as annotation in an Ingress Resource definition. The format is `ingress.pomerium.io/${OPTION_NAME}`.
 
@@ -476,7 +476,7 @@ Additional TLS certificates may be supplied by creating a Kubernetes secret(s) i
 
 - [`ingress.pomerium.io/tls_client_secret`](/docs/reference/routes/tls#tls-client-certificate)
 - [`ingress.pomerium.io/tls_custom_ca_secret`](/docs/reference/routes/tls#tls-custom-certificate-authority)
-- [`ingress.pomerium.io/tls_downstream_client_ca_secret`](#supported-annotations)
+- [`ingress.pomerium.io/tls_downstream_client_ca_secret`](#set-ingress-annotations)
 
 Please note that the referenced `tls_client_secret` must be a [TLS Kubernetes secret](https://kubernetes.io/docs/concepts/configuration/secret/#tls-secrets). `tls_custom_ca_secret` and `tls_downstream_client_ca_secret` referenced Secrets must contain `ca.crt` key containing a .PEM encoded (base64-encoded DER format) public certificate.
 
