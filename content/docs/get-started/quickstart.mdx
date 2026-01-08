@@ -272,7 +272,7 @@ services:
     image: pomerium/pomerium:latest
     volumes:
       - ./config.yaml:/pomerium/config.yaml:ro
-      - pomerium-certs:/data/autocert
+      - pomerium-cache:/data/
     ports:
       - '443:443'
       - '80:80'
@@ -281,10 +281,10 @@ services:
     image: pomerium/verify:latest
 
 volumes:
-  pomerium-certs:
+  pomerium-cache:
 ```
 
-The `pomerium-certs` volume stores Let's Encrypt certificates so they persist across container restarts.
+The `pomerium-cache` volume will store Let's Encrypt certificates so they persist across container restarts.
 
 ## Deploy Pomerium Core
 
@@ -300,10 +300,44 @@ docker compose up -d
 2. You'll be prompted to sign in with the Pomerium [hosted authenticate service](/docs/capabilities/authentication#hosted-authenticate-service).
 3. After authentication, you should see the Pomerium Verify page displaying your identity details.
 
+## Session persistence
+
+If you stop and restart the Pomerium container at this point, the next time you access the Pomerium route you may be prompted to sign in again. To avoid this, you'll need to configure Pomerium with a fixed [shared secret](/docs/reference/shared-secret) and a [persistent storage backend](/docs/reference/databroker).
+
+To generate a new shared secret you can run this command:
+
+```
+head -c32 /dev/urandom | base64
+```
+
+Then add these lines to your config.yaml file:
+
+```yaml title="config.yaml" {1-4}
+shared_secret: REPLACE_WITH_GENERATED_SECRET
+
+databroker_storage_type: file
+databroker_storage_connection_string: file:///data/pomerium
+
+# Pomerium will automatically obtain certificates from Let's Encrypt
+autocert: true
+
+# Routes
+routes:
+  - from: https://verify.pomerium.yourdomain.com
+    to: http://verify:8000
+    pass_identity_headers: true
+    policy:
+      - allow:
+          or:
+            - email:
+                is: user@example.com
+```
+
 ## Next Steps
 
 - [Learn Core Fundamentals](/docs/get-started/fundamentals/core/get-started)
 - [Configure Advanced Policies](/docs/get-started/fundamentals/core/build-policies)
+- [Set up a Custom Identity Provider](/docs/get-started/fundamentals/core/self-hosted-pomerium)
 
 </TabItem>
 </Tabs>
