@@ -23,7 +23,7 @@ Though not itself an identity provider, Pomerium incorporates a single sign-on f
 
 Pomerium automatically strips its authentication cookies (`_pomerium`) from requests before forwarding them to upstream services. This security feature:
 
-- Prevents [credential replay attacks](https://owasp.org/www-community/attacks/Credential_Reuse_Attack)
+- Prevents [credential stuffing attacks](https://owasp.org/www-community/attacks/Credential_stuffing)
 - Ensures authentication tokens don't leak to backend services
 - Requires no additional configuration
 

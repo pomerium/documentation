@@ -62,7 +62,7 @@ The `jit-example` web application has the following endpoints:
 - `/`: the index page where users can request access
 - `/admin`: the admin page where administrators can approve access requests
 
-Authentication and authorization of the `jit-example` is done by Pomerium itself. It consumes the [Pomerium JWT assertion header](https://www.pomerium.io/reference/#pass-identity-headers) to determine the current user. Two routes need to be setup in Pomerium Zero:
+Authentication and authorization of the `jit-example` is done by Pomerium itself. It consumes the [Pomerium JWT assertion header](/docs/reference/pass-identity-headers) to determine the current user. Two routes need to be setup in Pomerium Zero:
 
 - `jit-example.curious-cat-9999.pomerium.app`
   - **From** should be `https://jit-example.curious-cat-9999.pomerium.app`

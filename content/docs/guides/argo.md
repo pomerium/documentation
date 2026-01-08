@@ -10,7 +10,7 @@ description: This guide covers how to add authentication and authorization to an
 
 ## Install Argo
 
-To install Argo in Kubernetes you can either follow the instructions [here](https://github.com/argoproj/argo/blob/master/docs/getting-started.md), or use [Helm](https://github.com/argoproj/argo-helm/tree/master/charts/argo). This guide will use the Helm chart.
+To install Argo in Kubernetes you can either follow the instructions in the [Argo Workflows Quick Start](https://argo-workflows.readthedocs.io/en/latest/quick-start/), or use [Helm](https://github.com/argoproj/argo-helm/tree/main/charts/argo-workflows). This guide will use the Helm chart.
 
 Run the following commands:
 

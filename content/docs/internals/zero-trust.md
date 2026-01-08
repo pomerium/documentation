@@ -52,7 +52,7 @@ In summary, perimeter based security suffers from the following shortcomings:
 
 ### Zero Trust
 
-[Zero trust](https://ldapwiki.com/wiki/Zero%20Trust) instead attempts to mitigate these shortcomings by adopting the following principles:
+[Zero trust](https://csrc.nist.gov/pubs/sp/800/207/final) instead attempts to mitigate these shortcomings by adopting the following principles:
 
 - Trust flows from identity, device-state, and context; not network location.
 - Treat both internal and external networks as untrusted.
@@ -95,7 +95,6 @@ The zero trust security model was first articulated by [John Kindervag](http://w
   - [What is Zero Trust Architecture and Security?](https://www.pomerium.com/blog/what-is-zero-trust-architecture-and-security/)
   - [Zero Trust Maturity Rubric and Tool Matrix](https://www.pomerium.com/blog/zero-trust-maturity-rubric-and-tool-matrix/)
   - [Benefits of Zero Trust Architecture](https://www.pomerium.com/blog/what-are-the-benefits-zero-trust-brings-to-organizations/)
-  - [Children's Introduction Guide to Zero Trust](https://www.pomerium.com/blog/childrens-introduction-guide-to-zero-trust/)
   - [Analyzing the US Government's Adoption of Zero Trust](https://www.pomerium.com/blog/analyzing-the-us-government-adoption-of-zero-trust/)
   - [Q&A with Zero Trust Architecture Writers from NIST](https://www.pomerium.com/blog/zta-qa-nist/)
   - [Demystifying Zero Trust](https://www.pomerium.com/blog/demystifying-zero-trust/)
