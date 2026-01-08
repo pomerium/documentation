@@ -27,7 +27,7 @@ import TabItem from '@theme/TabItem';
 
 Get started with Pomerium using either our cloud-hosted Zero solution or self-hosted Core.
 
-<Tabs>
+<Tabs queryString="type">
 <TabItem value="zero" label="Pomerium Zero" default>
 
 Pomerium Zero is our cloud-hosted solution that simplifies deployment and management.
@@ -195,9 +195,8 @@ To see certificates in your cluster, go to the **Certificates** tab:
 
 ## Next Steps
 
-### [Build your First Route](/docs/get-started/fundamentals/zero/zero-build-routes)
-
-### [Add a Custom Domain](/docs/capabilities/custom-domains)
+- [Build your First Route](/docs/get-started/fundamentals/zero/zero-build-routes)
+- [Add a Custom Domain](/docs/capabilities/custom-domains)
 
 </TabItem>
 <TabItem value="core" label="Pomerium Core">
@@ -217,7 +216,6 @@ If you don't have those prerequisites ready, **[Pomerium Zero](https://console.p
 - A **publicly accessible server** with ports 443 and 80 available
 - A **domain** with DNS pointing to your server (e.g., `*.pomerium.yourdomain.com`)
 - [Docker](https://docs.docker.com/install/) and [Docker Compose](https://docs.docker.com/compose/install/) installed
-- An [identity provider](/docs/integrations/user-identity/identity-providers) configured for authentication
 
 :::note Other deployment methods
 
@@ -239,35 +237,6 @@ Your project will contain:
 - `config.yaml` - Pomerium configuration
 - `docker-compose.yaml` - Docker services configuration
 
-## Generate secrets
-
-Pomerium requires two secrets:
-
-- [**Shared Secret**](/docs/reference/shared-secret): Used to authenticate requests between Pomerium services
-- [**Cookie Secret**](/docs/reference/cookies#cookie-secret): Used to encrypt and sign session cookies
-
-Generate both secrets:
-
-```bash
-# Generate shared secret
-echo "shared_secret: $(head -c32 /dev/urandom | base64)"
-
-# Generate cookie secret
-echo "cookie_secret: $(head -c32 /dev/urandom | base64)"
-```
-
-Save these values—you'll add them to your config file next.
-
-## Set up identity provider
-
-Configure your [identity provider](/docs/integrations/user-identity/identity-providers). When setting up OAuth credentials, use this as your redirect URI:
-
-```
-https://authenticate.pomerium.yourdomain.com/oauth2/callback
-```
-
-Replace `yourdomain.com` with your actual domain.
-
 ## Configure Pomerium Core
 
 Create a `config.yaml` file with your Pomerium configuration:
@@ -276,22 +245,11 @@ Create a `config.yaml` file with your Pomerium configuration:
 # Pomerium will automatically obtain certificates from Let's Encrypt
 autocert: true
 
-# Authenticate service URL (must match your DNS)
-authenticate_service_url: https://authenticate.pomerium.yourdomain.com
-
-# Secrets (replace with your generated values)
-shared_secret: REPLACE_WITH_GENERATED_SECRET
-cookie_secret: REPLACE_WITH_GENERATED_SECRET
-
-# Identity provider settings
-idp_provider: REPLACE_WITH_IDP_PROVIDER
-idp_client_id: REPLACE_WITH_IDP_CLIENT_ID
-idp_client_secret: REPLACE_WITH_IDP_CLIENT_SECRET
-
 # Routes
 routes:
   - from: https://verify.pomerium.yourdomain.com
     to: http://verify:8000
+    pass_identity_headers: true
     policy:
       - allow:
           or:
@@ -302,8 +260,6 @@ routes:
 Replace:
 
 - `yourdomain.com` with your domain
-- `REPLACE_WITH_GENERATED_SECRET` values with your generated secrets
-- `REPLACE_WITH_IDP_*` values with your [identity provider](/docs/integrations/user-identity/identity-providers) settings
 - `user@example.com` with your email address
 
 ## Create Docker Compose configuration
@@ -316,7 +272,7 @@ services:
     image: pomerium/pomerium:latest
     volumes:
       - ./config.yaml:/pomerium/config.yaml:ro
-      - pomerium-cache:/var/cache/pomerium
+      - pomerium-certs:/data/autocert
     ports:
       - '443:443'
       - '80:80'
@@ -325,10 +281,10 @@ services:
     image: pomerium/verify:latest
 
 volumes:
-  pomerium-cache:
+  pomerium-certs:
 ```
 
-The `pomerium-cache` volume stores Let's Encrypt certificates so they persist across container restarts.
+The `pomerium-certs` volume stores Let's Encrypt certificates so they persist across container restarts.
 
 ## Deploy Pomerium Core
 
@@ -340,15 +296,14 @@ docker compose up -d
 
 ## Test your setup
 
-1. Navigate to `https://verify.pomerium.yourdomain.com` (using your actual domain)
-2. You'll be redirected to authenticate with your identity provider
-3. After authentication, you should see the Pomerium Verify page displaying your identity details
+1. Navigate to `https://verify.pomerium.yourdomain.com` (using your actual domain).
+2. You'll be prompted to sign in with the Pomerium [hosted authenticate service](/docs/capabilities/authentication#hosted-authenticate-service).
+3. After authentication, you should see the Pomerium Verify page displaying your identity details.
 
 ## Next Steps
 
-### [Learn Core Fundamentals](/docs/get-started/fundamentals/core/get-started)
-
-### [Configure Advanced Policies](/docs/get-started/fundamentals/core/build-policies)
+- [Learn Core Fundamentals](/docs/get-started/fundamentals/core/get-started)
+- [Configure Advanced Policies](/docs/get-started/fundamentals/core/build-policies)
 
 </TabItem>
 </Tabs>
