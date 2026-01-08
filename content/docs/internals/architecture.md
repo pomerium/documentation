@@ -109,7 +109,7 @@ The file backend stores all data in a local directory, using the [pebble key-val
 - Supports only a single replica
 - Persistence across restarts
 
-**[Postgres Storage Backend](/docs/internals/data-storage#postgresql)**
+**[Postgres Storage Backend](/docs/internals/data-storage#postgres)**
 
 The Postgres backend stores all data in indexed SQL tables with operations implemented as SQL queries. Key features:
 
