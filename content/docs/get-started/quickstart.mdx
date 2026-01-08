@@ -27,7 +27,7 @@ import TabItem from '@theme/TabItem';
 
 Get started with Pomerium using either our cloud-hosted Zero solution or self-hosted Core.
 
-<Tabs>
+<Tabs queryString="type">
 <TabItem value="zero" label="Pomerium Zero" default>
 
 Pomerium Zero is our cloud-hosted solution that simplifies deployment and management.
@@ -195,19 +195,33 @@ To see certificates in your cluster, go to the **Certificates** tab:
 
 ## Next Steps
 
-### [Build your First Route](/docs/get-started/fundamentals/zero/zero-build-routes)
-
-### [Add a Custom Domain](/docs/capabilities/custom-domains)
+- [Build your First Route](/docs/get-started/fundamentals/zero/zero-build-routes)
+- [Add a Custom Domain](/docs/capabilities/custom-domains)
 
 </TabItem>
 <TabItem value="core" label="Pomerium Core">
 
 Pomerium Core is our open-source, self-hosted identity-aware reverse proxy.
 
+:::tip Just want to try Pomerium as quickly as possible?
+
+With Pomerium Core, you're assembling the pieces yourself. This quickstart assumes you have a publicly accessible domain with DNS you control.
+
+If you don't have those prerequisites ready, **[Pomerium Zero](https://console.pomerium.app/create-account)** provides a managed experience with automatic certificates and DNS. You can always migrate to self-hosted Core later.
+
+:::
+
 ## Before you start
 
-- Install [Docker](https://docs.docker.com/install/) and [Docker Compose](https://docs.docker.com/compose/install/)
-- Choose an identity provider (Google, GitHub, etc.) for authentication
+- A **publicly accessible server** with ports 443 and 80 available
+- A **domain** with DNS pointing to your server (e.g., `*.pomerium.yourdomain.com`)
+- [Docker](https://docs.docker.com/install/) and [Docker Compose](https://docs.docker.com/compose/install/) installed
+
+:::note Other deployment methods
+
+This quickstart uses Docker, but Pomerium Core also supports [binaries, OS packages, and building from source](/docs/deploy/core).
+
+:::
 
 ## Set up your project
 
@@ -228,26 +242,14 @@ Your project will contain:
 Create a `config.yaml` file with your Pomerium configuration:
 
 ```yaml title="config.yaml"
-# Pomerium configuration
-authenticate_service_url: https://authenticate.localhost.pomerium.io
-authorize_service_url: https://authorize.localhost.pomerium.io
-databroker_service_url: https://databroker.localhost.pomerium.io
-
-# Generate a shared secret (use: head -c32 /dev/urandom | base64)
-shared_secret: REPLACE_WITH_RANDOM_STRING
-
-# Generate a cookie secret (use: head -c32 /dev/urandom | base64)
-cookie_secret: REPLACE_WITH_RANDOM_STRING
-
-# Identity provider settings (example with Google)
-idp_provider: google
-idp_client_id: REPLACE_WITH_GOOGLE_CLIENT_ID
-idp_client_secret: REPLACE_WITH_GOOGLE_CLIENT_SECRET
+# Pomerium will automatically obtain certificates from Let's Encrypt
+autocert: true
 
 # Routes
 routes:
-  - from: https://verify.localhost.pomerium.io
+  - from: https://verify.pomerium.yourdomain.com
     to: http://verify:8000
+    pass_identity_headers: true
     policy:
       - allow:
           or:
@@ -255,53 +257,34 @@ routes:
                 is: user@example.com
 ```
 
+Replace:
+
+- `yourdomain.com` with your domain
+- `user@example.com` with your email address
+
 ## Create Docker Compose configuration
 
 Create a `docker-compose.yaml` file:
 
 ```yaml title="docker-compose.yaml"
-version: '3'
 services:
   pomerium:
     image: pomerium/pomerium:latest
     volumes:
       - ./config.yaml:/pomerium/config.yaml:ro
+      - pomerium-cache:/data/
     ports:
       - '443:443'
       - '80:80'
-    environment:
-      - POMERIUM_DEBUG=true
 
   verify:
     image: pomerium/verify:latest
-    expose:
-      - 8000
+
+volumes:
+  pomerium-cache:
 ```
 
-## Generate secrets
-
-Generate the required secrets for your configuration:
-
-```bash
-# Generate shared secret
-echo "shared_secret: $(head -c32 /dev/urandom | base64)"
-
-# Generate cookie secret
-echo "cookie_secret: $(head -c32 /dev/urandom | base64)"
-```
-
-Update your `config.yaml` with these generated values.
-
-## Set up identity provider
-
-Configure your identity provider (this example uses Google):
-
-1. Go to the [Google Cloud Console](https://console.cloud.google.com/)
-2. Create a new project or select existing
-3. Enable the Google+ API
-4. Create OAuth 2.0 credentials
-5. Add authorized redirect URI: `https://authenticate.localhost.pomerium.io/oauth2/callback`
-6. Update `config.yaml` with your client ID and secret
+The `pomerium-cache` volume will store Let's Encrypt certificates so they persist across container restarts.
 
 ## Deploy Pomerium Core
 
@@ -313,15 +296,48 @@ docker compose up -d
 
 ## Test your setup
 
-1. Navigate to https://verify.localhost.pomerium.io
-2. You'll be redirected to authenticate with your identity provider
-3. After authentication, you should see the Pomerium verify page
+1. Navigate to `https://verify.pomerium.yourdomain.com` (using your actual domain).
+2. You'll be prompted to sign in with the Pomerium [hosted authenticate service](/docs/capabilities/authentication#hosted-authenticate-service).
+3. After authentication, you should see the Pomerium Verify page displaying your identity details.
+
+## Session persistence
+
+If you stop and restart the Pomerium container at this point, the next time you access the Pomerium route you may be prompted to sign in again. To avoid this, you'll need to configure Pomerium with a fixed [shared secret](/docs/reference/shared-secret) and a [persistent storage backend](/docs/reference/databroker).
+
+To generate a new shared secret you can run this command:
+
+```
+head -c32 /dev/urandom | base64
+```
+
+Then add these lines to your config.yaml file:
+
+```yaml title="config.yaml" {1-4}
+shared_secret: REPLACE_WITH_GENERATED_SECRET
+
+databroker_storage_type: file
+databroker_storage_connection_string: file:///data/pomerium
+
+# Pomerium will automatically obtain certificates from Let's Encrypt
+autocert: true
+
+# Routes
+routes:
+  - from: https://verify.pomerium.yourdomain.com
+    to: http://verify:8000
+    pass_identity_headers: true
+    policy:
+      - allow:
+          or:
+            - email:
+                is: user@example.com
+```
 
 ## Next Steps
 
-### [Learn Core Fundamentals](/docs/get-started/fundamentals/core/get-started)
-
-### [Configure Advanced Policies](/docs/get-started/fundamentals/core/build-policies)
+- [Learn Core Fundamentals](/docs/get-started/fundamentals/core/get-started)
+- [Configure Advanced Policies](/docs/get-started/fundamentals/core/build-policies)
+- [Set up a Custom Identity Provider](/docs/get-started/fundamentals/core/self-hosted-pomerium)
 
 </TabItem>
 </Tabs>
