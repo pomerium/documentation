@@ -18,7 +18,7 @@ Pomerium provides secure access to Model Context Protocol (MCP) servers, enablin
   - [MCP Servers with Upstream OAuth](#2-mcp-servers-with-upstream-oauth)
   - [Building MCP-Enabled Applications](#3-building-mcp-enabled-applications)
 - [Bearer Token Types](#bearer-token-types) - External and Internal tokens
-- [Configuration Options](#configuration-options) - Server and client configuration
+- [Configuration Options](#configuration-options) - Global, server, and client configuration
 - [User Identity and Claims](#user-identity-and-claims) - JWT headers and verification
 - [Security Considerations](#security-considerations) - Access control and token security
 - [Observability](#observability) - Logging and monitoring MCP activities
@@ -233,7 +233,37 @@ An internal authentication token that Pomerium obtains from upstream OAuth provi
 
 ## Configuration Options
 
-MCP integration can be configured through route-level settings. For general route configuration guidance, see the [Routes configuration reference](/docs/reference/routes).
+MCP integration can be configured through global settings and route-level settings. For general route configuration guidance, see the [Routes configuration reference](/docs/reference/routes).
+
+### Global MCP Settings
+
+#### Allowed Client ID Domains
+
+When MCP clients use URL-based client IDs (per the [OAuth 2.0 Client ID Metadata Document](https://datatracker.ietf.org/doc/html/draft-ietf-oauth-client-id-metadata-document) specification), Pomerium validates that the client ID URL's domain is in an allowed list before fetching the metadata document.
+
+```yaml
+mcp_allowed_client_id_domains:
+  - 'example.com'
+  - '*.trusted-provider.com'
+```
+
+| Setting | Description |
+| --- | --- |
+| `mcp_allowed_client_id_domains` | List of allowed domain patterns for MCP client ID metadata URLs. Supports wildcard patterns (e.g., `*.example.com`). Required when using URL-based client IDs. |
+
+**Behavior:**
+
+- Only domains matching the configured patterns can be used as client ID metadata URLs
+- Wildcard patterns like `*.example.com` match subdomains (e.g., `app.example.com`) but not the bare domain
+- If a client attempts to use a client ID from a domain not in the allowed list, Pomerium displays a user-friendly error page explaining the restriction, along with the request ID and the attempted client ID for troubleshooting
+
+**Example error scenario:**
+
+If a user tries to authorize with a client ID like `https://untrusted-app.com/oauth/client` and `untrusted-app.com` is not in `mcp_allowed_client_id_domains`, they will see an error page stating:
+
+> "The administrator of this Pomerium Proxy restricted the list of MCP client ID document domains that may be used."
+
+The error page includes the request ID and the attempted client ID to help administrators diagnose configuration issues.
 
 ### MCP Server Configuration
 
