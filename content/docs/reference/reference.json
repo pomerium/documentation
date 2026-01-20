@@ -299,6 +299,14 @@
     "title": "Default Upstream Timeout",
     "type": ""
   },
+  "debug-address": {
+    "description": "Exposes a debug endpoint on the specified address for accessing debugging information such as configuration dumps.",
+    "id": "debug-address",
+    "path": "/debug#debug-address",
+    "services": [],
+    "title": "Debug Address",
+    "type": "string"
+  },
   "description": {
     "description": "An optional description for this route. Displayed on the Routes Portal.",
     "id": "description",
@@ -326,13 +334,77 @@
     "services": ["proxy"],
     "title": "Direct Response"
   },
+  "dns-settings": {
+    "description": "Configure DNS settings in Pomerium.",
+    "id": "dns-settings",
+    "path": "/dns",
+    "services": [],
+    "title": "DNS Settings",
+    "type": "string"
+  },
+  "dns-failure-refresh-rate": {
+    "description": "Sets the DNS refresh rate when requests are failing.",
+    "id": "dns-failure-refresh-rate",
+    "path": "/dns#failure-refresh-rate",
+    "services": [],
+    "title": "DNS Failure Refresh Rate",
+    "type": "string"
+  },
   "dns-lookup-family": {
     "description": "Sets the DNS IP address resolution policy.",
     "id": "dns-lookup-family",
-    "path": "/dns-lookup-family",
+    "path": "/dns#lookup-family",
     "services": [],
     "title": "DNS Lookup Family",
     "type": "string"
+  },
+  "dns-query-timeout": {
+    "description": "Sets the timeout for DNS queries.",
+    "id": "dns-query-timeout",
+    "path": "/dns#query-timeout",
+    "services": [],
+    "title": "DNS Query Timeout",
+    "type": "string"
+  },
+  "dns-query-tries": {
+    "description": "Sets the number of times a DNS query will be re-tried.",
+    "id": "dns-query-tries",
+    "path": "/dns#query-tries",
+    "services": [],
+    "title": "DNS Query Tries",
+    "type": "integer"
+  },
+  "dns-refresh-rate": {
+    "description": "Sets the DNS refresh rate.",
+    "id": "dns-refresh-rate",
+    "path": "/dns#refresh-rate",
+    "services": [],
+    "title": "DNS Refresh Rate",
+    "type": "string"
+  },
+  "dns-resolvers": {
+    "description": "Specifies a list of custom DNS resolvers for Pomerium to use instead of the system default.",
+    "id": "dns-resolvers",
+    "path": "/dns#resolvers",
+    "services": [],
+    "title": "DNS Resolvers",
+    "type": "array of strings"
+  },
+  "dns-udp-max-queries": {
+    "description": "Sets the maximum number of queries before a new UDP port is opened.",
+    "id": "dns-udp-max-queries",
+    "path": "/dns#udp-max-queries",
+    "services": [],
+    "title": "DNS UDP Max Queries",
+    "type": "integer"
+  },
+  "dns-use-tcp": {
+    "description": "Configures Pomerium to use TCP instead of UDP for DNS queries.",
+    "id": "dns-use-tcp",
+    "path": "/dns#use-tcp",
+    "services": [],
+    "title": "DNS Use TCP",
+    "type": "boolean"
   },
   "downstream-mtls-client-certificate-authority": {
     "description": "A bundle of PEM-encoded X.509 certificates that will be treated as trust anchors when verifying client certificates",
@@ -964,6 +1036,14 @@
     "id": "manage-devices",
     "path": "/../capabilities/device-identity",
     "title": "Manage Devices"
+  },
+  "mcp-allowed-client-id-domains": {
+    "description": "List of allowed domain patterns for MCP client ID metadata URLs. Supports wildcard patterns (e.g., *.example.com). Required when using URL-based client IDs.",
+    "id": "mcp-allowed-client-id-domains",
+    "path": "/../capabilities/mcp#allowed-client-id-domains",
+    "services": [],
+    "title": "MCP Allowed Client ID Domains",
+    "type": "array of strings"
   },
   "mcp-server-max-request-bytes": {
     "description": "Maximum MCP request size in bytes. Adjust if you are passing some large payloads that cause errors.",

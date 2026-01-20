@@ -23,6 +23,7 @@ This reference covers all of Pomerium's **DNS Settings**:
 - [Query Timeout](#query-timeout)
 - [Query Tries](#query-tries)
 - [Refresh Rate](#refresh-rate)
+- [Resolvers](#resolvers)
 - [UDP Max Queries](#udp-max-queries)
 - [Use TCP](#use-tcp)
 
@@ -223,6 +224,50 @@ Set **Refresh Rate** in the Console:
 ```yaml
 dns:
   refreshRate: 10s
+```
+
+</TabItem>
+</Tabs>
+
+## Resolvers
+
+**Resolvers** allows you to specify a list of custom DNS resolvers for Pomerium to use instead of the system default. Each resolver should be specified as a URL in the format `udp://<ip>:<port>` or `tcp://<ip>:<port>`.
+
+### How to Configure
+
+<Tabs>
+<TabItem value="Core" label="Core">
+
+| **Config file keys** | **Environment variables** | **Type** | **Default** |
+| :-- | :-- | :-- | :-- |
+| `dns_resolvers` | `DNS_RESOLVERS` | `array of strings` | System DNS resolvers |
+
+#### Examples
+
+```yaml
+dns_resolvers:
+  - udp://1.1.1.1:53
+  - udp://8.8.8.8:53
+```
+
+```yaml
+dns_resolvers:
+  - tcp://1.1.1.1:53
+```
+
+</TabItem>
+<TabItem value="Enterprise" label="Enterprise">
+
+`dns_resolvers` is a bootstrap configuration setting and is not configurable in the Console.
+
+</TabItem>
+<TabItem value="Kubernetes" label="Kubernetes">
+
+```yaml
+dns:
+  resolvers:
+    - udp://1.1.1.1:53
+    - udp://8.8.8.8:53
 ```
 
 </TabItem>
