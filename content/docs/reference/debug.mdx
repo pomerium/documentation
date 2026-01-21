@@ -1,0 +1,74 @@
+---
+title: Debug Settings
+sidebar_label: Debug Settings
+description: Configure debug settings in Pomerium.
+keywords: [debug, debug address, config dump]
+pagination_prev: null
+pagination_next: null
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Debug Settings
+
+This reference covers Pomerium's **Debug Settings**:
+
+- [Debug Address](#debug-address)
+
+## Debug Address {#debug-address}
+
+**Debug Address** exposes a debug endpoint on the specified address. This endpoint provides access to debugging information such as configuration dumps.
+
+:::warning
+
+**Use with caution:** the debug endpoint can expose sensitive configuration values. Do not externally expose this endpoint.
+
+:::
+
+By default, the debug server starts on a random port accessible only to localhost. Setting this option allows you to explicitly configure the address.
+
+### How to configure {#how-to-configure-debug-address}
+
+<Tabs>
+<TabItem value="Core" label="Core">
+
+| **Config file keys** | **Environment variables** | **Type** | **Usage** | **Default** |
+| :-- | :-- | :-- | :-- | :-- |
+| `debug_address` | `DEBUG_ADDRESS` | `string` | **optional** | Random localhost port |
+
+#### Examples {#examples-debug-address}
+
+```yaml
+debug_address: 127.0.0.1:6060
+```
+
+```bash
+DEBUG_ADDRESS=127.0.0.1:6060
+```
+
+</TabItem>
+<TabItem value="Enterprise" label="Enterprise">
+
+`debug_address` is a bootstrap configuration setting and is not configurable in the Console.
+
+</TabItem>
+<TabItem value="Kubernetes" label="Kubernetes">
+
+Kubernetes does not support `debug_address`.
+
+</TabItem>
+</Tabs>
+
+### Available Endpoints
+
+When the debug address is configured, the following endpoints are available:
+
+| Endpoint       | Description                                  |
+| :------------- | :------------------------------------------- |
+| `/`            | Index page listing available debug endpoints |
+| `/config_dump` | Dumps the current Pomerium configuration     |
+
+### Security Considerations
+
+The debug endpoint exposes sensitive configuration information. Only enable this setting in controlled environments and ensure the endpoint is not accessible from untrusted networks.
