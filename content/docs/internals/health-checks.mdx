@@ -254,6 +254,18 @@ pomerium health -v
 }
 ```
 
+### TUI
+
+The health check CLI has a TUI mode that follows live health updates from the terminal:
+
+```bash
+pomerium health watch -a <grpc_address> -s <shared_secret>
+```
+
+where `<grpc_address>` is the `grpc_address` set in your config file and `shared_secret` is the `shared_secret` set in your config file.
+
+![Health TUI](./img/health/tui.png)
+
 ## Systemd
 
 When running Pomerium via systemd, health checks are automatically configured. Pomerium communicates its health status to systemd using the sd_notify protocol.
@@ -284,3 +296,9 @@ Additionally, since Pomerium sends sd_notify messages when started via systemd, 
 ```yaml
 health_check_systemd_disabled: true
 ```
+
+## For Enterprise
+
+:::enterprise In Pomerium Enterprise, synced clusters' health details will automatically be displayed in the UI :::
+
+![Health TUI](./img/health/console-health-check.png)
