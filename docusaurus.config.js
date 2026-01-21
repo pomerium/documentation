@@ -56,8 +56,7 @@ const config = {
           },
           versions: {
             current: {
-              label: 'vNext (upcoming release)',
-              badge: true,
+              label: 'v0.32.0 (latest)',
             },
           },
         },
