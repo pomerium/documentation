@@ -19,7 +19,6 @@ Pomerium Native SSH capability allows you to provide secure, identity-aware SSH 
 - Pomerium Zero cluster already created and running with [Pomerium 0.30](https://www.pomerium.com/blog/announcing-pomerium-v030) or higher
 - SSH client on user machines
 - Target SSH servers that you want to provide access to
-- Identity provider configured with your Pomerium Zero cluster that supports device codes (custom IdP configuration required \- built-in providers may not support this feature)
 - Administrative access to the Pomerium Zero console
 
 ## Step 1: Generate SSH Keys

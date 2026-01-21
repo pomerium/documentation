@@ -76,7 +76,10 @@ sequenceDiagram
 ### Prerequisites
 
 - Pomerium v0.30.0 or later
-- Identity provider with Device Code OAuth grant type enabled
+- If pomerium v0.31.X or lower:
+  - Identity provider with Device Code OAuth grant type enabled
+- If pomerium v0.32.0 or later:
+  - Identity provider with Authorization Code OAuth enabled
 - Network connectivity between Pomerium and SSH servers
 
 ### 1. Generate User CA Key Pair
@@ -224,35 +227,32 @@ Pomerium SSH routes use the syntax `user@route@pomerium`, where:
 ### First Connection
 
 1. Run your SSH command, e.g. `ssh user@route@pomerium-server`
-2. You should see a device code prompt or be redirected to authenticate
+2. You should see a prompt to authenticate
 3. Complete authentication in your browser
 4. Return to terminal and the connection completes successfully, as long as you meet the configured Pomerium policy requirements for this route.
 
 <iframe
   width="100%"
   height="415"
-  src="https://www.youtube.com/embed/jfUG5dZ5wcU"
+  src="https://www.youtube.com/embed/5Gt7u8szwac"
   title="Native SSH Access with Pomerium"
   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
   allowfullscreen></iframe>
 
-**If you don't see an OAuth prompt:** Check that your identity provider supports Device Code flow.
+This authentication flow creates a Client binding ([See client binding](https://docs.pomerium.com/docs/internals/client-binding)) for your ssh key that is associated to your Oauth user. There is no limit on ssh keys per user, but only one user per ssh key.
 
 ### Subsequent Connections
 
-- Run the same SSH command with your route and Pomerium server target; you will not see the device code prompt or browser authentication.
-- Uses cached credentials within session timeout (defaults to 14 hours; see [cookie expiration](https://docs.pomerium.com/docs/reference/cookies#cookie-expiration))
+- Run the same SSH command with your route and Pomerium server target; you will not see the code prompt or browser authentication.
+- Uses cached credentials, defaults to session timeout (defaults to 14 hours; see [cookie expiration](https://docs.pomerium.com/docs/reference/cookies#cookie-expiration)) or a maximum or 48 hours. See [client binding](https://docs.pomerium.com/docs/internals/client-binding) for more info.
+  - These credentials can be revoked at any time from the Pomerium UI, See [client binding](https://docs.pomerium.com/docs/internals/client-binding) for more info.
 - Pomerium policy is still enforced for each connection, but this happens non-interactively unless your session has expired or policy requirements have changed.
 
 :::info
 
-In version 0.30.0, SSH access only supports the Device Code OAuth flow. This restriction will be relaxed in a future release, allowing use of the Authorization Code flow instead.
+In versions below 0.32.0, SSH access only supports the Device Code OAuth flow. If running on those versions please make sure you consult the relevant docs for those versions.
 
 :::
-
-### Why Device Code?
-
-SSH clients don’t support browser redirects or interactive web authentication, which is required by standard OAuth flows like Authorization Code. The Device Code flow enables secure login by allowing you to authenticate via your browser, then return to the SSH session—bridging the gap between CLI tools and web-based identity providers.
 
 ## Using the Internal CLI
 
