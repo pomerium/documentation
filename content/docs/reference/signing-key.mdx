@@ -18,7 +18,9 @@ import TabItem from '@theme/TabItem';
 
 # Signing Key
 
-**Signing Key** is one or more PEM-encoded private keys used to sign a user's attestation JWT, which can be consumed by upstream applications to pass along identifying user information like username, id, and groups.
+**Signing Key** is one or more PEM-encoded private keys used to sign a user's attestation JWT, which can be consumed by upstream applications to pass along identifying user information like username, ID, and groups. See [Continuous Identity Verification](/docs/capabilities/getting-users-identity) for more information on this topic.
+
+If the signing key is not configured explicitly, a signing key will be derived from the [shared secret](/docs/reference/shared-secret).
 
 ## How to configure
 
@@ -29,6 +31,16 @@ import TabItem from '@theme/TabItem';
 | :------------------- | :------------------------ | :------- | :----------- |
 | `signing_key`        | `SIGNING_KEY`             | `string` | **optional** |
 | `signing_key_file`   | `SIGNING_KEY_FILE`        | `string` | **optional** |
+
+### Examples
+
+```yaml
+signing_key: LS0tLS1CRUdJTiBFQyBQUklWQVRFIEtFWS0tLS0tCk1IY0NBUUVFSUNUWHlVQ0phYmlHTW1wd3VqYlBmWHhNS2MzWjNFM0tEcmlEbmQwZktiTmtvQW9HQ0NxR1NNNDkKQXdFSG9VUURRZ0FFM1FYQmZ1eEV1UEhJT0ZDb3RaaXBOMUFqM3UrOUtFRWd4RFVURW9CcjYxYXpaYWFvYlRGbwo0cGY3WFRSbzVhM2U2aDdKUW9wckp4QSszd0dwTUpSYWl3PT0KLS0tLS1FTkQgRUMgUFJJVkFURSBLRVktLS0tLQo=
+```
+
+```bash
+SIGNING_KEY_FILE='/run/secrets/POMERIUM_SIGNING_KEY'
+```
 
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
@@ -47,25 +59,13 @@ See Kubernetes [bootstrap secrets](/docs/deploy/k8s/reference#spec) for more inf
 </TabItem>
 </Tabs>
 
-## Examples
+## JWKS endpoint
 
-```yaml
-signing_key: LS0tLS1CRUdJTiBFQyBQUklWQVRFIEtFWS0tLS0tCk1IY0NBUUVFSUNUWHlVQ0phYmlHTW1wd3VqYlBmWHhNS2MzWjNFM0tEcmlEbmQwZktiTmtvQW9HQ0NxR1NNNDkKQXdFSG9VUURRZ0FFM1FYQmZ1eEV1UEhJT0ZDb3RaaXBOMUFqM3UrOUtFRWd4RFVURW9CcjYxYXpaYWFvYlRGbwo0cGY3WFRSbzVhM2U2aDdKUW9wckp4QSszd0dwTUpSYWl3PT0KLS0tLS1FTkQgRUMgUFJJVkFURSBLRVktLS0tLQo=
-```
-
-```bash
-SIGNING_KEY_FILE='/run/secrets/POMERIUM_SIGNING_KEY'
-```
-
-### How to use signing key
-
-If set, the signing key's public key(s) can be retrieved by hitting Pomerium's well-known JWKS endpoint:
+An upstream application can retrieve the corresponding public key(s) from Pomerium's JWKS endpoint:
 
 `/.well-known/pomerium/jwks.json`
 
-Otherwise, the endpoint will return an empty keyset.
-
-### Examples
+This allows the application to verify the integrity of the Pomerium JWT.
 
 For example, assuming you have [generated an ES256 key](https://github.com/pomerium/pomerium/blob/main/scripts/generate_self_signed_signing_key.sh) with the following commands:
 
@@ -76,7 +76,7 @@ openssl ecparam  -genkey  -name prime256v1  -noout  -out ec_private.pem
 cat ec_private.pem | base64
 ```
 
-You can access that signing key from Pomerium's well-known JWKS endpoint.
+You can verify that the public key is available from Pomerium's JWKS endpoint:
 
 ```bash
 curl https://route.int.example.com/.well-known/pomerium/jwks.json | jq
@@ -98,11 +98,7 @@ curl https://route.int.example.com/.well-known/pomerium/jwks.json | jq
 }
 ```
 
-If multiple keys are supplied in the PEM data, all of them will be published to the JWKS endpoint.
-
-If no certificate is specified, one will be generated and the base64'd public key will be added to the logs. Note, however, that this key is unique to each service, ephemeral, and will not be accessible via the well-known JWKS endpoint.
-
-If multiple keys are provided, only the first will be used for signing.
+If multiple keys are supplied in the PEM data, the first one will be used for signing, but all of them will be published to the JWKS endpoint. This allows for key rotation.
 
 ### Key rotation
 
