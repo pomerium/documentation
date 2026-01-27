@@ -20,7 +20,7 @@ Pomerium provides secure access to Model Context Protocol (MCP) servers, enablin
 - [Bearer Token Types](#bearer-token-types) - External and Internal tokens
 - [Configuration Options](#configuration-options) - Global, server, and client configuration
 - [User Identity and Claims](#user-identity-and-claims) - JWT headers and verification
-- [Security Considerations](#security-considerations) - Access control and token security
+- [Security Considerations](#security-considerations) - Access control, token security, and session lifecycle
 - [Observability](#observability) - Logging and monitoring MCP activities
 - [Policy-Based Tool Access Control](#policy-based-tool-access-control) - Fine-grained tool permissions
 - [Demo and Examples](#demo-and-examples)
@@ -422,7 +422,40 @@ routes:
 - All tokens are automatically refreshed by Pomerium
 - All authorization decisions are logged for audit (see [Observability](#observability))
 
-For more information on Pomerium's bearer token format, see [Bearer Token Format](/docs/reference/bearer-token-format).
+### MCP Session Lifecycle
+
+Pomerium's MCP authorization server implements OAuth 2.1 refresh token support as required by the [MCP Authorization specification](https://modelcontextprotocol.io/specification/2025-11-25/basic/authorization). This enables MCP clients to maintain long-running sessions without requiring repeated user authentication.
+
+**Standard OAuth 2.1 Behavior:**
+
+- Access tokens are short-lived
+- Refresh tokens are long-lived
+- MCP clients use `grant_type=refresh_token` to obtain new access tokens
+- Refresh tokens are rotated on each use for public clients (per OAuth 2.1 security requirements)
+
+**Session Recreation**
+
+Pomerium's internal session management uses [`cookie_expiration`](/docs/reference/cookies#cookie-expiration) to control session lifetime. To support standard OAuth 2.1 refresh token behavior, Pomerium automatically recreates sessions when an MCP client presents a valid refresh token but the underlying Pomerium session has expired. This is done by using the stored upstream identity provider refresh token to obtain fresh credentials.
+
+**How Session Recreation Works:**
+
+1. MCP client sends a refresh token request
+2. Pomerium detects the original session has expired
+3. Pomerium uses the stored upstream IdP refresh token to obtain new identity tokens
+4. A new Pomerium session is created with the refreshed identity
+5. New MCP access and refresh tokens are issued
+
+**Security Implications:**
+
+- **Extended session lifetime**: MCP sessions can outlive the configured `cookie_expiration`. The effective session lifetime is bounded by the MCP refresh token lifetime and the upstream IdP's refresh token validity.
+- **Identity re-validation**: Session recreation requires successful refresh with the upstream IdP, ensuring the user's identity is still valid and not revoked.
+- **Policy enforcement**: The recreated session is subject to current authorization policies, so policy changes take effect on recreation.
+- **Failure modes**: Session recreation fails if the upstream IdP refresh token has expired, been revoked, or the IdP account has been disabled. In these cases, the MCP client receives an `invalid_grant` error and must re-authenticate.
+
+**Considerations for Operators:**
+
+- If strict session lifetime enforcement is required, configure your upstream IdP's refresh token lifetime or session policies accordingly, as MCP session recreation depends on successful upstream token refresh
+- Upstream IdP session policies (e.g., forced re-authentication, account disablement) are enforced during session recreation—if the IdP denies the refresh, the MCP client receives an `invalid_grant` error
 
 ## Observability
 
@@ -684,7 +717,6 @@ Putting `mcp_tool` exclusively under `allow` means non-`tools/call` requests (li
 ### Configuration References
 
 - [Route Policy Configuration](/docs/reference/routes/policy) - Policy configuration for routes
-- [Bearer Token Format](/docs/reference/bearer-token-format) - Token structure and validation
 - [Authorize Log Fields](/docs/reference/authorize-log-fields) - Logging configuration
 - [Identity Provider Settings](/docs/reference/identity-provider-settings) - OAuth provider setup
 
