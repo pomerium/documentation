@@ -84,7 +84,7 @@ Before deploying the Docker stack, you'll need a Pomerium Zero account and clust
 
 :::note Ignore the Docker Compose File
 
-The Pomerium Zero onboarding will provide you with a docker-compose file. **You don't need it** - the mr-claw repository (cloned in Step 2) already includes the necessary docker-compose setup. Just save your **POMERIUM_ZERO_TOKEN** and **cluster domain** for the next step.
+The Pomerium Zero onboarding will provide you with a docker-compose file. **You don't need it** - the openclaw-pomerium repository (cloned in Step 2) already includes the necessary docker-compose setup. Just save your **POMERIUM_ZERO_TOKEN** and **cluster domain** for the next step.
 
 :::
 
@@ -99,8 +99,8 @@ Your Pomerium Zero cluster comes with a built-in `*.pomerium.app` domain that yo
 1. **Clone the repository** to your deployment host:
 
    ```bash
-   git clone https://github.com/nickytonline/mr-claw
-   cd mr-claw
+   git clone https://github.com/nickytonline/openclaw-pomerium/
+   cd openclaw-pomerium
    ```
 
    **All subsequent setup commands should be run from this directory.**
@@ -126,7 +126,7 @@ Your Pomerium Zero cluster comes with a built-in `*.pomerium.app` domain that yo
 
 ## Step 3: Generate SSH Keys for Pomerium SSH Access
 
-The mr-claw repository's [Dockerfile](https://github.com/nickytonline/mr-claw/blob/main/openclaw/Dockerfile) includes an SSH server that allows you to remotely access the OpenClaw container via [Pomerium SSH routes](/docs/capabilities/native-ssh-access). You'll need to generate SSH keys for this functionality.
+The openclaw-pomerium repository's [Dockerfile](https://github.com/nickytonline/openclaw-pomerium//blob/main/openclaw/Dockerfile) includes an SSH server that allows you to remotely access the OpenClaw container via [Pomerium SSH routes](/docs/capabilities/native-ssh-access). You'll need to generate SSH keys for this functionality.
 
 ### Quick Setup (Recommended)
 
@@ -239,7 +239,7 @@ docker compose up -d
 
 :::info Custom Docker Image
 
-Since OpenClaw doesn't provide an official Docker image, the mr-claw repository includes a custom [Dockerfile](https://github.com/nickytonline/mr-claw/blob/main/openclaw/Dockerfile) that packages OpenClaw with an SSH server. This Dockerfile can be customized to add additional tools or utilities you need. For example, you might want to add:
+Since OpenClaw doesn't provide an official Docker image, the openclaw-pomerium repository includes a custom [Dockerfile](https://github.com/nickytonline/openclaw-pomerium//blob/main/openclaw/Dockerfile) that packages OpenClaw with an SSH server. This Dockerfile can be customized to add additional tools or utilities you need. For example, you might want to add:
 
 - Development tools (git, vim, etc.)
 - Language runtimes (Node.js, Python, etc.)
@@ -264,9 +264,9 @@ You should see three services running:
 ```bash
 ❯ docker ps
 CONTAINER ID   IMAGE                       COMMAND                  CREATED          STATUS                          PORTS     NAMES
-a6882babc788   pomerium/pomerium:v0.32.0   "/bin/pomerium --con…"   47 seconds ago   Restarting (1) 18 seconds ago             mr-claw-pomerium-1
-d03c1849ab7d   pomerium/verify:latest      "/bin/verify"            47 seconds ago   Up 47 seconds (healthy)                   mr-claw-verify-1
-190520ccdc2f   openclaw:2026.2.2          "docker-entrypoint.s…"   47 seconds ago   Up 47 seconds (healthy)         22/tcp    mr-claw-openclaw-gateway-1
+a6882babc788   pomerium/pomerium:v0.32.0   "/bin/pomerium --con…"   47 seconds ago   Restarting (1) 18 seconds ago             openclaw-pomerium-pomerium-1
+d03c1849ab7d   pomerium/verify:latest      "/bin/verify"            47 seconds ago   Up 47 seconds (healthy)                   openclaw-pomerium-verify-1
+190520ccdc2f   openclaw:2026.2.2          "docker-entrypoint.s…"   47 seconds ago   Up 47 seconds (healthy)         22/tcp    openclaw-pomerium-openclaw-gateway-1
 ```
 
 ## Step 5: Configure Pomerium SSH Routes
