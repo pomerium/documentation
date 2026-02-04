@@ -282,16 +282,11 @@ If this is your first SSH route in Pomerium Zero, you'll need to configure globa
    ![Routes management page in Pomerium Zero console](./img/zero-ssh/routes-page.png)
 
 2. Click **New Route** → **Guided SSH Route**
+   - Configure global SSH settings:
 
-   ![Creating a guided SSH route](./img/zero-ssh/guided-ssh-route-help.png)
+     ![Global SSH settings configuration page](./img/zero-ssh/guided-route-global-ssh-settings.png)
 
-3. Configure global SSH settings:
-
-   ![Global SSH settings configuration page](./img/zero-ssh/guided-route-global-ssh-settings.png)
    - **SSH Address**: `0.0.0.0:2200`
-
-     ![SSH Address configuration](./img/zero-ssh/configure-ssh-address.png)
-
    - **SSH Host Keys**: Paste all three private host keys from your repository root:
      - Contents of `ssh_host_ed25519_key`
      - Contents of `ssh_host_rsa_key`
@@ -305,7 +300,7 @@ If this is your first SSH route in Pomerium Zero, you'll need to configure globa
 
 :::note
 
-These are cluster-wide settings shared by all SSH routes. If you've already configured SSH for your cluster, skip this step.
+These are cluster-wide settings shared by all SSH routes. If you've already configured SSH for your cluster, these steps won't be shown.
 
 :::
 
@@ -318,7 +313,7 @@ For detailed SSH configuration instructions, see the [Pomerium Zero Native SSH C
    - **From URL**: `ssh://openclaw`
    - **To URL**: `ssh://openclaw-gateway:22`
 
-   ![Configuring From and To URLs for SSH route](./img/zero-ssh/configure-from-to-routes.png)
+   ![Configuring From and To URLs for SSH route](./img/openclaw/configure-ssh-route-openclaw.png)
    - **Access Policies**: Configure who can connect (e.g., allow your email address)
 
    ![Creating and applying access policies](./img/zero-ssh/create-apply-policies.png)
