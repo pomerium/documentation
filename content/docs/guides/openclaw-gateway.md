@@ -76,11 +76,26 @@ Before deploying the Docker stack, you'll need a Pomerium Zero account and clust
 
 2. During cluster creation, select **Docker** as your setup method
 
-3. The onboarding wizard will provide:
+3. **Configure a custom identity provider** (required for SSH access)
+
+   :::caution Required for SSH Access
+
+   The hosted authenticate service doesn't support native SSH for self-hosted Pomerium using Zero as a managed control plane (soon). You must configure a custom identity provider during cluster creation to use SSH routes.
+
+   During the onboarding wizard:
+   - Select a custom identity provider (Google, Okta, Azure AD, GitHub, etc.)
+   - Complete the provider configuration steps
+   - Save your provider credentials
+
+   For detailed instructions, see [Configuring a Custom Identity Provider in Pomerium Zero](https://www.pomerium.com/docs/get-started/fundamentals/zero/zero-custom-idp).
+
+   :::
+
+4. The onboarding wizard will provide:
    - Your **POMERIUM_ZERO_TOKEN**
    - Your cluster subdomain (e.g., `fantastic-fox-1234`)
 
-4. Save both the token and your cluster subdomain for the next step
+5. Save both the token and your cluster subdomain for the next step
 
 :::note Ignore the Docker Compose File
 
