@@ -266,7 +266,7 @@ You should see three services running:
 CONTAINER ID   IMAGE                       COMMAND                  CREATED          STATUS                          PORTS     NAMES
 a6882babc788   pomerium/pomerium:v0.32.0   "/bin/pomerium --con…"   47 seconds ago   Restarting (1) 18 seconds ago             mr-claw-pomerium-1
 d03c1849ab7d   pomerium/verify:latest      "/bin/verify"            47 seconds ago   Up 47 seconds (healthy)                   mr-claw-verify-1
-190520ccdc2f   openclaw:2026.1.30          "docker-entrypoint.s…"   47 seconds ago   Up 47 seconds (healthy)         22/tcp    mr-claw-openclaw-gateway-1
+190520ccdc2f   openclaw:2026.2.2          "docker-entrypoint.s…"   47 seconds ago   Up 47 seconds (healthy)         22/tcp    mr-claw-openclaw-gateway-1
 ```
 
 ## Step 5: Configure Pomerium SSH Routes
@@ -278,14 +278,30 @@ Now configure SSH routes in Pomerium Zero to access your OpenClaw container.
 If this is your first SSH route in Pomerium Zero, you'll need to configure global SSH settings:
 
 1. Navigate to **Manage → Routes** in the Pomerium Zero console
+
+   ![Routes management page in Pomerium Zero console](./img/zero-ssh/routes-page.png)
+
 2. Click **New Route** → **Guided SSH Route**
+
+   ![Creating a guided SSH route](./img/zero-ssh/guided-ssh-route-help.png)
+
 3. Configure global SSH settings:
+
+   ![Global SSH settings configuration page](./img/zero-ssh/guided-route-global-ssh-settings.png)
    - **SSH Address**: `0.0.0.0:2200`
+
+     ![SSH Address configuration](./img/zero-ssh/configure-ssh-address.png)
+
    - **SSH Host Keys**: Paste all three private host keys from your repository root:
      - Contents of `ssh_host_ed25519_key`
      - Contents of `ssh_host_rsa_key`
      - Contents of `ssh_host_ecdsa_key`
+
+     ![SSH Host Keys configuration](./img/zero-ssh/configure-ssh-host-keys.png)
+
    - **SSH User CA Key**: Paste the contents of `pomerium_user_ca_key` (private key)
+
+     ![SSH User CA Key configuration](./img/zero-ssh/configure-ssh-user-ca.png)
 
 :::note
 
@@ -301,7 +317,11 @@ For detailed SSH configuration instructions, see the [Pomerium Zero Native SSH C
    - **Name**: `openclaw` (or your preferred name)
    - **From URL**: `ssh://openclaw`
    - **To URL**: `ssh://openclaw-gateway:22`
+
+   ![Configuring From and To URLs for SSH route](./img/zero-ssh/configure-from-to-routes.png)
    - **Access Policies**: Configure who can connect (e.g., allow your email address)
+
+   ![Creating and applying access policies](./img/zero-ssh/create-apply-policies.png)
 
 2. Save and apply the route
 
@@ -372,6 +392,9 @@ To access the OpenClaw gateway website in your browser, create a route in Pomeri
    - **From**: `https://openclaw.your-cluster.pomerium.app`
    - **To**: `http://openclaw-gateway:18789`
    - **Policies**: Configure access policies for who can connect
+
+   ![Configuring access policies for the web interface route](./img/zero-ssh/create-apply-policies-2.png)
+
 4. **Enable WebSocket support** (required for the web interface to function):
    - Go to **Advanced → Timeouts**
    - Enable WebSocket support
