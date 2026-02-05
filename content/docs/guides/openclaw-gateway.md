@@ -410,7 +410,11 @@ To access the OpenClaw gateway website in your browser, create a route in Pomeri
    - Enable WebSocket support
 5. Save and apply the route
 
-:::note WebSocket support is required for the OpenClaw gateway web interface to work properly. Without it, the web UI will fail to connect to the gateway. :::
+:::note
+
+WebSocket support is required for the OpenClaw gateway web interface to work properly. Without it, the web UI will fail to connect to the gateway.
+
+:::
 
 For more information on WebSocket configuration, see the [Pomerium timeouts documentation](/docs/reference/routes/timeouts).
 
