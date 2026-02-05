@@ -281,7 +281,7 @@ You should see three services running:
 CONTAINER ID   IMAGE                       COMMAND                  CREATED          STATUS                          PORTS     NAMES
 a6882babc788   pomerium/pomerium:v0.32.0   "/bin/pomerium --con…"   47 seconds ago   Restarting (1) 18 seconds ago             openclaw-pomerium-pomerium-1
 d03c1849ab7d   pomerium/verify:latest      "/bin/verify"            47 seconds ago   Up 47 seconds (healthy)                   openclaw-pomerium-verify-1
-190520ccdc2f   openclaw:2026.2.2          "docker-entrypoint.s…"   47 seconds ago   Up 47 seconds (healthy)         22/tcp    openclaw-pomerium-openclaw-gateway-1
+190520ccdc2f   openclaw:2026.2.3          "docker-entrypoint.s…"   47 seconds ago   Up 47 seconds (healthy)         22/tcp    openclaw-pomerium-openclaw-gateway-1
 ```
 
 ## Step 5: Configure Pomerium SSH Routes
