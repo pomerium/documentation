@@ -93,9 +93,9 @@ Before deploying the Docker stack, you'll need a Pomerium Zero account and clust
 
 4. The onboarding wizard will provide:
    - Your **POMERIUM_ZERO_TOKEN**
-   - Your cluster subdomain (e.g., `fantastic-fox-1234`)
+   - Your cluster domain (e.g., `fantastic-fox-1234.pomerium.app`)
 
-5. Save both the token and your cluster subdomain for the next step
+5. Save both the token and your cluster domain for the next step
 
 :::note Ignore the Docker Compose File
 
