@@ -58,25 +58,12 @@ We provide OS packages via [Cloudsmith](https://cloudsmith.io/~pomerium/repos/po
 - `rpm` (Yum, DNF)
 - `deb` (Apt)
 
-For example, to add a Yum repo (`rpm`-based):
-
-```abnf title="/etc/yum.repos.d/pomerium-pomerium.repo"
-[pomerium-pomerium]
-name=pomerium-pomerium
-baseurl=https://dl.cloudsmith.io/public/pomerium/pomerium/rpm/el/$releasever/$basearch
-repo_gpgcheck=1
-enabled=1
-gpgkey=https://dl.cloudsmith.io/public/pomerium/pomerium/gpg.6E388440B94E1407.key
-gpgcheck=1
-sslverify=1
-pkg_gpgcheck=1
-```
-
-Or for Debian/Ubuntu (`deb`-based):
+To setup the repository run:
 
 ```bash
-curl -1sLf 'https://dl.cloudsmith.io/public/pomerium/pomerium/gpg.6E388440B94E1407.key' | apt-key add -
-echo "deb https://dl.cloudsmith.io/public/pomerium/pomerium/deb/debian buster main" > /etc/apt/sources.list.d/pomerium-pomerium.list
+curl -1sLf \
+  'https://dl.cloudsmith.io/public/pomerium/pomerium/setup.deb.sh' \
+  | sudo -E bash
 ```
 
 Then install Pomerium via your package manager:

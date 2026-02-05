@@ -83,12 +83,21 @@ curl -1sLf \
 | sudo -E bash
 ```
 
-To manually configure the repository, import the `apt-key` and create a new `.list file in /etc/apt/source.list.d`:
+To manually configure the repository, do the following:
 
 ```bash
-curl -1sLf 'https://dl.cloudsmith.io/[access-key]/pomerium/enterprise/gpg.B1D0324399CB9BC3.key' | apt-key add -
-
-echo "deb https://dl.cloudsmith.io/[access-key]/pomerium/enterprise/deb/debian buster main" | sudo tee /apt/sources.list.d/pomerium-console.list
+apt-get install -y debian-keyring  # debian only
+apt-get install -y debian-archive-keyring  # debian only
+apt-get install -y apt-transport-https
+# For Debian Stretch, Ubuntu 16.04 and later
+keyring_location=/usr/share/keyrings/pomerium-enterprise-archive-keyring.gpg
+# For Debian Jessie, Ubuntu 15.10 and earlier
+keyring_location=/etc/apt/trusted.gpg.d/pomerium-enterprise.gpg
+curl -1sLf 'https://dl.cloudsmith.io/[access-key]/pomerium/enterprise/gpg.B1D0324399CB9BC3.key' |  gpg --dearmor >> ${keyring_location}
+curl -1sLf 'https://dl.cloudsmith.io/[access-key]/pomerium/enterprise/config.deb.txt?distro=debian&codename=wheezy&component=main' > /etc/apt/sources.list.d/pomerium-enterprise.list
+sudo chmod 644 ${keyring_location}
+sudo chmod 644 /etc/apt/sources.list.d/pomerium-enterprise.list
+apt-get update
 ```
 
 2. Update `apt` and install Pomerium Enterprise:
@@ -120,7 +129,7 @@ To manually configure the repository, run:
 ```bash
 yum install yum-utils pygpgme
 rpm --import 'https://dl.cloudsmith.io/[access-key]/pomerium/enterprise/gpg.B1D0324399CB9BC3.key'
-curl -1sLf 'https://dl.cloudsmith.io/[access-key]/pomerium/enterprise/config.rpm.txt?distro=el&codename=8' > /tmp/pomerium-enterprise.repo
+curl -1sLf 'https://dl.cloudsmith.io/[access-key]/pomerium/enterprise/config.rpm.txt?distro=el&codename=9' > /tmp/pomerium-enterprise.repo
 yum-config-manager --add-repo '/tmp/pomerium-enterprise.repo'
 yum -q makecache -y --disablerepo='*' --enablerepo='pomerium-enterprise'
 ```
