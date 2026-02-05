@@ -80,7 +80,7 @@ Before deploying the Docker stack, you'll need a Pomerium Zero account and clust
 
    :::caution Required for SSH Access
 
-   The hosted authenticate service doesn't support native SSH for self-hosted Pomerium using Zero as a managed control plane (soon). You must configure a custom identity provider during cluster creation to use SSH routes.
+   Soon you'll be able to use the Pomerium hosted authenticate service, but for now you must configure a custom identity provider in order to use native SSH routes.
 
    During the onboarding wizard:
    - Select a custom identity provider (Google, Okta, Azure AD, GitHub, etc.)
