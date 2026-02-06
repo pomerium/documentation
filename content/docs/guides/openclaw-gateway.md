@@ -552,23 +552,6 @@ Pomerium ensures only authorized users reach OpenClaw, but what they can do insi
 
 For complete security details and sandboxing options, see the [OpenClaw sandboxing documentation](https://docs.openclaw.ai/gateway/sandboxing).
 
-## Architecture
-
-The deployment consists of three services:
-
-- **pomerium**: Zero-trust authentication proxy
-  - Runs in "Zero-managed" mode (cloud control plane)
-  - Automatic TLS certificate management via ZeroSSL
-  - Listens on port 443 for HTTPS and port 2200 for SSH
-- **verify**: Pomerium's verification service for testing authentication
-- **openclaw-gateway**: Claude Code gateway
-  - Accessible via WebSocket at `ws://openclaw-gateway:18789`
-  - Configuration persisted in `./openclaw-data/config/`
-  - Workspace data persisted in `./openclaw-data/workspace/`
-  - SSH server on port 22 (accessible via [Pomerium SSH routes](/docs/capabilities/native-ssh-access))
-
-All services communicate over a shared Docker network.
-
 ## Troubleshooting
 
 ### Check Container Status
