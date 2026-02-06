@@ -267,7 +267,7 @@ Simply edit `openclaw/Dockerfile` and rebuild with `docker compose up -d --build
 Verify all services are running:
 
 ```bash
-docker ps
+docker compose ps
 ```
 
 You should see three services running:
