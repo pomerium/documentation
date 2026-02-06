@@ -231,7 +231,7 @@ docker compose up -d
 **Note**: The first run will build the OpenClaw image, which may take a few minutes.
 
 ```bash
-❯ docker compose build openclaw-gateway --no-cache
+❯ docker compose build openclaw-gateway
 [+] Building 2.8s (5/10)
  => [internal] load local bake definitions                                0.0s
  => => reading from stdin 640B                                            0.0s
