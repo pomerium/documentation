@@ -558,7 +558,7 @@ For complete security details and sandboxing options, see the [OpenClaw sandboxi
 
 ```bash
 # View all containers
-docker ps
+docker compose ps
 
 # View logs
 docker compose logs -f openclaw-gateway
