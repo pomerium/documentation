@@ -136,7 +136,7 @@ Your Pomerium Zero cluster comes with a built-in `*.pomerium.app` domain that yo
    POMERIUM_CLUSTER_DOMAIN=fantastic-fox-1234.pomerium.app
 
    # OpenClaw version (optional, defaults to `latest`)
-   OPENCLAW_VERSION=2026.2.1
+   OPENCLAW_VERSION=2026.2.6
    ```
 
 ## Step 3: Generate SSH Keys for Pomerium SSH Access
@@ -249,7 +249,7 @@ docker compose up -d
  => => # Get:93 http://deb.debian.org/debian bookworm/main amd64 xauth amd64 1
  => => # :1.1.2-1 [36.0 kB]
 [+] build 0/1
- ⠙ Image openclaw:2026.2.1 Building                                        2.8s
+ ⠙ Image openclaw:2026.2.6 Building                                        2.8s
 ```
 
 :::info Custom Docker Image
