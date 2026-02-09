@@ -99,7 +99,7 @@ Before deploying the Docker stack, you'll need a Pomerium Zero account and clust
 
 :::note Ignore the Docker Compose File
 
-The Pomerium Zero onboarding will provide you with a docker-compose file. **You don't need it** - the openclaw-pomerium repository (cloned in Step 2) already includes the necessary docker-compose setup. Just save your **POMERIUM_ZERO_TOKEN** and **cluster domain** for the next step.
+The Pomerium Zero onboarding will provide you with a docker-compose file. **You don't need it** - the openclaw-pomerium-guide repository (cloned in Step 2) already includes the necessary docker-compose setup. Just save your **POMERIUM_ZERO_TOKEN** and **cluster domain** for the next step.
 
 :::
 
@@ -114,8 +114,8 @@ Your Pomerium Zero cluster comes with a built-in `*.pomerium.app` domain that yo
 1. **Clone the repository** to your deployment host:
 
    ```bash
-   git clone https://github.com/nickytonline/openclaw-pomerium/
-   cd openclaw-pomerium
+   git clone https://github.com/pomerium/openclaw-pomerium-guide/
+   cd openclaw-pomerium-guide
    ```
 
    **All subsequent setup commands should be run from this directory.**
@@ -141,7 +141,7 @@ Your Pomerium Zero cluster comes with a built-in `*.pomerium.app` domain that yo
 
 ## Step 3: Generate SSH Keys for Pomerium SSH Access
 
-The openclaw-pomerium repository's [Dockerfile](https://github.com/nickytonline/openclaw-pomerium//blob/main/openclaw/Dockerfile) includes an SSH server that allows you to remotely access the OpenClaw container via [Pomerium SSH routes](/docs/capabilities/native-ssh-access). You'll need to generate SSH keys for this functionality.
+The openclaw-pomerium-guide repository's [Dockerfile](https://github.com/pomerium/openclaw-pomerium-guide/blob/main/openclaw/Dockerfile) includes an SSH server that allows you to remotely access the OpenClaw container via [Pomerium SSH routes](/docs/capabilities/native-ssh-access). You'll need to generate SSH keys for this functionality.
 
 ### Quick Setup (Recommended)
 
@@ -254,7 +254,7 @@ docker compose up -d
 
 :::info Custom Docker Image
 
-Since OpenClaw doesn't provide an official Docker image, the openclaw-pomerium repository includes a custom [Dockerfile](https://github.com/nickytonline/openclaw-pomerium//blob/main/openclaw/Dockerfile) that packages OpenClaw with an SSH server. This Dockerfile can be customized to add additional tools or utilities you need. For example, you might want to add:
+Since OpenClaw doesn't provide an official Docker image, the openclaw-pomerium-guide repository includes a custom [Dockerfile](https://github.com/pomerium/openclaw-pomerium-guide/blob/main/openclaw/Dockerfile) that packages OpenClaw with an SSH server. This Dockerfile can be customized to add additional tools or utilities you need. For example, you might want to add:
 
 - Development tools (git, vim, etc.)
 - Language runtimes (Node.js, Python, etc.)
