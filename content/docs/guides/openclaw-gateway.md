@@ -1,14 +1,14 @@
 ---
-title: Secure OpenClaw (Clawdbot/Moltbot) Gateway with Pomerium
+title: Secure OpenClaw Gateway with Pomerium
 sidebar_label: OpenClaw Gateway
 lang: en-US
 keywords: [pomerium, openclaw, claude, ai, gateway, docker, ssh, zero-trust]
 description: Learn how to deploy a secure OpenClaw gateway behind Pomerium with zero-trust authentication, SSH access, and persistent storage.
 ---
 
-# Secure OpenClaw (Clawdbot/Moltbot) Gateway with Pomerium
+# Secure OpenClaw Gateway with Pomerium
 
-This guide shows you how to deploy [OpenClaw](https://openclaw.ai) gateway behind Pomerium for secure, authenticated access. OpenClaw (formerly known as Moltbot and Clawdbot) is an open-source personal AI assistant that features persistent memory, system access (file operations, shell commands), browser automation, and supports multiple chat platforms. In this guide, we'll deploy it in a Docker container on your deployment host.
+This guide shows you how to deploy [OpenClaw](https://openclaw.ai) (formerly Clawdbot/Moltbot) gateway behind Pomerium for secure, authenticated access. OpenClaw is an open-source personal AI assistant that features persistent memory, system access (file operations, shell commands), browser automation, and supports multiple chat platforms. In this guide, we'll deploy it in a Docker container on your deployment host.
 
 :::caution Security Scope
 
