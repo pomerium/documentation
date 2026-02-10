@@ -290,7 +290,7 @@ Now configure SSH routes in Pomerium Zero to access your OpenClaw container.
 
 ### Configure Global SSH Settings (First-Time Only)
 
-If this is your first SSH route in Pomerium Zero, you'll need to configure global SSH settings:
+If this is your first SSH route in Pomerium Zero or you haven't configured SSH in your Pomerium cluster's main settings, you'll need to configure global SSH settings:
 
 1. Navigate to **Manage → Routes** in the Pomerium Zero console
 
