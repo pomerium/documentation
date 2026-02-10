@@ -114,7 +114,12 @@ Your Pomerium Zero cluster comes with a built-in `*.pomerium.app` domain that yo
 1. **Clone the repository** to your deployment host:
 
    ```bash
-   git clone https://github.com/pomerium/openclaw-pomerium-guide/
+   # via git clone
+   git clone https://github.com/pomerium/openclaw-pomerium-guide
+
+   # or via GitHub CLI
+   gh repo clone pomerium/openclaw-pomerium-guide
+
    cd openclaw-pomerium-guide
    ```
 
@@ -290,7 +295,7 @@ Now configure SSH routes in Pomerium Zero to access your OpenClaw container.
 
 ### Configure Global SSH Settings (First-Time Only)
 
-If this is your first SSH route in Pomerium Zero or you haven't configured SSH in your Pomerium cluster's main settings, you'll need to configure global SSH settings:
+If this is your first SSH route you're creating in Pomerium Zero or you haven't configured SSH in your Pomerium cluster's main settings, you'll need to configure global SSH settings as part of the route creation process.
 
 1. Navigate to **Manage → Routes** in the Pomerium Zero console
 
