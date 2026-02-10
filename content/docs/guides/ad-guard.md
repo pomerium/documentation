@@ -8,7 +8,7 @@ keywords: [pomerium, identity access proxy, adguard, ad guard, pi hole, piehole]
 description: This guide covers how to add authentication and authorization to a hosted, fully online instance of Adguard.
 ---
 
-This guide covers how to add authentication and authorization to an instance of AdGuard while giving us a great excuse to demonstrate how to use Pomerium's [add headers](/docs/reference) functionality to **transparently pass along basic authentication credentials to a downstream app**.
+This guide covers how to add authentication and authorization to an instance of AdGuard while giving us a great excuse to demonstrate how to use Pomerium's [add headers](/docs/reference) functionality to **transparently pass along basic authentication credentials to an upstream app**.
 
 ## What is AdGuard?
 
