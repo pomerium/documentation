@@ -24,9 +24,6 @@ OpenClaw is not production-ready software and has known security limitations. **
 
 - OpenClaw's internal operations and tool execution
 - Code or commands run by authenticated users
-- Subagent isolation (configurable via sandboxing - see below)
-
-This guide configures sandboxing as a **starting point**. You can adjust OpenClaw's security model based on your risk tolerance and use case. See the [OpenClaw sandboxing documentation](https://docs.openclaw.ai/gateway/sandboxing) for customization options.
 
 :::
 
@@ -38,7 +35,6 @@ By the end of this guide, you'll have:
 - **Identity-aware proxy**: Pomerium verifies user identity through your identity provider (Google, Okta, Azure AD, etc.) and enforces access policies on every request to the gateway
 - **SSH access**: Secure SSH access to the OpenClaw container via [Pomerium SSH routes](/docs/capabilities/native-ssh-access)
 - **Persistent storage**: OpenClaw configuration and workspace data that survives container restarts
-- **Full Docker sandboxing**: Subagents run in isolated containers for enhanced security
 
 ## Before You Start
 
@@ -478,8 +474,6 @@ OpenClaw configuration is persisted in `./openclaw-data/config/.openclaw/opencla
 - Auth token: `configure-gateway-token` (change this!)
 - Workspace: `/home/claw/workspace`
 - Bind mode: `lan` (accessible from network)
-- Sandbox mode: `non-main` (main agent unsandboxed, subagents sandboxed)
-- Workspace access for sandboxed agents: `none`
 
 ### Updating Configuration
 
@@ -492,70 +486,6 @@ ssh claw@openclaw@your-cluster.pomerium.app
 # Run OpenClaw configuration
 openclaw configure
 ```
-
-### Sandbox Configuration
-
-The repository includes a pre-configured `openclaw.json` with sandboxing as a **reasonable starting point for personal use behind Pomerium**. You can adjust these settings based on your security requirements and risk tolerance.
-
-**Starting Configuration: `non-main` sandbox mode**
-
-Located in `./openclaw-data/config/.openclaw/openclaw.json`:
-
-- Main agent runs directly on the gateway container (enables WebFetch/network tools)
-- Spawned subagents run in isolated Docker containers
-- Sandboxed agents have no workspace access (`workspaceAccess: "none"`)
-- Sandbox scope: `session` (containers cleaned up after session ends)
-
-**Tool Restrictions (Sandboxed Agents)**
-
-- Command execution: `exec, process`
-- Browser/UI tools: `browser, canvas, nodes`
-- System management: `gateway, cron`
-- Messaging integrations: `telegram, whatsapp, discord, slack, signal, imessage`
-
-**Security Trade-offs:**
-
-**Advantages:**
-
-- WebFetch and WebSearch work (main agent has network access)
-- Subagents are fully sandboxed
-- Behind Pomerium authentication
-- Most dangerous operations blocked
-
-**Considerations:**
-
-- Main agent runs direct (not sandboxed) - necessary for WebFetch
-- Docker socket access required for sandboxing
-- Suitable for personal/authenticated use behind Pomerium
-- For multi-tenant/public deployments, consider `mode: all` (full isolation)
-
-**Customizing Security:**
-
-You have full control over OpenClaw's security model. To adjust sandbox configuration:
-
-```bash
-# Change sandbox mode (options: non-main, all, off)
-openclaw config set 'agents.defaults.sandbox.mode' 'all'
-
-# Update tool deny list
-openclaw config set 'tools.sandbox.tools.deny' '["exec","process","browser"]' --json
-
-# Disable sandboxing entirely (not recommended)
-openclaw config set 'agents.defaults.sandbox.mode' 'off'
-```
-
-:::tip Your Security, Your Choice
-
-The sandboxing configuration in this guide balances functionality with security for personal use. You can:
-
-- **Increase security**: Use `mode: all` to sandbox everything, though this limits functionality
-- **Decrease security**: Loosen restrictions or disable sandboxing if you trust all authenticated users
-
-Pomerium ensures only authorized users reach OpenClaw, but what they can do inside is up to you.
-
-:::
-
-For complete security details and sandboxing options, see the [OpenClaw sandboxing documentation](https://docs.openclaw.ai/gateway/sandboxing).
 
 ## Troubleshooting
 
