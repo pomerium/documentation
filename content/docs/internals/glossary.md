@@ -153,8 +153,14 @@ Hardware-based isolation for sensitive operations and key storage. Pomerium can 
 
 ## Upstream / Downstream
 
-- **Upstream**: The protected backend services.
-- **Downstream**: Clients or end users connecting to Pomerium from the internet.
+Pomerium inherits these terms from [Envoy](https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/intro/terminology):
+
+- **Downstream**: A downstream host connects to Pomerium, sends requests, and receives responses. This is the client side — typically a web browser, the Pomerium CLI, or the Pomerium Desktop client.
+- **Upstream**: An upstream host receives connections and requests from Pomerium and returns responses. This is the backend service side — the applications and APIs that Pomerium protects.
+
+Related Envoy-inherited concepts used in Pomerium:
+
+- **Listener**: A named network location (port, address) that accepts connections from downstream clients. Pomerium configures several Envoy listeners (e.g., `https-ingress` on port 443). See [Connections](/docs/internals/connection#listeners).
 
 ## Users and Groups
 
