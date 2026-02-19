@@ -9,26 +9,41 @@ Create a GitHub pull request for the current branch using `gh`, following this r
 
 ## Prerequisites
 
-Before starting, verify:
-1. There is a branch with commits ready for PR (not `main`)
-2. The `gh` CLI is available and authenticated
+Before starting, verify the `gh` CLI is available and authenticated.
 
 ## Workflow
 
-### 1. Assess the Current State
+### 1. Ensure main Is Up to Date
+
+```bash
+git fetch origin main
+git pull origin main
+```
+
+### 2. Assess the Current State
 
 Run the following in parallel to understand what will go into the PR:
 
 - `git status` — check for uncommitted changes
-- `git branch --show-current` — confirm not on `main`
-- `git log main..HEAD --oneline` — see all commits that will be in the PR
-- `git diff main...HEAD --stat` — see all files changed vs main
+- `git branch --show-current` — check current branch
 
 If there are uncommitted changes, ask the user whether to commit them first.
 
-If on `main`, create a descriptive branch name using the format `docs/short-description` and switch to it before proceeding.
+If on `main` or a branch needs to be created, determine the git username and create a branch:
 
-### 2. Run Pre-commit Checks
+```bash
+git config user.name  # get username for branch prefix
+git checkout -b {username}/{short-description}
+```
+
+Branch names must follow the format `{git-username}/{branch-slug}` (e.g., `bobby/add-mcp-guide`). The base branch is always `main`.
+
+Then check what will be in the PR:
+
+- `git log main..HEAD --oneline` — see all commits that will be in the PR
+- `git diff main...HEAD --stat` — see all files changed vs main
+
+### 3. Run Pre-commit Checks
 
 Before pushing, run the checks that CI will enforce:
 
@@ -38,13 +53,13 @@ yarn precommit
 
 This runs `format-check` and `cspell`. If formatting fails, run `yarn format` to fix, then re-stage and commit the fixes. If cspell fails on intentional terms, add them to `cspell.json`.
 
-### 3. Push the Branch
+### 4. Push the Branch
 
 ```bash
 git push -u origin HEAD
 ```
 
-### 4. Create the Pull Request
+### 5. Create the Pull Request
 
 Use `gh pr create` with the repository's PR template structure from `.github/ISSUE_TEMPLATE/PULL_REQUEST_TEMPLATE`.
 
@@ -66,7 +81,7 @@ Analyze all commits in `git log main..HEAD` to write the PR body:
 #### Execute
 
 ```bash
-gh pr create --title "docs: description" --body "$(cat <<'EOF'
+gh pr create --base main --title "docs: description" --body "$(cat <<'EOF'
 ## Summary
 
 - Description of changes
@@ -85,6 +100,6 @@ EOF
 )"
 ```
 
-### 5. Confirm
+### 6. Confirm
 
 After creation, display the PR URL to the user. If `gh pr create` fails (e.g., no upstream, auth issue), show the error and suggest remediation.
