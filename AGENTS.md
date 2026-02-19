@@ -1,8 +1,4 @@
-# CLAUDE.md
-
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
-
-## Project Overview
+# AGENTS.md
 
 Pomerium documentation site built with **Docusaurus 3.8** (React + MDX). Published at https://pomerium.com/docs. Pomerium is an identity-aware proxy for zero-trust access.
 
