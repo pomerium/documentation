@@ -75,12 +75,7 @@ lang: en-US
 Standard types plus a custom `:::enterprise` for enterprise-only features:
 
 ```markdown
-:::note
-:::tip
-:::info
-:::caution
-:::danger
-:::enterprise
+:::note :::tip :::info :::caution :::danger :::enterprise
 ```
 
 ### Tabs (Zero vs Core)
@@ -90,8 +85,12 @@ import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
 <Tabs>
-  <TabItem value="zero" label="Pomerium Zero">...</TabItem>
-  <TabItem value="core" label="Pomerium Core">...</TabItem>
+  <TabItem value="zero" label="Pomerium Zero">
+    ...
+  </TabItem>
+  <TabItem value="core" label="Pomerium Core">
+    ...
+  </TabItem>
 </Tabs>
 ```
 
