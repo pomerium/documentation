@@ -199,6 +199,26 @@ authorize_log_fields:
 
 See [Observability](/docs/capabilities/mcp/reference#observability) for the full logging reference.
 
+## Alternative: Service account tokens
+
+Instead of delegating the interactive user's token to the LLM, you can use a [Pomerium Service Account](/docs/capabilities/service-accounts) to authenticate MCP requests. A service account provides a long-lived JWT that your backend can use directly, without requiring a logged-in user session.
+
+This is useful when:
+
+- Your app runs background jobs or scheduled tasks that call MCP tools
+- You want to call MCP servers from a backend service that has no interactive user
+- You want to impersonate a specific user for auditing purposes
+
+To authenticate, pass the service account JWT as a bearer token:
+
+```
+Authorization: Bearer Pomerium-${SERVICE_ACCOUNT_JWT}
+```
+
+Service accounts can impersonate directory users from your identity provider, so policies based on identity (email, groups) still apply. Create service accounts and manage their policies in the Enterprise Console or Pomerium Zero.
+
+See [Service Accounts](/docs/capabilities/service-accounts) for setup instructions.
+
 ## Sample repos and next steps
 
 - **[pomerium/mcp-app-demo](https://github.com/pomerium/mcp-app-demo)** — Full working Pomerium Chat app with MCP server integration, LLM API calling, and audit logging
