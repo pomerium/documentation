@@ -17,10 +17,21 @@ Your MCP server handles tool execution and returns structured data that the host
 **What you get:**
 
 - An MCP server that registers tools and returns widget-ready structured data
-- React-based widgets rendered inside ChatGPT as interactive iframes
+- React-based widgets rendered inside your MCP host as interactive iframes
 - Secure authentication via Pomerium — use `pom.run` for local development or deploy permanently
 
 ## Architecture
+
+The template builds and serves two separate properties:
+
+| Property | Dev | Production | Access policy |
+|---|---|---|---|
+| **MCP server** (`/mcp`) | Public URL via `pom.run` tunnel | Public URL via Pomerium | Auth-gated — tool calls always require a Bearer token |
+| **Widget assets** | `localhost:4444` (rendered in your browser) | Public URL via Pomerium | **Public** — the MCP host renders widgets in a sandboxed iframe and cannot forward credentials |
+
+The MCP server always needs a publicly reachable URL so the MCP host can reach it. Widget assets only need a public URL in production; during development your local browser loads them directly from localhost.
+
+Tool calls always carry a Bearer token and should be gated by a strict Pomerium policy. Widgets must be publicly accessible because the MCP host renders them in a sandboxed iframe and cannot forward authentication tokens.
 
 ```mermaid
 sequenceDiagram
@@ -31,10 +42,10 @@ sequenceDiagram
   participant W as Widget (React iframe)
   U ->> C: "echo hello world"
   C ->> P: tools/call (Bearer token)
-  P ->> S: Authenticated request
+  P ->> S: Authenticated request (auth-gated route)
   S ->> P: Response with text + structured JSON + widget metadata
   P ->> C: Tool result
-  C ->> W: Render widget with tool output
+  C ->> W: Render widget with tool output (public route)
   W ->> U: Interactive UI component
 ```
 
@@ -42,7 +53,7 @@ sequenceDiagram
 
 Your MCP server registers tools that return three things in each response:
 
-1. **Text content** — human-readable text for ChatGPT's conversation
+1. **Text content** — human-readable text for the MCP host's conversation
 2. **Structured JSON data** — passed to the widget via `window.openai.toolOutput`
 3. **Widget metadata** — a `_meta.outputTemplate` pointing to a widget resource (e.g., `ui://echo`)
 
@@ -67,15 +78,15 @@ npm run dev
 
 This starts both the MCP server (`http://localhost:8080`) and widget dev server (`http://localhost:4444`).
 
-### 2. Expose your app with pom.run
+### 2. Expose your MCP server with pom.run
 
-In a new terminal (keep `npm run dev` running):
+The MCP host needs a public URL to reach your server — `localhost` won't work. In a new terminal (keep `npm run dev` running):
 
 ```bash
 ssh -R 0 pom.run
 ```
 
-Sign in and you'll get a public route URL like `https://mcp.your-route-1234.pomerium.app/`. For full tunneling details, see [Tunnel to ChatGPT During Development](/docs/capabilities/mcp/tunnel-to-chatgpt).
+Sign in and you'll get a public route URL like `https://mcp.your-route-1234.pomerium.app/` that tunnels to your local MCP server. The widget dev server (`localhost:4444`) stays local — your browser loads it directly. For full tunneling details, see [Tunnel to ChatGPT During Development](/docs/capabilities/mcp/tunnel-to-chatgpt).
 
 ### 3. Connect to ChatGPT
 
@@ -120,16 +131,17 @@ See the [template README](https://github.com/pomerium/chatgpt-app-typescript-tem
 
 ## For production deployment
 
-Configure a Pomerium route to put your app behind authentication permanently:
+You need two Pomerium routes — one for the MCP server (auth-gated) and one for the widgets (public):
 
 ```yaml
 runtime_flags:
   mcp: true
 
 routes:
+  # MCP server — fine-grained authorization required for tool calls
   - from: https://my-chatgpt-app.your-domain.com
     to: http://my-chatgpt-app:8080/mcp
-    name: My ChatGPT App
+    name: My ChatGPT App (MCP server)
     mcp:
       server: {}
     policy:
@@ -137,7 +149,15 @@ routes:
         and:
           - domain:
               is: company.com
+
+  # Widget assets — must be public so the MCP host can render iframes without credentials
+  - from: https://my-chatgpt-app-ui.your-domain.com
+    to: http://my-chatgpt-app-widgets:4444
+    name: My ChatGPT App (widgets)
+    allow_public_unauthenticated_access: true
 ```
+
+The MCP server URL you register in ChatGPT points to the first (auth-gated) route. Widget resources served by your MCP server reference the second (public) route. Never put the widget route behind an auth policy — MCP hosts cannot forward credentials when loading iframe content.
 
 See [Protect an MCP Server](/docs/capabilities/mcp/protect-mcp-server) for the full setup guide.
 
