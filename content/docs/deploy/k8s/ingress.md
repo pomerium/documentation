@@ -814,7 +814,7 @@ spec:
 
 #### MCP Server with Custom Path
 
-If your MCP client application makes use of [MCP Routes Enumeration](https://main.docs.pomerium.com/docs/capabilities/mcp#listing-available-mcp-servers) to determine the exact URL the MCP Streaming HTTP is exposed at, you may specify it with this annotation.
+If your MCP client application makes use of [MCP Routes Enumeration](/docs/capabilities/mcp/reference#listing-available-mcp-servers) to determine the exact URL the MCP Streaming HTTP is exposed at, you may specify it with this annotation.
 
 ```yaml
 apiVersion: networking.k8s.io/v1
