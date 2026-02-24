@@ -12,6 +12,8 @@ keywords:
     install,
     enterprise,
     console,
+    terraform,
+    kubernetes,
   ]
 ---
 
@@ -210,6 +212,140 @@ kubectl apply -k ./config
 [pomerium kustomize]: /docs/deploy/k8s/install
 [environment variables]: /docs/deploy/enterprise/configure
 [ingress]: /docs/deploy/k8s/ingress
+
+</TabItem>
+<TabItem label="Kubernetes with Terraform" value="Kubernetes with Terraform">
+
+You can deploy Pomerium Enterprise to Kubernetes using Terraform modules from the [`pomerium/install`](https://github.com/pomerium/install) repository. This approach uses two modules:
+
+1. **Ingress Controller** — deploys Pomerium Core as a Kubernetes ingress controller
+2. **Enterprise Console** — deploys the Pomerium Enterprise Console, connecting it to the ingress controller
+
+:::caution
+
+Keep installation and [configuration](/docs/deploy/enterprise/configure-terraform) in separate Terraform runs. The Pomerium Terraform provider must connect to a running Enterprise Console, so if Pomerium is misconfigured or an essential component (such as the console database) is down, all dependent configuration resources will fail and the entire `terraform plan` / `terraform apply` will be blocked.
+
+:::
+
+### Prerequisites
+
+- A Kubernetes cluster with a configured Terraform [Kubernetes provider](https://registry.terraform.io/providers/hashicorp/kubernetes/latest)
+- [Terraform](https://www.terraform.io/downloads) >= 1.0
+- A PostgreSQL database for the Enterprise Console
+- A Pomerium Enterprise license key and Cloudsmith registry credentials
+
+### Required Providers
+
+```hcl
+terraform {
+  required_providers {
+    kubernetes = {
+      source  = "hashicorp/kubernetes"
+      version = "~> 2.0"
+    }
+    # Required by the ingress-controller module
+    tls = {
+      source  = "hashicorp/tls"
+      version = "~> 4.0"
+    }
+    random = {
+      source  = "hashicorp/random"
+      version = "~> 3.0"
+    }
+    kubectl = {
+      source  = "gavinbunney/kubectl"
+      version = ">= 1.7.0"
+    }
+  }
+}
+```
+
+### Deploy the Ingress Controller
+
+The ingress controller module is an all-in-one deployment of Pomerium Core and the ingress controller. It creates the following Kubernetes resources: Namespace, CRDs, RBAC (ClusterRole, ClusterRoleBinding, ServiceAccounts), IngressClass, Deployment, Services, and Secrets.
+
+```hcl
+module "pomerium_ingress_controller" {
+  source = "git::https://github.com/pomerium/install.git//ingress-controller/terraform?ref=main"
+
+  namespace_name    = "pomerium"
+  enable_databroker = true
+
+  config = {
+    # Reference TLS certificates available in the namespace
+    certificates = ["pomerium/wildcard-tls"]
+    # See https://www.pomerium.com/docs/k8s/reference for all options
+  }
+}
+```
+
+See the [ingress-controller module variables](https://github.com/pomerium/install/tree/main/ingress-controller/terraform) for a full list of configuration options, including identity provider settings, resource limits, and proxy service type.
+
+### Deploy the Enterprise Console
+
+The enterprise console module deploys the Pomerium Enterprise Console and connects it to the ingress controller using shared secrets.
+
+```hcl
+module "pomerium_enterprise_console" {
+  source = "git::https://github.com/pomerium/install.git//enterprise/terraform/kubernetes?ref=main"
+
+  # Secrets from the ingress controller module
+  shared_secret_b64 = module.pomerium_ingress_controller.shared_secret_b64
+  signing_key_b64   = module.pomerium_ingress_controller.signing_key_b64
+
+  # Namespace where Pomerium Core is deployed
+  core_namespace_name = "pomerium"
+
+  # Enterprise image registry credentials
+  image_registry_password = var.cloudsmith_password
+
+  # Enterprise license
+  license_key = var.pomerium_license_key
+
+  # PostgreSQL database connection string
+  database_url = "postgres://console:${var.db_password}@db-host:5432/pomerium-enterprise?sslmode=require"
+
+  # Console web UI and API ingress configuration
+  console_ingress = {
+    dns         = "console.example.com"
+    annotations = {}
+  }
+  console_api_ingress = {
+    dns         = "console-api.example.com"
+    annotations = {}
+  }
+
+  # Initial administrator emails for console bootstrap
+  administrators = ["admin@example.com"]
+
+  # Sidecar containers (e.g. cloud-sql-proxy for GCP Cloud SQL)
+  sidecars = []
+
+  depends_on = [module.pomerium_ingress_controller]
+}
+```
+
+See the [enterprise console module variables](https://github.com/pomerium/install/tree/main/enterprise/terraform/kubernetes) for a full list of configuration options, including resource limits, clustered databroker settings, and observability options.
+
+### DNS Records
+
+After deployment, point your console DNS records to the ingress controller's proxy service load balancer IP:
+
+```hcl
+data "kubernetes_service" "pomerium_proxy" {
+  metadata {
+    name      = "pomerium-proxy"
+    namespace = "pomerium"
+  }
+
+  depends_on = [module.pomerium_ingress_controller]
+}
+
+# Create DNS records for the console and API endpoints pointing to the
+# load balancer IP:
+# - console.example.com     -> data.kubernetes_service.pomerium_proxy.status[0].load_balancer[0].ingress[0].ip
+# - console-api.example.com -> data.kubernetes_service.pomerium_proxy.status[0].load_balancer[0].ingress[0].ip
+```
 
 </TabItem>
 </Tabs>
