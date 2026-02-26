@@ -1,0 +1,68 @@
+log_level: info
+proxy_log_level: info
+services: all
+
+address: "0.0.0.0:443"
+ssh_address: "0.0.0.0:22"
+
+idp_provider: oidc
+idp_provider_url: http://mock-idp.example.com:8024
+idp_client_id: CLIENT_ID
+idp_client_secret: CLIENT_SECRET
+
+authenticate_service_url: https://authenticate.example.com:443
+
+databroker_storage_type: memory
+
+certificate_file: _wildcard.example.com.pem
+certificate_key_file: _wildcard.example.com-key.pem
+
+cookie_secret_file: /pomerium/demo_cookie_secret
+shared_secret_file: /pomerium/demo_shared_secret
+
+routes:
+  - from: https://https-route.example.com
+    to: http://localhost:8080
+    allow_public_unauthenticated_access: true
+    upstream_tunnel:
+      ssh_policy:
+        - allow:
+            and:
+              - email:
+                  is: user@example.com
+    health_checks:
+      - timeout: 1s
+        unhealthy_threshold: 1
+        healthy_threshold: 1
+        interval: 10s
+        no_traffic_interval: 10s
+        always_log_health_check_success: true
+        always_log_health_check_failures: true
+        http_health_check:
+          path: "/health"
+
+  - from: https://grpc-route.example.com
+    to: h2c://localhost:8079
+    allow_public_unauthenticated_access: true
+    upstream_tunnel:
+      ssh_policy:
+        - allow:
+            and:
+              - email:
+                  is: user@example.com
+    health_checks:
+      - timeout: 1s
+        unhealthy_threshold: 1
+        healthy_threshold: 1
+        interval: 10s
+        no_traffic_interval: 10s
+        always_log_health_check_success: true
+        always_log_health_check_failures: true
+        grpc_health_check: {}
+
+ssh_host_key_files:
+  - /pomerium/demo_host_key
+ssh_user_ca_key_file: /pomerium/demo_user_ca_key
+
+runtime_flags:
+  ssh_upstream_tunnel: true
