@@ -8,8 +8,10 @@ pagination_next: null
 toc_max_heading_level: 2
 ---
 
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
+import TabItem from "@theme/TabItem";
+import Tabs from "@theme/Tabs";
+
+import EnterpriseConfiguration from "../../../../src/components/EnterpriseConfiguration";
 
 # TLS Settings
 
@@ -34,9 +36,9 @@ For more details, see our [mTLS example repository](https://github.com/pomerium/
 <Tabs>
 <TabItem value="Core" label="Core">
 
-| **YAML**/**JSON** setting | **Type** | **Usage** |
-| :-- | :-- | :-- |
-| `tls_client_cert` and `tls_client_key` | `string` (base64-encoded) | **optional** |
+| **YAML**/**JSON** setting                        | **Type**                  | **Usage**    |
+| :----------------------------------------------- | :------------------------ | :----------- |
+| `tls_client_cert` and `tls_client_key`           | `string` (base64-encoded) | **optional** |
 | `tls_client_cert_file` and `tls_client_key_file` | `string` (base64-encoded) | **optional** |
 
 ### Examples {#examples-tls-client-certificate}
@@ -52,22 +54,17 @@ tls_client_key_file: /relative/file/location
 
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
+<EnterpriseConfiguration name="tls_client_key_pair_id" resource="route">
 
 Set the **TLS Client Certificate** under **TLS Settings** in the Console:
 
 ![set TLS client Certificate in the console](../img/routes/tls/tls-client-certificate.png)
 
+</EnterpriseConfiguration>
 </TabItem>
 <TabItem value="Kubernetes" label="Kubernetes">
 
 See Kubernetes [TLS Certificates](/docs/deploy/k8s/ingress#tls-certificates) for more information
-
-</TabItem>
-<TabItem value="Enterprise via Terraform" label="Enterprise via Terraform">
-
-| **Parameter name**        | **Type** | **Usage**    |
-| :------------------------ | :------- | :----------- |
-| `tls_client_key_pair_id ` | String   | **optional** |
 
 </TabItem>
 </Tabs>
@@ -96,22 +93,17 @@ tls_custom_ca_file: /relative/file/location
 
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
+<EnterpriseConfiguration name="tls_custom_ca_key_pair_id" resource="route">
 
 Set **TLS Custom Certificate Authority** in the Console:
 
 ![Set TLS custom certificate authority in the console](../img/routes/tls/route-tls-settings.png)
 
+</EnterpriseConfiguration>
 </TabItem>
 <TabItem value="Kubernetes" label="Kubernetes">
 
 See Kubernetes [TLS Certificates](/docs/deploy/k8s/ingress#tls-certificates) for more information
-
-</TabItem>
-<TabItem value="Enterprise via Terraform" label="Enterprise via Terraform">
-
-| **Parameter name**          | **Type** | **Usage**    |
-| :-------------------------- | :------- | :----------- |
-| `tls_custom_ca_key_pair_id` | String   | **optional** |
 
 </TabItem>
 </Tabs>
@@ -139,8 +131,8 @@ See [Client-Side mTLS With Pomerium](/docs/internals/mutual-auth.md) for more in
 <Tabs>
 <TabItem value="Core" label="Core">
 
-| **YAML**/**JSON** setting | **Type** | **Usage** |
-| :-- | :-- | :-- |
+| **YAML**/**JSON** setting                                     | **Type** | **Usage**    |
+| :------------------------------------------------------------ | :------- | :----------- |
 | `tls_downstream_client_ca` or `tls_downstream_client_ca_file` | `string` | **optional** |
 
 ### Examples {#examples-tls-downstream-client-certificate-authority}
@@ -152,11 +144,13 @@ tls_downstream_client_ca_file: /relative/file/location
 
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
+<EnterpriseConfiguration name="tls_downstream_client_ca" resource="route" uiOnly>
 
 Set **TLS Downstream Client CA** in the Console:
 
 ![Set TLS Downstream Client CA in the console](../img/routes/tls/route-tls-settings.png)
 
+</EnterpriseConfiguration>
 </TabItem>
 <TabItem value="Kubernetes" label="Kubernetes">
 
@@ -174,28 +168,23 @@ See Kubernetes [TLS Certificates](/docs/deploy/k8s/ingress#tls-certificates) for
 <Tabs>
 <TabItem value="Core" label="Core">
 
-| **Config file keys** | **Environment variables** | **Type** | **Usage** |
-| :-- | :-- | :-- | :-- |
+| **Config file keys**         | **Environment variables**    | **Type** | **Usage**    |
+| :--------------------------- | :--------------------------- | :------- | :----------- |
 | `tls_downstream_server_name` | `TLS_DOWNSTREAM_SERVER_NAME` | `string` | **optional** |
 
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
+<EnterpriseConfiguration name="tls_downstream_server_name" resource="route">
 
 Set **TLS Downstream Server Name** in the Console:
 
 ![Set TLS upstream server name in the console](../img/routes/tls/route-tls-settings.png)
 
+</EnterpriseConfiguration>
 </TabItem>
 <TabItem value="Kubernetes" label="Kubernetes">
 
 Kubernetes does not support `tls_downstream_server_name`
-
-</TabItem>
-<TabItem value="Enterprise via Terraform" label="Enterprise via Terraform">
-
-| **Parameter name**           | **Type** | **Usage**    |
-| :--------------------------- | :------- | :----------- |
-| `tls_downstream_server_name` | String   | **optional** |
 
 </TabItem>
 </Tabs>
@@ -225,35 +214,24 @@ tls_skip_verify: true
 
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
+<EnterpriseConfiguration name="tls_skip_verify" resource="route">
 
 Enable **TLS Skip Verify** in the Console:
 
 ![Enable TLS skip verify in the console](../img/routes/tls/route-tls-settings.png)
 
+</EnterpriseConfiguration>
 </TabItem>
 <TabItem value="Kubernetes" label="Kubernetes">
 
-| **[Annotation name](/docs/deploy/k8s/ingress#set-ingress-annotations)** | **Type** | **Default** |
-| :-- | :-- | :-- |
-| `tls_skip_verify` | `boolean` | `false` |
+| **[Annotation name](/docs/deploy/k8s/ingress#set-ingress-annotations)** | **Type**  | **Default** |
+| :---------------------------------------------------------------------- | :-------- | :---------- |
+| `tls_skip_verify`                                                       | `boolean` | `false`     |
 
 ### Examples
 
 ```yaml
-ingress.pomerium.io/tls_skip_verify: 'true'
-```
-
-</TabItem>
-<TabItem value="Enterprise via Terraform" label="Enterprise via Terraform">
-
-| **Parameter name** | **Type** | **Default** |
-| :----------------- | :------- | :---------- |
-| `tls_skip_verify`  | Boolean  | `false`     |
-
-### Examples {#examples-tls-skip-verification}
-
-```hcl
-tls_skip_verify = true
+ingress.pomerium.io/tls_skip_verify: "true"
 ```
 
 </TabItem>
@@ -286,28 +264,17 @@ tls_upstream_allow_renegotiation: true
 
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
+<EnterpriseConfiguration name="tls_upstream_allow_renegotiation" resource="route">
 
 Enable **TLS Upstream Allow Renegotiation** in the Console:
 
 ![Enable tls upstream renegotiation in the console](../img/routes/tls/route-tls-settings.png)
 
+</EnterpriseConfiguration>
 </TabItem>
 <TabItem value="Kubernetes" label="Kubernetes">
 
 Kubernetes does not support **TLS Upstream Allow Renegotiation**
-
-</TabItem>
-<TabItem value="Enterprise via Terraform" label="Enterprise via Terraform">
-
-| **Parameter name**                 | **Type** | **Default** |
-| :--------------------------------- | :------- | :---------- |
-| `tls_upstream_allow_renegotiation` | Boolean  | `false`     |
-
-### Examples {#examples-tls-upstream-allow-renegotiation}
-
-```hcl
-tls_upstream_allow_renegotiation = true
-```
 
 </TabItem>
 </Tabs>
@@ -321,28 +288,24 @@ tls_upstream_allow_renegotiation = true
 <Tabs>
 <TabItem value="Core" label="Core">
 
-| **Config file keys** | **Environment variables** | **Type** | **Usage** |
-| :-- | :-- | :-- | :-- |
+| **Config file keys**       | **Environment variables**  | **Type** | **Usage**    |
+| :------------------------- | :------------------------- | :------- | :----------- |
 | `tls_upstream_server_name` | `TLS_UPSTREAM_SERVER_NAME` | `string` | **optional** |
 
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
+<EnterpriseConfiguration name="tls_upstream_server_name" resource="route">
 
 Set **TLS Upstream Server Name** in the Console:
 
 ![Set TLS upstream server name in the console](../img/routes/tls/route-tls-settings.png)
 
+</EnterpriseConfiguration>
+
 </TabItem>
 <TabItem value="Kubernetes" label="Kubernetes">
 
 Kubernetes does not support `tls_upstream_server_name`
-
-</TabItem>
-<TabItem value="Enterprise via Terraform" label="Enterprise via Terraform">
-
-| **Parameter name**         | **Type** | **Usage**    |
-| :------------------------- | :------- | :----------- |
-| `tls_upstream_server_name` | String   | **optional** |
 
 </TabItem>
 </Tabs>

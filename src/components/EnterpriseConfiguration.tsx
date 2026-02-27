@@ -6,11 +6,13 @@ type EnterpriseConfigurationProps = PropsWithChildren<{
   name: string;
   resource: Resource;
   bootstrap?: boolean;
+  uiOnly?: boolean;
 }>;
 const EnterpriseConfiguration = ({
   name,
   resource,
   bootstrap,
+  uiOnly,
   children,
 }: EnterpriseConfigurationProps) => {
   const terraformLink = `https://registry.terraform.io/providers/pomerium/pomerium/latest/docs/resources/${resource}#${name}-1`;
@@ -19,12 +21,17 @@ const EnterpriseConfiguration = ({
       {bootstrap && (
         <p>
           The <code>{name}</code> setting is a bootstrap setting and cannot be
-          configured in the Console UI. However it can be configured by{" "}
-          <a href={terraformLink}>Terraform</a>.
+          configured in the Console UI.{" "}
+          {!uiOnly && (
+            <>
+              However it can be configured by{" "}
+              <a href={terraformLink}>Terraform</a>.
+            </>
+          )}
         </p>
       )}
       {children}
-      {!bootstrap && (
+      {!bootstrap && !uiOnly && (
         <p>
           The <code>{name}</code> setting can also be configured by{" "}
           <a href={terraformLink}>Terraform</a>.
