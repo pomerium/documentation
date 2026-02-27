@@ -5,24 +5,23 @@ import { Resource } from "../types";
 type EnterpriseConfigurationProps = PropsWithChildren<{
   name: string;
   resource: Resource;
-  bootstrap?: boolean;
-  uiOnly?: boolean;
+  via?: ("terraform" | "ui")[];
 }>;
 const EnterpriseConfiguration = ({
   name,
   resource,
-  bootstrap,
-  uiOnly,
+  via,
   children,
 }: EnterpriseConfigurationProps) => {
+  via = via || ["terraform", "ui"];
   const terraformLink = `https://registry.terraform.io/providers/pomerium/pomerium/latest/docs/resources/${resource}#${name}-1`;
   return (
     <>
-      {bootstrap && (
+      {!via.includes("ui") && (
         <p>
           The <code>{name}</code> setting is a bootstrap setting and cannot be
           configured in the Console UI.{" "}
-          {!uiOnly && (
+          {via.includes("terraform") && (
             <>
               However it can be configured by{" "}
               <a href={terraformLink}>Terraform</a>.
@@ -31,7 +30,7 @@ const EnterpriseConfiguration = ({
         </p>
       )}
       {children}
-      {!bootstrap && !uiOnly && (
+      {via.includes("ui") && via.includes("terraform") && (
         <p>
           The <code>{name}</code> setting can also be configured by{" "}
           <a href={terraformLink}>Terraform</a>.
