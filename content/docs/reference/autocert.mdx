@@ -13,8 +13,10 @@ pagination_prev: null
 pagination_next: null
 ---
 
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
+import TabItem from "@theme/TabItem";
+import Tabs from "@theme/Tabs";
+
+import EnterpriseConfiguration from "../../../src/components/EnterpriseConfiguration";
 
 # Autocert Settings
 
@@ -75,18 +77,8 @@ AUTOCERT=TRUE
 ```
 
 </TabItem>
-<TabItem label="Enterprise via Terraform" value="Enterprise via Terraform">
-
-| **[Parameter name](https://registry.terraform.io/providers/pomerium/pomerium/latest/docs/resources/settings)** | **Type** | **Usage** |
-| :-- | :-- | :-- |
-| `autocert` | Boolean | **optional** |
-
-### Examples
-
-```hcl
-autocert = true
-```
-
+<TabItem label="Enterprise" value="Enterprise">
+<EnterpriseConfiguration name="autocert" resource="settings" via={["terraform"]}/>
 </TabItem>
 </Tabs>
 
@@ -125,9 +117,9 @@ AUTOCERT_CA=https://acme.zerossl.com/v2/DV90
 <Tabs>
 <TabItem label="Core" value="Core">
 
-| **Config file keys** | **Environment variables** | **Type** | **Usage** |
-| :-- | :-- | :-- | :-- |
-| `autocert_dir` | `AUTOCERT_DIR` | \*`string` | \*\* **optional** |
+| **Config file keys** | **Environment variables** | **Type**   | **Usage**         |
+| :------------------- | :------------------------ | :--------- | :---------------- |
+| `autocert_dir`       | `AUTOCERT_DIR`            | \*`string` | \*\* **optional** |
 
 \* `string` must point to the directory path or URL of an S3 or GCS bucket.
 
@@ -157,49 +149,19 @@ Credentials are sourced from [Google Application Default Credentials](https://cl
 
 </TabItem>
 
-<TabItem label="Enterprise via Terraform" value="Enterprise via Terraform">
-
-| **[Parameter name](https://registry.terraform.io/providers/pomerium/pomerium/latest/docs/resources/settings)** | **Type** | **Usage** |
-| :-- | :-- | :-- |
-| `autocert_dir` | \*`String` | \*\* **optional** |
-
-\* `String` must point to the directory path or URL of an S3 or GCS bucket.
-
-\*\* If you don't specify an Autocert directory, Pomerium will generate a directory by default based on your runtime environment. See [Defaults](#autocert-directory-defaults) for more information.
-
-#### Examples {#autocert-directory-examples}
-
-##### S3 bucket
-
-An S3 bucket can be used as storage by using a URL like:
-
-```hcl
-autocert_dir = "s3://your-bucket.s3.us-east-1.amazonaws.com/some/prefix"
-```
-
-Credentials are sourced from [the environment](https://pkg.go.dev/github.com/aws/aws-sdk-go-v2/config#EnvConfig).
-
-##### GCS bucket
-
-A Google Cloud Storage bucket can be used as storage by using a URL like:
-
-```hcl
-autocert_dir = "gs://your-bucket/some/prefix"
-```
-
-Credentials are sourced from [Google Application Default Credentials](https://cloud.google.com/docs/authentication/application-default-credentials).
-
+<TabItem label="Enterprise" value="Enterprise">
+<EnterpriseConfiguration name="autocert_dir" resource="settings" via={["terraform"]}/>
 </TabItem>
 </Tabs>
 
 ### Defaults {#autocert-directory-defaults}
 
-| **Default paths** | **Value** |
-| :-- | :-- |
-| Docker images | `/data/autocert` |
-| [OS packages](https://github.com/pomerium/pomerium/blob/5e3ae59658246bfe3d4cc5d12997c6e19350bf80/ospkg/pomerium.service#L8) | `/etc/pomerium/` (Must be manually set with environmental variables.) |
-| XDG base directories | [$XDG_DATA_HOME](https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html) |
-| Home directories | `$HOME/.local/share/pomerium` |
+| **Default paths**                                                                                                           | **Value**                                                                                      |
+| :-------------------------------------------------------------------------------------------------------------------------- | :--------------------------------------------------------------------------------------------- |
+| Docker images                                                                                                               | `/data/autocert`                                                                               |
+| [OS packages](https://github.com/pomerium/pomerium/blob/5e3ae59658246bfe3d4cc5d12997c6e19350bf80/ospkg/pomerium.service#L8) | `/etc/pomerium/` (Must be manually set with environmental variables.)                          |
+| XDG base directories                                                                                                        | [$XDG_DATA_HOME](https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html) |
+| Home directories                                                                                                            | `$HOME/.local/share/pomerium`                                                                  |
 
 ## Autocert EAB Key ID {#autocert-eab-key-id}
 
@@ -287,9 +249,9 @@ The Autocert Must Staple setting will only take effect when you request or renew
 
 ### How to configure {#autocert-must-staple-how-to-configure}
 
-| **Config file keys** | **Environment variables** | **Type** | **Usage** | **Default** |
-| :-- | :-- | :-- | :-- | :-- |
-| `autocert_must_staple` | `AUTOCERT_MUST_STAPLE` | `boolean` | **optional** | `false` |
+| **Config file keys**   | **Environment variables** | **Type**  | **Usage**    | **Default** |
+| :--------------------- | :------------------------ | :-------- | :----------- | :---------- |
+| `autocert_must_staple` | `AUTOCERT_MUST_STAPLE`    | `boolean` | **optional** | `false`     |
 
 See [RFC7633](https://tools.ietf.org/html/rfc7633) for more information.
 
@@ -311,9 +273,9 @@ If not set, the system trusted roots will be used to verify TLS connections to t
 
 ### How to configure {#autocert-trusted-certificate-authority-how-to-configure}
 
-| **Config file keys** | **Environment variables** | **Type** | **Usage** |
-| :-- | :-- | :-- | :-- |
-| `autocert_trusted_ca` | `AUTOCERT_TRUSTED_CA` | `string` | **optional** |
+| **Config file keys**       | **Environment variables**  | **Type** | **Usage**    |
+| :------------------------- | :------------------------- | :------- | :----------- |
+| `autocert_trusted_ca`      | `AUTOCERT_TRUSTED_CA`      | `string` | **optional** |
 | `autocert_trusted_ca_file` | `AUTOCERT_TRUSTED_CA_FILE` | `string` | **optional** |
 
 #### Examples {#autocert-trusted-certificate-authority-examples}
@@ -340,9 +302,9 @@ The **Autocert Use Staging** setting allows you to use Let's Encrypt's [staging 
 
 ### How to configure {#autocert-use-staging-how-to-configure}
 
-| **Config file keys** | **Environment variables** | **Type** | **Usage** | **Default** |
-| :-- | :-- | :-- | :-- | :-- |
-| `autocert_use_staging` | `AUTOCERT_USE_STAGING` | `boolean` | **optional** | `false` |
+| **Config file keys**   | **Environment variables** | **Type**  | **Usage**    | **Default** |
+| :--------------------- | :------------------------ | :-------- | :----------- | :---------- |
+| `autocert_use_staging` | `AUTOCERT_USE_STAGING`    | `boolean` | **optional** | `false`     |
 
 #### Examples {#autocert-use-staging-examples}
 

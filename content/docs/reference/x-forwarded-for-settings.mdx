@@ -15,8 +15,10 @@ pagination_next: null
 toc_max_heading_level: 2
 ---
 
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
+import TabItem from "@theme/TabItem";
+import Tabs from "@theme/Tabs";
+
+import EnterpriseConfiguration from "../../../src/components/EnterpriseConfiguration";
 
 # X-Forwarded-For Settings
 
@@ -53,6 +55,7 @@ SKIP_XFF_APPEND=true
 
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
+<EnterpriseConfiguration name="skip_xff_append" resource="settings">
 
 Configure **X-Forward-For HTTP Header** with the toggle button in the Console. The button has three states:
 
@@ -62,23 +65,11 @@ Configure **X-Forward-For HTTP Header** with the toggle button in the Console. T
 
 ![Configure x-forward-for-http-headers in the console](./img/headers/x-forwarded-for-http-header.png)
 
+</EnterpriseConfiguration>
 </TabItem>
 <TabItem value="Kubernetes" label="Kubernetes">
 
 Kubernetes does not support `skip_xff_append`
-
-</TabItem>
-<TabItem value="Enterprise via Terraform" label="Enterprise via Terraform">
-
-| **[Annotation name](https://registry.terraform.io/providers/pomerium/pomerium/latest/docs/resources/settings)** | **Type** | **Default** |
-| :-- | :-- | :-- |
-| `skip_xff_append` | Boolean | `false` |
-
-### Examples
-
-```hcl
-skip_xff_append = true
-```
 
 </TabItem>
 </Tabs>

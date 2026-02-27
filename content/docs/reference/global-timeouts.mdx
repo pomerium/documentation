@@ -14,8 +14,10 @@ pagination_next: null
 toc_max_heading_level: 2
 ---
 
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
+import TabItem from "@theme/TabItem";
+import Tabs from "@theme/Tabs";
+
+import EnterpriseConfiguration from "../../../src/components/EnterpriseConfiguration";
 
 # Global Timeouts
 
@@ -44,12 +46,12 @@ sequenceDiagram
 
 ## Timeout Settings Overview
 
-| **Timeout** | **Direction** | **Default** | **Purpose** |
-| --- | --- | --- | --- |
-| **Read Timeout** | Downstream | 30s | Time allowed to receive complete request from client |
-| **Write Timeout** | Downstream | 0 (disabled) | Total time for entire request/response cycle |
-| **Idle Timeout** | Bidirectional | 5m | Closes inactive connections when idle |
-| **Default Upstream Timeout** | Upstream | 30s | Time allowed for backend to respond |
+| **Timeout**                  | **Direction** | **Default**  | **Purpose**                                          |
+| ---------------------------- | ------------- | ------------ | ---------------------------------------------------- |
+| **Read Timeout**             | Downstream    | 30s          | Time allowed to receive complete request from client |
+| **Write Timeout**            | Downstream    | 0 (disabled) | Total time for entire request/response cycle         |
+| **Idle Timeout**             | Bidirectional | 5m           | Closes inactive connections when idle                |
+| **Default Upstream Timeout** | Upstream      | 30s          | Time allowed for backend to respond                  |
 
 ## Read Timeout
 
@@ -62,9 +64,9 @@ Setting this timeout to `0` disables it. (This is not recommended, as it could a
 <Tabs>
 <TabItem value="Core" label="Core">
 
-| **Config file keys** | **Environment variables** | **Type** | **Default** |
-| :-- | :-- | :-- | :-- |
-| `timeout_read` | `TIMEOUT_READ` | [Go Duration] string | `30s` |
+| **Config file keys** | **Environment variables** | **Type**             | **Default** |
+| :------------------- | :------------------------ | :------------------- | :---------- |
+| `timeout_read`       | `TIMEOUT_READ`            | [Go Duration] string | `30s`       |
 
 ### Examples
 
@@ -78,34 +80,23 @@ TIMEOUT_READ=30s
 
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
+<EnterpriseConfiguration name="timeout_read" resource="settings">
 
 Set **Global Timeouts** in the Console: ![Global timeouts in Console](./img/timeouts/timeouts-default.png)
 
+</EnterpriseConfiguration>
 </TabItem>
 <TabItem value="Kubernetes" label="Kubernetes">
 
-| **[Parameter name](/docs/deploy/k8s/reference#timeouts)** | **Type** | **Defaults** |
-| :-- | :-- | :-- |
-| `timeouts.read` | [Go Duration] string | `30s` |
+| **[Parameter name](/docs/deploy/k8s/reference#timeouts)** | **Type**             | **Defaults** |
+| :-------------------------------------------------------- | :------------------- | :----------- |
+| `timeouts.read`                                           | [Go Duration] string | `30s`        |
 
 ### Examples
 
 ```yaml
 timeouts:
   read: 30s
-```
-
-</TabItem>
-<TabItem value="Enterprise via Terraform" label="Enterprise via Terraform">
-
-| **[Parameter name](https://registry.terraform.io/providers/pomerium/pomerium/latest/docs/resources/settings)** | **Type** | **Defaults** |
-| :-- | :-- | :-- |
-| `timeout_read ` | String | `30s` |
-
-### Examples
-
-```hcl
-timeout_read = "30s"
 ```
 
 </TabItem>
@@ -122,9 +113,9 @@ Setting this timeout to `0` disables it, meaning there is no time limit for requ
 <Tabs>
 <TabItem value="Core" label="Core">
 
-| **Config file keys** | **Environment variables** | **Type** | **Default** |
-| :-- | :-- | :-- | :-- |
-| `timeout_write` | `TIMEOUT_WRITE` | [Go Duration] string | `0` (no timeout) |
+| **Config file keys** | **Environment variables** | **Type**             | **Default**      |
+| :------------------- | :------------------------ | :------------------- | :--------------- |
+| `timeout_write`      | `TIMEOUT_WRITE`           | [Go Duration] string | `0` (no timeout) |
 
 ### Examples
 
@@ -138,34 +129,23 @@ TIMEOUT_WRITE=0
 
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
+<EnterpriseConfiguration name="timeout_write" resource="settings">
 
 Set **Global Timeouts** in the Console: ![Global timeouts in Console](./img/timeouts/timeouts-default.png)
 
+</EnterpriseConfiguration>
 </TabItem>
 <TabItem value="Kubernetes" label="Kubernetes">
 
-| **[Parameter name](/docs/deploy/k8s/reference#timeouts)** | **Type** | **Default** |
-| :-- | :-- | :-- |
-| `timeouts.write` | [Go Duration] string | `0` (no timeout) |
+| **[Parameter name](/docs/deploy/k8s/reference#timeouts)** | **Type**             | **Default**      |
+| :-------------------------------------------------------- | :------------------- | :--------------- |
+| `timeouts.write`                                          | [Go Duration] string | `0` (no timeout) |
 
 ### Examples
 
 ```yaml
 timeouts:
   write: 0
-```
-
-</TabItem>
-<TabItem value="Enterprise via Terraform" label="Enterprise via Terraform">
-
-| **[Parameter name](https://registry.terraform.io/providers/pomerium/pomerium/latest/docs/resources/settings)** | **Type** | **Default** |
-| :-- | :-- | :-- |
-| `timeout_write` | String | `0` (no timeout) |
-
-### Examples
-
-```hcl
-timeout_write = "0"
 ```
 
 </TabItem>
@@ -182,9 +162,9 @@ Setting this timeout to `0` disables it, allowing connections to remain open ind
 <Tabs>
 <TabItem value="Core" label="Core">
 
-| **Config file keys** | **Environment variables** | **Type** | **Default** |
-| :-- | :-- | :-- | :-- |
-| `timeout_idle` | `TIMEOUT_IDLE` | [Go Duration] string | `5m` |
+| **Config file keys** | **Environment variables** | **Type**             | **Default** |
+| :------------------- | :------------------------ | :------------------- | :---------- |
+| `timeout_idle`       | `TIMEOUT_IDLE`            | [Go Duration] string | `5m`        |
 
 ### Examples
 
@@ -198,34 +178,23 @@ TIMEOUT_IDLE=5m
 
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
+<EnterpriseConfiguration name="timeout_idle" resource="settings">
 
 Set **Global Timeouts** in the Console: ![Global timeouts in Console](./img/timeouts/timeouts-default.png)
 
+</EnterpriseConfiguration>
 </TabItem>
 <TabItem value="Kubernetes" label="Kubernetes">
 
-| **[Parameter name](/docs/deploy/k8s/reference#timeouts)** | **Type** | **Default** |
-| :-- | :-- | :-- |
-| `timeouts.idle` | [Go Duration] string | `5m` |
+| **[Parameter name](/docs/deploy/k8s/reference#timeouts)** | **Type**             | **Default** |
+| :-------------------------------------------------------- | :------------------- | :---------- |
+| `timeouts.idle`                                           | [Go Duration] string | `5m`        |
 
 ### Examples
 
 ```yaml
 timeouts:
   idle: 5m
-```
-
-</TabItem>
-<TabItem value="Enterprise via Terraform" label="Enterprise via Terraform">
-
-| **[Parameter name](https://registry.terraform.io/providers/pomerium/pomerium/latest/docs/resources/settings)** | **Type** | **Default** |
-| :-- | :-- | :-- |
-| `timeout_idle ` | String | `5m` |
-
-### Examples
-
-```hcl
-timeout_idle = "5m"
 ```
 
 </TabItem>
@@ -240,9 +209,9 @@ timeout_idle = "5m"
 <Tabs>
 <TabItem value="Core" label="Core">
 
-| **Config file keys** | **Environment variables** | **Type** | **Default** |
-| :-- | :-- | :-- | :-- |
-| `default_upstream_timeout` | `DEFAULT_UPSTREAM_TIMEOUT` | [Go Duration] string | `30s` |
+| **Config file keys**       | **Environment variables**  | **Type**             | **Default** |
+| :------------------------- | :------------------------- | :------------------- | :---------- |
+| `default_upstream_timeout` | `DEFAULT_UPSTREAM_TIMEOUT` | [Go Duration] string | `30s`       |
 
 ### Examples
 

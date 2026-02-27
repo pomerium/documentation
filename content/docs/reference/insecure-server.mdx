@@ -11,8 +11,10 @@ pagination_next: null
 toc_max_heading_level: 2
 ---
 
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
+import TabItem from "@theme/TabItem";
+import Tabs from "@theme/Tabs";
+
+import EnterpriseConfiguration from "../../../src/components/EnterpriseConfiguration";
 
 # Insecure Server
 
@@ -33,9 +35,9 @@ Pomerium should _never_ be exposed to the internet without TLS encryption.
 <Tabs>
 <TabItem value="Core" label="Core">
 
-| **Config file keys** | **Environment variables** | **Type** | **Usage** |
-| :-- | :-- | :-- | :-- |
-| `insecure_server` | `INSECURE_SERVER` | `boolean` | **required** (if [certificates](/docs/reference/certificates) unset) |
+| **Config file keys** | **Environment variables** | **Type**  | **Usage**                                                            |
+| :------------------- | :------------------------ | :-------- | :------------------------------------------------------------------- |
+| `insecure_server`    | `INSECURE_SERVER`         | `boolean` | **required** (if [certificates](/docs/reference/certificates) unset) |
 
 ### Examples
 
@@ -49,26 +51,11 @@ INSECURE_SERVER=true
 
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
-
-`insecure_server` is a bootstrap configuration setting and is not configurable in the Console.
-
+<EnterpriseConfiguration name="insecure_server" resource="settings" via={["terraform"]}/>
 </TabItem>
 <TabItem value="Kubernetes" label="Kubernetes">
 
 Kubernetes does not support **Insecure Server**
-
-</TabItem>
-<TabItem value="Enterprise via Terraform" label="Enterprise via Terraform">
-
-| **[Parameter name](https://registry.terraform.io/providers/pomerium/pomerium/latest/docs/resources/settings)** | **Type** | **Usage** |
-| :-- | :-- | :-- |
-| `insecure_server` | Boolean | **required** (if [certificates](/docs/reference/certificates) unset) |
-
-### Examples
-
-```hcl
-insecure_server = true
-```
 
 </TabItem>
 </Tabs>
