@@ -10,9 +10,9 @@ toc_max_heading_level: 2
 import TabItem from "@theme/TabItem";
 import Tabs from "@theme/Tabs";
 
-import CoreConfigureTable from "../../../src/components/CoreConfigureTable";
+import CoreConfiguration from "../../../src/components/CoreConfiguration";
+import EnterpriseConfiguration from "../../../src/components/EnterpriseConfiguration";
 import KubernetesConfigureTable from "../../../src/components/KubernetesConfigureTable";
-import TerraformConfigureTable from "../../../src/components/TerraformConfigureTable";
 
 # Access Log Fields
 
@@ -27,15 +27,16 @@ The default log fields should be appropriate for most deployments.
 <Tabs>
 <TabItem label="Core" value="Core">
 
-<CoreConfigureTable
+<CoreConfiguration
   name="access_log_fields"
+  resource="settings"
   type="StringList"
   defaultValue={
     <>
       See <a href="#access-fields-and-defaults">Access Fields and Defaults</a>
     </>
-  }
-/>
+  } 
+>
 
 ### Examples
 
@@ -62,8 +63,12 @@ access_log_fields:
 ACCESS_LOG_FIELDS=headers.user-agent,headers.content-type
 ```
 
+</CoreConfiguration>
+
 </TabItem>
 <TabItem label="Enterprise" value="Enterprise">
+
+<EnterpriseConfiguration name="access_log_fields" resource="settings">
 
 Configure **Access Log Fields** in the Console:
 
@@ -72,6 +77,8 @@ Configure **Access Log Fields** in the Console:
 Add **Custom Headers** in the Console:
 
 ![Add custom headers in the Console](./img/http-logs/access-custom-headers.gif)
+
+</EnterpriseConfiguration>
 
 </TabItem>
 <TabItem label="Kubernetes" value="Kubernetes">
@@ -101,34 +108,6 @@ accessLogFields:
 accessLogFields:
   - headers.user-agent
   - headers.content-type
-```
-
-</TabItem>
-
-<TabItem label="Terraform" value="Terraform">
-
-<TerraformConfigureTable
-  resource="settings"
-  name="access_log_fields"
-  type="StringSet"
-  defaultValue={
-    <>
-      See <a href="#access-fields-and-defaults">Access Fields and Defaults</a>
-    </>
-  }
-  supportedProducts={["core", "enterprise"]}
-/>
-
-### Examples
-
-```hcl
-access_log_fields = ["authority", "duration", "path"]
-```
-
-**Custom headers example**
-
-```hcl
-access_log_fields = ["headers.user-agent", "headers.content-type"]
 ```
 
 </TabItem>

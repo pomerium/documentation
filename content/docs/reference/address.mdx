@@ -11,8 +11,12 @@ pagination_next: null
 toc_max_heading_level: 2
 ---
 
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
+import TabItem from "@theme/TabItem";
+import Tabs from "@theme/Tabs";
+
+import CoreConfiguration from "../../../src/components/CoreConfiguration";
+import EnterpriseConfiguration from "../../../src/components/EnterpriseConfiguration";
+import KubernetesConfigureTable from "../../../src/components/KubernetesConfigureTable";
 
 # Address
 
@@ -31,42 +35,29 @@ In all-in-one deployments, gRPC traffic will be served on loopback on port `:544
 <Tabs>
 <TabItem label="Core" value="Core">
 
-| **Config file keys** | **Environment variables** | **Type** | **Usage** | **Default** |
-| :-- | :-- | :-- | :-- | :-- |
-| `address` | `ADDRESS` | `string` | **required** | `:443` |
+<CoreConfiguration name="address" resource="settings" type="String" defaultValue={<code>:443</code>}>
 
 ### Examples
 
 ```yaml
-address: ':8443'
+address: ":8443"
 ```
 
 ```bash
 ADDRESS=:8443
 ```
 
+</CoreConfiguration>
+
 </TabItem>
 <TabItem label="Enterprise" value="Enterprise">
 
-`address` is a bootstrap configuration setting and is not configurable in the Console.
+<EnterpriseConfiguration name="address" resource="settings" bootstrap />
 
 </TabItem>
 <TabItem label="Kubernetes" value="Kubernetes">
 
 `address` is included in the deployment manifest and not customizable.
-
-</TabItem>
-<TabItem label="Enterprise via Terraform" value="Enterprise via Terraform">
-
-| **[Parameter name](https://registry.terraform.io/providers/pomerium/pomerium/latest/docs/resources/settings#address-1)** | **Type** | **Default** |
-| :-- | :-- | :-- |
-| `address` | String | `:443` |
-
-### Examples
-
-```hcl
-address = ":8433"
-```
 
 </TabItem>
 </Tabs>

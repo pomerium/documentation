@@ -2,7 +2,7 @@ import React, { ReactNode } from "react";
 
 import { ConfigType, getTypeName } from "../types";
 
-type KubernetesConfigureTableProperties = {
+type KubernetesConfigureTableProps = {
   name: string;
   type: ConfigType;
   defaultValue?: ReactNode;
@@ -11,7 +11,7 @@ const KubernetesConfigureTable = ({
   name,
   type,
   defaultValue,
-}: KubernetesConfigureTableProperties) => {
+}: KubernetesConfigureTableProps) => {
   const typeName = getTypeName(type);
   return (
     <table>
