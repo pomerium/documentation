@@ -10,8 +10,10 @@ pagination_next: null
 toc_max_heading_level: 2
 ---
 
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
+import TabItem from "@theme/TabItem";
+import Tabs from "@theme/Tabs";
+
+import EnterpriseConfiguration from "../../../../src/components/EnterpriseConfiguration";
 
 # From
 
@@ -66,9 +68,9 @@ You can revert to the previous behavior by setting the [`match_any_incoming_port
 <Tabs>
 <TabItem value="Core" label="Core">
 
-| **YAML**/**JSON** setting | **Type** | **Schemes** | **Usage** |
-| :-- | :-- | :-- | :-- |
-| `from` | `URL` | `https`, `tcp+https`, `udp+https`, `ssh` | **required** |
+| **YAML**/**JSON** setting | **Type** | **Schemes**                              | **Usage**    |
+| :------------------------ | :------- | :--------------------------------------- | :----------- |
+| `from`                    | `URL`    | `https`, `tcp+https`, `udp+https`, `ssh` | **required** |
 
 ### Examples
 
@@ -89,33 +91,17 @@ routes:
 
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
+<EnterpriseConfiguration name="from" resource="route">
 
 Define a **From** route under **General** route settings in the Console:
 
 ![Define a route in the Console](../img/routes/from/from-route.png)
 
+</EnterpriseConfiguration>
 </TabItem>
 <TabItem value="Kubernetes" label="Kubernetes">
 
 See Kubernetes [Ingress](/docs/deploy/k8s/ingress) for more information.
-
-</TabItem>
-<TabItem value="Enterprise via Terraform" label="Enterprise via Terraform">
-
-| **[Parameter name](https://registry.terraform.io/providers/pomerium/pomerium/latest/docs/resources/route)** | **Type** | **Usage** |
-| :-- | :-- | :-- |
-| `from` | String | **required** |
-
-#### Examples
-
-```hcl
-resource "pomerium_route" "verify_route" {
-  name         = "verify-route"
-  namespace_id = pomerium_namespace.test_namespace.id
-  from         = "https://verify.localhost.pomerium.io"
-  to           = ["https://verify.pomerium.com"]
-}
-```
 
 </TabItem>
 </Tabs>
