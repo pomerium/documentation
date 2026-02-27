@@ -8,8 +8,10 @@ pagination_next: null
 toc_max_heading_level: 2
 ---
 
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
+import TabItem from "@theme/TabItem";
+import Tabs from "@theme/Tabs";
+
+import EnterpriseConfiguration from "../../../../src/components/EnterpriseConfiguration";
 
 # Path Matching Settings
 
@@ -43,34 +45,17 @@ routes:
 
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
+<EnterpriseConfiguration name="path" resource="route">
 
 Set **Path** under **Path Matching** settings in the Console:
 
 ![Set path in the Console](../img/routes/path-matching/exact-path.png)
 
+</EnterpriseConfiguration>
 </TabItem>
 <TabItem value="Kubernetes" label="Kubernetes">
 
 See Kubernetes [Ingress](/docs/deploy/k8s/ingress#regular-expressions-path-matching) for more information
-
-</TabItem>
-<TabItem value="Enterprise via Terraform" label="Enterprise via Terraform">
-
-| **YAML**/**JSON** setting | **Type** | **Usage**    |
-| :------------------------ | :------- | :----------- |
-| `path`                    | String   | **optional** |
-
-### Examples {#examples-path}
-
-```hcl
-resource "pomerium_route" "verify_route" {
-  name         = "verify-route"
-  namespace_id = pomerium_namespace.test_namespace.id
-  from         = "https://verify.localhost.pomerium.io"
-  to           = ["https://verify.pomerium.com"]
-  path = "/admin/some/exact/path"
-}
-```
 
 </TabItem>
 </Tabs>
@@ -98,11 +83,13 @@ prefix: /admin
 
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
+<EnterpriseConfiguration name="prefix" resource="route">
 
 Set the **Prefix** in **Path Matching** settings:
 
 ![set the prefix in the path matching settings](../img/routes/path-matching/prefix.png)
 
+</EnterpriseConfiguration>
 </TabItem>
 <TabItem value="Kubernetes" label="Kubernetes">
 
@@ -129,25 +116,6 @@ spec:
 See Kubernetes [Ingress](/docs/deploy/k8s/ingress#set-ingress-annotations) for more information
 
 </TabItem>
-<TabItem value="Enterprise via Terraform" label="Enterprise via Terraform">
-
-| **YAML**/**JSON** setting | **Type** | **Usage**    |
-| :------------------------ | :------- | :----------- |
-| `prefix`                  | String   | **optional** |
-
-### Examples {#examples-path}
-
-```hcl
-resource "pomerium_route" "verify_route" {
-  name         = "verify-route"
-  namespace_id = pomerium_namespace.test_namespace.id
-  from         = "https://verify.localhost.pomerium.io"
-  to           = ["https://verify.pomerium.com"]
-  prefix = "/admin"
-}
-```
-
-</TabItem>
 </Tabs>
 
 ## Regex {#regex}
@@ -166,16 +134,18 @@ If **Regex** is set, the route will only match incoming requests with a path tha
 ### Examples {#examples-regex}
 
 ```yaml
-regex: '^/(admin|superuser)/.*$'
+regex: "^/(admin|superuser)/.*$"
 ```
 
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
+<EnterpriseConfiguration name="regex" resource="route">
 
 Set **Regex** in the Console:
 
 ![Set regex in the console](../img/routes/regex/regex.png)
 
+</EnterpriseConfiguration>
 </TabItem>
 <TabItem value="Kubernetes" label="Kubernetes">
 
@@ -201,19 +171,6 @@ spec:
                   name: http
             path: ^/(admin|superuser)/.*$
             pathType: ImplementationSpecific
-```
-
-</TabItem>
-<TabItem value="Enterprise via Terraform" label="Enterprise via Terraform">
-
-| **Parameter name** | **Type** | **Usage**    |
-| :----------------- | :------- | :----------- |
-| `regex`            | String   | **optional** |
-
-### Examples {#examples-regex}
-
-```hcl
-regex = "^/(admin|superuser)/.*$"
 ```
 
 </TabItem>
