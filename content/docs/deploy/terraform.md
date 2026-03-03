@@ -1,6 +1,6 @@
 ---
-title: Configure with Terraform
-description: Learn how to manage your Pomerium Enterprise configuration using Terraform, including authentication setup, resource management, and deployment examples.
+title: Terraform
+description: Learn how to manage your Pomerium configuration using Terraform, including authentication setup, resource management, and deployment examples.
 keywords:
   [
     Pomerium Enterprise,
@@ -15,12 +15,18 @@ keywords:
 
 # Configure with Terraform
 
-Pomerium Enterprise can be configured and managed using Terraform through the [official Pomerium provider](https://registry.terraform.io/providers/pomerium/pomerium/latest/docs). This enables you to manage your Pomerium Enterprise resources as infrastructure as code, making it easier to version, review, and automate your configuration changes.
+Pomerium Core, Enterprise and Zero can be configured and managed using Terraform through the [official Pomerium provider](https://registry.terraform.io/providers/pomerium/pomerium/latest/docs). This enables you to manage your Pomerium resources as infrastructure as code, making it easier to version, review, and automate your configuration changes.
 
 ## Prerequisites
 
-- Pomerium Enterprise must be running first
-- Console API must be accessible
+- For Pomerium Core:
+  - A running instance of Core
+  - gRPC port must be accessible
+- For Pomerium Enterprise:
+  - A running instance of Core and Enterprise
+  - Console API must be accessible
+- For Pomerium Zero:
+  - An API user for Zero must be created
 
 ## Provider Configuration
 
@@ -37,6 +43,8 @@ terraform {
 }
 
 provider "pomerium" {
+  # For Zero use "https://console.pomerium.app"
+  # For Core use the gRPC address, e.g. "http://your-server:5443"
   api_url = "https://console-api.your-domain.com"
   # Choose one of the authentication methods below
 }
@@ -48,7 +56,7 @@ The provider supports one of the two authentication methods:
 
 ### 1. Service Account Token
 
-This method uses a [Pomerium Enterprise Service Account](/docs/capabilities/service-accounts) and provides fine-grained access control at the namespace level:
+For Pomerium Enterprise or Pomerium Zero, a service account can be used:
 
 ```hcl
 provider "pomerium" {
@@ -57,7 +65,9 @@ provider "pomerium" {
 }
 ```
 
-The Pomerium API route should authorize the relative pomerium service account access:
+In Pomerium Zero the service account corresponds to an API User.
+
+In Pomerium Enterprise the service account token corresponds to a service account and the Pomerium route for the Console API should grant access to the service account user:
 
 ```yaml
 - allow:
@@ -66,9 +76,11 @@ The Pomerium API route should authorize the relative pomerium service account ac
           is: 'bootstrap-014e587b-3f4b-4fcf-90a9-f6ecdf8154af.pomerium'
 ```
 
-### 2. Bootstrap Service Account
+### 2. Shared Secret
 
-This method requires enabling bootstrap service accounts in your Enterprise Console. It may be used if you wish to configure Pomerium Enterprise part of the installation process, without accessing its UI to create a new service account.
+For Pomerium Core and Pomerium Enterprise, the shared secret can be used.
+
+For Pomerium Enterprise this method requires enabling bootstrap service accounts in your Enterprise Console. It may be used if you wish to configure Pomerium Enterprise part of the installation process, without accessing its UI to create a new service account.
 
 ```hcl
 provider "pomerium" {
