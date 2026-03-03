@@ -19,7 +19,7 @@ This reference covers all of Pomerium's **Metrics Settings**:
 - [Metrics Certificate](#metrics-certificate)
 - [Metrics Client Certificate Authority](#metrics-client-certificate-authority)
 
-## Metrics Address {#metrics-address}
+## Metrics Address \{#metrics-address}
 
 **Metrics Address** exposes a Prometheus endpoint on the specified port.
 
@@ -29,7 +29,7 @@ This reference covers all of Pomerium's **Metrics Settings**:
 
 :::
 
-### How to configure {#how-to-configure-metrics-address}
+### How to configure \{#how-to-configure-metrics-address}
 
 <Tabs>
 <TabItem value="Core" label="Core">
@@ -38,7 +38,7 @@ This reference covers all of Pomerium's **Metrics Settings**:
 | :-- | :-- | :-- | :-- | :-- |
 | `metrics_address` | `METRICS_ADDRESS` | `string` | **optional** | `disabled` |
 
-#### Examples {#examples-metrics-address}
+#### Examples \{#examples-metrics-address}
 
 ```yaml
 metrics_address: :9090
@@ -134,13 +134,13 @@ All metrics coming from Envoy will be labeled with `service="pomerium"` or `serv
 
 See [Configuration & Settings](/docs/internals/configuration#all-in-one-vs-split-service-mode) for more information configuration environments.
 
-## Metrics Basic Authentication {#metrics-basic-authentication}
+## Metrics Basic Authentication \{#metrics-basic-authentication}
 
 **Metrics Basic Authentication** requires [Basic HTTP Authentication](https://tools.ietf.org/html/rfc7617) to access the metrics endpoint.
 
 To support this in Prometheus, consult the `basic_auth` option in the [`scrape_config`](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#scrape_config) documentation.
 
-### How to configure {#how-to-configure-metrics-basic-authentication}
+### How to configure \{#how-to-configure-metrics-basic-authentication}
 
 <Tabs>
 <TabItem value="Core" label="Core">
@@ -149,7 +149,7 @@ To support this in Prometheus, consult the `basic_auth` option in the [`scrape_c
 | :-- | :-- | :-- | :-- |
 | `metrics_basic_authentication` | `METRICS_BASIC_AUTHENTICATION` | `string` ([base64 encoded](https://en.wikipedia.org/wiki/Base64)) | **optional** |
 
-#### Examples {#examples-metrics-basic-authentication}
+#### Examples \{#examples-metrics-basic-authentication}
 
 ```yaml
 # for username: x and password: y
@@ -174,7 +174,7 @@ Kubernetes does not support `metrics_basic_authentication`
 </TabItem>
 </Tabs>
 
-## Metrics Certificate {#metrics-certificate}
+## Metrics Certificate \{#metrics-certificate}
 
 **Metrics Certificate** uses a certificate to secure the metrics endpoint.
 
@@ -186,7 +186,7 @@ All certificates supplied to Pomerium must be in **PEM** format.
 
 :::
 
-### How to configure {#how-to-configure-metrics-certificate}
+### How to configure \{#how-to-configure-metrics-certificate}
 
 <Tabs>
 <TabItem value="Core" label="Core">
@@ -196,7 +196,7 @@ All certificates supplied to Pomerium must be in **PEM** format.
 | `metrics_certificate` and `metrics_certificate_key` | `METRICS_CERTIFICATE` and `METRICS_CERTIFICATE_KEY` | `string` | **optional** |
 | `metrics_certificate_file` and `metrics_certificate_key_file` | `METRICS_CERTIFICATE_FILE` and `METRICS_CERTIFICATE_KEY_FILE` | `string` | **optional** |
 
-#### Examples {#examples-metrics-certificate}
+#### Examples \{#examples-metrics-certificate}
 
 ```yaml
 metrics_certificate: base64-encoded-string
@@ -221,11 +221,11 @@ Kubernetes does not support **Metrics Certificate**
 </TabItem>
 </Tabs>
 
-## Metrics Client Certificate Authority {#metrics-client-certificate-authority}
+## Metrics Client Certificate Authority \{#metrics-client-certificate-authority}
 
 **Metrics Client Certificate Authority** is the X.509 _public-key_ used to validate [mTLS](https://en.wikipedia.org/wiki/Mutual_authentication) client certificates for the metrics endpoint. If not set, no client certificate will be required.
 
-### How to configure {#how-to-configure-metrics-client-certificate-authority}
+### How to configure \{#how-to-configure-metrics-client-certificate-authority}
 
 <Tabs>
 <TabItem value="Core" label="Core">
@@ -234,7 +234,7 @@ Kubernetes does not support **Metrics Certificate**
 | :-- | :-- | :-- | :-- |
 | `metrics_client_ca` and `metrics_client_ca_file` | `METRICS_CLIENT_CA` and `METRICS_CLIENT_CA_FILE` | `string` | **optional** |
 
-#### Examples {#examples-metrics-client-certificate-authority}
+#### Examples \{#examples-metrics-client-certificate-authority}
 
 ```yaml
 metrics_client_ca: base64-encoded-string
@@ -411,7 +411,7 @@ Example Prometheus output:
 pomerium_pgxpool_acquire_duration_nanoseconds_total{db_client_connection_pool_name="localhost:5432/pomerium",db_system="postgresql",otel_scope_name="github.com/exaring/otelpgx",otel_scope_version="v0.9.1",hostname="my-host"} 5.1058702e+07
 ```
 
-#### File-Based Storage Metrics {#file-based-storage-metrics}
+#### File-Based Storage Metrics \{#file-based-storage-metrics}
 
 When using file-based storage (the default for Pomerium Core or when `databroker_storage_type` is not set to `postgres`), Pomerium uses [Pebble](https://github.com/cockroachdb/pebble), a high-performance key-value store. These metrics are prefixed with `pomerium_storage_pebble_` and provide visibility into the storage engine's performance.
 

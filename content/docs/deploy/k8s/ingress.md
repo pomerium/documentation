@@ -89,7 +89,7 @@ The default installation adds `pomerium` [IngressClass](https://kubernetes.io/do
 
 It is also possible to [set Pomerium to be a default ingress controller](/docs/deploy/k8s/install#set-pomerium-as-default-ingressclass) cluster-wide.
 
-### Set Ingress annotations {#set-ingress-annotations}
+### Set Ingress annotations \{#set-ingress-annotations}
 
 Most configuration keys in non-Kubernetes deployments can be specified as annotation in an Ingress Resource definition. The format is `ingress.pomerium.io/${OPTION_NAME}`.
 

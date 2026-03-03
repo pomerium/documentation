@@ -248,13 +248,13 @@ Kubernetes does not support `authorize_internal_service_url`
 </TabItem>
 </Tabs>
 
-## Databroker Service URL {#databroker-service-url}
+## Databroker Service URL \{#databroker-service-url}
 
 The **Databroker Service URL** settings points to a databroker which is responsible for storing associated authorization context (for example, sessions, users, and user groups).
 
 In all-in-one mode, leave these unset; Pomerium uses `http://localhost:5443`. Set them only when the databroker runs on another host/port (split-service or remote).
 
-### How to configure {#databroker-service-url-how-to-configure}
+### How to configure \{#databroker-service-url-how-to-configure}
 
 <Tabs>
 <TabItem value="Core" label="Core">
@@ -264,7 +264,7 @@ In all-in-one mode, leave these unset; Pomerium uses `http://localhost:5443`. Se
 | `databroker_service_url` | `DATABROKER_SERVICE_URL` | `URL` | `http://localhost:5443` (In [all-in-one mode](/docs/internals/configuration#all-in-one-vs-split-service-mode)) |
 | `databroker_service_urls` | `DATABROKER_SERVICE_URLS` | `URL` | `http://localhost:5443` (In [all-in-one mode](/docs/internals/configuration#all-in-one-vs-split-service-mode)) |
 
-#### Examples {#databroker-service-url-examples}
+#### Examples \{#databroker-service-url-examples}
 
 ```yaml
 databroker_service_urls:
@@ -302,11 +302,11 @@ databroker_service_url = "http://databroker.corp.example1.com"
 </TabItem>
 </Tabs>
 
-## Databroker Internal Service URL {#databroker-internal-service-url}
+## Databroker Internal Service URL \{#databroker-internal-service-url}
 
 The **Databroker Internal Service URL** overrides [`databroker_service_url`](/docs/reference/databroker) when determining the TLS certificate for the Databroker service to listen with.
 
-### How to configure {#databroker-internal-service-url-how-to-configure}
+### How to configure \{#databroker-internal-service-url-how-to-configure}
 
 <Tabs>
 <TabItem value="Core" label="Core">
@@ -316,7 +316,7 @@ The **Databroker Internal Service URL** overrides [`databroker_service_url`](/do
 | `databroker_internal_service_url` | `DATABROKER_INTERNAL_SERVICE_URL` | `URL` | `http://localhost:5443` (In all-in-one mode) |
 | `databroker_internal_service_urls` | `DATABROKER_INTERNAL_SERVICE_URLS` | `URL` | `http://localhost:5443` (In all-in-one mode) |
 
-#### Examples {#databroker-internal-service-url-examples}
+#### Examples \{#databroker-internal-service-url-examples}
 
 ```yaml
 databroker_internal_service_urls:

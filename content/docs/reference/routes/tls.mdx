@@ -23,13 +23,13 @@ This reference covers all of Pomerium's TLS route settings:
 - [TLS Upstream Allow Renegotiation](#tls-upstream-allow-renegotiation)
 - [TLS Upstream Server Name](#tls-upstream-server-name)
 
-## TLS Client Certificate {#tls-client-certificate}
+## TLS Client Certificate \{#tls-client-certificate}
 
 If specified, Pomerium will present this client certificate to upstream services when requested to enforce [mutual authentication](https://en.wikipedia.org/wiki/Mutual_authentication) (mTLS).
 
 For more details, see our [mTLS example repository](https://github.com/pomerium/pomerium/tree/main/examples/mutual-tls) and the [Upstream mTLS With Pomerium](/docs/internals/certificates-and-tls) guide.
 
-### How to configure {#how-to-configure-tls-client-certificate}
+### How to configure \{#how-to-configure-tls-client-certificate}
 
 <Tabs>
 <TabItem value="Core" label="Core">
@@ -39,7 +39,7 @@ For more details, see our [mTLS example repository](https://github.com/pomerium/
 | `tls_client_cert` and `tls_client_key` | `string` (base64-encoded) | **optional** |
 | `tls_client_cert_file` and `tls_client_key_file` | `string` (base64-encoded) | **optional** |
 
-### Examples {#examples-tls-client-certificate}
+### Examples \{#examples-tls-client-certificate}
 
 ```yaml
 tls_client_cert: base64-encoded-certificate
@@ -72,13 +72,13 @@ See Kubernetes [TLS Certificates](/docs/deploy/k8s/ingress#tls-certificates) for
 </TabItem>
 </Tabs>
 
-## TLS Custom Certificate Authority {#tls-custom-certificate-authority}
+## TLS Custom Certificate Authority \{#tls-custom-certificate-authority}
 
 **TLS Custom Certificate Authority** defines a set of root certificate authorities that the Pomerium Proxy Service uses when verifying upstream server certificates.
 
 **Note**: This setting will replace (not append) the system's trust store for a given route.
 
-### How to configure {#how-to-configure-tls-custom-certificate-authority}
+### How to configure \{#how-to-configure-tls-custom-certificate-authority}
 
 <Tabs>
 <TabItem value="Core" label="Core">
@@ -87,7 +87,7 @@ See Kubernetes [TLS Certificates](/docs/deploy/k8s/ingress#tls-certificates) for
 | :-------------------------------------- | :------- | :----------- |
 | `tls_custom_ca` or `tls_custom_ca_file` | `string` | **optional** |
 
-### Examples {#examples-tls-custom-certificate-authority}
+### Examples \{#examples-tls-custom-certificate-authority}
 
 ```yaml
 tls_custom_ca: base64-encoded-custom-ca
@@ -116,7 +116,7 @@ See Kubernetes [TLS Certificates](/docs/deploy/k8s/ingress#tls-certificates) for
 </TabItem>
 </Tabs>
 
-## TLS Downstream Client Certificate Authority {#tls-downstream-client-certificate-authority}
+## TLS Downstream Client Certificate Authority \{#tls-downstream-client-certificate-authority}
 
 :::caution
 
@@ -134,7 +134,7 @@ If specified, downstream clients (like a user's browser) will be required to pro
 
 See [Client-Side mTLS With Pomerium](/docs/internals/mutual-auth.md) for more information.
 
-### How to configure {#how-to-configure-tls-downstream-client-certificate-authority}
+### How to configure \{#how-to-configure-tls-downstream-client-certificate-authority}
 
 <Tabs>
 <TabItem value="Core" label="Core">
@@ -143,7 +143,7 @@ See [Client-Side mTLS With Pomerium](/docs/internals/mutual-auth.md) for more in
 | :-- | :-- | :-- |
 | `tls_downstream_client_ca` or `tls_downstream_client_ca_file` | `string` | **optional** |
 
-### Examples {#examples-tls-downstream-client-certificate-authority}
+### Examples \{#examples-tls-downstream-client-certificate-authority}
 
 ```yaml
 tls_downstream_client_ca: base64-encoded-client-ca
@@ -165,11 +165,11 @@ See Kubernetes [TLS Certificates](/docs/deploy/k8s/ingress#tls-certificates) for
 </TabItem>
 </Tabs>
 
-## TLS Downstream Server Name {#tls-downstream-server-name}
+## TLS Downstream Server Name \{#tls-downstream-server-name}
 
 **TLS Downstream Server Name** overrides the hostname specified in the `from` field. When a connection to Pomerium is made via TLS the `tls_downstream_server_name` will be used as the expected Server Name Indication, whereas the host part of the `from` field, will be expected to match the `Host` or `:authority` headers of the HTTP request.
 
-### How to configure {#how-to-configure-tls-downstream-server-name}
+### How to configure \{#how-to-configure-tls-downstream-server-name}
 
 <Tabs>
 <TabItem value="Core" label="Core">
@@ -200,7 +200,7 @@ Kubernetes does not support `tls_downstream_server_name`
 </TabItem>
 </Tabs>
 
-## TLS Skip Verification {#tls-skip-verification}
+## TLS Skip Verification \{#tls-skip-verification}
 
 TLS Skip Verification controls whether the Pomerium Proxy Service verifies the upstream server's certificate chain and host name.
 
@@ -208,7 +208,7 @@ If enabled, Pomerium accepts any certificate presented by the upstream server an
 
 In this mode, TLS is susceptible to man-in-the-middle attacks. This should be used only for testing.
 
-### How to configure {#how-to-configure-tls-skip-verification}
+### How to configure \{#how-to-configure-tls-skip-verification}
 
 <Tabs>
 <TabItem value="Core" label="Core">
@@ -217,7 +217,7 @@ In this mode, TLS is susceptible to man-in-the-middle attacks. This should be us
 | :------------------------ | :-------- | :---------- |
 | `tls_skip_verify`         | `boolean` | `false`     |
 
-### Examples {#examples-tls-skip-verification}
+### Examples \{#examples-tls-skip-verification}
 
 ```yaml
 tls_skip_verify: true
@@ -250,7 +250,7 @@ ingress.pomerium.io/tls_skip_verify: 'true'
 | :----------------- | :------- | :---------- |
 | `tls_skip_verify`  | Boolean  | `false`     |
 
-### Examples {#examples-tls-skip-verification}
+### Examples \{#examples-tls-skip-verification}
 
 ```hcl
 tls_skip_verify = true
@@ -259,7 +259,7 @@ tls_skip_verify = true
 </TabItem>
 </Tabs>
 
-## TLS Upstream Allow Renegotiation {#tls-upstream-allow-renegotiation}
+## TLS Upstream Allow Renegotiation \{#tls-upstream-allow-renegotiation}
 
 **TLS Upstream Allow Renegotiation** controls whether server-initiated TLS renegotiation is allowed for upstream servers. For more details, see Envoy's documentation on [`allow_renegotiation`](https://www.envoyproxy.io/docs/envoy/latest/api-v3/extensions/transport_sockets/tls/v3/tls.proto).
 
@@ -269,7 +269,7 @@ TLS renegotiation is considered insecure and shouldn't be used unless absolutely
 
 :::
 
-### How to configure {#how-to-configure-tls-upstream-allow-renegotiation}
+### How to configure \{#how-to-configure-tls-upstream-allow-renegotiation}
 
 <Tabs>
 <TabItem value="Core" label="Core">
@@ -278,7 +278,7 @@ TLS renegotiation is considered insecure and shouldn't be used unless absolutely
 | :--------------------------------- | :-------- | :---------- |
 | `tls_upstream_allow_renegotiation` | `boolean` | `false`     |
 
-### Examples {#examples-tls-upstream-allow-renegotiation}
+### Examples \{#examples-tls-upstream-allow-renegotiation}
 
 ```yaml
 tls_upstream_allow_renegotiation: true
@@ -303,7 +303,7 @@ Kubernetes does not support **TLS Upstream Allow Renegotiation**
 | :--------------------------------- | :------- | :---------- |
 | `tls_upstream_allow_renegotiation` | Boolean  | `false`     |
 
-### Examples {#examples-tls-upstream-allow-renegotiation}
+### Examples \{#examples-tls-upstream-allow-renegotiation}
 
 ```hcl
 tls_upstream_allow_renegotiation = true
@@ -312,11 +312,11 @@ tls_upstream_allow_renegotiation = true
 </TabItem>
 </Tabs>
 
-## TLS Upstream Server Name {#tls-upstream-server-name}
+## TLS Upstream Server Name \{#tls-upstream-server-name}
 
 **TLS Upstream Server Name** overrides the hostname specified in the `to` field. If set, this server name will be used to verify the certificate name. This is useful when the backend of your service is a TLS server with a valid certificate, but mismatched name.
 
-### How to configure {#how-to-configure-tls-upstream-server-name}
+### How to configure \{#how-to-configure-tls-upstream-server-name}
 
 <Tabs>
 <TabItem value="Core" label="Core">

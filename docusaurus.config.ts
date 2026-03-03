@@ -1,18 +1,19 @@
 // @ts-check
 // Note: type annotations allow type checking and IDEs autocompletion
 
+import {Config} from '@docusaurus/types';
+
 const dotenv = require('dotenv');
 const webpack = require('webpack');
 
 dotenv.config();
 
-const config = {
+const config: Config = {
   title: 'Pomerium',
   tagline: 'Documentation',
   url: 'https://www.pomerium.com',
   baseUrl: '/',
   onBrokenLinks: 'throw',
-  onBrokenMarkdownLinks: 'throw',
   favicon: 'img/favicon.ico',
   organizationName: 'pomerium',
   projectName: 'documentation',
@@ -20,6 +21,9 @@ const config = {
 
   markdown: {
     mermaid: true,
+    hooks: {
+      onBrokenMarkdownLinks: 'throw',
+    },
   },
   themes: ['@docusaurus/theme-mermaid'],
 
@@ -303,11 +307,11 @@ function darkCodeTheme() {
 }
 
 if (!process.env.ALGOLIA_APPID) {
-  delete config.themeConfig.algolia;
+  delete (config.themeConfig as any).algolia;
 }
 
 if (!process.env.GA) {
-  delete config.presets[0][1].googleAnalytics;
+  delete (config.presets as any)[0][1].googleAnalytics;
 }
 
 module.exports = config;

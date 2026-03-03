@@ -22,7 +22,7 @@ Downstream mTLS settings control the client certificate requirements for end use
 
 These settings are grouped in the YAML configuration file under the key `downstream_mtls`.
 
-## Certificate Authority (CA) {#ca}
+## Certificate Authority (CA) \{#ca}
 
 **CA** is a bundle of PEM-encoded X.509 certificates that will be treated as trust anchors when verifying client certificates. Both root and intermediate CA certificates can be used as trust anchors.
 
@@ -32,7 +32,7 @@ The Subject Name of all configured CA certificates will be advertised in the ini
 
 The CA setting is **required** for downstream mTLS.
 
-### How to configure {#ca-how-to-configure}
+### How to configure \{#ca-how-to-configure}
 
 The CA bundle can be specified inline (with the `ca` key or the `DOWNSTREAM_MTLS_CA` environment variable) or as a path to a file on disk (with the `ca_file` key or the `DOWNSTREAM_MTLS_CA_FILE` environment variable). It is considered an error to specify both.
 
@@ -44,7 +44,7 @@ The CA bundle can be specified inline (with the `ca` key or the `DOWNSTREAM_MTLS
 | `downstream_mtls.ca` | `DOWNSTREAM_MTLS_CA` | string (base64-encoded PEM certificate bundle) |
 | `downstream_mtls.ca_file` | `DOWNSTREAM_MTLS_CA_FILE` | string (path to PEM certificate bundle) |
 
-### Examples {#ca-examples}
+### Examples \{#ca-examples}
 
 ```yaml
 downstream_mtls:
@@ -86,7 +86,7 @@ downstreamMtls:
 </TabItem>
 </Tabs>
 
-## Certificate Revocation List (CRL) {#crl}
+## Certificate Revocation List (CRL) \{#crl}
 
 :::caution
 
@@ -100,7 +100,7 @@ Please test thoroughly with your client certificate deployment before enabling t
 
 Additionally, when [**Enforcement Mode**](#enforcement-mode) is set to `reject_connection`, any provided CRLs will be considered valid only for the time period between their `thisUpdate` and `nextUpdate` timestamps. If a provided CRL is no longer valid, _no certificates from the corresponding CA will be trusted_. When using CRLs in combination with this mode, you must be prepared to regularly update all provided CRLs.
 
-### How to configure {#crl-how-to-configure}
+### How to configure \{#crl-how-to-configure}
 
 A CRL bundle can be specified inline (with the `crl` key or the `DOWNSTREAM_MTLS_CRL` environment variable) or as a path to a file on disk (with the `crl_file` key or the `DOWNSTREAM_MTLS_CRL_FILE` environment variable). It is considered an error to specify both.
 
@@ -112,7 +112,7 @@ A CRL bundle can be specified inline (with the `crl` key or the `DOWNSTREAM_MTLS
 | `downstream_mtls.crl` | `DOWNSTREAM_MTLS_CRL` | string (base64-encoded PEM CRL bundle) |
 | `downstream_mtls.crl_file` | `DOWNSTREAM_MTLS_CRL_FILE` | string (path to PEM CRL bundle) |
 
-### Examples {#crl-examples}
+### Examples \{#crl-examples}
 
 ```yaml
 downstream_mtls:
@@ -181,13 +181,13 @@ downstreamMtls:
    This matches the default behavior of many popular reverse proxies, such as Apache httpd and Caddy.
 
    Note that this mode also:
-   - Requires client certificates even for internal Pomerium routes, such as the authenticate URL (if using the self-hosted authenticate service) and the /.pomerium/ page (the page showing details of a user's current login session). In particular, any upstream services that perform [JWT verification](/docs/capabilities/getting-users-identity) will not be able to access the default [JWKS endpoint](/docs/reference/signing-key#how-to-use-signing-key). You may need to host your own JWKS endpoint, or provide some other means of distributing the JWT verification key(s).
+   - Requires client certificates even for internal Pomerium routes, such as the authenticate URL (if using the self-hosted authenticate service) and the /.pomerium/ page (the page showing details of a user's current login session). In particular, any upstream services that perform [JWT verification](/docs/capabilities/getting-users-identity) will not be able to access the default [JWKS endpoint](/docs/reference/signing-key#jwks-endpoint). You may need to host your own JWKS endpoint, or provide some other means of distributing the JWT verification key(s).
 
    - Adds a requirement that any configured [**CRL**](#crl) is valid only between its `thisUpdate` and `nextUpdate` timestamps. _If an invalid CRL is provided for a certain CA, no certificates issued by that CA will be allowed._
 
    - Enables TLS connection failure logging. Any connection attempt that fails during the TLS handshake will be logged by the proxy service with the message `"listener connection failure"`. The log entry will include the client IP address, server hostname, and client certificate info (if a client certificate was presented), so you can monitor rejected connections. (Otherwise, when a connection is rejected due to mTLS requirements, the client would never have the opportunity to make any requests, and so there would be no entries in the [access log](/docs/reference/access-log-fields#access-log-behavior) or [authorize log](/docs/capabilities/audit-logs).)
 
-### How to configure {#enforcement-mode-how-to-configure}
+### How to configure \{#enforcement-mode-how-to-configure}
 
 <Tabs groupId="deployment-type">
 <TabItem value="Core" label="Core">
@@ -196,7 +196,7 @@ downstreamMtls:
 | :-- | :-- | :-- |
 | `downstream_mtls.enforcement` | `DOWNSTREAM_MTLS_ENFORCEMENT` | string (one of `policy_with_default_deny`, `policy`, or `reject_connection`) |
 
-### Examples {#enforcement-mode-examples}
+### Examples \{#enforcement-mode-examples}
 
 ```yaml
 downstream_mtls:
@@ -229,7 +229,7 @@ downstreamMtls:
 </TabItem>
 </Tabs>
 
-## Match Subject Alt Names {#match-sans}
+## Match Subject Alt Names \{#match-sans}
 
 **Match Subject Alt Names** can be used to add an additional constraint when validating client certificates: each certificate must contain a Subject Alternative Name (SAN) of a particular type, whose value matches the provided regular expression.
 
@@ -247,7 +247,7 @@ The provided regular expression must match against the entire SAN entry. The reg
 
 SAN IPv4 addresses will be expressed in dotted decimal notation (e.g. "127.0.0.1") when matching against the provided regular expression. SAN IPv6 addresses will be expressed as specified in [RFC 5952](https://datatracker.ietf.org/doc/html/rfc5952#section-4).
 
-### How to configure {#match-sans-how-to-configure}
+### How to configure \{#match-sans-how-to-configure}
 
 <Tabs groupId="deployment-type">
 <TabItem value="Core" label="Core">
@@ -256,7 +256,7 @@ SAN IPv4 addresses will be expressed in dotted decimal notation (e.g. "127.0.0.1
 | :-- | :-- | :-- |
 | `downstream_mtls.match_subject_alt_names` | n/a | array of mappings from SAN type to regular expression |
 
-### Examples {#match-sans-examples}
+### Examples \{#match-sans-examples}
 
 To require that all client certificates have a DNS SAN with a domain name ending in ".corp.example.com":
 
@@ -332,7 +332,7 @@ In this scenario, with **Max Verify Depth** set to 1, only "Certificate A" would
 
 Note that a client presenting "Certificate B" must also include the "Intermediate CA 1" certificate, as it is not part of the trusted CA bundle. Likewise, a client presenting "Certificate C" must also include both the "Intermediate CA 1" and "Intermediate CA 2" certificates.
 
-### How to configure {#max-verify-depth-how-to-configure}
+### How to configure \{#max-verify-depth-how-to-configure}
 
 <Tabs groupId="deployment-type">
 <TabItem value="Core" label="Core">
@@ -341,7 +341,7 @@ Note that a client presenting "Certificate B" must also include the "Intermediat
 | :-- | :-- | :-- |
 | `downstream_mtls.max_verify_depth` | `DOWNSTREAM_MTLS_MAX_VERIFY_DEPTH` | unsigned integer |
 
-### Examples {#max-verify-depth-examples}
+### Examples \{#max-verify-depth-examples}
 
 To allow client certificate chains including the leaf certificate and at most one client-supplied intermediate CA certificate (before a trusted root or intermediate CA):
 
