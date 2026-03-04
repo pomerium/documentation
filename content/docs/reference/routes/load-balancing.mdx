@@ -8,8 +8,10 @@ pagination_next: null
 toc_max_heading_level: 2
 ---
 
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
+import TabItem from "@theme/TabItem";
+import Tabs from "@theme/Tabs";
+
+import EnterpriseConfiguration from "../../../../src/components/EnterpriseConfiguration";
 
 # Load Balancing Settings
 
@@ -48,17 +50,19 @@ routes:
 
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
+<EnterpriseConfiguration name="load_balancing_policy" resource="route">
 
 Set the **Load Balancing Policy** in the Console:
 
 ![Set load balancing policy in the console](../img/routes/load-balancing/load-balancing-config.gif)
 
+</EnterpriseConfiguration>
 </TabItem>
 <TabItem value="Kubernetes" label="Kubernetes">
 
-| **[Annotation name](/docs/deploy/k8s/ingress#set-ingress-annotations)** | **Type** | **Usage** | **Default** |
-| :-- | :-- | :-- | :-- |
-| `lb_policy` | `enum` | **optional** | `ROUND_ROBIN` |
+| **[Annotation name](/docs/deploy/k8s/ingress#set-ingress-annotations)** | **Type** | **Usage**    | **Default**   |
+| :---------------------------------------------------------------------- | :------- | :----------- | :------------ |
+| `lb_policy`                                                             | `enum`   | **optional** | `ROUND_ROBIN` |
 
 ### Examples
 
@@ -70,36 +74,17 @@ ingress.pomerium.io/least_request_lb_config: '{"choice_count": 2}'
 See [Kubernetes - Ingress Configuration](/docs/deploy/k8s/ingress) for more information.
 
 </TabItem>
-<TabItem value="Enterprise via Terraform" label="Enterprise via Terraform">
-
-| **Config file keys**    | **Type** | **Usage**    | **Default**   |
-| :---------------------- | :------- | :----------- | :------------ |
-| `load_balancing_policy` | String   | **optional** | `round_robin` |
-
-### Examples {#examples-load-balancing-policy}
-
-```hcl
-resource "pomerium_route" "verify_route" {
-  name         = "verify-route"
-  namespace_id = pomerium_namespace.test_namespace.id
-  from         = "https://verify.localhost.pomerium.io"
-  to           = ["https://verify.pomerium.com"]
-  load_balancing_policy = "least_request"
-}
-```
-
-</TabItem>
 </Tabs>
 
 ### Load Balancing Policy options {#load-balancing-policy-options}
 
-| **Load Balancer Policy options** |
-| :-- |
-| [`ROUND_ROBIN`](https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/upstream/load_balancing/load_balancers#weighted-round-robin) |
-| [`RING_HASH`](https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/upstream/load_balancing/load_balancers#ring-hash) (may be further configured using [`ring_hash_lb_config`](https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/cluster/v3/cluster.proto#config-cluster-v3-cluster-ringhashlbconfig) option) |
+| **Load Balancer Policy options**                                                                                                                                                                                                                                                                                                                                   |
+| :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [`ROUND_ROBIN`](https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/upstream/load_balancing/load_balancers#weighted-round-robin)                                                                                                                                                                                                                       |
+| [`RING_HASH`](https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/upstream/load_balancing/load_balancers#ring-hash) (may be further configured using [`ring_hash_lb_config`](https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/cluster/v3/cluster.proto#config-cluster-v3-cluster-ringhashlbconfig) option)                                    |
 | [`LEAST_REQUEST`](https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/upstream/load_balancing/load_balancers#weighted-least-request) (may be further configured using [`least_request_lb_config`](https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/cluster/v3/cluster.proto#envoy-v3-api-msg-config-cluster-v3-cluster-leastrequestlbconfig)) |
-| [`RANDOM`](https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/upstream/load_balancing/load_balancers#random) |
-| [`MAGLEV`](https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/upstream/load_balancing/load_balancers#maglev) (may be further configured using [`maglev_lb_config`](https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/cluster/v3/cluster.proto#envoy-v3-api-msg-config-cluster-v3-cluster-maglevlbconfig) option) |
+| [`RANDOM`](https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/upstream/load_balancing/load_balancers#random)                                                                                                                                                                                                                                          |
+| [`MAGLEV`](https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/upstream/load_balancing/load_balancers#maglev) (may be further configured using [`maglev_lb_config`](https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/cluster/v3/cluster.proto#envoy-v3-api-msg-config-cluster-v3-cluster-maglevlbconfig) option)                              |
 
 ## Health Checks {#health-checks}
 
@@ -109,12 +94,12 @@ See Envoy's [`outlier_detection`](https://www.envoyproxy.io/docs/envoy/latest/in
 
 ### Supported health checks parameters
 
-| **Config file keys** | **Definition** | **Type** | **Usage** |
-| :-- | :-- | :-- | :-- |
-| `timeout` | The total time to wait for a health check response. | [`Duration`](https://developers.google.com/protocol-buffers/docs/reference/google.protobuf#duration) | **required** |
-| `interval` | The interval between health checks. | [`Duration`](https://developers.google.com/protocol-buffers/docs/reference/google.protobuf#duration) | **required** |
+| **Config file keys**  | **Definition**                                                                    | **Type**                                                                                                   | **Usage**    |
+| :-------------------- | :-------------------------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------- | :----------- |
+| `timeout`             | The total time to wait for a health check response.                               | [`Duration`](https://developers.google.com/protocol-buffers/docs/reference/google.protobuf#duration)       | **required** |
+| `interval`            | The interval between health checks.                                               | [`Duration`](https://developers.google.com/protocol-buffers/docs/reference/google.protobuf#duration)       | **required** |
 | `unhealthy_threshold` | The number of unhealthy health checks required before a host is marked unhealthy. | [`UInt32Value`](https://developers.google.com/protocol-buffers/docs/reference/google.protobuf#uint32value) | **required** |
-| `healthy_threshold` | The number of healthy health checks required before a host is marked healthy. | [`UInt32Value`](https://developers.google.com/protocol-buffers/docs/reference/google.protobuf#uint32value) | **required** |
+| `healthy_threshold`   | The number of healthy health checks required before a host is marked healthy.     | [`UInt32Value`](https://developers.google.com/protocol-buffers/docs/reference/google.protobuf#uint32value) | **required** |
 
 See the [Envoy documentation](https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/upstream/health_checking) for a list of [supported parameters](https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/core/v3/health_check.proto#envoy-v3-api-msg-config-core-v3-healthcheck).
 
@@ -128,30 +113,30 @@ You may configure only one of the following options per `health_check` object de
 
 #### HTTP health check {#http-healthcheck-overview}
 
-| **Config file keys** | **Definition** | **Type** | **Usage** |
-| :-- | :-- | :-- | :-- |
-| `host` | The Host header value in the HTTP health check request. If empty (default value), the name of the cluster this health check is associated with will be used. | `string` | **optional** |
-| `path` | Specifies the HTTP path requested during a health check. For example, `/healthcheck`. | `string` | **required** |
-| `expected_statuses` | Defines a range of HTTP response statuses that are considered healthy. | [`Int64Range`](https://www.envoyproxy.io/docs/envoy/latest/api-v3/type/v3/range.proto#envoy-v3-api-msg-type-v3-int64range) | **optional** |
-| `codec_client_type` | Specifies which application protocol to use: `HTTP1` or `HTTP2`. | [`CodecClientType`](https://www.envoyproxy.io/docs/envoy/latest/api-v3/type/v3/http.proto#envoy-v3-api-enum-type-v3-codecclienttype) | **optional** |
+| **Config file keys** | **Definition**                                                                                                                                               | **Type**                                                                                                                             | **Usage**    |
+| :------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------- | :----------- |
+| `host`               | The Host header value in the HTTP health check request. If empty (default value), the name of the cluster this health check is associated with will be used. | `string`                                                                                                                             | **optional** |
+| `path`               | Specifies the HTTP path requested during a health check. For example, `/healthcheck`.                                                                        | `string`                                                                                                                             | **required** |
+| `expected_statuses`  | Defines a range of HTTP response statuses that are considered healthy.                                                                                       | [`Int64Range`](https://www.envoyproxy.io/docs/envoy/latest/api-v3/type/v3/range.proto#envoy-v3-api-msg-type-v3-int64range)           | **optional** |
+| `codec_client_type`  | Specifies which application protocol to use: `HTTP1` or `HTTP2`.                                                                                             | [`CodecClientType`](https://www.envoyproxy.io/docs/envoy/latest/api-v3/type/v3/http.proto#envoy-v3-api-enum-type-v3-codecclienttype) | **optional** |
 
 See the [Envoy HTTP health checks documentation](https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/core/v3/health_check.proto#envoy-v3-api-msg-config-core-v3-healthcheck-httphealthcheck) for more information.
 
 #### TCP health check {#tcp-healthcheck-overview}
 
-| **Config file keys** | **Definition** | **Type** | **Usage** |
-| :-- | :-- | :-- | :-- |
-| `send` | Defines the payload, which must be one of [text](https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/core/v3/health_check.proto#envoy-v3-api-field-config-core-v3-healthcheck-payload-text) or [binary](https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/core/v3/health_check.proto#envoy-v3-api-field-config-core-v3-healthcheck-payload-binary). An empty payload results in a connect-only health check. | [`Payload`](https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/core/v3/health_check.proto#envoy-v3-api-msg-config-core-v3-healthcheck-payload) | **optional** |
-| `receive` | Checks a response with 'fuzzy' matching to the extent that each payload block must be found, and in the specified order, but not necessarily contiguous. | [`Payload`](https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/core/v3/health_check.proto#envoy-v3-api-msg-config-core-v3-healthcheck-payload) | **optional** |
+| **Config file keys** | **Definition**                                                                                                                                                                                                                                                                                                                                                                                                             | **Type**                                                                                                                                              | **Usage**    |
+| :------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------- | :----------- |
+| `send`               | Defines the payload, which must be one of [text](https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/core/v3/health_check.proto#envoy-v3-api-field-config-core-v3-healthcheck-payload-text) or [binary](https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/core/v3/health_check.proto#envoy-v3-api-field-config-core-v3-healthcheck-payload-binary). An empty payload results in a connect-only health check. | [`Payload`](https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/core/v3/health_check.proto#envoy-v3-api-msg-config-core-v3-healthcheck-payload) | **optional** |
+| `receive`            | Checks a response with 'fuzzy' matching to the extent that each payload block must be found, and in the specified order, but not necessarily contiguous.                                                                                                                                                                                                                                                                   | [`Payload`](https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/core/v3/health_check.proto#envoy-v3-api-msg-config-core-v3-healthcheck-payload) | **optional** |
 
 See the [Envoy TCP health checks documentation](https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/core/v3/health_check.proto#config-core-v3-healthcheck-tcphealthcheck) for more information.
 
 #### gRPC health check {#grpc-healthcheck-overview}
 
-| **Config file keys** | **Definition** | **Type** | **Usage** |
-| :-- | :-- | :-- | :-- |
-| `authority` | The `:authority` header value in a gRPC health check request. | `string` | **optional** |
-| `service_name` | A service name parameter sent to the gRPC service. See [gRPC health checking](https://github.com/grpc/grpc/blob/master/doc/health-checking.md) for more information. | `string` | **optional** |
+| **Config file keys** | **Definition**                                                                                                                                                       | **Type** | **Usage**    |
+| :------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------- | :----------- |
+| `authority`          | The `:authority` header value in a gRPC health check request.                                                                                                        | `string` | **optional** |
+| `service_name`       | A service name parameter sent to the gRPC service. See [gRPC health checking](https://github.com/grpc/grpc/blob/master/doc/health-checking.md) for more information. | `string` | **optional** |
 
 See the [Envoy gRPC health checks documentation](https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/core/v3/health_check.proto#config-core-v3-healthcheck-grpchealthcheck) for more information.
 
@@ -176,7 +161,7 @@ routes:
         healthy_threshold: 1
         unhealthy_threshold: 2
         http_health_check:
-          path: '/'
+          path: "/"
 ```
 
 ### TCP example configuration
@@ -194,9 +179,9 @@ routes:
         healthy_threshold: 1
         tcp_health_check:
           send:
-            text: '50494E47' #PING
+            text: "50494E47" #PING
           receive:
-            text: '504F4E47' #PONG
+            text: "504F4E47" #PONG
 ```
 
 </TabItem>

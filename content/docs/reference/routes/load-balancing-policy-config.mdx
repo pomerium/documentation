@@ -8,8 +8,10 @@ pagination_prev: null
 pagination_next: null
 ---
 
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
+import TabItem from "@theme/TabItem";
+import Tabs from "@theme/Tabs";
+
+import EnterpriseConfiguration from "../../../../src/components/EnterpriseConfiguration";
 
 # Load Balancing Policy Config
 
@@ -26,28 +28,19 @@ When [`lb_policy`](/docs/reference/routes/load-balancing#load-balancing-policy) 
 <Tabs>
 <TabItem value="Core" label="Core">
 
-| **Config file keys** | **Type** | **Usage** |
-| :-- | :-- | :-- |
+| **Config file keys**                                                                                                                                                            | **Type** | **Usage**    |
+| :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | :------- | :----------- |
 | [`least_request_lb_config`](https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/cluster/v3/cluster.proto#envoy-v3-api-msg-config-cluster-v3-cluster-leastrequestlbconfig) | `object` | **optional** |
-| [`ring_hash_lb_config`](https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/cluster/v3/cluster.proto#config-cluster-v3-cluster-ringhashlbconfig) | `object` | **optional** |
-| [`maglev_lb_config`](https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/cluster/v3/cluster.proto#envoy-v3-api-msg-config-cluster-v3-cluster-maglevlbconfig) | `object` | **optional** |
+| [`ring_hash_lb_config`](https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/cluster/v3/cluster.proto#config-cluster-v3-cluster-ringhashlbconfig)                          | `object` | **optional** |
+| [`maglev_lb_config`](https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/cluster/v3/cluster.proto#envoy-v3-api-msg-config-cluster-v3-cluster-maglevlbconfig)              | `object` | **optional** |
 
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
-
-**Load Balancing Policy Config** is a bootstrap configuration setting and is not configurable in the Console.
-
+<EnterpriseConfiguration name="load_balancing_policy" resource="route" via={["terraform"]} />
 </TabItem>
 <TabItem value="Kubernetes" label="Kubernetes">
 
 See Kubernetes [Ingress](/docs/deploy/k8s/ingress#load-balancing) for more information
-
-</TabItem>
-<TabItem value="Enterprise via Terraform" label="Enterprise via Terraform">
-
-| **Config file keys**    | **Type** | **Options**                            |
-| :---------------------- | :------- | :------------------------------------- |
-| `load_balancing_policy` | String   | `least_request`, `ring_hash`, `maglev` |
 
 </TabItem>
 </Tabs>

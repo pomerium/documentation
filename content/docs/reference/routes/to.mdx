@@ -9,8 +9,10 @@ pagination_next: null
 toc_max_heading_level: 2
 ---
 
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
+import TabItem from "@theme/TabItem";
+import Tabs from "@theme/Tabs";
+
+import EnterpriseConfiguration from "../../../../src/components/EnterpriseConfiguration";
 
 # To
 
@@ -23,9 +25,9 @@ import TabItem from '@theme/TabItem';
 <Tabs>
 <TabItem value="Core" label="Core">
 
-| **YAML**/**JSON** setting | **Type** | **Usage** | **Schemes** |
-| :-- | :-- | :-- | :-- |
-| `to` | `URL` | **optional** | `http`, `https`, `h2c`, `tcp`, `udp`, `ssh` |
+| **YAML**/**JSON** setting | **Type** | **Usage**    | **Schemes**                                 |
+| :------------------------ | :------- | :----------- | :------------------------------------------ |
+| `to`                      | `URL`    | **optional** | `http`, `https`, `h2c`, `tcp`, `udp`, `ssh` |
 
 ### Examples
 
@@ -53,33 +55,17 @@ import TabItem from '@theme/TabItem';
 
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
+<EnterpriseConfiguration name="to" resource="route">
 
 Set **To** in the Console:
 
 ![Set to routes in the console](../img/routes/to-routes.png)
 
+</EnterpriseConfiguration>
 </TabItem>
 <TabItem value="Kubernetes" label="Kubernetes">
 
 See Kubernetes [Ingress](/docs/deploy/k8s/ingress) for more information.
-
-</TabItem>
-<TabItem value="Enterprise via Terraform" label="Enterprise via Terraform">
-
-| **Parameter name** | **Type** | **Usage** | **Schemes** |
-| :-- | :-- | :-- | :-- |
-| `to` | Set of String | **optional** | `http`, `https`, `h2c`, `tcp`, `udp` |
-
-### Examples
-
-```hcl
-resource "pomerium_route" "example_route" {
-  name         = "example-route"
-  namespace_id = pomerium_namespace.test_namespace.id
-  from         = "https://example.com"
-  to           = ["https://a.example.com", "https://b.example.com", "https://c.example.com"]
-}
-```
 
 </TabItem>
 </Tabs>
@@ -101,10 +87,10 @@ A load balancing weight may be associated with a particular upstream by appendin
 
 ```yaml
 - from: https://example.com
-  to: ['http://a', 'http://b']
+  to: ["http://a", "http://b"]
 
 - from: https://example.com
-  to: ['http://a,10', 'http://b,20']
+  to: ["http://a,10", "http://b,20"]
 ```
 
 ### HTTP/2 cleartext

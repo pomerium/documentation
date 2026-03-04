@@ -12,8 +12,10 @@ pagination_next: null
 toc_max_heading_level: 2
 ---
 
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
+import TabItem from "@theme/TabItem";
+import Tabs from "@theme/Tabs";
+
+import EnterpriseConfiguration from "../../../src/components/EnterpriseConfiguration";
 
 # JWT Claim Headers
 
@@ -42,17 +44,19 @@ jwt_claims_headers:
 
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
+<EnterpriseConfiguration name="jwt_claims_headers" resource="settings">
 
 Format **JWT Claims Headers** in the Console:
 
 ![Format JWT Claims Headers in the Console](./img/jwts/jwt-claims-headers-console.png)
 
+</EnterpriseConfiguration>
 </TabItem>
 <TabItem value="Kubernetes" label="Kubernetes">
 
-| **[Parameter name](/docs/deploy/k8s/reference#spec)** | **Type** | **Usage** |
-| :-- | :-- | :-- |
-| `jwtClaimHeaders` | map of strings | **optional** |
+| **[Parameter name](/docs/deploy/k8s/reference#spec)** | **Type**       | **Usage**    |
+| :---------------------------------------------------- | :------------- | :----------- |
+| `jwtClaimHeaders`                                     | map of strings | **optional** |
 
 ### Examples
 
@@ -60,19 +64,6 @@ Format **JWT Claims Headers** in the Console:
 jwtClaimHeaders:
   X-Email: email
   X-Username: user
-```
-
-</TabItem>
-<TabItem value="Enterprise via Terraform" label="Enterprise via Terraform">
-
-| **[Parameter name](https://registry.terraform.io/providers/pomerium/pomerium/latest/docs/resources/settings)** | **Type** | **Usage** |
-| :-- | :-- | :-- |
-| `jwt_claims_headers` | Map of String | **optional** |
-
-### Examples
-
-```hcl
-jwt_claims_headers = {"X-Email": "email", "X-Username": "user"}
 ```
 
 </TabItem>

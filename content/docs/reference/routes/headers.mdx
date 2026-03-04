@@ -15,8 +15,10 @@ pagination_next: null
 toc_max_heading_level: 2
 ---
 
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
+import TabItem from "@theme/TabItem";
+import Tabs from "@theme/Tabs";
+
+import EnterpriseConfiguration from "../../../../src/components/EnterpriseConfiguration";
 
 # Headers Settings
 
@@ -61,7 +63,7 @@ For an incoming request with the header `X-My-Host: foo.example.com`, this would
 `host_path_regex_rewrite_pattern` and `host_path_regex_rewrite_substitution` rewrite the Host header based on a regular expression substitution using the URL path as the input. For example:
 
 ```yaml
-host_path_regex_rewrite_pattern: '^/(.+)/.+$'
+host_path_regex_rewrite_pattern: "^/(.+)/.+$"
 host_path_regex_rewrite_substitution: \1
 ```
 
@@ -87,43 +89,29 @@ preserve_host_header: true
 ```
 
 ```yaml
-host_rewrite: 'example.com'
+host_rewrite: "example.com"
 ```
 
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
+<EnterpriseConfiguration name="host_rewrite" resource="route">
 
 Configure **Host Header** settings in the route **Headers** settings in the Console:
 
 ![Configure host rewrite in the console](../img/routes/headers/rewrite-host-header.gif)
 
+</EnterpriseConfiguration>
 </TabItem>
 <TabItem value="Kubernetes" label="Kubernetes">
 
-| **[Annotation name](/docs/deploy/k8s/ingress#set-ingress-annotations)** | **Type** | **Usage** |
-| :-- | :-- | :-- |
-| `host_rewrite` | `string` | **optional** |
+| **[Annotation name](/docs/deploy/k8s/ingress#set-ingress-annotations)** | **Type** | **Usage**    |
+| :---------------------------------------------------------------------- | :------- | :----------- |
+| `host_rewrite`                                                          | `string` | **optional** |
 
 ### Examples
 
 ```yaml
-ingress.pomerium.io/host_rewrite: 'example.com'
-```
-
-</TabItem>
-<TabItem value="Enterprise via Terraform" label="Enterprise via Terraform">
-
-| **Parameter name**                     | **Type** | **Usage**    |
-| :------------------------------------- | :------- | :----------- |
-| `host_rewrite`                         | `String` | **optional** |
-| `host_rewrite_header`                  | `String` | **optional** |
-| `host_path_regex_rewrite_pattern`      | `String` | **optional** |
-| `host_path_regex_rewrite_substitution` | `String` | **optional** |
-
-### Examples
-
-```hcl
-host_rewrite = "example.com"
+ingress.pomerium.io/host_rewrite: "example.com"
 ```
 
 </TabItem>
@@ -168,7 +156,7 @@ Pass static header values in the request:
     # Set a fixed Basic Auth username and password (root:hunter42)
     Authorization: Basic cm9vdDpodW50ZXI0Mg==
     # Set a custom header
-    X-Your-favorite-authenticating-Proxy: 'Pomerium'
+    X-Your-favorite-authenticating-Proxy: "Pomerium"
     # To include a '$' character in a header value:
     X-Hello: $$world # header value is set to "$world"
 ```
@@ -191,17 +179,19 @@ Pass ID token, access token, and client certificate fingerprint (if present) as 
 
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
+<EnterpriseConfiguration name="set_request_headers" resource="route">
 
 Configure **Set Request Headers** in the Console:
 
 ![Set request headers in the console](../img/routes/headers/set-request-headers.png)
 
+</EnterpriseConfiguration>
 </TabItem>
 <TabItem value="Kubernetes" label="Kubernetes">
 
-| **[Annotation name](/docs/deploy/k8s/ingress#set-ingress-annotations)** | **Type** | **Usage** |
-| :-- | :-- | :-- |
-| `set_request_headers` | map of key-value pairs | **optional** |
+| **[Annotation name](/docs/deploy/k8s/ingress#set-ingress-annotations)** | **Type**               | **Usage**    |
+| :---------------------------------------------------------------------- | :--------------------- | :----------- |
+| `set_request_headers`                                                   | map of key-value pairs | **optional** |
 
 ```yaml
 ingress.pomerium.io/set_request_headers: |
@@ -210,37 +200,18 @@ ingress.pomerium.io/set_request_headers: |
 
 </TabItem>
 
-<TabItem value="Enterprise via Terraform" label="Enterprise via Terraform">
-
-| **Parameter name**    | **Type**      | **Usage**    |
-| :-------------------- | :------------ | :----------- |
-| `set_request_headers` | Map of String | **optional** |
-
-### Examples
-
-```hcl
-resource "pomerium_route" "verify_route" {
-  name         = "verify-route"
-  namespace_id = pomerium_namespace.test_namespace.id
-  from         = "https://verify.localhost.pomerium.io"
-  to           = ["https://verify.pomerium.com"]
-  set_request_headers = {"Pomerium-jwt": "$${pomerium.jwt}", "X-Your-favorite-authenticating-Proxy": "Pomerium"}
-}
-```
-
-</TabItem>
 </Tabs>
 
 ### Pass Dynamic Tokens in Headers {#pass-dynamic-tokens-in-headers}
 
 The following token substitutions are available:
 
-| **Token** | **Value** |
-| :-- | :-- |
-| `${pomerium.access_token}` | OAuth access token from the identity provider\* |
-| `${pomerium.client_cert_fingerprint}` | Short form SHA-256 fingerprint of the presented client certificate (if [downstream mTLS](/docs/internals/certificates-and-tls) is enabled) |
-| `${pomerium.id_token}` | OIDC ID token from the identity provider\* |
-| `${pomerium.jwt}` | [Pomerium JWT](/docs/capabilities/getting-users-identity) (this is the same value as in the [`X-Pomerium-Jwt-Assertion` header](/docs/reference/routes/pass-identity-headers-per-route)) |
+| **Token**                             | **Value**                                                                                                                                                                                |
+| :------------------------------------ | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `${pomerium.access_token}`            | OAuth access token from the identity provider\*                                                                                                                                          |
+| `${pomerium.client_cert_fingerprint}` | Short form SHA-256 fingerprint of the presented client certificate (if [downstream mTLS](/docs/internals/certificates-and-tls) is enabled)                                               |
+| `${pomerium.id_token}`                | OIDC ID token from the identity provider\*                                                                                                                                               |
+| `${pomerium.jwt}`                     | [Pomerium JWT](/docs/capabilities/getting-users-identity) (this is the same value as in the [`X-Pomerium-Jwt-Assertion` header](/docs/reference/routes/pass-identity-headers-per-route)) |
 
 \*The ID token and access token are not available when using the [Hosted Authenticate](/docs/capabilities/authentication) service.
 
@@ -291,41 +262,24 @@ set_request_headers:
 
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
+<EnterpriseConfiguration name="remove_request_headers" resource="route">
 
 Set **Remove Request Headers** in the Console:
 
 ![Set remove request headers in the console](../img/routes/headers/remove-request-headers.png)
 
+</EnterpriseConfiguration>
 </TabItem>
 <TabItem value="Kubernetes" label="Kubernetes">
 
-| **[Annotation name](/docs/deploy/k8s/ingress#set-ingress-annotations)** | **Type** | **Usage** |
-| :-- | :-- | :-- |
-| `remove_request_headers` | `string` | **optional** |
+| **[Annotation name](/docs/deploy/k8s/ingress#set-ingress-annotations)** | **Type** | **Usage**    |
+| :---------------------------------------------------------------------- | :------- | :----------- |
+| `remove_request_headers`                                                | `string` | **optional** |
 
 ```yaml
 ingress.pomerium.io/remove_request_headers: |
   - X-Email
   - X-User
-```
-
-</TabItem>
-<TabItem value="Enterprise via Terraform" label="Enterprise via Terraform">
-
-| **YAML**/**JSON** setting | **Type**      | **Usage**    |
-| :------------------------ | :------------ | :----------- |
-| `remove_request_headers`  | Set of String | **optional** |
-
-### Examples {#examples-remove-request-headers}
-
-```hcl
-resource "pomerium_route" "verify_route" {
-  name         = "verify-route"
-  namespace_id = pomerium_namespace.test_namespace.id
-  from         = "https://verify.localhost.pomerium.io"
-  to           = ["https://verify.pomerium.com"]
-  remove_request_headers = ["X-Email", "X-User"]
-}
 ```
 
 </TabItem>
@@ -353,40 +307,23 @@ set_response_headers:
 
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
+<EnterpriseConfiguration name="set_response_headers" resource="route">
 
 Configure **Set Response Headers** in the Console:
 
 ![Configure set response headers in the console](../img/routes/headers/set-response-headers-route.png)
 
+</EnterpriseConfiguration>
 </TabItem>
 <TabItem value="Kubernetes" label="Kubernetes">
 
-| **[Annotation name](/docs/deploy/k8s/ingress#set-ingress-annotations)** | **Type** | **Usage** |
-| :-- | :-- | :-- |
-| `set_response_headers` | `string` | **optional** |
+| **[Annotation name](/docs/deploy/k8s/ingress#set-ingress-annotations)** | **Type** | **Usage**    |
+| :---------------------------------------------------------------------- | :------- | :----------- |
+| `set_response_headers`                                                  | `string` | **optional** |
 
 ```yaml
 ingress.pomerium.io/set_response_headers: |
   X-Test: X-Value
-```
-
-</TabItem>
-<TabItem value="Enterprise via Terraform" label="Enterprise via Terraform">
-
-| **YAML**/**JSON** setting | **Type**      | **Usage**    |
-| :------------------------ | :------------ | :----------- |
-| `set_response_headers`    | Map of String | **optional** |
-
-### Examples {#examples-remove-request-headers}
-
-```hcl
-resource "pomerium_route" "verify_route" {
-  name         = "verify-route"
-  namespace_id = pomerium_namespace.test_namespace.id
-  from         = "https://verify.localhost.pomerium.io"
-  to           = ["https://verify.pomerium.com"]
-  set_response_headers = {"X-Test": "X-Value"}
-}
 ```
 
 </TabItem>
@@ -426,17 +363,19 @@ The browser would be redirected to: `http://frontend/one/some/path/`. This is si
 
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
+<EnterpriseConfiguration name="rewrite_response_headers" resource="route">
 
 Configure **Rewrite Response Headers** in the Console:
 
 ![Configure rewrite response headers in the console](../img/routes/headers/rewrite-response-header.png)
 
+</EnterpriseConfiguration>
 </TabItem>
 <TabItem value="Kubernetes" label="Kubernetes">
 
-| **[Annotation name](/docs/deploy/k8s/ingress#set-ingress-annotations)** | **Type** | **Usage** |
-| :-- | :-- | :-- |
-| `rewrite_response_headers` | `object` | **optional** |
+| **[Annotation name](/docs/deploy/k8s/ingress#set-ingress-annotations)** | **Type** | **Usage**    |
+| :---------------------------------------------------------------------- | :------- | :----------- |
+| `rewrite_response_headers`                                              | `object` | **optional** |
 
 ### Examples
 
@@ -456,25 +395,6 @@ ingress.pomerium.io/rewrite_response_headers: |
 ```
 
 The browser would be redirected to: `http://frontend/one/some/path/`. This is similar to nginx's [`proxy_redirect` option](http://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_redirect), but can be used for any header.
-
-</TabItem>
-<TabItem value="Enterprise via Terraform" label="Enterprise via Terraform">
-
-| **YAML**/**JSON** setting  | **Type**      | **Usage**    |
-| :------------------------- | :------------ | :----------- |
-| `rewrite_response_headers` | Map of String | **optional** |
-
-### Examples {#examples-remove-request-headers}
-
-```hcl
-resource "pomerium_route" "verify_route" {
-  name         = "verify-route"
-  namespace_id = pomerium_namespace.test_namespace.id
-  from         = "https://verify.localhost.pomerium.io"
-  to           = ["https://verify.pomerium.com"]
-  rewrite_response_headers = {"X-Test": "X-New-Value"}
-}
-```
 
 </TabItem>
 </Tabs>
