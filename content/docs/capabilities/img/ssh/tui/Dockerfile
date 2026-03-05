@@ -1,11 +1,13 @@
+ARG pomerium_image=pomerium/pomerium@sha256:2c107a708926b9c3389cf870996a609c2532f70aac047445a538aa1a203901fd
+
 FROM golang:latest AS mockidp
 
 RUN mkdir /workspace && cd /workspace \
- && git clone --depth=1 --branch kralicky/mockidp-cmd https://github.com/pomerium/pomerium \
+ && git clone --depth=1 https://github.com/pomerium/pomerium \
  && cd pomerium \
  && go build -o bin/mock-idp ./internal/cmd/mock-idp
 
-FROM pomerium/pomerium@sha256:5a2b585b7d24d9c7dedf38529cd7af27e5842527fc5825c7db14a0f79e31a0b4 AS pomerium
+FROM $pomerium_image AS pomerium
 
 FROM debian@sha256:3615a749858a1cba49b408fb49c37093db813321355a9ab7c1f9f4836341e9db
 
@@ -45,7 +47,13 @@ RUN ssh-keygen -N "" -t ed25519 -f demo_host_key \
  && openssl rand -base64 32 | tr -d '\n' > /pomerium/demo_shared_secret \
  && echo "example.com $(cat demo_host_key.pub)" >> /root/.ssh/known_hosts
 
-COPY config.yaml /pomerium/config.yaml
+COPY _config.yaml /tmp/_config.yaml
+COPY _routes.yaml /tmp/_routes.yaml
+
+RUN cat /tmp/_config.yaml /tmp/_routes.yaml > /pomerium/config.yaml \
+ && rm /tmp/_config.yaml \
+ && rm /tmp/_routes.yaml
+
 COPY scripts/ /pomerium/scripts/
 COPY _entrypoint.sh /_entrypoint.sh
 ENTRYPOINT [ "/_entrypoint.sh" ]

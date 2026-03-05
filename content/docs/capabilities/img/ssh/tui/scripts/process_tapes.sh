@@ -2,7 +2,8 @@
 
 set -e
 
-for f in /tapes/*.tape; do
+
+for f in /tapes/$1; do
   rm -f /ssh.log
   NAME=$(basename "$f" ".tape")
   VHS_NO_SANDBOX=1 vhs -o "${NAME}.gif" "$f"

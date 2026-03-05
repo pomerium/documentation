@@ -1,0 +1,37 @@
+routes:
+  - from: https://https-route.example.com
+    to: http://localhost:8080
+    allow_public_unauthenticated_access: true
+    upstream_tunnel:
+      ssh_policy:
+        - allow:
+            and:
+              - email:
+                  is: user@example.com
+    health_checks:
+      - http_health_check:
+          path: "/health"
+        timeout: 0.5s
+        interval: 10s
+        unhealthy_threshold: 1
+        healthy_threshold: 1
+        always_log_health_check_success: true
+        always_log_health_check_failures: true
+
+  - from: https://grpc-route.example.com
+    to: h2c://localhost:8079
+    allow_public_unauthenticated_access: true
+    upstream_tunnel:
+      ssh_policy:
+        - allow:
+            and:
+              - email:
+                  is: user@example.com
+    health_checks:
+      - grpc_health_check: {}
+        timeout: 0.5s
+        interval: 10s
+        unhealthy_threshold: 1
+        healthy_threshold: 1
+        always_log_health_check_success: true
+        always_log_health_check_failures: true

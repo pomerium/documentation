@@ -1,4 +1,6 @@
 #!/bin/bash
 
-( sleep "$1"; curl https://https-route.example.com ) &
+DURATION="$1"
+shift 1
+( sleep "$DURATION"; curl "$@" https://https-route.example.com ) &
 disown

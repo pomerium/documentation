@@ -1,6 +1,6 @@
 ---
 title: Reverse Tunneling
-description: ''
+description: "Reverse Tunneling"
 sidebar_label: Reverse Tunneling
 sidebar_position: 8
 keywords:
@@ -15,6 +15,10 @@ keywords:
   ]
 ---
 
+import RoutesYaml from "!!raw-loader!./img/ssh/tui/_routes.yaml";
+
+import CodeBlock from "@theme/CodeBlock";
+
 # Reverse Tunneling
 
 ![Diagram](./img/ssh/reverse-tunnel.svg)
@@ -28,6 +32,9 @@ register themselves as upstream endpoints for the route (for as long as they
 remain connected and authenticated). Then, when a downstream client connects to
 the route, Pomerium will tell a connected SSH client to open a connection to the
 "real" upstream server via reverse port-forward.
+
+This uses the [Native SSH Access](./native-ssh-access) feature, and works best
+with the standard OpenSSH client.
 
 ## Example Scenario
 
@@ -55,7 +62,49 @@ reach the local web server, so the connection can be established.
 
 &nbsp; &nbsp; &nbsp; ![Scenario 1b](./img/ssh/reverse-tunnel-scenario-1-b.svg)
 
+## Setup
+
+1. Follow steps 1-3 in
+   [Native SSH Access - Setup](/docs/capabilities/native-ssh-access#setup) to
+   configure the SSH address, host keys, and user CA key. Note that SSH routes
+   are not necessary to be able to use this feature, so steps 4 and 5 can be
+   skipped.
+
+2. Enable the `ssh_upstream_tunnel` runtime flag:
+   ```yaml title="config.yaml"
+   runtime_flags:
+     ssh_upstream_tunnel: true
+   ```
+
 ## Detailed Usage
+
+### Connecting With an SSH Client
+
+Reverse tunneling is only enabled when connecting to Pomerium without a route,
+the same way as the Internal CLI is accessed (see
+[Using the Internal CLI](./native-ssh-access#using-the-internal-cli)).
+
+It is not necessary to interact with the Internal CLI in reverse tunneling mode
+(you can pass `-N` to tell ssh not to run any commands at all), but by default
+the tunnel status TUI will be displayed when no command is given and `-R` was
+set on the command line.
+
+For example, if your Pomerium server is hosted at `pomerium.example.com`, your
+ssh command would look like:
+
+```bash
+$ ssh -R ... pomerium.example.com
+#        ^^^ see below for '-R' syntax
+```
+
+When connecting to a SSH route directly, any port-forwarding requests are sent
+directly to the upstream SSH server, and are not interpreted by Pomerium. For
+example, the following command does _not_ enable reverse tunneling:
+
+```bash
+# The upstream server for the route 'some-ssh-route' handles the -R request here
+$ ssh -R ... some-ssh-route@pomerium.example.com
+```
 
 ### OpenSSH Client Syntax
 
@@ -67,7 +116,8 @@ of this flag can take several forms, following a similar structure:<b>[^1]</b>
 The argument to `-R` consists of either one or two `name:port` addresses,
 separated by a `:`. The remote address (first) describes the client's request to
 the server. The local address (second), if present, is used only by the client
-to control the destination of an incoming request; it is not sent to the server.
+to control the destination of an incoming request. <b>The local address is not
+sent to the server.</b>
 
 If the local address is present, the server has no control over the destination
 address. The SSH client forwards the request to the hostname and port given on
@@ -102,12 +152,14 @@ interpret this in an application-specific way. In Pomerium's case:
 - The `port` functions as a protocol selector. If the port is `443`, it will
   match HTTP routes. If the port is `22`, it will match SSH routes. These are
   fixed values and do not change based on the ports Pomerium is listening
-  on<b>[^3]</b>.
+  on.<b>[^3]</b>
 
 ### Dynamic Port Forwarding
 
-Dynamic port forwarding is enabled **only when the client requests port `0` in
-the remote address[^4]**.
+<b>
+  Dynamic port forwarding is enabled only when the client requests port `0` in
+  the remote address.[^4]
+</b>
 
 This mode allows a single SSH client to port-forward multiple routes at the same
 time, and not require manual updates when the Pomerium configuration changes.
@@ -147,12 +199,99 @@ protocol for the route, and
 
 ## Operating the TUI
 
-TODO
+:::info Configuration
+
+The screenshots in this section are using the following route definitions:
+
+<CodeBlock language="yaml">{RoutesYaml}</CodeBlock>
+
+:::
+
+When connecting to Pomerium as a reverse tunnel upstream, the tunnel status TUI
+will be displayed by default.
+
+![TUI HTTPS Only](./img/ssh/tui/out/tui_https_only.png)
+
+### Active Connections
+
+The Active Connections panel displays live connections through the reverse
+tunnel. For HTTP routes, the hostname and path in the request will be displayed.
+For SSH routes, the route name will be displayed.
+
+The downstream client IP is also displayed in this panel, along with bytes sent
+through the tunnel in both directions (Rx = downstream to upstream, Tx =
+upstream to downstream), and the duration of the connection. Connection stats
+are updated periodically while the connection is open, and immediately when the
+connection is closed.
+
+### Client Requests
+
+The Client Requests panel shows how Pomerium interpreted each `-R` flag passed
+on the ssh client command line. Each instance of `-R` will show up as a separate
+row in this table.
+
+The `Hostname` column shows the `name` section of the `name:port` syntax for the
+remote address. If the name was `*`, or empty, the request will show `(all)`.
+
+The `Port` column shows the `port` section of the `name:port` syntax for the
+remote address. If the port was set to 0 on the command line, indicating dynamic
+port forwarding is enabled, it will be displayed as a random number, prefixed
+with <span style={{color: "blue"}}>`D`</span>, for example:
+![TUI All Routes](./img/ssh/tui/out/tui_all_routes.png)
+
+:::tip
+
+Dynamic port numbers are known to the SSH client. They can be used to identify
+specific requests to deactivate them at runtime using the escape console. See
+[OpenSSH Escape Commands](#openssh-escape-commands).
+
+:::
+
+The `Routes` column shows how many routes (of those displayed in the
+`Port Forward Status` table) were matched by each request.
+
+### Port Forward Status
+
+The Port Forward Status panel displays routes with upstream tunneling enabled
+(via the `upstream_tunnel` route option) that the current user is authorized to
+connect to as an upstream endpoint (based on the route's `ssh_policy`). Routes
+that the user would not be authorized for are not displayed in this table,
+whether or not the user's request patterns match those routes.
+
+The `Status` column shows whether that route is matched by any of the client
+requests. If it is, it will display <span
+style={{color: "green"}}>`ACTIVE`</span>.
+
+For routes with health checks enabled, the `Health` column shows the current
+state of those routes as determined by the configured health checks. This state
+is either <span style={{color: "green"}}>`HEALTHY`</span>, <span
+style={{color: "orange"}}>`DEGRADED`</span>, or <span
+style={{color: "red"}}>`UNHEALTHY`</span> (see
+[Envoy docs](https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/upstream/health_checking)).
+If the route is currently failing its health checks, it will show <span
+style={{color: 'gray'}}>`INACTIVE`</span> in the `Status` column.
+
+### Logs
+
+The Logs panel shows system messages and warnings.
 
 ### Non-interactive clients
 
 The TUI will be automatically disabled for non-interactive clients. To disable
 it while running an interactive client, pass the `-N` flag to `ssh`.
+
+### Terminal Feature Support
+
+The TUI has full mouse support for terminals which support it (all modern
+terminals do).
+
+Some features, such as the ability to copy to the clipboard, are not supported
+by all terminals. If your terminal supports this feature (see
+[here](https://github.com/contour-terminal/vt-extensions/blob/master/clipboard-extension.md)
+for an unofficial support matrix), you will have the ability to copy URLs to the
+clipboard in the right-click context menu of some table rows.
+
+{/* FIXME the context menu screenshots have font issues */}
 
 ## Compatibility
 
@@ -255,6 +394,55 @@ requests without needing to restart the ssh client. Details on how to use this
 can be found in the "Escape Characters" section of `man 1 ssh`.
 ([online docs here](https://www.man7.org/linux/man-pages/man1/ssh.1.html#ESCAPE_CHARACTERS))
 
+## Troubleshooting
+
+### '-R' Syntax
+
+Common mistakes that can be made with the `-R` syntax:
+
+#### 1. Dynamic port forwarding request mismatch
+
+For each `-R` request, both the Pomerium server and the SSH client must agree
+whether that request should use dynamic port forwarding or not. This is
+controlled by the syntax of the `-R` argument:
+
+- Pomerium enables dynamic port-forwarding when the remote port is 0.
+- The SSH client enables dynamic port-forwarding when the local `host:port` half
+  of the `-R` argument is omitted.
+
+If the remote port is 0, but a local host:port is _also_ set, Pomerium will be
+expecting dynamic port-forwarding, but the local ssh client will not be. This
+will cause downstream clients (including internal health checks) to time
+out.<b>[^5]</b> The TUI will also display a warning with hints on how to fix the
+command:
+
+`ssh -R https-*:0:localhost:8080 example.com`
+![TUI Warning 1](./img/ssh/tui/out/tui_warning_logs_static.png)
+
+If the remote port is not 0, and the local host:port is omitted, then the local
+ssh client will be expecting dynamic port-forwarding, but Pomerium will not be.
+This will result in immediate downstream errors (not timeouts). The TUI will
+also display a similar warning:
+
+`ssh -R https-route.example.com:443 example.com`
+![TUI Warning 2](./img/ssh/tui/out/tui_warning_logs_dynamic.png)
+
+#### 2. Incorrect wildcard usage
+
+Wildcards (`*` and `?`) in the remote address are only functional when remote
+port 0 is also set. A request such as `-R *.example.com:443` will match a
+[Wildcard From Route](/docs/reference/routes/from#wildcard-from-routes) of the
+literal form `"https://*.example.com"`.
+
+When remote port 0 is set, `*` characters in these routes have no special
+meaning, and are considered to be part of the hostname.
+
+For example, the route `from: "https://*.example.com"`, would be matched by:
+
+- `-R *.example.com:0` (`*` matches the `*` in the from URL)
+- `-R ?.example.com:0` (`?` matches the `*` in the from URL)
+- `-R *.com:0` (`*` matches `*.example` in the from URL)
+
 ---
 
 <br />
@@ -292,3 +480,10 @@ can be found in the "Escape Characters" section of `man 1 ssh`.
     numbers" are generated to identify individual port-forward requests made by
     the client. These numbers show up in the TUI, and can be used in the OpenSSH
     escape console to revoke a port-forwarding rule at runtime.
+
+[^5]:
+    Depending on the upstream server and protocol, the channel may or may not be
+    held open until the timeout. It is normal to see `CLOSED` status with a
+    short duration in the TUI, yet the downstream client is stuck waiting. You
+    may also see a channel with `OPEN` status, which transitions to `CLOSED` at
+    the same time the downstream times out.
