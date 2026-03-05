@@ -40,7 +40,7 @@ The suite of Autocert settings listed below are supported only in [Pomerium Core
 
 :::
 
-## Autocert {#autocert}
+## Autocert \{#autocert}
 
 The **Autocert** setting enables Pomerium to automatically retrieve, manage, and renew public-facing TLS certificates from the [Autocert CA](#autocert-ca). Pomerium uses these certificates to secure Pomerium-managed route domains and the authenticate service. If you don't configure Autocert CA, Pomerium will use Let's Encrypt by default.
 
@@ -57,7 +57,7 @@ If you use Let's Encrypt as your CA, you agree to the [Let's Encrypt Subscriber 
 
 [letsencrypt]: https://letsencrypt.org/
 
-### How to configure {#autocert-how-to-configure}
+### How to configure \{#autocert-how-to-configure}
 
 <Tabs>
 <TabItem label="Core" value="Core">
@@ -66,7 +66,7 @@ If you use Let's Encrypt as your CA, you agree to the [Let's Encrypt Subscriber 
 | :------------------- | :------------------------ | :-------- | :----------- |
 | `autocert`           | `AUTOCERT`                | `boolean` | **optional** |
 
-#### Examples {#autocert-examples}
+#### Examples \{#autocert-examples}
 
 ```yaml
 autocert: true
@@ -82,7 +82,7 @@ AUTOCERT=TRUE
 </TabItem>
 </Tabs>
 
-## Autocert CA {#autocert-ca}
+## Autocert CA \{#autocert-ca}
 
 **Autocert CA** is the directory URL of the ACME CA to use when requesting certificates.
 
@@ -92,13 +92,13 @@ If set, Autocert CA will override the [**Autocert Use Staging**](/docs/reference
 
 :::
 
-### How to configure {#autocert-ca-how-to-configure}
+### How to configure \{#autocert-ca-how-to-configure}
 
 | **Config file keys** | **Environment variables** | **Type** | **Usage**    |
 | :------------------- | :------------------------ | :------- | :----------- |
 | `autocert_ca`        | `AUTOCERT_CA`             | `string` | **optional** |
 
-#### Examples {#autocert-ca-examples}
+#### Examples \{#autocert-ca-examples}
 
 ```yaml
 autocert_ca: https://acme.zerossl.com/v2/DV90
@@ -108,11 +108,11 @@ autocert_ca: https://acme.zerossl.com/v2/DV90
 AUTOCERT_CA=https://acme.zerossl.com/v2/DV90
 ```
 
-## Autocert Directory {#autocert-directory}
+## Autocert Directory \{#autocert-directory}
 
 **Autocert Directory** is the path where [Autocert](/docs/reference/autocert) stores X.509 certificate data.
 
-### How to configure {#autocert-directory-how-to-configure}
+### How to configure \{#autocert-directory-how-to-configure}
 
 <Tabs>
 <TabItem label="Core" value="Core">
@@ -125,7 +125,7 @@ AUTOCERT_CA=https://acme.zerossl.com/v2/DV90
 
 \*\* If you don't specify an Autocert directory, Pomerium will generate a directory by default based on your runtime environment. See [Defaults](#autocert-directory-defaults) for more information.
 
-#### Examples {#autocert-directory-examples}
+#### Examples \{#autocert-directory-examples}
 
 ##### S3 bucket
 
@@ -154,7 +154,7 @@ Credentials are sourced from [Google Application Default Credentials](https://cl
 </TabItem>
 </Tabs>
 
-### Defaults {#autocert-directory-defaults}
+### Defaults \{#autocert-directory-defaults}
 
 | **Default paths**                                                                                                           | **Value**                                                                                      |
 | :-------------------------------------------------------------------------------------------------------------------------- | :--------------------------------------------------------------------------------------------- |
@@ -163,11 +163,11 @@ Credentials are sourced from [Google Application Default Credentials](https://cl
 | XDG base directories                                                                                                        | [$XDG_DATA_HOME](https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html) |
 | Home directories                                                                                                            | `$HOME/.local/share/pomerium`                                                                  |
 
-## Autocert EAB Key ID {#autocert-eab-key-id}
+## Autocert EAB Key ID \{#autocert-eab-key-id}
 
 **Autocert EAB Key ID** is the key identifier when requesting a certificate from a CA with External Account Binding (EAB) enabled.
 
-### How to configure {#autocert-eab-key-id-how-to-configure}
+### How to configure \{#autocert-eab-key-id-how-to-configure}
 
 | **Config file keys**  | **Environment variables** | **Type** | **Usage**    |
 | :-------------------- | :------------------------ | :------- | :----------- |
@@ -175,7 +175,7 @@ Credentials are sourced from [Google Application Default Credentials](https://cl
 
 See [RFC8555-#7.3.4](https://datatracker.ietf.org/doc/html/rfc8555#section-7.3.4) for more information.
 
-#### Examples {#autocert-eab-key-id-examples}
+#### Examples \{#autocert-eab-key-id-examples}
 
 ```yaml
 autocert_eab_key_id: EAB_KID
@@ -185,19 +185,19 @@ autocert_eab_key_id: EAB_KID
 AUTOCERT_EAB_KEY_ID=EAB_KID
 ```
 
-## Autocert EAB MAC Key {#autocert-eab-mac-key}
+## Autocert EAB MAC Key \{#autocert-eab-mac-key}
 
 **Autocert EAB MAC Key** is the base64-URL-encoded secret key corresponding to the [Autocert EAB Key ID](/docs/reference/autocert).
 
 The Autocert EAB MAC Key setting is required when Autocert EAB Key ID is set.
 
-### How to configure {#autocert-eab-mac-key-how-to-configure}
+### How to configure \{#autocert-eab-mac-key-how-to-configure}
 
 | **Config file keys**   | **Environment variables** | **Type** | **Usage**    |
 | :--------------------- | :------------------------ | :------- | :----------- |
 | `autocert_eab_mac_key` | `AUTOCERT_EAB_MAC_KEY`    | `string` | **optional** |
 
-#### Examples {#autocert-eab-mac-key-examples}
+#### Examples \{#autocert-eab-mac-key-examples}
 
 ```yaml
 autocert_eab_key_id: base64-URL-encoded_secret_key
@@ -207,7 +207,7 @@ autocert_eab_key_id: base64-URL-encoded_secret_key
 AUTOCERT_EAB_KEY_ID=base64-URL-encoded_secret_key
 ```
 
-## Autocert Email {#autocert-email}
+## Autocert Email \{#autocert-email}
 
 **Autocert Email** is the email address to use when requesting certificates from an ACME CA or registering an ACME account.
 
@@ -217,13 +217,13 @@ The CA may contact you at this address when, for example, a certificate expires.
 
 :::
 
-### How to configure {#autocert-email-how-to-configure}
+### How to configure \{#autocert-email-how-to-configure}
 
 | **Config file keys** | **Environment variables** | **Type** | **Usage**    |
 | :------------------- | :------------------------ | :------- | :----------- |
 | `autocert_email`     | `AUTOCERT_EMAIL`          | `string` | **optional** |
 
-#### Examples {#autocert-email-examples}
+#### Examples \{#autocert-email-examples}
 
 ```yaml
 autocert_email: example@domain.com
@@ -233,7 +233,7 @@ autocert_email: example@domain.com
 AUTOCERT_EMAIL=example@domain.com
 ```
 
-## Autocert Must Staple {#autocert-must-staple}
+## Autocert Must Staple \{#autocert-must-staple}
 
 If true, **Autocert Must Staple** forces Autocert to request a certificate with the `status_request` extension (commonly called `Must-Staple`).
 
@@ -247,7 +247,7 @@ The Autocert Must Staple setting will only take effect when you request or renew
 
 :::
 
-### How to configure {#autocert-must-staple-how-to-configure}
+### How to configure \{#autocert-must-staple-how-to-configure}
 
 | **Config file keys**   | **Environment variables** | **Type**  | **Usage**    | **Default** |
 | :--------------------- | :------------------------ | :-------- | :----------- | :---------- |
@@ -255,7 +255,7 @@ The Autocert Must Staple setting will only take effect when you request or renew
 
 See [RFC7633](https://tools.ietf.org/html/rfc7633) for more information.
 
-#### Examples {#autocert-must-staple-examples}
+#### Examples \{#autocert-must-staple-examples}
 
 ```yaml
 autocert_must_staple: true
@@ -265,20 +265,20 @@ autocert_must_staple: true
 AUTOCERT_MUST_STAPLE=true
 ```
 
-## Autocert Trusted Certificate Authority {#autocert-trusted-certificate-authority}
+## Autocert Trusted Certificate Authority \{#autocert-trusted-certificate-authority}
 
 **Autocert Trusted Certificate Authority** is the X.509 CA (bundle) used when communicating with a CA supporting the ACME protocol.
 
 If not set, the system trusted roots will be used to verify TLS connections to the ACME CA.
 
-### How to configure {#autocert-trusted-certificate-authority-how-to-configure}
+### How to configure \{#autocert-trusted-certificate-authority-how-to-configure}
 
 | **Config file keys**       | **Environment variables**  | **Type** | **Usage**    |
 | :------------------------- | :------------------------- | :------- | :----------- |
 | `autocert_trusted_ca`      | `AUTOCERT_TRUSTED_CA`      | `string` | **optional** |
 | `autocert_trusted_ca_file` | `AUTOCERT_TRUSTED_CA_FILE` | `string` | **optional** |
 
-#### Examples {#autocert-trusted-certificate-authority-examples}
+#### Examples \{#autocert-trusted-certificate-authority-examples}
 
 ```yaml
 autocert_trusted_ca: base64-encoded-string
@@ -296,17 +296,17 @@ AUTOCERT_TRUSTED_CA=base64-encoded-string
 AUTOCERT_TRUSTED_CA_FILE=/relative/file/location
 ```
 
-## Autocert Use Staging {#autocert-use-staging}
+## Autocert Use Staging \{#autocert-use-staging}
 
 The **Autocert Use Staging** setting allows you to use Let's Encrypt's [staging environment](https://letsencrypt.org/docs/staging-environment/), which has more generous [usage limits](https://letsencrypt.org/docs/staging-environment/) than the production environment. If you're testing or using Autocert in development, you should use the staging environment so that you don't exceed Let's Encrypt's rate limits.
 
-### How to configure {#autocert-use-staging-how-to-configure}
+### How to configure \{#autocert-use-staging-how-to-configure}
 
 | **Config file keys**   | **Environment variables** | **Type**  | **Usage**    | **Default** |
 | :--------------------- | :------------------------ | :-------- | :----------- | :---------- |
 | `autocert_use_staging` | `AUTOCERT_USE_STAGING`    | `boolean` | **optional** | `false`     |
 
-#### Examples {#autocert-use-staging-examples}
+#### Examples \{#autocert-use-staging-examples}
 
 ```yaml
 autocert_use_staging: true

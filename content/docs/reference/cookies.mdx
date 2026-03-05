@@ -24,11 +24,11 @@ This reference covers all of Pomerium's **Cookies Settings**:
 - [Cookie SameSite](#cookie-samesite)
 - [Cookie Secret File](#cookie-secret-file)
 
-## Cookie Name {#cookie-name}
+## Cookie Name \{#cookie-name}
 
 **Cookie Name** sets the name of the session cookie sent to clients.
 
-### How to configure {#cookie-name-how-to-configure}
+### How to configure \{#cookie-name-how-to-configure}
 
 <Tabs>
 <TabItem value="Core" label="Core">
@@ -37,7 +37,7 @@ This reference covers all of Pomerium's **Cookies Settings**:
 | :------------------- | :------------------------ | :------- | :---------- |
 | `cookie_name`        | `COOKIE_NAME`             | `string` | `_pomerium` |
 
-#### Examples {#cookie-name-examples}
+#### Examples \{#cookie-name-examples}
 
 ```yaml
 cookie_name: cookie_name
@@ -57,7 +57,7 @@ COOKIE_NAME=cookie_name
 | :------------------------------------------------------ | :------- | :---------- |
 | `cookie.name`                                           | `string` | `_pomerium` |
 
-#### Examples {#cookie-name-examples}
+#### Examples \{#cookie-name-examples}
 
 ```yaml
 cookie:
@@ -67,11 +67,11 @@ cookie:
 </TabItem>
 </Tabs>
 
-## Cookie Secret {#cookie-secret}
+## Cookie Secret \{#cookie-secret}
 
 **Cookie Secret** is the secret used to encrypt and sign session cookies. If you don't provide a cookie secret, Pomerium will generate one for you.
 
-### How to configure {#cookie-secret-how-to-configure}
+### How to configure \{#cookie-secret-how-to-configure}
 
 <Tabs>
 <TabItem value="Core" label="Core">
@@ -80,7 +80,7 @@ cookie:
 | :------------------- | :------------------------ | :------- | :----------- |
 | `cookie_secret`      | `COOKIE_SECRET`           | `string` | **optional** |
 
-#### Examples {#cookie-secret-examples}
+#### Examples \{#cookie-secret-examples}
 
 Generate a random, base64-encoded key:
 
@@ -109,13 +109,13 @@ See Kubernetes [bootstrap secrets](/docs/deploy/k8s/configure#bootstrap-secrets)
 </TabItem>
 </Tabs>
 
-## Cookie Domain {#cookie-domain}
+## Cookie Domain \{#cookie-domain}
 
 **Cookie Domain** sets the scope of session cookies issued by Pomerium.
 
 If you specify the domain explicitly, then subdomains would also be included.
 
-### How to configure {#cookie-domain-how-to-configure}
+### How to configure \{#cookie-domain-how-to-configure}
 
 <Tabs>
 <TabItem value="Core" label="Core">
@@ -124,7 +124,7 @@ If you specify the domain explicitly, then subdomains would also be included.
 | :------------------- | :------------------------ | :------- | :----------- | :--------------------------- |
 | `cookie_domain`      | `COOKIE_DOMAIN`           | `string` | **optional** | The host that set the cookie |
 
-#### Examples {#cookie-domain-examples}
+#### Examples \{#cookie-domain-examples}
 
 ```yaml
 cookie_domain: localhost.pomerium.io
@@ -144,7 +144,7 @@ COOKIE_DOMAIN=localhost.pomerium.io
 | :------------------------------------------------------ | :------- | :----------- | :--------------------------- |
 | `cookie.domain`                                         | `string` | **optional** | The host that set the cookie |
 
-#### Examples {#cookie-domain-examples}
+#### Examples \{#cookie-domain-examples}
 
 ```yaml
 cookie:
@@ -154,7 +154,7 @@ cookie:
 </TabItem>
 </Tabs>
 
-## Cookie HTTP Only {#cookie-http-only}
+## Cookie HTTP Only \{#cookie-http-only}
 
 If true, **Cookie HTTP Only** forbids JavaScript from accessing the cookie.
 
@@ -178,7 +178,7 @@ The security implications of disabling HttpOnly far outweigh most convenience be
 
 :::
 
-### How to configure {#cookie-http-only-how-to-configure}
+### How to configure \{#cookie-http-only-how-to-configure}
 
 <Tabs>
 <TabItem value="Core" label="Core">
@@ -187,7 +187,7 @@ The security implications of disabling HttpOnly far outweigh most convenience be
 | :------------------- | :------------------------ | :-------- | :---------- |
 | `cookie_http_only`   | `COOKIE_HTTP_ONLY`        | `boolean` | `true`      |
 
-#### Examples {#cookie-http-only-examples}
+#### Examples \{#cookie-http-only-examples}
 
 ```yaml
 cookie_http_only: false
@@ -217,7 +217,7 @@ Configure **Cookie HTTP Only** with the **Javascript Security** toggle button in
 | :------------------------------------------------------ | :-------- | :---------- |
 | `cookie.httpOnly`                                       | `boolean` | `true`      |
 
-#### Examples {#cookie-http-only-examples}
+#### Examples \{#cookie-http-only-examples}
 
 ```yaml
 cookie:
@@ -227,13 +227,13 @@ cookie:
 </TabItem>
 </Tabs>
 
-## Cookie Expiration {#cookie-expiration}
+## Cookie Expiration \{#cookie-expiration}
 
 **Cookie Expiration** sets the lifetime of session cookies. After this interval, users must reauthenticate.
 
 Pomerium sets its own session timeout (14 hours by default) because it has no way to know if a user simply closed their browser or cleared their cookies. Without an expiration, the server would keep refreshing identity provider tokens for abandoned sessions indefinitely. The timeout acts as a garbage-collection mechanism so that unused session state is eventually cleaned up.
 
-### How to configure {#cookie-expiration-how-to-configure}
+### How to configure \{#cookie-expiration-how-to-configure}
 
 <Tabs>
 <TabItem value="Core" label="Core">
@@ -242,7 +242,7 @@ Pomerium sets its own session timeout (14 hours by default) because it has no wa
 | :------------------- | :------------------------ | :-------------------------------------------------------------------------------- | :---------- |
 | `cookie_expire`      | `COOKIE_EXPIRE`           | `string` ([Go Duration](https://golang.org/pkg/time/#Duration.String) formatting) | `14h`       |
 
-#### Examples {#cookie-expiration-examples}
+#### Examples \{#cookie-expiration-examples}
 
 ```yaml
 cookie_expire: 13h15m0.5s
@@ -266,7 +266,7 @@ Set **Cookie Expiration** in the Console: ![Setting the cookie expiration time i
 | :------------------------------------------------------ | :-------------------------------------------------------------------------------- | :---------- |
 | `cookie.expire`                                         | `string` ([Go Duration](https://golang.org/pkg/time/#Duration.String) formatting) | `14h`       |
 
-#### Examples {#cookie-expiration-examples}
+#### Examples \{#cookie-expiration-examples}
 
 ```yaml
 cookie:
@@ -276,11 +276,11 @@ cookie:
 </TabItem>
 </Tabs>
 
-## Cookie SameSite {#cookie-samesite}
+## Cookie SameSite \{#cookie-samesite}
 
 **Cookie SameSite** sets the [SameSite](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie#samesitesamesite-value) option for cookies, which determines whether or not a cookie is sent with cross-site requests.
 
-### How to configure {#cookie-samesite-how-to-configure}
+### How to configure \{#cookie-samesite-how-to-configure}
 
 <Tabs>
 <TabItem value="Core" label="Core">
@@ -289,7 +289,7 @@ cookie:
 | :------------------- | :------------------------ | :------- | :----------- | :---------------- | :------------------------------------------------------ |
 | `cookie_same_site`   | `COOKIE_SAME_SITE`        | `string` | **optional** | ` Lax` (if unset) | See [Cookie SameSite Options](#cookie-samesite-options) |
 
-#### Examples {#cookie-samesite-examples}
+#### Examples \{#cookie-samesite-examples}
 
 ```yaml
 cookie_same_site: Lax
@@ -317,7 +317,7 @@ See [Cookie SameSite Options](#cookie-samesite-options) for more information.
 | :------------------------------------------------------ | :------- | :----------- | :---------------- | :------------------------------------------------------ |
 | `cookie.sameSite`                                       | `string` | **optional** | ` Lax` (if unset) | See [Cookie SameSite Options](#cookie-samesite-options) |
 
-#### Examples {#cookie-samesite-examples}
+#### Examples \{#cookie-samesite-examples}
 
 ```yaml
 cookie:
@@ -335,11 +335,11 @@ cookie:
 | `Strict`      | The browser sends the cookie only for same-site requests, that is, requests originating from the same site that set the cookie.                                                                                     |
 | `None`        | The browser sends the cookie with both cross-site and same-site requests. If you set `SameSite=none`, the cookie must be served over HTTPS.                                                                         |
 
-## Cookie Secret File {#cookie-secret-file}
+## Cookie Secret File \{#cookie-secret-file}
 
 **Cookie Secret File** sets the path to the file containing a secret used to encrypt and sign session cookies.
 
-### How to configure {#cookie-secret-file-how-to-configure}
+### How to configure \{#cookie-secret-file-how-to-configure}
 
 <Tabs>
 <TabItem value="Core" label="Core">
@@ -348,7 +348,7 @@ cookie:
 | :------------------- | :------------------------ | :------- | :------------------------------- |
 | `cookie_secret_file` | `COOKIE_SECRET_FILE`      | `string` | **required** (for proxy service) |
 
-#### Examples {#cookie-secret-file-examples}
+#### Examples \{#cookie-secret-file-examples}
 
 Generate a random, base64-encoded key:
 

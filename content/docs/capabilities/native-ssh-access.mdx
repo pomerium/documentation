@@ -18,8 +18,8 @@ keywords:
   ]
 ---
 
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
+import TabItem from "@theme/TabItem";
+import Tabs from "@theme/Tabs";
 
 # Native SSH Access
 
@@ -35,12 +35,12 @@ Upstream SSH servers are added as standard Pomerium routes using the `ssh://` pr
 
 ```yaml
 routes:
-  - from: 'ssh://route1'
-    to: 'ssh://upstream-host-1:22'
+  - from: "ssh://route1"
+    to: "ssh://upstream-host-1:22"
     policy:
       # ...
-  - from: 'ssh://route2'
-    to: 'ssh://upstream-host-2:22'
+  - from: "ssh://route2"
+    to: "ssh://upstream-host-2:22"
     policy:
       # ...
 ```
@@ -134,11 +134,11 @@ Add SSH configuration to your `config.yaml`:
 
 ```yaml title="config.yaml"
 ssh_address: 0.0.0.0:22 # if port 22 is already in use by sshd, choose a different port
-ssh_user_ca_key_file: '/path/to/pomerium_user_ca_key'
+ssh_user_ca_key_file: "/path/to/pomerium_user_ca_key"
 ssh_host_key_files:
-  - '/path/to/pomerium_ssh_host_ed25519_key'
-  - '/path/to/pomerium_ssh_host_rsa_key'
-  - '/path/to/pomerium_ssh_host_ecdsa_key'
+  - "/path/to/pomerium_ssh_host_ed25519_key"
+  - "/path/to/pomerium_ssh_host_rsa_key"
+  - "/path/to/pomerium_ssh_host_ecdsa_key"
 ```
 
 </TabItem>
@@ -231,13 +231,8 @@ Pomerium SSH routes use the syntax `user@route@pomerium`, where:
 3. Complete authentication in your browser
 4. Return to terminal and the connection completes successfully, as long as you meet the configured Pomerium policy requirements for this route.
 
-<iframe
-  width="100%"
-  height="415"
-  src="https://www.youtube.com/embed/5Gt7u8szwac"
-  title="Native SSH Access with Pomerium"
-  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-  allowfullscreen></iframe>
+{/* prettier-ignore */}
+<iframe width="100%" height="415" src="https://www.youtube.com/embed/5Gt7u8szwac" title="Native SSH Access with Pomerium" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
 
 This authentication flow creates a Client binding ([See client binding](https://docs.pomerium.com/docs/internals/client-binding)) for your ssh key that is associated to your Oauth user. There is no limit on ssh keys per user, but only one user per ssh key.
 
@@ -280,13 +275,13 @@ This feature is disabled by default, and can be enabled using a runtime flag ([s
 
 ## Configuration Reference
 
-| Setting | Description |
-| --- | --- |
-| `ssh_address` | Address and port to listen for SSH connections on (e.g. `0.0.0.0:22`) |
-| `ssh_user_ca_key` | Private key for signing SSH certificates (if no ssh_user_ca_key_file is provided) |
-| `ssh_user_ca_key_file` | Path to the User CA private key file (if no ssh_user_ca_key is provided) |
-| `ssh_host_keys` | List of SSH private key files to use as Pomerium's host keys |
-| `ssh_host_key_files` | List of SSH private keys to use as Pomerium's host keys |
+| Setting                | Description                                                                       |
+| ---------------------- | --------------------------------------------------------------------------------- |
+| `ssh_address`          | Address and port to listen for SSH connections on (e.g. `0.0.0.0:22`)             |
+| `ssh_user_ca_key`      | Private key for signing SSH certificates (if no ssh_user_ca_key_file is provided) |
+| `ssh_user_ca_key_file` | Path to the User CA private key file (if no ssh_user_ca_key is provided)          |
+| `ssh_host_keys`        | List of SSH private key files to use as Pomerium's host keys                      |
+| `ssh_host_key_files`   | List of SSH private keys to use as Pomerium's host keys                           |
 
 ### SSH Route Configuration
 
@@ -303,21 +298,21 @@ routes:
             - groups:
                 has: developers
             - ssh_publickey:
-                - 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIeAQ7VbiYJdPaxsMYTW/q5QpqtyHMtHHRBUJOcQMaLE key-1'
-                - 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPzK2WQZ0NU52W8Bk/8po+4V4oUEdCklf3GtQmiYQB/9 key-2'
+                - "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIeAQ7VbiYJdPaxsMYTW/q5QpqtyHMtHHRBUJOcQMaLE key-1"
+                - "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPzK2WQZ0NU52W8Bk/8po+4V4oUEdCklf3GtQmiYQB/9 key-2"
 ```
 
 ### SSH Policy Criteria
 
 The following SSH-specific PPL criteria are available:
 
-| Criterion Name | Data Format | Description |
-| --- | --- | --- |
-| `ssh_publickey` | String or String List | Matches the client's SSH public key (authorized_keys format)<br/>(ex: `"ssh-ed25519 AAAA..."`) |
-| `ssh_ca` | String or String List | Enforces that the client's SSH public key is a certificate-key signed by this SSH public key (authorized_keys format). If a list of public keys is configured, the client's SSH public key can be signed by any of them. <br/>(ex: `"ssh-ed25519 AAAA..."`) |
-| `ssh_username` | [String Matcher] | Matches the username requested by the client <br/> (ex: `"ubuntu"` or `["user1", "user2"]`) |
-| `ssh_username_matches_claim` | String | Enforces that the username requested by the client is present within a list of allowed names, obtained from this OAuth token claim <br/>(ex: `"allowed_usernames"`) |
-| `ssh_username_matches_email` | Anything. Typically `true`. | Enforces that the username requested by the client exactly matches the user's email with the '@' and domain omitted <br/>(ex: the email `"bobby@gmail.com"` matches the username `"bobby"`) |
+| Criterion Name               | Data Format                 | Description                                                                                                                                                                                                                                                 |
+| ---------------------------- | --------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `ssh_publickey`              | String or String List       | Matches the client's SSH public key (authorized_keys format)<br/>(ex: `"ssh-ed25519 AAAA..."`)                                                                                                                                                              |
+| `ssh_ca`                     | String or String List       | Enforces that the client's SSH public key is a certificate-key signed by this SSH public key (authorized_keys format). If a list of public keys is configured, the client's SSH public key can be signed by any of them. <br/>(ex: `"ssh-ed25519 AAAA..."`) |
+| `ssh_username`               | [String Matcher]            | Matches the username requested by the client <br/> (ex: `"ubuntu"` or `["user1", "user2"]`)                                                                                                                                                                 |
+| `ssh_username_matches_claim` | String                      | Enforces that the username requested by the client is present within a list of allowed names, obtained from this OAuth token claim <br/>(ex: `"allowed_usernames"`)                                                                                         |
+| `ssh_username_matches_email` | Anything. Typically `true`. | Enforces that the username requested by the client exactly matches the user's email with the '@' and domain omitted <br/>(ex: the email `"bobby@gmail.com"` matches the username `"bobby"`)                                                                 |
 
 :::note Policy applicability on SSH
 
@@ -399,7 +394,7 @@ routes:
       - allow:
           and:
             - email:
-                ends_with: '@example.com'
+                ends_with: "@example.com"
             - groups:
                 has: sre-team
             - day_of_week:

@@ -21,10 +21,11 @@ keywords:
   - sidecar
 ---
 
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
-import GoApp from '/content/examples/go-sdk/go-app.md';
-import ExpressApp from '/content/examples/js-sdk/express-server.md';
+import TabItem from "@theme/TabItem";
+import Tabs from "@theme/Tabs";
+
+import GoApp from "/content/examples/go-sdk/go-app.md";
+import ExpressApp from "/content/examples/js-sdk/express-server.md";
 
 <iframe
   width="100%"
@@ -33,7 +34,8 @@ import ExpressApp from '/content/examples/js-sdk/express-server.md';
   title="YouTube video player"
   frameborder="0"
   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-  allowfullscreen></iframe>
+  allowfullscreen
+></iframe>
 
 Pomerium uses JSON Web Tokens (JWTs) to help your upstream services verify a user's identity and additional context (like group membership) at the **application layer**. In a zero trust environment, verifying that **both** the client and server are who they say they are is crucial. Pomerium handles user authentication, then mints a **signed JWT** for every verified and authorized request.
 
@@ -102,7 +104,7 @@ Pick the key matching the `kid` claim in the JWT header to verify its signature.
 
 ## Four Approaches to JWT Validation
 
-### 1. Manual Verification {#manual-verification}
+### 1. Manual Verification \{#manual-verification}
 
 Useful for learning or debugging:
 
@@ -167,7 +169,7 @@ If you can't modify your app's code, run a [Envoy](https://www.envoyproxy.io/) s
 http_filters:
   - name: envoy.filters.http.jwt_authn
     typed_config:
-      '@type': type.googleapis.com/envoy.extensions.filters.http.jwt_authn.v3.JwtAuthentication
+      "@type": type.googleapis.com/envoy.extensions.filters.http.jwt_authn.v3.JwtAuthentication
       providers:
         pomerium:
           issuer: myapp.localhost.pomerium.io
