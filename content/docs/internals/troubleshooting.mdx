@@ -16,9 +16,10 @@ keywords:
   ]
 ---
 
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
-import GenerateRecoveryToken from '@site/content/docs/admonitions/_generate-recovery-token.md';
+import GenerateRecoveryToken from "@site/content/docs/admonitions/_generate-recovery-token.md";
+
+import TabItem from "@theme/TabItem";
+import Tabs from "@theme/Tabs";
 
 ## Pomerium Zero
 
@@ -428,9 +429,9 @@ routes:
     allow_any_authenticated_user: true
     cors_allow_preflight: true
     set_response_headers:
-      'Access-Control-Allow-Credentials': 'true'
-      'Access-Control-Allow-Origin': 'https://app.localhost.pomerium.io'
-      'Access-Control-Allow-Headers': 'X-Pomerium-Authorization'
+      "Access-Control-Allow-Credentials": "true"
+      "Access-Control-Allow-Origin": "https://app.localhost.pomerium.io"
+      "Access-Control-Allow-Headers": "X-Pomerium-Authorization"
   - from: https://app.localhost.pomerium.io
     to: http://app:8000
     allow_any_authenticated_user: true
@@ -464,14 +465,14 @@ func main() {
 
 ```javascript
 (async () => {
-  const result = await fetch('https://api.localhost.pomerium.io', {
-    method: 'POST',
+  const result = await fetch("https://api.localhost.pomerium.io", {
+    method: "POST",
     headers: {
-      Accept: 'application/json',
+      Accept: "application/json",
     },
   });
   const json = await result.json();
-  console.log('RESULT', json);
+  console.log("RESULT", json);
 })();
 ```
 
@@ -509,9 +510,9 @@ services:
 
   app:
     image: golang:latest
-    command: ['go', 'run', '.']
+    command: ["go", "run", "."]
     environment:
-      GO111MODULE: 'off'
+      GO111MODULE: "off"
     volumes:
       - ./app.go:/go/app.go:ro
       - ./index.html:/go/index.html:ro
@@ -519,9 +520,9 @@ services:
 
   api:
     image: golang:latest
-    command: ['go', 'run', '.']
+    command: ["go", "run", "."]
     environment:
-      GO111MODULE: 'off'
+      GO111MODULE: "off"
     volumes:
       - ./api.go:/go/api.go:ro
 ```
@@ -563,17 +564,17 @@ cookie_http_only: false
 
 ```javascript
 (async () => {
-  const result = await fetch('https://api.localhost.pomerium.io', {
-    method: 'POST',
+  const result = await fetch("https://api.localhost.pomerium.io", {
+    method: "POST",
     headers: {
-      Accept: 'application/json',
-      'X-Pomerium-Authorization': document.cookie.substring(
-        document.cookie.indexOf('=') + 1,
+      Accept: "application/json",
+      "X-Pomerium-Authorization": document.cookie.substring(
+        document.cookie.indexOf("=") + 1,
       ),
     },
   });
   const json = await result.json();
-  console.log('RESULT', json);
+  console.log("RESULT", json);
 })();
 ```
 
@@ -591,15 +592,15 @@ In this example, you can set `cookie_domain: '.localhost.pomerium.io'` to share 
 
 ```javascript
 (async () => {
-  const result = await fetch('https://api.localhost.pomerium.io', {
-    method: 'POST',
+  const result = await fetch("https://api.localhost.pomerium.io", {
+    method: "POST",
     headers: {
-      Accept: 'application/json',
+      Accept: "application/json",
     },
-    credentials: 'include',
+    credentials: "include",
   });
   const json = await result.json();
-  console.log('RESULT', json);
+  console.log("RESULT", json);
 })();
 ```
 
@@ -616,9 +617,9 @@ routes:
     allow_any_authenticated_user: true
     cors_allow_preflight: true
     set_response_headers:
-      'Access-Control-Allow-Credentials': 'true'
-      'Access-Control-Allow-Origin': 'https://app.localhost.pomerium.io'
-      'Access-Control-Allow-Headers': 'X-Pomerium-Authorization'
+      "Access-Control-Allow-Credentials": "true"
+      "Access-Control-Allow-Origin": "https://app.localhost.pomerium.io"
+      "Access-Control-Allow-Headers": "X-Pomerium-Authorization"
   - from: https://app.localhost.pomerium.io
     to: http://app:8000
     allow_any_authenticated_user: true
