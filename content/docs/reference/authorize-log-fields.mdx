@@ -8,8 +8,12 @@ pagination_next: null
 toc_max_heading_level: 2
 ---
 
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
+import TabItem from "@theme/TabItem";
+import Tabs from "@theme/Tabs";
+
+import CoreConfiguration from "../../../src/components/CoreConfiguration";
+import EnterpriseConfiguration from "../../../src/components/EnterpriseConfiguration";
+import KubernetesConfigureTable from "../../../src/components/KubernetesConfigureTable";
 
 # Authorize Log Fields
 
@@ -24,9 +28,12 @@ The default log fields should be appropriate for most deployments.
 <Tabs>
 <TabItem label="Core" value="Core">
 
-| **Config file key** | **Environment variable** | **Type** | **Default** |
-| :-- | :-- | :-- | :-- |
-| `authorize_log_fields` | `AUTHORIZE_LOG_FIELDS` | Array of strings | See [Authorize Fields and Defaults](#authorize-log-fields-and-defaults) |
+<CoreConfiguration name="authorize_log_fields" resource="settings" type="StringList" 
+  defaultValue={
+    <>
+      See <a href="#authorize-fields-and-defaults">Authorize Fields and Defaults</a>
+    </>
+  } >
 
 ### Examples
 
@@ -64,8 +71,12 @@ authorize_log_fields:
 AUTHORIZE_LOG_FIELDS=headers.cookie,headers.content-type
 ```
 
+</CoreConfiguration>
+
 </TabItem>
 <TabItem label="Enterprise" value="Enterprise">
+
+<EnterpriseConfiguration name="authorize_log_fields" resource="settings">
 
 Configure **Authorize Log Fields** in the Console:
 
@@ -75,12 +86,14 @@ Add **Custom Headers** in the Console:
 
 ![Add custom headers in the Console](./img/http-logs/authorize-custom-headers.gif)
 
+</EnterpriseConfiguration>
+
 </TabItem>
 <TabItem label="Kubernetes" value="Kubernetes">
 
-| **[Parameter name](/docs/deploy/k8s/reference#spec)** | **Type** | **Default** |
-| :-- | :-- | :-- |
-| `authorizeLogFields` | Array of strings | See [Authorize Fields and Defaults](#authorize-log-fields-and-defaults) |
+| **[Parameter name](/docs/deploy/k8s/reference#spec)** | **Type**         | **Default**                                                             |
+| :---------------------------------------------------- | :--------------- | :---------------------------------------------------------------------- |
+| `authorizeLogFields`                                  | Array of strings | See [Authorize Fields and Defaults](#authorize-log-fields-and-defaults) |
 
 ### Examples
 
@@ -92,50 +105,37 @@ authorizeLogFields:
 ```
 
 </TabItem>
-<TabItem label="Enterprise via Terraform" value="Enterprise via Terraform">
-
-| **[Parameter name](https://registry.terraform.io/providers/pomerium/pomerium/latest/docs/resources/settings)** | **Type** | **Default** |
-| :-- | :-- | :-- |
-| `authorize_log_fields` | Set of string | See [Authorize Fields and Defaults](#authorize-log-fields-and-defaults) |
-
-### Examples
-
-```hcl
-authorize_log_fields = ["request-id", "path", "ip"]
-```
-
-</TabItem>
 </Tabs>
 
 ## Authorize log fields and defaults
 
 The table below lists all available authorize log fields:
 
-| **Field name** | **Description** | **Default field** |
-| :-- | :-- | :-- |
-| `body` | The HTTP request body. Only available for protocols with request content inspection such as MCP. | No |
-| `check-request-id` | The request ID of the gRPC check call | Yes |
-| `email` | The logged-in user's email address | Yes |
-| `headers` | The complete set of HTTP request headers | No |
-| [`headers.{CustomHeaderName}`](#log-custom-headers-fields) | An HTTP Request Header identified by the `HeaderName` | No |
-| `host` | The HTTP request `:authority` or `Host` header value. Can be a domain name or IP address and may contain a port number (for example, `www.example.com`) | Yes |
-| `id-token` | The user's ID token | No |
-| `id-token-claims` | The user's ID token claims | No |
-| `impersonate-email` | If [impersonating](/docs/capabilities/impersonation), the impersonated email | Yes |
-| `impersonate-session-id` | If [impersonating](/docs/capabilities/impersonation), the impersonated session ID | Yes |
-| `impersonate-user-id` | If [impersonating](/docs/capabilities/impersonation), the impersonated user ID | Yes |
-| `ip` | The IP address of the direct downstream client. If Pomerium is deployed behind a load balancer or other proxy, this will not be the IP address of the end user. | Yes |
-| `mcp-method` | The MCP method being called (e.g., `tools/call`, `tools/list`) | No |
-| `mcp-tool` | The MCP tool name for `tools/call` requests | No |
-| `mcp-tool-parameters` | The tool call parameters as a JSON object for `tools/call` requests | No |
-| `method` | The HTTP request method, such as `GET`, `POST`, or `PUT` | Yes |
-| `path` | The HTTP request path (for example, `/some/path`) | Yes |
-| `query` | The HTTP request query (for example, `?test=one&other=13`) | No |
-| `removed-groups-count` | The number of groups removed during [JWT groups filtering](/docs/reference/jwt-groups-filter) | Yes |
-| `request-id` | The request's unique identifier as assigned by Pomerium | Yes |
-| `service-account-id` | if using a service account, the service account ID | Yes |
-| `session-id` | the session ID | Yes |
-| `user` | The user's ID | Yes |
+| **Field name**                                             | **Description**                                                                                                                                                 | **Default field** |
+| :--------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------- | :---------------- |
+| `body`                                                     | The HTTP request body. Only available for protocols with request content inspection such as MCP.                                                                | No                |
+| `check-request-id`                                         | The request ID of the gRPC check call                                                                                                                           | Yes               |
+| `email`                                                    | The logged-in user's email address                                                                                                                              | Yes               |
+| `headers`                                                  | The complete set of HTTP request headers                                                                                                                        | No                |
+| [`headers.{CustomHeaderName}`](#log-custom-headers-fields) | An HTTP Request Header identified by the `HeaderName`                                                                                                           | No                |
+| `host`                                                     | The HTTP request `:authority` or `Host` header value. Can be a domain name or IP address and may contain a port number (for example, `www.example.com`)         | Yes               |
+| `id-token`                                                 | The user's ID token                                                                                                                                             | No                |
+| `id-token-claims`                                          | The user's ID token claims                                                                                                                                      | No                |
+| `impersonate-email`                                        | If [impersonating](/docs/capabilities/impersonation), the impersonated email                                                                                    | Yes               |
+| `impersonate-session-id`                                   | If [impersonating](/docs/capabilities/impersonation), the impersonated session ID                                                                               | Yes               |
+| `impersonate-user-id`                                      | If [impersonating](/docs/capabilities/impersonation), the impersonated user ID                                                                                  | Yes               |
+| `ip`                                                       | The IP address of the direct downstream client. If Pomerium is deployed behind a load balancer or other proxy, this will not be the IP address of the end user. | Yes               |
+| `mcp-method`                                               | The MCP method being called (e.g., `tools/call`, `tools/list`)                                                                                                  | No                |
+| `mcp-tool`                                                 | The MCP tool name for `tools/call` requests                                                                                                                     | No                |
+| `mcp-tool-parameters`                                      | The tool call parameters as a JSON object for `tools/call` requests                                                                                             | No                |
+| `method`                                                   | The HTTP request method, such as `GET`, `POST`, or `PUT`                                                                                                        | Yes               |
+| `path`                                                     | The HTTP request path (for example, `/some/path`)                                                                                                               | Yes               |
+| `query`                                                    | The HTTP request query (for example, `?test=one&other=13`)                                                                                                      | No                |
+| `removed-groups-count`                                     | The number of groups removed during [JWT groups filtering](/docs/reference/jwt-groups-filter)                                                                   | Yes               |
+| `request-id`                                               | The request's unique identifier as assigned by Pomerium                                                                                                         | Yes               |
+| `service-account-id`                                       | if using a service account, the service account ID                                                                                                              | Yes               |
+| `session-id`                                               | the session ID                                                                                                                                                  | Yes               |
+| `user`                                                     | The user's ID                                                                                                                                                   | Yes               |
 
 :::danger
 

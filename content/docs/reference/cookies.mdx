@@ -7,8 +7,10 @@ pagination_prev: null
 pagination_next: null
 ---
 
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
+import TabItem from "@theme/TabItem";
+import Tabs from "@theme/Tabs";
+
+import EnterpriseConfiguration from "../../../src/components/EnterpriseConfiguration";
 
 # Cookies Settings
 
@@ -47,34 +49,19 @@ COOKIE_NAME=cookie_name
 
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
-
-`cookie_name` is a bootstrap configuration setting and is not configurable in the Console.
-
+<EnterpriseConfiguration name="cookie_name" resource="settings" via={["terraform"]}/>
 </TabItem>
 <TabItem value="Kubernetes" label="Kubernetes">
 
 | **[Parameter name](/docs/deploy/k8s/reference#cookie)** | **Type** | **Default** |
-| :-- | :-- | :-- |
-| `cookie.name` | `string` | `_pomerium` |
+| :------------------------------------------------------ | :------- | :---------- |
+| `cookie.name`                                           | `string` | `_pomerium` |
 
 #### Examples \{#cookie-name-examples}
 
 ```yaml
 cookie:
   name: cookie_name
-```
-
-</TabItem>
-<TabItem value="Enterprise via Terraform" label="Enterprise via Terraform">
-
-| **[Parameter name](/docs/deploy/k8s/reference#cookie)** | **Type** | **Default** |
-| :-- | :-- | :-- |
-| `cookie_name` | `string` | `_pomerium` |
-
-#### Examples \{#cookie-name-examples}
-
-```hcl
-cookie_name = "cookie_name"
 ```
 
 </TabItem>
@@ -113,26 +100,11 @@ COOKIE_SECRET=tdkuWzUelRukP/6VYzopfh6kis7y5u5Ldl3MrIq9ZR0=
 
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
-
-`cookie_secret` is a bootstrap configuration setting and is not configurable in the Console.
-
+<EnterpriseConfiguration name="cookie_secret" resource="settings" via={["terraform"]}/>
 </TabItem>
 <TabItem value="Kubernetes" label="Kubernetes">
 
 See Kubernetes [bootstrap secrets](/docs/deploy/k8s/configure#bootstrap-secrets) for more information.
-
-</TabItem>
-<TabItem value="Enterprise via Terraform" label="Enterprise via Terraform">
-
-| **[Parameter name](https://registry.terraform.io/providers/pomerium/pomerium/latest/docs/resources/settings)** | **Type** | **Usage** |
-| :-- | :-- | :-- |
-| `cookie_secret` | `String` | **optional** |
-
-#### Examples \{#cookie-name-examples}
-
-```hcl
-cookie_secret = "tdkuWzUelRukP/6VYzopfh6kis7y5u5Ldl3MrIq9ZR0="
-```
 
 </TabItem>
 </Tabs>
@@ -148,9 +120,9 @@ If you specify the domain explicitly, then subdomains would also be included.
 <Tabs>
 <TabItem value="Core" label="Core">
 
-| **Config file keys** | **Environment variables** | **Type** | **Usage** | **Default** |
-| :-- | :-- | :-- | :-- | :-- |
-| `cookie_domain` | `COOKIE_DOMAIN` | `string` | **optional** | The host that set the cookie |
+| **Config file keys** | **Environment variables** | **Type** | **Usage**    | **Default**                  |
+| :------------------- | :------------------------ | :------- | :----------- | :--------------------------- |
+| `cookie_domain`      | `COOKIE_DOMAIN`           | `string` | **optional** | The host that set the cookie |
 
 #### Examples \{#cookie-domain-examples}
 
@@ -164,34 +136,19 @@ COOKIE_DOMAIN=localhost.pomerium.io
 
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
-
-`cookie_domain` is a bootstrap configuration setting and is not configurable in the Console.
-
+<EnterpriseConfiguration name="cookie_domain" resource="settings" via={["terraform"]}/>
 </TabItem>
 <TabItem value="Kubernetes" label="Kubernetes">
 
-| **[Parameter name](/docs/deploy/k8s/reference#cookie)** | **Type** | **Usage** | **Default** |
-| :-- | :-- | :-- | :-- |
-| `cookie.domain` | `string` | **optional** | The host that set the cookie |
+| **[Parameter name](/docs/deploy/k8s/reference#cookie)** | **Type** | **Usage**    | **Default**                  |
+| :------------------------------------------------------ | :------- | :----------- | :--------------------------- |
+| `cookie.domain`                                         | `string` | **optional** | The host that set the cookie |
 
 #### Examples \{#cookie-domain-examples}
 
 ```yaml
 cookie:
   domain: localhost.pomerium.io
-```
-
-</TabItem>
-<TabItem value="Enterprise via Terraform" label="Enterprise via Terraform">
-
-| **[Parameter name](/docs/deploy/k8s/reference#cookie)** | **Type** | **Usage** | **Default** |
-| :-- | :-- | :-- | :-- |
-| `cookie_domain` | `String` | **optional** | The host that set the cookie |
-
-#### Examples \{#cookie-domain-examples}
-
-```hcl
-cookie_domain = "localhost.pomerium.io"
 ```
 
 </TabItem>
@@ -242,6 +199,7 @@ COOKIE_HTTP_ONLY=false
 
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
+<EnterpriseConfiguration name="cookie_http_only" resource="settings">
 
 Configure **Cookie HTTP Only** with the **Javascript Security** toggle button in the Console. The button has three states:
 
@@ -251,31 +209,19 @@ Configure **Cookie HTTP Only** with the **Javascript Security** toggle button in
 
 ![Configure Cookie HTTP only in the Console](./img/cookies/cookie-settings.png)
 
+</EnterpriseConfiguration>
 </TabItem>
 <TabItem value="Kubernetes" label="Kubernetes">
 
-| **[Parameter name](/docs/deploy/k8s/reference#cookie)** | **Type** | **Default** |
-| :-- | :-- | :-- |
-| `cookie.httpOnly` | `boolean` | `true` |
+| **[Parameter name](/docs/deploy/k8s/reference#cookie)** | **Type**  | **Default** |
+| :------------------------------------------------------ | :-------- | :---------- |
+| `cookie.httpOnly`                                       | `boolean` | `true`      |
 
 #### Examples \{#cookie-http-only-examples}
 
 ```yaml
 cookie:
   httpOnly: false
-```
-
-</TabItem>
-<TabItem value="Enterprise via Terraform" label="Enterprise via Terraform">
-
-| **[Parameter name](https://registry.terraform.io/providers/pomerium/pomerium/latest/docs/resources/settings)** | **Type** | **Default** |
-| :-- | :-- | :-- |
-| `cookie_http_only ` | `boolean` | `true` |
-
-#### Examples \{#cookie-http-only-examples}
-
-```hcl
-cookie_http_only = false
 ```
 
 </TabItem>
@@ -292,9 +238,9 @@ Pomerium sets its own session timeout (14 hours by default) because it has no wa
 <Tabs>
 <TabItem value="Core" label="Core">
 
-| **Config file keys** | **Environment variables** | **Type** | **Default** |
-| :-- | :-- | :-- | :-- |
-| `cookie_expire` | `COOKIE_EXPIRE` | `string` ([Go Duration](https://golang.org/pkg/time/#Duration.String) formatting) | `14h` |
+| **Config file keys** | **Environment variables** | **Type**                                                                          | **Default** |
+| :------------------- | :------------------------ | :-------------------------------------------------------------------------------- | :---------- |
+| `cookie_expire`      | `COOKIE_EXPIRE`           | `string` ([Go Duration](https://golang.org/pkg/time/#Duration.String) formatting) | `14h`       |
 
 #### Examples \{#cookie-expiration-examples}
 
@@ -308,34 +254,23 @@ COOKIE_EXPIRE=13h15m0.5s
 
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
+<EnterpriseConfiguration name="cookie_expire" resource="settings">
 
 Set **Cookie Expiration** in the Console: ![Setting the cookie expiration time in Enterprise Console](./img/cookies/cookies-expiration.png)
 
+</EnterpriseConfiguration>
 </TabItem>
 <TabItem value="Kubernetes" label="Kubernetes">
 
-| **[Parameter name](/docs/deploy/k8s/reference#cookie)** | **Type** | **Default** |
-| :-- | :-- | :-- |
-| `cookie.expire` | `string` ([Go Duration](https://golang.org/pkg/time/#Duration.String) formatting) | `14h` |
+| **[Parameter name](/docs/deploy/k8s/reference#cookie)** | **Type**                                                                          | **Default** |
+| :------------------------------------------------------ | :-------------------------------------------------------------------------------- | :---------- |
+| `cookie.expire`                                         | `string` ([Go Duration](https://golang.org/pkg/time/#Duration.String) formatting) | `14h`       |
 
 #### Examples \{#cookie-expiration-examples}
 
 ```yaml
 cookie:
   expire: 13h15m0.5s
-```
-
-</TabItem>
-<TabItem value="Enterprise via Terraform" label="Enterprise via Terraform">
-
-| **[Parameter name](https://registry.terraform.io/providers/pomerium/pomerium/latest/docs/resources/settings)** | **Type** | **Default** |
-| :-- | :-- | :-- |
-| `cookie_expire ` | `string` ([Go Duration](https://golang.org/pkg/time/#Duration.String) formatting) | `14h` |
-
-#### Examples \{#cookie-expiration-examples}
-
-```hcl
-cookie_expire = "13h15m0.5s"
 ```
 
 </TabItem>
@@ -350,9 +285,9 @@ cookie_expire = "13h15m0.5s"
 <Tabs>
 <TabItem value="Core" label="Core">
 
-| **Config file keys** | **Environment variables** | **Type** | **Usage** | **Default** | **Options** |
-| :-- | :-- | :-- | :-- | :-- | :-- |
-| `cookie_same_site` | `COOKIE_SAME_SITE` | `string` | **optional** | ` Lax` (if unset) | See [Cookie SameSite Options](#cookie-samesite-options) |
+| **Config file keys** | **Environment variables** | **Type** | **Usage**    | **Default**       | **Options**                                             |
+| :------------------- | :------------------------ | :------- | :----------- | :---------------- | :------------------------------------------------------ |
+| `cookie_same_site`   | `COOKIE_SAME_SITE`        | `string` | **optional** | ` Lax` (if unset) | See [Cookie SameSite Options](#cookie-samesite-options) |
 
 #### Examples \{#cookie-samesite-examples}
 
@@ -366,6 +301,7 @@ COOKIE_SAME_SITE=Strict
 
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
+<EnterpriseConfiguration name="cookie_same_site" resource="settings">
 
 Set the **Cookie SameSite** attribute in the Console:
 
@@ -373,12 +309,13 @@ Set the **Cookie SameSite** attribute in the Console:
 
 See [Cookie SameSite Options](#cookie-samesite-options) for more information.
 
+</EnterpriseConfiguration>
 </TabItem>
 <TabItem value="Kubernetes" label="Kubernetes">
 
-| **[Parameter name](/docs/deploy/k8s/reference#cookie)** | **Type** | **Usage** | **Default** | **Options** |
-| :-- | :-- | :-- | :-- | :-- |
-| `cookie.sameSite` | `string` | **optional** | ` Lax` (if unset) | See [Cookie SameSite Options](#cookie-samesite-options) |
+| **[Parameter name](/docs/deploy/k8s/reference#cookie)** | **Type** | **Usage**    | **Default**       | **Options**                                             |
+| :------------------------------------------------------ | :------- | :----------- | :---------------- | :------------------------------------------------------ |
+| `cookie.sameSite`                                       | `string` | **optional** | ` Lax` (if unset) | See [Cookie SameSite Options](#cookie-samesite-options) |
 
 #### Examples \{#cookie-samesite-examples}
 
@@ -388,28 +325,15 @@ cookie:
 ```
 
 </TabItem>
-<TabItem value="Enterprise via Terraform" label="Enterprise via Terraform">
-
-| **[Parameter name](https://registry.terraform.io/providers/pomerium/pomerium/latest/docs/resources/settings)** | **Type** | **Usage** | **Default** | **Options** |
-| :-- | :-- | :-- | :-- | :-- |
-| `cookie_same_site` | `String` | **optional** | ` Lax` (if unset) | See [Cookie SameSite Options](#cookie-samesite-options) |
-
-#### Examples \{#cookie-samesite-examples}
-
-```hcl
-cookie_same_site = "Lax"
-```
-
-</TabItem>
 </Tabs>
 
 ### Cookie SameSite options
 
-| **Attribute** | **Value** |
-| :-- | :-- |
-| `Lax` | The cookie is _not_ sent on cross-site requests, such as on requests to load images or frames, but is sent when a user is navigating to the origin site from an external site (for example, when following a link). |
-| `Strict` | The browser sends the cookie only for same-site requests, that is, requests originating from the same site that set the cookie. |
-| `None` | The browser sends the cookie with both cross-site and same-site requests. If you set `SameSite=none`, the cookie must be served over HTTPS. |
+| **Attribute** | **Value**                                                                                                                                                                                                           |
+| :------------ | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `Lax`         | The cookie is _not_ sent on cross-site requests, such as on requests to load images or frames, but is sent when a user is navigating to the origin site from an external site (for example, when following a link). |
+| `Strict`      | The browser sends the cookie only for same-site requests, that is, requests originating from the same site that set the cookie.                                                                                     |
+| `None`        | The browser sends the cookie with both cross-site and same-site requests. If you set `SameSite=none`, the cookie must be served over HTTPS.                                                                         |
 
 ## Cookie Secret File \{#cookie-secret-file}
 
@@ -420,9 +344,9 @@ cookie_same_site = "Lax"
 <Tabs>
 <TabItem value="Core" label="Core">
 
-| **Config file keys** | **Environment variables** | **Type** | **Usage** |
-| :-- | :-- | :-- | :-- |
-| `cookie_secret_file` | `COOKIE_SECRET_FILE` | `string` | **required** (for proxy service) |
+| **Config file keys** | **Environment variables** | **Type** | **Usage**                        |
+| :------------------- | :------------------------ | :------- | :------------------------------- |
+| `cookie_secret_file` | `COOKIE_SECRET_FILE`      | `string` | **required** (for proxy service) |
 
 #### Examples \{#cookie-secret-file-examples}
 
@@ -435,7 +359,7 @@ head -c32 /dev/urandom | base64
 Add the value to your configuration:
 
 ```yaml
-cookie_secret_file: '/run/secrets/POMERIUM_COOKIE_SECRET'
+cookie_secret_file: "/run/secrets/POMERIUM_COOKIE_SECRET"
 ```
 
 ```bash

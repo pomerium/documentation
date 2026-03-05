@@ -8,8 +8,10 @@ pagination_next: null
 toc_max_heading_level: 2
 ---
 
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
+import TabItem from "@theme/TabItem";
+import Tabs from "@theme/Tabs";
+
+import EnterpriseConfiguration from "../../../../src/components/EnterpriseConfiguration";
 
 # Path Rewriting Settings
 
@@ -67,6 +69,7 @@ prefix_rewrite: /
 
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
+<EnterpriseConfiguration name="prefix_rewrite" resource="route">
 
 Configure **Prefix Rewrite** in the Console:
 
@@ -78,32 +81,13 @@ Configure **Prefix Rewrite** in the Console:
 
 ![Set the prefix rewrite in path rewriting settings](../img/routes/path-rewrite/prefix-rewrite.png)
 
+</EnterpriseConfiguration>
 </TabItem>
 <TabItem value="Kubernetes" label="Kubernetes">
 
-| **[Annotation name](/docs/deploy/k8s/ingress#set-ingress-annotations)** | **Type** | **Usage** |
-| :-- | :-- | :-- |
-| `prefix_rewrite` | `string` | **optional** |
-
-</TabItem>
-<TabItem value="Enterprise via Terraform" label="Enterprise via Terraform">
-
-| **Parameter name** | **Type** | **Usage**    |
-| :----------------- | :------- | :----------- |
-| `prefix_rewrite`   | String   | **optional** |
-
-### Examples \{#examples-prefix-rewrite}
-
-```hcl
-resource "pomerium_route" "verify_route" {
-  name         = "verify-route"
-  namespace_id = pomerium_namespace.test_namespace.id
-  from         = "https://verify.localhost.pomerium.io"
-  to           = ["https://verify.pomerium.com"]
-  prefix = "/admin"
-  prefix_rewrite = "/"
-}
-```
+| **[Annotation name](/docs/deploy/k8s/ingress#set-ingress-annotations)** | **Type** | **Usage**    |
+| :---------------------------------------------------------------------- | :------- | :----------- |
+| `prefix_rewrite`                                                        | `string` | **optional** |
 
 </TabItem>
 </Tabs>
@@ -127,36 +111,23 @@ If **Regex Rewrite** or **Regex Rewrite Substitution** are set, the URL path wil
 ### Examples \{#examples-regex-rewrite}
 
 ```yaml
-regex_rewrite_pattern: '^/service/([^/]+)(/.*)$'
+regex_rewrite_pattern: "^/service/([^/]+)(/.*)$"
 regex_rewrite_substitution: "\\2/instance/\\1"
 ```
 
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
+<EnterpriseConfiguration name="host_path_regex_rewrite_pattern" resource="route">
 
 Set **Regex Rewrite** pattern and substitution in the Console:
 
 ![Set regex rewrite pattern and substitution in the console](../img/routes/regex/regex-rewrites.png)
 
+</EnterpriseConfiguration>
 </TabItem>
 <TabItem value="Kubernetes" label="Kubernetes">
 
 Kubernetes does not support **Regex Rewrite**
-
-</TabItem>
-<TabItem value="Enterprise via Terraform" label="Enterprise via Terraform">
-
-| **Parameter name**                      | **Type** | **Usage**    |
-| :-------------------------------------- | :------- | :----------- |
-| `host_path_regex_rewrite_pattern`       | String   | **optional** |
-| `host_path_regex_rewrite_substitution ` | String   | **optional** |
-
-### Examples \{#examples-regex-rewrite}
-
-```hcl
-host_path_regex_rewrite_pattern = "^/service/([^/]+)(/.*)$"
-host_path_regex_rewrite_substitution = "\\2/instance/\\1"
-```
 
 </TabItem>
 </Tabs>

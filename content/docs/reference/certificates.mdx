@@ -9,8 +9,10 @@ pagination_next: null
 toc_max_heading_level: 2
 ---
 
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
+import TabItem from "@theme/TabItem";
+import Tabs from "@theme/Tabs";
+
+import EnterpriseConfiguration from "../../../src/components/EnterpriseConfiguration";
 
 # Certificates Settings
 
@@ -44,11 +46,11 @@ Pomerium will check your system's trust/key store for valid certificates first. 
 <Tabs>
 <TabItem value="Core" label="Core">
 
-| **Config file keys** | **Environment variables** | **Type** | **Usage** |
-| :-- | :-- | :-- | :-- |
-| `certificates` | Not settable as environment variable | `string` (Array of relative file locations for multiple certificates) | **required** (if insecure not set) |
-| `certificate` and `certificate_key` | `CERTIFICATE` and `CERTIFICATE_KEY` | `string` (base64-encoded string) | **required** (if insecure not set) |
-| `certificate_file` and `certificate_key_file` | `CERTIFICATE_FILE` and `CERTIFICATE_KEY_FILE` | `string` (Relative file location for a single certificate) | **required** (if insecure not set) |
+| **Config file keys**                          | **Environment variables**                     | **Type**                                                              | **Usage**                          |
+| :-------------------------------------------- | :-------------------------------------------- | :-------------------------------------------------------------------- | :--------------------------------- |
+| `certificates`                                | Not settable as environment variable          | `string` (Array of relative file locations for multiple certificates) | **required** (if insecure not set) |
+| `certificate` and `certificate_key`           | `CERTIFICATE` and `CERTIFICATE_KEY`           | `string` (base64-encoded string)                                      | **required** (if insecure not set) |
+| `certificate_file` and `certificate_key_file` | `CERTIFICATE_FILE` and `CERTIFICATE_KEY_FILE` | `string` (Relative file location for a single certificate)            | **required** (if insecure not set) |
 
 ### Examples \{#certificates-examples}
 
@@ -57,24 +59,25 @@ Specify multiple certificates at once:
 ```yaml
 # Array of relative file locations for multiple certs
 certificates:
-  - cert: '$HOME/.acme.sh/authenticate.example.com_ecc/fullchain.cer'
-    key: '$HOME/.acme.sh/authenticate.example.com_ecc/authenticate.example.com.key'
-  - cert: '$HOME/.acme.sh/verify.example.com_ecc/fullchain.cer'
-    key: '$HOME/.acme.sh/verify.example.com_ecc/verify.example.com.key'
-  - cert: '$HOME/.acme.sh/prometheus.example.com_ecc/fullchain.cer'
-    key: '$HOME/.acme.sh/prometheus.example.com_ecc/prometheus.example.com.key'
+  - cert: "$HOME/.acme.sh/authenticate.example.com_ecc/fullchain.cer"
+    key: "$HOME/.acme.sh/authenticate.example.com_ecc/authenticate.example.com.key"
+  - cert: "$HOME/.acme.sh/verify.example.com_ecc/fullchain.cer"
+    key: "$HOME/.acme.sh/verify.example.com_ecc/verify.example.com.key"
+  - cert: "$HOME/.acme.sh/prometheus.example.com_ecc/fullchain.cer"
+    key: "$HOME/.acme.sh/prometheus.example.com_ecc/prometheus.example.com.key"
 ```
 
 Set a single certificate and key covering multiple domains and/or a wildcard subdomain:
 
 ```yaml
 # Relative file location for a single cert
-certificate_file: '$HOME/.acme.sh/*.example.com/fullchain.crt'
-certificate_key_file: '$HOME/.acme.sh/*.example.com/*.example.com.key'
+certificate_file: "$HOME/.acme.sh/*.example.com/fullchain.crt"
+certificate_key_file: "$HOME/.acme.sh/*.example.com/*.example.com.key"
 ```
 
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
+<EnterpriseConfiguration name="certificate" resource="key_pair">
 
 Add **Certificates** in the Enterprise Console:
 
@@ -84,6 +87,7 @@ View **Certificates**:
 
 ![See your Certificates in the Enterprise Console](./img/certificates/certs-console-list.png)
 
+</EnterpriseConfiguration>
 </TabItem>
 <TabItem value="Kubernetes" label="Kubernetes">
 
@@ -92,20 +96,6 @@ certificates: pomerium/wildcard-localhost
 ```
 
 See Kubernetes [TLS Certificates](/docs/deploy/k8s/ingress#tls-certificates) for more information.
-
-</TabItem>
-<TabItem value="Enterprise via Terraform" label="Enterprise via Terraform">
-
-```hcl
-resource "pomerium_key_pair" "wildcard-localhost" {
-  namespace_id = pomerium_namespace.test_namespace.id
-  name         = "wildcard-localhost-key-pair"
-  certificate  = file("wildcard.localhost.pomerium.io.pem")
-  key          = file("wildcard.localhost.pomerium.io-key.pem")
-}
-```
-
-See Pomerium Terraform Provider [pomerium_key_pair](https://registry.terraform.io/providers/pomerium/pomerium/latest/docs/resources/key_pair) for more information.
 
 </TabItem>
 
@@ -138,15 +128,15 @@ Be sure to include the intermediary certificate.
 <Tabs>
 <TabItem value="Core" label="Core">
 
-| **Config file keys** | **Environment variables** | **Type** | **Usage** |
-| :-- | :-- | :-- | :-- |
-| `certificate_authority` | `CERTIFICATE_AUTHORITY` | `string` | **optional** |
+| **Config file keys**         | **Environment variables**    | **Type** | **Usage**    |
+| :--------------------------- | :--------------------------- | :------- | :----------- |
+| `certificate_authority`      | `CERTIFICATE_AUTHORITY`      | `string` | **optional** |
 | `certificate_authority_file` | `CERTIFICATE_AUTHORITY_FILE` | `string` | **optional** |
 
 ### Examples \{#certificate-authority-examples}
 
 ```yaml
-certificate_authority: 'base64-encoded-string'
+certificate_authority: "base64-encoded-string"
 ```
 
 ```bash
@@ -155,30 +145,17 @@ CERTIFICATE_AUTHORITY_FILE=/relative/file/location
 
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
+<EnterpriseConfiguration name="certificate_authority" resource="settings">
 
 Configure **Certificate Authority** in the Enterprise Console:
 
 ![Set Certificate Authority in the Console](./img/certificates/cert-authority-console.png)
 
+</EnterpriseConfiguration>
 </TabItem>
 <TabItem value="Kubernetes" label="Kubernetes">
 
 Kubernetes does not support `certificate_authority`
-
-</TabItem>
-<TabItem label="Enterprise via Terraform" value="Enterprise via Terraform">
-
-| **[Parameter name](https://registry.terraform.io/providers/pomerium/pomerium/latest/docs/resources/settings)** | **Type** | **Usage** |
-| :-- | :-- | :-- |
-| `certificate_authority` | String | **optional** |
-| `certificate_authority_file` | String | **optional** |
-
-### Examples
-
-```hcl
-certificate_authority = "base64-encoded-string"
-certificate_authority_file = "/relative/file/location"
-```
 
 </TabItem>
 </Tabs>

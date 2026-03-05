@@ -8,8 +8,10 @@ pagination_next: null
 toc_max_heading_level: 2
 ---
 
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
+import TabItem from "@theme/TabItem";
+import Tabs from "@theme/Tabs";
+
+import EnterpriseConfiguration from "../../../../src/components/EnterpriseConfiguration";
 
 # Regex Priority Order
 
@@ -29,12 +31,13 @@ If **Regex Priority Order** is set, the route will only match incoming requests 
 ### Examples
 
 ```yaml
-regex: '^/(admin|superuser)/.*$'
+regex: "^/(admin|superuser)/.*$"
 regex_priority_order: 1
 ```
 
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
+<EnterpriseConfiguration name="regex_priority_order" resource="route">
 
 Set **Regex Priority Order** in the Console:
 
@@ -43,24 +46,11 @@ Set **Regex Priority Order** in the Console:
 
 ![Enter Regex Priority Order in the Console](../img/routes/regex/regex.png)
 
+</EnterpriseConfiguration>
 </TabItem>
 <TabItem value="Kubernetes" label="Kubernetes">
 
 Kubernetes does not support **Regex Priority Order**
-
-</TabItem>
-<TabItem value="Enterprise via Terraform" label="Enterprise via Terraform">
-
-| **Parameter name**     | **Type** | **Usage**    |
-| :--------------------- | :------- | :----------- |
-| `regex_priority_order` | Number   | **optional** |
-
-### Examples
-
-```hcl
-regex = "^/(admin|superuser)/.*$"
-regex_priority_order = 1
-```
 
 </TabItem>
 </Tabs>

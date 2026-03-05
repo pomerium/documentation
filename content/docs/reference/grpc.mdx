@@ -8,8 +8,10 @@ pagination_next: null
 toc_max_heading_level: 2
 ---
 
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
+import TabItem from "@theme/TabItem";
+import Tabs from "@theme/Tabs";
+
+import EnterpriseConfiguration from "../../../src/components/EnterpriseConfiguration";
 
 # gRPC Settings
 
@@ -33,9 +35,9 @@ These settings have no effect on gRPC traffic proxied on a regular Pomerium rout
 <Tabs>
 <TabItem value="Core" label="Core">
 
-| **Config file keys** | **Environment variables** | **Type** | **Default** |
-| :-- | :-- | :-- | :-- |
-| `grpc_address` | `GRPC_ADDRESS` | `string` | `:5443` in all-in-one mode <br/> `:443` in [split service mode] |
+| **Config file keys** | **Environment variables** | **Type** | **Default**                                                     |
+| :------------------- | :------------------------ | :------- | :-------------------------------------------------------------- |
+| `grpc_address`       | `GRPC_ADDRESS`            | `string` | `:5443` in all-in-one mode <br/> `:443` in [split service mode] |
 
 ### Examples \{#examples-grpc-address}
 
@@ -49,26 +51,11 @@ GRPC_ADDRESS=:8443
 
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
-
-`grpc_address` is a bootstrap configuration setting and is not configurable in the Console.
-
+<EnterpriseConfiguration name="grpc_address" resource="settings" via={["terraform"]}/>
 </TabItem>
 <TabItem value="Kubernetes" label="Kubernetes">
 
 **gRPC Address** is not customizable with Kubernetes
-
-</TabItem>
-<TabItem value="Enterprise via Terraform" label="Enterprise via Terraform">
-
-| **[Parameter name](https://registry.terraform.io/providers/pomerium/pomerium/latest/docs/resources/settings)** | **Type** | **Default** |
-| :-- | :-- | :-- |
-| `grpc_address` | String | `:5443` in all-in-one mode <br/> `:443` in [split service mode] |
-
-### Examples
-
-```hcl
-grpc_address = ":8443"
-```
 
 </TabItem>
 </Tabs>
@@ -82,9 +69,9 @@ grpc_address = ":8443"
 <Tabs>
 <TabItem value="Core" label="Core">
 
-| **Config file keys** | **Environment variables** | **Type** | **Default** |
-| :-- | :-- | :-- | :-- |
-| `grpc_client_timeout` | `GRPC_CLIENT_TIMEOUT` | `string` ([Go Duration](https://golang.org/pkg/time/#Duration.String) formatting) | `10s` |
+| **Config file keys**  | **Environment variables** | **Type**                                                                          | **Default** |
+| :-------------------- | :------------------------ | :-------------------------------------------------------------------------------- | :---------- |
+| `grpc_client_timeout` | `GRPC_CLIENT_TIMEOUT`     | `string` ([Go Duration](https://golang.org/pkg/time/#Duration.String) formatting) | `10s`       |
 
 ### Examples \{#examples-grpc-client-timeout}
 
@@ -118,9 +105,9 @@ Kubernetes does not support **gRPC Client Timeout**
 <Tabs>
 <TabItem value="Core" label="Core">
 
-| **Config file keys** | **Environment variables** | **Type** | **Default** |
-| :-- | :-- | :-- | :-- |
-| `grpc_insecure` | `GRPC_INSECURE` | `boolean` | `true` in all-in-one mode <br/> `false` in [split service mode] |
+| **Config file keys** | **Environment variables** | **Type**  | **Default**                                                     |
+| :------------------- | :------------------------ | :-------- | :-------------------------------------------------------------- |
+| `grpc_insecure`      | `GRPC_INSECURE`           | `boolean` | `true` in all-in-one mode <br/> `false` in [split service mode] |
 
 ### Examples \{#examples-grpc-insecure}
 
@@ -134,26 +121,11 @@ GRPC_INSECURE=false
 
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
-
-`grpc_insecure` is a bootstrap configuration setting and is not configurable in the Console.
-
+<EnterpriseConfiguration name="grpc_insecure" resource="settings" via={["terraform"]}/>
 </TabItem>
 <TabItem value="Kubernetes" label="Kubernetes">
 
 **gRPC Insecure** is not customizable in Kubernetes
-
-</TabItem>
-<TabItem value="Enterprise via Terraform" label="Enterprise via Terraform">
-
-| **[Parameter name](https://registry.terraform.io/providers/pomerium/pomerium/latest/docs/resources/settings)** | **Type** | **Default** |
-| :-- | :-- | :-- |
-| `grpc_insecure` | Boolean | `true` in all-in-one mode <br/> `false` in [split service mode] |
-
-### Examples
-
-```hcl
-grpc_insecure = false
-```
 
 </TabItem>
 </Tabs>

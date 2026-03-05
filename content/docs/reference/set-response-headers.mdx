@@ -9,8 +9,10 @@ pagination_next: null
 toc_max_heading_level: 2
 ---
 
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
+import TabItem from "@theme/TabItem";
+import Tabs from "@theme/Tabs";
+
+import EnterpriseConfiguration from "../../../src/components/EnterpriseConfiguration";
 
 # Set Response Headers
 
@@ -23,9 +25,9 @@ import TabItem from '@theme/TabItem';
 <Tabs>
 <TabItem value="Core" label="Core">
 
-| **Config file keys** | **Environment variables** | **Type** | **Default** |
-| :-- | :-- | :-- | :-- |
-| `set_response_headers` | `SET_RESPONSE_HEADERS` | `string` | see [Default headers](#default) |
+| **Config file keys**   | **Environment variables** | **Type** | **Default**                     |
+| :--------------------- | :------------------------ | :------- | :------------------------------ |
+| `set_response_headers` | `SET_RESPONSE_HEADERS`    | `string` | see [Default headers](#default) |
 
 ### Examples
 
@@ -48,36 +50,25 @@ set_response_headers:
 
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
+<EnterpriseConfiguration name="set_response_headers" resource="settings">
 
 Configure **Response Headers** under **Proxy** settings in the Console:
 
 ![Configure response headers in the Console](./img/proxy-settings/response-headers.png)
 
+</EnterpriseConfiguration>
 </TabItem>
 <TabItem value="Kubernetes" label="Kubernetes">
 
-| **[Annotation name](/docs/deploy/k8s/ingress#set-ingress-annotations)** | **Type** | **Default** |
-| :-- | :-- | :-- |
-| `set_response_headers` | `string` | see [Default headers](#default) |
+| **[Annotation name](/docs/deploy/k8s/ingress#set-ingress-annotations)** | **Type** | **Default**                     |
+| :---------------------------------------------------------------------- | :------- | :------------------------------ |
+| `set_response_headers`                                                  | `string` | see [Default headers](#default) |
 
 ### Examples
 
 ```yaml
 ingress.pomerium.io/set_response_headers: |
   X-Test: X-Value
-```
-
-</TabItem>
-<TabItem value="Enterprise via Terraform" label="Enterprise via Terraform">
-
-| **[Annotation name](https://registry.terraform.io/providers/pomerium/pomerium/latest/docs/resources/settings)** | **Type** | **Default** |
-| :-- | :-- | :-- |
-| `set_response_headers` | Map of String | see [Default headers](#default) |
-
-### Examples
-
-```hcl
-set_response_headers = {"X-Test": "X-Value", "X-Test2": "X-Value2"}
 ```
 
 </TabItem>
