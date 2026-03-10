@@ -1,9 +1,9 @@
 ---
-title: 'Delegate MCP Access to an LLM'
-sidebar_label: 'Delegate MCP Access to an LLM'
+title: "Delegate MCP Access to an LLM"
+sidebar_label: "Delegate MCP Access to an LLM"
 sidebar_position: 6
 lang: en-US
-description: 'Build a web application that captures the authenticated user token and passes it to an LLM, enabling the LLM to call MCP servers on the user behalf.'
+description: "Let AI agents call MCP servers on a user behalf — via a client application with token delegation or via service accounts for headless agents in CI."
 keywords:
   [
     MCP,
@@ -13,10 +13,23 @@ keywords:
     token delegation,
     OpenAI,
     Pomerium Chat,
+    service accounts,
+    CI,
+    Claude Code,
+    Codex,
   ]
 ---
 
 # Delegate MCP Access to an LLM
+
+Let AI agents call MCP tools through Pomerium on behalf of a user. There are two patterns:
+
+- **Client application** — build a web app that captures the current user's session token and passes it to an LLM API
+- **Service account** — mint a long-lived credential for headless agents (CI, Claude Code, Codex) that reuses the user's upstream connections
+
+Both patterns enforce the same authorization policies and log every tool call.
+
+## Pattern 1: Client application with token delegation
 
 Build a web application where the authenticated user's Pomerium token is captured and passed to an LLM API (such as OpenAI). The LLM then uses that token to call MCP servers behind Pomerium on behalf of the user — with full authentication, authorization, and audit logging.
 
@@ -27,7 +40,8 @@ Build a web application where the authenticated user's Pomerium token is capture
   frameBorder="0"
   webkitallowfullscreen="true"
   mozallowfullscreen="true"
-  allowFullScreen={true}></iframe>
+  allowFullScreen={true}
+></iframe>
 
 **What you get:**
 
@@ -97,10 +111,10 @@ routes:
         upstream_oauth2:
           client_id: xxxxxxxxxxxx
           client_secret: yyyyyyyyy
-          scopes: ['read:user', 'repo']
+          scopes: ["read:user", "repo"]
           endpoint:
-            auth_url: 'https://github.com/login/oauth/authorize'
-            token_url: 'https://github.com/login/oauth/access_token'
+            auth_url: "https://github.com/login/oauth/authorize"
+            token_url: "https://github.com/login/oauth/access_token"
     policy:
       allow:
         and:
@@ -195,33 +209,118 @@ authorize_log_fields:
   frameBorder="0"
   webkitallowfullscreen="true"
   mozallowfullscreen="true"
-  allowFullScreen={true}></iframe>
+  allowFullScreen={true}
+></iframe>
 
 See [Observability](/docs/capabilities/mcp/reference#observability) for the full logging reference.
 
-## Alternative: Service account tokens
+## Pattern 2: Service accounts for headless agents
 
-Instead of delegating the interactive user's token to the LLM, you can use a [Pomerium Service Account](/docs/capabilities/service-accounts) to authenticate MCP requests. A service account provides a long-lived JWT that your backend can use directly, without requiring a logged-in user session.
+For CI pipelines, coding agents, and background jobs where no human is present to complete an interactive login, use a Pomerium [service account](/docs/capabilities/service-accounts). A service account provides a long-lived JWT that authenticates MCP requests directly — no browser required.
 
-This is useful when:
+### How it works
 
-- Your app runs background jobs or scheduled tasks that call MCP tools
-- You want to call MCP servers from a backend service that has no interactive user
-- You want to impersonate a specific user for auditing purposes
+A service account is tied to a specific user in your identity provider. When the service account makes MCP requests, Pomerium evaluates the same identity-based policies (email, groups) as it would for that user's interactive session.
 
-To authenticate, pass the service account JWT as a bearer token:
+For MCP servers that require upstream OAuth (e.g., GitHub, Notion), the service account **reuses upstream tokens that the user has already provisioned** through an interactive session. This means:
+
+1. The user logs in and connects to upstream MCP servers via the **routes portal**
+2. An administrator creates a service account for that user
+3. The service account can now access those same MCP servers using the cached upstream tokens
+
+:::note
+
+Service accounts cannot independently initiate upstream OAuth flows. If an upstream connection hasn't been established by the user's interactive session, the service account's request will receive a 401 from the upstream server. The user must hydrate their upstream connections first.
+
+:::
+
+### Step-by-step
+
+#### 1. Hydrate upstream connections
+
+Log in to Pomerium and visit the **routes portal**. For each MCP server you want the agent to access, click **Connect** to complete the upstream OAuth consent flow. This caches upstream tokens under your user identity.
+
+For MCP servers that don't require upstream OAuth (i.e., internal servers behind a [basic MCP route](/docs/capabilities/mcp/protect-mcp-server)), this step is not needed.
+
+#### 2. Create a service account
+
+Create a service account for your user in the Enterprise Console or Pomerium Zero. The service account must be associated with the same identity (email) that hydrated the upstream connections.
+
+See [Service Accounts](/docs/capabilities/service-accounts) for detailed setup instructions.
+
+#### 3. Configure your coding agent
+
+Pass the service account JWT to your agent as a bearer token. The `Pomerium-` prefix tells Pomerium to authenticate the request as a service account:
 
 ```
-Authorization: Bearer Pomerium-${SERVICE_ACCOUNT_JWT}
+Authorization: Bearer Pomerium-<SERVICE_ACCOUNT_JWT>
 ```
 
-Service accounts can impersonate directory users from your identity provider, so policies based on identity (email, groups) still apply. Create service accounts and manage their policies in the Enterprise Console or Pomerium Zero.
+Below are examples for popular coding agents. In all examples, `POMERIUM_SERVICE_ACCOUNT_JWT` is set to the **raw JWT** (without any prefix).
 
-See [Service Accounts](/docs/capabilities/service-accounts) for setup instructions.
+**Claude Code**
+
+Add a Pomerium-fronted MCP server to Claude Code using the `--header` flag:
+
+```bash
+claude mcp add --transport http my-mcp-server \
+  https://mcp-server.your-domain.com \
+  --header "Authorization: Bearer Pomerium-${POMERIUM_SERVICE_ACCOUNT_JWT}"
+```
+
+Or configure it in `.mcp.json` for a shared project setup:
+
+```json
+{
+  "mcpServers": {
+    "my-mcp-server": {
+      "type": "http",
+      "url": "https://mcp-server.your-domain.com",
+      "headers": {
+        "Authorization": "Bearer Pomerium-${POMERIUM_SERVICE_ACCOUNT_JWT}"
+      }
+    }
+  }
+}
+```
+
+Claude Code expands `${POMERIUM_SERVICE_ACCOUNT_JWT}` from your shell environment. Set it before starting Claude Code:
+
+```bash
+export POMERIUM_SERVICE_ACCOUNT_JWT="eyJhbGciOi..."
+```
+
+See the [Claude Code MCP documentation](https://code.claude.com/docs/en/mcp) for full configuration options.
+
+**OpenAI Codex**
+
+Codex uses `bearer_token_env_var` to read a token from an environment variable and sends it as `Authorization: Bearer <value>`. Because Codex adds the `Bearer` prefix automatically, the environment variable must include the `Pomerium-` prefix:
+
+```toml
+[mcp_servers.my-mcp-server]
+url = "https://mcp-server.your-domain.com"
+bearer_token_env_var = "POMERIUM_MCP_TOKEN"
+```
+
+```bash
+export POMERIUM_MCP_TOKEN="Pomerium-eyJhbGciOi..."
+```
+
+See the [Codex MCP documentation](https://developers.openai.com/codex/mcp/) for full configuration options.
+
+**Other agents and CI**
+
+For any agent or CI system that supports MCP over HTTP, set the full header directly:
+
+```bash
+curl -H "Authorization: Bearer Pomerium-${POMERIUM_SERVICE_ACCOUNT_JWT}" \
+  https://mcp-server.your-domain.com/mcp
+```
 
 ## Sample repos and next steps
 
 - **[pomerium/mcp-app-demo](https://github.com/pomerium/mcp-app-demo)** — Full working Pomerium Chat app with MCP server integration, LLM API calling, and audit logging
+- [Service Accounts](/docs/capabilities/service-accounts) — Create and manage service accounts
 - [MCP + Upstream OAuth](/docs/capabilities/mcp/mcp-upstream-oauth) — Configure upstream OAuth for services like GitHub
 - [Limit MCP Tool Calling](/docs/capabilities/mcp/limit-mcp-tools) — Control which tools the LLM can call
 - [MCP Full Reference](/docs/capabilities/mcp/reference) — Token types, session lifecycle, configuration details
