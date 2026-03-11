@@ -238,7 +238,14 @@ const config: Config = {
         'rego',
         'shell-session',
         'hcl',
+        'bash',
       ],
+    },
+    zoom: {
+      selector: '.markdown :not(em) > img',
+      config: {
+        margin: 120,
+      }
     },
   },
   stylesheets: [
@@ -280,6 +287,8 @@ const config: Config = {
         modalTitle: 'Share your thoughts',
       },
     ],
+
+    require.resolve('docusaurus-plugin-image-zoom'),
   ],
 };
 

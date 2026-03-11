@@ -82,7 +82,7 @@ sequenceDiagram
   - Identity provider with Authorization Code OAuth enabled
 - Network connectivity between Pomerium and SSH servers
 
-### 1. Generate User CA Key Pair
+### 1. Generate User CA Key Pair {/* note: reverse-tunneling.mdx refers to these steps by number */}
 
 Generate a key pair that Pomerium will use to sign SSH certificates:
 
@@ -109,7 +109,7 @@ The User CA key is a standard SSH keypair, not a certificate or certificate-key.
 
 :::
 
-### 2. Generate SSH Host Keys
+### 2. Generate SSH Host Keys {/* note: reverse-tunneling.mdx refers to these steps by number */}
 
 Generate new SSH host keys for your Pomerium instance.
 
@@ -125,7 +125,7 @@ This creates three host keys which support different algorithms for compatibilit
 - `pomerium_ssh_host_rsa_key` (default 3072 bits)
 - `pomerium_ssh_host_ecdsa_key` (default 256 bits)
 
-### 3. Configure Pomerium
+### 3. Configure Pomerium {/* note: reverse-tunneling.mdx refers to these steps by number */}
 
 Add SSH configuration to your `config.yaml`:
 
@@ -158,7 +158,7 @@ Configure SSH in the Zero Console under **Settings** > **SSH**:
 </TabItem>
 </Tabs>
 
-### 4. Add SSH routes
+### 4. Add SSH routes {/* note: reverse-tunneling.mdx refers to these steps by number */}
 
 Add SSH routes for each upstream server, for example:
 
@@ -179,7 +179,7 @@ routes:
 
 Note the use of the `ssh://` scheme for both `from` and `to`.
 
-### 5. Configure Upstream Servers
+### 5. Configure Upstream Servers {/* note: reverse-tunneling.mdx refers to these steps by number */}
 
 1. Copy the User CA public key (`pomerium_user_ca_key.pub`) to your upstream servers. It can be placed in any (root-owned) location - for example, `/etc/pomerium/` or `/var/lib/pomerium/`. You may also place it in `/etc/ssh/` if desired.
 
@@ -324,15 +324,19 @@ SSH routes support most general PPL criteria (`email`, `domain`, `user`, `claim`
 
 ### Runtime Flags
 
-There are two SSH specific runtime flags. See [Runtime Flags](/docs/reference/runtime-flags) for more information.
+There are three SSH specific runtime flags. See [Runtime Flags](/docs/reference/runtime-flags) for more information.
 
 #### Routes Portal
 
-- **`ssh_routes_portal`**: Enables the SSH routes portal, allowing users to select their SSH destination from an interactive menu when SSHing to Pomerium without specifying a route.
+- `ssh_routes_portal`: Enables the SSH routes portal, allowing users to select their SSH destination from an interactive menu when SSHing to Pomerium without specifying a route.
 
 #### Enable `ProxyJump` Support
 
-- **`ssh_allow_direct_tcpip`**: Allows clients to connect to SSH routes using [Jump Host Mode](/docs/capabilities/native-ssh-access#using-jump-host-mode).
+- `ssh_allow_direct_tcpip`: Allows clients to connect to SSH routes using [Jump Host Mode](/docs/capabilities/native-ssh-access#using-jump-host-mode).
+
+#### Reverse Tunneling
+
+- `ssh_upstream_tunnel`: Enables the `upstream_tunnel` route configuration option. See [Reverse Tunneling](./reverse-tunneling) for details.
 
 ## Policy Examples
 
