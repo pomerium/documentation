@@ -3,7 +3,7 @@ title: "Develop an MCP App"
 sidebar_label: "Develop an MCP App"
 sidebar_position: 5
 lang: en-US
-description: 'Build interactive MCP Apps with widgets using the official ext-apps SDK, secured by Pomerium.'
+description: "Build interactive MCP Apps with widgets using the official ext-apps SDK, secured by Pomerium."
 keywords:
   [MCP, model context protocol, MCP Apps, widgets, interactive, ext-apps]
 ---
@@ -111,26 +111,26 @@ The template's echo tool shows the full pattern. The key pieces when adding your
 ```typescript
 registerAppTool(
   server,
-  'my_tool',
+  "my_tool",
   {
-    title: 'My Tool',
-    description: 'Does something cool',
+    title: "My Tool",
+    description: "Does something cool",
     inputSchema: {
-      type: 'object',
+      type: "object",
       properties: {
-        input: {type: 'string', description: 'Tool input'},
+        input: { type: "string", description: "Tool input" },
       },
-      required: ['input'],
+      required: ["input"],
     },
     _meta: {
-      ui: {resourceUri: 'ui://my-widget'},
+      ui: { resourceUri: "ui://my-widget" },
     },
   },
   async (args) => {
     const input = MyToolInputSchema.parse(args).input;
     return {
-      content: [{type: 'text', text: 'Result'}],
-      structuredContent: {result: input},
+      content: [{ type: "text", text: "Result" }],
+      structuredContent: { result: input },
     };
   },
 );
@@ -141,15 +141,15 @@ registerAppTool(
 ```typescript
 registerAppResource(
   server,
-  'ui://my-widget',
-  'ui://my-widget',
-  {mimeType: RESOURCE_MIME_TYPE},
+  "ui://my-widget",
+  "ui://my-widget",
+  { mimeType: RESOURCE_MIME_TYPE },
   async () => ({
     contents: [
       {
-        uri: 'ui://my-widget',
+        uri: "ui://my-widget",
         mimeType: RESOURCE_MIME_TYPE, // 'text/html;profile=mcp-app'
-        text: await readWidgetHtml('my-widget'),
+        text: await readWidgetHtml("my-widget"),
       },
     ],
   }),
@@ -159,32 +159,31 @@ registerAppResource(
 **Widget entry point** — React component in `widgets/src/widgets/my-widget.tsx` using the `App` class from `@modelcontextprotocol/ext-apps`:
 
 ```tsx
-import {StrictMode, useEffect, useState} from 'react';
-import {createRoot} from 'react-dom/client';
-import {App} from '@modelcontextprotocol/ext-apps';
+import { App } from "@modelcontextprotocol/ext-apps";
+import { StrictMode, useEffect, useState } from "react";
+import { createRoot } from "react-dom/client";
 
 function MyWidget() {
   const [toolOutput, setToolOutput] = useState(null);
-  const [theme, setTheme] = useState('light');
+  const [theme, setTheme] = useState("light");
 
   useEffect(() => {
-    const app = new App({name: 'MyWidget', version: '1.0.0'});
+    const app = new App({ name: "MyWidget", version: "1.0.0" });
     app.ontoolresult = (result) =>
       setToolOutput(result.structuredContent ?? null);
-    app.onhostcontextchanged = (context) =>
-      setTheme(context?.theme ?? 'light');
+    app.onhostcontextchanged = (context) => setTheme(context?.theme ?? "light");
     app.connect();
   }, []);
 
   return (
-    <div className={theme === 'dark' ? 'dark' : ''}>
+    <div className={theme === "dark" ? "dark" : ""}>
       <h1>My Widget</h1>
       <pre>{JSON.stringify(toolOutput, null, 2)}</pre>
     </div>
   );
 }
 
-const rootElement = document.getElementById('my-widget-root');
+const rootElement = document.getElementById("my-widget-root");
 if (rootElement) {
   createRoot(rootElement).render(
     <StrictMode>
