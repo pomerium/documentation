@@ -250,7 +250,7 @@ if (rootElement) {
 
 ### Widget resource registration
 
-Register the widget resource on the server with the correct MIME type:
+Register the widget resource on the server. The `RESOURCE_MIME_TYPE` constant used below (imported from `@modelcontextprotocol/ext-apps/server`) is `text/html;profile=mcp-app`, the MIME type MCP hosts expect for widget resources:
 
 ```typescript
 registerAppResource(
@@ -269,8 +269,6 @@ registerAppResource(
   }),
 );
 ```
-
-The `RESOURCE_MIME_TYPE` constant is `text/html;profile=mcp-app`, required for MCP hosts to recognize and render the widget.
 
 <!-- [NEEDS_VERIFICATION: There's a discrepancy between docs. The template README uses `text/html;profile=mcp-app` while the develop-mcp-app docs page shows `text/html+skybridge`. One of these is wrong or outdated — needs to be resolved before publishing.] -->
 
@@ -426,10 +424,6 @@ If it works in the inspector but not in your MCP host, the host is likely using 
 You can also verify your registered tools and widget resources are correct from the app's detail view:
 
 ![ChatGPT developer mode showing registered actions and widget templates](./img/mcp-app-quick-start/chatgpt-app-tools.png)
-
-**OAuth issues**
-
-Use the same identity provider for both Pomerium and your MCP host. If you're seeing auth errors, confirm you're signed in to both with the same account.
 
 **Widget not mounting (blank iframe)**
 
