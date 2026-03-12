@@ -1,39 +1,86 @@
 ---
-title: 'Model Context Protocol (MCP) Support'
-sidebar_label: 'Model Context Protocol (MCP)'
+title: "Model Context Protocol (MCP) Support"
+sidebar_label: "Model Context Protocol (MCP)"
 lang: en-US
-description: 'Secure access to Model Context Protocol servers through Pomerium, enabling AI agents to safely interact with internal resources via standardized interfaces.'
-keywords: [MCP, model context protocol, AI agents, LLM, AI gateway]
+description: "Secure access to Model Context Protocol servers through Pomerium, enabling AI agents to safely interact with internal resources via standardized interfaces."
+keywords:
+  [
+    MCP,
+    model context protocol,
+    AI agents,
+    LLM,
+    AI gateway,
+    MCP bridging,
+    service accounts,
+  ]
 ---
 
 # Model Context Protocol (MCP) Support
 
 Pomerium provides secure access to [Model Context Protocol (MCP)](https://modelcontextprotocol.io/) servers, enabling AI agents and applications to safely interact with your internal resources through standardized interfaces.
 
-### [Protect an MCP Server](/docs/capabilities/mcp/protect-mcp-server)
+## Key Capabilities
 
-Proxy an internal MCP server through Pomerium so MCP clients can access it securely — no auth logic needed on the server side.
+### Secure MCP Gateway
 
-### [MCP + Upstream OAuth](/docs/capabilities/mcp/mcp-upstream-oauth)
+Pomerium is a **secure gateway** for your MCP servers. Place any internal MCP server behind Pomerium, and external clients (Claude, ChatGPT, VS Code, and others) can reach it securely. Pomerium handles authentication, authorization, TLS termination, and all the customary gateway concerns — your server stays in the internal network, never exposed directly, and focuses purely on business logic.
 
-Connect MCP servers to upstream OAuth2 APIs like GitHub, Google Drive, or Notion. Pomerium manages the full OAuth flow and token lifecycle.
+See [Protect an MCP Server](/docs/capabilities/mcp/protect-mcp-server) for setup instructions.
 
-### [Tunnel to ChatGPT During Development](/docs/capabilities/mcp/tunnel-to-chatgpt)
+### MCP Bridging
 
-Use `ssh -R 0 pom.run` to expose a local MCP server to ChatGPT for development and testing — one command, no setup.
+Pomerium acts as an **MCP-aware bridge** between your clients and remote third-party MCP servers that have their own authentication and authorization. Rather than exposing upstream credentials to each client, Pomerium sits in the middle and handles the full upstream OAuth lifecycle on the user's behalf.
 
-### [Limit MCP Tool Calling](/docs/capabilities/mcp/limit-mcp-tools)
+When a client connects to a Pomerium-fronted MCP route, Pomerium:
 
-Use Pomerium Policy Language (PPL) to control which MCP tools each user or group can call, with deny-based block lists and allowlists.
+- **Authenticates the user** through your identity provider (downstream OAuth 2.1)
+- **Authenticates with the upstream MCP server** by managing the upstream OAuth flow — acquiring, caching, and automatically refreshing access tokens
+- **Enforces authorization policies** on every request, including fine-grained tool-level access control
+- **Injects the upstream token** into proxied requests transparently — your MCP server receives a valid bearer token without the client ever seeing it
 
-### [Develop an MCP App](/docs/capabilities/mcp/develop-mcp-app)
+This means third-party MCP servers with their own auth (GitHub, Linear, Notion, Google, and others) can be securely bridged through Pomerium. Clients authenticate once with Pomerium and never handle upstream credentials directly. Pomerium supports both static OAuth2 configuration (where you register client credentials) and automatic [RFC 9728](https://datatracker.ietf.org/doc/html/rfc9728) discovery for MCP servers that advertise their own authorization requirements.
 
-Build interactive ChatGPT Apps with custom widgets and tools, secured by Pomerium.
+See [MCP + Upstream OAuth](/docs/capabilities/mcp/mcp-upstream-oauth) for setup instructions.
 
-### [Delegate MCP Access to an LLM](/docs/capabilities/mcp/delegate-mcp-to-llm)
+### Per-User Connection Management
 
-Capture the authenticated user's token and pass it to an LLM, enabling the LLM to call MCP servers on the user's behalf.
+Each user manages their own upstream MCP connections independently. Because different MCP servers may require separate OAuth consent (for example, a GitHub server and a Linear server), Pomerium tracks connection status per user, per route. Users can connect, disconnect, and see the status of each upstream server through Pomerium's **routes portal** or programmatically via the server discovery API — one user's connections never affect another's.
 
-### [MCP Full Reference](/docs/capabilities/mcp/reference)
+See [Delegate MCP Access to an LLM](/docs/capabilities/mcp/delegate-mcp-to-llm) and the [MCP Full Reference](/docs/capabilities/mcp/reference#listing-available-mcp-servers) for API details.
 
-Configuration options, token types, security details, session lifecycle, and observability — the complete reference for Pomerium's MCP support.
+### Fine-Grained Tool Access Control
+
+Pomerium uses [Pomerium Policy Language (PPL)](/docs/internals/ppl) to control which MCP tools each user or group can call. The `mcp_tool` criterion matches tool names by exact name, prefix, suffix, or list — enabling deny-based block lists (e.g. block all `admin_*` tools) and allowlists (e.g. only permit `query` and `list_tables`). Tool restrictions compose with identity-based policies, so you can grant different tool sets to different teams.
+
+Every tool call is logged with the method, tool name, and parameters, giving you full audit visibility into what AI agents do on behalf of your users.
+
+See [Limit MCP Tool Calling](/docs/capabilities/mcp/limit-mcp-tools) for patterns and examples.
+
+### Delegating MCP Access to AI Agents
+
+Not every MCP caller is a human sitting behind a browser. Pomerium supports two patterns for letting AI agents and applications call MCP tools on a user's behalf:
+
+- **Service accounts** — For CI pipelines, background jobs, and autonomous agents where no interactive login is possible, mint a Pomerium [service account](/docs/capabilities/service-accounts) that represents a specific user. The service account JWT authenticates MCP requests directly, and identity-based policies (email, groups) still apply.
+- **Client applications** — Build an app behind a Pomerium `mcp: client` route. Your app receives an External Token (TE) for the authenticated user and passes it to an LLM API (OpenAI, Anthropic, etc.). The LLM calls MCP tools through Pomerium with the user's identity — same policies, same audit logging.
+
+Either way, Pomerium enforces the same authorization policies and logs every tool call — whether the caller is a human, an LLM, or a CI agent.
+
+See [Delegate MCP Access to an LLM](/docs/capabilities/mcp/delegate-mcp-to-llm) for both patterns.
+
+### Dev Tunneling with pom.run
+
+For local development, `ssh -R 0 pom.run` exposes your local MCP server over HTTPS — one command, no configuration. Pomerium authenticates and authorizes every request through the tunnel, so you can test with ChatGPT, Claude, or any other hosted MCP client immediately.
+
+See [Tunnel to ChatGPT During Development](/docs/capabilities/mcp/tunnel-to-chatgpt) for the full walkthrough.
+
+## Blueprints
+
+| Blueprint                                                                   | Description                                                                                |
+| --------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
+| [Protect an MCP Server](/docs/capabilities/mcp/protect-mcp-server)          | Proxy an internal MCP server through Pomerium — no auth logic needed on the server side    |
+| [MCP + Upstream OAuth](/docs/capabilities/mcp/mcp-upstream-oauth)           | Bridge to upstream OAuth2 APIs like GitHub, Google Drive, or Notion                        |
+| [Tunnel to ChatGPT](/docs/capabilities/mcp/tunnel-to-chatgpt)               | Expose a local MCP server to ChatGPT for development and testing                           |
+| [Limit MCP Tool Calling](/docs/capabilities/mcp/limit-mcp-tools)            | Control which MCP tools each user or group can call with PPL policies                      |
+| [Develop an MCP App](/docs/capabilities/mcp/develop-mcp-app)                | Build interactive ChatGPT Apps with custom widgets and tools                               |
+| [Delegate MCP Access to an LLM](/docs/capabilities/mcp/delegate-mcp-to-llm) | Pass the user's token to an LLM so it can call MCP servers on their behalf                 |
+| [MCP Full Reference](/docs/capabilities/mcp/reference)                      | Configuration options, token types, security details, session lifecycle, and observability |
