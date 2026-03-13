@@ -16,7 +16,10 @@ keywords:
 description: Build a secure MCP App using the Pomerium MCP App template and pom.run reverse tunnel, with OAuth handled automatically.
 ---
 
-This guide walks you through building a secure MCP App using the [Pomerium MCP App template](https://github.com/pomerium/chatgpt-app-typescript-template) and `ssh -R 0 pom.run`. `pom.run` is a hosted reverse SSH tunnel that gives your local MCP server a public URL and handles OAuth automatically. No auth code to write, no certificate management. The quick start gets you a working app you can test in ChatGPT in about 5 minutes. The rest covers connecting to Claude.ai, building your own tools, sharing what you're building, and deploying your MCP server behind Pomerium when you're ready to ship.
+import TabItem from "@theme/TabItem";
+import Tabs from "@theme/Tabs";
+
+This guide walks you through building a secure MCP App using the [Pomerium MCP App template](https://github.com/pomerium/chatgpt-app-typescript-template) and `ssh -R 0 pom.run`. `pom.run` is a hosted reverse SSH tunnel that gives your local MCP server a public URL and handles OAuth automatically. No auth code to write, no certificate management. The quick start gets you a working app you can test in ChatGPT or Claude.ai in about 5 minutes. The rest covers building your own tools, sharing what you're building, and deploying your MCP server behind Pomerium when you're ready to ship.
 
 ## Quick Start
 
@@ -63,22 +66,54 @@ If the URL is cut off, you can right click in the TUI and select **Copy Remote U
 
 In a new terminal:
 
+<Tabs queryString="clone-method">
+  <TabItem value="git" label="Git" default>
+
 ```bash
 git clone https://github.com/pomerium/chatgpt-app-typescript-template your-mcp-app
 cd your-mcp-app
 npm install
-npm run dev
 ```
 
-or via the GitHub CLI:
+  </TabItem>
+  <TabItem value="gh-cli" label="GitHub CLI">
 
 ```bash
 # Requires GitHub CLI: https://cli.github.com/
 gh repo clone pomerium/chatgpt-app-typescript-template your-mcp-app
 cd your-mcp-app
 npm install
+```
+
+  </TabItem>
+</Tabs>
+
+Start the dev server:
+
+<Tabs queryString="host">
+  <TabItem value="chatgpt" label="ChatGPT" default>
+
+```bash
 npm run dev
 ```
+
+  </TabItem>
+  <TabItem value="claude" label="Claude.ai">
+
+```bash
+npm run dev:inline
+```
+
+Claude.ai's iframe can't load assets from `localhost`, so inline mode bundles all JavaScript and CSS directly into the widget HTML, producing self-contained files. The widget dev server still runs in watch mode, so changes are automatically rebuilt.
+
+:::note
+Inline mode is only needed when tunneling via `pom.run` for the development environment. In production, once your assets are served from a public URL, Claude.ai fetches them directly and inline mode isn't required.
+
+You can also use inline mode if you want to test the MCP on another device other than your development machine, e.g. ChatGPT or Claude on your phone.
+:::
+
+  </TabItem>
+</Tabs>
 
 This starts two processes:
 
@@ -133,7 +168,10 @@ You should see something similar to this in your terminal:
 [0]     healthEndpoint: "http://localhost:8080/health"
 ```
 
-### 3. Connect to ChatGPT and test
+### 3. Connect and test
+
+<Tabs queryString="host">
+  <TabItem value="chatgpt" label="ChatGPT" default>
 
 1. In ChatGPT, go to **Settings → Apps → Advanced settings** and enable **Developer mode**
 2. Click **Create app**
@@ -143,51 +181,35 @@ You should see something similar to this in your terminal:
 
 ![Registering an MCP app in ChatGPT](./img/mcp-app-quick-start/register-mcp-in-chatgpt.gif)
 
-Start a new chat and send: `echo today is a great day`
+Start a new chat and send: `@Echo today is a great day`, where `Echo` is the name of the app (MCP server) you registered.
 
-You should see the message displayed in an interactive widget. That's a working MCP App.
+  </TabItem>
+  <TabItem value="claude" label="Claude.ai">
 
----
+<!-- [NOT_EXPLAINED: These steps are incomplete and unverified. The Claude.ai integration flow isn't documented anywhere in Pomerium's current docs — no screenshots, no detail on what "Authenticate when prompted" looks like, and no confirmation of the exact Settings path. This needs someone to walk through the actual Claude.ai UI and document it before publishing.] -->
 
-From here, you can stop. You have a working app you can build on. The sections below cover connecting to Claude.ai, building your own tools, sharing your work, and deploying to production.
-
----
-
-## Connecting to Claude.ai
-
-Claude.ai requires a different dev mode than ChatGPT. ChatGPT renders widgets in an iframe in your browser, which can reach `localhost:4444` directly. Claude.ai's iframe is more tightly sandboxed and can't load assets from localhost, so widget assets need to be fully self-contained.
-
-<!-- [UNDER_EXPLAINED: "Claude.ai's iframe is more tightly sandboxed" — the exact mechanism isn't confirmed. Worth verifying whether it's a server-side render, a different CSP policy, or something else. The practical effect (can't reach localhost) is correct, but the explanation may be imprecise.] -->
-
-Stop your dev server and restart with inline mode:
-
-```bash
-npm run dev:inline
-```
-
-This bundles all JavaScript and CSS directly into the widget HTML, producing self-contained files that work inside Claude's sandboxed iframe. The widget dev server still runs in watch mode, so changes are automatically rebuilt.
-
-**Connect to Claude.ai:**
-
-1. Go to **Settings → Integrations** and add a new integration
+1. Go to **Settings → Connectors** and add a new integration
 2. Set the MCP Server URL to your tunnel URL + `/mcp`
 3. Authenticate when prompted
 
 ![Registering an MCP app in Claude.ai](./img/mcp-app-quick-start/register-mcp-in-claude-ai.gif)
 
-<!-- [NOT_EXPLAINED: These steps are incomplete and unverified. The Claude.ai integration flow isn't documented anywhere in Pomerium's current docs — no screenshots, no detail on what "Authenticate when prompted" looks like, and no confirmation of the exact Settings path. This needs someone to walk through the actual Claude.ai UI and document it before publishing.] -->
-
-Test it the same way: ask Claude to echo a message and confirm the widget renders.
+Start a new chat and send: `echo today is a great day`
 
 After making code changes, refresh the integration to reload tool definitions.
 
 <!-- [NOT_EXPLAINED: How do you refresh an integration in Claude.ai? The ChatGPT flow has a specific path (Settings → Apps → Your App → Refresh). Claude.ai's equivalent isn't documented here or elsewhere in Pomerium's docs.] -->
 
-:::note
-Inline mode is only needed when tunneling via `pom.run` to get your MCP working in claude.ai for the development environment. In production, once your assets are served from a public URL, Claude.ai fetches them directly and inline mode isn't required.
+  </TabItem>
+</Tabs>
 
-You can also use inline mode if you want to test the MCP on another device other then your development machine, e.g. ChatGPT or Claude on your phone.
-:::
+You should see the message displayed in an interactive widget. That's a working MCP App.
+
+---
+
+From here, you can stop. You have a working app you can build on. The sections below cover building your own tools, sharing your work, and deploying to production.
+
+---
 
 ## Building Your Own Tools
 
