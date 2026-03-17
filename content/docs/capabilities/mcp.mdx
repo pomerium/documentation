@@ -38,7 +38,7 @@ When a client connects to a Pomerium-fronted MCP route, Pomerium:
 - **Enforces authorization policies** on every request, including fine-grained tool-level access control
 - **Injects the upstream token** into proxied requests transparently — your MCP server receives a valid bearer token without the client ever seeing it
 
-This means third-party MCP servers with their own auth (GitHub, Linear, Notion, Google, and others) can be securely bridged through Pomerium. Clients authenticate once with Pomerium and never handle upstream credentials directly. Pomerium supports both static OAuth2 configuration (where you register client credentials) and automatic [RFC 9728](https://datatracker.ietf.org/doc/html/rfc9728) discovery for MCP servers that advertise their own authorization requirements.
+This means third-party MCP servers with their own auth (GitHub, Linear, Notion, Google, and others) can be securely bridged through Pomerium. Clients authenticate once with Pomerium and never handle upstream credentials directly. Pomerium uses a unified upstream OAuth pipeline that adapts to what you configure — from fully static credentials and endpoints, to pre-registered credentials with automatic endpoint discovery via [RFC 9728](https://datatracker.ietf.org/doc/html/rfc9728), to full auto-discovery where Pomerium handles client registration and the entire OAuth lifecycle.
 
 See [MCP + Upstream OAuth](/docs/capabilities/mcp/mcp-upstream-oauth) for setup instructions.
 
