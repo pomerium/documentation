@@ -90,7 +90,7 @@ metadata:
   name: pomerium-proxy
   namespace: pomerium
   annotations:
-    external-dns.alpha.kubernetes.io/hostname: "authenticate.localhost.pomerium.io"
+    external-dns.alpha.kubernetes.io/hostname: 'authenticate.localhost.pomerium.io'
 ```
 
 ### Multiple Replicas
@@ -137,7 +137,7 @@ kind: IngressClass
 metadata:
   name: pomerium
   annotations:
-    ingressclass.kubernetes.io/is-default-class: "true"
+    ingressclass.kubernetes.io/is-default-class: 'true'
 ```
 
 ### Multiple controllers
@@ -170,7 +170,7 @@ metadata:
   name: envoy
 spec:
   type: ExternalName
-  externalName: "localhost"
+  externalName: 'localhost'
   ports:
     - protocol: TCP
       name: admin
@@ -185,7 +185,7 @@ metadata:
 spec:
   ingressClassName: pomerium
   rules:
-    - host: "envoy.localhost.pomerium.io"
+    - host: 'envoy.localhost.pomerium.io'
       http:
         paths:
           - pathType: Prefix

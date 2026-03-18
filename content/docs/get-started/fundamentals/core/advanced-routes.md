@@ -116,7 +116,7 @@ Because we added `pass_identity_headers`, we can see that the request includes t
 Since we're forwarding the JWT, let's try adding the JWT Claims Headers global setting to your configuration file, right under the `signing_key_file`:
 
 ```yaml
-signing_key_file: "/pomerium/ec_private.pem"
+signing_key_file: '/pomerium/ec_private.pem'
 
 jwt_claims_headers:
   X-Pomerium-Claim-Email: email
@@ -217,7 +217,7 @@ Pomerium makes this simple to implement. Just swap out `to:` with the `redirect:
 
 ```yaml title="config.yaml"
 - from: https://httpbin.localhost.pomerium.io
-  redirect: { "host_redirect": "verify.localhost.pomerium.io" }
+  redirect: {'host_redirect': 'verify.localhost.pomerium.io'}
 ```
 
 Now, when you access `httpbin`, Pomerium will redirect you to the Verify service.
@@ -245,19 +245,19 @@ After you install Node.js:
 Add the following code inside `index.js`:
 
 ```js title="index.js"
-const express = require("express");
+const express = require('express');
 const app = express();
 
-app.get("/", (req, res) => {
+app.get('/', (req, res) => {
   console.log(req);
-  res.send("Hello World!");
+  res.send('Hello World!');
 });
 
-app.get("/admin", (req, res) => {
-  res.send("This is an admin only page");
+app.get('/admin', (req, res) => {
+  res.send('This is an admin only page');
 });
 
-app.listen(5001, () => console.log("Server is up and running"));
+app.listen(5001, () => console.log('Server is up and running'));
 ```
 
 This mini server builds two different endpoints:
@@ -326,7 +326,7 @@ nodeserver:
   build:
     context: ./app
   ports:
-    - "5001:5001"
+    - '5001:5001'
 ```
 
 In your configuration file, add a route to the Node server:

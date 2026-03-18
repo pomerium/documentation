@@ -1,6 +1,6 @@
-import React from "react";
+import React from 'react';
 
-import data from "./docVersions.json";
+import data from './docVersions.json';
 
 const versions = Object.values(data);
 

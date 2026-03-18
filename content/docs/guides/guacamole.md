@@ -79,7 +79,7 @@ guacamole:
     GUACD_HOSTNAME: guacd
     POSTGRES_DATABASE: guacamole_db
     POSTGRES_HOSTNAME: postgres
-    POSTGRES_PASSWORD: "ChooseYourOwnPasswordHere1234"
+    POSTGRES_PASSWORD: 'ChooseYourOwnPasswordHere1234'
     POSTGRES_USER: guacamole_user
     # highlight-start
     # Enables HTTP header authentication

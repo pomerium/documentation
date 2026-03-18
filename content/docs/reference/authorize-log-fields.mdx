@@ -8,12 +8,12 @@ pagination_next: null
 toc_max_heading_level: 2
 ---
 
-import TabItem from "@theme/TabItem";
-import Tabs from "@theme/Tabs";
+import TabItem from '@theme/TabItem';
+import Tabs from '@theme/Tabs';
 
-import CoreConfiguration from "../../../src/components/CoreConfiguration";
-import EnterpriseConfiguration from "../../../src/components/EnterpriseConfiguration";
-import KubernetesConfigureTable from "../../../src/components/KubernetesConfigureTable";
+import CoreConfiguration from '../../../src/components/CoreConfiguration';
+import EnterpriseConfiguration from '../../../src/components/EnterpriseConfiguration';
+import KubernetesConfigureTable from '../../../src/components/KubernetesConfigureTable';
 
 # Authorize Log Fields
 
@@ -91,9 +91,9 @@ Add **Custom Headers** in the Console:
 </TabItem>
 <TabItem label="Kubernetes" value="Kubernetes">
 
-| **[Parameter name](/docs/deploy/k8s/reference#spec)** | **Type**         | **Default**                                                             |
-| :---------------------------------------------------- | :--------------- | :---------------------------------------------------------------------- |
-| `authorizeLogFields`                                  | Array of strings | See [Authorize Fields and Defaults](#authorize-log-fields-and-defaults) |
+| **[Parameter name](/docs/deploy/k8s/reference#spec)** | **Type** | **Default** |
+| :-- | :-- | :-- |
+| `authorizeLogFields` | Array of strings | See [Authorize Fields and Defaults](#authorize-log-fields-and-defaults) |
 
 ### Examples
 
@@ -111,31 +111,31 @@ authorizeLogFields:
 
 The table below lists all available authorize log fields:
 
-| **Field name**                                             | **Description**                                                                                                                                                 | **Default field** |
-| :--------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------- | :---------------- |
-| `body`                                                     | The HTTP request body. Only available for protocols with request content inspection such as MCP.                                                                | No                |
-| `check-request-id`                                         | The request ID of the gRPC check call                                                                                                                           | Yes               |
-| `email`                                                    | The logged-in user's email address                                                                                                                              | Yes               |
-| `headers`                                                  | The complete set of HTTP request headers                                                                                                                        | No                |
-| [`headers.{CustomHeaderName}`](#log-custom-headers-fields) | An HTTP Request Header identified by the `HeaderName`                                                                                                           | No                |
-| `host`                                                     | The HTTP request `:authority` or `Host` header value. Can be a domain name or IP address and may contain a port number (for example, `www.example.com`)         | Yes               |
-| `id-token`                                                 | The user's ID token                                                                                                                                             | No                |
-| `id-token-claims`                                          | The user's ID token claims                                                                                                                                      | No                |
-| `impersonate-email`                                        | If [impersonating](/docs/capabilities/impersonation), the impersonated email                                                                                    | Yes               |
-| `impersonate-session-id`                                   | If [impersonating](/docs/capabilities/impersonation), the impersonated session ID                                                                               | Yes               |
-| `impersonate-user-id`                                      | If [impersonating](/docs/capabilities/impersonation), the impersonated user ID                                                                                  | Yes               |
-| `ip`                                                       | The IP address of the direct downstream client. If Pomerium is deployed behind a load balancer or other proxy, this will not be the IP address of the end user. | Yes               |
-| `mcp-method`                                               | The MCP method being called (e.g., `tools/call`, `tools/list`)                                                                                                  | No                |
-| `mcp-tool`                                                 | The MCP tool name for `tools/call` requests                                                                                                                     | No                |
-| `mcp-tool-parameters`                                      | The tool call parameters as a JSON object for `tools/call` requests                                                                                             | No                |
-| `method`                                                   | The HTTP request method, such as `GET`, `POST`, or `PUT`                                                                                                        | Yes               |
-| `path`                                                     | The HTTP request path (for example, `/some/path`)                                                                                                               | Yes               |
-| `query`                                                    | The HTTP request query (for example, `?test=one&other=13`)                                                                                                      | No                |
-| `removed-groups-count`                                     | The number of groups removed during [JWT groups filtering](/docs/reference/jwt-groups-filter)                                                                   | Yes               |
-| `request-id`                                               | The request's unique identifier as assigned by Pomerium                                                                                                         | Yes               |
-| `service-account-id`                                       | if using a service account, the service account ID                                                                                                              | Yes               |
-| `session-id`                                               | the session ID                                                                                                                                                  | Yes               |
-| `user`                                                     | The user's ID                                                                                                                                                   | Yes               |
+| **Field name** | **Description** | **Default field** |
+| :-- | :-- | :-- |
+| `body` | The HTTP request body. Only available for protocols with request content inspection such as MCP. | No |
+| `check-request-id` | The request ID of the gRPC check call | Yes |
+| `email` | The logged-in user's email address | Yes |
+| `headers` | The complete set of HTTP request headers | No |
+| [`headers.{CustomHeaderName}`](#log-custom-headers-fields) | An HTTP Request Header identified by the `HeaderName` | No |
+| `host` | The HTTP request `:authority` or `Host` header value. Can be a domain name or IP address and may contain a port number (for example, `www.example.com`) | Yes |
+| `id-token` | The user's ID token | No |
+| `id-token-claims` | The user's ID token claims | No |
+| `impersonate-email` | If [impersonating](/docs/capabilities/impersonation), the impersonated email | Yes |
+| `impersonate-session-id` | If [impersonating](/docs/capabilities/impersonation), the impersonated session ID | Yes |
+| `impersonate-user-id` | If [impersonating](/docs/capabilities/impersonation), the impersonated user ID | Yes |
+| `ip` | The IP address of the direct downstream client. If Pomerium is deployed behind a load balancer or other proxy, this will not be the IP address of the end user. | Yes |
+| `mcp-method` | The MCP method being called (e.g., `tools/call`, `tools/list`) | No |
+| `mcp-tool` | The MCP tool name for `tools/call` requests | No |
+| `mcp-tool-parameters` | The tool call parameters as a JSON object for `tools/call` requests | No |
+| `method` | The HTTP request method, such as `GET`, `POST`, or `PUT` | Yes |
+| `path` | The HTTP request path (for example, `/some/path`) | Yes |
+| `query` | The HTTP request query (for example, `?test=one&other=13`) | No |
+| `removed-groups-count` | The number of groups removed during [JWT groups filtering](/docs/reference/jwt-groups-filter) | Yes |
+| `request-id` | The request's unique identifier as assigned by Pomerium | Yes |
+| `service-account-id` | if using a service account, the service account ID | Yes |
+| `session-id` | the session ID | Yes |
+| `user` | The user's ID | Yes |
 
 :::danger
 
@@ -188,17 +188,17 @@ Your logs would look similar to the below example:
 
 ```json
 {
-  "level": "info",
-  "service": "authorize",
-  "request-id": "c9afae5a-ec5a-4242-864f-df4189f20e99",
-  "method": "GET",
-  "path": "/index.css",
   "allow": true,
   "allow-why-true": ["domain-ok"],
   "deny": false,
   "deny-why-false": [],
-  "time": "2023-08-07T10:26:33-04:00",
-  "message": "authorize check"
+  "level": "info",
+  "message": "authorize check",
+  "method": "GET",
+  "path": "/index.css",
+  "request-id": "c9afae5a-ec5a-4242-864f-df4189f20e99",
+  "service": "authorize",
+  "time": "2023-08-07T10:26:33-04:00"
 }
 ```
 
@@ -215,8 +215,10 @@ Your logs would look similar to the example below:
 
 ```json
 {
-  "level": "info",
-  "service": "authorize",
+  "allow": true,
+  "allow-why-true": ["domain-ok"],
+  "deny": false,
+  "deny-why-false": [],
   "headers": {
     ":authority": "verify.localhost.pomerium.io",
     ":method": "GET",
@@ -240,12 +242,10 @@ Your logs would look similar to the example below:
     "X-Forwarded-Proto": "https",
     "X-Request-Id": "d6c95dd6-9f3c-4653-94d1-62ea54b11328"
   },
-  "allow": true,
-  "allow-why-true": ["domain-ok"],
-  "deny": false,
-  "deny-why-false": [],
-  "time": "2023-08-07T10:32:03-04:00",
-  "message": "authorize check"
+  "level": "info",
+  "message": "authorize check",
+  "service": "authorize",
+  "time": "2023-08-07T10:32:03-04:00"
 }
 ```
 
@@ -265,18 +265,18 @@ The custom headers will appear in the `headers` field:
 
 ```json
 {
-  "level": "info",
-  "service": "authorize",
-  "headers": {
-    "Content-Type": "application/json",
-    "Cookie": "_pomerium=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhYnJva2VyX3JlY29yZF92ZXJzaW9uIjozMTQwLCJkYXRhYnJva2VyX3NlcnZlcl92ZXJzaW9uIjo3OTM4MDg0ODcsImlhdCI6MTY5MTQxODM5MiwianRpIjoiMTcyZTQ1NTEtZTllYi00ZmUwLWE2Y2UtMjQ0NWM3NjA0MGJkIiwic3ViIjoiZ29vZ2xlLW9hdXRoMnwxMTU0MjA2NjQ3MjYxODMzMjM3NTgifQ.ktq6oFtiBiGwNsU-5DQzLNTszexFhyNl1Iz4kc_Uq2M"
-  },
   "allow": true,
   "allow-why-true": ["domain-ok"],
   "deny": false,
   "deny-why-false": [],
-  "time": "2023-08-07T10:40:38-04:00",
-  "message": "authorize check"
+  "headers": {
+    "Content-Type": "application/json",
+    "Cookie": "_pomerium=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhYnJva2VyX3JlY29yZF92ZXJzaW9uIjozMTQwLCJkYXRhYnJva2VyX3NlcnZlcl92ZXJzaW9uIjo3OTM4MDg0ODcsImlhdCI6MTY5MTQxODM5MiwianRpIjoiMTcyZTQ1NTEtZTllYi00ZmUwLWE2Y2UtMjQ0NWM3NjA0MGJkIiwic3ViIjoiZ29vZ2xlLW9hdXRoMnwxMTU0MjA2NjQ3MjYxODMzMjM3NTgifQ.ktq6oFtiBiGwNsU-5DQzLNTszexFhyNl1Iz4kc_Uq2M"
+  },
+  "level": "info",
+  "message": "authorize check",
+  "service": "authorize",
+  "time": "2023-08-07T10:40:38-04:00"
 }
 ```
 
@@ -301,15 +301,15 @@ Your logs would look similar to the below example:
 
 ```json
 {
-  "level": "info",
-  "service": "authorize",
-  "body": "{\"username\":\"user@example.com\",\"action\":\"login\"}",
   "allow": true,
   "allow-why-true": ["domain-ok"],
+  "body": "{\"username\":\"user@example.com\",\"action\":\"login\"}",
   "deny": false,
   "deny-why-false": [],
-  "time": "2023-08-07T10:43:36-04:00",
-  "message": "authorize check"
+  "level": "info",
+  "message": "authorize check",
+  "service": "authorize",
+  "time": "2023-08-07T10:43:36-04:00"
 }
 ```
 
@@ -335,8 +335,10 @@ Your logs would look similar to the below example:
 
 ```json
 {
-  "level": "info",
-  "service": "authorize",
+  "allow": true,
+  "allow-why-true": ["domain-ok"],
+  "deny": false,
+  "deny-why-false": [],
   "id-token": "<ID-TOKEN>",
   "id-token-claims": {
     "aud": "XmDTct9PHNsMRxKxCIObqWnmnEJLguPQ",
@@ -356,11 +358,9 @@ Your logs would look similar to the below example:
     "sub": "google-oauth2|XXXXXXXXXXXXXXXXXXXXX",
     "updated_at": "2023-08-03T17:44:00.171Z"
   },
-  "allow": true,
-  "allow-why-true": ["domain-ok"],
-  "deny": false,
-  "deny-why-false": [],
-  "time": "2023-08-07T10:43:36-04:00",
-  "message": "authorize check"
+  "level": "info",
+  "message": "authorize check",
+  "service": "authorize",
+  "time": "2023-08-07T10:43:36-04:00"
 }
 ```

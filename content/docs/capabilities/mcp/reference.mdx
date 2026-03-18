@@ -1,9 +1,9 @@
 ---
-title: "MCP Full Reference"
-sidebar_label: "Full Reference"
+title: 'MCP Full Reference'
+sidebar_label: 'Full Reference'
 sidebar_position: 10
 lang: en-US
-description: "Complete reference for Pomerium MCP support: token types, configuration options, user identity, security, observability, and policy-based tool access control."
+description: 'Complete reference for Pomerium MCP support: token types, configuration options, user identity, security, observability, and policy-based tool access control.'
 keywords: [MCP, model context protocol, AI agents, LLM, AI gateway]
 ---
 
@@ -157,12 +157,12 @@ When MCP clients use URL-based client IDs (per the [OAuth 2.0 Client ID Metadata
 
 ```yaml
 mcp_allowed_client_id_domains:
-  - "example.com"
-  - "*.trusted-provider.com"
+  - 'example.com'
+  - '*.trusted-provider.com'
 ```
 
-| Setting                         | Description                                                                                                                                                    |
-| ------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Setting | Description |
+| --- | --- |
 | `mcp_allowed_client_id_domains` | List of allowed domain patterns for MCP client ID metadata URLs. Supports wildcard patterns (e.g., `*.example.com`). Required when using URL-based client IDs. |
 
 **Behavior:**
@@ -188,13 +188,13 @@ mcp:
   server:
     # Optional: Configure upstream OAuth2 for services requiring authentication
     upstream_oauth2:
-      client_id: "your-oauth-client-id"
-      client_secret: "your-oauth-client-secret"
+      client_id: 'your-oauth-client-id'
+      client_secret: 'your-oauth-client-secret'
       endpoint:
-        auth_url: "https://provider.com/oauth/authorize"
-        token_url: "https://provider.com/oauth/token"
-        auth_style: "header" # or "params"
-      scopes: ["scope1", "scope2"]
+        auth_url: 'https://provider.com/oauth/authorize'
+        token_url: 'https://provider.com/oauth/token'
+        auth_style: 'header' # or "params"
+      scopes: ['scope1', 'scope2']
 
     # Optional: Maximum request body size (default: 4KiB)
     max_request_bytes: 1048576
@@ -281,12 +281,12 @@ Both MCP client applications and servers can access authenticated user informati
 
 ```json
 {
-  "sub": "user@example.com",
+  "aud": "your-app.domain.com",
   "email": "user@example.com",
-  "name": "John Doe",
   "groups": ["engineering", "admin"],
   "iss": "your-domain.com",
-  "aud": "your-app.domain.com"
+  "name": "John Doe",
+  "sub": "user@example.com"
 }
 ```
 
@@ -367,11 +367,11 @@ For general observability features, see [Metrics](/docs/reference/metrics) and [
 
 Pomerium includes three specialized log fields for MCP monitoring:
 
-| Field                 | Description                                                      | Example Value                                    |
-| --------------------- | ---------------------------------------------------------------- | ------------------------------------------------ |
-| `mcp-method`          | The MCP JSON-RPC method being called                             | `"tools/call"`, `"tools/list"`                   |
-| `mcp-tool`            | The specific tool name being invoked (for `tools/call` requests) | `"database_query"`, `"list_files"`               |
-| `mcp-tool-parameters` | The parameters passed to the tool                                | `{"query": "SELECT * FROM users", "limit": 100}` |
+| Field | Description | Example Value |
+| --- | --- | --- |
+| `mcp-method` | The MCP JSON-RPC method being called | `"tools/call"`, `"tools/list"` |
+| `mcp-tool` | The specific tool name being invoked (for `tools/call` requests) | `"database_query"`, `"list_files"` |
+| `mcp-tool-parameters` | The parameters passed to the tool | `{"query": "SELECT * FROM users", "limit": 100}` |
 
 ### Configuration
 
@@ -393,11 +393,12 @@ When an AI agent calls an MCP tool, Pomerium generates detailed authorization lo
 
 ```json
 {
-  "level": "info",
-  "service": "authorize",
-  "request-id": "c9afae5a-ec5a-4242-864f-df4189f20e99",
-  "user": "google-oauth2|115420664726183323237",
+  "allow": true,
+  "allow-why-true": ["domain-ok", "mcp-tool-ok"],
+  "deny": false,
+  "deny-why-false": [],
   "email": "analyst@company.com",
+  "level": "info",
   "mcp-method": "tools/call",
   "mcp-tool": "database_query",
   "mcp-tool-parameters": {
@@ -405,12 +406,11 @@ When an AI agent calls an MCP tool, Pomerium generates detailed authorization lo
     "limit": 100,
     "format": "json"
   },
-  "allow": true,
-  "allow-why-true": ["domain-ok", "mcp-tool-ok"],
-  "deny": false,
-  "deny-why-false": [],
+  "message": "authorize check",
+  "request-id": "c9afae5a-ec5a-4242-864f-df4189f20e99",
+  "service": "authorize",
   "time": "2024-06-24T10:26:33-04:00",
-  "message": "authorize check"
+  "user": "google-oauth2|115420664726183323237"
 }
 ```
 
@@ -445,9 +445,9 @@ Different MCP methods appear in logs:
 
 ```json
 {
-  "mcp-method": "tools/list",
   "allow": true,
-  "allow-why-true": ["authenticated-user"]
+  "allow-why-true": ["authenticated-user"],
+  "mcp-method": "tools/list"
 }
 ```
 
@@ -468,8 +468,8 @@ Different MCP methods appear in logs:
 
 ```json
 {
-  "mcp-method": "resources/list",
-  "allow": true
+  "allow": true,
+  "mcp-method": "resources/list"
 }
 ```
 
@@ -485,14 +485,14 @@ For broader policy examples, see the [Authorization documentation](/docs/capabil
 
 The `mcp_tool` criterion is designed specifically for MCP routes and allows policy enforcement at the individual tool level. It uses the [String Matcher](/docs/internals/ppl#string-matcher) format and supports all standard string matching operators.
 
-| Operator      | Description                                                                                     | Example                                               |
-| ------------- | ----------------------------------------------------------------------------------------------- | ----------------------------------------------------- |
-| `is`          | Exact match of the tool name                                                                    | `mcp_tool: { is: "database_query" }`                  |
-| `starts_with` | Tool name starts with the specified prefix                                                      | `mcp_tool: { starts_with: "db_" }`                    |
-| `ends_with`   | Tool name ends with the specified suffix                                                        | `mcp_tool: { ends_with: "_query" }`                   |
-| `contains`    | Tool name contains the specified substring                                                      | `mcp_tool: { contains: "read" }`                      |
-| `in`          | Tool name matches one of the provided values                                                    | `mcp_tool: { in: ["list_tables", "describe_table"] }` |
-| `not_in`      | Tool name does not match any of the provided values (useful to enforce allowlists under `deny`) | `mcp_tool: { not_in: ["query", "list_tables"] }`      |
+| Operator | Description | Example |
+| --- | --- | --- |
+| `is` | Exact match of the tool name | `mcp_tool: { is: "database_query" }` |
+| `starts_with` | Tool name starts with the specified prefix | `mcp_tool: { starts_with: "db_" }` |
+| `ends_with` | Tool name ends with the specified suffix | `mcp_tool: { ends_with: "_query" }` |
+| `contains` | Tool name contains the specified substring | `mcp_tool: { contains: "read" }` |
+| `in` | Tool name matches one of the provided values | `mcp_tool: { in: ["list_tables", "describe_table"] }` |
+| `not_in` | Tool name does not match any of the provided values (useful to enforce allowlists under `deny`) | `mcp_tool: { not_in: ["query", "list_tables"] }` |
 
 #### Evaluation semantics
 
@@ -534,7 +534,7 @@ policy:
   deny:
     and:
       - mcp_tool:
-          starts_with: "admin_"
+          starts_with: 'admin_'
 ```
 
 Note:
@@ -552,7 +552,7 @@ policy:
   deny:
     and:
       - mcp_tool:
-          not_in: ["query", "list_tables"]
+          not_in: ['query', 'list_tables']
 ```
 
 ### Example
@@ -566,13 +566,13 @@ policy:
       - domain:
           is: company.com
       - groups:
-          has: "data-analysts"
+          has: 'data-analysts'
   deny:
     or:
       - mcp_tool:
-          in: ["update_data", "drop_table", "delete_records"]
+          in: ['update_data', 'drop_table', 'delete_records']
       - mcp_tool:
-          starts_with: "admin_"
+          starts_with: 'admin_'
 ```
 
 For more advanced policy patterns, see the [PPL documentation](/docs/internals/ppl).

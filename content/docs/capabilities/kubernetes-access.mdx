@@ -6,9 +6,9 @@ sidebar_label: Kubernetes Access Management
 description: This article describes Pomerium's integration with the Kubernetes API Server
 ---
 
-import CodeBlock from "@theme/CodeBlock";
-import TabItem from "@theme/TabItem";
-import Tabs from "@theme/Tabs";
+import CodeBlock from '@theme/CodeBlock';
+import TabItem from '@theme/TabItem';
+import Tabs from '@theme/Tabs';
 
 # Kubernetes Access
 
@@ -64,13 +64,13 @@ metadata:
   name: pomerium-impersonation
 rules:
   - apiGroups:
-      - ""
+      - ''
     resources:
       - users
     verbs:
       - impersonate
   - apiGroups:
-      - ""
+      - ''
     resources:
       - groups
     verbs:
@@ -104,11 +104,11 @@ For self-hosted Kubernetes clusters, this is the recommended way to configure au
 routes:
   - from: https://mycluster.localhost.pomerium.io
     to:
-      - "" # API server address (e.g. https://x.x.x.x:6443)
-    tls_custom_ca: "" # base64-encoded API server CA cert
+      - '' # API server address (e.g. https://x.x.x.x:6443)
+    tls_custom_ca: '' # base64-encoded API server CA cert
     jwt_issuer_format: uri
     set_request_headers:
-      Authorization: "Bearer ${pomerium.jwt}"
+      Authorization: 'Bearer ${pomerium.jwt}'
 ```
 
 2. Create a file with the following contents, then configure kube-apiserver to use this file with the flag <br/>`--authentication-config=/path/to/authentication_config.yaml`:
@@ -125,7 +125,7 @@ jwt:
     claimMappings:
       username:
         claim: email
-        prefix: ""
+        prefix: ''
 ```
 
 Be sure to substitute `/path/to/authentication_config.yaml` with the actual path on the node where this config file is saved. The config file must be present on the host in each control-plane node.
@@ -184,7 +184,7 @@ metadata:
   name: example-role
 rules:
   - apiGroups:
-      - ""
+      - ''
     resources:
       - pods
     verbs:
@@ -210,7 +210,7 @@ Then, your user should be authorized:
 <CodeBlock>
   <span>$ kubectl auth can-i list pods</span>
   <br />
-  <span style={{ fontWeight: "bold" }}>yes</span>
+  <span style={{fontWeight: 'bold'}}>yes</span>
 </CodeBlock>
 
 ## Kubeconfig Setup

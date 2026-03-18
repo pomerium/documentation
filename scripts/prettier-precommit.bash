@@ -1,4 +1,7 @@
 #!/bin/bash
 set -euo pipefail
 
-printf "%s\n" "$@" | xargs yarn --cwd ui run prettier --write --ignore-unknown
+repo_root="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
+
+cd "$repo_root"
+./node_modules/.bin/prettier --write --ignore-unknown "$@"

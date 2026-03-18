@@ -15,10 +15,10 @@ pagination_next: null
 toc_max_heading_level: 2
 ---
 
-import TabItem from "@theme/TabItem";
-import Tabs from "@theme/Tabs";
+import TabItem from '@theme/TabItem';
+import Tabs from '@theme/Tabs';
 
-import EnterpriseConfiguration from "../../../../src/components/EnterpriseConfiguration";
+import EnterpriseConfiguration from '../../../../src/components/EnterpriseConfiguration';
 
 # Headers Settings
 
@@ -63,7 +63,7 @@ For an incoming request with the header `X-My-Host: foo.example.com`, this would
 `host_path_regex_rewrite_pattern` and `host_path_regex_rewrite_substitution` rewrite the Host header based on a regular expression substitution using the URL path as the input. For example:
 
 ```yaml
-host_path_regex_rewrite_pattern: "^/(.+)/.+$"
+host_path_regex_rewrite_pattern: '^/(.+)/.+$'
 host_path_regex_rewrite_substitution: \1
 ```
 
@@ -89,7 +89,7 @@ preserve_host_header: true
 ```
 
 ```yaml
-host_rewrite: "example.com"
+host_rewrite: 'example.com'
 ```
 
 </TabItem>
@@ -104,14 +104,14 @@ Configure **Host Header** settings in the route **Headers** settings in the Cons
 </TabItem>
 <TabItem value="Kubernetes" label="Kubernetes">
 
-| **[Annotation name](/docs/deploy/k8s/ingress#set-ingress-annotations)** | **Type** | **Usage**    |
-| :---------------------------------------------------------------------- | :------- | :----------- |
-| `host_rewrite`                                                          | `string` | **optional** |
+| **[Annotation name](/docs/deploy/k8s/ingress#set-ingress-annotations)** | **Type** | **Usage** |
+| :-- | :-- | :-- |
+| `host_rewrite` | `string` | **optional** |
 
 ### Examples
 
 ```yaml
-ingress.pomerium.io/host_rewrite: "example.com"
+ingress.pomerium.io/host_rewrite: 'example.com'
 ```
 
 </TabItem>
@@ -156,7 +156,7 @@ Pass static header values in the request:
     # Set a fixed Basic Auth username and password (root:hunter42)
     Authorization: Basic cm9vdDpodW50ZXI0Mg==
     # Set a custom header
-    X-Your-favorite-authenticating-Proxy: "Pomerium"
+    X-Your-favorite-authenticating-Proxy: 'Pomerium'
     # To include a '$' character in a header value:
     X-Hello: $$world # header value is set to "$world"
 ```
@@ -189,9 +189,9 @@ Configure **Set Request Headers** in the Console:
 </TabItem>
 <TabItem value="Kubernetes" label="Kubernetes">
 
-| **[Annotation name](/docs/deploy/k8s/ingress#set-ingress-annotations)** | **Type**               | **Usage**    |
-| :---------------------------------------------------------------------- | :--------------------- | :----------- |
-| `set_request_headers`                                                   | map of key-value pairs | **optional** |
+| **[Annotation name](/docs/deploy/k8s/ingress#set-ingress-annotations)** | **Type** | **Usage** |
+| :-- | :-- | :-- |
+| `set_request_headers` | map of key-value pairs | **optional** |
 
 ```yaml
 ingress.pomerium.io/set_request_headers: |
@@ -206,12 +206,12 @@ ingress.pomerium.io/set_request_headers: |
 
 The following token substitutions are available:
 
-| **Token**                             | **Value**                                                                                                                                                                                |
-| :------------------------------------ | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `${pomerium.access_token}`            | OAuth access token from the identity provider\*                                                                                                                                          |
-| `${pomerium.client_cert_fingerprint}` | Short form SHA-256 fingerprint of the presented client certificate (if [downstream mTLS](/docs/internals/certificates-and-tls) is enabled)                                               |
-| `${pomerium.id_token}`                | OIDC ID token from the identity provider\*                                                                                                                                               |
-| `${pomerium.jwt}`                     | [Pomerium JWT](/docs/capabilities/getting-users-identity) (this is the same value as in the [`X-Pomerium-Jwt-Assertion` header](/docs/reference/routes/pass-identity-headers-per-route)) |
+| **Token** | **Value** |
+| :-- | :-- |
+| `${pomerium.access_token}` | OAuth access token from the identity provider\* |
+| `${pomerium.client_cert_fingerprint}` | Short form SHA-256 fingerprint of the presented client certificate (if [downstream mTLS](/docs/internals/certificates-and-tls) is enabled) |
+| `${pomerium.id_token}` | OIDC ID token from the identity provider\* |
+| `${pomerium.jwt}` | [Pomerium JWT](/docs/capabilities/getting-users-identity) (this is the same value as in the [`X-Pomerium-Jwt-Assertion` header](/docs/reference/routes/pass-identity-headers-per-route)) |
 
 \*The ID token and access token are not available when using the [Hosted Authenticate](/docs/capabilities/authentication) service.
 
@@ -272,9 +272,9 @@ Set **Remove Request Headers** in the Console:
 </TabItem>
 <TabItem value="Kubernetes" label="Kubernetes">
 
-| **[Annotation name](/docs/deploy/k8s/ingress#set-ingress-annotations)** | **Type** | **Usage**    |
-| :---------------------------------------------------------------------- | :------- | :----------- |
-| `remove_request_headers`                                                | `string` | **optional** |
+| **[Annotation name](/docs/deploy/k8s/ingress#set-ingress-annotations)** | **Type** | **Usage** |
+| :-- | :-- | :-- |
+| `remove_request_headers` | `string` | **optional** |
 
 ```yaml
 ingress.pomerium.io/remove_request_headers: |
@@ -317,9 +317,9 @@ Configure **Set Response Headers** in the Console:
 </TabItem>
 <TabItem value="Kubernetes" label="Kubernetes">
 
-| **[Annotation name](/docs/deploy/k8s/ingress#set-ingress-annotations)** | **Type** | **Usage**    |
-| :---------------------------------------------------------------------- | :------- | :----------- |
-| `set_response_headers`                                                  | `string` | **optional** |
+| **[Annotation name](/docs/deploy/k8s/ingress#set-ingress-annotations)** | **Type** | **Usage** |
+| :-- | :-- | :-- |
+| `set_response_headers` | `string` | **optional** |
 
 ```yaml
 ingress.pomerium.io/set_response_headers: |
@@ -373,9 +373,9 @@ Configure **Rewrite Response Headers** in the Console:
 </TabItem>
 <TabItem value="Kubernetes" label="Kubernetes">
 
-| **[Annotation name](/docs/deploy/k8s/ingress#set-ingress-annotations)** | **Type** | **Usage**    |
-| :---------------------------------------------------------------------- | :------- | :----------- |
-| `rewrite_response_headers`                                              | `object` | **optional** |
+| **[Annotation name](/docs/deploy/k8s/ingress#set-ingress-annotations)** | **Type** | **Usage** |
+| :-- | :-- | :-- |
+| `rewrite_response_headers` | `object` | **optional** |
 
 ### Examples
 

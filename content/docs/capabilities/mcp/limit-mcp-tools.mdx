@@ -1,9 +1,9 @@
 ---
-title: "Limit MCP Tool Calling"
-sidebar_label: "Limit MCP Tool Calling"
+title: 'Limit MCP Tool Calling'
+sidebar_label: 'Limit MCP Tool Calling'
 sidebar_position: 4
 lang: en-US
-description: "Use Pomerium Policy Language (PPL) to control which MCP tools users can call, with deny-based block lists and allowlists."
+description: 'Use Pomerium Policy Language (PPL) to control which MCP tools users can call, with deny-based block lists and allowlists.'
 keywords:
   [MCP, model context protocol, PPL, policy, tool access control, authorization]
 ---
@@ -34,14 +34,14 @@ flowchart LR
 
 The `mcp_tool` criterion matches the tool name in MCP `tools/call` requests. It uses the [String Matcher](/docs/internals/ppl#string-matcher) format:
 
-| Operator      | Description                                            | Example                                               |
-| ------------- | ------------------------------------------------------ | ----------------------------------------------------- |
-| `is`          | Exact match                                            | `mcp_tool: { is: "database_query" }`                  |
-| `starts_with` | Prefix match                                           | `mcp_tool: { starts_with: "db_" }`                    |
-| `ends_with`   | Suffix match                                           | `mcp_tool: { ends_with: "_query" }`                   |
-| `contains`    | Substring match                                        | `mcp_tool: { contains: "read" }`                      |
-| `in`          | Matches any value in list                              | `mcp_tool: { in: ["list_tables", "describe_table"] }` |
-| `not_in`      | Does not match any value (for allowlists under `deny`) | `mcp_tool: { not_in: ["query", "list_tables"] }`      |
+| Operator | Description | Example |
+| --- | --- | --- |
+| `is` | Exact match | `mcp_tool: { is: "database_query" }` |
+| `starts_with` | Prefix match | `mcp_tool: { starts_with: "db_" }` |
+| `ends_with` | Suffix match | `mcp_tool: { ends_with: "_query" }` |
+| `contains` | Substring match | `mcp_tool: { contains: "read" }` |
+| `in` | Matches any value in list | `mcp_tool: { in: ["list_tables", "describe_table"] }` |
+| `not_in` | Does not match any value (for allowlists under `deny`) | `mcp_tool: { not_in: ["query", "list_tables"] }` |
 
 ### Evaluation semantics
 
@@ -89,7 +89,7 @@ policy:
   deny:
     and:
       - mcp_tool:
-          starts_with: "admin_"
+          starts_with: 'admin_'
 ```
 
 ### Allowlist with `not_in`
@@ -105,7 +105,7 @@ policy:
   deny:
     and:
       - mcp_tool:
-          not_in: ["query", "list_tables"]
+          not_in: ['query', 'list_tables']
 ```
 
 ### Combined identity + tool restrictions
@@ -119,13 +119,13 @@ policy:
       - domain:
           is: company.com
       - groups:
-          has: "data-analysts"
+          has: 'data-analysts'
   deny:
     or:
       - mcp_tool:
-          in: ["update_data", "drop_table", "delete_records"]
+          in: ['update_data', 'drop_table', 'delete_records']
       - mcp_tool:
-          starts_with: "admin_"
+          starts_with: 'admin_'
 ```
 
 ## Step-by-step

@@ -9,7 +9,7 @@ yarn start           # Dev server on localhost:3001 (hot-reload)
 yarn build           # Production build to /build/
 yarn format          # Auto-fix formatting with Prettier
 yarn format-check    # Check formatting (no changes)
-yarn cspell "**/*"   # Spell-check all files
+yarn cspell          # Spell-check tracked source files
 yarn precommit       # Runs format-check + cspell
 yarn clear           # Clear Docusaurus cache (useful if build fails)
 ```
@@ -62,9 +62,9 @@ Enterprise-only sidebar items use `className: 'enterprise'`.
 
 ```yaml
 ---
-title: "Page Title"
-sidebar_label: "Menu Label"
-description: "SEO description"
+title: 'Page Title'
+sidebar_label: 'Menu Label'
+description: 'SEO description'
 keywords: [pomerium, relevant, terms]
 lang: en-US
 ---
@@ -81,8 +81,8 @@ Standard types plus a custom `:::enterprise` for enterprise-only features:
 ### Tabs (Zero vs Core)
 
 ```mdx
-import TabItem from "@theme/TabItem";
-import Tabs from "@theme/Tabs";
+import TabItem from '@theme/TabItem';
+import Tabs from '@theme/Tabs';
 
 <Tabs>
   <TabItem value="zero" label="Pomerium Zero">
@@ -99,7 +99,7 @@ import Tabs from "@theme/Tabs";
 Stored as `content/docs/admonitions/_name.mdx` (underscore prefix). Imported as:
 
 ```mdx
-import SemanticVersioning from "@site/content/docs/admonitions/_semantic-versioning.mdx";
+import SemanticVersioning from '@site/content/docs/admonitions/_semantic-versioning.mdx';
 
 <SemanticVersioning />
 ```

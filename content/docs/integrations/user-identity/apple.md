@@ -83,17 +83,17 @@ Apple requires a signed JWT for the client secret.
 
 You can use any [JWT library](https://jwt.io/libraries) to generate and sign the JWT. At a minimum, the JWT should include the following claims, fields, and values (per [Apple's docs](https://developer.apple.com/documentation/signinwithapplerestapi/generate_and_validate_tokens)):
 
-| **Header** |                                                                                                                        |
-| :--------- | :--------------------------------------------------------------------------------------------------------------------- |
-| `alg`      | The algorithm used to sign the token. For Sign in with Apple, use `ES256`.                                             |
-| `kid`      | A 10-character key identifier generated for the Sign in with Apple private key associated with your developer account. |
+| **Header** |  |
+| :-- | :-- |
+| `alg` | The algorithm used to sign the token. For Sign in with Apple, use `ES256`. |
+| `kid` | A 10-character key identifier generated for the Sign in with Apple private key associated with your developer account. |
 
-| **Payload Claims** |                                                                                                             |
-| :----------------- | :---------------------------------------------------------------------------------------------------------- |
-| `iss`              | 10-character Team ID associated with your Developer Account.                                                |
-| `exp`              | Expiration time; must not exceed 15777000 (6 months in seconds) from Current UNIX Time.                     |
-| `aud`              | Use `https://appleid.apple.com`. The audience claim identifies the intended recipient of the client secret. |
-| `sub`              | Use `client_id`. The subject identifies the principal that is the subject of the client secret.             |
+| **Payload Claims** |  |
+| :-- | :-- |
+| `iss` | 10-character Team ID associated with your Developer Account. |
+| `exp` | Expiration time; must not exceed 15777000 (6 months in seconds) from Current UNIX Time. |
+| `aud` | Use `https://appleid.apple.com`. The audience claim identifies the intended recipient of the client secret. |
+| `sub` | Use `client_id`. The subject identifies the principal that is the subject of the client secret. |
 
 **Note:** Your `client_id` must be the value of either **Service ID** or **App ID**.
 

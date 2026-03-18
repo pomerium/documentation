@@ -1,6 +1,6 @@
 ---
-title: "Special Routes"
-sidebar_label: "Special Routes"
+title: 'Special Routes'
+sidebar_label: 'Special Routes'
 lang: en-US
 keywords:
   [
@@ -39,19 +39,19 @@ This page documents all such endpoints, their purpose, and usage.
 
 Below is a summary of the special routes:
 
-| **Endpoint**                                                         | **Method(s)** | **Requires Auth?**   | **Purpose**                                                                                                             |
-| :------------------------------------------------------------------- | :------------ | :------------------- | :---------------------------------------------------------------------------------------------------------------------- |
-| [`/.pomerium/`](#user-info-page)                                     | `GET`         | Yes (logged in)      | User info page (HTML) showing current identity, session details, and device identities.                                 |
-| [`/.pomerium/user`](#user-data-endpoint)                             | `GET`         | Yes (logged in)      | Return current user information in JSON format (plain claims data).                                                     |
-| [`/.pomerium/api/v1/login`](#programmatic-login-url-api)             | `GET`         | No (initiates login) | Generate a one-time **programmatic login** URL to start an OAuth2 login flow and obtain a Pomerium session token (JWT). |
-| [`/.pomerium/sign_out`](#single-sign-out-endpoint)                   | `GET`, `POST` | Yes (CSRF token)     | Log the user out of Pomerium (and IdP session if applicable), clearing session cookies and redirecting.                 |
-| [`/.pomerium/webauthn`](#device-enrollment-endpoint)                 | `GET`, `POST` | Yes (logged in)      | Initiate or complete a **device enrollment** via WebAuthn for device identity verification.                             |
-| [`/.pomerium/device-enrolled`](#device-enrollment-callback)          | `GET`         | Yes (logged in)      | Finalize device enrollment. Typically used by Pomerium to confirm a device was successfully registered.                 |
-| [`/ping`](#health-check-endpoints)                                   | `GET`, `HEAD` | No                   | Basic health check endpoint. Returns 200 OK.                                                                            |
-| [`/healthz`](#health-check-endpoints)                                | `GET`, `HEAD` | No                   | Basic health check endpoint. Returns 200 OK.                                                                            |
-| [`/.well-known/pomerium`](#oidc-discovery-endpoint)                  | `GET`         | No                   | OIDC-like discovery document listing relevant Pomerium endpoints (JWKS URI, etc.).                                      |
-| [`/.well-known/pomerium/jwks.json`](#jwks-endpoint)                  | `GET`         | No                   | Serves the JSON Web Key Set (JWKS) used to verify Pomerium-issued JWTs.                                                 |
-| [`/.well-known/pomerium/hpke-public-key`](#hpke-public-key-endpoint) | `GET`         | No                   | Serves the Hybrid Public Key Encryption (HPKE) public key used in the stateless authentication flow.                    |
+| **Endpoint** | **Method(s)** | **Requires Auth?** | **Purpose** |
+| :-- | :-- | :-- | :-- |
+| [`/.pomerium/`](#user-info-page) | `GET` | Yes (logged in) | User info page (HTML) showing current identity, session details, and device identities. |
+| [`/.pomerium/user`](#user-data-endpoint) | `GET` | Yes (logged in) | Return current user information in JSON format (plain claims data). |
+| [`/.pomerium/api/v1/login`](#programmatic-login-url-api) | `GET` | No (initiates login) | Generate a one-time **programmatic login** URL to start an OAuth2 login flow and obtain a Pomerium session token (JWT). |
+| [`/.pomerium/sign_out`](#single-sign-out-endpoint) | `GET`, `POST` | Yes (CSRF token) | Log the user out of Pomerium (and IdP session if applicable), clearing session cookies and redirecting. |
+| [`/.pomerium/webauthn`](#device-enrollment-endpoint) | `GET`, `POST` | Yes (logged in) | Initiate or complete a **device enrollment** via WebAuthn for device identity verification. |
+| [`/.pomerium/device-enrolled`](#device-enrollment-callback) | `GET` | Yes (logged in) | Finalize device enrollment. Typically used by Pomerium to confirm a device was successfully registered. |
+| [`/ping`](#health-check-endpoints) | `GET`, `HEAD` | No | Basic health check endpoint. Returns 200 OK. |
+| [`/healthz`](#health-check-endpoints) | `GET`, `HEAD` | No | Basic health check endpoint. Returns 200 OK. |
+| [`/.well-known/pomerium`](#oidc-discovery-endpoint) | `GET` | No | OIDC-like discovery document listing relevant Pomerium endpoints (JWKS URI, etc.). |
+| [`/.well-known/pomerium/jwks.json`](#jwks-endpoint) | `GET` | No | Serves the JSON Web Key Set (JWKS) used to verify Pomerium-issued JWTs. |
+| [`/.well-known/pomerium/hpke-public-key`](#hpke-public-key-endpoint) | `GET` | No | Serves the Hybrid Public Key Encryption (HPKE) public key used in the stateless authentication flow. |
 
 Below are details for each special route:
 
@@ -72,8 +72,8 @@ This endpoint is particularly useful for single-page applications that need to f
 ```json
 {
   "email": "user@example.com",
-  "name": "John Doe",
-  "groups": ["engineering", "admins"]
+  "groups": ["engineering", "admins"],
+  "name": "John Doe"
 }
 ```
 
@@ -152,9 +152,9 @@ This endpoint allows clients and upstream applications to dynamically discover n
 
 ```json
 {
-  "issuer": "https://app.example.com/",
   "authentication_callback_endpoint": "https://authenticate.example.com/oauth2/callback",
   "frontchannel_logout_uri": "https://app.example.com/.pomerium/sign_out",
+  "issuer": "https://app.example.com/",
   "jwks_uri": "https://app.example.com/.well-known/pomerium/jwks.json"
 }
 ```

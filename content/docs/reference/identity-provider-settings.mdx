@@ -5,10 +5,10 @@ sidebar_label: Identity Provider Settings
 description: Configure and self-host your own Identity Provider with Pomerium's Identity Provider settings.
 ---
 
-import TabItem from "@theme/TabItem";
-import Tabs from "@theme/Tabs";
+import TabItem from '@theme/TabItem';
+import Tabs from '@theme/Tabs';
 
-import EnterpriseConfiguration from "../../../src/components/EnterpriseConfiguration";
+import EnterpriseConfiguration from '../../../src/components/EnterpriseConfiguration';
 
 # Identity Provider Settings
 
@@ -48,9 +48,9 @@ Pomerium can also integrate with any identity provider that supports OAuth 2.0 a
 <Tabs>
 <TabItem value="Core" label="Core">
 
-| **Config file keys** | **Environment variables** | **Type** | **Usage**                      |
-| :------------------- | :------------------------ | :------- | :----------------------------- |
-| `idp_client_id`      | `IDP_CLIENT_ID`           | `string` | **required** (if self-hosting) |
+| **Config file keys** | **Environment variables** | **Type** | **Usage** |
+| :-- | :-- | :-- | :-- |
+| `idp_client_id` | `IDP_CLIENT_ID` | `string` | **required** (if self-hosting) |
 
 #### Examples \{#identity-provider-client-id-examples}
 
@@ -88,9 +88,9 @@ See [`identityProvider.secret`](/docs/deploy/k8s/reference#identityprovider)
 <Tabs>
 <TabItem value="Core" label="Core">
 
-| **Config file keys** | **Environment variables** | **Type** | **Usage**                                                                                   |
-| :------------------- | :------------------------ | :------- | :------------------------------------------------------------------------------------------ |
-| `idp_client_secret`  | `IDP_CLIENT_SECRET`       | `string` | **required** (unless using [idp_client_secret_file](#identity-provider-client-secret-file)) |
+| **Config file keys** | **Environment variables** | **Type** | **Usage** |
+| :-- | :-- | :-- | :-- |
+| `idp_client_secret` | `IDP_CLIENT_SECRET` | `string` | **required** (unless using [idp_client_secret_file](#identity-provider-client-secret-file)) |
 
 #### Examples \{#identity-provider-client-secret-examples}
 
@@ -130,14 +130,14 @@ The identity provider client secret file points to a file containing the secret.
 <Tabs>
 <TabItem value="Core" label="Core">
 
-| **Config file keys**     | **Environment variables** | **Type** | **Usage**                                                                                       |
-| :----------------------- | :------------------------ | :------- | :---------------------------------------------------------------------------------------------- |
-| `idp_client_secret_file` | `IDP_CLIENT_SECRET_FILE`  | `string` | **required** (unless using [identity_provider_client_secret](#identity-provider-client-secret)) |
+| **Config file keys** | **Environment variables** | **Type** | **Usage** |
+| :-- | :-- | :-- | :-- |
+| `idp_client_secret_file` | `IDP_CLIENT_SECRET_FILE` | `string` | **required** (unless using [identity_provider_client_secret](#identity-provider-client-secret)) |
 
 #### Examples \{#identity-provider-client-secret-file-examples}
 
 ```yaml
-idp_client_secret_file: "/run/secrets/POMERIUM_CLIENT_SECRET"
+idp_client_secret_file: '/run/secrets/POMERIUM_CLIENT_SECRET'
 ```
 
 ```bash
@@ -183,9 +183,9 @@ The supported values for this setting are:
 <Tabs>
 <TabItem value="Core" label="Core">
 
-| **Config file keys** | **Environment variables** | **Type** | **Usage**                                                     |
-| :------------------- | :------------------------ | :------- | :------------------------------------------------------------ |
-| `idp_provider`       | `IDP_PROVIDER`            | `string` | **required** (if not using the [Hosted Authenticate Service]) |
+| **Config file keys** | **Environment variables** | **Type** | **Usage** |
+| :-- | :-- | :-- | :-- |
+| `idp_provider` | `IDP_PROVIDER` | `string` | **required** (if not using the [Hosted Authenticate Service]) |
 
 #### Examples \{#identity-provider-name-examples}
 
@@ -223,9 +223,9 @@ See [`identityProvider.provider`](/docs/deploy/k8s/reference#identityprovider) f
 <Tabs>
 <TabItem value="Core" label="Core">
 
-| **Config file keys** | **Environment variables** | **Type**                          | **Usage**    |
-| :------------------- | :------------------------ | :-------------------------------- | :----------- |
-| `idp_request_params` | `IDP_REQUEST_PARAMS`      | `string` (map of key-value pairs) | **optional** |
+| **Config file keys** | **Environment variables** | **Type** | **Usage** |
+| :-- | :-- | :-- | :-- |
+| `idp_request_params` | `IDP_REQUEST_PARAMS` | `string` (map of key-value pairs) | **optional** |
 
 #### Examples \{#identity-provider-request-params-examples}
 
@@ -261,11 +261,11 @@ See Kubernetes [`identityProvider.requestParams` and `identityProvider.requestPa
 
 Pomerium includes some default parameters for specific identity providers. Setting this configuration option will replace these default parameters. To remove the default parameters entirely, set this option to an empty map\* (e.g. `idp_request_params: {}` in the config file).
 
-| **Provider** | **Default parameters**                                              |
-| :----------- | :------------------------------------------------------------------ |
-| `apple`\*    | <pre>response_mode: form_post</pre>                                 |
-| `azure`      | <pre>prompt: select_account</pre>                                   |
-| `google`     | <pre>prompt: select_account consent<br />access_type: offline</pre> |
+| **Provider** | **Default parameters** |
+| :-- | :-- |
+| `apple`\* | <pre>response_mode: form_post</pre> |
+| `azure` | <pre>prompt: select_account</pre> |
+| `google` | <pre>prompt: select_account consent<br />access_type: offline</pre> |
 
 :::note
 
@@ -299,9 +299,9 @@ Some providers, like Amazon Cognito, _do not_ support the `offline_access` scope
 <Tabs>
 <TabItem value="Core" label="Core">
 
-| **Config file keys** | **Environment variables** | **Type**        | **Usage**                                      |
-| :------------------- | :------------------------ | :-------------- | :--------------------------------------------- |
-| `idp_scopes`         | `IDP_SCOPES`              | `string` (list) | **optional** (for built-in identity providers) |
+| **Config file keys** | **Environment variables** | **Type** | **Usage** |
+| :-- | :-- | :-- | :-- |
+| `idp_scopes` | `IDP_SCOPES` | `string` (list) | **optional** (for built-in identity providers) |
 
 #### Examples \{#identity-provider-scopes-examples}
 
@@ -350,14 +350,14 @@ See Kubernetes [`identityProvider.scopes`](/docs/deploy/k8s/reference#identitypr
 <Tabs>
 <TabItem value="Core" label="Core">
 
-| **Config file keys** | **Environment variables** | **Type** | **Usage**                                     |
-| :------------------- | :------------------------ | :------- | :-------------------------------------------- |
-| `idp_provider_url`   | `IDP_PROVIDER_URL`        | `string` | **required** (depending on identity provider) |
+| **Config file keys** | **Environment variables** | **Type** | **Usage** |
+| :-- | :-- | :-- | :-- |
+| `idp_provider_url` | `IDP_PROVIDER_URL` | `string` | **required** (depending on identity provider) |
 
 #### Examples \{#identity-provider-url-examples}
 
 ```yaml
-idp_provider_url: "https://awesome-company.auth0.com"
+idp_provider_url: 'https://awesome-company.auth0.com'
 ```
 
 ```bash

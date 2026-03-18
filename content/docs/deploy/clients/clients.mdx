@@ -1,7 +1,7 @@
 ---
-description: "Consolidated guide to installing Pomerium CLI/Desktop and configuring TCP+UDP routes in Pomerium."
-sidebar_label: "Clients for TCP & UDP"
-title: "Pomerium Clients for Tunneling Non-HTTP Protocols"
+description: 'Consolidated guide to installing Pomerium CLI/Desktop and configuring TCP+UDP routes in Pomerium.'
+sidebar_label: 'Clients for TCP & UDP'
+title: 'Pomerium Clients for Tunneling Non-HTTP Protocols'
 keywords:
   [
     pomerium,
@@ -26,10 +26,10 @@ keywords:
 lang: en-US
 ---
 
-import LongLivedConnections from "@site/content/docs/admonitions/_long-lived-connections.mdx";
+import LongLivedConnections from '@site/content/docs/admonitions/_long-lived-connections.mdx';
 
-import TabItem from "@theme/TabItem";
-import Tabs from "@theme/Tabs";
+import TabItem from '@theme/TabItem';
+import Tabs from '@theme/Tabs';
 
 # Pomerium Clients for Tunneling Non-HTTP Protocols
 
@@ -47,8 +47,7 @@ Pomerium can secure non-HTTP protocols such as SSH, RDP, MySQL, Redis, or DNS wi
   title="YouTube video player"
   frameborder="0"
   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-  allowfullscreen
-></iframe>
+  allowfullscreen></iframe>
 
 Pomerium's non-HTTP proxying allows you to secure SSH, MySQL, DNS, or any other TCP/UDP-based service behind Pomerium's identity-aware access control. When a user connects through **Pomerium CLI** or **Pomerium Desktop**, they:
 
@@ -167,8 +166,7 @@ Execute it in place or use [AppImageLauncher](https://github.com/TheAssassin/App
   title="YouTube video player"
   frameborder="0"
   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-  allowfullscreen
-></iframe>
+  allowfullscreen></iframe>
 
 Use `tcp+https://` in the route **From** field and `tcp://` in **To**. Example:
 
@@ -181,7 +179,7 @@ routes:
           or:
             - email:
                 is: contractor@notexample.com
-            - claim/groups: "datascience@example.com"
+            - claim/groups: 'datascience@example.com'
 ```
 
 Points to remember:
@@ -237,8 +235,7 @@ connections
   title="YouTube video player"
   frameborder="0"
   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-  allowfullscreen
-></iframe>
+  allowfullscreen></iframe>
 
 #### Listen configuration
 
@@ -281,7 +278,7 @@ routes:
           or:
             - email:
                 is: contractor@notexample.com
-            - claim/groups: "datascience@example.com"
+            - claim/groups: 'datascience@example.com'
 ```
 
 - `CONNECT-UDP` is used internally, so no HTTP-specific settings apply.
@@ -327,21 +324,21 @@ pomerium-cli tcp [destination] [flags]
 
 ### Flags
 
-| Flags                                                                                                                                    | Description                                                                                                                                                                                                                                | Type   |
-| :--------------------------------------------------------------------------------------------------------------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------ |
-| <a className="entRef-anchor" id="--alternate-ca-path">#</a><a href='#--alternate-ca-path'>--alternate-ca-path</a>                        | Path to CA certificate to use for HTTP requests.                                                                                                                                                                                           | string |
-| <a className="entRef-anchor" id="--browser-cmd">#</a><a href='#--browser-cmd'>--browser-cmd</a>                                          | Custom browser command to run when opening a URL.                                                                                                                                                                                          | string |
-| <a className="entRef-anchor" id="--ca-cert">#</a><a href='#--ca-cert'>--ca-cert</a>                                                      | Path to CA certificate to use for HTTP requests.                                                                                                                                                                                           | string |
-| <a className="entRef-anchor" id="--client-cert">#</a><a href='#--client-cert'>--client-cert</a>                                          | (optional) PEM-encoded client certificate.                                                                                                                                                                                                 | string |
-| <a className="entRef-anchor" id=" --client-key">#</a><a href='# --client-key'> --client-key</a>                                          | (optional) PEM-encoded client certificate key.                                                                                                                                                                                             | string |
-| <a className="entRef-anchor" id="--client-cert-from-store">#</a><a href='#--client-cert-from-store'> --client-cert-from-store</a>        | (optional) If provided, pomerium-cli will attempt to use a client certificate from the system trust store (macOS and Windows only), searching for a certificate based on the trusted CA names advertised by Pomerium in the TLS handshake. | none   |
-| <a className="entRef-anchor" id="--client-cert-issuer">#</a><a href='#--client-cert-issuer'> --client-cert-issuer</a>                    | (optional) When used in combination with --client-cert-from-store, restricts the client certificate search based on a particular attribute of the certificate's [Issuer name](#certificate-name-filters).                                  | string |
-| <a className="entRef-anchor" id="--client-cert-subject">#</a><a href='#--client-cert-subject'> --client-cert-subject</a>                 | (optional) When used in combination with --client-cert-from-store, restricts the client certificate search based on a particular attribute of the certificate's [Subject name](#certificate-name-filters).                                 | string |
-| <a className="entRef-anchor" id=" --disable-tls-verification">#</a><a href='# --disable-tls-verification'>--disable-tls-verification</a> | Disables TLS verification.                                                                                                                                                                                                                 | none   |
-| <a className="entRef-anchor" id="--help">#</a><a href='#--help'>-h, --help</a>                                                           | Help for tcp.                                                                                                                                                                                                                              | none   |
-| <a className="entRef-anchor" id="--listen">#</a><a href='#--listen'>--listen</a>                                                         | Local address to start a listener on (default "127.0.0.1:0").                                                                                                                                                                              | string |
-| <a className="entRef-anchor" id="--pomerium-url">#</a><a href='#--pomerium-url'>--pomerium-url</a>                                       | The URL of the Pomerium server to connect to.                                                                                                                                                                                              | string |
-| <a className="entRef-anchor" id="--version">#</a><a href='#--version'>-v, --version</a>                                                  | Version for pomerium-cli.                                                                                                                                                                                                                  | none   |
+| Flags | Description | Type |
+| :-- | :-- | --- |
+| <a className="entRef-anchor" id="--alternate-ca-path">#</a><a href='#--alternate-ca-path'>--alternate-ca-path</a> | Path to CA certificate to use for HTTP requests. | string |
+| <a className="entRef-anchor" id="--browser-cmd">#</a><a href='#--browser-cmd'>--browser-cmd</a> | Custom browser command to run when opening a URL. | string |
+| <a className="entRef-anchor" id="--ca-cert">#</a><a href='#--ca-cert'>--ca-cert</a> | Path to CA certificate to use for HTTP requests. | string |
+| <a className="entRef-anchor" id="--client-cert">#</a><a href='#--client-cert'>--client-cert</a> | (optional) PEM-encoded client certificate. | string |
+| <a className="entRef-anchor" id=" --client-key">#</a><a href='# --client-key'> --client-key</a> | (optional) PEM-encoded client certificate key. | string |
+| <a className="entRef-anchor" id="--client-cert-from-store">#</a><a href='#--client-cert-from-store'> --client-cert-from-store</a> | (optional) If provided, pomerium-cli will attempt to use a client certificate from the system trust store (macOS and Windows only), searching for a certificate based on the trusted CA names advertised by Pomerium in the TLS handshake. | none |
+| <a className="entRef-anchor" id="--client-cert-issuer">#</a><a href='#--client-cert-issuer'> --client-cert-issuer</a> | (optional) When used in combination with --client-cert-from-store, restricts the client certificate search based on a particular attribute of the certificate's [Issuer name](#certificate-name-filters). | string |
+| <a className="entRef-anchor" id="--client-cert-subject">#</a><a href='#--client-cert-subject'> --client-cert-subject</a> | (optional) When used in combination with --client-cert-from-store, restricts the client certificate search based on a particular attribute of the certificate's [Subject name](#certificate-name-filters). | string |
+| <a className="entRef-anchor" id=" --disable-tls-verification">#</a><a href='# --disable-tls-verification'>--disable-tls-verification</a> | Disables TLS verification. | none |
+| <a className="entRef-anchor" id="--help">#</a><a href='#--help'>-h, --help</a> | Help for tcp. | none |
+| <a className="entRef-anchor" id="--listen">#</a><a href='#--listen'>--listen</a> | Local address to start a listener on (default "127.0.0.1:0"). | string |
+| <a className="entRef-anchor" id="--pomerium-url">#</a><a href='#--pomerium-url'>--pomerium-url</a> | The URL of the Pomerium server to connect to. | string |
+| <a className="entRef-anchor" id="--version">#</a><a href='#--version'>-v, --version</a> | Version for pomerium-cli. | none |
 
 #### Certificate name filters
 

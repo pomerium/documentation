@@ -2,12 +2,12 @@
 # cSpell:ignore doqu outform pkey pubin yourdomain
 
 title: Policy Language
-sidebar_label: "Policy Enforcement"
+sidebar_label: 'Policy Enforcement'
 description: Learn how to use Pomerium Policy Language to build context-aware authorization policies for routes.
 ---
 
-import TabItem from "@theme/TabItem";
-import Tabs from "@theme/Tabs";
+import TabItem from '@theme/TabItem';
+import Tabs from '@theme/Tabs';
 
 # Pomerium Policy Language
 
@@ -18,8 +18,7 @@ import Tabs from "@theme/Tabs";
   frameborder="0"
   webkitallowfullscreen="true"
   mozallowfullscreen="true"
-  allowfullscreen="true"
-></iframe>
+  allowfullscreen="true"></iframe>
 
 Pomerium Policy Language (**PPL**) is a [yaml]-based notation for creating easy and flexible authorization policies. This document covers the usage of PPL and provides several example policies.
 
@@ -157,29 +156,29 @@ Below is an exhaustive list of PPL criteria.
 
 Entries marked with `*` denote criteria that are only available in the [Enterprise Console](/docs/deploy/enterprise) PPL builder. All other entries are available in both Pomerium Core and Pomerium Enterprise.
 
-| Criterion Name               | Data Format                                                             | Description                                                                                                                                                                                                                                                                                                                               |
-| ---------------------------- | ----------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `accept`                     | Anything. Typically `true`.                                             | Always returns true, thus always allowing access. Equivalent to the [`allow_public_unauthenticated_access`] option.                                                                                                                                                                                                                       |
-| `authenticated_user`         | Anything. Typically `true`.                                             | Always returns true for logged-in users. Equivalent to the [`allow_any_authenticated_user`] option.                                                                                                                                                                                                                                       |
-| `claim`                      | Anything. Typically a string.                                           | Returns true if a token claim matches the supplied value **exactly**. The claim to check is determined via the sub-path. <br/> For example, `claim/family_name: Smith` matches if the user's `family_name` claim is `Smith`.                                                                                                              |
-| `client_certificate`         | [Certificate matcher]                                                   | Returns true if a client presented a TLS certificate matching the provided condition.                                                                                                                                                                                                                                                     |
-| `cors_preflight`             | Anything. Typically `true`.                                             | Returns true if the incoming request uses the `OPTIONS` method and has both the `Access-Control-Request-Method` and `Origin` headers. Used to allow [CORS pre-flight requests].                                                                                                                                                           |
-| \* `date`                    | [Date Matcher]                                                          | Returns true if the time of the request matches the constraints.                                                                                                                                                                                                                                                                          |
-| \* `day_of_week`             | [Day of Week Matcher]                                                   | Returns true if the day of the request matches the constraints.                                                                                                                                                                                                                                                                           |
-| `device`                     | [Device matcher]                                                        | Returns true if the incoming request includes a valid device ID or type.                                                                                                                                                                                                                                                                  |
-| `domain`                     | [String Matcher]                                                        | Returns true if the logged-in user's email address domain (the part after `@`) matches the given value.                                                                                                                                                                                                                                   |
-| `email`                      | [String Matcher]                                                        | Returns true if the logged-in user's email address matches the given value.                                                                                                                                                                                                                                                               |
-| \* `groups`                  | [String List Matcher]                                                   | Returns true if a user's group ID matches the supplied value **exactly**. `groups` data is only available after a successful directory sync. See [Identity Providers](/docs/integrations/user-identity/identity-providers) for vendor-specific directory sync steps.                                                                      |
-| `http_method`                | [String Matcher]                                                        | Returns true if the HTTP method matches the given value.                                                                                                                                                                                                                                                                                  |
-| `http_path`                  | [String Matcher]                                                        | Returns true if the HTTP path matches the given value.                                                                                                                                                                                                                                                                                    |
-| `mcp_tool`                   | [String Matcher]                                                        | Returns true if, for MCP routes, the tool name in a `tools/call` request matches the provided condition. Recommended to use under `deny` to block specific tools or classes of tools without affecting non-tool requests. See [Limit MCP Tool Calling](/docs/capabilities/mcp/limit-mcp-tools).                                           |
-| `invalid_client_certificate` | Anything. Typically `true`.                                             | Returns true if the incoming request does not have a trusted client certificate. By default, a `deny` rule using this criterion is added to all Pomerium policies when [downstream mTLS] is configured (but this default can be changed using the [Enforcement Mode](/docs/reference/downstream-mtls-settings#enforcement-mode) setting.) |
-| `pomerium_routes`            | Anything. Typically `true`.                                             | Returns true if the incoming request is for the special `.pomerium` routes. A default `allow` rule using this criterion is added to all Pomerium policies.                                                                                                                                                                                |
-| \* `record`                  | variable                                                                | Allows policies to be extended using data from [external data sources](/docs/capabilities/integrations). See [Record Matcher](#record-matcher) for more information.                                                                                                                                                                      |
-| `reject`                     | Anything. Typically `true`.                                             | Always returns false. The opposite of `accept`.                                                                                                                                                                                                                                                                                           |
-| `source_ip`                  | String or list of strings, each containing an IP address or CIDR range. | Returns true if the incoming request was from an IP address matching any element of the list.                                                                                                                                                                                                                                             |
-| \* `time_of_day`             | [Time of Day Matcher]                                                   | Returns true if the time of the request (for the current day) matches the constraints.                                                                                                                                                                                                                                                    |
-| `user`                       | [String Matcher]                                                        | Returns `true` if the logged-in user's ID matches the supplied value. (The actual value of the user ID claim depends on how the identity provider sets this value.)                                                                                                                                                                       |
+| Criterion Name | Data Format | Description |
+| --- | --- | --- |
+| `accept` | Anything. Typically `true`. | Always returns true, thus always allowing access. Equivalent to the [`allow_public_unauthenticated_access`] option. |
+| `authenticated_user` | Anything. Typically `true`. | Always returns true for logged-in users. Equivalent to the [`allow_any_authenticated_user`] option. |
+| `claim` | Anything. Typically a string. | Returns true if a token claim matches the supplied value **exactly**. The claim to check is determined via the sub-path. <br/> For example, `claim/family_name: Smith` matches if the user's `family_name` claim is `Smith`. |
+| `client_certificate` | [Certificate matcher] | Returns true if a client presented a TLS certificate matching the provided condition. |
+| `cors_preflight` | Anything. Typically `true`. | Returns true if the incoming request uses the `OPTIONS` method and has both the `Access-Control-Request-Method` and `Origin` headers. Used to allow [CORS pre-flight requests]. |
+| \* `date` | [Date Matcher] | Returns true if the time of the request matches the constraints. |
+| \* `day_of_week` | [Day of Week Matcher] | Returns true if the day of the request matches the constraints. |
+| `device` | [Device matcher] | Returns true if the incoming request includes a valid device ID or type. |
+| `domain` | [String Matcher] | Returns true if the logged-in user's email address domain (the part after `@`) matches the given value. |
+| `email` | [String Matcher] | Returns true if the logged-in user's email address matches the given value. |
+| \* `groups` | [String List Matcher] | Returns true if a user's group ID matches the supplied value **exactly**. `groups` data is only available after a successful directory sync. See [Identity Providers](/docs/integrations/user-identity/identity-providers) for vendor-specific directory sync steps. |
+| `http_method` | [String Matcher] | Returns true if the HTTP method matches the given value. |
+| `http_path` | [String Matcher] | Returns true if the HTTP path matches the given value. |
+| `mcp_tool` | [String Matcher] | Returns true if, for MCP routes, the tool name in a `tools/call` request matches the provided condition. Recommended to use under `deny` to block specific tools or classes of tools without affecting non-tool requests. See [Limit MCP Tool Calling](/docs/capabilities/mcp/limit-mcp-tools). |
+| `invalid_client_certificate` | Anything. Typically `true`. | Returns true if the incoming request does not have a trusted client certificate. By default, a `deny` rule using this criterion is added to all Pomerium policies when [downstream mTLS] is configured (but this default can be changed using the [Enforcement Mode](/docs/reference/downstream-mtls-settings#enforcement-mode) setting.) |
+| `pomerium_routes` | Anything. Typically `true`. | Returns true if the incoming request is for the special `.pomerium` routes. A default `allow` rule using this criterion is added to all Pomerium policies. |
+| \* `record` | variable | Allows policies to be extended using data from [external data sources](/docs/capabilities/integrations). See [Record Matcher](#record-matcher) for more information. |
+| `reject` | Anything. Typically `true`. | Always returns false. The opposite of `accept`. |
+| `source_ip` | String or list of strings, each containing an IP address or CIDR range. | Returns true if the incoming request was from an IP address matching any element of the list. |
+| \* `time_of_day` | [Time of Day Matcher] | Returns true if the time of the request (for the current day) matches the constraints. |
+| `user` | [String Matcher] | Returns `true` if the logged-in user's ID matches the supplied value. (The actual value of the user ID claim depends on how the identity provider sets this value.) |
 
 Entries marked with `*` denote criteria that are only available in the [Enterprise Console](/docs/deploy/enterprise) PPL builder. All other entries are available in both Pomerium Core and Pomerium Enterprise.
 
@@ -201,13 +200,13 @@ The certificate matcher is a beta feature. The syntax and capabilities are subje
 
 A certificate matcher can be used to allow or deny certain TLS certificates. This matcher is represented as an object that may have the following key/value entries:
 
-| Key Name      | Value Type                 | Description                                                                                                         |
-| ------------- | -------------------------- | ------------------------------------------------------------------------------------------------------------------- |
-| `fingerprint` | string or array of strings | The certificate's SHA-256 fingerprint must match one of the provided values.                                        |
-| `san_dns`     | [String Matcher]           | The certificate must contain a Subject Alternative Name with a DNS name satisfying the provided condition.          |
-| `san_email`   | [String Matcher]           | The certificate must contain a Subject Alternative Name with an email address satisfying the provided condition.    |
-| `san_uri`     | [String Matcher]           | The certificate must contain a Subject Alternative Name with a URI satisfying the provided condition.               |
-| `spki_hash`   | string or array of strings | The base64-encoded SHA-256 hash of the certificate's Subject Public Key Info must match one of the provided values. |
+| Key Name | Value Type | Description |
+| --- | --- | --- |
+| `fingerprint` | string or array of strings | The certificate's SHA-256 fingerprint must match one of the provided values. |
+| `san_dns` | [String Matcher] | The certificate must contain a Subject Alternative Name with a DNS name satisfying the provided condition. |
+| `san_email` | [String Matcher] | The certificate must contain a Subject Alternative Name with an email address satisfying the provided condition. |
+| `san_uri` | [String Matcher] | The certificate must contain a Subject Alternative Name with a URI satisfying the provided condition. |
+| `spki_hash` | string or array of strings | The base64-encoded SHA-256 hash of the certificate's Subject Public Key Info must match one of the provided values. |
 
 <details>
 <summary>Notes on certificate fingerprint</summary>
@@ -253,7 +252,7 @@ allow:
     - authenticated_user: true
     - client_certificate:
         san_email:
-          ends_with: "@yourdomain.com"
+          ends_with: '@yourdomain.com'
 ```
 
 Or, to allow only one specific trusted certificate (again, while still requiring the user to sign in with the configured identity provider):
@@ -263,7 +262,7 @@ allow:
   and:
     - authenticated_user: true
     - client_certificate:
-        fingerprint: "17859273e8a980631d367b2d5a6a6635412b0f22835f69e47b3f65624546a704"
+        fingerprint: '17859273e8a980631d367b2d5a6a6635412b0f22835f69e47b3f65624546a704'
 ```
 
 Or, to enforce an allowlist of trusted certificate key pairs:
@@ -404,7 +403,7 @@ allow:
     - record:
         type: pomerium.io/ExternalDataSource
         field: trust_score
-        ">=": 5
+        '>=': 5
 ```
 
 </TabItem>
@@ -427,7 +426,7 @@ For example:
 allow:
   and:
     - email:
-        starts_with: "admin@"
+        starts_with: 'admin@'
 ```
 
 Or:
@@ -438,7 +437,7 @@ allow:
     - record:
         type: example.com/geoip
         field: country
-        is: "US"
+        is: 'US'
 ```
 
 To check if a user's role is one of several allowed values:
@@ -447,7 +446,7 @@ To check if a user's role is one of several allowed values:
 allow:
   and:
     - email:
-        in: ["user1@company.com", "user2.company.com"]
+        in: ['user1@company.com', 'user2.company.com']
 ```
 
 A string matcher can also be used with an array, a string, a number or a boolean, in which case it is the same as the `is` operator.
@@ -458,7 +457,7 @@ To enforce an allowlist by denying any value not in a known-safe set, use `not_i
 deny:
   and:
     - mcp_tool:
-        not_in: ["query", "list_tables"]
+        not_in: ['query', 'list_tables']
 ```
 
 ### String List Matcher
@@ -473,7 +472,7 @@ For example, using the `groups` criterion:
 allow:
   and:
     - groups:
-        has: "00gv40ki4gmtCyl5d4x6"
+        has: '00gv40ki4gmtCyl5d4x6'
 ```
 
 Using the `record` criterion:
@@ -482,7 +481,7 @@ Using the `record` criterion:
 - record:
     type: example.com/hr_user
     field: departments
-    has: "engineering"
+    has: 'engineering'
 ```
 
 A string list matcher can also be used with an array, a string, a number or a boolean, in which case it is the same as the `has` operator.
@@ -601,25 +600,25 @@ allow if input.http.method == "POST"
 
 Rego defines the following inputs:
 
-| **Input name**                          | **Type** | **Description**                                            |
-| :-------------------------------------- | :------- | :--------------------------------------------------------- |
-| `http`                                  | Object   | Represents the HTTP request                                |
-| `http.method`                           | String   | The method used in the HTTP request                        |
-| `http.hostname`                         | String   | The hostname in the HTTP request                           |
-| `http.path`                             | String   | The path in the HTTP request                               |
-| `http.url`                              | String   | The full URL in the HTTP request                           |
-| `http.headers`                          | Object   | The headers in the HTTP request                            |
-| `http.client_certificate`               | Object   | The client certificate details                             |
-| `http.client_certificate.presented`     | Boolean  | `true` if the client presented a certificate               |
-| `http.client_certificate.leaf`          | String   | The leaf certificated provided by the client (unvalidated) |
-| `http.client_certificate.intermediates` | String   | The remainder of the client certificate chain              |
-| `http.ip`                               | String   | The user's IP address                                      |
-| `http.session`                          | Object   | Represents the user's session                              |
-| `http.session.id`                       | String   | The session ID                                             |
-| `http.is_valid_client_certificate`      | Boolean  | `true` if the presented client certificate is valid        |
-| `ssh`                                   | Object   | Represents the SSH connection                              |
-| `ssh.username`                          | String   | The username requested by the client                       |
-| `ssh.publickey`                         | String   | The client's SSH public key                                |
+| **Input name** | **Type** | **Description** |
+| :-- | :-- | :-- |
+| `http` | Object | Represents the HTTP request |
+| `http.method` | String | The method used in the HTTP request |
+| `http.hostname` | String | The hostname in the HTTP request |
+| `http.path` | String | The path in the HTTP request |
+| `http.url` | String | The full URL in the HTTP request |
+| `http.headers` | Object | The headers in the HTTP request |
+| `http.client_certificate` | Object | The client certificate details |
+| `http.client_certificate.presented` | Boolean | `true` if the client presented a certificate |
+| `http.client_certificate.leaf` | String | The leaf certificated provided by the client (unvalidated) |
+| `http.client_certificate.intermediates` | String | The remainder of the client certificate chain |
+| `http.ip` | String | The user's IP address |
+| `http.session` | Object | Represents the user's session |
+| `http.session.id` | String | The session ID |
+| `http.is_valid_client_certificate` | Boolean | `true` if the presented client certificate is valid |
+| `ssh` | Object | Represents the SSH connection |
+| `ssh.username` | String | The username requested by the client |
+| `ssh.publickey` | String | The client's SSH public key |
 
 :::note
 

@@ -3,7 +3,7 @@
 
 title: Routing, Proxying, and Load Balancing with Pomerium
 lang: en-US
-sidebar_label: "Proxying & Routing"
+sidebar_label: 'Proxying & Routing'
 description: How to get Pomerium's CLI which be used to proxy TCP services and kubernetes commands
 keywords:
   [
@@ -27,8 +27,7 @@ keywords:
   frameborder="0"
   webkitallowfullscreen="true"
   mozallowfullscreen="true"
-  allowfullscreen="true"
-></iframe>
+  allowfullscreen="true"></iframe>
 
 ## Routing
 
@@ -224,7 +223,7 @@ The `host` header can be preserved via the `preserve_host_header` setting or cus
 4. `host_path_regex_rewrite_pattern` & `host_path_regex_rewrite_substitution`, which will rewrite the host according to a regex matching the path. For example with the following config:
 
    ```yaml
-   host_path_regex_rewrite_pattern: "^/(.+)/.+$"
+   host_path_regex_rewrite_pattern: '^/(.+)/.+$'
    host_path_regex_rewrite_substitution: \1
    ```
 
@@ -248,7 +247,7 @@ Set Request Headers allows you to set static values for given request headers. T
     # works auto-magically!
     # https://verify.corp.example.com/basic-auth/root/hunter42
     Authorization: Basic cm9vdDpodW50ZXI0Mg==
-    X-Your-favorite-authenticating-Proxy: "Pomerium"
+    X-Your-favorite-authenticating-Proxy: 'Pomerium'
 ```
 
 :::warning
@@ -332,7 +331,7 @@ routes:
         healthy_threshold: 1
         unhealthy_threshold: 2
         http_health_check:
-          path: "/"
+          path: '/'
 ```
 
 </details>
@@ -353,9 +352,9 @@ routes:
         healthy_threshold: 1
         tcp_health_check:
           send:
-            text: "50494E47" #PING
+            text: '50494E47' #PING
           receive:
-            text: "504F4E47" #PONG
+            text: '504F4E47' #PONG
 ```
 
 </details>
@@ -459,19 +458,19 @@ For example, if specifying multiple certificates at once:
 
 ```yaml
 certificates:
-  - cert: "$HOME/.acme.sh/authenticate.example.com_ecc/fullchain.cer"
-    key: "$HOME/.acme.sh/authenticate.example.com_ecc/authenticate.example.com.key"
-  - cert: "$HOME/.acme.sh/verify.example.com_ecc/fullchain.cer"
-    key: "$HOME/.acme.sh/verify.example.com_ecc/verify.example.com.key"
-  - cert: "$HOME/.acme.sh/prometheus.example.com_ecc/fullchain.cer"
-    key: "$HOME/.acme.sh/prometheus.example.com_ecc/prometheus.example.com.key"
+  - cert: '$HOME/.acme.sh/authenticate.example.com_ecc/fullchain.cer'
+    key: '$HOME/.acme.sh/authenticate.example.com_ecc/authenticate.example.com.key'
+  - cert: '$HOME/.acme.sh/verify.example.com_ecc/fullchain.cer'
+    key: '$HOME/.acme.sh/verify.example.com_ecc/verify.example.com.key'
+  - cert: '$HOME/.acme.sh/prometheus.example.com_ecc/fullchain.cer'
+    key: '$HOME/.acme.sh/prometheus.example.com_ecc/prometheus.example.com.key'
 ```
 
 Or to set a single certificate and key covering multiple domains and/or a wildcard subdomain:
 
 ```yaml
-certificate_file: "$HOME/.acme.sh/*.example.com/fullchain.crt"
-certificate_key: "$HOME/.acme.sh/*.example.com/*.example.com.key"
+certificate_file: '$HOME/.acme.sh/*.example.com/fullchain.crt'
+certificate_key: '$HOME/.acme.sh/*.example.com/*.example.com.key'
 ```
 
 **Note:** Pomerium will check your system's trust/key store for valid certificates first. If your certificate solution imports into the system store, you don't need to also specify them with these configuration keys.

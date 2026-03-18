@@ -130,7 +130,7 @@ services:
     volumes:
       - uploads:/hedgedoc/public/uploads
     ports:
-      - "3000:3000"
+      - '3000:3000'
     restart: always
     depends_on:
       - database
