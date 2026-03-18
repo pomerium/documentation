@@ -174,7 +174,7 @@ You only need these settings if you're setting up the Enterprise Console.  For 
 If you're using GitHub as the IdP, you only need the following IdP keys:
 
 ```yaml title="config.yaml"
-idp_provider: 'github'
+idp_provider: "github"
 idp_client_id: <your_id>
 idp_client_secret: <your_secret>
 ```

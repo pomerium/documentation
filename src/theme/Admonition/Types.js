@@ -1,14 +1,14 @@
-import DefaultAdmonitionTypes from '@theme-original/Admonition/Types';
-import BusinessIcon from '@mui/icons-material/Business';
+import BusinessIcon from "@mui/icons-material/Business";
+import DefaultAdmonitionTypes from "@theme-original/Admonition/Types";
 
-import styles from './styles.module.css';
+import styles from "./styles.module.css";
 
 function EnterpriseAdmonition(props) {
   return (
     <div className={styles.enterprise}>
       <div className={styles.enterprise_header}>
         <BusinessIcon />
-        <h5>{props.title || 'Pomerium Enterprise'}</h5>
+        <h5>{props.title || "Pomerium Enterprise"}</h5>
       </div>
       {props.children}
     </div>

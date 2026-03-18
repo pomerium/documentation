@@ -136,7 +136,7 @@ By now, your configuration files should look similar to this:
 ```yaml
 authenticate_service_url: https://authenticate.pomerium.app
 
-signing_key_file: '/pomerium/ec_private.pem'
+signing_key_file: "/pomerium/ec_private.pem"
 
 routes:
   - from: https://verify.localhost.pomerium.io

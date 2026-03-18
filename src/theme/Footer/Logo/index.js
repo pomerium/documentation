@@ -4,14 +4,16 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  */
-import React from 'react';
-import Link from '@docusaurus/Link';
-import {useBaseUrlUtils} from '@docusaurus/useBaseUrl';
-import styles from './styles.module.css';
-import ThemedImage from '@theme/ThemedImage';
+import Link from "@docusaurus/Link";
+import { useBaseUrlUtils } from "@docusaurus/useBaseUrl";
+import React from "react";
 
-function LogoImage({logo}) {
-  const {withBaseUrl} = useBaseUrlUtils();
+import ThemedImage from "@theme/ThemedImage";
+
+import styles from "./styles.module.css";
+
+function LogoImage({ logo }) {
+  const { withBaseUrl } = useBaseUrlUtils();
   const sources = {
     light: withBaseUrl(logo.src),
     dark: withBaseUrl(logo.srcDark ?? logo.src),
@@ -27,7 +29,7 @@ function LogoImage({logo}) {
   );
 }
 
-export default function FooterLogo({logo}) {
+export default function FooterLogo({ logo }) {
   return logo.href ? (
     <Link href={logo.href} className={styles.footerLogoLink}>
       <LogoImage logo={logo} />

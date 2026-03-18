@@ -180,7 +180,7 @@ This command generates a public/private key pair in your project:
 ```yaml title="config.yaml"
 authenticate_service_url: https://authenticate.pomerium.app
 # Add your signing key as a global setting:
-signing_key_file: '/pomerium/ec_private.pem'
+signing_key_file: "/pomerium/ec_private.pem"
 ```
 
 ### Update Docker Compose
@@ -304,7 +304,7 @@ By now, your configuration files should look similar to this:
 ```yaml
 authenticate_service_url: https://authenticate.pomerium.app
 
-signing_key_file: '/pomerium/ec_private.pem'
+signing_key_file: "/pomerium/ec_private.pem"
 
 routes:
   - from: https://verify.localhost.pomerium.io

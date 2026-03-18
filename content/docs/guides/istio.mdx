@@ -18,7 +18,7 @@ keywords:
 description: Integrate the Pomerium Ingress controller with an Istio service mesh for full mutual authentication in your cluster.
 ---
 
-import GrafanaIni from '/content/examples/kubernetes/istio/grafana.ini.yml.md';
+import GrafanaIni from "/content/examples/kubernetes/istio/grafana.ini.yml.md";
 
 Istio provides application-aware networking via a service mesh and control plane. When configured with the [Pomerium Ingress Controller] for kubernetes, this enables authorization (**[authZ]**) and authentication (**[authN]**) of [east-west traffic] in your internal network bringing you closer to complete [zero trust].
 
@@ -85,14 +85,14 @@ Follow [Install Pomerium using Helm] to set up the Pomerium Ingress Controller a
    ```yaml title="pomerium-values.yaml"
    authenticate:
      idp:
-       provider: 'google'
+       provider: "google"
        clientID: YOUR_CLIENT_ID
        clientSecret: YOUR_SECRET
 
    proxy:
      deployment:
        podAnnotations:
-         traffic.sidecar.istio.io/excludeInboundPorts: '80,443' # allow external connections to terminate directly on the Pomerium proxy rather than the sidecar
+         traffic.sidecar.istio.io/excludeInboundPorts: "80,443" # allow external connections to terminate directly on the Pomerium proxy rather than the sidecar
 
    config:
      rootDomain: localhost.pomerium.io
@@ -139,11 +139,11 @@ Now that Pomerium is installed in the cluster, we can define authentication and 
        matchLabels:
          app.kubernetes.io/name: nginx # This matches the label applied to our test service
      jwtRules:
-       - issuer: 'hello.localhost.pomerium.io' # Adjust to match your Authenticate service URL
+       - issuer: "hello.localhost.pomerium.io" # Adjust to match your Authenticate service URL
          audiences:
            - hello.localhost.pomerium.io # This should match the value of spec.host in the services Ingress
          fromHeaders:
-           - name: 'X-Pomerium-Jwt-Assertion'
+           - name: "X-Pomerium-Jwt-Assertion"
          jwksUri: https://istio.localhost.pomerium.io/.well-known/pomerium/jwks.json # Adjust to match your external route URL.
          # The jwksUri key above is the preferred method of retrieving the signing key, and should be used in production. See
          # See https://istio.io/latest/docs/reference/config/security/jwt/#JWTRule
@@ -164,7 +164,7 @@ Now that Pomerium is installed in the cluster, we can define authentication and 
      rules:
        - when:
            - key: request.auth.claims[aud]
-             values: ['hello.localhost.pomerium.io'] # This should match the value of spec.host in the service's Ingress
+             values: ["hello.localhost.pomerium.io"] # This should match the value of spec.host in the service's Ingress
    ```
 
    This file defines two Custom Resources. The first is a `RequestAuthentication`, and it specifies:
@@ -198,7 +198,7 @@ Now that Pomerium is installed in the cluster, we can define authentication and 
      annotations:
        kubernetes.io/ingress.class: pomerium
        cert-manager.io/issuer: pomerium-issuer
-       ingress.pomerium.io/pass_identity_headers: 'true'
+       ingress.pomerium.io/pass_identity_headers: "true"
        ingress.pomerium.io/policy: '[{"allow":{"and":[{"domain":{"is":"example.com"}}]}}]'
    ```
 
@@ -223,14 +223,14 @@ To demonstrate complete authorization validation through to the upstream service
        # Specify the certificate issuer for your namespace or cluster. For example:
        # cert-manager.io/issuer: pomerium-issuer
        kubernetes.io/ingress.class: pomerium
-       ingress.pomerium.io/pass_identity_headers: 'true'
+       ingress.pomerium.io/pass_identity_headers: "true"
        ingress.pomerium.io/policy: |
          - allow:
              or:
                - domain:
                    is: example.com
      hosts:
-       - 'grafana.localhost.pomerium.io'
+       - "grafana.localhost.pomerium.io"
      tls:
        - hosts:
            - grafana.localhost.pomerium.io
@@ -285,11 +285,11 @@ To demonstrate complete authorization validation through to the upstream service
        matchLabels:
          app.kubernetes.io/name: grafana # This matches the label applied to our test service
      jwtRules:
-       - issuer: 'grafana.localhost.pomerium.io'
+       - issuer: "grafana.localhost.pomerium.io"
          audiences:
            - grafana.localhost.pomerium.io # This should match the value of spec.host in the services Ingress
          fromHeaders:
-           - name: 'X-Pomerium-Jwt-Assertion'
+           - name: "X-Pomerium-Jwt-Assertion"
          forwardOriginalToken: true
          jwksUri: https://grafana.localhost.pomerium.io/.well-known/pomerium/jwks.json # Adjust to match your external route URL.
          # The jwksUri key above is the preferred method of retrieving the signing key, and should be used in production.
@@ -311,7 +311,7 @@ To demonstrate complete authorization validation through to the upstream service
      rules:
        - when:
            - key: request.auth.claims[aud]
-             values: ['grafana.localhost.pomerium.io'] # This should match the value of spec.host in the service's Ingress
+             values: ["grafana.localhost.pomerium.io"] # This should match the value of spec.host in the service's Ingress
    ```
 
    Apply the policies with `kubectl apply -f` to complete the configuration.

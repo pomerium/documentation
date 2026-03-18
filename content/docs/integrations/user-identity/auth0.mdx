@@ -6,8 +6,8 @@ pagination_prev: null
 pagination_next: null
 ---
 
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
+import TabItem from "@theme/TabItem";
+import Tabs from "@theme/Tabs";
 
 This page documents how to configure an [Auth0] application for use with Pomerium. It assumes you have already [installed Pomerium](/docs/get-started/quickstart).
 
@@ -31,12 +31,12 @@ While we do our best to keep our documentation up to date, changes to third-part
 
 1. Provide the following information for your application settings:
 
-   | Field | Description |
-   | --- | --- |
-   | Name | The name of your application. |
-   | Application Login URI | [Authenticate Service URL] (e.g. `https://auth.example.com`) |
-   | Allowed Callback URLs | Redirect URL (e.g. `https://auth.example.com/oauth2/callback`). |
-   | Allowed Logout URLs | Sign Out URL (e.g. `https://auth.example.com/.pomerium/signed_out`). |
+   | Field                 | Description                                                          |
+   | --------------------- | -------------------------------------------------------------------- |
+   | Name                  | The name of your application.                                        |
+   | Application Login URI | [Authenticate Service URL] (e.g. `https://auth.example.com`)         |
+   | Allowed Callback URLs | Redirect URL (e.g. `https://auth.example.com/oauth2/callback`).      |
+   | Allowed Logout URLs   | Sign Out URL (e.g. `https://auth.example.com/.pomerium/signed_out`). |
 
 1. In pomerium versions 0.31.X and below, if you want to use Pomerium's [**native SSH access**](/docs/capabilities/native-ssh-access): scroll down to **Advanced Settings** near the bottom of the page, then select the **Grant Types** tab. Make sure the **Device Code** box is checked:
 
@@ -54,10 +54,10 @@ You can now configure Pomerium with the identity provider settings retrieved in 
 <TabItem value="config-file-keys" label="Config file keys">
 
 ```yaml
-idp_provider: 'auth0'
-idp_provider_url: 'https://awesome-company.auth0.com'
-idp_client_id: 'REPLACE_ME' # from the web application
-idp_client_secret: 'REPLACE_ME' # from the web application
+idp_provider: "auth0"
+idp_provider_url: "https://awesome-company.auth0.com"
+idp_client_id: "REPLACE_ME" # from the web application
+idp_client_secret: "REPLACE_ME" # from the web application
 ```
 
 </TabItem>
@@ -94,7 +94,7 @@ To authorize users based on their group membership (roles in Auth0), a claim can
    exports.onExecutePostLogin = async (event, api) => {
      if (event.authorization) {
        api.idToken.setCustomClaim(
-         'pomerium.io/groups',
+         "pomerium.io/groups",
          event.authorization.roles,
        );
      }
@@ -113,8 +113,8 @@ Now when users login they will have a claim named `pomerium.io/groups` that cont
 
 ```yaml
 routes:
-  - from: 'https://verify.localhost.pomerium.io'
-    to: 'https://verify.pomerium.com'
+  - from: "https://verify.localhost.pomerium.io"
+    to: "https://verify.pomerium.com"
     policy:
       - allow:
           and:

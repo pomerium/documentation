@@ -48,16 +48,16 @@ Personal and professional organizations are allocated different quotas. Personal
 
 The table below breaks down quotas by organization type:
 
-| Entity | Personal account quota | Professional org quota |
-| --- | --- | --- |
-| Routes | 10 | 100 |
-| Policies | 5 | 100 |
-| Certificates (user uploaded) | 10 | 100 |
-| Custom domains | 1 | 5 |
-| Service accounts | 2 | 20 |
-| API users | 2 | 1,000 |
-| Clusters | 1 | 5 |
-| Replicas | 3 | 5 (per cluster) |
+| Entity                       | Personal account quota | Professional org quota |
+| ---------------------------- | ---------------------- | ---------------------- |
+| Routes                       | 10                     | 100                    |
+| Policies                     | 5                      | 100                    |
+| Certificates (user uploaded) | 10                     | 100                    |
+| Custom domains               | 1                      | 5                      |
+| Service accounts             | 2                      | 20                     |
+| API users                    | 2                      | 1,000                  |
+| Clusters                     | 1                      | 5                      |
+| Replicas                     | 3                      | 5 (per cluster)        |
 
 User quotas differ also based on the organization type:
 

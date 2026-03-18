@@ -1,31 +1,30 @@
 // @ts-check
 // Note: type annotations allow type checking and IDEs autocompletion
+import { Config } from "@docusaurus/types";
 
-import {Config} from '@docusaurus/types';
-
-const dotenv = require('dotenv');
-const webpack = require('webpack');
+const dotenv = require("dotenv");
+const webpack = require("webpack");
 
 dotenv.config();
 
 const config: Config = {
-  title: 'Pomerium',
-  tagline: 'Documentation',
-  url: 'https://www.pomerium.com',
-  baseUrl: '/',
-  onBrokenLinks: 'throw',
-  favicon: 'img/favicon.ico',
-  organizationName: 'pomerium',
-  projectName: 'documentation',
+  title: "Pomerium",
+  tagline: "Documentation",
+  url: "https://www.pomerium.com",
+  baseUrl: "/",
+  onBrokenLinks: "throw",
+  favicon: "img/favicon.ico",
+  organizationName: "pomerium",
+  projectName: "documentation",
   trailingSlash: false,
 
   markdown: {
     mermaid: true,
     hooks: {
-      onBrokenMarkdownLinks: 'throw',
+      onBrokenMarkdownLinks: "throw",
     },
   },
-  themes: ['@docusaurus/theme-mermaid'],
+  themes: ["@docusaurus/theme-mermaid"],
 
   customFields: {
     xgridKey: process.env.XGRID_KEY,
@@ -33,57 +32,57 @@ const config: Config = {
 
   scripts: [
     {
-      src: './static/js/syft.js',
+      src: "./static/js/syft.js",
       async: false,
     },
   ],
 
   presets: [
     [
-      '@docusaurus/preset-classic',
+      "@docusaurus/preset-classic",
       {
         docs: {
-          path: 'content',
-          routeBasePath: '/',
-          sidebarPath: require.resolve('./sidebars.js'),
-          editUrl: 'https://github.com/pomerium/documentation/tree/main',
+          path: "content",
+          routeBasePath: "/",
+          sidebarPath: require.resolve("./sidebars.js"),
+          editUrl: "https://github.com/pomerium/documentation/tree/main",
           admonitions: {
             keywords: [
-              'note',
-              'tip',
-              'info',
-              'caution',
-              'danger',
-              'enterprise',
+              "note",
+              "tip",
+              "info",
+              "caution",
+              "danger",
+              "enterprise",
             ],
             extendDefaults: true,
           },
           versions: {
             current: {
-              label: 'vNext (upcoming release)',
+              label: "vNext (upcoming release)",
               badge: true,
             },
           },
         },
         theme: {
-          customCss: require.resolve('./src/css/custom.css'),
+          customCss: require.resolve("./src/css/custom.css"),
         },
         gtag: {
           trackingID: [`${process.env.GA4}`, `${process.env.GA}`],
         },
         sitemap: {
-          filename: 'docs/sitemap.xml',
-          ignorePatterns: ['/docs/examples/**'],
+          filename: "docs/sitemap.xml",
+          ignorePatterns: ["/docs/examples/**"],
         },
       },
     ],
     [
-      'redocusaurus',
+      "redocusaurus",
       {
         specs: [
           {
-            spec: 'https://console.pomerium.app/openapi.yaml',
-            route: '/docs/api/',
+            spec: "https://console.pomerium.app/openapi.yaml",
+            route: "/docs/api/",
           },
         ],
       },
@@ -91,7 +90,7 @@ const config: Config = {
   ],
 
   themeConfig: {
-    image: 'docs/img/logo.svg',
+    image: "docs/img/logo.svg",
     algolia: {
       appId: process.env.ALGOLIA_APPID,
       apiKey: process.env.ALGOLIA_APIKEY, // cSpell:ignore APIKEY
@@ -100,69 +99,69 @@ const config: Config = {
       searchPagePath: false,
     },
     colorMode: {
-      defaultMode: 'light', // The color mode when user first visits the site. type: 'light' | 'dark' . Default is 'light'.
+      defaultMode: "light", // The color mode when user first visits the site. type: 'light' | 'dark' . Default is 'light'.
       respectPrefersColorScheme: true, // If true, respects the user's OS-level color scheme preference. Default is false.
     },
     navbar: {
-      title: '',
+      title: "",
       logo: {
-        alt: 'Pomerium Logo',
-        src: 'img/logo.svg',
-        srcDark: 'img/logo-dark.svg',
-        href: 'https://www.pomerium.com',
-        target: '_self',
+        alt: "Pomerium Logo",
+        src: "img/logo.svg",
+        srcDark: "img/logo-dark.svg",
+        href: "https://www.pomerium.com",
+        target: "_self",
       },
       items: [
         {
-          docId: 'docs',
-          position: 'right',
-          label: 'Documentation',
-          to: '/docs/',
-          activeBaseRegex: 'docs/(?!guides|reference|enterprise)',
+          docId: "docs",
+          position: "right",
+          label: "Documentation",
+          to: "/docs/",
+          activeBaseRegex: "docs/(?!guides|reference|enterprise)",
         },
         {
-          type: 'doc',
-          docId: 'docs/reference',
-          position: 'right',
-          label: 'Reference',
-          to: '/docs/reference/',
+          type: "doc",
+          docId: "docs/reference",
+          position: "right",
+          label: "Reference",
+          to: "/docs/reference/",
         },
         {
-          type: 'docSidebar',
-          sidebarId: 'guides',
-          position: 'right',
-          label: 'Guides',
-          to: '/docs/guides/',
+          type: "docSidebar",
+          sidebarId: "guides",
+          position: "right",
+          label: "Guides",
+          to: "/docs/guides/",
         },
         {
-          href: 'https://github.com/pomerium/pomerium ',
-          label: 'GitHub',
-          position: 'right',
+          href: "https://github.com/pomerium/pomerium ",
+          label: "GitHub",
+          position: "right",
         },
         {
-          type: 'docsVersionDropdown',
-          position: 'right',
+          type: "docsVersionDropdown",
+          position: "right",
           dropdownActiveClassDisabled: true,
           dropdownItemsAfter: [
             {
-              to: 'https://0-32-0.docs.pomerium.com/docs',
-              label: 'v0.32',
+              to: "https://0-32-0.docs.pomerium.com/docs",
+              label: "v0.32",
             },
             {
-              to: 'https://0-31-0.docs.pomerium.com/docs',
-              label: 'v0.31',
+              to: "https://0-31-0.docs.pomerium.com/docs",
+              label: "v0.31",
             },
             {
-              to: 'https://0-30-0.docs.pomerium.com/docs',
-              label: 'v0.30',
+              to: "https://0-30-0.docs.pomerium.com/docs",
+              label: "v0.30",
             },
             {
-              type: 'html',
-              value: '<hr>',
+              type: "html",
+              value: "<hr>",
             },
             {
-              to: '/docs/versions',
-              label: 'All Versions',
+              to: "/docs/versions",
+              label: "All Versions",
             },
           ],
         },
@@ -171,56 +170,56 @@ const config: Config = {
     footer: {
       links: [
         {
-          title: 'Resources',
+          title: "Resources",
           items: [
             {
-              label: 'Documentation',
-              to: 'https://www.pomerium.com/docs/',
+              label: "Documentation",
+              to: "https://www.pomerium.com/docs/",
             },
             {
-              label: 'Community',
-              to: 'https://discuss.pomerium.com/',
+              label: "Community",
+              to: "https://discuss.pomerium.com/",
             },
             {
-              label: 'Guides',
-              to: 'https://www.pomerium.com/docs/guides',
+              label: "Guides",
+              to: "https://www.pomerium.com/docs/guides",
             },
             {
-              label: 'Comparisons',
-              to: 'https://www.pomerium.com/comparisons/',
+              label: "Comparisons",
+              to: "https://www.pomerium.com/comparisons/",
             },
             {
-              label: 'Integrations',
-              to: 'https://www.pomerium.com/integrations/',
+              label: "Integrations",
+              to: "https://www.pomerium.com/integrations/",
             },
           ],
         },
         {
-          title: 'Company',
+          title: "Company",
           items: [
             {
-              label: 'Blog',
-              to: 'https://www.pomerium.com/blog/',
+              label: "Blog",
+              to: "https://www.pomerium.com/blog/",
             },
             {
-              label: 'About',
-              to: 'https://www.pomerium.com/about/',
+              label: "About",
+              to: "https://www.pomerium.com/about/",
             },
             {
-              label: 'Press Kit',
-              to: 'https://www.pomerium.com/press/',
+              label: "Press Kit",
+              to: "https://www.pomerium.com/press/",
             },
             {
-              label: 'Careers',
-              to: 'https://www.pomerium.com/careers/',
+              label: "Careers",
+              to: "https://www.pomerium.com/careers/",
             },
           ],
         },
       ],
       logo: {
-        alt: 'Pomerium Logo',
-        src: 'img/logo.svg',
-        href: 'https://www.pomerium.com',
+        alt: "Pomerium Logo",
+        src: "img/logo.svg",
+        href: "https://www.pomerium.com",
         width: 161,
         height: 28,
       },
@@ -230,37 +229,37 @@ const config: Config = {
       theme: lightCodeTheme(),
       darkTheme: darkCodeTheme(),
       additionalLanguages: [
-        'actionscript',
-        'log',
-        'ini',
-        'json',
-        'nginx',
-        'rego',
-        'shell-session',
-        'hcl',
-        'bash',
+        "actionscript",
+        "log",
+        "ini",
+        "json",
+        "nginx",
+        "rego",
+        "shell-session",
+        "hcl",
+        "bash",
       ],
     },
     zoom: {
-      selector: '.markdown :not(em) > img',
+      selector: ".markdown :not(em) > img",
       config: {
         margin: 120,
-      }
+      },
     },
   },
   stylesheets: [
-    'https://fonts.googleapis.com/icon?family=Material+Icons',
-    'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/brands.min.css',
+    "https://fonts.googleapis.com/icon?family=Material+Icons",
+    "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/brands.min.css",
   ],
   plugins: [
     [
-      require.resolve('docusaurus-gtm-plugin'),
+      require.resolve("docusaurus-gtm-plugin"),
       {
         id: process.env.GTM,
       },
     ],
     // Generate llms.txt file for LLM consumption
-    require.resolve('./plugins/llms-txt-plugin'),
+    require.resolve("./plugins/llms-txt-plugin"),
     // async function customPlugin(context, opts) {
     //   return {
     //     name: 'custom-plugin',
@@ -278,17 +277,17 @@ const config: Config = {
     //   };
     // },
     [
-      'docusaurus-pushfeedback',
+      "docusaurus-pushfeedback",
       {
-        project: 'esgee0kxds',
-        buttonPosition: 'center-right',
-        modalPosition: 'sidebar-right',
-        buttonStyle: 'dark',
-        modalTitle: 'Share your thoughts',
+        project: "esgee0kxds",
+        buttonPosition: "center-right",
+        modalPosition: "sidebar-right",
+        buttonStyle: "dark",
+        modalTitle: "Share your thoughts",
       },
     ],
 
-    require.resolve('docusaurus-plugin-image-zoom'),
+    require.resolve("docusaurus-plugin-image-zoom"),
   ],
 };
 
@@ -296,21 +295,21 @@ const config: Config = {
 // token types, so define our own styles for these types here.
 function lightCodeTheme() {
   return {
-    ...require('prism-react-renderer').themes.github,
-    styles: require('prism-react-renderer').themes.github.styles.concat([
-      {types: ['shell-symbol'], style: {color: '#5d36c6'}},
-      {types: ['command'], style: {color: '#1c1e21'}},
-      {types: ['output'], style: {color: '#133369'}},
+    ...require("prism-react-renderer").themes.github,
+    styles: require("prism-react-renderer").themes.github.styles.concat([
+      { types: ["shell-symbol"], style: { color: "#5d36c6" } },
+      { types: ["command"], style: { color: "#1c1e21" } },
+      { types: ["output"], style: { color: "#133369" } },
     ]),
   };
 }
 
 function darkCodeTheme() {
   return {
-    ...require('prism-react-renderer').themes.dracula,
-    styles: require('prism-react-renderer').themes.dracula.styles.concat([
-      {types: ['shell-symbol'], style: {color: '#c0a9ff'}},
-      {types: ['output'], style: {color: '#e4e4c4'}},
+    ...require("prism-react-renderer").themes.dracula,
+    styles: require("prism-react-renderer").themes.dracula.styles.concat([
+      { types: ["shell-symbol"], style: { color: "#c0a9ff" } },
+      { types: ["output"], style: { color: "#e4e4c4" } },
     ]),
   };
 }

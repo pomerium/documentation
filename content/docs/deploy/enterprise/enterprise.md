@@ -79,24 +79,24 @@ In the **External Data** dashboard, you can import, view, and manage [external d
 
 ## Pomerium Enterprise features comparison
 
-| Features | Pomerium Core | Pomerium Enterprise |
-| :-- | :-- | :-- |
-| Identity-based Access | ![Pomerium checkmark](./img/pomerium-checkmark.svg) | ![Pomerium checkmark](./img/pomerium-checkmark.svg) |
-| SSO Support | ![Pomerium checkmark](./img/pomerium-checkmark.svg) | ![Pomerium checkmark](./img/pomerium-checkmark.svg) |
-| Declarative Authorization Policy | ![Pomerium checkmark](./img/pomerium-checkmark.svg) | ![Pomerium checkmark](./img/pomerium-checkmark.svg) |
-| TCP Support | ![Pomerium checkmark](./img/pomerium-checkmark.svg) | ![Pomerium checkmark](./img/pomerium-checkmark.svg) |
-| Enterprise Console | <ClearIcon /> | ![Pomerium checkmark](./img/pomerium-checkmark.svg) |
-| [Enterprise API](/docs/internals/management-api-enterprise) | <ClearIcon /> | ![Pomerium checkmark](./img/pomerium-checkmark.svg) |
-| [Session Management](/docs/internals/metrics) | <ClearIcon /> | ![Pomerium checkmark](./img/pomerium-checkmark.svg) |
-| [Namespaces](/docs/internals/namespacing) | <ClearIcon /> | ![Pomerium checkmark](./img/pomerium-checkmark.svg) |
-| [Directory Sync](/docs/integrations/user-standing/directory-sync) | <ClearIcon /> | ![Pomerium checkmark](./img/pomerium-checkmark.svg) |
-| [User Impersonation](/docs/capabilities/impersonation) | <ClearIcon /> | ![Pomerium checkmark](./img/pomerium-checkmark.svg) |
-| [Deployment History](/docs/internals/metrics) | <ClearIcon /> | ![Pomerium checkmark](./img/pomerium-checkmark.svg) |
-| [Device Identity](/docs/integrations/device-context/device-identity) | <ClearIcon /> | ![Pomerium checkmark](./img/pomerium-checkmark.svg) |
-| [Custom Branding](/docs/capabilities/branding) | <ClearIcon /> | ![Pomerium checkmark](./img/pomerium-checkmark.svg) |
-| [Service Accounts](/docs/capabilities/service-accounts) | <ClearIcon /> | ![Pomerium checkmark](./img/pomerium-checkmark.svg) |
-| [Metrics](/docs/internals/metrics) | <ClearIcon /> | ![Pomerium checkmark](./img/pomerium-checkmark.svg) |
-| [External Data Sources](/docs/capabilities/integrations) | <ClearIcon /> | ![Pomerium checkmark](./img/pomerium-checkmark.svg) |
+| Features                                                             | Pomerium Core                                       | Pomerium Enterprise                                 |
+| :------------------------------------------------------------------- | :-------------------------------------------------- | :-------------------------------------------------- |
+| Identity-based Access                                                | ![Pomerium checkmark](./img/pomerium-checkmark.svg) | ![Pomerium checkmark](./img/pomerium-checkmark.svg) |
+| SSO Support                                                          | ![Pomerium checkmark](./img/pomerium-checkmark.svg) | ![Pomerium checkmark](./img/pomerium-checkmark.svg) |
+| Declarative Authorization Policy                                     | ![Pomerium checkmark](./img/pomerium-checkmark.svg) | ![Pomerium checkmark](./img/pomerium-checkmark.svg) |
+| TCP Support                                                          | ![Pomerium checkmark](./img/pomerium-checkmark.svg) | ![Pomerium checkmark](./img/pomerium-checkmark.svg) |
+| Enterprise Console                                                   | <ClearIcon />                                       | ![Pomerium checkmark](./img/pomerium-checkmark.svg) |
+| [Enterprise API](/docs/internals/management-api-enterprise)          | <ClearIcon />                                       | ![Pomerium checkmark](./img/pomerium-checkmark.svg) |
+| [Session Management](/docs/internals/metrics)                        | <ClearIcon />                                       | ![Pomerium checkmark](./img/pomerium-checkmark.svg) |
+| [Namespaces](/docs/internals/namespacing)                            | <ClearIcon />                                       | ![Pomerium checkmark](./img/pomerium-checkmark.svg) |
+| [Directory Sync](/docs/integrations/user-standing/directory-sync)    | <ClearIcon />                                       | ![Pomerium checkmark](./img/pomerium-checkmark.svg) |
+| [User Impersonation](/docs/capabilities/impersonation)               | <ClearIcon />                                       | ![Pomerium checkmark](./img/pomerium-checkmark.svg) |
+| [Deployment History](/docs/internals/metrics)                        | <ClearIcon />                                       | ![Pomerium checkmark](./img/pomerium-checkmark.svg) |
+| [Device Identity](/docs/integrations/device-context/device-identity) | <ClearIcon />                                       | ![Pomerium checkmark](./img/pomerium-checkmark.svg) |
+| [Custom Branding](/docs/capabilities/branding)                       | <ClearIcon />                                       | ![Pomerium checkmark](./img/pomerium-checkmark.svg) |
+| [Service Accounts](/docs/capabilities/service-accounts)              | <ClearIcon />                                       | ![Pomerium checkmark](./img/pomerium-checkmark.svg) |
+| [Metrics](/docs/internals/metrics)                                   | <ClearIcon />                                       | ![Pomerium checkmark](./img/pomerium-checkmark.svg) |
+| [External Data Sources](/docs/capabilities/integrations)             | <ClearIcon />                                       | ![Pomerium checkmark](./img/pomerium-checkmark.svg) |
 
 ## Next Steps
 

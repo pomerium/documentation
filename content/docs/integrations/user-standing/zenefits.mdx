@@ -4,8 +4,8 @@ sidebar_label: TriNet Zenefits
 description: Configure the TriNet Zenefits external data provider to extend your access policies.
 ---
 
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
+import TabItem from "@theme/TabItem";
+import Tabs from "@theme/Tabs";
 
 The Zenefits integration provides integration with HR data from Zenefits, such as group memberships, employment status, out of the office, etc.
 
@@ -77,13 +77,13 @@ The output should resemble:
 
 1. Fill out the following fields:
 
-| Field | Content | Notes |
-| :-- | :-- | :-- |
-| URL | `http://zenefits:8080/employees` | Adjust the hostname as needed depending on your local test environment. |
-| Record type | `pomerium.io/Zenefits` |  |
-| Foreign Key | `user.email` | Pomerium uses the users's email to associate IdP and Zenefits user entries. |
-| Polling Min Delay | `1h` | Minimum poll interval |
-| Polling Max Delay | `4h` | Max poll interval |
+| Field             | Content                          | Notes                                                                       |
+| :---------------- | :------------------------------- | :-------------------------------------------------------------------------- |
+| URL               | `http://zenefits:8080/employees` | Adjust the hostname as needed depending on your local test environment.     |
+| Record type       | `pomerium.io/Zenefits`           |                                                                             |
+| Foreign Key       | `user.email`                     | Pomerium uses the users's email to associate IdP and Zenefits user entries. |
+| Polling Min Delay | `1h`                             | Minimum poll interval                                                       |
+| Polling Max Delay | `4h`                             | Max poll interval                                                           |
 
 1. Define a new policy. The example policy below only allows persons in the list (i.e. not out of office or on vacation) and in `active` status (i.e. not `terminated` or `onboarding`) to pass.
 

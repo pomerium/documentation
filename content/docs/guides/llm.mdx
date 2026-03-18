@@ -103,7 +103,7 @@ With these settings, Open WebUI trusts the identity headers and can attribute ac
 Use placeholders for secrets and adjust `WEBUI_URL` to your external route. If you trust Pomerium's headers, set `WEBUI_AUTH=False` in Open WebUI.
 
 ```yaml
-version: '3.9'
+version: "3.9"
 services:
   pomerium:
     image: pomerium/pomerium:latest
@@ -111,7 +111,7 @@ services:
       - 443:443
     restart: always
     environment:
-      POMERIUM_ZERO_TOKEN: '<YOUR_CLUSTER_TOKEN>'
+      POMERIUM_ZERO_TOKEN: "<YOUR_CLUSTER_TOKEN>"
       XDG_CACHE_HOME: /var/cache
     volumes:
       - pomerium-cache:/var/cache
@@ -123,11 +123,11 @@ services:
   openwebui:
     image: ghcr.io/open-webui/open-webui:main
     environment:
-      HOST: '0.0.0.0'
-      OLLAMA_HOST: '0.0.0.0'
-      WEBUI_URL: 'https://llm.your-domain.pomerium.app'
-      WEBUI_AUTH_TRUSTED_EMAIL_HEADER: 'X-Pomerium-Claim-Email'
-      WEBUI_AUTH: 'False'
+      HOST: "0.0.0.0"
+      OLLAMA_HOST: "0.0.0.0"
+      WEBUI_URL: "https://llm.your-domain.pomerium.app"
+      WEBUI_AUTH_TRUSTED_EMAIL_HEADER: "X-Pomerium-Claim-Email"
+      WEBUI_AUTH: "False"
     ports:
       - 3000:8080
     volumes:

@@ -1,26 +1,29 @@
-import React from 'react';
-import NotFound from '@theme/NotFound';
-import DocPageLayout from '@theme/DocPage/Layout';
-import clsx from 'clsx';
-import {HtmlClassNameProvider, ThemeClassNames} from '@docusaurus/theme-common';
-
+import {
+  HtmlClassNameProvider,
+  ThemeClassNames,
+} from "@docusaurus/theme-common";
 import {
   DocsSidebarProvider,
-  docVersionSearchTag,
   DocsVersionProvider,
+  docVersionSearchTag,
   useDocRouteMetadata,
-} from '@docusaurus/theme-common/internal';
+} from "@docusaurus/theme-common/internal";
+import clsx from "clsx";
+import React from "react";
 
-import SearchMetadata from '@theme/SearchMetadata';
+import DocPageLayout from "@theme/DocPage/Layout";
+import NotFound from "@theme/NotFound";
+import SearchMetadata from "@theme/SearchMetadata";
+
 export default function DocPage(props) {
-  const {versionMetadata} = props;
+  const { versionMetadata } = props;
   const currentDocRouteMetadata = useDocRouteMetadata(props);
 
   if (!currentDocRouteMetadata) {
     return <NotFound />;
   }
 
-  const {docElement, sidebarName, sidebarItems} = currentDocRouteMetadata;
+  const { docElement, sidebarName, sidebarItems } = currentDocRouteMetadata;
   return (
     <>
       <SearchMetadata
@@ -36,7 +39,8 @@ export default function DocPage(props) {
           ThemeClassNames.wrapper.docsPages,
           ThemeClassNames.page.docsDocPage,
           props.versionMetadata.className,
-        )}>
+        )}
+      >
         <DocsVersionProvider version={versionMetadata}>
           <DocsSidebarProvider name={sidebarName} items={sidebarItems}>
             <DocPageLayout>{docElement}</DocPageLayout>

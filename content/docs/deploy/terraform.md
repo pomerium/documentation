@@ -73,7 +73,7 @@ In Pomerium Enterprise the service account token corresponds to a service accoun
 - allow:
     or:
       - user:
-          is: 'bootstrap-014e587b-3f4b-4fcf-90a9-f6ecdf8154af.pomerium'
+          is: "bootstrap-014e587b-3f4b-4fcf-90a9-f6ecdf8154af.pomerium"
 ```
 
 ### 2. Shared Secret
@@ -95,7 +95,7 @@ The Pomerium API route should have the following policy, with the special bootst
 - allow:
     or:
       - user:
-          is: 'bootstrap-014e587b-3f4b-4fcf-90a9-f6ecdf8154af.pomerium'
+          is: "bootstrap-014e587b-3f4b-4fcf-90a9-f6ecdf8154af.pomerium"
 ```
 
 :::warning

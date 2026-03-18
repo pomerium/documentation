@@ -1,14 +1,14 @@
-import React from 'react';
-import Card from '@mui/material/Card';
-import CardActions from '@mui/material/CardActions';
-import CardContent from '@mui/material/CardContent';
-import CardMedia from '@mui/material/CardMedia';
-import Typography from '@mui/material/Typography';
-import Link from '@docusaurus/Link';
-import {useColorMode} from '@docusaurus/theme-common';
+import Link from "@docusaurus/Link";
+import { useColorMode } from "@docusaurus/theme-common";
+import Card from "@mui/material/Card";
+import CardActions from "@mui/material/CardActions";
+import CardContent from "@mui/material/CardContent";
+import CardMedia from "@mui/material/CardMedia";
+import Typography from "@mui/material/Typography";
+import React from "react";
 
 export default function VideoMediaCard() {
-  const {colorMode} = useColorMode();
+  const { colorMode } = useColorMode();
 
   return (
     <div>
@@ -18,7 +18,8 @@ export default function VideoMediaCard() {
             maxWidth: 850,
             mb: 7,
             ml: 0,
-          }}>
+          }}
+        >
           <CardMedia
             component="iframe"
             alt="2-minute explainer video of what Pomerium is."
@@ -28,30 +29,34 @@ export default function VideoMediaCard() {
           />
           <CardContent
             sx={{
-              bgcolor: colorMode === 'dark' ? '#121212' : '',
-            }}>
+              bgcolor: colorMode === "dark" ? "#121212" : "",
+            }}
+          >
             <Typography
               gutterBottom
               variant="h5"
               component="div"
               sx={{
-                color: colorMode === 'dark' ? '#ebedf0;' : '',
-              }}>
+                color: colorMode === "dark" ? "#ebedf0;" : "",
+              }}
+            >
               Pomerium Demo
             </Typography>
             <Typography
               variant="body1"
               sx={{
-                color: colorMode === 'dark' ? '#ebedf0;' : '',
-              }}>
+                color: colorMode === "dark" ? "#ebedf0;" : "",
+              }}
+            >
               Learn how Pomerium secures your apps and services in this 2-minute
               demo.
             </Typography>
           </CardContent>
           <CardActions
             sx={{
-              bgcolor: colorMode === 'dark' ? '#121212' : '',
-            }}>
+              bgcolor: colorMode === "dark" ? "#121212" : "",
+            }}
+          >
             <Link to="/docs/get-started/quickstart">Try Quickstart</Link>
           </CardActions>
         </Card>
@@ -62,7 +67,8 @@ export default function VideoMediaCard() {
             maxWidth: 850,
             mb: 7,
             ml: 0,
-          }}>
+          }}
+        >
           <CardMedia
             component="iframe"
             alt="something"
@@ -72,22 +78,25 @@ export default function VideoMediaCard() {
           />
           <CardContent
             sx={{
-              bgcolor: colorMode === 'dark' ? '#121212' : '',
-            }}>
+              bgcolor: colorMode === "dark" ? "#121212" : "",
+            }}
+          >
             <Typography
               gutterBottom
               variant="h5"
               component="div"
               sx={{
-                color: colorMode === 'dark' ? '#ebedf0;' : '',
-              }}>
+                color: colorMode === "dark" ? "#ebedf0;" : "",
+              }}
+            >
               Clientless Access
             </Typography>
             <Typography
               variant="body1"
               sx={{
-                color: colorMode === 'dark' ? '#ebedf0;' : '',
-              }}>
+                color: colorMode === "dark" ? "#ebedf0;" : "",
+              }}
+            >
               Learn how Pomerium simplifies access control by providing
               clientless access to users within your organization.
             </Typography>
@@ -100,7 +109,8 @@ export default function VideoMediaCard() {
             maxWidth: 850,
             mb: 7,
             ml: 0,
-          }}>
+          }}
+        >
           <CardMedia
             component="iframe"
             alt="something"
@@ -110,30 +120,34 @@ export default function VideoMediaCard() {
           />
           <CardContent
             sx={{
-              bgcolor: colorMode === 'dark' ? '#121212' : '',
-            }}>
+              bgcolor: colorMode === "dark" ? "#121212" : "",
+            }}
+          >
             <Typography
               gutterBottom
               variant="h5"
               component="div"
               sx={{
-                color: colorMode === 'dark' ? '#ebedf0;' : '',
-              }}>
+                color: colorMode === "dark" ? "#ebedf0;" : "",
+              }}
+            >
               Continuous Verification
             </Typography>
             <Typography
               variant="body1"
               sx={{
-                color: colorMode === 'dark' ? '#ebedf0;' : '',
-              }}>
+                color: colorMode === "dark" ? "#ebedf0;" : "",
+              }}
+            >
               Learn what Continuous Verification is, how it works with Pomerium,
               and why it's important for building a Zero Trust Architecture.
             </Typography>
           </CardContent>
           <CardActions
             sx={{
-              bgcolor: colorMode === 'dark' ? '#121212' : '',
-            }}>
+              bgcolor: colorMode === "dark" ? "#121212" : "",
+            }}
+          >
             <Link to="/docs/capabilities/authorization">
               Go to Authorization Docs
             </Link>

@@ -2,11 +2,11 @@
 title: Connections
 lang: en-US
 sidebar_label: Connections
-description: 'How Pomerium proxies HTTP, SSH, and MCP over TCP/UDP: Envoy listeners, TLS/HTTP/3, routing and auth, timeouts, long-lived connections, and safe draining.'
+description: "How Pomerium proxies HTTP, SSH, and MCP over TCP/UDP: Envoy listeners, TLS/HTTP/3, routing and auth, timeouts, long-lived connections, and safe draining."
 keywords: [pomerium, architecture, connections, listeners]
 ---
 
-import LongLivedConnections from '@site/content/docs/admonitions/_long-lived-connections.mdx';
+import LongLivedConnections from "@site/content/docs/admonitions/_long-lived-connections.mdx";
 
 # Connections
 
@@ -108,16 +108,16 @@ This section describes the network listeners that Pomerium configures in Envoy: 
 
 ### Summary Table
 
-| Listener Name | Protocol | Purpose | Typical Port | Key Settings |
-| --- | --- | --- | --- | --- |
-| `http-ingress` | TCP/HTTP | Accepts insecure HTTP traffic, ACME/Autocert HTTP-01 challenges, and (if enabled) performs plain-HTTP to HTTPS redirects | 80 | [`address`](../reference/address) with [`insecure_server: true`](../reference/insecure-server) or [`http_redirect_address`](../reference/http-redirect-address) |
-| `https-ingress` | TCP/HTTPS | Primary HTTPS entrypoint (TLS termination) | 443 | [`address`](../reference/address) |
-| `quic-ingress` | UDP/QUIC (HTTP/3) | HTTP/3 listener over QUIC | 443 | [`address`](../reference/address) with [`codec_type: http3`](../reference/codec-type) |
-| `grpc-ingress` | TCP/gRPC | Inbound internal gRPC between Pomerium services | random | [`grpc_addr`](../reference/grpc) |
-| `grpc-egress` | TCP/gRPC | Outbound internal gRPC to other Pomerium services | random | (created automatically) |
-| `envoy-admin` | TCP/HTTP | Envoy administration interface | varies | `envoy_admin_address` |
-| `metrics-ingress` | TCP/HTTP | Prometheus metrics (Pomerium + Envoy) | 9902 (default) | [`metrics_address`](../reference/metrics#metrics-address) |
-| `ssh` | TCP/SSH | Native SSH proxy | 22 (default) | [`ssh_address`](../capabilities/native-ssh-access#configuration-reference) |
+| Listener Name     | Protocol          | Purpose                                                                                                                  | Typical Port   | Key Settings                                                                                                                                                    |
+| ----------------- | ----------------- | ------------------------------------------------------------------------------------------------------------------------ | -------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `http-ingress`    | TCP/HTTP          | Accepts insecure HTTP traffic, ACME/Autocert HTTP-01 challenges, and (if enabled) performs plain-HTTP to HTTPS redirects | 80             | [`address`](../reference/address) with [`insecure_server: true`](../reference/insecure-server) or [`http_redirect_address`](../reference/http-redirect-address) |
+| `https-ingress`   | TCP/HTTPS         | Primary HTTPS entrypoint (TLS termination)                                                                               | 443            | [`address`](../reference/address)                                                                                                                               |
+| `quic-ingress`    | UDP/QUIC (HTTP/3) | HTTP/3 listener over QUIC                                                                                                | 443            | [`address`](../reference/address) with [`codec_type: http3`](../reference/codec-type)                                                                           |
+| `grpc-ingress`    | TCP/gRPC          | Inbound internal gRPC between Pomerium services                                                                          | random         | [`grpc_addr`](../reference/grpc)                                                                                                                                |
+| `grpc-egress`     | TCP/gRPC          | Outbound internal gRPC to other Pomerium services                                                                        | random         | (created automatically)                                                                                                                                         |
+| `envoy-admin`     | TCP/HTTP          | Envoy administration interface                                                                                           | varies         | `envoy_admin_address`                                                                                                                                           |
+| `metrics-ingress` | TCP/HTTP          | Prometheus metrics (Pomerium + Envoy)                                                                                    | 9902 (default) | [`metrics_address`](../reference/metrics#metrics-address)                                                                                                       |
+| `ssh`             | TCP/SSH           | Native SSH proxy                                                                                                         | 22 (default)   | [`ssh_address`](../capabilities/native-ssh-access#configuration-reference)                                                                                      |
 
 ### Details
 

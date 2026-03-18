@@ -62,9 +62,9 @@ Enterprise-only sidebar items use `className: 'enterprise'`.
 
 ```yaml
 ---
-title: 'Page Title'
-sidebar_label: 'Menu Label'
-description: 'SEO description'
+title: "Page Title"
+sidebar_label: "Menu Label"
+description: "SEO description"
 keywords: [pomerium, relevant, terms]
 lang: en-US
 ---
@@ -81,8 +81,8 @@ Standard types plus a custom `:::enterprise` for enterprise-only features:
 ### Tabs (Zero vs Core)
 
 ```mdx
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
+import TabItem from "@theme/TabItem";
+import Tabs from "@theme/Tabs";
 
 <Tabs>
   <TabItem value="zero" label="Pomerium Zero">
@@ -99,7 +99,7 @@ import TabItem from '@theme/TabItem';
 Stored as `content/docs/admonitions/_name.mdx` (underscore prefix). Imported as:
 
 ```mdx
-import SemanticVersioning from '@site/content/docs/admonitions/_semantic-versioning.mdx';
+import SemanticVersioning from "@site/content/docs/admonitions/_semantic-versioning.mdx";
 
 <SemanticVersioning />
 ```
