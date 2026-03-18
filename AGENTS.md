@@ -9,12 +9,12 @@ yarn start           # Dev server on localhost:3001 (hot-reload)
 yarn build           # Production build to /build/
 yarn format          # Auto-fix formatting with Prettier
 yarn format-check    # Check formatting (no changes)
+yarn check           # Run formatting and spelling checks
 yarn cspell          # Spell-check tracked source files
-yarn precommit       # Runs format-check + cspell
 yarn clear           # Clear Docusaurus cache (useful if build fails)
 ```
 
-Pre-commit hooks run Prettier on `content/**` files and cspell on all files. CI does not invoke `pre-commit/action`; it runs `yarn format-check` and `yarn cspell` directly so the checks match the repo-root config and toolchain.
+This repo does not use the Python `pre-commit` framework. The CI `pre-commit` check runs the repo scripts directly (`yarn format-check`, `yarn cspell`), and the same commands are available locally via `yarn check`.
 
 ## Architecture
 
