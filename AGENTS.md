@@ -14,7 +14,7 @@ yarn precommit       # Runs format-check + cspell
 yarn clear           # Clear Docusaurus cache (useful if build fails)
 ```
 
-Pre-commit hooks run Prettier on `content/**` files and cspell on all files.
+Pre-commit hooks run Prettier on `content/**` files and cspell on all files. CI does not invoke `pre-commit/action`; it runs `yarn format-check` and `yarn cspell` directly so the checks match the repo-root config and toolchain.
 
 ## Architecture
 
