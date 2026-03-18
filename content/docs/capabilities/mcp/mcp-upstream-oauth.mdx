@@ -20,17 +20,20 @@ keywords:
 
 # MCP + Upstream OAuth
 
-Many MCP servers require their own authentication — either because they front an upstream API (GitHub, Google Drive, Notion) or because the MCP server itself enforces OAuth. Pomerium manages the entire upstream OAuth flow and token lifecycle so your clients never handle upstream credentials directly.
+Upstream OAuth applies to two scenarios:
 
-Pomerium uses a unified upstream OAuth pipeline that adapts based on what you configure. You can supply as much or as little as you need:
+- **Third-party hosted MCP servers** (Notion, Linear, Google) that enforce their own OAuth — Pomerium handles the upstream auth flow so your users authenticate once and tool calls are proxied with valid tokens.
+- **Self-hosted MCP servers** that call upstream APIs under the hood — your server receives a valid upstream access token in the `Authorization: Bearer` header on every proxied request, so it never needs to implement OAuth itself.
 
-- **Static OAuth2** — you register client credentials and endpoints in your route config. Best for upstream APIs where you control the OAuth app registration (GitHub Apps, Google Cloud, etc.).
-- **Pre-registered credentials** — you supply `client_id` and `client_secret` but omit endpoints. Pomerium discovers the authorization and token endpoints automatically via [RFC 9728 Protected Resource Metadata](https://datatracker.ietf.org/doc/html/rfc9728), then uses your credentials directly — no dynamic client registration needed.
-- **Auto-discovery** — no upstream OAuth config at all. Pomerium discovers the server's authorization requirements at runtime and registers itself as an OAuth client via [CIMD](https://datatracker.ietf.org/doc/html/draft-ietf-oauth-client-id-metadata-document) or [DCR](https://datatracker.ietf.org/doc/html/rfc7591). Best for third-party MCP servers that advertise their own OAuth configuration.
+In both cases, external MCP clients only hold a Pomerium-issued token (TE) and never see upstream credentials.
 
-These modes are not separate code paths — they are points on a single configuration spectrum. Pomerium skips discovery and registration steps that your config makes unnecessary, and fills in what's missing from upstream metadata.
+Pomerium uses a unified upstream OAuth pipeline that adapts based on what you configure. The [MCP authorization spec](https://modelcontextprotocol.io/specification/2025-03-26/basic/authorization) defines a priority order for how clients identify themselves to upstream authorization servers:
 
-In all modes, your MCP server receives a valid upstream token on every proxied request — no OAuth logic needed on the server side. External clients only hold a Pomerium-issued external token (TE) and never see the upstream token.
+1. **Pre-registered credentials** — use when the upstream authorization server requires manual app registration and does not support automatic client registration. You supply `client_id` and `client_secret` (and optionally endpoints) in your route config.
+2. **[CIMD](https://datatracker.ietf.org/doc/html/draft-ietf-oauth-client-id-metadata-document)** — the recommended automatic mechanism. Pomerium publishes its client metadata at an HTTPS URL that serves as its `client_id`. The upstream AS fetches metadata on demand.
+3. **[DCR](https://datatracker.ietf.org/doc/html/rfc7591)** — a fallback for authorization servers that support dynamic registration but not CIMD.
+
+When no `upstream_oauth2` config is present, Pomerium tries CIMD first, then falls back to DCR. When `client_id` and `client_secret` are provided, Pomerium uses them directly and skips automatic registration. When endpoints are also provided, Pomerium skips [RFC 9728](https://datatracker.ietf.org/doc/html/rfc9728) discovery as well.
 
 ## Architecture
 
@@ -148,9 +151,9 @@ After both steps, the client receives an external token (TE) and can make tool c
 
 ## Pre-Registered Credentials
 
-Use this mode when you have OAuth client credentials but the upstream server advertises its own endpoints via [RFC 9728](https://datatracker.ietf.org/doc/html/rfc9728). Pomerium discovers the authorization and token endpoints automatically, then uses your credentials — skipping dynamic client registration entirely.
+Use this mode when the upstream authorization server does not support automatic client registration (neither [CIMD](https://datatracker.ietf.org/doc/html/draft-ietf-oauth-client-id-metadata-document) nor [DCR](https://datatracker.ietf.org/doc/html/rfc7591)). You register an OAuth app manually with the provider and supply the credentials in your route config. Pomerium can still discover the authorization and token endpoints automatically via [RFC 9728 PRM](https://datatracker.ietf.org/doc/html/rfc9728) if the upstream advertises them — you only need to provide `endpoint` when it doesn't.
 
-This is common with providers like Google Cloud, where you create an OAuth app in their console but the MCP server's Protected Resource Metadata (PRM) already points to the correct authorization server.
+This is the common case for providers like Google Cloud and GitHub, where you must create an OAuth app in their console.
 
 ### Configuration
 
@@ -165,8 +168,8 @@ routes:
       server:
         path: /mcp
         upstream_oauth2:
-          client_id: 123456789.apps.googleusercontent.com
-          client_secret: your-client-secret
+          client_id: <your-google-oauth-client-id>
+          client_secret: <your-google-oauth-client-secret>
           scopes: ["https://www.googleapis.com/auth/datastore"]
     policy:
       allow:
@@ -177,7 +180,7 @@ routes:
 
 {/* spellchecker: enable */}
 
-Note the absence of `endpoint` — Pomerium discovers `accounts.google.com` as the authorization server from the upstream server's PRM metadata. You still need to add `accounts.google.com` to `mcp_allowed_as_metadata_domains` since it's a third-party domain not derivable from the route config:
+Note the absence of `endpoint` — Pomerium discovers `accounts.google.com` as the authorization server from the upstream server's [Protected Resource Metadata](https://datatracker.ietf.org/doc/html/rfc9728). You still need to add `accounts.google.com` to `mcp_allowed_as_metadata_domains` since it's a third-party domain not derivable from the route config:
 
 ```yaml
 mcp_allowed_as_metadata_domains:
