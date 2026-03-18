@@ -330,19 +330,82 @@ ${LLM_AGENT_INSTRUCTIONS.map((instruction) => `- ${instruction}`).join("\n")}
 `;
 }
 
+function normalizeRouteMarkdownPath(routePath) {
+  if (typeof routePath !== "string") return "";
+
+  const normalizedRoutePath = routePath
+    .trim()
+    .replace(/^\/+/, "")
+    .replace(/\/+$/, "");
+  if (!normalizedRoutePath) return "";
+
+  const pathParts = normalizedRoutePath.split("/").filter(Boolean);
+  if (path.isAbsolute(normalizedRoutePath) || pathParts.includes(".."))
+    return "";
+
+  return normalizedRoutePath;
+}
+
 function buildMarkdownUrl(route, context) {
-  const mdFilePath = route.filePath || "";
-  let relPath = "";
-  if (mdFilePath) {
-    const docsRoot = path.join(context.siteDir, "content", "docs");
-    relPath = path.relative(docsRoot, mdFilePath).replace(/\\/g, "/");
-    if (relPath.startsWith("..")) {
-      relPath = path.basename(mdFilePath);
-    }
-    relPath = relPath.replace(/\.(mdx|md)$/, ".md");
+  const routePath = normalizeRouteMarkdownPath(route.path);
+  if (!routePath) return "";
+
+  return getAbsoluteSiteUrl(context, `${routePath}/index.md`);
+}
+
+function buildRouteMarkdownOutputPath(routePath) {
+  const normalizedRoutePath = normalizeRouteMarkdownPath(routePath);
+  return normalizedRoutePath ? `${normalizedRoutePath}/index.md` : "";
+}
+
+function resolveRouteMarkdownOutputFile(outDir, routePath) {
+  const outputPath = buildRouteMarkdownOutputPath(routePath);
+  if (!outputPath) return "";
+
+  const resolvedOutputPath = path.resolve(outDir, outputPath);
+  const relativeOutputPath = path.relative(outDir, resolvedOutputPath);
+
+  if (
+    !relativeOutputPath ||
+    relativeOutputPath.startsWith("..") ||
+    path.isAbsolute(relativeOutputPath)
+  ) {
+    return "";
   }
 
-  return relPath ? getAbsoluteSiteUrl(context, `content/docs/${relPath}`) : "";
+  return resolvedOutputPath;
+}
+
+function shouldSkipMarkdownCopy(srcFile) {
+  const skipPatterns = [
+    "_template.mdx",
+    /^_/, // files/folders starting with "_",
+  ];
+
+  return skipPatterns.some((pat) =>
+    typeof pat === "string"
+      ? srcFile.includes(pat)
+      : pat.test(path.basename(srcFile)),
+  );
+}
+
+function validateRouteMarkdownCollisions(routes) {
+  const routeOutputs = new Map();
+
+  for (const route of routes) {
+    if (!route.filePath || shouldSkipMarkdownCopy(route.filePath)) continue;
+
+    const outputPath = buildRouteMarkdownOutputPath(route.path);
+    if (!outputPath) continue;
+
+    if (routeOutputs.has(outputPath)) {
+      throw new Error(
+        `Duplicate route markdown output path "${outputPath}" for "${route.path}" and "${routeOutputs.get(outputPath)}"`,
+      );
+    }
+
+    routeOutputs.set(outputPath, route.path);
+  }
 }
 
 /**
@@ -689,6 +752,7 @@ async function pluginLlmsTxt(context, options) {
             "⚠️  No curated llms.txt routes matched the current route set.",
           );
         }
+        validateRouteMarkdownCollisions(finalRoutes);
         const curatedRoutesByCategory = await groupRoutesByCategoryAuto(
           curatedRoutes,
           context,
@@ -732,19 +796,7 @@ async function pluginLlmsTxt(context, options) {
           let srcFile = route.filePath;
           if (!srcFile) continue;
 
-          // Add skip logic here
-          const skipPatterns = [
-            "_template.mdx",
-            /^_/, // files/folders starting with "_",
-            "versions.mdx",
-          ];
-          if (
-            skipPatterns.some((pat) =>
-              typeof pat === "string"
-                ? srcFile.includes(pat)
-                : pat.test(path.basename(srcFile)),
-            )
-          ) {
+          if (shouldSkipMarkdownCopy(srcFile)) {
             continue; // Skip this file silently
           }
 
@@ -754,9 +806,17 @@ async function pluginLlmsTxt(context, options) {
           if (destRel.startsWith("..")) {
             destRel = path.basename(srcFile).replace(/\.(mdx|md)$/, ".md");
           }
-          const destFile = path.join(outDir, "content", "docs", destRel);
+          // Keep legacy /content/docs markdown copies for compatibility while
+          // llms consumers and infra transition to route-mirrored .md URLs.
+          const contentDestFile = path.join(outDir, "content", "docs", destRel);
+          const routeDestFile = resolveRouteMarkdownOutputFile(
+            outDir,
+            route.path,
+          );
           // Ensure directory exists
-          await fs.promises.mkdir(path.dirname(destFile), { recursive: true });
+          await fs.promises.mkdir(path.dirname(contentDestFile), {
+            recursive: true,
+          });
           // Read, clean, and write file
           try {
             const rawContent = await fs.promises.readFile(srcFile, "utf8");
@@ -772,7 +832,25 @@ async function pluginLlmsTxt(context, options) {
               cleanedContent = preCleanedContent;
               errors++;
             }
-            await fs.promises.writeFile(destFile, cleanedContent, "utf8");
+            await fs.promises.writeFile(
+              contentDestFile,
+              cleanedContent,
+              "utf8",
+            );
+            if (routeDestFile) {
+              await fs.promises.mkdir(path.dirname(routeDestFile), {
+                recursive: true,
+              });
+              await fs.promises.writeFile(
+                routeDestFile,
+                cleanedContent,
+                "utf8",
+              );
+            } else {
+              console.warn(
+                `Warning: Could not resolve route markdown path for ${route.path}, skipping route-mirrored copy.`,
+              );
+            }
             copied++;
           } catch (err) {
             console.warn(
