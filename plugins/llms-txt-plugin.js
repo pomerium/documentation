@@ -272,6 +272,12 @@ function isCoreConcept(subsection) {
   return coreConcepts.includes(subsection);
 }
 
+function getAbsoluteSiteUrl(context, sitePath) {
+  const siteOrigin = context.siteConfig.url;
+  const basePath = context.siteConfig.baseUrl || '/';
+  return new URL(path.posix.join(basePath, sitePath), siteOrigin).toString();
+}
+
 /**
  * Generate the llms.txt file content
  */
@@ -304,7 +310,9 @@ Pomerium is an identity and context-aware access proxy that provides secure acce
         // Always output .md extension
         relPath = relPath.replace(/\.(mdx|md)$/, '.md');
       }
-      const mdUrl = relPath ? `content/docs/${relPath}` : '';
+      const mdUrl = relPath
+        ? getAbsoluteSiteUrl(context, `content/docs/${relPath}`)
+        : '';
 
       if (description && mdUrl) {
         content += `- [${title}](${mdUrl}): ${description}\n`;
