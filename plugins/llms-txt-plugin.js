@@ -1,10 +1,10 @@
-const fs = require('fs');
-const path = require('path');
-const {remark} = require('remark');
-const remarkParse = require('remark-parse').default;
-const remarkStringify = require('remark-stringify').default;
-const remarkMdx = require('remark-mdx').default;
-const visit = require('unist-util-visit').visit;
+const fs = require("fs");
+const path = require("path");
+const { remark } = require("remark");
+const remarkParse = require("remark-parse").default;
+const remarkStringify = require("remark-stringify").default;
+const remarkMdx = require("remark-mdx").default;
+const visit = require("unist-util-visit").visit;
 
 /**
  * Pre-clean Docusaurus MDX files before remark parsing.
@@ -14,26 +14,26 @@ const visit = require('unist-util-visit').visit;
  */
 function preCleanDocusaurusMDX(raw) {
   // Remove YAML frontmatter at the very top (--- ... ---)
-  raw = raw.replace(/^---[\s\S]*?---\s*(\n|$)/, '');
+  raw = raw.replace(/^---[\s\S]*?---\s*(\n|$)/, "");
 
   // Remove all Docusaurus import lines
-  raw = raw.replace(/^\s*import\s.*from\s+['"][^'"]+['"];?\s*$/gm, '');
+  raw = raw.replace(/^\s*import\s.*from\s+['"][^'"]+['"];?\s*$/gm, "");
 
   // Remove <Tabs>, </Tabs>, <TabItem ...>, </TabItem>
-  raw = raw.replace(/<\/?Tabs[^>]*>/g, '');
-  raw = raw.replace(/<\/?TabItem[^>]*>/g, '');
+  raw = raw.replace(/<\/?Tabs[^>]*>/g, "");
+  raw = raw.replace(/<\/?TabItem[^>]*>/g, "");
 
   // Remove all Docusaurus admonition blocks (with all contents)
   raw = raw.replace(
     /^:::(info|note|caution|tip|danger|important|success|failure|admonition)[^\n]*\n([\s\S]*?)^:::\s*$/gm,
-    '',
+    "",
   );
 
   // Remove any "orphan" closing or opening :::
-  raw = raw.replace(/^:::\s*$/gm, '');
+  raw = raw.replace(/^:::\s*$/gm, "");
 
   // Optionally strip extra blank lines
-  raw = raw.replace(/^\s*\n/gm, '');
+  raw = raw.replace(/^\s*\n/gm, "");
 
   return raw;
 }
@@ -54,23 +54,23 @@ async function cleanMarkdownForLLM(rawContent) {
       // Remove YAML frontmatter
       tree.children = tree.children.filter(
         (node) =>
-          node.type !== 'yaml' && // Remove frontmatter
-          node.type !== 'mdxjsEsm' && // Remove import/export
-          node.type !== 'mdxJsxFlowElement' &&
-          node.type !== 'mdxJsxTextElement',
+          node.type !== "yaml" && // Remove frontmatter
+          node.type !== "mdxjsEsm" && // Remove import/export
+          node.type !== "mdxJsxFlowElement" &&
+          node.type !== "mdxJsxTextElement",
       );
       // Remove images
       visit(tree, (node, index, parent) => {
-        if (node.type === 'image' && parent && typeof index === 'number') {
+        if (node.type === "image" && parent && typeof index === "number") {
           parent.children.splice(index, 1);
         }
       });
     })
     .use(remarkStringify, {
       fences: true,
-      bullet: '-',
-      rule: '-',
-      listItemIndent: 'one',
+      bullet: "-",
+      rule: "-",
+      listItemIndent: "one",
       // Important! Do not stringify YAML nodes (just in case)
       // This setting may not exist, but keeping for emphasis.
     });
@@ -78,7 +78,7 @@ async function cleanMarkdownForLLM(rawContent) {
   const result = await processor.process(rawContent);
 
   // Optionally trim excessive blank lines
-  return result.value.replace(/\n{3,}/g, '\n\n');
+  return result.value.replace(/\n{3,}/g, "\n\n");
 }
 
 /**
@@ -87,11 +87,11 @@ async function cleanMarkdownForLLM(rawContent) {
 function filterDocumentationRoutes(routes) {
   return routes.filter((route) => {
     return (
-      route.path.startsWith('/docs/') &&
-      route.path !== '/docs/' &&
-      !route.path.includes('/api/') &&
-      !route.path.includes('/_') &&
-      route.component !== '@theme/NotFound/Content'
+      route.path.startsWith("/docs/") &&
+      route.path !== "/docs/" &&
+      !route.path.includes("/api/") &&
+      !route.path.includes("/_") &&
+      route.component !== "@theme/NotFound/Content"
     );
   });
 }
@@ -102,9 +102,9 @@ function filterDocumentationRoutes(routes) {
 async function scanDocumentationFiles(contentDir) {
   const files = [];
 
-  async function scanDirectory(dir, basePath = '') {
+  async function scanDirectory(dir, basePath = "") {
     try {
-      const entries = await fs.promises.readdir(dir, {withFileTypes: true});
+      const entries = await fs.promises.readdir(dir, { withFileTypes: true });
 
       for (const entry of entries) {
         const fullPath = path.join(dir, entry.name);
@@ -113,22 +113,22 @@ async function scanDocumentationFiles(contentDir) {
         if (entry.isDirectory()) {
           // Skip certain directories
           if (
-            entry.name.startsWith('.') ||
-            entry.name === 'img' ||
-            entry.name === 'assets'
+            entry.name.startsWith(".") ||
+            entry.name === "img" ||
+            entry.name === "assets"
           ) {
             continue;
           }
           await scanDirectory(fullPath, relativePath);
         } else if (
           entry.isFile() &&
-          (entry.name.endsWith('.mdx') || entry.name.endsWith('.md')) &&
-          !entry.name.startsWith('_')
+          (entry.name.endsWith(".mdx") || entry.name.endsWith(".md")) &&
+          !entry.name.startsWith("_")
         ) {
           // Create a route-like object from the file
           const urlPath =
-            '/docs/' +
-            relativePath.replace(/\.(mdx?|md)$/, '').replace(/\\/g, '/');
+            "/docs/" +
+            relativePath.replace(/\.(mdx?|md)$/, "").replace(/\\/g, "/");
 
           // Read file to get frontmatter metadata
           const metadata = await extractMetadata(fullPath);
@@ -154,7 +154,7 @@ async function scanDocumentationFiles(contentDir) {
  */
 async function extractMetadata(filePath) {
   try {
-    const content = await fs.promises.readFile(filePath, 'utf8');
+    const content = await fs.promises.readFile(filePath, "utf8");
     const metadata = {};
 
     // Extract frontmatter
@@ -168,9 +168,22 @@ async function extractMetadata(filePath) {
         metadata.title = titleMatch[1];
       }
 
-      const descMatch = frontmatter.match(/^description:\s*['"]?(.*?)['"]?$/m);
-      if (descMatch) {
-        metadata.description = descMatch[1];
+      const descBlockMatch = frontmatter.match(
+        /^description:\s*[|>][-+0-9]*\s*\n((?:[ \t]+.*(?:\n|$))*)/m,
+      );
+      if (descBlockMatch) {
+        metadata.description = descBlockMatch[1]
+          .split("\n")
+          .map((line) => line.trim())
+          .filter(Boolean)
+          .join(" ");
+      } else {
+        const descMatch = frontmatter.match(
+          /^description:\s*['"]?(.*?)['"]?$/m,
+        );
+        if (descMatch) {
+          metadata.description = descMatch[1];
+        }
       }
     }
 
@@ -197,20 +210,20 @@ async function extractMetadata(filePath) {
  */
 function groupRoutesByCategory(routes) {
   const categories = {
-    'Getting Started': [],
-    'Core Concepts': [],
+    "Getting Started": [],
+    "Core Concepts": [],
     Deployment: [],
-    'Configuration and Reference': [],
-    'Advanced Capabilities': [],
-    'Integrations and Guides': [],
-    'API and Internals': [],
+    "Configuration and Reference": [],
+    "Advanced Capabilities": [],
+    "Integrations and Guides": [],
+    "API and Internals": [],
     Examples: [],
     Training: [],
     Other: [],
   };
 
   routes.forEach((route) => {
-    const pathParts = route.path.split('/').filter(Boolean);
+    const pathParts = route.path.split("/").filter(Boolean);
 
     if (pathParts.length < 2) return; // Skip root docs page
 
@@ -218,34 +231,34 @@ function groupRoutesByCategory(routes) {
     const subsection = pathParts[2]; // Second part if exists
 
     // Skip index files at the top level
-    if (pathParts.length === 2 && (section === 'index' || section === 'docs')) {
+    if (pathParts.length === 2 && (section === "index" || section === "docs")) {
       return;
     }
 
     // Categorize based on path structure
-    if (section === 'get-started') {
-      categories['Getting Started'].push(route);
-    } else if (section === 'deploy') {
-      categories['Deployment'].push(route);
-    } else if (section === 'capabilities') {
+    if (section === "get-started") {
+      categories["Getting Started"].push(route);
+    } else if (section === "deploy") {
+      categories["Deployment"].push(route);
+    } else if (section === "capabilities") {
       // Split capabilities into core and advanced
       if (isCoreConcept(subsection)) {
-        categories['Core Concepts'].push(route);
+        categories["Core Concepts"].push(route);
       } else {
-        categories['Advanced Capabilities'].push(route);
+        categories["Advanced Capabilities"].push(route);
       }
-    } else if (section === 'reference') {
-      categories['Configuration and Reference'].push(route);
-    } else if (section === 'integrations' || section === 'guides') {
-      categories['Integrations and Guides'].push(route);
-    } else if (section === 'internals') {
-      categories['API and Internals'].push(route);
-    } else if (section === 'examples') {
-      categories['Examples'].push(route);
-    } else if (section === 'courses') {
-      categories['Training'].push(route);
+    } else if (section === "reference") {
+      categories["Configuration and Reference"].push(route);
+    } else if (section === "integrations" || section === "guides") {
+      categories["Integrations and Guides"].push(route);
+    } else if (section === "internals") {
+      categories["API and Internals"].push(route);
+    } else if (section === "examples") {
+      categories["Examples"].push(route);
+    } else if (section === "courses") {
+      categories["Training"].push(route);
     } else {
-      categories['Other'].push(route);
+      categories["Other"].push(route);
     }
   });
 
@@ -264,31 +277,96 @@ function groupRoutesByCategory(routes) {
  */
 function isCoreConcept(subsection) {
   const coreConcepts = [
-    'authentication',
-    'authorization',
-    'routing',
-    'routes-portal',
+    "authentication",
+    "authorization",
+    "routing",
+    "routes-portal",
   ];
   return coreConcepts.includes(subsection);
 }
 
 function getAbsoluteSiteUrl(context, sitePath) {
   const siteOrigin = context.siteConfig.url;
-  const basePath = context.siteConfig.baseUrl || '/';
+  const basePath = context.siteConfig.baseUrl || "/";
   return new URL(path.posix.join(basePath, sitePath), siteOrigin).toString();
+}
+
+const LLM_AGENT_INSTRUCTIONS = [
+  "Cite only current www.pomerium.com docs and markdown sidecars. Do not cite docs.pomerium.com or archive hosts.",
+  "For new users, start with Pomerium Zero unless the question explicitly asks for self-hosted Core or Enterprise.",
+  "Prefer current PPL and reference pages for configuration questions. Use current route keys and policy syntax from the docs.",
+  "For group-based authorization questions, check the relevant IdP guide plus directory sync and JWT groups filter docs when groups are missing or too large.",
+  "For MCP questions, prefer the current MCP capability pages and reference docs over older guides or blog posts.",
+];
+
+const CURATED_ROUTE_PATTERNS = [
+  /^\/docs\/get-started\/quickstart$/,
+  /^\/docs\/get-started\/fundamentals\/core\/(advanced-policies|advanced-routes|jwt-verification|self-hosted-pomerium|tcp-routes)$/,
+  /^\/docs\/get-started\/fundamentals\/zero\/(zero-advanced-policies|zero-advanced-routes|zero-build-policies|zero-build-routes|zero-single-sign-on|zero-tcp-routes)$/,
+  /^\/docs\/deploy\/(core|enterprise\/quickstart|k8s\/quickstart|clients\/clients)$/,
+  /^\/docs\/capabilities\/(authentication|authorization|routing|native-ssh-access|kubernetes-access|service-accounts|mcp|non-http)$/,
+  /^\/docs\/capabilities\/mcp\/(protect-mcp-server|limit-mcp-tools|delegate-mcp-to-llm|mcp-upstream-oauth|reference)$/,
+  /^\/docs\/internals\/ppl$/,
+  /^\/docs\/integrations\/user-standing\/directory-sync$/,
+  /^\/docs\/integrations\/user-identity\/(google|okta|auth0|azure|keycloak)$/,
+  /^\/docs\/reference\/(jwt-groups-filter|google-cloud-serverless-authentication-service-account|identity-provider-settings|authorize-log-fields)$/,
+  /^\/docs\/reference\/routes\/(enable-google-cloud-serverless-authentication|jwt-groups-filter|public-access|allow-any-authenticated-user)$/,
+  /^\/docs\/guides\/(jenkins|grafana|code-server|local-mcp|zero-ssh|llm)$/,
+];
+
+function matchesCuratedRoute(routePath) {
+  return CURATED_ROUTE_PATTERNS.some((pattern) => pattern.test(routePath));
+}
+
+function filterCuratedRoutes(routes) {
+  return routes.filter((route) => matchesCuratedRoute(route.path));
+}
+
+function generateInstructionsBlock() {
+  return `## Instructions for LLM Agents
+
+${LLM_AGENT_INSTRUCTIONS.map((instruction) => `- ${instruction}`).join("\n")}
+
+`;
+}
+
+function buildMarkdownUrl(route, context) {
+  const mdFilePath = route.filePath || "";
+  let relPath = "";
+  if (mdFilePath) {
+    const docsRoot = path.join(context.siteDir, "content", "docs");
+    relPath = path.relative(docsRoot, mdFilePath).replace(/\\/g, "/");
+    if (relPath.startsWith("..")) {
+      relPath = path.basename(mdFilePath);
+    }
+    relPath = relPath.replace(/\.(mdx|md)$/, ".md");
+  }
+
+  return relPath ? getAbsoluteSiteUrl(context, `content/docs/${relPath}`) : "";
 }
 
 /**
  * Generate the llms.txt file content
  */
-function generateLlmsTxtContent(routesByCategory, context) {
-  let content = `# Pomerium Documentation
+function generateLlmsTxtContent(routesByCategory, context, options = {}) {
+  const {
+    title: documentTitle = "Pomerium Documentation",
+    intro = "This file contains information about Pomerium's public documentation to help LLMs understand and reference our documentation.",
+    includeInstructions = false,
+    footer = "This documentation is publicly available and approved for LLM training and reference.",
+  } = options;
 
-This file contains information about Pomerium's public documentation to help LLMs understand and reference our documentation.
+  let content = `# ${documentTitle}
+
+${intro}
 
 Pomerium is an identity and context-aware access proxy that provides secure access to applications and services.
 
 `;
+
+  if (includeInstructions) {
+    content += generateInstructionsBlock();
+  }
 
   Object.entries(routesByCategory).forEach(([categoryName, routes]) => {
     content += `## ${categoryName}\n\n`;
@@ -296,40 +374,25 @@ Pomerium is an identity and context-aware access proxy that provides secure acce
     const sortedRoutes = sortRoutes(routes);
 
     sortedRoutes.forEach((route) => {
-      const title = getRouteTitle(route);
+      const routeTitle = getRouteTitle(route);
       const description = getRouteDescription(route);
-      let mdFilePath = route.filePath || '';
-      // Make the path relative to the docs root for the link
-      let relPath = '';
-      if (mdFilePath) {
-        const docsRoot = path.join(context.siteDir, 'content', 'docs');
-        relPath = path.relative(docsRoot, mdFilePath).replace(/\\/g, '/');
-        if (relPath.startsWith('..')) {
-          relPath = path.basename(mdFilePath);
-        }
-        // Always output .md extension
-        relPath = relPath.replace(/\.(mdx|md)$/, '.md');
-      }
-      const mdUrl = relPath
-        ? getAbsoluteSiteUrl(context, `content/docs/${relPath}`)
-        : '';
+      const mdUrl = buildMarkdownUrl(route, context);
 
       if (description && mdUrl) {
-        content += `- [${title}](${mdUrl}): ${description}\n`;
+        content += `- [${routeTitle}](${mdUrl}): ${description}\n`;
       } else if (mdUrl) {
-        content += `- [${title}](${mdUrl})\n`;
+        content += `- [${routeTitle}](${mdUrl})\n`;
       } else if (description) {
-        content += `- ${title}: ${description}\n`;
+        content += `- ${routeTitle}: ${description}\n`;
       } else {
-        content += `- ${title}\n`;
+        content += `- ${routeTitle}\n`;
       }
     });
 
-    content += '\n';
+    content += "\n";
   });
 
-  content +=
-    'This documentation is publicly available and approved for LLM training and reference.';
+  content += `${footer}\n`;
 
   return content;
 }
@@ -341,13 +404,13 @@ function sortRoutes(routes) {
   return routes.sort((a, b) => {
     // Custom sorting logic - prioritize important pages first
     const priorityOrder = [
-      'quickstart',
-      'fundamentals',
-      'index',
-      'core',
-      'authentication',
-      'authorization',
-      'routing',
+      "quickstart",
+      "fundamentals",
+      "index",
+      "core",
+      "authentication",
+      "authorization",
+      "routing",
     ];
 
     const aName = path.basename(a.path);
@@ -378,13 +441,13 @@ function getRouteTitle(route) {
   }
 
   // Fallback: generate title from path
-  const pathParts = route.path.split('/').filter(Boolean);
+  const pathParts = route.path.split("/").filter(Boolean);
   const lastPart = pathParts[pathParts.length - 1];
 
   return lastPart
-    .split('-')
+    .split("-")
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(' ');
+    .join(" ");
 }
 
 /**
@@ -423,7 +486,7 @@ async function groupRoutesByCategoryAuto(routes, context) {
     return sortCategories(categories);
   } catch (error) {
     console.warn(
-      '⚠️  Could not auto-detect categories from sidebars, falling back to manual categorization',
+      "⚠️  Could not auto-detect categories from sidebars, falling back to manual categorization",
     );
     return groupRoutesByCategory(routes);
   }
@@ -434,7 +497,7 @@ async function groupRoutesByCategoryAuto(routes, context) {
  */
 async function loadSidebarsConfig(siteDir) {
   try {
-    const sidebarsPath = path.join(siteDir, 'sidebars.js');
+    const sidebarsPath = path.join(siteDir, "sidebars.js");
     delete require.cache[require.resolve(sidebarsPath)];
     return require(sidebarsPath);
   } catch (error) {
@@ -461,13 +524,13 @@ function extractCategoryMappingFromSidebars(sidebars) {
  */
 function processSidebarItems(items, mapping, parentCategory) {
   items.forEach((item) => {
-    if (typeof item === 'string') {
+    if (typeof item === "string") {
       // Direct doc reference
-      const docPath = `/docs/${item.replace(/^docs\//, '')}`;
+      const docPath = `/docs/${item.replace(/^docs\//, "")}`;
       if (parentCategory) {
         mapping[docPath] = parentCategory;
       }
-    } else if (item.type === 'category') {
+    } else if (item.type === "category") {
       // Category with nested items
       const categoryName = item.label;
 
@@ -477,12 +540,12 @@ function processSidebarItems(items, mapping, parentCategory) {
 
       // Also map the category link if it exists
       if (item.link?.id) {
-        const linkPath = `/docs/${item.link.id.replace(/^docs\//, '')}`;
+        const linkPath = `/docs/${item.link.id.replace(/^docs\//, "")}`;
         mapping[linkPath] = categoryName;
       }
-    } else if (item.type === 'doc') {
+    } else if (item.type === "doc") {
       // Direct doc with custom label
-      const docPath = `/docs/${item.id.replace(/^docs\//, '')}`;
+      const docPath = `/docs/${item.id.replace(/^docs\//, "")}`;
       if (parentCategory) {
         mapping[docPath] = parentCategory;
       }
@@ -500,9 +563,9 @@ function determineCategoryForRoute(route, categoryMapping) {
   }
 
   // Check for partial matches (for nested routes)
-  const pathParts = route.path.split('/').filter(Boolean);
+  const pathParts = route.path.split("/").filter(Boolean);
   for (let i = pathParts.length; i >= 2; i--) {
-    const partialPath = '/' + pathParts.slice(0, i).join('/');
+    const partialPath = "/" + pathParts.slice(0, i).join("/");
     if (categoryMapping[partialPath]) {
       return normalizeCategory(categoryMapping[partialPath]);
     }
@@ -517,13 +580,13 @@ function determineCategoryForRoute(route, categoryMapping) {
  */
 function normalizeCategory(categoryName) {
   const normalizationMap = {
-    'Get Started': 'Getting Started',
-    Deploy: 'Deployment',
-    Capabilities: 'Advanced Capabilities',
-    Internals: 'API and Internals',
-    Integrations: 'Integrations and Guides',
-    Reference: 'Configuration and Reference',
-    Guides: 'Integrations and Guides',
+    "Get Started": "Getting Started",
+    Deploy: "Deployment",
+    Capabilities: "Advanced Capabilities",
+    Internals: "API and Internals",
+    Integrations: "Integrations and Guides",
+    Reference: "Configuration and Reference",
+    Guides: "Integrations and Guides",
   };
 
   return normalizationMap[categoryName] || categoryName;
@@ -533,28 +596,28 @@ function normalizeCategory(categoryName) {
  * Get category from path structure (fallback method)
  */
 function getCategoryFromPath(routePath) {
-  const pathParts = routePath.split('/').filter(Boolean);
+  const pathParts = routePath.split("/").filter(Boolean);
 
-  if (pathParts.length < 2) return 'Other';
+  if (pathParts.length < 2) return "Other";
 
   const section = pathParts[1];
   const subsection = pathParts[2];
 
   const pathMapping = {
-    'get-started': 'Getting Started',
-    deploy: 'Deployment',
+    "get-started": "Getting Started",
+    deploy: "Deployment",
     capabilities: isCoreConcept(subsection)
-      ? 'Core Concepts'
-      : 'Advanced Capabilities',
-    reference: 'Configuration and Reference',
-    integrations: 'Integrations and Guides',
-    guides: 'Integrations and Guides',
-    internals: 'API and Internals',
-    examples: 'Examples',
-    courses: 'Training',
+      ? "Core Concepts"
+      : "Advanced Capabilities",
+    reference: "Configuration and Reference",
+    integrations: "Integrations and Guides",
+    guides: "Integrations and Guides",
+    internals: "API and Internals",
+    examples: "Examples",
+    courses: "Training",
   };
 
-  return pathMapping[section] || 'Other';
+  return pathMapping[section] || "Other";
 }
 
 /**
@@ -562,16 +625,16 @@ function getCategoryFromPath(routePath) {
  */
 function sortCategories(categories) {
   const preferredOrder = [
-    'Getting Started',
-    'Core Concepts',
-    'Deployment',
-    'Configuration and Reference',
-    'Advanced Capabilities',
-    'Integrations and Guides',
-    'API and Internals',
-    'Examples',
-    'Training',
-    'Other',
+    "Getting Started",
+    "Core Concepts",
+    "Deployment",
+    "Configuration and Reference",
+    "Advanced Capabilities",
+    "Integrations and Guides",
+    "API and Internals",
+    "Examples",
+    "Training",
+    "Other",
   ];
 
   const sorted = {};
@@ -598,9 +661,9 @@ function sortCategories(categories) {
  */
 async function pluginLlmsTxt(context, options) {
   return {
-    name: 'llms-txt-plugin',
+    name: "llms-txt-plugin",
 
-    async postBuild({outDir, routes, ...buildContext}) {
+    async postBuild({ outDir, routes, ...buildContext }) {
       try {
         // Use Docusaurus routes data instead of manual file scanning
         const docRoutes = filterDocumentationRoutes(routes);
@@ -609,9 +672,9 @@ async function pluginLlmsTxt(context, options) {
         let finalRoutes = docRoutes;
         if (docRoutes.length < 10) {
           console.log(
-            '⚠️  Routes seem incomplete, falling back to file scanning...',
+            "⚠️  Routes seem incomplete, falling back to file scanning...",
           );
-          const contentDir = path.join(context.siteDir, 'content', 'docs');
+          const contentDir = path.join(context.siteDir, "content", "docs");
           finalRoutes = await scanDocumentationFiles(contentDir);
         }
 
@@ -620,19 +683,49 @@ async function pluginLlmsTxt(context, options) {
           finalRoutes,
           context,
         );
-
-        // Generate the llms.txt content
-        const llmsTxtContent = generateLlmsTxtContent(
-          routesByCategory,
+        const curatedRoutes = filterCuratedRoutes(finalRoutes);
+        if (curatedRoutes.length === 0) {
+          console.warn(
+            "⚠️  No curated llms.txt routes matched the current route set.",
+          );
+        }
+        const curatedRoutesByCategory = await groupRoutesByCategoryAuto(
+          curatedRoutes,
           context,
         );
 
+        // Generate the llms.txt content
+        const llmsTxtContent = generateLlmsTxtContent(
+          curatedRoutesByCategory,
+          context,
+          {
+            intro: `This file contains curated public documentation entry points to help LLM agents quickly find current Pomerium guidance. For the exhaustive current docs index, see ${getAbsoluteSiteUrl(context, "llms-full.txt")}.`,
+            includeInstructions: true,
+          },
+        );
+        const llmsFullTxtContent = generateLlmsTxtContent(
+          routesByCategory,
+          context,
+          {
+            title: "Pomerium Documentation (Full)",
+            intro:
+              "This file contains the exhaustive current public documentation index for Pomerium's docs site.",
+            includeInstructions: true,
+          },
+        );
+
         // Write the llms.txt file to the build output
-        const llmsTxtPath = path.join(outDir, 'llms.txt');
-        await fs.promises.writeFile(llmsTxtPath, llmsTxtContent, 'utf8');
+        const llmsTxtPath = path.join(outDir, "llms.txt");
+        await fs.promises.writeFile(llmsTxtPath, llmsTxtContent, "utf8");
+        const llmsFullTxtPath = path.join(outDir, "llms-full.txt");
+        await fs.promises.writeFile(
+          llmsFullTxtPath,
+          llmsFullTxtContent,
+          "utf8",
+        );
 
         // Copy and CLEAN referenced markdown files to the build output (as .md)
-        const docsRoot = path.join(context.siteDir, 'content', 'docs');
+        const docsRoot = path.join(context.siteDir, "content", "docs");
         let copied = 0,
           errors = 0;
         for (const route of finalRoutes) {
@@ -641,13 +734,13 @@ async function pluginLlmsTxt(context, options) {
 
           // Add skip logic here
           const skipPatterns = [
-            '_template.mdx',
+            "_template.mdx",
             /^_/, // files/folders starting with "_",
-            'versions.mdx',
+            "versions.mdx",
           ];
           if (
             skipPatterns.some((pat) =>
-              typeof pat === 'string'
+              typeof pat === "string"
                 ? srcFile.includes(pat)
                 : pat.test(path.basename(srcFile)),
             )
@@ -656,17 +749,17 @@ async function pluginLlmsTxt(context, options) {
           }
 
           // Always copy as .md
-          let destRel = path.relative(docsRoot, srcFile).replace(/\\/g, '/');
-          destRel = destRel.replace(/\.(mdx|md)$/, '.md');
-          if (destRel.startsWith('..')) {
-            destRel = path.basename(srcFile).replace(/\.(mdx|md)$/, '.md');
+          let destRel = path.relative(docsRoot, srcFile).replace(/\\/g, "/");
+          destRel = destRel.replace(/\.(mdx|md)$/, ".md");
+          if (destRel.startsWith("..")) {
+            destRel = path.basename(srcFile).replace(/\.(mdx|md)$/, ".md");
           }
-          const destFile = path.join(outDir, 'content', 'docs', destRel);
+          const destFile = path.join(outDir, "content", "docs", destRel);
           // Ensure directory exists
-          await fs.promises.mkdir(path.dirname(destFile), {recursive: true});
+          await fs.promises.mkdir(path.dirname(destFile), { recursive: true });
           // Read, clean, and write file
           try {
-            const rawContent = await fs.promises.readFile(srcFile, 'utf8');
+            const rawContent = await fs.promises.readFile(srcFile, "utf8");
             const preCleanedContent = preCleanDocusaurusMDX(rawContent);
             let cleanedContent;
             try {
@@ -679,7 +772,7 @@ async function pluginLlmsTxt(context, options) {
               cleanedContent = preCleanedContent;
               errors++;
             }
-            await fs.promises.writeFile(destFile, cleanedContent, 'utf8');
+            await fs.promises.writeFile(destFile, cleanedContent, "utf8");
             copied++;
           } catch (err) {
             console.warn(
@@ -691,10 +784,10 @@ async function pluginLlmsTxt(context, options) {
         }
 
         console.log(
-          `✅ Generated llms.txt with ${finalRoutes.length} documentation pages. Copied and cleaned ${copied} markdown sources. ${errors ? `(${errors} errors)` : ''}`,
+          `✅ Generated llms.txt (${curatedRoutes.length} curated pages) and llms-full.txt (${finalRoutes.length} documentation pages). Copied and cleaned ${copied} markdown sources. ${errors ? `(${errors} errors)` : ""}`,
         );
       } catch (error) {
-        console.error('❌ Error generating llms.txt:', error);
+        console.error("❌ Error generating llms.txt:", error);
         throw error;
       }
     },
