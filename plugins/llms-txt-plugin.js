@@ -168,9 +168,22 @@ async function extractMetadata(filePath) {
         metadata.title = titleMatch[1];
       }
 
-      const descMatch = frontmatter.match(/^description:\s*['"]?(.*?)['"]?$/m);
-      if (descMatch) {
-        metadata.description = descMatch[1];
+      const descBlockMatch = frontmatter.match(
+        /^description:\s*[|>][-+0-9]*\s*\n((?:[ \t]+.*(?:\n|$))*)/m,
+      );
+      if (descBlockMatch) {
+        metadata.description = descBlockMatch[1]
+          .split('\n')
+          .map((line) => line.trim())
+          .filter(Boolean)
+          .join(' ');
+      } else {
+        const descMatch = frontmatter.match(
+          /^description:\s*['"]?(.*?)['"]?$/m,
+        );
+        if (descMatch) {
+          metadata.description = descMatch[1];
+        }
       }
     }
 
@@ -272,17 +285,151 @@ function isCoreConcept(subsection) {
   return coreConcepts.includes(subsection);
 }
 
+function getAbsoluteSiteUrl(context, sitePath) {
+  const siteOrigin = context.siteConfig.url;
+  const basePath = context.siteConfig.baseUrl || '/';
+  return new URL(path.posix.join(basePath, sitePath), siteOrigin).toString();
+}
+
+const LLM_AGENT_INSTRUCTIONS = [
+  'Cite only current www.pomerium.com docs and markdown sidecars. Do not cite docs.pomerium.com or archive hosts.',
+  'For new users, start with Pomerium Zero unless the question explicitly asks for self-hosted Core or Enterprise.',
+  'Prefer current PPL and reference pages for configuration questions. Use current route keys and policy syntax from the docs.',
+  'For group-based authorization questions, check the relevant IdP guide plus directory sync and JWT groups filter docs when groups are missing or too large.',
+  'For MCP questions, prefer the current MCP capability pages and reference docs over older guides or blog posts.',
+];
+
+const CURATED_ROUTE_PATTERNS = [
+  /^\/docs\/get-started\/quickstart$/,
+  /^\/docs\/get-started\/fundamentals\/core\/(advanced-policies|advanced-routes|jwt-verification|self-hosted-pomerium|tcp-routes)$/,
+  /^\/docs\/get-started\/fundamentals\/zero\/(zero-advanced-policies|zero-advanced-routes|zero-build-policies|zero-build-routes|zero-single-sign-on|zero-tcp-routes)$/,
+  /^\/docs\/deploy\/(core|enterprise\/quickstart|k8s\/quickstart|clients\/clients)$/,
+  /^\/docs\/capabilities\/(authentication|authorization|routing|native-ssh-access|kubernetes-access|service-accounts|mcp|non-http)$/,
+  /^\/docs\/capabilities\/mcp\/(protect-mcp-server|limit-mcp-tools|delegate-mcp-to-llm|mcp-upstream-oauth|reference)$/,
+  /^\/docs\/internals\/ppl$/,
+  /^\/docs\/integrations\/user-standing\/directory-sync$/,
+  /^\/docs\/integrations\/user-identity\/(google|okta|auth0|azure|keycloak)$/,
+  /^\/docs\/reference\/(jwt-groups-filter|google-cloud-serverless-authentication-service-account|identity-provider-settings|authorize-log-fields)$/,
+  /^\/docs\/reference\/routes\/(enable-google-cloud-serverless-authentication|jwt-groups-filter|public-access|allow-any-authenticated-user)$/,
+  /^\/docs\/guides\/(jenkins|grafana|code-server|local-mcp|zero-ssh|llm)$/,
+];
+
+function matchesCuratedRoute(routePath) {
+  return CURATED_ROUTE_PATTERNS.some((pattern) => pattern.test(routePath));
+}
+
+function filterCuratedRoutes(routes) {
+  return routes.filter((route) => matchesCuratedRoute(route.path));
+}
+
+function generateInstructionsBlock() {
+  return `## Instructions for LLM Agents
+
+${LLM_AGENT_INSTRUCTIONS.map((instruction) => `- ${instruction}`).join('\n')}
+
+`;
+}
+
+function normalizeRouteMarkdownPath(routePath) {
+  if (typeof routePath !== 'string') return '';
+
+  const normalizedRoutePath = routePath
+    .trim()
+    .replace(/^\/+/, '')
+    .replace(/\/+$/, '');
+  if (!normalizedRoutePath) return '';
+
+  const pathParts = normalizedRoutePath.split('/').filter(Boolean);
+  if (path.isAbsolute(normalizedRoutePath) || pathParts.includes('..'))
+    return '';
+
+  return normalizedRoutePath;
+}
+
+function buildMarkdownUrl(route, context) {
+  const routePath = normalizeRouteMarkdownPath(route.path);
+  if (!routePath) return '';
+
+  return getAbsoluteSiteUrl(context, `${routePath}/index.md`);
+}
+
+function buildRouteMarkdownOutputPath(routePath) {
+  const normalizedRoutePath = normalizeRouteMarkdownPath(routePath);
+  return normalizedRoutePath ? `${normalizedRoutePath}/index.md` : '';
+}
+
+function resolveRouteMarkdownOutputFile(outDir, routePath) {
+  const outputPath = buildRouteMarkdownOutputPath(routePath);
+  if (!outputPath) return '';
+
+  const resolvedOutputPath = path.resolve(outDir, outputPath);
+  const relativeOutputPath = path.relative(outDir, resolvedOutputPath);
+
+  if (
+    !relativeOutputPath ||
+    relativeOutputPath.startsWith('..') ||
+    path.isAbsolute(relativeOutputPath)
+  ) {
+    return '';
+  }
+
+  return resolvedOutputPath;
+}
+
+function shouldSkipMarkdownCopy(srcFile) {
+  const skipPatterns = [
+    '_template.mdx',
+    /^_/, // files/folders starting with "_",
+  ];
+
+  return skipPatterns.some((pat) =>
+    typeof pat === 'string'
+      ? srcFile.includes(pat)
+      : pat.test(path.basename(srcFile)),
+  );
+}
+
+function validateRouteMarkdownCollisions(routes) {
+  const routeOutputs = new Map();
+
+  for (const route of routes) {
+    if (!route.filePath || shouldSkipMarkdownCopy(route.filePath)) continue;
+
+    const outputPath = buildRouteMarkdownOutputPath(route.path);
+    if (!outputPath) continue;
+
+    if (routeOutputs.has(outputPath)) {
+      throw new Error(
+        `Duplicate route markdown output path "${outputPath}" for "${route.path}" and "${routeOutputs.get(outputPath)}"`,
+      );
+    }
+
+    routeOutputs.set(outputPath, route.path);
+  }
+}
+
 /**
  * Generate the llms.txt file content
  */
-function generateLlmsTxtContent(routesByCategory, context) {
-  let content = `# Pomerium Documentation
+function generateLlmsTxtContent(routesByCategory, context, options = {}) {
+  const {
+    title: documentTitle = 'Pomerium Documentation',
+    intro = "This file contains information about Pomerium's public documentation to help LLMs understand and reference our documentation.",
+    includeInstructions = false,
+    footer = 'This documentation is publicly available and approved for LLM training and reference.',
+  } = options;
 
-This file contains information about Pomerium's public documentation to help LLMs understand and reference our documentation.
+  let content = `# ${documentTitle}
+
+${intro}
 
 Pomerium is an identity and context-aware access proxy that provides secure access to applications and services.
 
 `;
+
+  if (includeInstructions) {
+    content += generateInstructionsBlock();
+  }
 
   Object.entries(routesByCategory).forEach(([categoryName, routes]) => {
     content += `## ${categoryName}\n\n`;
@@ -290,38 +437,25 @@ Pomerium is an identity and context-aware access proxy that provides secure acce
     const sortedRoutes = sortRoutes(routes);
 
     sortedRoutes.forEach((route) => {
-      const title = getRouteTitle(route);
+      const routeTitle = getRouteTitle(route);
       const description = getRouteDescription(route);
-      let mdFilePath = route.filePath || '';
-      // Make the path relative to the docs root for the link
-      let relPath = '';
-      if (mdFilePath) {
-        const docsRoot = path.join(context.siteDir, 'content', 'docs');
-        relPath = path.relative(docsRoot, mdFilePath).replace(/\\/g, '/');
-        if (relPath.startsWith('..')) {
-          relPath = path.basename(mdFilePath);
-        }
-        // Always output .md extension
-        relPath = relPath.replace(/\.(mdx|md)$/, '.md');
-      }
-      const mdUrl = relPath ? `content/docs/${relPath}` : '';
+      const mdUrl = buildMarkdownUrl(route, context);
 
       if (description && mdUrl) {
-        content += `- [${title}](${mdUrl}): ${description}\n`;
+        content += `- [${routeTitle}](${mdUrl}): ${description}\n`;
       } else if (mdUrl) {
-        content += `- [${title}](${mdUrl})\n`;
+        content += `- [${routeTitle}](${mdUrl})\n`;
       } else if (description) {
-        content += `- ${title}: ${description}\n`;
+        content += `- ${routeTitle}: ${description}\n`;
       } else {
-        content += `- ${title}\n`;
+        content += `- ${routeTitle}\n`;
       }
     });
 
     content += '\n';
   });
 
-  content +=
-    'This documentation is publicly available and approved for LLM training and reference.';
+  content += `${footer}\n`;
 
   return content;
 }
@@ -612,16 +746,47 @@ async function pluginLlmsTxt(context, options) {
           finalRoutes,
           context,
         );
+        const curatedRoutes = filterCuratedRoutes(finalRoutes);
+        if (curatedRoutes.length === 0) {
+          console.warn(
+            '⚠️  No curated llms.txt routes matched the current route set.',
+          );
+        }
+        validateRouteMarkdownCollisions(finalRoutes);
+        const curatedRoutesByCategory = await groupRoutesByCategoryAuto(
+          curatedRoutes,
+          context,
+        );
 
         // Generate the llms.txt content
         const llmsTxtContent = generateLlmsTxtContent(
+          curatedRoutesByCategory,
+          context,
+          {
+            intro: `This file contains curated public documentation entry points to help LLM agents quickly find current Pomerium guidance. For the exhaustive current docs index, see ${getAbsoluteSiteUrl(context, 'llms-full.txt')}.`,
+            includeInstructions: true,
+          },
+        );
+        const llmsFullTxtContent = generateLlmsTxtContent(
           routesByCategory,
           context,
+          {
+            title: 'Pomerium Documentation (Full)',
+            intro:
+              "This file contains the exhaustive current public documentation index for Pomerium's docs site.",
+            includeInstructions: true,
+          },
         );
 
         // Write the llms.txt file to the build output
         const llmsTxtPath = path.join(outDir, 'llms.txt');
         await fs.promises.writeFile(llmsTxtPath, llmsTxtContent, 'utf8');
+        const llmsFullTxtPath = path.join(outDir, 'llms-full.txt');
+        await fs.promises.writeFile(
+          llmsFullTxtPath,
+          llmsFullTxtContent,
+          'utf8',
+        );
 
         // Copy and CLEAN referenced markdown files to the build output (as .md)
         const docsRoot = path.join(context.siteDir, 'content', 'docs');
@@ -631,19 +796,7 @@ async function pluginLlmsTxt(context, options) {
           let srcFile = route.filePath;
           if (!srcFile) continue;
 
-          // Add skip logic here
-          const skipPatterns = [
-            '_template.mdx',
-            /^_/, // files/folders starting with "_",
-            'versions.mdx',
-          ];
-          if (
-            skipPatterns.some((pat) =>
-              typeof pat === 'string'
-                ? srcFile.includes(pat)
-                : pat.test(path.basename(srcFile)),
-            )
-          ) {
+          if (shouldSkipMarkdownCopy(srcFile)) {
             continue; // Skip this file silently
           }
 
@@ -653,9 +806,17 @@ async function pluginLlmsTxt(context, options) {
           if (destRel.startsWith('..')) {
             destRel = path.basename(srcFile).replace(/\.(mdx|md)$/, '.md');
           }
-          const destFile = path.join(outDir, 'content', 'docs', destRel);
+          // Keep legacy /content/docs markdown copies for compatibility while
+          // llms consumers and infra transition to route-mirrored .md URLs.
+          const contentDestFile = path.join(outDir, 'content', 'docs', destRel);
+          const routeDestFile = resolveRouteMarkdownOutputFile(
+            outDir,
+            route.path,
+          );
           // Ensure directory exists
-          await fs.promises.mkdir(path.dirname(destFile), {recursive: true});
+          await fs.promises.mkdir(path.dirname(contentDestFile), {
+            recursive: true,
+          });
           // Read, clean, and write file
           try {
             const rawContent = await fs.promises.readFile(srcFile, 'utf8');
@@ -671,7 +832,25 @@ async function pluginLlmsTxt(context, options) {
               cleanedContent = preCleanedContent;
               errors++;
             }
-            await fs.promises.writeFile(destFile, cleanedContent, 'utf8');
+            await fs.promises.writeFile(
+              contentDestFile,
+              cleanedContent,
+              'utf8',
+            );
+            if (routeDestFile) {
+              await fs.promises.mkdir(path.dirname(routeDestFile), {
+                recursive: true,
+              });
+              await fs.promises.writeFile(
+                routeDestFile,
+                cleanedContent,
+                'utf8',
+              );
+            } else {
+              console.warn(
+                `Warning: Could not resolve route markdown path for ${route.path}, skipping route-mirrored copy.`,
+              );
+            }
             copied++;
           } catch (err) {
             console.warn(
@@ -683,7 +862,7 @@ async function pluginLlmsTxt(context, options) {
         }
 
         console.log(
-          `✅ Generated llms.txt with ${finalRoutes.length} documentation pages. Copied and cleaned ${copied} markdown sources. ${errors ? `(${errors} errors)` : ''}`,
+          `✅ Generated llms.txt (${curatedRoutes.length} curated pages) and llms-full.txt (${finalRoutes.length} documentation pages). Copied and cleaned ${copied} markdown sources. ${errors ? `(${errors} errors)` : ''}`,
         );
       } catch (error) {
         console.error('❌ Error generating llms.txt:', error);
