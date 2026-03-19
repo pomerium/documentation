@@ -407,13 +407,13 @@ This cluster status alert checks whether a cluster has at least one active repli
 
 This cluster status alert tracks whether the cluster configuration was successfully built when applying a changeset. It runs every time a configuration change is applied.
 
-**What causes this alert**: There was an error building the cluster configuration. This could be due to:
+**What causes this alert**: There was an error building the cluster configuration. This usually points to an internal processing failure, but it can also be triggered by:
 
 - An invalid configuration value in a route or policy
 - Missing required configuration fields
 - An internal error during configuration processing
 
-**Steps to resolve**: Review your recent configuration changes for errors. If the configuration appears correct, please [contact support](https://discuss.pomerium.com/).
+**Steps to resolve**: Review your recent configuration changes for obvious errors. If the configuration appears correct, or the alert persists after fixing invalid input, please [contact support](https://discuss.pomerium.com/).
 
 ### Routes are unreachable {#routes.reachable}
 
@@ -425,7 +425,7 @@ This cluster status alert verifies that all configured routes can be reached via
 - The detected or override IP address doesn't match where traffic is being routed
 - Network configuration is preventing access to the route hosts
 
-**Steps to resolve**: Verify that DNS records are correctly configured for all route hostnames. Check that the cluster's [**Detected IP Address or Override IP Address**](#detected-and-override-ip-address) is correctly set. Ensure firewall rules allow traffic to reach your routes.
+**Steps to resolve**: Verify that DNS records are correctly configured for all route hostnames. Check that the cluster's [**Detected IP Address or Override IP Address**](#detected-and-override-ip-address) is correctly set. Ensure firewall rules allow traffic to reach your routes. If you use split DNS or private route domains, make sure the cluster can resolve those internal hostnames as expected, or this check may report a false positive.
 
 ### Resource bundle application failed {#zero.resource-bundle.config}
 
