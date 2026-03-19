@@ -1,6 +1,5 @@
 // @ts-check
 // Note: type annotations allow type checking and IDEs autocompletion
-
 import {Config} from '@docusaurus/types';
 
 const dotenv = require('dotenv');
@@ -245,7 +244,7 @@ const config: Config = {
       selector: '.markdown :not(em) > img',
       config: {
         margin: 120,
-      }
+      },
     },
   },
   stylesheets: [

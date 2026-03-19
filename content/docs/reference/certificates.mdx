@@ -9,10 +9,10 @@ pagination_next: null
 toc_max_heading_level: 2
 ---
 
-import TabItem from "@theme/TabItem";
-import Tabs from "@theme/Tabs";
+import TabItem from '@theme/TabItem';
+import Tabs from '@theme/Tabs';
 
-import EnterpriseConfiguration from "../../../src/components/EnterpriseConfiguration";
+import EnterpriseConfiguration from '../../../src/components/EnterpriseConfiguration';
 
 # Certificates Settings
 
@@ -46,11 +46,11 @@ Pomerium will check your system's trust/key store for valid certificates first. 
 <Tabs>
 <TabItem value="Core" label="Core">
 
-| **Config file keys**                          | **Environment variables**                     | **Type**                                                              | **Usage**                          |
-| :-------------------------------------------- | :-------------------------------------------- | :-------------------------------------------------------------------- | :--------------------------------- |
-| `certificates`                                | Not settable as environment variable          | `string` (Array of relative file locations for multiple certificates) | **required** (if insecure not set) |
-| `certificate` and `certificate_key`           | `CERTIFICATE` and `CERTIFICATE_KEY`           | `string` (base64-encoded string)                                      | **required** (if insecure not set) |
-| `certificate_file` and `certificate_key_file` | `CERTIFICATE_FILE` and `CERTIFICATE_KEY_FILE` | `string` (Relative file location for a single certificate)            | **required** (if insecure not set) |
+| **Config file keys** | **Environment variables** | **Type** | **Usage** |
+| :-- | :-- | :-- | :-- |
+| `certificates` | Not settable as environment variable | `string` (Array of relative file locations for multiple certificates) | **required** (if insecure not set) |
+| `certificate` and `certificate_key` | `CERTIFICATE` and `CERTIFICATE_KEY` | `string` (base64-encoded string) | **required** (if insecure not set) |
+| `certificate_file` and `certificate_key_file` | `CERTIFICATE_FILE` and `CERTIFICATE_KEY_FILE` | `string` (Relative file location for a single certificate) | **required** (if insecure not set) |
 
 ### Examples \{#certificates-examples}
 
@@ -59,20 +59,20 @@ Specify multiple certificates at once:
 ```yaml
 # Array of relative file locations for multiple certs
 certificates:
-  - cert: "$HOME/.acme.sh/authenticate.example.com_ecc/fullchain.cer"
-    key: "$HOME/.acme.sh/authenticate.example.com_ecc/authenticate.example.com.key"
-  - cert: "$HOME/.acme.sh/verify.example.com_ecc/fullchain.cer"
-    key: "$HOME/.acme.sh/verify.example.com_ecc/verify.example.com.key"
-  - cert: "$HOME/.acme.sh/prometheus.example.com_ecc/fullchain.cer"
-    key: "$HOME/.acme.sh/prometheus.example.com_ecc/prometheus.example.com.key"
+  - cert: '$HOME/.acme.sh/authenticate.example.com_ecc/fullchain.cer'
+    key: '$HOME/.acme.sh/authenticate.example.com_ecc/authenticate.example.com.key'
+  - cert: '$HOME/.acme.sh/verify.example.com_ecc/fullchain.cer'
+    key: '$HOME/.acme.sh/verify.example.com_ecc/verify.example.com.key'
+  - cert: '$HOME/.acme.sh/prometheus.example.com_ecc/fullchain.cer'
+    key: '$HOME/.acme.sh/prometheus.example.com_ecc/prometheus.example.com.key'
 ```
 
 Set a single certificate and key covering multiple domains and/or a wildcard subdomain:
 
 ```yaml
 # Relative file location for a single cert
-certificate_file: "$HOME/.acme.sh/*.example.com/fullchain.crt"
-certificate_key_file: "$HOME/.acme.sh/*.example.com/*.example.com.key"
+certificate_file: '$HOME/.acme.sh/*.example.com/fullchain.crt'
+certificate_key_file: '$HOME/.acme.sh/*.example.com/*.example.com.key'
 ```
 
 </TabItem>
@@ -128,15 +128,15 @@ Be sure to include the intermediary certificate.
 <Tabs>
 <TabItem value="Core" label="Core">
 
-| **Config file keys**         | **Environment variables**    | **Type** | **Usage**    |
-| :--------------------------- | :--------------------------- | :------- | :----------- |
-| `certificate_authority`      | `CERTIFICATE_AUTHORITY`      | `string` | **optional** |
+| **Config file keys** | **Environment variables** | **Type** | **Usage** |
+| :-- | :-- | :-- | :-- |
+| `certificate_authority` | `CERTIFICATE_AUTHORITY` | `string` | **optional** |
 | `certificate_authority_file` | `CERTIFICATE_AUTHORITY_FILE` | `string` | **optional** |
 
 ### Examples \{#certificate-authority-examples}
 
 ```yaml
-certificate_authority: "base64-encoded-string"
+certificate_authority: 'base64-encoded-string'
 ```
 
 ```bash

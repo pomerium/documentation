@@ -9,12 +9,12 @@ yarn start           # Dev server on localhost:3001 (hot-reload)
 yarn build           # Production build to /build/
 yarn format          # Auto-fix formatting with Prettier
 yarn format-check    # Check formatting (no changes)
-yarn cspell "**/*"   # Spell-check all files
-yarn precommit       # Runs format-check + cspell
+yarn check           # Run formatting and spelling checks
+yarn cspell          # Spell-check tracked source files
 yarn clear           # Clear Docusaurus cache (useful if build fails)
 ```
 
-Pre-commit hooks run Prettier on `content/**` files and cspell on all files.
+This repo does not use the Python `pre-commit` framework. The CI `pre-commit` check runs the repo scripts directly (`yarn format-check`, `yarn cspell`), and the same commands are available locally via `yarn check`.
 
 ## Architecture
 
@@ -81,8 +81,8 @@ Standard types plus a custom `:::enterprise` for enterprise-only features:
 ### Tabs (Zero vs Core)
 
 ```mdx
-import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
+import Tabs from '@theme/Tabs';
 
 <Tabs>
   <TabItem value="zero" label="Pomerium Zero">

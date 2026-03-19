@@ -4,12 +4,13 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  */
-import React from 'react';
 import {useThemeConfig} from '@docusaurus/theme-common';
-import FooterLinks from '@theme/Footer/Links';
-import FooterLogo from '@theme/Footer/Logo';
+import React from 'react';
+
 import FooterCopyright from '@theme/Footer/Copyright';
 import FooterLayout from '@theme/Footer/Layout';
+import FooterLinks from '@theme/Footer/Links';
+import FooterLogo from '@theme/Footer/Logo';
 
 function Footer() {
   const {footer} = useThemeConfig();

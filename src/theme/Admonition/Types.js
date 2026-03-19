@@ -1,5 +1,5 @@
-import DefaultAdmonitionTypes from '@theme-original/Admonition/Types';
 import BusinessIcon from '@mui/icons-material/Business';
+import DefaultAdmonitionTypes from '@theme-original/Admonition/Types';
 
 import styles from './styles.module.css';
 
