@@ -110,7 +110,7 @@ MCP support is currently an experimental feature only available in the `main` br
 Register an OAuth application with the upstream service. For GitHub:
 
 1. Go to **Settings → Developer settings → OAuth Apps → New OAuth App**
-2. Set the authorization callback URL to your Pomerium authenticate service URL
+2. Set the **authorization callback URL** to `https://<your-route-from-domain>/.pomerium/mcp/client/oauth/callback` — for example, if your route's `from` is `https://github.your-domain.com`, the callback URL is `https://github.your-domain.com/.pomerium/mcp/client/oauth/callback`
 3. Note the **Client ID** and **Client Secret**
 
 For other providers, refer to their OAuth documentation. You need:
@@ -118,6 +118,7 @@ For other providers, refer to their OAuth documentation. You need:
 - `client_id` and `client_secret`
 - `auth_url` and `token_url` endpoints
 - The appropriate `scopes` for your use-case
+- The **redirect/callback URI** set to `https://<your-route-from-domain>/.pomerium/mcp/client/oauth/callback`
 
 #### 2. Configure the route
 
@@ -155,6 +156,8 @@ After both steps, the client receives an external token (TE) and can make tool c
 Use this mode when the upstream authorization server does not support automatic client registration (neither [CIMD](https://datatracker.ietf.org/doc/html/draft-ietf-oauth-client-id-metadata-document) nor [DCR](https://datatracker.ietf.org/doc/html/rfc7591)). You register an OAuth app manually with the provider and supply the credentials in your route config. Pomerium can still discover the authorization and token endpoints automatically via [RFC 9728 PRM](https://datatracker.ietf.org/doc/html/rfc9728) if the upstream advertises them — you only need to provide `endpoint` when it doesn't.
 
 This is the common case for providers like Google Cloud and GitHub, where you must create an OAuth app in their console.
+
+When registering your OAuth app, set the redirect/callback URI to `https://<your-route-from-domain>/.pomerium/mcp/client/oauth/callback`.
 
 ### Configuration
 

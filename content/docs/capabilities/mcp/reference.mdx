@@ -221,6 +221,12 @@ mcp:
 
     # Optional: Maximum request body size (default: 4KiB)
     max_request_bytes: 1048576
+
+    # Optional: Sub-path appended to the upstream URL for the MCP endpoint
+    path: "/mcp"
+
+    # Optional: Fallback AS issuer URL when PRM discovery fails (must be HTTPS)
+    authorization_server_url: "https://auth.provider.com"
 ```
 
 All `upstream_oauth2` fields are optional. Pomerium uses a unified pipeline that adapts based on what you configure:
@@ -232,6 +238,8 @@ All `upstream_oauth2` fields are optional. Pomerium uses a unified pipeline that
 | Nothing                                               | Full auto-discovery: discovers endpoints, registers as a client via CIMD/DCR, manages the full lifecycle                               |
 
 `client_secret` is never stored per-user — it is read from the route config at token refresh time.
+
+When using static or pre-registered credentials, set the OAuth app's **redirect/callback URI** to `https://<your-route-from-domain>/.pomerium/mcp/client/oauth/callback`. In auto-discovery mode, this is handled automatically via CIMD or DCR.
 
 ** Tool Call Authorization **
 
