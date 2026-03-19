@@ -1,8 +1,9 @@
-import React from 'react';
-import {ThemeProvider, createTheme} from '@mui/material/styles';
-import App from '../../src/components/App';
-import {LicenseInfo} from '@mui/x-data-grid-pro';
 import useDocusaurusContext from '@docusaurus/core/lib/client/exports/useDocusaurusContext';
+import {ThemeProvider, createTheme} from '@mui/material/styles';
+import {LicenseInfo} from '@mui/x-data-grid-pro';
+import React from 'react';
+
+import App from '../../src/components/App';
 
 const theme = createTheme({
   palette: {

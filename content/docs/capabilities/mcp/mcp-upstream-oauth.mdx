@@ -1,9 +1,9 @@
 ---
-title: "MCP + Upstream OAuth"
-sidebar_label: "MCP + Upstream OAuth"
+title: 'MCP + Upstream OAuth'
+sidebar_label: 'MCP + Upstream OAuth'
 sidebar_position: 2
 lang: en-US
-description: "Bridge MCP servers that have their own authentication — using static OAuth2 credentials or automatic RFC 9728 discovery."
+description: 'Bridge MCP servers that have their own authentication — using static OAuth2 credentials or automatic RFC 9728 discovery.'
 keywords:
   [
     MCP,
@@ -72,10 +72,10 @@ routes:
         upstream_oauth2:
           client_id: xxxxxxxxxxxx
           client_secret: yyyyyyyyy
-          scopes: ["read:user", "user:email"]
+          scopes: ['read:user', 'user:email']
           endpoint:
-            auth_url: "https://github.com/login/oauth/authorize"
-            token_url: "https://github.com/login/oauth/access_token"
+            auth_url: 'https://github.com/login/oauth/authorize'
+            token_url: 'https://github.com/login/oauth/access_token'
     policy:
       allow:
         and:
@@ -84,7 +84,7 @@ routes:
       deny:
         and:
           - mcp_tool:
-              starts_with: "admin_"
+              starts_with: 'admin_'
 ```
 
 :::warning Experimental Feature
@@ -134,11 +134,11 @@ After both steps, the client receives an external token (TE) and can make tool c
 
 ### Common upstream providers
 
-| Provider | Auth URL                                    | Token URL                                     | Common Scopes                                    |
-| -------- | ------------------------------------------- | --------------------------------------------- | ------------------------------------------------ |
-| GitHub   | `https://github.com/login/oauth/authorize`  | `https://github.com/login/oauth/access_token` | `read:user`, `repo`                              |
-| Google   | `https://accounts.google.com/o/oauth2/auth` | `https://oauth2.googleapis.com/token`         | `https://www.googleapis.com/auth/drive.readonly` |
-| Notion   | `https://api.notion.com/v1/oauth/authorize` | `https://api.notion.com/v1/oauth/token`       | — (configured in integration)                    |
+| Provider | Auth URL | Token URL | Common Scopes |
+| --- | --- | --- | --- |
+| GitHub | `https://github.com/login/oauth/authorize` | `https://github.com/login/oauth/access_token` | `read:user`, `repo` |
+| Google | `https://accounts.google.com/o/oauth2/auth` | `https://oauth2.googleapis.com/token` | `https://www.googleapis.com/auth/drive.readonly` |
+| Notion | `https://api.notion.com/v1/oauth/authorize` | `https://api.notion.com/v1/oauth/token` | — (configured in integration) |
 
 ## Auto-Discovery (RFC 9728)
 
@@ -182,10 +182,10 @@ The `mcp.server` block without `upstream_oauth2` tells Pomerium to use auto-disc
 
 **Optional settings:**
 
-| Setting                               | Description                                                               |
-| ------------------------------------- | ------------------------------------------------------------------------- |
-| `mcp.server.path`                     | Sub-path appended to the upstream URL for the MCP endpoint (e.g., `/mcp`) |
-| `mcp.server.authorization_server_url` | Fallback Authorization Server URL if PRM discovery fails. Must be HTTPS.  |
+| Setting | Description |
+| --- | --- |
+| `mcp.server.path` | Sub-path appended to the upstream URL for the MCP endpoint (e.g., `/mcp`) |
+| `mcp.server.authorization_server_url` | Fallback Authorization Server URL if PRM discovery fails. Must be HTTPS. |
 
 **Global settings for auto-discovery:**
 
@@ -194,18 +194,18 @@ Auto-discovery involves fetching metadata documents from URLs that originate in 
 ```yaml
 # Domains allowed to serve Client ID Metadata Documents (CIMD)
 mcp_allowed_client_id_domains:
-  - "vscode.dev"
-  - "*.trusted-provider.com"
+  - 'vscode.dev'
+  - '*.trusted-provider.com'
 
 # Domains allowed for upstream Authorization Server and Protected Resource Metadata fetches
 mcp_allowed_as_metadata_domains:
-  - "auth.example.com"
-  - "*.oauth-provider.com"
+  - 'auth.example.com'
+  - '*.oauth-provider.com'
 ```
 
-| Setting                           | Description                                                                                                                                                                                                       |
-| --------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `mcp_allowed_client_id_domains`   | Domains that may serve Client ID Metadata Documents. Required when MCP clients use URL-based client IDs. Supports wildcards (e.g. `*.example.com`).                                                               |
+| Setting | Description |
+| --- | --- |
+| `mcp_allowed_client_id_domains` | Domains that may serve Client ID Metadata Documents. Required when MCP clients use URL-based client IDs. Supports wildcards (e.g. `*.example.com`). |
 | `mcp_allowed_as_metadata_domains` | Domains Pomerium may contact during upstream OAuth discovery — this includes `resource_metadata` URLs from `WWW-Authenticate` headers and `authorization_servers` entries from PRM documents. Supports wildcards. |
 
 ### Step-by-step

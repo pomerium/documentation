@@ -59,9 +59,9 @@ If Pomerium is running in [split-service mode](/docs/internals/configuration#all
 <Tabs>
 <TabItem value="Core" label="Core">
 
-| **Config file keys**       | **Environment variables**  | **Type** | **Usage**    |
-| :------------------------- | :------------------------- | :------- | :----------- |
-| `authenticate_service_url` | `AUTHENTICATE_SERVICE_URL` | `URL`    | **optional** |
+| **Config file keys** | **Environment variables** | **Type** | **Usage** |
+| :-- | :-- | :-- | :-- |
+| `authenticate_service_url` | `AUTHENTICATE_SERVICE_URL` | `URL` | **optional** |
 
 ### Examples
 
@@ -79,9 +79,9 @@ AUTHENTICATE_SERVICE_URL=https://authenticate.corp.example.com
 </TabItem>
 <TabItem value="Kubernetes" label="Kubernetes">
 
-| **[Parameter name](/docs/deploy/k8s/reference#spec)** | **Type** | **Usage**    |
-| :---------------------------------------------------- | :------- | :----------- |
-| `authenticate.url`                                    | `URL`    | **optional** |
+| **[Parameter name](/docs/deploy/k8s/reference#spec)** | **Type** | **Usage** |
+| :-- | :-- | :-- |
+| `authenticate.url` | `URL` | **optional** |
 
 ### Examples
 
@@ -106,9 +106,9 @@ If set, the Authenticate Internal Service URL will be used for communication bet
 <Tabs>
 <TabItem label="Core" value="Core">
 
-| **Config file keys**                | **Environment variables**           | **Type** | **Usage**      |
-| :---------------------------------- | :---------------------------------- | :------- | :------------- |
-| `authenticate_internal_service_url` | `AUTHENTICATE_INTERNAL_SERVICE_URL` | `URL`    | \***optional** |
+| **Config file keys** | **Environment variables** | **Type** | **Usage** |
+| :-- | :-- | :-- | :-- |
+| `authenticate_internal_service_url` | `AUTHENTICATE_INTERNAL_SERVICE_URL` | `URL` | \***optional** |
 
 \* Excluding the `authenticate_internal_service_url` defaults to the [hosted authenticated service](/docs/capabilities/authentication) if `authenticate_service_url` isn't defined.
 
@@ -152,10 +152,10 @@ If your load balancer does not support gRPC pass-through, you must set this valu
 <Tabs>
 <TabItem value="Core" label="Core">
 
-| **Config file keys**     | **Environment variables** | **Type** | **Usage**                                                  |
-| :----------------------- | :------------------------ | :------- | :--------------------------------------------------------- |
-| `authorize_service_url`  | `AUTHORIZE_SERVICE_URL`   | `URL`    | **required** (Inferred in all-in-one mode to be localhost) |
-| `authorize_service_urls` | `AUTHORIZE_SERVICE_URLS`  | `URL`    | **required** (Inferred in all-in-one mode to be localhost) |
+| **Config file keys** | **Environment variables** | **Type** | **Usage** |
+| :-- | :-- | :-- | :-- |
+| `authorize_service_url` | `AUTHORIZE_SERVICE_URL` | `URL` | **required** (Inferred in all-in-one mode to be localhost) |
+| `authorize_service_urls` | `AUTHORIZE_SERVICE_URLS` | `URL` | **required** (Inferred in all-in-one mode to be localhost) |
 
 ### Examples
 
@@ -193,9 +193,9 @@ If included, Authorize Internal Service URL will override Authorize Service URL.
 <Tabs>
 <TabItem value="Core" label="Core">
 
-| **Config file keys**             | **Environment variables**        | **Type** | **Usage**                                                  |
-| :------------------------------- | :------------------------------- | :------- | :--------------------------------------------------------- |
-| `authorize_internal_service_url` | `AUTHORIZE_INTERNAL_SERVICE_URL` | `URL`    | **required** (Inferred in all-in-one mode to be localhost) |
+| **Config file keys** | **Environment variables** | **Type** | **Usage** |
+| :-- | :-- | :-- | :-- |
+| `authorize_internal_service_url` | `AUTHORIZE_INTERNAL_SERVICE_URL` | `URL` | **required** (Inferred in all-in-one mode to be localhost) |
 
 ### Examples
 
@@ -231,10 +231,10 @@ In all-in-one mode, leave these unset; Pomerium uses `http://localhost:5443`. Se
 <Tabs>
 <TabItem value="Core" label="Core">
 
-| **Config file keys**      | **Environment variables** | **Type** | **Default**                                                                                                    |
-| :------------------------ | :------------------------ | :------- | :------------------------------------------------------------------------------------------------------------- |
-| `databroker_service_url`  | `DATABROKER_SERVICE_URL`  | `URL`    | `http://localhost:5443` (In [all-in-one mode](/docs/internals/configuration#all-in-one-vs-split-service-mode)) |
-| `databroker_service_urls` | `DATABROKER_SERVICE_URLS` | `URL`    | `http://localhost:5443` (In [all-in-one mode](/docs/internals/configuration#all-in-one-vs-split-service-mode)) |
+| **Config file keys** | **Environment variables** | **Type** | **Default** |
+| :-- | :-- | :-- | :-- |
+| `databroker_service_url` | `DATABROKER_SERVICE_URL` | `URL` | `http://localhost:5443` (In [all-in-one mode](/docs/internals/configuration#all-in-one-vs-split-service-mode)) |
+| `databroker_service_urls` | `DATABROKER_SERVICE_URLS` | `URL` | `http://localhost:5443` (In [all-in-one mode](/docs/internals/configuration#all-in-one-vs-split-service-mode)) |
 
 #### Examples \{#databroker-service-url-examples}
 
@@ -268,10 +268,10 @@ The **Databroker Internal Service URL** overrides [`databroker_service_url`](/do
 <Tabs>
 <TabItem value="Core" label="Core">
 
-| **Config file keys**               | **Environment variables**          | **Type** | **Default**                                  |
-| :--------------------------------- | :--------------------------------- | :------- | :------------------------------------------- |
-| `databroker_internal_service_url`  | `DATABROKER_INTERNAL_SERVICE_URL`  | `URL`    | `http://localhost:5443` (In all-in-one mode) |
-| `databroker_internal_service_urls` | `DATABROKER_INTERNAL_SERVICE_URLS` | `URL`    | `http://localhost:5443` (In all-in-one mode) |
+| **Config file keys** | **Environment variables** | **Type** | **Default** |
+| :-- | :-- | :-- | :-- |
+| `databroker_internal_service_url` | `DATABROKER_INTERNAL_SERVICE_URL` | `URL` | `http://localhost:5443` (In all-in-one mode) |
+| `databroker_internal_service_urls` | `DATABROKER_INTERNAL_SERVICE_URLS` | `URL` | `http://localhost:5443` (In all-in-one mode) |
 
 #### Examples \{#databroker-internal-service-url-examples}
 

@@ -1,10 +1,11 @@
-import React, {useState} from 'react';
-import data from '../../content/docs/reference/reference.json';
-import {DataGridPro} from '@mui/x-data-grid-pro/DataGridPro/DataGridPro';
-import {renderCellExpand} from './RenderCellExpand';
-import {GridToolbar} from '@mui/x-data-grid';
-import {FormControl, InputLabel, NativeSelect} from '@mui/material';
 import {useColorMode} from '@docusaurus/theme-common';
+import {FormControl, InputLabel, NativeSelect} from '@mui/material';
+import {GridToolbar} from '@mui/x-data-grid';
+import {DataGridPro} from '@mui/x-data-grid-pro/DataGridPro/DataGridPro';
+import React, {useState} from 'react';
+
+import data from '../../content/docs/reference/reference.json';
+import {renderCellExpand} from './RenderCellExpand';
 
 function ServiceSelector(props) {
   const {item, applyValue} = props;
