@@ -57,8 +57,8 @@ metadata:
   annotations:
     cert-manager.io/cluster-issuer: google-dns
     external-dns.alpha.kubernetes.io/hostname: httpbin.localhost.pomerium.io
-    ingress.pomerium.io/allow_any_authenticated_user: "true"
-    ingress.pomerium.io/pass_identity_headers: "true"
+    ingress.pomerium.io/allow_any_authenticated_user: 'true'
+    ingress.pomerium.io/pass_identity_headers: 'true'
   name: httpbin
   namespace: httpbin
 spec:
@@ -175,29 +175,29 @@ The expandable list below contains the annotations available, which behave as de
 
 The remaining annotations are specific to or behave differently than they do when using Pomerium without the Ingress Controller:
 
-| Annotation                                                    | Description                                                                                                                                                                                          |
-| ------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `ingress.pomerium.io/kubernetes_service_account_token_secret` | Name of a Kubernetes Secret containing a [Kubernetes Service Account Token](/docs/reference/routes/kubernetes-service-account-token) in a `token` key.                                               |
-| `ingress.pomerium.io/mcp_client`                              | When set to `"true"`, configures the route as an MCP (Model Context Protocol) client. The URL is defined by the service backend.                                                                     |
-| `ingress.pomerium.io/mcp_server`                              | When set to `"true"`, configures the route as an MCP (Model Context Protocol) server. The URL is defined by the service backend. Optional if other MCP server annotations are present.               |
-| `ingress.pomerium.io/mcp_server_max_request_bytes`            | Sets the maximum request body size for MCP server routes.                                                                                                                                            |
-| `ingress.pomerium.io/mcp_server_path`                         | Sets the path property for MCP server routes, used when returning the server URL in the .mcp/routes endpoint. Defaults to "/" if not specified.                                                      |
-| `ingress.pomerium.io/mcp_server_upstream_oauth2_secret`       | Name of a Kubernetes Secret containing OAuth2 credentials for MCP server upstream authentication.                                                                                                    |
-| `ingress.pomerium.io/mcp_server_upstream_oauth2_token_url`    | OAuth2 token URL for MCP server upstream authentication.                                                                                                                                             |
-| `ingress.pomerium.io/mcp_server_upstream_oauth2_scopes`       | Comma-separated list of OAuth2 scopes for MCP server upstream authentication.                                                                                                                        |
-| `ingress.pomerium.io/path_regex`                              | When set to `"true"` enables path regex matching. See the [Regular Expressions Path Matching](#regular-expressions-path-matching) section for more information.                                      |
-| `ingress.pomerium.io/secure_upstream`                         | When set to `"true"`, use `https` when connecting to the upstream endpoint.                                                                                                                          |
-| `ingress.pomerium.io/set_request_headers_secret`              | Name of Kubernetes Secret containing the contents of the request header to send upstream. When used, `ingress.pomerium.io/set_request_headers` should not contain overlapping keys.                  |
-| `ingress.pomerium.io/set_response_headers_secret`             | Name of Kubernetes Secret containing the contents of the response header to send downstream. When used, `ingress.pomerium.io/set_response_headers` should not contain overlapping keys.              |
-| `ingress.pomerium.io/service_proxy_upstream`                  | When set to `"true"` forces Pomerium to connect to upstream servers through the k8s service proxy, and not individual endpoints. <br/> This is useful when deploying Pomerium inside a service mesh. |
-| `ingress.pomerium.io/tcp_upstream`                            | When set to `"true"`, defines the route as supporting a TCP tunnel. See the [example below](/docs/deploy/k8s/ingress#tcp-services) for more information.                                             |
-| `ingress.pomerium.io/tls_client_secret`                       | Name of Kubernetes `tls` Secret containing a [client certificate][tls_client_certificate] for connecting to the upstream.                                                                            |
-| `ingress.pomerium.io/tls_custom_ca_secret`                    | Name of Kubernetes `tls` Secret containing a custom [CA certificate][`tls_custom_ca_secret`] for the upstream.                                                                                       |
-| `ingress.pomerium.io/tls_downstream_client_ca_secret`         | Name of Kubernetes `tls` Secret containing a [Client CA][client-certificate-authority] for validating downstream clients.                                                                            |
-| `ingress.pomerium.io/policy`                                  | [Pomerium Policy Language](/docs/internals/ppl) YAML or JSON block (as string)                                                                                                                       |
-| `ingress.pomerium.io/allow_any_authenticated_user`            | When set to `"true"`, allows access to any user that was successfully authenticated with your Identity Provider.                                                                                     |
-| `ingress.pomerium.io/allow_public_unauthenticated_access`     | When set to `"true"`, does not require authentication, grants public access                                                                                                                          |
-| `ingress.pomerium.io/identity_provider_secret`                | Name of Kubernetes `opaque` Secret containing `client_id` and `client_secret` to use for the route.                                                                                                  |
+| Annotation | Description |
+| --- | --- |
+| `ingress.pomerium.io/kubernetes_service_account_token_secret` | Name of a Kubernetes Secret containing a [Kubernetes Service Account Token](/docs/reference/routes/kubernetes-service-account-token) in a `token` key. |
+| `ingress.pomerium.io/mcp_client` | When set to `"true"`, configures the route as an MCP (Model Context Protocol) client. The URL is defined by the service backend. |
+| `ingress.pomerium.io/mcp_server` | When set to `"true"`, configures the route as an MCP (Model Context Protocol) server. The URL is defined by the service backend. Optional if other MCP server annotations are present. |
+| `ingress.pomerium.io/mcp_server_max_request_bytes` | Sets the maximum request body size for MCP server routes. |
+| `ingress.pomerium.io/mcp_server_path` | Sets the path property for MCP server routes, used when returning the server URL in the .mcp/routes endpoint. Defaults to "/" if not specified. |
+| `ingress.pomerium.io/mcp_server_upstream_oauth2_secret` | Name of a Kubernetes Secret containing OAuth2 credentials for MCP server upstream authentication. |
+| `ingress.pomerium.io/mcp_server_upstream_oauth2_token_url` | OAuth2 token URL for MCP server upstream authentication. |
+| `ingress.pomerium.io/mcp_server_upstream_oauth2_scopes` | Comma-separated list of OAuth2 scopes for MCP server upstream authentication. |
+| `ingress.pomerium.io/path_regex` | When set to `"true"` enables path regex matching. See the [Regular Expressions Path Matching](#regular-expressions-path-matching) section for more information. |
+| `ingress.pomerium.io/secure_upstream` | When set to `"true"`, use `https` when connecting to the upstream endpoint. |
+| `ingress.pomerium.io/set_request_headers_secret` | Name of Kubernetes Secret containing the contents of the request header to send upstream. When used, `ingress.pomerium.io/set_request_headers` should not contain overlapping keys. |
+| `ingress.pomerium.io/set_response_headers_secret` | Name of Kubernetes Secret containing the contents of the response header to send downstream. When used, `ingress.pomerium.io/set_response_headers` should not contain overlapping keys. |
+| `ingress.pomerium.io/service_proxy_upstream` | When set to `"true"` forces Pomerium to connect to upstream servers through the k8s service proxy, and not individual endpoints. <br/> This is useful when deploying Pomerium inside a service mesh. |
+| `ingress.pomerium.io/tcp_upstream` | When set to `"true"`, defines the route as supporting a TCP tunnel. See the [example below](/docs/deploy/k8s/ingress#tcp-services) for more information. |
+| `ingress.pomerium.io/tls_client_secret` | Name of Kubernetes `tls` Secret containing a [client certificate][tls_client_certificate] for connecting to the upstream. |
+| `ingress.pomerium.io/tls_custom_ca_secret` | Name of Kubernetes `tls` Secret containing a custom [CA certificate][`tls_custom_ca_secret`] for the upstream. |
+| `ingress.pomerium.io/tls_downstream_client_ca_secret` | Name of Kubernetes `tls` Secret containing a [Client CA][client-certificate-authority] for validating downstream clients. |
+| `ingress.pomerium.io/policy` | [Pomerium Policy Language](/docs/internals/ppl) YAML or JSON block (as string) |
+| `ingress.pomerium.io/allow_any_authenticated_user` | When set to `"true"`, allows access to any user that was successfully authenticated with your Identity Provider. |
+| `ingress.pomerium.io/allow_public_unauthenticated_access` | When set to `"true"`, does not require authentication, grants public access |
+| `ingress.pomerium.io/identity_provider_secret` | Name of Kubernetes `opaque` Secret containing `client_id` and `client_secret` to use for the route. |
 
 ### Set authorization policy
 
@@ -289,7 +289,7 @@ metadata:
   name: my-app
   namespace: production
   annotations:
-    ingress.pomerium.io/name: "Production App"
+    ingress.pomerium.io/name: 'Production App'
     ingress.pomerium.io/policy: |
       allow:
         and:
@@ -340,7 +340,7 @@ metadata:
         and:
         - domain:
             is: exampledomain.com
-    ingress.pomerium.io/path_regex: "true"
+    ingress.pomerium.io/path_regex: 'true'
   name: example
 spec:
   ingressClassName: pomerium
@@ -384,11 +384,11 @@ kind: Ingress
 metadata:
   name: tcp-example
   annotations:
-    ingress.pomerium.io/tcp_upstream: "true"
+    ingress.pomerium.io/tcp_upstream: 'true'
 spec:
   ingressClassName: pomerium
   rules:
-    - host: "tcp.localhost.pomerium.io"
+    - host: 'tcp.localhost.pomerium.io'
       http:
         paths:
           - pathType: ImplementationSpecific
@@ -418,7 +418,7 @@ Unlike a standalone Pomerium configuration, you may not create multiple TCP rout
 For performance reasons, by default, Pomerium routes traffic directly to the referenced Service's Endpoints, bypassing Kubernetes service proxy. If you would like to disable this behavior, i.e. you are deploying Pomerium inside a service mesh such as Istio, set the following annotation to the Ingress:
 
 ```yaml
-ingress.pomerium.io/service_proxy_upstream: "true"
+ingress.pomerium.io/service_proxy_upstream: 'true'
 ```
 
 ### Load Balancing
@@ -426,26 +426,26 @@ ingress.pomerium.io/service_proxy_upstream: "true"
 Unless you disabled direct traffic to Endpoints, Pomerium would load balance the requests to the upstream endpoints. See the [Load Balancing](/docs/capabilities/routing) guide for details, and use relevant Ingress annotations to fine tune load balancing and health checks.
 
 ```yaml
-ingress.pomerium.io/lb_policy: "lb_policy_option"
+ingress.pomerium.io/lb_policy: 'lb_policy_option'
 ```
 
 The `lb_policy` has the following options:
 
-| **Load Balancer Policy options**                                                                                                                                                                                                                                                                                                                                   |
-| :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [`ROUND_ROBIN`](https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/upstream/load_balancing/load_balancers#weighted-round-robin) (each pod has an equal weight that cannot be customized)                                                                                                                                                              |
-| [`RING_HASH`](https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/upstream/load_balancing/load_balancers#ring-hash) (may be further configured using [`ring_hash_lb_config`](https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/cluster/v3/cluster.proto#config-cluster-v3-cluster-ringhashlbconfig) option)                                    |
+| **Load Balancer Policy options** |
+| :-- |
+| [`ROUND_ROBIN`](https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/upstream/load_balancing/load_balancers#weighted-round-robin) (each pod has an equal weight that cannot be customized) |
+| [`RING_HASH`](https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/upstream/load_balancing/load_balancers#ring-hash) (may be further configured using [`ring_hash_lb_config`](https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/cluster/v3/cluster.proto#config-cluster-v3-cluster-ringhashlbconfig) option) |
 | [`LEAST_REQUEST`](https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/upstream/load_balancing/load_balancers#weighted-least-request) (may be further configured using [`least_request_lb_config`](https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/cluster/v3/cluster.proto#envoy-v3-api-msg-config-cluster-v3-cluster-leastrequestlbconfig)) |
-| [`RANDOM`](https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/upstream/load_balancing/load_balancers#random)                                                                                                                                                                                                                                          |
-| [`MAGLEV`](https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/upstream/load_balancing/load_balancers#maglev) (may be further configured using [`maglev_lb_config`](https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/cluster/v3/cluster.proto#envoy-v3-api-msg-config-cluster-v3-cluster-maglevlbconfig) option)                              |
+| [`RANDOM`](https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/upstream/load_balancing/load_balancers#random) |
+| [`MAGLEV`](https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/upstream/load_balancing/load_balancers#maglev) (may be further configured using [`maglev_lb_config`](https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/cluster/v3/cluster.proto#envoy-v3-api-msg-config-cluster-v3-cluster-maglevlbconfig) option) |
 
 You can further configure `lb_policy` with the following OPTIONAL annotations:
 
-| **Annotation name**                                                                                                                                                             | **Type** | **Usage**    |
-| :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | :------- | :----------- |
+| **Annotation name** | **Type** | **Usage** |
+| :-- | :-- | :-- |
 | [`least_request_lb_config`](https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/cluster/v3/cluster.proto#envoy-v3-api-msg-config-cluster-v3-cluster-leastrequestlbconfig) | `object` | **optional** |
-| [`ring_hash_lb_config`](https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/cluster/v3/cluster.proto#config-cluster-v3-cluster-ringhashlbconfig)                          | `object` | **optional** |
-| [`maglev_lb_config`](https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/cluster/v3/cluster.proto#envoy-v3-api-msg-config-cluster-v3-cluster-maglevlbconfig)              | `object` | **optional** |
+| [`ring_hash_lb_config`](https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/cluster/v3/cluster.proto#config-cluster-v3-cluster-ringhashlbconfig) | `object` | **optional** |
+| [`maglev_lb_config`](https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/cluster/v3/cluster.proto#envoy-v3-api-msg-config-cluster-v3-cluster-maglevlbconfig) | `object` | **optional** |
 
 For example:
 
@@ -469,7 +469,7 @@ The Ingress spec assumes that all communications to the upstream service are sen
 Annotate your Ingress with
 
 ```yaml
-ingress.pomerium.io/secure_upstream: "true"
+ingress.pomerium.io/secure_upstream: 'true'
 ```
 
 Additional TLS certificates may be supplied by creating a Kubernetes secret(s) in the same namespaces as the Ingress resource. Please note that we do not support file paths or embedded secret references.
@@ -493,7 +493,7 @@ metadata:
   name: external
 spec:
   type: ExternalName
-  externalName: "my-existing-service.corp.com"
+  externalName: 'my-existing-service.corp.com'
   ports:
     - protocol: TCP
       name: https
@@ -505,7 +505,7 @@ metadata:
   name: external
   annotations:
     cert-manager.io/cluster-issuer: letsencrypt-prod-http
-    ingress.pomerium.io/secure_upstream: "true"
+    ingress.pomerium.io/secure_upstream: 'true'
     ingress.pomerium.io/policy: |
       - allow:
           and:
@@ -515,10 +515,10 @@ spec:
   ingressClassName: pomerium
   tls:
     - hosts:
-        - "external.localhost.pomerium.io"
+        - 'external.localhost.pomerium.io'
       secretName: external-localhost-pomerium.io
   rules:
-    - host: "external.localhost.pomerium.io"
+    - host: 'external.localhost.pomerium.io'
       http:
         paths:
           - path: /
@@ -792,7 +792,7 @@ kind: Ingress
 metadata:
   name: mcp-server
   annotations:
-    ingress.pomerium.io/mcp_server: "true"
+    ingress.pomerium.io/mcp_server: 'true'
 spec:
   ingressClassName: pomerium
   rules:
@@ -822,8 +822,8 @@ kind: Ingress
 metadata:
   name: mcp-server-with-path
   annotations:
-    ingress.pomerium.io/mcp_server: "true"
-    ingress.pomerium.io/mcp_server_path: "/api/v1/mcp"
+    ingress.pomerium.io/mcp_server: 'true'
+    ingress.pomerium.io/mcp_server_path: '/api/v1/mcp'
 spec:
   ingressClassName: pomerium
   rules:
@@ -860,11 +860,11 @@ kind: Ingress
 metadata:
   name: mcp-server-oauth2
   annotations:
-    ingress.pomerium.io/mcp_server: "true"
-    ingress.pomerium.io/mcp_server_max_request_bytes: "1048576"
-    ingress.pomerium.io/mcp_server_upstream_oauth2_secret: "mcp-oauth2-credentials"
-    ingress.pomerium.io/mcp_server_upstream_oauth2_token_url: "https://auth.example.com/token"
-    ingress.pomerium.io/mcp_server_upstream_oauth2_scopes: "read,write,admin"
+    ingress.pomerium.io/mcp_server: 'true'
+    ingress.pomerium.io/mcp_server_max_request_bytes: '1048576'
+    ingress.pomerium.io/mcp_server_upstream_oauth2_secret: 'mcp-oauth2-credentials'
+    ingress.pomerium.io/mcp_server_upstream_oauth2_token_url: 'https://auth.example.com/token'
+    ingress.pomerium.io/mcp_server_upstream_oauth2_scopes: 'read,write,admin'
 spec:
   ingressClassName: pomerium
   rules:
@@ -895,7 +895,7 @@ metadata:
   name: mcp-server-implicit
   annotations:
     # mcp_server annotation omitted - implicitly enabled by server-specific annotation
-    ingress.pomerium.io/mcp_server_max_request_bytes: "2097152"
+    ingress.pomerium.io/mcp_server_max_request_bytes: '2097152'
 spec:
   ingressClassName: pomerium
   rules:
@@ -919,7 +919,7 @@ kind: Ingress
 metadata:
   name: mcp-client
   annotations:
-    ingress.pomerium.io/mcp_client: "https://mcp-client.example.com"
+    ingress.pomerium.io/mcp_client: 'https://mcp-client.example.com'
 spec:
   ingressClassName: pomerium
   rules:

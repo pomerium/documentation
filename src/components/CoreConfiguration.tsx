@@ -1,7 +1,7 @@
-import React, { PropsWithChildren, ReactNode } from "react";
+import React, {PropsWithChildren, ReactNode} from 'react';
 
-import { ConfigType, Resource, getTypeName } from "../types";
-import CoreConfigureTable from "./CoreConfigureTable";
+import {ConfigType, Resource, getTypeName} from '../types';
+import CoreConfigureTable from './CoreConfigureTable';
 
 type CoreConfigurationProps = PropsWithChildren<{
   name: string;
@@ -24,7 +24,7 @@ const CoreConfiguration = ({
       {children}
 
       <p>
-        The <code>{name}</code> setting can also be configured by{" "}
+        The <code>{name}</code> setting can also be configured by{' '}
         <a href={terraformLink}>Terraform</a>.
       </p>
     </>

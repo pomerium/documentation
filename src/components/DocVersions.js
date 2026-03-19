@@ -1,4 +1,5 @@
 import React from 'react';
+
 import data from './docVersions.json';
 
 const versions = Object.values(data);

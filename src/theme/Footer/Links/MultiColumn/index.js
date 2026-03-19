@@ -4,11 +4,13 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  */
-import React from 'react';
-import LinkItem from '@theme/Footer/LinkItem';
-import {FooterNewsletterForm} from '../../../../components/Newsletter';
-import Logo from '@site/static/img/logo.svg';
 import {IconButton} from '@mui/material';
+import Logo from '@site/static/img/logo.svg';
+import React from 'react';
+
+import LinkItem from '@theme/Footer/LinkItem';
+
+import {FooterNewsletterForm} from '../../../../components/Newsletter';
 
 function ColumnLinkItem({item}) {
   return item.html ? (
