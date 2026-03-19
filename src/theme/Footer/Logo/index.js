@@ -4,11 +4,13 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  */
-import React from 'react';
 import Link from '@docusaurus/Link';
 import {useBaseUrlUtils} from '@docusaurus/useBaseUrl';
-import styles from './styles.module.css';
+import React from 'react';
+
 import ThemedImage from '@theme/ThemedImage';
+
+import styles from './styles.module.css';
 
 function LogoImage({logo}) {
   const {withBaseUrl} = useBaseUrlUtils();

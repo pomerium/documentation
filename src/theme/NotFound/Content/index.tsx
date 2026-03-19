@@ -1,7 +1,8 @@
-import React, {JSX, useEffect} from 'react';
-import Content from '@theme-original/NotFound/Content';
-import type ContentType from '@theme/NotFound/Content';
 import type {WrapperProps} from '@docusaurus/types';
+import Content from '@theme-original/NotFound/Content';
+import React, {JSX, useEffect} from 'react';
+
+import type ContentType from '@theme/NotFound/Content';
 
 type Props = WrapperProps<typeof ContentType>;
 

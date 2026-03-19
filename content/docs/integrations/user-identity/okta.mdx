@@ -6,8 +6,8 @@ pagination_prev: null
 pagination_next: null
 ---
 
-import TabItem from "@theme/TabItem";
-import Tabs from "@theme/Tabs";
+import TabItem from '@theme/TabItem';
+import Tabs from '@theme/Tabs';
 
 # Okta
 
@@ -35,13 +35,13 @@ While we do our best to keep our documentation up to date, changes to third-part
 
 1. Provide the following information for your application settings:
 
-   | Field                 | Description                                                                                |
-   | --------------------- | ------------------------------------------------------------------------------------------ |
-   | Name                  | The name of your application.                                                              |
-   | Grant type allowed    | **You must enable Refresh Token.**                                                         |
-   | Base URIs             | **Optional**: The domain(s) of your application.                                           |
-   | Sign-in redirect URIs | Redirect URL (e.g.`https://${authenticate_service_url}/oauth2/callback`).                  |
-   | Controlled Access     | The user groups that can sign in to this application. See [Group ID] for more information. |
+   | Field | Description |
+   | --- | --- |
+   | Name | The name of your application. |
+   | Grant type allowed | **You must enable Refresh Token.** |
+   | Base URIs | **Optional**: The domain(s) of your application. |
+   | Sign-in redirect URIs | Redirect URL (e.g.`https://${authenticate_service_url}/oauth2/callback`). |
+   | Controlled Access | The user groups that can sign in to this application. See [Group ID] for more information. |
 
    ![Okta Create Application Settings](./img/okta/okta-create-app-settings.png)
 
@@ -59,10 +59,10 @@ Finally, configure Pomerium with the identity provider settings retrieved in the
 <TabItem value="config-file-keys" label="config.yaml">
 
 ```yaml
-idp_provider: "okta"
-idp_provider_url: "https://awesomecompany.okta.com"
-idp_client_id: "REPLACE ME"
-idp_client_secret: "REPLACE ME"
+idp_provider: 'okta'
+idp_provider_url: 'https://awesomecompany.okta.com'
+idp_client_id: 'REPLACE ME'
+idp_client_secret: 'REPLACE ME'
 ```
 
 </TabItem>
@@ -91,8 +91,8 @@ Now when users login they will have a claim named `groups` that contains their g
 
 ```yaml
 routes:
-  - from: "https://verify.localhost.pomerium.io"
-    to: "https://verify.pomerium.com"
+  - from: 'https://verify.localhost.pomerium.io'
+    to: 'https://verify.pomerium.com'
     policy:
       - allow:
           and:

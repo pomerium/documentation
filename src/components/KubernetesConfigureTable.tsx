@@ -1,6 +1,6 @@
-import React, { ReactNode } from "react";
+import React, {ReactNode} from 'react';
 
-import { ConfigType, getTypeName } from "../types";
+import {ConfigType, getTypeName} from '../types';
 
 type KubernetesConfigureTableProps = {
   name: string;
@@ -26,7 +26,7 @@ const KubernetesConfigureTable = ({
             <strong>Type</strong>
           </th>
           <th>
-            <strong>{defaultValue ? "Default" : "Usage"}</strong>
+            <strong>{defaultValue ? 'Default' : 'Usage'}</strong>
           </th>
         </tr>
       </thead>
