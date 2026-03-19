@@ -281,12 +281,12 @@ Both MCP client applications and servers can access authenticated user informati
 
 ```json
 {
-  "aud": "your-app.domain.com",
   "email": "user@example.com",
   "groups": ["engineering", "admin"],
   "iss": "your-domain.com",
   "name": "John Doe",
-  "sub": "user@example.com"
+  "sub": "user@example.com",
+  "aud": "your-app.domain.com"
 }
 ```
 
@@ -393,12 +393,6 @@ When an AI agent calls an MCP tool, Pomerium generates detailed authorization lo
 
 ```json
 {
-  "allow": true,
-  "allow-why-true": ["domain-ok", "mcp-tool-ok"],
-  "deny": false,
-  "deny-why-false": [],
-  "email": "analyst@company.com",
-  "level": "info",
   "mcp-method": "tools/call",
   "mcp-tool": "database_query",
   "mcp-tool-parameters": {
@@ -406,11 +400,17 @@ When an AI agent calls an MCP tool, Pomerium generates detailed authorization lo
     "limit": 100,
     "format": "json"
   },
-  "message": "authorize check",
+  "email": "analyst@company.com",
+  "user": "google-oauth2|115420664726183323237",
+  "allow": true,
+  "allow-why-true": ["domain-ok", "mcp-tool-ok"],
+  "deny": false,
+  "deny-why-false": [],
+  "level": "info",
   "request-id": "c9afae5a-ec5a-4242-864f-df4189f20e99",
   "service": "authorize",
   "time": "2024-06-24T10:26:33-04:00",
-  "user": "google-oauth2|115420664726183323237"
+  "message": "authorize check"
 }
 ```
 
@@ -445,9 +445,9 @@ Different MCP methods appear in logs:
 
 ```json
 {
+  "mcp-method": "tools/list",
   "allow": true,
-  "allow-why-true": ["authenticated-user"],
-  "mcp-method": "tools/list"
+  "allow-why-true": ["authenticated-user"]
 }
 ```
 
@@ -468,8 +468,8 @@ Different MCP methods appear in logs:
 
 ```json
 {
-  "allow": true,
-  "mcp-method": "resources/list"
+  "mcp-method": "resources/list",
+  "allow": true
 }
 ```
 

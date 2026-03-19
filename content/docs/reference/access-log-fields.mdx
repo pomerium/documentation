@@ -149,20 +149,20 @@ To find access logs logged by the proxy service, filter your Pomerium logs for e
 
 ```json
 {
-  "authority": "verify.pomerium.com",
-  "duration": 224.860959,
-  "forwarded-for": "XXX.XXX.X.XXX",
   "level": "info",
-  "message": "http-request",
   "method": "GET",
+  "authority": "verify.pomerium.com",
   "path": "/img/json.svg",
   "referer": "https://verify.localhost.pomerium.io/index.css",
   "request-id": "6f3ad640-cb15-48b4-b79f-9adb94dd654c",
   "response-code": 200,
   "response-code-details": "via_upstream",
-  "service": "envoy",
+  "forwarded-for": "XXX.XXX.X.XXX",
+  "duration": 224.860959,
   "size": 5127,
   "time": "2023-08-03T16:55:14-04:00",
+  "message": "http-request",
+  "service": "envoy",
   "upstream-cluster": "route-6f431f0be965b608",
   "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36"
 }
@@ -188,8 +188,8 @@ Your logs would look similar to the below example:
 {
   "authority": "verify.pomerium.com",
   "level": "info",
-  "message": "http-request",
   "path": "/img/json.svg",
+  "message": "http-request",
   "service": "envoy",
   "time": "2023-08-04T12:12:35-04:00"
 }
@@ -216,8 +216,8 @@ The custom headers will appear in the `headers` field:
     "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36"
   },
   "level": "info",
-  "message": "http-request",
   "service": "envoy",
+  "message": "http-request",
   "time": "2023-08-04T11:37:01-04:00"
 }
 ```

@@ -72,8 +72,8 @@ This endpoint is particularly useful for single-page applications that need to f
 ```json
 {
   "email": "user@example.com",
-  "groups": ["engineering", "admins"],
-  "name": "John Doe"
+  "name": "John Doe",
+  "groups": ["engineering", "admins"]
 }
 ```
 
@@ -152,9 +152,9 @@ This endpoint allows clients and upstream applications to dynamically discover n
 
 ```json
 {
+  "issuer": "https://app.example.com/",
   "authentication_callback_endpoint": "https://authenticate.example.com/oauth2/callback",
   "frontchannel_logout_uri": "https://app.example.com/.pomerium/sign_out",
-  "issuer": "https://app.example.com/",
   "jwks_uri": "https://app.example.com/.well-known/pomerium/jwks.json"
 }
 ```
