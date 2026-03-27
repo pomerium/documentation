@@ -6,7 +6,7 @@
     "services": ["proxy"],
     "short_description": "",
     "title": "Access Log Fields",
-    "type": "string"
+    "type": "array of strings"
   },
   "additional-login-redirect-hosts": {
     "description": "Chain login redirects across specified domains, ensuring a session cookie is issued for each domain",
@@ -18,7 +18,7 @@
     "type": "array of string"
   },
   "address": {
-    "description": "Specifies the IP Address and Port to serve HTTP requests from.",
+    "description": "Specifies the IP Address and Port to serve HTTPS requests from.",
     "id": "address",
     "path": "/address",
     "services": ["proxy"],
@@ -64,7 +64,7 @@
     "services": ["authorize"],
     "short_description": "",
     "title": "Authorize Log Fields",
-    "type": "string"
+    "type": "array of strings"
   },
   "authorize-service-url": {
     "description": "Authorize Service URL is the location of the internally accessible Authorize service.",
@@ -196,10 +196,11 @@
     "title": "Cluster Identity"
   },
   "cluster-name": {
+    "description": "A human-readable name for the route, also used as the Envoy cluster stat name for metrics.",
     "id": "cluster-name",
     "path": "/routes/cluster-name",
     "services": ["proxy"],
-    "title": "Cluster Name",
+    "title": "Name",
     "type": "string"
   },
   "cluster-settings-name": {
@@ -955,7 +956,7 @@
     "path": "/jwt-claim-headers",
     "services": [],
     "title": "JWT Claim Headers",
-    "type": "slice of string"
+    "type": "map of string"
   },
   "jwt-groups-filter": {
     "description": "Restricts the set of groups allowed in the Pomerium JWT and Impersonate-Group headers, either based on applied policies or using a specific list of groups.",
@@ -996,7 +997,7 @@
     "type": "string"
   },
   "load-balancing-policy": {
-    "description": "Defines the Load Balancing strategy for multiple upstream servers.",
+    "description": "Selects the load balancing strategy for routes with multiple upstream servers.",
     "id": "load-balancing-policy",
     "path": "/routes/load-balancing#load-balancing-policy",
     "services": ["proxy"],
@@ -1004,11 +1005,12 @@
     "type": "enum"
   },
   "load-balancing-policy-config": {
+    "description": "Advanced Envoy load balancing policy config objects are not currently exposed in Pomerium route configuration.",
     "id": "load-balancing-policy-config",
     "path": "/routes/load-balancing-policy-config",
     "services": ["proxy"],
     "title": "Load Balancing Policy Config",
-    "type": "object"
+    "type": "not currently supported"
   },
   "load-balancing-settings": {
     "id": "load-balancing-settings",
@@ -1016,7 +1018,7 @@
     "title": "Load Balancing Settings"
   },
   "log-level": {
-    "description": "Sets the global logging level for this cluster.",
+    "description": "Sets the global logging level for Pomerium.",
     "id": "log-level",
     "path": "/log-level",
     "services": [],
@@ -1349,7 +1351,7 @@
     "type": "array of string"
   },
   "proxy-log-level": {
-    "description": "Sets the logging level for the Pomerium Proxy service.",
+    "description": "Sets Envoy's logging level for the Pomerium Proxy service. Defaults to log_level when unset.",
     "id": "proxy-log-level",
     "path": "/proxy-log-level",
     "services": [],
@@ -1397,12 +1399,12 @@
     "type": "regular expression"
   },
   "regex-priority-order": {
-    "description": "Rewrites the URL path according to the regex rewrite pattern.",
+    "description": "Determines the ordering of routes that use regular expressions. Higher values are evaluated first.",
     "id": "regex-priority-order",
     "path": "/routes/regex-priority-order",
     "services": ["proxy"],
     "title": "Regex Priority Order",
-    "type": "uint32"
+    "type": "int64"
   },
   "regex-rewrite": {
     "description": "Rewrites the URL path according to the regex rewrite pattern.",
@@ -1555,7 +1557,7 @@
     "title": "Service Account User ID"
   },
   "service-mode": {
-    "description": "Service mode sets the pomerium service(s) to run.",
+    "description": "Sets which Pomerium services to run. Accepts a comma-separated list.",
     "id": "service-mode",
     "path": "/service-mode",
     "services": [],
@@ -1598,10 +1600,10 @@
     "type": "string"
   },
   "show-error-details": {
-    "description": "If applied, shows error details, including policy explanation and remediation for 403 Forbidden responses.",
+    "description": "Includes policy explanation and remediation details in authorization error responses. Required for route-specific branded error content.",
     "id": "show-error-details",
     "path": "/routes/show-error-details",
-    "services": [],
+    "services": ["proxy"],
     "title": "Show Error Details",
     "type": "bool"
   },
@@ -1610,7 +1612,7 @@
     "id": "signing-key",
     "path": "/signing-key",
     "services": [],
-    "short_description": "y",
+    "short_description": "",
     "title": "Signing Key",
     "type": "string"
   },

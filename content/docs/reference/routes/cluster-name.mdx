@@ -1,9 +1,9 @@
 ---
 id: cluster-name
-title: Cluster Name
+title: Name
 keywords:
   - reference
-  - Cluster Name
+  - Route Name
 pagination_prev: null
 pagination_next: null
 toc_max_heading_level: 2
@@ -12,11 +12,13 @@ toc_max_heading_level: 2
 import TabItem from '@theme/TabItem';
 import Tabs from '@theme/Tabs';
 
-# Cluster Name
+# Name
 
 ## Summary
 
-Runtime metrics for **Cluster Name** would be available under `envoy_cluster_`_`name`_ prefix.
+**Name** sets a human-readable name for the route. When set, Pomerium also uses this value as the Envoy cluster stat name, which appears in metrics under the `envoy_cluster_name` label.
+
+If **Name** is not set, the route has no display name and the cluster stat name will be empty.
 
 ## How to configure
 
@@ -27,10 +29,19 @@ Runtime metrics for **Cluster Name** would be available under `envoy_cluster_`_`
 | :------------------ | :------- | :----------- |
 | `name`              | `string` | **optional** |
 
+### Examples
+
+```yaml
+routes:
+  - from: https://verify.example.com
+    to: https://verify.local
+    name: verify
+```
+
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
 
-**Cluster Name** is a bootstrap configuration setting and is not configurable in the Console.
+Set the route **Name** under **General** route settings in the Console.
 
 </TabItem>
 <TabItem value="Kubernetes" label="Kubernetes">

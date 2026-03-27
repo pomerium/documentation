@@ -1,5 +1,5 @@
 ---
-# cSpell:ignore keepalive tcpip
+# cSpell:ignore keepalive tcpip GOMAXPROCS
 id: runtime-flags
 title: Runtime Flags
 description: This page lists Runtime Flags available in Pomerium.
@@ -34,12 +34,18 @@ The available flags are:
 
 | Runtime Flag | Description | Default |
 | :-- | :-- | :-- |
+| `add_extra_metrics_labels` | Enables adding extra labels to metrics (host and installation id). | `true` |
+| `authorize_use_synced_data` | Enables synced data for querying the databroker for certain types of data. | `true` |
 | `config_hot_reload` | Enables automatic config reloading triggered whenever a configuration file is written to (either the main Pomerium configuration file or a file referenced from the main configuration). In some rare cases this may not work correctly, so this setting provides a way to disable this behavior. (See issue [#5079](https://github.com/pomerium/pomerium/issues/5079) for more context.) | `true` |
+| `debug_admin_endpoints` | Enables the admin endpoints for the debug listener. | `false` |
 | `envoy_resource_manager` | Monitors control group (cgroup) memory usage of all processes running in the container (including both Pomerium and Envoy) and applies overload actions when memory thresholds are exceeded to reduce memory consumption. See [memory thresholds](#envoy-resource-manager-memory-thresholds) to review thresholds and their corresponding overload actions. | `true` |
-| `grpc_databroker_keepalive` | _(experimental)_ Enables gRPC keep-alive (HTTP/2 PING) requests on the databroker service connection. This may improve service reliability in [split service mode](/docs/internals/configuration#service-mode) deployments where there are multiple firewalls in the connection path between different Pomerium services. | `false` |
+| `grpc_databroker_keepalive` | _(experimental)_ Enables gRPC keep-alive (HTTP/2 PING) requests on the databroker service connection. This may improve service reliability in [split service mode](/docs/internals/configuration#service-mode) deployments where there are multiple firewalls in the connection path between different Pomerium services. | `true` |
 | `match_any_incoming_port` | For a route where the From URL does not contain a port number, allow it to match incoming requests with any port number. See the section on [Port matching behavior](/docs/reference/routes/from#port-matching-behavior) for more details. | `true` |
+| `mcp` | Enables the MCP services for the authorize service. | `false` |
 | `pomerium_jwt_endpoint` | Temporary opt-out of the `/.pomerium/jwt` deprecation: when set to `true`, Pomerium will continue to issue a JWT from the deprecated `/.pomerium/jwt` endpoint. (This endpoint does not provide the desired security properties for the Pomerium JWT and will be removed in a future release.) | `false` |
 | `refresh_session_at_id_token_expiration` | Changes the session refresh behavior so that a session will also be refreshed when the ID token is set to expire. If the identity provider issues a new ID token during refresh, this will allow Pomerium to maintain a valid ID token for the entire lifetime of a session. | `true` |
+| `routes_portal` | Enables the web-based routes portal dashboard. | `true` |
+| `set_envoy_concurrency_to_go_max_procs` | Sets the Envoy concurrency option to GOMAXPROCS. | `true` |
 | `ssh_allow_direct_tcpip` | Allows clients to connect to SSH routes using [Jump Host Mode](/docs/capabilities/native-ssh-access#using-jump-host-mode). | `false` |
 | `ssh_routes_portal` | Enables the SSH routes portal, allowing users to select their SSH destination from an interactive menu when SSHing to Pomerium without specifying a route. | `false` |
 | `ssh_upstream_tunnel` | Enables the `upstream_tunnel` route option. See [Reverse Tunneling](/docs/capabilities/reverse-tunneling). | `false` |

@@ -31,7 +31,7 @@ The default log fields should be appropriate for most deployments.
 <CoreConfiguration name="authorize_log_fields" resource="settings" type="StringList" 
   defaultValue={
     <>
-      See <a href="#authorize-fields-and-defaults">Authorize Fields and Defaults</a>
+      See <a href="#authorize-log-fields-and-defaults">Authorize Fields and Defaults</a>
     </>
   } >
 
@@ -115,7 +115,10 @@ The table below lists all available authorize log fields:
 | :-- | :-- | :-- |
 | `body` | The HTTP request body. Only available for protocols with request content inspection such as MCP. | No |
 | `check-request-id` | The request ID of the gRPC check call | Yes |
+| `cluster-stat-name` | The stat name of the upstream cluster the request was routed to (set via route `name`, route `id`, or the Enterprise Console **Metric Name** field) | No |
 | `email` | The logged-in user's email address | Yes |
+| `envoy-route-checksum` | The checksum of the Envoy route configuration used to match the request | Yes |
+| `envoy-route-id` | The ID of the Envoy route that matched the request | Yes |
 | `headers` | The complete set of HTTP request headers | No |
 | [`headers.{CustomHeaderName}`](#log-custom-headers-fields) | An HTTP Request Header identified by the `HeaderName` | No |
 | `host` | The HTTP request `:authority` or `Host` header value. Can be a domain name or IP address and may contain a port number (for example, `www.example.com`) | Yes |
@@ -133,8 +136,10 @@ The table below lists all available authorize log fields:
 | `query` | The HTTP request query (for example, `?test=one&other=13`) | No |
 | `removed-groups-count` | The number of groups removed during [JWT groups filtering](/docs/reference/jwt-groups-filter) | Yes |
 | `request-id` | The request's unique identifier as assigned by Pomerium | Yes |
-| `service-account-id` | if using a service account, the service account ID | Yes |
-| `session-id` | the session ID | Yes |
+| `route-checksum` | The checksum of the Pomerium route policy that matched the request | Yes |
+| `route-id` | The ID of the Pomerium route policy that matched the request | Yes |
+| `service-account-id` | If using a service account, the service account ID | Yes |
+| `session-id` | The session ID | Yes |
 | `user` | The user's ID | Yes |
 
 :::danger

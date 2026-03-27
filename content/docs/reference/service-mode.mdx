@@ -2,7 +2,7 @@
 id: service-mode
 title: Service Mode
 description: |
-  Service mode sets the pomerium service(s) to run.
+  Sets which Pomerium services to run. Accepts a comma-separated list.
 keywords:
   - reference
   - Service Mode
@@ -18,7 +18,7 @@ import Tabs from '@theme/Tabs';
 
 ## Summary
 
-**Service Mode** sets which service(s) to run. When set to `all` (the default), Pomerium runs in [all-in-one mode](/docs/internals/configuration#all-in-one-vs-split-service-mode).
+**Service Mode** sets which service or services to run. It accepts a comma-separated list. When set to `all` (the default), Pomerium runs in [all-in-one mode](/docs/internals/configuration#all-in-one-vs-split-service-mode).
 
 To instead run in [split service mode](/docs/internals/configuration#discrete-services), you will need to deploy multiple instances of Pomerium: at least one replica of each of the four services.
 
@@ -38,15 +38,16 @@ To instead run in [split service mode](/docs/internals/configuration#discrete-se
 - `authorize`
 - `proxy`
 - `databroker`
+- `cache` (accepted as an alias for `databroker`)
 
 ### Examples
 
 ```yaml
-services: authorize
+services: authenticate,proxy
 ```
 
 ```bash
-SERVICES=databroker
+SERVICES=authenticate,proxy
 ```
 
 </TabItem>

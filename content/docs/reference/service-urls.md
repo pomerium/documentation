@@ -271,14 +271,11 @@ The **Databroker Internal Service URL** overrides [`databroker_service_url`](/do
 | **Config file keys** | **Environment variables** | **Type** | **Default** |
 | :-- | :-- | :-- | :-- |
 | `databroker_internal_service_url` | `DATABROKER_INTERNAL_SERVICE_URL` | `URL` | `http://localhost:5443` (In all-in-one mode) |
-| `databroker_internal_service_urls` | `DATABROKER_INTERNAL_SERVICE_URLS` | `URL` | `http://localhost:5443` (In all-in-one mode) |
 
 #### Examples \{#databroker-internal-service-url-examples}
 
 ```yaml
-databroker_internal_service_urls:
-  - http://localhost:5443
-  - http://service_url.com
+databroker_internal_service_url: http://localhost:5443
 ```
 
 ```bash
@@ -288,7 +285,7 @@ DATABROKER_INTERNAL_SERVICE_URL=http://localhost:5443
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
 
-`databroker_internal_service_url` and `databroker_internal_service_urls` are bootstrap configuration settings and are not configurable in the Console.
+`databroker_internal_service_url` is a bootstrap configuration setting and is not configurable in the Console.
 
 </TabItem>
 <TabItem value="Kubernetes" label="Kubernetes">

@@ -23,14 +23,14 @@ See [Envoy documentation](https://www.envoyproxy.io/docs/envoy/latest/api-v3/con
 
 ### How to configure \{#how-to-configure-load-balancing-policy}
 
-Some policy types support additional [configuration](/docs/reference/routes/load-balancing#load-balancing-policy-options).
+Pomerium currently exposes policy selection only. Advanced Envoy policy-specific configuration objects are not configurable through route settings.
 
 <Tabs>
 <TabItem value="Core" label="Core">
 
-| **Config file keys** | **Type** | **Usage**    | **Default**   |
-| :------------------- | :------- | :----------- | :------------ |
-| `lb_policy`          | `enum`   | **optional** | `ROUND_ROBIN` |
+| **Config file keys**    | **Type** | **Usage**    | **Default**   |
+| :---------------------- | :------- | :----------- | :------------ |
+| `load_balancing_policy` | `enum`   | **optional** | `ROUND_ROBIN` |
 
 ### Examples \{#examples-load-balancing-policy}
 
@@ -43,9 +43,7 @@ routes:
       - http://myapp-srv-3:8080
       - http://myapp-srv-4:8080
       - http://myapp-srv-5:8080
-    lb_policy: LEAST_REQUEST
-    least_request_lb_config:
-      choice_count: 2 # current envoy default
+    load_balancing_policy: LEAST_REQUEST
 ```
 
 </TabItem>
@@ -60,31 +58,22 @@ Set the **Load Balancing Policy** in the Console:
 </TabItem>
 <TabItem value="Kubernetes" label="Kubernetes">
 
-| **[Annotation name](/docs/deploy/k8s/ingress#set-ingress-annotations)** | **Type** | **Usage** | **Default** |
-| :-- | :-- | :-- | :-- |
-| `lb_policy` | `enum` | **optional** | `ROUND_ROBIN` |
-
-### Examples
-
-```yaml
-ingress.pomerium.io/lb_policy: LEAST_REQUEST
-ingress.pomerium.io/least_request_lb_config: '{"choice_count": 2}'
-```
-
-See [Kubernetes - Ingress Configuration](/docs/deploy/k8s/ingress) for more information.
+Kubernetes does not currently expose a load balancing policy annotation.
 
 </TabItem>
 </Tabs>
 
 ### Load Balancing Policy options \{#load-balancing-policy-options}
 
+Pomerium currently supports selecting one of Envoy's built-in load balancing policies. Policy-specific Envoy config objects such as `least_request_lb_config`, `ring_hash_lb_config`, and `maglev_lb_config` are not currently exposed.
+
 | **Load Balancer Policy options** |
 | :-- |
 | [`ROUND_ROBIN`](https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/upstream/load_balancing/load_balancers#weighted-round-robin) |
-| [`RING_HASH`](https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/upstream/load_balancing/load_balancers#ring-hash) (may be further configured using [`ring_hash_lb_config`](https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/cluster/v3/cluster.proto#config-cluster-v3-cluster-ringhashlbconfig) option) |
-| [`LEAST_REQUEST`](https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/upstream/load_balancing/load_balancers#weighted-least-request) (may be further configured using [`least_request_lb_config`](https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/cluster/v3/cluster.proto#envoy-v3-api-msg-config-cluster-v3-cluster-leastrequestlbconfig)) |
+| [`RING_HASH`](https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/upstream/load_balancing/load_balancers#ring-hash) |
+| [`LEAST_REQUEST`](https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/upstream/load_balancing/load_balancers#weighted-least-request) |
 | [`RANDOM`](https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/upstream/load_balancing/load_balancers#random) |
-| [`MAGLEV`](https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/upstream/load_balancing/load_balancers#maglev) (may be further configured using [`maglev_lb_config`](https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/cluster/v3/cluster.proto#envoy-v3-api-msg-config-cluster-v3-cluster-maglevlbconfig) option) |
+| [`MAGLEV`](https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/upstream/load_balancing/load_balancers#maglev) |
 
 ## Health Checks \{#health-checks}
 
