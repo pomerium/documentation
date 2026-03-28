@@ -48,9 +48,9 @@ Pomerium will check your system's trust/key store for valid certificates first. 
 
 | **Config file keys** | **Environment variables** | **Type** | **Usage** |
 | :-- | :-- | :-- | :-- |
-| `certificates` | Not settable as environment variable | `string` (Array of relative file locations for multiple certificates) | **required** (if insecure not set) |
-| `certificate` and `certificate_key` | `CERTIFICATE` and `CERTIFICATE_KEY` | `string` (base64-encoded string) | **required** (if insecure not set) |
-| `certificate_file` and `certificate_key_file` | `CERTIFICATE_FILE` and `CERTIFICATE_KEY_FILE` | `string` (Relative file location for a single certificate) | **required** (if insecure not set) |
+| `certificates` | Not settable as environment variable | array of objects (each with `cert` and `key` file paths) | **required** (if insecure not set) |
+| `certificate` and `certificate_key` | `CERTIFICATE` and `CERTIFICATE_KEY` | `string` (base64-encoded) | **required** (if insecure not set) |
+| `certificate_file` and `certificate_key_file` | `CERTIFICATE_FILE` and `CERTIFICATE_KEY_FILE` | `string` (file path) | **required** (if insecure not set) |
 
 ### Examples \{#certificates-examples}
 
@@ -130,8 +130,8 @@ Be sure to include the intermediary certificate.
 
 | **Config file keys** | **Environment variables** | **Type** | **Usage** |
 | :-- | :-- | :-- | :-- |
-| `certificate_authority` | `CERTIFICATE_AUTHORITY` | `string` | **optional** |
-| `certificate_authority_file` | `CERTIFICATE_AUTHORITY_FILE` | `string` | **optional** |
+| `certificate_authority` | `CERTIFICATE_AUTHORITY` | `string` (base64-encoded) | **optional** |
+| `certificate_authority_file` | `CERTIFICATE_AUTHORITY_FILE` | `string` (file path) | **optional** |
 
 ### Examples \{#certificate-authority-examples}
 

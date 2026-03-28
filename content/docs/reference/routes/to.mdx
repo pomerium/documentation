@@ -83,7 +83,7 @@ Multiple upstream resources can be targeted by using a list instead of a single 
 
 ### Set load balancing weight
 
-A load balancing weight may be associated with a particular upstream by appending `,[weight]` to the URL. The exact behavior depends on your [`lb_policy`](/docs/reference/routes/load-balancing#load-balancing-policy) setting. See [Load Balancing](/docs/capabilities/routing) for example [configurations](/docs/capabilities/routing#load-balancing-weight).
+A load balancing weight may be associated with a particular upstream by appending `,[weight]` to the URL. The exact behavior depends on your [`load_balancing_policy`](/docs/reference/routes/load-balancing#load-balancing-policy) setting. See [Load Balancing](/docs/capabilities/routing) for example [configurations](/docs/capabilities/routing#load-balancing-weight).
 
 ```yaml
 - from: https://example.com
@@ -184,6 +184,6 @@ While the rule:
 
 All requests to `https://verify.corp.example.com/*` will be forwarded to `https://verify.pomerium.com/anything/*`. That means accessing to `https://verify.corp.example.com` will be forwarded to `https://verify.pomerium.com/anything/`. That said, if your application does not handle trailing slash, the request will end up with 404 not found.
 
-Either `redirect` or `to` must be set.
+Either `to`, [`redirect`](/docs/reference/routes/redirect), or [`response`](/docs/reference/routes/direct-response) must be set.
 
 :::

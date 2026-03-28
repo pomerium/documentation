@@ -16,11 +16,27 @@ import EnterpriseConfiguration from '../../../../src/components/EnterpriseConfig
 
 ## Summary
 
-If true, **Show Error Details** allows you apply your custom [error message header](/docs/reference/branding) to a route.
+If enabled, **Show Error Details** includes policy evaluation explanation and remediation details in authorization error responses.
 
 ## How to configure
 
 <Tabs>
+<TabItem value="Core" label="Core">
+
+| **Config file keys** | **Type**  | **Usage**    | **Default** |
+| :------------------- | :-------- | :----------- | :---------- |
+| `show_error_details` | `boolean` | **optional** | `false`     |
+
+### Examples
+
+```yaml
+routes:
+  - from: https://example.com
+    to: https://upstream.internal
+    show_error_details: true
+```
+
+</TabItem>
 <TabItem value="Enterprise" label="Enterprise">
 <EnterpriseConfiguration name="show_error_details" resource="route">
 
@@ -29,5 +45,10 @@ Enable **Show Error Details** on a route in the Console:
 ![Show error details](../branding/img/branding-show-error-details.png)
 
 </EnterpriseConfiguration>
+</TabItem>
+<TabItem value="Kubernetes" label="Kubernetes">
+
+Kubernetes does not support `show_error_details`
+
 </TabItem>
 </Tabs>

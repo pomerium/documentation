@@ -21,6 +21,7 @@ This reference covers all of Pomerium's TLS route settings:
 - [TLS Custom Certificate Authority](#tls-custom-certificate-authority)
 - [TLS Downstream Client Certificate Authority](#tls-downstream-client-certificate-authority)
 - [TLS Downstream Server Name](#tls-downstream-server-name)
+- [TLS Server Name](#tls-server-name)
 - [TLS Skip Verification](#tls-skip-verification)
 - [TLS Upstream Allow Renegotiation](#tls-upstream-allow-renegotiation)
 - [TLS Upstream Server Name](#tls-upstream-server-name)
@@ -39,7 +40,7 @@ For more details, see our [mTLS example repository](https://github.com/pomerium/
 | **YAML**/**JSON** setting | **Type** | **Usage** |
 | :-- | :-- | :-- |
 | `tls_client_cert` and `tls_client_key` | `string` (base64-encoded) | **optional** |
-| `tls_client_cert_file` and `tls_client_key_file` | `string` (base64-encoded) | **optional** |
+| `tls_client_cert_file` and `tls_client_key_file` | `string` (file path) | **optional** |
 
 ### Examples \{#examples-tls-client-certificate}
 
@@ -168,9 +169,9 @@ See Kubernetes [TLS Certificates](/docs/deploy/k8s/ingress#tls-certificates) for
 <Tabs>
 <TabItem value="Core" label="Core">
 
-| **Config file keys** | **Environment variables** | **Type** | **Usage** |
-| :-- | :-- | :-- | :-- |
-| `tls_downstream_server_name` | `TLS_DOWNSTREAM_SERVER_NAME` | `string` | **optional** |
+| **YAML**/**JSON** setting    | **Type** | **Usage**    |
+| :--------------------------- | :------- | :----------- |
+| `tls_downstream_server_name` | `string` | **optional** |
 
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
@@ -185,6 +186,48 @@ Set **TLS Downstream Server Name** in the Console:
 <TabItem value="Kubernetes" label="Kubernetes">
 
 Kubernetes does not support `tls_downstream_server_name`
+
+</TabItem>
+</Tabs>
+
+## TLS Server Name \{#tls-server-name}
+
+**TLS Server Name** overrides the hostname specified in the `to` field for TLS certificate verification and SNI. This is useful when your backend is an HTTPS server with a valid certificate, but you want to communicate with it using an internal hostname (for example, a Docker container name).
+
+If [`tls_upstream_server_name`](#tls-upstream-server-name) is also set, it takes precedence over this setting.
+
+### How to configure \{#how-to-configure-tls-server-name}
+
+<Tabs>
+<TabItem value="Core" label="Core">
+
+| **YAML**/**JSON** setting | **Type** | **Usage**    |
+| :------------------------ | :------- | :----------- |
+| `tls_server_name`         | `string` | **optional** |
+
+### Examples \{#examples-tls-server-name}
+
+```yaml
+tls_server_name: backend.internal.example.com
+```
+
+</TabItem>
+<TabItem value="Enterprise" label="Enterprise">
+
+Configure **TLS Server Name** in the Console under the route TLS settings.
+
+</TabItem>
+<TabItem value="Kubernetes" label="Kubernetes">
+
+| **[Annotation name](/docs/deploy/k8s/ingress#set-ingress-annotations)** | **Type** | **Usage** |
+| :-- | :-- | :-- |
+| `tls_server_name` | `string` | **optional** |
+
+### Examples
+
+```yaml
+ingress.pomerium.io/tls_server_name: 'backend.internal.example.com'
+```
 
 </TabItem>
 </Tabs>
@@ -281,16 +324,18 @@ Kubernetes does not support **TLS Upstream Allow Renegotiation**
 
 ## TLS Upstream Server Name \{#tls-upstream-server-name}
 
-**TLS Upstream Server Name** overrides the hostname specified in the `to` field. If set, this server name will be used to verify the certificate name. This is useful when the backend of your service is a TLS server with a valid certificate, but mismatched name.
+**TLS Upstream Server Name** overrides the hostname specified in the `to` field for TLS certificate verification and SNI. If set, this server name will be used to verify the certificate name. This is useful when the backend of your service is a TLS server with a valid certificate, but mismatched name.
+
+This setting takes precedence over [`tls_server_name`](#tls-server-name) if both are set.
 
 ### How to configure \{#how-to-configure-tls-upstream-server-name}
 
 <Tabs>
 <TabItem value="Core" label="Core">
 
-| **Config file keys** | **Environment variables** | **Type** | **Usage** |
-| :-- | :-- | :-- | :-- |
-| `tls_upstream_server_name` | `TLS_UPSTREAM_SERVER_NAME` | `string` | **optional** |
+| **YAML**/**JSON** setting  | **Type** | **Usage**    |
+| :------------------------- | :------- | :----------- |
+| `tls_upstream_server_name` | `string` | **optional** |
 
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">

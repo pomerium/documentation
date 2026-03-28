@@ -11,38 +11,28 @@ pagination_next: null
 import TabItem from '@theme/TabItem';
 import Tabs from '@theme/Tabs';
 
-import EnterpriseConfiguration from '../../../../src/components/EnterpriseConfiguration';
-
 # Load Balancing Policy Config
 
 ## Summary
 
-When [`lb_policy`](/docs/reference/routes/load-balancing#load-balancing-policy) is configured, **Load Balancing Policy Config** allows you to further customize policy settings with one of the following options:
-
-- `LEAST_REQUEST`
-- `RING_HASH`
-- `MAGLEV`
+Pomerium currently exposes only [`load_balancing_policy`](/docs/reference/routes/load-balancing#load-balancing-policy). Advanced Envoy policy-specific configuration objects such as `least_request_lb_config`, `ring_hash_lb_config`, and `maglev_lb_config` are not currently configurable through route settings or Kubernetes annotations.
 
 ## How to configure
 
 <Tabs>
 <TabItem value="Core" label="Core">
 
-| **Config file keys** | **Type** | **Usage** |
-| :-- | :-- | :-- |
-| [`least_request_lb_config`](https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/cluster/v3/cluster.proto#envoy-v3-api-msg-config-cluster-v3-cluster-leastrequestlbconfig) | `object` | **optional** |
-| [`ring_hash_lb_config`](https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/cluster/v3/cluster.proto#config-cluster-v3-cluster-ringhashlbconfig) | `object` | **optional** |
-| [`maglev_lb_config`](https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/cluster/v3/cluster.proto#envoy-v3-api-msg-config-cluster-v3-cluster-maglevlbconfig) | `object` | **optional** |
+Advanced load balancing policy config is not currently supported in route configuration.
 
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
-<EnterpriseConfiguration name="load_balancing_policy" resource="route" via={["terraform"]} />
+
+Advanced load balancing policy config is not currently configurable in the Console.
+
 </TabItem>
 <TabItem value="Kubernetes" label="Kubernetes">
 
-See Kubernetes [Ingress](/docs/deploy/k8s/ingress#load-balancing) for more information
+Kubernetes does not currently expose these load balancing policy config options.
 
 </TabItem>
 </Tabs>
-
-See [Load Balancing](/docs/capabilities/routing) for example [configurations](/docs/capabilities/routing#load-balancing-method)

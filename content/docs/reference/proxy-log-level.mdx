@@ -2,7 +2,7 @@
 id: proxy-log-level
 title: Proxy Log Level
 description: |
-  Log level sets the logging level for the Pomerium Proxy service.
+  Sets Envoy's logging level for the Pomerium Proxy service.
 keywords:
   - reference
   - Proxy Log Level
@@ -20,7 +20,7 @@ import EnterpriseConfiguration from '../../../src/components/EnterpriseConfigura
 
 ## Summary
 
-**Proxy Log Level** sets the logging level for the Pomerium Proxy service access logs. Only logs of the desired level and above will be logged.
+**Proxy Log Level** sets Envoy's logging level for the Pomerium Proxy service. If unset, Pomerium uses the value of [`log_level`](/docs/reference/log-level).
 
 ## How to configure
 
@@ -29,7 +29,7 @@ import EnterpriseConfiguration from '../../../src/components/EnterpriseConfigura
 
 | **Config file keys** | **Environment variables** | **Type** | **Default** |
 | :-- | :-- | :-- | :-- |
-| `proxy_log_level` | `PROXY_LOG_LEVEL` | `string` | `debug` or value of [`log_level`](/docs/reference/log-level) if set |
+| `proxy_log_level` | `PROXY_LOG_LEVEL` | `string` | value of [`log_level`](/docs/reference/log-level) |
 
 ### Examples
 
@@ -60,7 +60,12 @@ Kubernetes does not support **Proxy Log Level**
 
 ### Options
 
+- `trace`
 - `debug`
 - `info`
-- `warn`
+- `warn` or `warning`
 - `error`
+- `critical`
+- `fatal`
+- `panic`
+- `off`, `none`, or `disabled`

@@ -38,7 +38,7 @@ This reference covers all of Pomerium's **DNS Settings**:
 
 | **Config file keys** | **Environment variables** | **Type** | **Default** |
 | :-- | :-- | :-- | :-- |
-| `dns_failure_refresh_rate` | `DNS_FAILURE_REFRESH_RATE` | `string` ([Go Duration](https://golang.org/pkg/time/#Duration.String) formatting) | `5s` |
+| `dns_failure_refresh_rate` | `DNS_FAILURE_REFRESH_RATE` | `string` ([Go Duration](https://golang.org/pkg/time/#Duration.String) formatting) | none (Envoy default) |
 
 #### Examples
 
@@ -80,11 +80,11 @@ dns:
 #### Examples
 
 ```yaml
-default_lookup_family: AUTO
+dns_lookup_family: AUTO
 ```
 
 ```bash
-DEFAULT_LOOKUP_FAMILY=V6_ONLY
+DNS_LOOKUP_FAMILY=V6_ONLY
 ```
 
 </TabItem>
@@ -110,7 +110,7 @@ dns:
 | **Options** | **Description** |
 | :-- | :-- |
 | `DEFAULT` (Enterprise only) | Defers to configuration settings or default if none specified |
-| `AUTO` | DNS resolver will first perform a lookup for addresses in the IPv6 family and fallback to a lookup for addresses in the IPv4 family |
+| `AUTO` | DNS resolver will perform a lookup using the system's default behavior, which typically attempts resolution for both IPv4 and IPv6 addresses |
 | `V4_ONLY` | DNS resolver will only perform a lookup for addresses in the IPv4 family |
 | `V6_ONLY` | DNS resolver will only perform a lookup for addresses in the IPv6 family |
 | `V4_PREFERRED` | DNS resolver will first perform a lookup for addresses in the IPv4 family and fallback to a lookup for addresses in the IPv6 family |
@@ -129,7 +129,7 @@ See the [Envoy docs](https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/c
 
 | **Config file keys** | **Environment variables** | **Type** | **Default** |
 | :-- | :-- | :-- | :-- |
-| `dns_query_timeout` | `DNS_QUERY_TIMEOUT` | `string` ([Go Duration](https://golang.org/pkg/time/#Duration.String) formatting) | `5s` |
+| `dns_query_timeout` | `DNS_QUERY_TIMEOUT` | `string` ([Go Duration](https://golang.org/pkg/time/#Duration.String) formatting) | none (Envoy default) |
 
 #### Examples
 
@@ -164,9 +164,9 @@ dns:
 <Tabs>
 <TabItem value="Core" label="Core">
 
-| **Config file keys** | **Environment variables** | **Type**  | **Default** |
-| :------------------- | :------------------------ | :-------- | :---------- |
-| `dns_query_tries`    | `DNS_QUERY_TRIES`         | `integer` | `4`         |
+| **Config file keys** | **Environment variables** | **Type** | **Default** |
+| :-- | :-- | :-- | :-- |
+| `dns_query_tries` | `DNS_QUERY_TRIES` | `integer` | none (Envoy default) |
 
 #### Examples
 
@@ -203,7 +203,7 @@ dns:
 
 | **Config file keys** | **Environment variables** | **Type** | **Default** |
 | :-- | :-- | :-- | :-- |
-| `dns_refresh_rate` | `DNS_REFRESH_RATE` | `string` ([Go Duration](https://golang.org/pkg/time/#Duration.String) formatting) | DNS record TTL, or `5s` if not set |
+| `dns_refresh_rate` | `DNS_REFRESH_RATE` | `string` ([Go Duration](https://golang.org/pkg/time/#Duration.String) formatting) | none (respects DNS record TTL) |
 
 #### Examples
 
