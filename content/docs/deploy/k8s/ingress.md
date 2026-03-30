@@ -3,6 +3,7 @@
 
 title: Pomerium Ingress Controller for Kubernetes
 sidebar_label: Ingress Configuration
+description: Configure routes, policies, and TLS settings using the Pomerium Ingress Controller for Kubernetes.
 lang: en-US
 keywords:
   [

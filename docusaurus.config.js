@@ -27,6 +27,18 @@ const config = {
     xgridKey: process.env.XGRID_KEY,
   },
 
+  headTags: [
+    {
+      tagName: 'link',
+      attributes: {
+        rel: 'alternate',
+        type: 'text/plain',
+        href: '/llms.txt',
+        title: 'LLM-readable documentation',
+      },
+    },
+  ],
+
   scripts: [
     {
       src: './static/js/syft.js',
