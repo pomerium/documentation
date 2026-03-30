@@ -171,6 +171,25 @@ mcp_allowed_client_id_domains:
 - Wildcard patterns like `*.example.com` match subdomains (e.g., `app.example.com`) but not the bare domain
 - If a client attempts to use a client ID from a domain not in the allowed list, Pomerium displays a user-friendly error page explaining the restriction, along with the request ID and the attempted client ID for troubleshooting
 
+#### Allowed AS Metadata Domains
+
+When Pomerium performs upstream OAuth discovery (for both auto-discovery and pre-registered credential modes), it fetches metadata documents from URLs that originate in upstream server responses. To protect against SSRF, these URLs are validated against a domain allowlist.
+
+```yaml
+mcp_allowed_as_metadata_domains:
+  - 'accounts.google.com'
+  - '*.oauth-provider.com'
+```
+
+| Setting | Description |
+| --- | --- |
+| `mcp_allowed_as_metadata_domains` | Domains Pomerium may contact during upstream OAuth discovery. This includes `resource_metadata` URLs from `WWW-Authenticate` headers and `authorization_servers` entries from PRM documents. Supports wildcard patterns. |
+
+**What needs to be listed:**
+
+- The route's upstream (`to`) domain is used for PRM fetches and is validated against this list
+- Third-party authorization server domains discovered inside PRM documents (e.g. `accounts.google.com` for Google APIs) must be explicitly added — they cannot be inferred from route config
+
 **Example error scenario:**
 
 If a user tries to authorize with a client ID like `https://untrusted-app.com/oauth/client` and `untrusted-app.com` is not in `mcp_allowed_client_id_domains`, they will see an error page stating:
@@ -195,10 +214,32 @@ mcp:
         token_url: 'https://provider.com/oauth/token'
         auth_style: 'header' # or "params"
       scopes: ['scope1', 'scope2']
+      # Optional: extra query parameters for the authorization URL
+      authorization_url_params:
+        access_type: 'offline' # Google: required for refresh tokens
+        prompt: 'consent' # Google: force re-consent to get new refresh token
 
     # Optional: Maximum request body size (default: 4KiB)
     max_request_bytes: 1048576
+
+    # Optional: Sub-path appended to the upstream URL for the MCP endpoint
+    path: '/mcp'
+
+    # Optional: Fallback AS issuer URL when PRM discovery fails (must be HTTPS)
+    authorization_server_url: 'https://auth.provider.com'
 ```
+
+All `upstream_oauth2` fields are optional. Pomerium uses a unified pipeline that adapts based on what you configure:
+
+| What you provide | What Pomerium does |
+| --- | --- |
+| Everything (`client_id`, `client_secret`, `endpoint`) | Uses your credentials and endpoints directly — no discovery or registration |
+| `client_id` + `client_secret` (no `endpoint`) | Discovers endpoints via [RFC 9728 PRM](https://datatracker.ietf.org/doc/html/rfc9728), uses your credentials — no dynamic registration |
+| Nothing | Full auto-discovery: discovers endpoints, registers as a client via CIMD/DCR, manages the full lifecycle |
+
+`client_secret` is never stored per-user — it is read from the route config at token refresh time.
+
+When using static or pre-registered credentials, set the OAuth app's **redirect/callback URI** to `https://<your-route-from-domain>/.pomerium/mcp/client/oauth/callback`. In auto-discovery mode, this is handled automatically via CIMD or DCR.
 
 ** Tool Call Authorization **
 

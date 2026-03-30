@@ -1,9 +1,9 @@
 ---
-title: "MCP + Upstream OAuth"
-sidebar_label: "MCP + Upstream OAuth"
+title: 'MCP + Upstream OAuth'
+sidebar_label: 'MCP + Upstream OAuth'
 sidebar_position: 2
 lang: en-US
-description: "Bridge MCP servers that have their own authentication — using static OAuth2 credentials or automatic RFC 9728 discovery."
+description: 'Bridge MCP servers that have their own authentication — using static OAuth2 credentials or automatic RFC 9728 discovery.'
 keywords:
   [
     MCP,
@@ -20,14 +20,20 @@ keywords:
 
 # MCP + Upstream OAuth
 
-Many MCP servers require their own authentication — either because they front an upstream API (GitHub, Google Drive, Notion) or because the MCP server itself enforces OAuth. Pomerium manages the entire upstream OAuth flow and token lifecycle so your clients never handle upstream credentials directly.
+Upstream OAuth applies to two scenarios:
 
-Pomerium supports two modes:
+- **Third-party hosted MCP servers** (Notion, Linear, Google) that enforce their own OAuth — Pomerium handles the upstream auth flow so your users authenticate once and tool calls are proxied with valid tokens.
+- **Self-hosted MCP servers** that call upstream APIs under the hood — your server receives a valid upstream access token in the `Authorization: Bearer` header on every proxied request, so it never needs to implement OAuth itself.
 
-- **Static OAuth2** — you register client credentials and endpoints in your route config. Best for upstream APIs where you control the OAuth app registration (GitHub Apps, Google Cloud, etc.).
-- **Auto-discovery** — Pomerium automatically discovers the server's authorization requirements at runtime using [RFC 9728 Protected Resource Metadata](https://datatracker.ietf.org/doc/html/rfc9728). Best for third-party MCP servers that advertise their own OAuth configuration.
+In both cases, external MCP clients only hold a Pomerium-issued token (TE) and never see upstream credentials.
 
-In both modes, your MCP server receives a valid upstream token on every proxied request — no OAuth logic needed on the server side. External clients only hold a Pomerium-issued external token (TE) and never see the upstream token.
+Pomerium uses a unified upstream OAuth pipeline that adapts based on what you configure. The [MCP authorization spec](https://modelcontextprotocol.io/specification/2025-03-26/basic/authorization) defines a priority order for how clients identify themselves to upstream authorization servers:
+
+1. **Pre-registered credentials** — use when the upstream authorization server requires manual app registration and does not support automatic client registration. You supply `client_id` and `client_secret` (and optionally endpoints) in your route config.
+2. **[CIMD](https://datatracker.ietf.org/doc/html/draft-ietf-oauth-client-id-metadata-document)** — the recommended automatic mechanism. Pomerium publishes its client metadata at an HTTPS URL that serves as its `client_id`. The upstream AS fetches metadata on demand.
+3. **[DCR](https://datatracker.ietf.org/doc/html/rfc7591)** — a fallback for authorization servers that support dynamic registration but not CIMD.
+
+When no `upstream_oauth2` config is present, Pomerium tries CIMD first, then falls back to DCR. When `client_id` and `client_secret` are provided, Pomerium uses them directly and skips automatic registration. When endpoints are also provided, Pomerium skips [RFC 9728](https://datatracker.ietf.org/doc/html/rfc9728) discovery as well.
 
 ## Architecture
 
@@ -55,7 +61,7 @@ sequenceDiagram
 
 ## Static OAuth2
 
-Use static OAuth2 when you have pre-registered OAuth credentials for the upstream service.
+Use static OAuth2 when you have pre-registered OAuth credentials and know the provider's endpoints.
 
 ### Configuration
 
@@ -72,10 +78,14 @@ routes:
         upstream_oauth2:
           client_id: xxxxxxxxxxxx
           client_secret: yyyyyyyyy
-          scopes: ["read:user", "user:email"]
+          scopes: ['read:user', 'user:email']
           endpoint:
-            auth_url: "https://github.com/login/oauth/authorize"
-            token_url: "https://github.com/login/oauth/access_token"
+            auth_url: 'https://github.com/login/oauth/authorize'
+            token_url: 'https://github.com/login/oauth/access_token'
+          # Optional: extra query parameters for the authorization URL
+          # authorization_url_params:
+          #   access_type: 'offline'
+          #   prompt: 'consent'
     policy:
       allow:
         and:
@@ -84,7 +94,7 @@ routes:
       deny:
         and:
           - mcp_tool:
-              starts_with: "admin_"
+              starts_with: 'admin_'
 ```
 
 :::warning Experimental Feature
@@ -100,7 +110,7 @@ MCP support is currently an experimental feature only available in the `main` br
 Register an OAuth application with the upstream service. For GitHub:
 
 1. Go to **Settings → Developer settings → OAuth Apps → New OAuth App**
-2. Set the authorization callback URL to your Pomerium authenticate service URL
+2. Set the **authorization callback URL** to `https://<your-route-from-domain>/.pomerium/mcp/client/oauth/callback` — for example, if your route's `from` is `https://github.your-domain.com`, the callback URL is `https://github.your-domain.com/.pomerium/mcp/client/oauth/callback`
 3. Note the **Client ID** and **Client Secret**
 
 For other providers, refer to their OAuth documentation. You need:
@@ -108,6 +118,7 @@ For other providers, refer to their OAuth documentation. You need:
 - `client_id` and `client_secret`
 - `auth_url` and `token_url` endpoints
 - The appropriate `scopes` for your use-case
+- The **redirect/callback URI** set to `https://<your-route-from-domain>/.pomerium/mcp/client/oauth/callback`
 
 #### 2. Configure the route
 
@@ -134,11 +145,54 @@ After both steps, the client receives an external token (TE) and can make tool c
 
 ### Common upstream providers
 
-| Provider | Auth URL                                    | Token URL                                     | Common Scopes                                    |
-| -------- | ------------------------------------------- | --------------------------------------------- | ------------------------------------------------ |
-| GitHub   | `https://github.com/login/oauth/authorize`  | `https://github.com/login/oauth/access_token` | `read:user`, `repo`                              |
-| Google   | `https://accounts.google.com/o/oauth2/auth` | `https://oauth2.googleapis.com/token`         | `https://www.googleapis.com/auth/drive.readonly` |
-| Notion   | `https://api.notion.com/v1/oauth/authorize` | `https://api.notion.com/v1/oauth/token`       | — (configured in integration)                    |
+| Provider | Auth URL | Token URL | Common Scopes |
+| --- | --- | --- | --- |
+| GitHub | `https://github.com/login/oauth/authorize` | `https://github.com/login/oauth/access_token` | `read:user`, `repo` |
+| Google | `https://accounts.google.com/o/oauth2/auth` | `https://oauth2.googleapis.com/token` | `https://www.googleapis.com/auth/drive.readonly` |
+| Notion | `https://api.notion.com/v1/oauth/authorize` | `https://api.notion.com/v1/oauth/token` | — (configured in integration) |
+
+## Pre-Registered Credentials
+
+Use this mode when the upstream authorization server does not support automatic client registration (neither [CIMD](https://datatracker.ietf.org/doc/html/draft-ietf-oauth-client-id-metadata-document) nor [DCR](https://datatracker.ietf.org/doc/html/rfc7591)). You register an OAuth app manually with the provider and supply the credentials in your route config. Pomerium can still discover the authorization and token endpoints automatically via [RFC 9728 PRM](https://datatracker.ietf.org/doc/html/rfc9728) if the upstream advertises them — you only need to provide `endpoint` when it doesn't.
+
+This is the common case for providers like Google Cloud and GitHub, where you must create an OAuth app in their console.
+
+When registering your OAuth app, set the redirect/callback URI to `https://<your-route-from-domain>/.pomerium/mcp/client/oauth/callback`.
+
+### Configuration
+
+{/* spellchecker: disable */}
+
+```yaml
+routes:
+  - from: https://firestore.your-domain.com
+    to: https://firestore.googleapis.com/
+    name: Google Firestore
+    mcp:
+      server:
+        path: /mcp
+        upstream_oauth2:
+          client_id: <your-google-oauth-client-id>
+          client_secret: <your-google-oauth-client-secret>
+          scopes: ['https://www.googleapis.com/auth/datastore']
+          authorization_url_params:
+            access_type: 'offline'
+            prompt: 'consent'
+    policy:
+      allow:
+        and:
+          - domain:
+              is: company.com
+```
+
+{/* spellchecker: enable */}
+
+Note the absence of `endpoint` — Pomerium discovers `accounts.google.com` as the authorization server from the upstream server's [Protected Resource Metadata](https://datatracker.ietf.org/doc/html/rfc9728). You still need to add `accounts.google.com` to `mcp_allowed_as_metadata_domains` since it's a third-party domain not derivable from the route config:
+
+```yaml
+mcp_allowed_as_metadata_domains:
+  - 'accounts.google.com'
+```
 
 ## Auto-Discovery (RFC 9728)
 
@@ -182,10 +236,10 @@ The `mcp.server` block without `upstream_oauth2` tells Pomerium to use auto-disc
 
 **Optional settings:**
 
-| Setting                               | Description                                                               |
-| ------------------------------------- | ------------------------------------------------------------------------- |
-| `mcp.server.path`                     | Sub-path appended to the upstream URL for the MCP endpoint (e.g., `/mcp`) |
-| `mcp.server.authorization_server_url` | Fallback Authorization Server URL if PRM discovery fails. Must be HTTPS.  |
+| Setting | Description |
+| --- | --- |
+| `mcp.server.path` | Sub-path appended to the upstream URL for the MCP endpoint (e.g., `/mcp`) |
+| `mcp.server.authorization_server_url` | Fallback Authorization Server URL if PRM discovery fails. Must be HTTPS. |
 
 **Global settings for auto-discovery:**
 
@@ -194,18 +248,18 @@ Auto-discovery involves fetching metadata documents from URLs that originate in 
 ```yaml
 # Domains allowed to serve Client ID Metadata Documents (CIMD)
 mcp_allowed_client_id_domains:
-  - "vscode.dev"
-  - "*.trusted-provider.com"
+  - 'vscode.dev'
+  - '*.trusted-provider.com'
 
 # Domains allowed for upstream Authorization Server and Protected Resource Metadata fetches
 mcp_allowed_as_metadata_domains:
-  - "auth.example.com"
-  - "*.oauth-provider.com"
+  - 'auth.example.com'
+  - '*.oauth-provider.com'
 ```
 
-| Setting                           | Description                                                                                                                                                                                                       |
-| --------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `mcp_allowed_client_id_domains`   | Domains that may serve Client ID Metadata Documents. Required when MCP clients use URL-based client IDs. Supports wildcards (e.g. `*.example.com`).                                                               |
+| Setting | Description |
+| --- | --- |
+| `mcp_allowed_client_id_domains` | Domains that may serve Client ID Metadata Documents. Required when MCP clients use URL-based client IDs. Supports wildcards (e.g. `*.example.com`). |
 | `mcp_allowed_as_metadata_domains` | Domains Pomerium may contact during upstream OAuth discovery — this includes `resource_metadata` URLs from `WWW-Authenticate` headers and `authorization_servers` entries from PRM documents. Supports wildcards. |
 
 ### Step-by-step
