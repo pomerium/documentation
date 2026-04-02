@@ -74,6 +74,11 @@
     "title": "Authorize Service URL",
     "type": "URL"
   },
+  "auto-apply-changesets": {
+    "id": "auto-apply-changesets",
+    "description": "auto_apply_changesets controls whether or not changesets are automatically\napplied or require an adminstrator to apply them. This setting is\ncurrently only used in Pomerium Zero.",
+    "type": "bool"
+  },
   "autocert": {
     "description": "Turning on autocert allows Pomerium to automatically retrieve, manage, and renew public facing TLS certificates from Lets Encrypt.",
     "id": "autocert",
@@ -1040,20 +1045,20 @@
     "title": "Manage Devices"
   },
   "mcp-allowed-as-metadata-domains": {
-    "description": "Domains Pomerium may contact during upstream OAuth discovery. Includes resource_metadata URLs from WWW-Authenticate headers and authorization_servers entries from PRM documents. Supports wildcard patterns.",
+    "description": "mcp_allowed_as_metadata_domains specifies the allowed domains for upstream AS/PRM metadata URLs.\nSupports wildcard patterns like \"*.example.com\".\nThis restricts which domains Pomerium will contact during upstream OAuth discovery.",
     "id": "mcp-allowed-as-metadata-domains",
     "path": "/../capabilities/mcp/reference#allowed-as-metadata-domains",
     "services": [],
     "title": "MCP Allowed AS Metadata Domains",
-    "type": "array of strings"
+    "type": "array of string"
   },
   "mcp-allowed-client-id-domains": {
-    "description": "List of allowed domain patterns for MCP client ID metadata URLs. Supports wildcard patterns (e.g., *.example.com). Required when using URL-based client IDs.",
+    "description": "mcp_allowed_client_id_domains specifies the allowed domains for MCP client ID metadata URLs.\nSupports wildcard patterns like \"*.example.com\".\nThis is REQUIRED when MCP is enabled - client metadata fetching will fail if empty.",
     "id": "mcp-allowed-client-id-domains",
     "path": "/../capabilities/mcp/reference#allowed-client-id-domains",
     "services": [],
     "title": "MCP Allowed Client ID Domains",
-    "type": "array of strings"
+    "type": "array of string"
   },
   "mcp-server-authorization-server-url": {
     "description": "Fallback Authorization Server URL used when RFC 9728 PRM discovery fails. Must be HTTPS.",
@@ -1097,6 +1102,13 @@
     "title": "MCP Server Upstream OAuth2 Authentication URL",
     "type": "string"
   },
+  "mcp-server-upstream-oauth2-authorization-url-params": {
+    "description": "Extra query parameters appended to the OAuth authorization URL (e.g., access_type, prompt, audience).",
+    "id": "mcp-server-upstream-oauth2-authorization-url-params",
+    "path": "/../capabilities/mcp/reference#mcp-server-configuration",
+    "title": "MCP Server Upstream OAuth2 Authorization URL Params",
+    "type": "map of strings"
+  },
   "mcp-server-upstream-oauth2-client-id": {
     "description": "OAuth client identifier issued by the upstream provider.",
     "id": "mcp-server-upstream-oauth2-client-id",
@@ -1110,13 +1122,6 @@
     "path": "/../capabilities/mcp/reference#mcp-server-configuration",
     "title": "MCP Server Upstream OAuth2 Client Secret",
     "type": "string"
-  },
-  "mcp-server-upstream-oauth2-authorization-url-params": {
-    "description": "Extra query parameters appended to the OAuth authorization URL (e.g., access_type, prompt, audience).",
-    "id": "mcp-server-upstream-oauth2-authorization-url-params",
-    "path": "/../capabilities/mcp/reference#mcp-server-configuration",
-    "title": "MCP Server Upstream OAuth2 Authorization URL Params",
-    "type": "map of strings"
   },
   "mcp-server-upstream-oauth2-scopes": {
     "description": "OAuth scopes to request from the provider (e.g., read:user, user:email).",
