@@ -256,6 +256,8 @@ const config = {
         id: process.env.GTM,
       },
     ],
+    // Branch deploys default to disallow; release branches rewrite robots.txt.
+    require.resolve('./plugins/robots-txt-plugin'),
     // Generate llms.txt file for LLM consumption
     require.resolve('./plugins/llms-txt-plugin'),
     // async function customPlugin(context, opts) {
