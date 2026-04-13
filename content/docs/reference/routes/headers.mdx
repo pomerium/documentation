@@ -117,6 +117,21 @@ ingress.pomerium.io/host_rewrite: 'example.com'
 </TabItem>
 </Tabs>
 
+### Original Host Header \{#original-host-header}
+
+When host rewrite is active, Pomerium adds an `x-pomerium-original-host` header to upstream requests containing the pre-rewrite `Host`/`:authority` value. This applies to the default `auto_host_rewrite` behavior as well as explicit `host_rewrite`, `host_rewrite_header`, and `host_path_regex_rewrite` settings.
+
+This header is not added when [`preserve_host_header`](#1-preserve-host-header) is enabled, because the `Host` header is not being rewritten.
+
+The header value matches the client's original `Host` exactly, including port if present (e.g. `app.example.com:8443`). Pomerium overwrites any client-sent `x-pomerium-original-host` value, so upstream services can trust it.
+
+To remove this header, add it to [`remove_request_headers`](#remove-request-headers):
+
+```yaml
+remove_request_headers:
+  - x-pomerium-original-host
+```
+
 ## Set Request Headers \{#set-request-headers}
 
 **Set Request Headers** allows you to set both static and dynamic values for given request headers. Static values can be useful if you want to pass along additional information to upstream applications as headers, or to set a fixed authentication header on the request.
