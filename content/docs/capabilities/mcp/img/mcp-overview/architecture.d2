@@ -1,0 +1,104 @@
+# Pomerium MCP Gateway — Inside the Gateway
+#
+# Regenerate:  d2 architecture.d2 architecture.svg
+
+direction: right
+
+vars: {
+  d2-config: {
+    pad: 40
+  }
+}
+
+classes: {
+  endpoint: {
+    # Transparent rectangle so arrows stop short of the text label
+    shape: rectangle
+    width: 260
+    height: 100
+    style: {
+      fill: transparent
+      stroke: transparent
+      font-size: 40
+      bold: true
+      font-color: "#0F172A"
+    }
+  }
+  capability: {
+    shape: rectangle
+    width: 280
+    height: 90
+    style: {
+      fill: "#FFFFFF"
+      stroke: "#6F43E7"
+      stroke-width: 2
+      border-radius: 12
+      font-size: 28
+      bold: true
+      font-color: "#2E1065"
+    }
+  }
+}
+
+clients: "MCP Clients" {
+  class: endpoint
+}
+
+pomerium: "Pomerium Gateway" {
+  grid-columns: 3
+  grid-gap: 32
+
+  style: {
+    fill: "#F3EEFF"
+    stroke: "#6F43E7"
+    stroke-width: 4
+    border-radius: 22
+    font-size: 44
+    bold: true
+    font-color: "#2E1065"
+    shadow: true
+  }
+
+  # Column-major fill: [col1-top, col1-bottom, col2-top, col2-bottom, col3-top, col3-bottom]
+  signon: "Single Sign-On" {
+    class: capability
+  }
+
+  audit: "Audit Logs" {
+    class: capability
+  }
+
+  policies: "Access Policies" {
+    class: capability
+  }
+
+  toolperm: "Tool Permissions" {
+    class: capability
+  }
+
+  proxy: "Secure Proxy" {
+    class: capability
+  }
+
+  tunnels: "Dev Tunnels" {
+    class: capability
+  }
+}
+
+servers: "MCP Servers" {
+  class: endpoint
+}
+
+clients <-> pomerium {
+  style: {
+    stroke: "#475569"
+    stroke-width: 3
+  }
+}
+
+pomerium <-> servers {
+  style: {
+    stroke: "#475569"
+    stroke-width: 3
+  }
+}
