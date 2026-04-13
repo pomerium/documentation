@@ -117,6 +117,21 @@ ingress.pomerium.io/host_rewrite: 'example.com'
 </TabItem>
 </Tabs>
 
+### Original Host Header \{#original-host-header}
+
+When host rewrite is active, Envoy appends the original `Host`/`:authority` value to the standard `x-forwarded-host` header. This applies to the default `auto_host_rewrite` behavior as well as explicit `host_rewrite`, `host_rewrite_header`, and `host_path_regex_rewrite` settings.
+
+This header is not appended when [`preserve_host_header`](#1-preserve-host-header) is enabled, because the `Host` header is not being rewritten.
+
+The forwarded value matches the client's original `Host` exactly, including port if present (for example, `app.example.com:8443`). If `x-forwarded-host` is already present, Envoy appends the original host value when it differs from the last value already in the header.
+
+To remove this header, add it to [`remove_request_headers`](#remove-request-headers):
+
+```yaml
+remove_request_headers:
+  - x-forwarded-host
+```
+
 ## Set Request Headers \{#set-request-headers}
 
 **Set Request Headers** allows you to set both static and dynamic values for given request headers. Static values can be useful if you want to pass along additional information to upstream applications as headers, or to set a fixed authentication header on the request.
