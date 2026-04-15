@@ -23,17 +23,7 @@ keywords:
 
 This guide is a concrete walkthrough of [MCP bridging](/docs/capabilities/mcp#mcp-bridging): fronting a third-party hosted MCP server with Pomerium Zero so your team can use it under your SSO.
 
-:::info Example upstream: Linear
-
-Throughout this guide we use [Linear's](https://linear.app) hosted MCP server (`https://mcp.linear.app/mcp`) as the example upstream to make the steps, policies, and screenshots concrete. The same pattern works unchanged for any provider that advertises OAuth metadata via [RFC 9728](https://datatracker.ietf.org/doc/html/rfc9728). Swap the `to` URL, metadata domain, and tool names and you're done.
-
-Another provider we've tested this pattern with is the [GitHub MCP server](https://github.com/github/github-mcp-server). GitHub's hosted MCP endpoint (`https://api.githubcopilot.com/mcp/`) advertises its authorization metadata via RFC 9728, so the same auto-discovery flow used for Linear applies: set `to: https://api.githubcopilot.com/mcp/`, add `api.githubcopilot.com` to **Allowed As Metadata Domains**, and attach your policy. No manual OAuth app registration required.
-
-For providers that require pre-registered OAuth credentials (Google and most enterprise SaaS), see the [static-credentials variant](/docs/capabilities/mcp/mcp-upstream-oauth#pre-registered-credentials) instead.
-
-:::
-
-You'll stand up a Pomerium Zero route that fronts the upstream's MCP endpoint, then use your existing identity provider to gate who can connect, which workspace their tokens come from, and which tools the agent is allowed to call.
+We'll use [Linear's](https://linear.app) remote MCP server (`https://mcp.linear.app/mcp`) for this guide so the steps, policies, and screenshots stay concrete. You'll stand up a Pomerium Zero route in front of the Linear remote MCP server, then use your existing identity provider to gate who can connect, which workspace their tokens come from, and which tools the agent is allowed to call.
 
 ## What this guide does
 
