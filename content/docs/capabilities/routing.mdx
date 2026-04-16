@@ -420,7 +420,7 @@ routes:
       - http://myapp-srv-5:8080,10
 ```
 
-### Route matching order
+### Route Matching Order
 
 Pomerium matches routes in a specific order; an incoming request will be sent to the first route that matches.
 
@@ -447,6 +447,21 @@ If Pomerium receives a request to access `https://a.example.com:8080`, Pomerium 
   to: http://example:8080
   allow_any_authenticated_user: true
 ```
+
+### Advanced
+
+#### Allow Upgrades
+
+If set, enable proxying of an HTTP upgrade request and its payload. This option takes a list of strings and can be set both at the global level for all routes and for a specific route (in which case it overrides the global option).
+
+```yaml
+allow_upgrades:
+  - custom-upgrade-type
+  - websocket
+  - spdy/3.1
+```
+
+Using `websocket` is equivalent to enabling the `allow_websockets` option and `spdy/3.1` is equivalent to enabling the `allow_spdy` option.
 
 ## Certificates
 
