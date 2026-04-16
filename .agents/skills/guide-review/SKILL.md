@@ -118,6 +118,18 @@ When a guide needs diagrams, follow these rules:
 
 If Excalidraw MCP is not enabled for your account, enable it before generating non-swim-lane diagrams. Mermaid is an acceptable fallback only when Excalidraw is unavailable.
 
+## Screenshots
+
+When creating a guide, capture relevant screenshots of Pomerium Zero as you navigate through the steps the guide describes. Screenshots ground abstract instructions in what the user will actually see and are especially valuable for UI-heavy flows.
+
+**How to capture screenshots:** Guide creation most commonly happens in Claude.ai or the Claude Code desktop app (Cowork), where Pomerium Zero is navigated via the Claude browser extension. Although the browser extension can take screenshots, those screenshots are confined to the browser sandbox and cannot be written to the repository. Use the **Chrome DevTools MCP** instead which you have access to — it captures screenshots outside the sandbox and allows them to be placed directly in the guide's `img/` directory.
+
+- Place screenshots in the guide's `img/{guide-name}/` directory alongside any diagrams, for example `content/docs/guides/img/grafana/`.
+- Use descriptive, lowercase, hyphenated filenames that match the step they illustrate, for example `route-config-tls-settings.png`.
+- Crop screenshots to the relevant UI area. Avoid full-browser captures that bury the relevant element in surrounding UI noise.
+- After placing a screenshot, reference it in the guide with a descriptive `alt` attribute.
+- If the Chrome DevTools MCP is not available, note where screenshots should go and describe what each should show so they can be added in a follow-up pass.
+
 ## Pre-publish validation
 
 After drafting or revising a guide, run these checks before marking it publish-ready:
