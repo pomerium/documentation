@@ -132,7 +132,7 @@ The Zero Console has three distinct settings surfaces you'll touch in this guide
 | Where | What it controls | Used in |
 | --- | --- | --- |
 | **Settings → MCP** (cluster-wide) | Server-Side Request Forgery (SSRF) allowlists for OAuth metadata discovery (the **Allowed As Metadata Domains** and **Allowed Client ID Domains** subsections) | Step 1 |
-| **Route editor → Advanced tab → MCP panel** (per route) | Route-level MCP properties (server vs. client mode, pre-registered upstream credentials) | Step 2 (read-only for this guide) |
+| **Route editor → Advanced tab → MCP panel** (per route) | Route-level MCP properties (server vs. client mode, path the MCP server is served at, pre-registered upstream credentials) | Step 2 |
 | **Settings → Logging** (cluster-wide) | Access and authorize log field selection, including the MCP-specific `mcp-method`, `mcp-tool`, and `mcp-tool-parameters` fields | Step 4 |
 
 :::
@@ -168,11 +168,11 @@ In the Zero Console, go to **Routes → New Route**. On the **General** tab, fil
 
 Click **Save Route**. The route will show up with **Assigned: None**. That's expected until you attach a policy.
 
-Because you selected **Route Type: MCP**, Pomerium treats this as an MCP server route by default. If you want to inspect or change the MCP-specific properties (for example, switch from server mode to client mode, or provide pre-registered upstream OAuth credentials), open the route, go to the **Advanced** tab, and expand the **MCP** panel. For this Linear bridge you don't need to touch anything there; the defaults are correct.
-
 ![Route editor General tab for the Linear MCP route, showing Route Type MCP, From linear.civil-pony-4582.pomerium.app, To https://mcp.linear.app, and the Pomerium Team policy attached](./img/mcp-bridge/route-linear-mcp-general.png)
 
-The absence of an `upstream_oauth2` block is deliberate: it tells Pomerium to use [auto-discovery](/docs/capabilities/mcp/mcp-upstream-oauth#auto-discovery-rfc-9728). Pomerium will register itself with Linear via a [Client ID Metadata Document (CIMD)](/docs/capabilities/mcp/mcp-upstream-oauth#auto-discovery-rfc-9728) on the first connection and cache the client registration.
+After saving, open the route again and go to **Advanced → MCP**. Set **Path** to `/mcp` (Linear's MCP endpoint) and leave everything else at its defaults. That's enough to enable [auto-discovery](/docs/capabilities/mcp/mcp-upstream-oauth#auto-discovery-rfc-9728): Pomerium registers itself with Linear via a [Client ID Metadata Document (CIMD)](/docs/capabilities/mcp/mcp-upstream-oauth#auto-discovery-rfc-9728) on the first connection and caches the registration.
+
+![Route editor Advanced tab MCP panel for the Linear MCP route, showing Server mode selected, Upstream OAuth2 Properties toggled off, and Path set to /mcp](./img/mcp-bridge/route-advanced-mcp-panel.png)
 
 ### 3. Create and attach an authorization policy
 
@@ -261,7 +261,7 @@ In the MCP Inspector, after clicking **Connect**, you should:
 - Then be redirected to a Linear **Authorize** screen listing Pomerium as the client and showing the requested scopes.
 - Then land back in the Inspector with a green **Connected** status on the connection banner.
 
-If you see the IdP sign-in but Linear's consent screen never appears, the route isn't actually saved as an MCP server route. Re-open the route in the Zero Console and confirm **Route Type: MCP** on the General tab and an `mcp: { server: {} }` block in the PPL Editor. A route saved without Route Type MCP will proxy to Linear but won't trigger the bridging handshake. The other common cause is `mcp.linear.app` missing from the **Allowed As Metadata Domains** subsection under **Settings → MCP** (step 1).
+If you see the IdP sign-in but Linear's consent screen never appears, the route isn't fully configured as an MCP server route. Re-open the route in the Zero Console and confirm **Route Type: MCP** is set on the General tab and that **Advanced → MCP** matches the screenshot in step 2 (Server mode, Path `/mcp`, Upstream OAuth2 Properties off). A route without Route Type MCP will proxy to Linear but won't trigger the bridging handshake, and a missing or wrong Path will break the MCP discovery Pomerium advertises back to clients. The other common cause is `mcp.linear.app` missing from the **Allowed As Metadata Domains** subsection under **Settings → MCP** (step 1).
 
 ### Checkpoint 3: `tools/list` returns Linear tools
 
