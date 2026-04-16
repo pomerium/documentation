@@ -13,10 +13,12 @@ Recommended canonical structure:
 7. Verify the setup
 8. Common failure modes
 9. Security considerations
-10. Operations, rollback, and cleanup
+10. Operations, rollback, and cleanup (conditional — see below)
 11. Next steps and related guides
 
 Not every guide will need the same depth in every section, but the structure should remain stable unless there is a strong reason not to.
+
+**Section 10 is conditional.** An Operations, rollback, and cleanup section is only expected when the guide installs, pins, or directly operates a Pomerium component whose version or lifecycle the reader controls, or otherwise produces long-lived artifacts (credentials, infrastructure, binaries, charts, operators) that the reader must later maintain, rotate, or remove by hand. Guides that only configure a managed control plane (for example, Pomerium Zero route/policy/settings changes) — where the control plane pushes changes automatically and a rollback is just editing the same config back — do not need a dedicated Operations section and should not be penalized for omitting it.
 
 ---
 
@@ -78,25 +80,35 @@ Not every guide will need the same depth in every section, but the structure sho
 
 **Weight:** 2x **Question:** Does the guide state the tools, permissions, versions, dependencies, and assumptions required before starting?
 
+**Baseline prerequisite (always required):** Every guide must list a **working Pomerium cluster in Pomerium Zero** as a prerequisite and link to the [Quickstart](/docs/get-started/quickstart) so readers without a cluster have a one-click path to get there. Phrase it as something a reviewer can grep for, for example:
+
+> - A working Pomerium Zero cluster. If you don't have one, follow the [Quickstart](/docs/get-started/quickstart) first.
+
+A guide that omits this baseline prereq fails this dimension and cannot score above 1 regardless of the rest of the prerequisites section. Self-hosted / Core-only guides may substitute a link to the appropriate [Deploy](/docs/deploy) page, but still must explicitly state that a running Pomerium cluster is required.
+
 ### 0 - Missing
 
 - No prerequisites or assumptions listed
+- Baseline Pomerium Zero cluster prereq missing
 
 ### 1 - Weak
 
 - Some prerequisites mentioned
 - Versions, access levels, accounts, DNS/TLS assumptions, or dependencies are incomplete
+- Baseline cluster prereq implied but not explicit, or missing the Quickstart link
 
 ### 2 - Good
 
 - Tools, accounts, permissions, and key environment assumptions are listed
 - Important dependencies are stated before steps begin
+- Baseline cluster prereq is present and links to the Quickstart (or an equivalent deploy page for self-hosted guides)
 
 ### 3 - Excellent
 
 - Prerequisites are complete, specific, and ordered
 - Includes versions or tested ranges where relevant
 - Identifies required permissions, platform assumptions, DNS/TLS expectations, and prerequisite setup the reader must already have
+- Baseline cluster prereq is present and links to the Quickstart (or an equivalent deploy page for self-hosted guides)
 
 ---
 
@@ -233,9 +245,11 @@ Not every guide will need the same depth in every section, but the structure sho
 
 **Weight:** 1x **Question:** Can the reader maintain, roll back, or remove what they built?
 
+**Applicability note:** This dimension — including upgrade, rollback, cleanup, credential rotation, and maintenance guidance — is only expected when the guide installs, pins, or directly operates a Pomerium component whose version or lifecycle the reader controls, or otherwise produces long-lived artifacts (binaries, charts, operators, credentials, infrastructure) that the reader must later maintain, rotate, or remove by hand. Guides that only configure a managed control plane (for example, Pomerium Zero route/policy/settings changes) — where the control plane pushes changes automatically and "rollback" is just editing the same config back — are **not applicable (N/A)** for this dimension and should not be penalized. Mark the dimension N/A in the review worksheet and exclude it from the total (adjust the denominator accordingly, or treat it as the maximum weighted score of 3).
+
 ### 0 - Missing
 
-- No upgrade, rollback, cleanup, or maintenance guidance
+- No rollback, cleanup, or maintenance guidance where such guidance is applicable
 
 ### 1 - Weak
 
@@ -245,11 +259,12 @@ Not every guide will need the same depth in every section, but the structure sho
 ### 2 - Good
 
 - Includes rollback or cleanup path
-- Notes at least one maintenance or upgrade concern
+- Notes at least one maintenance concern (or one upgrade concern, where upgrades are applicable)
 
 ### 3 - Excellent
 
-- Covers upgrades, rollback, cleanup, credential rotation impact, and useful observability or logging checks
+- Covers rollback, cleanup, credential rotation impact, and useful observability or logging checks
+- Covers upgrades where applicable (see applicability note)
 - Sets reader up for real operation, not just one-time setup
 
 ---
@@ -257,6 +272,10 @@ Not every guide will need the same depth in every section, but the structure sho
 ## 10. Maintainability + Scanability
 
 **Weight:** 1x **Question:** Is the guide easy to scan, extract, update, and keep correct over time?
+
+**Style rules (hard fail):** Prose must not contain em dashes (`—`) or en dashes (`–`), and the guide must not contain emojis (decorative, status, or bullets — ✅ ❌ ⚠️ 🎉 🚀 💡 and similar). Use plain punctuation and Docusaurus admonitions (`:::note`, `:::tip`, `:::warning`, `:::danger`, `:::info`) instead. Code, config, CLI output, and quoted external content are exempt. A guide that violates either rule is not publish-ready regardless of its score on this dimension.
+
+**Acronym rule (hard fail):** Every acronym must be expanded on first use in the guide, formatted as full term followed by the acronym in parentheses (for example, `Pomerium Policy Language (PPL)`). Widely-understood internet-infrastructure acronyms (HTTP, HTTPS, URL, TLS, DNS, IP, JSON, YAML, API, SDK, CLI, UI, OS, SSO, OAuth, OIDC, SAML, JWT, CSV, PDF, CDN, SaaS, CI, CD, SQL, REST, RFC, and similar) are exempt. Product-specific or guide-local acronyms (for example TE, TI, AS, PRM, DCR, CIMD, PPL, IdP, SIEM, MCP) are not exempt. For long guides, reintroduce the full form at least once per major section, or substitute a descriptive noun (for example "the cached upstream token" instead of "the cached TI") so that readers who land mid-page are not forced to scroll back to the definition.
 
 ### 0 - Missing
 
@@ -289,7 +308,7 @@ To improve consistency across the full guides set, standardize these across all 
 - Reusable verification callout pattern
 - Reusable troubleshooting table format
 - Reusable security caveats section
-- Reusable operations footer with rollback and cleanup
+- Reusable operations footer with rollback and cleanup (for guides where Operations + Lifecycle Management is applicable — see dimension 9)
 - "Last tested with" metadata where third-party integrations are involved
 - Clear moved/deprecated labeling in the guides index and page body
 
@@ -305,7 +324,9 @@ Before marking a guide ready for review:
 - Verification exists for critical steps
 - At least 3 troubleshooting entries are included
 - At least 2 security caveats are included
-- Rollback or cleanup guidance exists
+- Rollback or cleanup guidance exists (where applicable — see dimension 9)
 - The expected end state is explicit
 - The guide helps the reader decide whether to use this pattern
 - The guide can be skimmed without losing the implementation flow
+- No em dashes (`—`) or en dashes (`–`) in prose, and no emojis anywhere in the guide (see dimension 10 style rules)
+- Every product-specific or guide-local acronym is expanded on first use (see dimension 10 acronym rule)
