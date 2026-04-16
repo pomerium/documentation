@@ -174,15 +174,15 @@ If you skip this step, the first client connection will fail with a log line lik
 
 In the Zero Console, go to **Routes → New Route**. On the **General** tab, fill in:
 
-| Field | Value |
-| --- | --- |
-| Route Type | Set to `MCP` |
-| Name | `Linear MCP` |
-| From → Protocol | `https://` |
-| From → Host | `linear.mcp.<your-cluster>.pomerium.app` |
-| To | `https://mcp.linear.app/mcp` |
-| Policies | leave empty for now; you'll attach one in step 3 |
-| Pass Identity Headers | leave default |
+| Field                 | Value                                            |
+| --------------------- | ------------------------------------------------ |
+| Route Type            | Set to `MCP`                                     |
+| Name                  | `Linear MCP`                                     |
+| From → Protocol       | `https://`                                       |
+| From → Host           | `linear.mcp.<your-cluster>.pomerium.app`         |
+| To                    | `https://mcp.linear.app/mcp`                     |
+| Policies              | leave empty for now; you'll attach one in step 3 |
+| Pass Identity Headers | leave default                                    |
 
 Click **Save Route**. The route will show up with **Assigned: None**. That's expected until you attach a policy.
 
@@ -245,7 +245,7 @@ Once this domain-only policy is working, see [Limit MCP Tool Calling](/docs/capa
 
 ### 4. Enable MCP-aware audit logging
 
-In **Settings → Logging**, scroll to **Authorize Log Fields**, select **Custom Logged Fields**, and check at least the fields below. The MCP-specific entries (`mcp-method`, `mcp-tool`, and `mcp-tool-parameters`) are the reason this step matters: without them, your authorize logs record that a request happened but not *which tool was called* or *with what arguments*.
+In **Settings → Logging**, scroll to **Authorize Log Fields**, select **Custom Logged Fields**, and check at least the fields below. The MCP-specific entries (`mcp-method`, `mcp-tool`, and `mcp-tool-parameters`) are the reason this step matters: without them, your authorize logs record that a request happened but not _which tool was called_ or _with what arguments_.
 
 ```yaml
 authorize_log_fields:
@@ -328,7 +328,7 @@ You should see a log entry like:
   "email": "you@your-company.com",
   "mcp-method": "tools/call",
   "mcp-tool": "issue_search",
-  "mcp-tool-parameters": { "query": "oncall" },
+  "mcp-tool-parameters": {"query": "oncall"},
   "allow-why-true": ["domain-ok", "mcp-tool-ok"],
   "allow-why-false": []
 }
@@ -357,7 +357,7 @@ For a blocked call (try `issue_delete`), the same entry should show `"allow-why-
 - **Put destructive tools under `deny`, not behind an honor system.** Linear exposes tools that delete issues, archive projects, and manage workspace membership. A model that hallucinates an argument can call those tools just as readily as a useful one. When you add a [tool-restriction policy](/docs/capabilities/mcp/limit-mcp-tools), block `issue_delete`, `project_delete`, `comment_delete`, and anything else whose loss you can't easily recover from, and apply that block globally (including to privileged groups) unless you have a specific reason to relax it.
 - **Audit, don't trust.** Enable the `mcp-tool` and `mcp-method` [audit log](/docs/capabilities/audit-logs) fields from step 4 and route them to wherever your team already aggregates security-relevant logs. That could be a [Security Information and Event Management (SIEM)](https://en.wikipedia.org/wiki/Security_information_and_event_management) platform like Splunk or Elastic Security, an observability backend like Grafana (Loki for the log fields, Tempo for the [OTel traces](/docs/reference/tracing) Pomerium already emits), or a combined platform like Datadog or Honeycomb. Every tool call is attributed to the end user's email, not to a service credential, which is the whole point of bridging, and it only pays off if the logs actually land somewhere searchable.
 - **Secrets: there are none to store, but the CIMD registration is still state.** Auto-discovery uses CIMD, so there's no `client_secret` to rotate for the Linear bridge. The client registration Pomerium negotiates with Linear is cached in the databroker and reused across restarts. That's another reason the persistent-backend prerequisite matters. If you ever switch to pre-registered credentials for another provider, store the secret in your config management or secret manager and limit who can read it. See the [MCP + Upstream OAuth](/docs/capabilities/mcp/mcp-upstream-oauth#static-oauth2) reference for the static-credential variant.
-- **Rotating upstream tokens means clearing databroker state, not just revoking in Linear.** Each user's Linear access + refresh token is cached server-side in the databroker. Revoking the user in Linear will prevent future refreshes from succeeding, but the currently cached access token will continue to work until it expires. If you need to forcibly cut a user off immediately (for example during offboarding), revoke them in Linear *and* remove the user's session from Pomerium so the cached TI is no longer associated with any valid Pomerium session.
+- **Rotating upstream tokens means clearing databroker state, not just revoking in Linear.** Each user's Linear access + refresh token is cached server-side in the databroker. Revoking the user in Linear will prevent future refreshes from succeeding, but the currently cached access token will continue to work until it expires. If you need to forcibly cut a user off immediately (for example during offboarding), revoke them in Linear _and_ remove the user's session from Pomerium so the cached TI is no longer associated with any valid Pomerium session.
 - **Domain allowlists are an SSRF control.** `mcp_allowed_as_metadata_domains` and `mcp_allowed_client_id_domains` exist to prevent a malicious upstream response from pointing Pomerium at an arbitrary host. Keep them narrow, one provider at a time.
 - **TLS is non-optional.** The `from` URL must be HTTPS; Pomerium Zero handles this automatically for `*.<cluster>.pomerium.app` and for custom domains configured per [Custom Domains](/docs/capabilities/custom-domains).
 
