@@ -1,0 +1,26 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "hooks": [
+          {
+            "command": "yarn format \"$CLAUDE_TOOL_INPUT_FILE_PATH\"",
+            "type": "command"
+          },
+          {
+            "command": "yarn cspell \"$CLAUDE_TOOL_INPUT_FILE_PATH\"",
+            "type": "command"
+          }
+        ],
+        "if": "*.{md,mdx}",
+        "matcher": "Write|Edit"
+      }
+    ]
+  },
+  "mcpServers": {
+    "chrome-devtools": {
+      "args": ["@anthropic-ai/mcp-chrome-devtools@latest"],
+      "command": "npx"
+    }
+  }
+}
