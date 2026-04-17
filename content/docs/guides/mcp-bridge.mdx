@@ -48,7 +48,7 @@ Use a different blueprint when:
 | --- | --- |
 | Expose your own internal MCP server (no upstream OAuth) | [Protect an MCP Server](/docs/capabilities/mcp/protect-mcp-server) |
 | Bridge a provider that requires you to manually register an OAuth app (Google Workspace, most enterprise SaaS) | [MCP + Upstream OAuth: pre-registered credentials](/docs/capabilities/mcp/mcp-upstream-oauth#pre-registered-credentials) |
-| Let an LLM backend (OpenAI, Anthropic) call MCP servers on a user's behalf | [Delegate MCP Access to an LLM](/docs/capabilities/mcp/delegate-mcp-to-llm) |
+| Let a large language model (LLM) backend (OpenAI, Anthropic) call MCP servers on a user's behalf | [Delegate MCP Access to an LLM](/docs/capabilities/mcp/delegate-mcp-to-llm) |
 | Run your own internal MCP server that calls an upstream API (e.g. internal service → GitHub REST) and want Pomerium to inject the upstream OAuth token | [MCP + Upstream OAuth](/docs/capabilities/mcp/mcp-upstream-oauth) (same bridging machinery; just point `to:` at your own server) |
 
 ## Who this is for
@@ -118,7 +118,7 @@ Subsequent calls skip everything from the `401` down to OAuth consent. Pomerium 
 **Trust boundaries to keep in mind:**
 
 - The MCP client trusts Pomerium's certificate on the `from` host. It has no direct relationship with Linear.
-- Pomerium trusts Linear's authorization server metadata at `mcp.linear.app`. That host must be explicitly allowed in the **Allowed As Metadata Domains** subsection of **Settings → MCP** (step 1).
+- Pomerium trusts Linear's authorization server (AS) metadata at `mcp.linear.app`. That host must be explicitly allowed in the **Allowed AS Metadata Domains** subsection of **Settings → MCP** (step 1).
 - Linear's OAuth consent screen is the only place a user can scope down what Pomerium is allowed to see. If a user has read-only Linear access, the cached upstream token will too.
 
 ## Step-by-step implementation
@@ -131,7 +131,7 @@ The Zero Console has three distinct settings surfaces you'll touch in this guide
 
 | Where | What it controls | Used in |
 | --- | --- | --- |
-| **Settings → MCP** (cluster-wide) | Server-Side Request Forgery (SSRF) allowlists for OAuth metadata discovery (the **Allowed As Metadata Domains** and **Allowed Client ID Domains** subsections) | Step 1 |
+| **Settings → MCP** (cluster-wide) | Server-Side Request Forgery (SSRF) allowlists for OAuth metadata discovery (the **Allowed AS Metadata Domains** and **Allowed Client ID Domains** subsections) | Step 1 |
 | **Route editor → Advanced tab → MCP panel** (per route) | Route-level MCP properties (server vs. client mode, path the MCP server is served at, pre-registered upstream credentials) | Step 2 |
 | **Settings → Logging** (cluster-wide) | Access and authorize log field selection, including the MCP-specific `mcp-method`, `mcp-tool`, and `mcp-tool-parameters` fields | Step 4 |
 
@@ -144,10 +144,10 @@ Linear's MCP server advertises its authorization server via [RFC 9728 Protected 
 In the Zero Console:
 
 1. In the left nav, click **Settings**, then go to the **MCP** section in the main cluster settings. This is a dedicated panel (separate from the **Advanced** section further down) that controls SSRF allowlists for MCP OAuth metadata discovery.
-2. Under the **Allowed As Metadata Domains** subsection, click the **+** and enter `mcp.linear.app`.
+2. Under the **Allowed AS Metadata Domains** subsection, click the **+** and enter `mcp.linear.app`.
 3. Click **Save Settings**.
 
-![Zero Console Settings showing the MCP section with Allowed Client ID Domains set to vscode.dev and Allowed As Metadata Domains set to mcp.linear.app](./img/mcp-bridge/settings-mcp.png)
+![Zero Console Settings showing the MCP section with Allowed Client ID Domains set to vscode.dev and Allowed AS Metadata Domains set to mcp.linear.app](./img/mcp-bridge/settings-mcp.png)
 
 This section also contains the **Allowed Client ID Domains** subsection, a related but separate allowlist for MCP clients that authenticate using URL-based client IDs. The default list includes `vscode.dev`, which is what this guide uses as the test client. Add other hosted MCP clients you want to permit, for example `claude.ai` or `chatgpt.com`. Leave the default in place if you only need VS Code.
 
@@ -186,7 +186,7 @@ This is the point of the whole exercise. You'll create a reusable policy and att
 6. Set:
    - **Criteria:** `Domain`
    - **Operator:** `Is`
-   - **Domain:** `your-company.com` (in the screenshots for this guide, the test cluster uses `pomerium.com`)
+   - **Domain:** `pomerium.com` (substitute your own email domain)
 7. Click **Save Policy**.
 
 ![Policies list page showing the Pomerium Team policy assigned to the mcp bridging cluster](./img/mcp-bridge/policies-list.png)
@@ -213,11 +213,7 @@ In **Settings → Logging**, scroll to **Authorize Log Fields**, select **Custom
 
 Without this, your authorize logs won't tell you which tool was called or by whom, and [Checkpoint 4](#checkpoint-4-authorize-log-records-the-tool-call) below depends on it.
 
-### 5. Confirm the config is live
-
-Pomerium Zero distributes each **Save Settings**, **Save Policy**, and **Save Route** to every connected replica as soon as it completes. There is no separate "Apply changeset" button. You can confirm the deployment by going to **Reports → Status**. A healthy cluster shows no red banners; if you see `Cluster has no active replicas`, no Pomerium replica is currently connected and nothing will enforce your config until one is. For help wiring up a replica, see [Pomerium Zero Quickstart](/docs/get-started/quickstart?type=zero).
-
-### 6. Connect an MCP client
+### 5. Connect an MCP client
 
 From any machine with Node installed:
 
@@ -232,7 +228,7 @@ In the Inspector UI:
 3. Enable **Quick OAuth Flow**.
 4. Click **Connect**.
 
-![MCP Inspector connection form with Transport Type set to Streamable HTTP and URL set to e.g. https://linear.slyfox-1234.pomerium.app/mcp, ready to click Connect](./img/mcp-bridge/inspector-connect-form.png)
+![MCP Inspector connection form with Transport Type set to Streamable HTTP and URL set to https://linear.slyfox-1234.pomerium.app/mcp, ready to click Connect](./img/mcp-bridge/inspector-connect-form.png)
 
 You'll be redirected through two sign-ins in sequence: first Pomerium → your IdP, then Pomerium → Linear. After the second one you land back in the Inspector with a green **Connected** status on the connection banner.
 
@@ -263,7 +259,7 @@ In the MCP Inspector, after clicking **Connect**, you should:
 - Then be redirected to a Linear **Authorize** screen listing Pomerium as the client and showing the requested scopes.
 - Then land back in the Inspector with a green **Connected** status on the connection banner.
 
-If you see the IdP sign-in but Linear's consent screen never appears, the route isn't fully configured as an MCP server route. Re-open the route in the Zero Console and confirm **Route Type: MCP** is set on the General tab and that **Advanced → MCP** matches the screenshot in step 2 (Server mode, Path `/mcp`, Upstream OAuth2 Properties off). A route without Route Type MCP will proxy to Linear but won't trigger the bridging handshake, and a missing or wrong Path will break the MCP discovery Pomerium advertises back to clients. The other common cause is `mcp.linear.app` missing from the **Allowed As Metadata Domains** subsection under **Settings → MCP** (step 1).
+If you see the IdP sign-in but Linear's consent screen never appears, the route isn't fully configured as an MCP server route. Re-open the route in the Zero Console and confirm **Route Type: MCP** is set on the General tab and that **Advanced → MCP** matches the screenshot in step 2 (Server mode, Path `/mcp`, Upstream OAuth2 Properties off). A route without Route Type MCP will proxy to Linear but won't trigger the bridging handshake, and a missing or wrong Path will break the MCP discovery Pomerium advertises back to clients. The other common cause is `mcp.linear.app` missing from the **Allowed AS Metadata Domains** subsection under **Settings → MCP** (step 1).
 
 ### Checkpoint 3: `tools/list` returns Linear tools
 
@@ -280,7 +276,7 @@ You should see a log entry like:
 ```json
 {
   "request-id": "...",
-  "email": "you@your-company.com",
+  "email": "you@pomerium.com",
   "mcp-method": "tools/call",
   "mcp-tool": "issue_search",
   "mcp-tool-parameters": {"query": "cfp"},
@@ -297,11 +293,11 @@ For a blocked call (try `issue_delete`), the same entry should show `"allow-why-
 
 | Symptom | Likely cause | What to check | Fix |
 | --- | --- | --- | --- |
-| Inspector connects but `tools/list` is empty | Upstream OAuth didn't complete; Pomerium has no cached Linear token for this user | Zero Console **Logs → Proxy**, search for `upstream_oauth2` and `resource_metadata` warnings | Re-run the connect flow. If Linear's consent screen never appeared, add `mcp.linear.app` to **Settings → MCP → Allowed As Metadata Domains** and save. |
+| Inspector connects but `tools/list` is empty | Upstream OAuth didn't complete; Pomerium has no cached Linear token for this user | Zero Console **Logs → Proxy**, search for `upstream_oauth2` and `resource_metadata` warnings | Re-run the connect flow. If Linear's consent screen never appeared, add `mcp.linear.app` to **Settings → MCP → Allowed AS Metadata Domains** and save. |
 | Connect flow hangs on `mcp.linear.app` with a browser error | Linear's consent screen rejected Pomerium's client registration | Open the browser devtools network tab during OAuth; look for a 4xx from `mcp.linear.app` or Linear's authorization server | Usually a stale Client ID Metadata Document (CIMD) entry. Wait for Pomerium to retry, or restart the route from the Zero Console so the client registration is re-initialized. |
 | First user works, second user gets "not connected" in the Inspector | You're confusing session state: each user has their own cached Linear token. The first user's session doesn't grant access for anyone else. | Sign in as the second user in a fresh browser profile and complete the Linear consent once | This is expected behavior. Per-user connection state is documented under [Per-User Connection Management](/docs/capabilities/mcp#per-user-connection-management). |
 | Policy change had no effect | The cached Pomerium-issued client token (TE) is stale, or no replica is connected to the cluster | Zero Console: confirm the route shows the policy under **Assigned**; check **Reports → Status** for a connected replica; sign out of the MCP client and reconnect | Policies apply on the next MCP request once the replica has picked them up. If Status reports no active replicas, nothing is enforcing the config. Attach a replica via the Zero Quickstart. |
-| `401 mcp: upstream AS metadata domain not allowed` in proxy logs | The **Allowed As Metadata Domains** subsection under **Settings → MCP** is missing `mcp.linear.app` | **Settings → MCP → Allowed As Metadata Domains** | Add the entry and save. |
+| `401 mcp: upstream AS metadata domain not allowed` in proxy logs | The **Allowed AS Metadata Domains** subsection under **Settings → MCP** is missing `mcp.linear.app` | **Settings → MCP → Allowed AS Metadata Domains** | Add the entry and save. |
 | Tools worked earlier in the session; suddenly all tool calls return `401` (or the client disconnects) | Upstream refresh token failed. Common causes: the user revoked Pomerium in Linear, Linear rotated the token out, or the cached refresh token is stale | Zero Console **Logs → Proxy**: look for `upstream_oauth2` refresh failures attributed to the user | Have the user reconnect from the MCP client. Pomerium will re-run the Linear consent flow and cache a fresh TI. If this is happening cluster-wide, check that system clocks are in sync. Large skew can cause refresh tokens to be rejected by Linear. |
 | After a Pomerium restart, every user is asked to re-authorize Linear | Databroker is configured with the in-memory backend (or its storage has been wiped), so the cached TI tokens and CIMD registration are gone | Zero Console **Settings → General → Databroker Storage Connection String**; verify a `file://` or `postgres://` value is set | Set a Pebble connection string like `file:///var/lib/pomerium` (or a Postgres one if that's what you use). See [Databroker Storage Settings](/docs/reference/databroker). |
 
@@ -312,7 +308,7 @@ For a blocked call (try `issue_delete`), the same entry should show `"allow-why-
 - **Audit, don't trust.** Enable the `mcp-tool` and `mcp-method` [audit log](/docs/capabilities/audit-logs) fields from step 4 and route them to wherever your team already aggregates security-relevant logs. That could be a [Security Information and Event Management (SIEM)](https://en.wikipedia.org/wiki/Security_information_and_event_management) platform like Splunk or Elastic Security, an observability backend like Grafana (Loki for the log fields, Tempo for the [OTel traces](/docs/reference/tracing) Pomerium already emits), or a combined platform like Datadog or Honeycomb. Every tool call is attributed to the end user's email, not to a service credential, which is the whole point of bridging, and it only pays off if the logs actually land somewhere searchable.
 - **Secrets: there are none to store, but the CIMD registration is still state.** Auto-discovery uses CIMD, so there's no `client_secret` to rotate for the Linear bridge. The client registration Pomerium negotiates with Linear is cached in the databroker and reused across restarts. That's another reason the persistent-backend prerequisite matters. If you ever switch to pre-registered credentials for another provider, store the secret in your config management or secret manager and limit who can read it. See the [MCP + Upstream OAuth](/docs/capabilities/mcp/mcp-upstream-oauth#static-oauth2) reference for the static-credential variant.
 - **Rotating upstream tokens means clearing databroker state, not just revoking in Linear.** Each user's Linear access + refresh token is cached server-side in the databroker. Revoking the user in Linear will prevent future refreshes from succeeding, but the currently cached access token will continue to work until it expires. If you need to forcibly cut a user off immediately (for example during offboarding), revoke them in Linear _and_ remove the user's session from Pomerium so the cached TI is no longer associated with any valid Pomerium session.
-- **Domain allowlists are an SSRF control.** The **Allowed As Metadata Domains** and **Allowed Client ID Domains** subsections under **Settings → MCP** exist to prevent a malicious upstream response from pointing Pomerium at an arbitrary host. Keep them narrow, one provider at a time.
+- **Domain allowlists are an SSRF control.** The **Allowed AS Metadata Domains** and **Allowed Client ID Domains** subsections under **Settings → MCP** exist to prevent a malicious upstream response from pointing Pomerium at an arbitrary host. Keep them narrow, one provider at a time.
 - **TLS is non-optional.** The `from` URL must be HTTPS; Pomerium Zero handles this automatically for `*.<cluster>.pomerium.app` and for custom domains configured per [Custom Domains](/docs/capabilities/custom-domains).
 
 ## Next steps and related guides
