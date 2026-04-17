@@ -82,11 +82,9 @@ Once a Route is created, the Metric Name field will populate. You can use this n
     - https://b.example.com
 ```
 
+Both `http://` and `https://` URLs are supported, as well as `http+unix:///var/run/example.sock` and `https+unix:///var/run/example.sock` for local unix addresses. If the `from` address starts with `tcp+https://`, use `tcp://` for the upstream. If the `from` address starts with `udp+https://`, use `udp://` for the upstream.
+
 A load balancing weight may be associated with a particular upstream by appending `,[weight]` to the URL. The exact behavior depends on your [`lb_policy`](#load-balancing-method) setting.
-
-> **For more details and examples, see our dedicated [Upstream Load Balancing page](/docs/capabilities/routing).**
-
-Should be `tcp://` if `from` is `tcp+https://`, or `udp://` if `from` is `udp+https://`.
 
 :::warning Be careful with trailing slash.
 
