@@ -223,14 +223,16 @@ npx -y @modelcontextprotocol/inspector@latest
 
 In the Inspector UI:
 
-1. **Transport type:** Streamable HTTP
+1. **Transport type:** Streamable HTTP.
 2. **URL:** the MCP server URL with `/mcp` at the end, for example `https://linear.slyfox-1234.pomerium.app/mcp`.
-3. Enable **Quick OAuth Flow**.
+3. Leave **Authentication** collapsed (Client ID and Client Secret empty). The Inspector will run its quick OAuth flow automatically on connect.
 4. Click **Connect**.
 
 ![MCP Inspector connection form with Transport Type set to Streamable HTTP and URL set to https://linear.slyfox-1234.pomerium.app/mcp, ready to click Connect](./img/mcp-bridge/inspector-connect-form.png)
 
 You'll be redirected through two sign-ins in sequence: first Pomerium → your IdP, then Pomerium → Linear. After the second one you land back in the Inspector with a green **Connected** status on the connection banner.
+
+If you need to re-authenticate later (for example, to switch accounts or retry after a failed bridge flow), expand **Authentication Settings** in the sidebar and click **Quick Refresh**. **Clear OAuth State** in the same panel wipes the cached tokens and forces a full re-consent on the next connect.
 
 :::note
 
