@@ -25,7 +25,7 @@ This guide is a concrete walkthrough of [Model Context Protocol (MCP) bridging](
 
 ## What this guide does
 
-You'll end up with a single Zero route (for example, `https://linear.mcp.<your-cluster>.pomerium.app`) that any MCP client (Claude Desktop, ChatGPT, VS Code, the MCP Inspector) can add as an MCP server. When a user connects:
+You'll end up with a single Zero route (for example, `https://linear.slyfox-1234.pomerium.app/mcp`) that any MCP client (Claude Desktop, ChatGPT, VS Code, the MCP Inspector) can add as an MCP server. When a user connects:
 
 1. Pomerium authenticates them with your identity provider (IdP) via SSO.
 2. Pomerium bridges them through Linear's OAuth flow the first time, caches the resulting Linear token, and refreshes it automatically. The MCP client never sees that token.
@@ -61,7 +61,7 @@ End users of the MCP route (the people installing Claude Desktop or VS Code's MC
 
 Before you start, confirm all of the following:
 
-- **A working Pomerium Zero cluster** that you own, with a custom or default cluster starter domain (the guide assumes `<your-cluster>.pomerium.app`). If you don't have one, follow the [Pomerium Zero Quickstart](/docs/get-started/quickstart?type=zero) first.
+- **A working Pomerium Zero cluster** that you own, with a custom or default cluster starter domain. This guide uses `slyfox-1234.pomerium.app` as the example cluster hostname in URLs and screenshots; substitute your own cluster hostname wherever you see it. If you don't have a cluster yet, follow the [Pomerium Zero Quickstart](/docs/get-started/quickstart?type=zero) first.
 - **A persistent databroker backend.** Prefer Pebble by setting a `file://` connection string under **Settings → General** in the Zero Console. Don't use the in-memory default: it loses the upstream OAuth state Pomerium caches per user, which forces every user to re-authorize Linear on every restart. See [Databroker Storage Settings](/docs/reference/databroker) for the full reference.
 - An identity provider wired into Pomerium Zero. [Google Workspace](/docs/integrations/user-identity/google), [Okta](/docs/integrations/user-identity/okta), [Microsoft Entra ID (Azure AD)](/docs/integrations/user-identity/azure), [Auth0](/docs/integrations/user-identity/auth0), or any OIDC-compatible IdP will work. For Zero-specific setup, see [Zero Custom IdP](/docs/get-started/fundamentals/zero/zero-custom-idp) and [Identity Providers](/docs/integrations/user-identity/identity-providers). Domain-based access (the policy used in this guide) works with any IdP; group-based rules require one that emits group claims, and are covered in [Limit MCP Tool Calling](/docs/capabilities/mcp/limit-mcp-tools).
 - A Linear workspace, and permission from a Linear admin for members to authorize a third-party OAuth client (the client will be Pomerium). No Linear OAuth application registration is required. Linear's MCP server advertises its own authorization metadata and Pomerium registers itself automatically.
@@ -95,7 +95,7 @@ sequenceDiagram
   participant L as Linear OAuth
   participant M as mcp.linear.app
 
-  U ->> C: Adds https://linear.mcp.<cluster>.pomerium.app
+  U ->> C: Adds https://linear.slyfox-1234.pomerium.app/mcp
   C ->> P: Register client, start auth
   P ->> U: Redirect to IdP (Google/Okta/...)
   U ->> P: SSO success
@@ -161,14 +161,14 @@ In the Zero Console, go to **Routes → New Route**. On the **General** tab, fil
 | --------------------- | ------------------------------------------------ |
 | Route Type            | Set to `MCP`                                     |
 | Name                  | `Linear MCP`                                     |
-| From → Host           | `linear.mcp.<your-cluster>.pomerium.app`         |
+| From → Host           | `linear.slyfox-1234.pomerium.app`                |
 | To                    | `https://mcp.linear.app/mcp`                     |
 | Policies              | leave empty for now; you'll attach one in step 3 |
 | Pass Identity Headers | leave default                                    |
 
 Click **Save Route**. The route will show up with **Assigned: None**. That's expected until you attach a policy.
 
-![Route editor General tab for the Linear MCP route, showing Route Type MCP, From linear.civil-pony-4582.pomerium.app, To https://mcp.linear.app, and the Pomerium Team policy attached](./img/mcp-bridge/route-linear-mcp-general.png)
+![Route editor General tab for the Linear MCP route, showing Route Type MCP, From linear.slyfox-1234.pomerium.app, To https://mcp.linear.app, and the Pomerium Team policy attached](./img/mcp-bridge/route-linear-mcp-general.png)
 
 After saving, open the route again and go to **Advanced → MCP**. Set **Path** to `/mcp` (Linear's MCP endpoint) and leave everything else at its defaults. That's enough to enable [auto-discovery](/docs/capabilities/mcp/mcp-upstream-oauth#auto-discovery-rfc-9728): Pomerium registers itself with Linear via a [Client ID Metadata Document (CIMD)](/docs/capabilities/mcp/mcp-upstream-oauth#auto-discovery-rfc-9728) on the first connection and caches the registration.
 
@@ -250,7 +250,7 @@ Run these four checks in order. Every one of them has a specific expected result
 
 ```bash
 curl -sS -o /dev/null -w '%{http_code}\n' \
-  https://linear.mcp.<your-cluster>.pomerium.app/mcp
+  https://linear.slyfox-1234.pomerium.app/mcp
 ```
 
 Expected: `401` or `302` (redirect to the Pomerium sign-in page). If you see `404` or `Could not resolve host`, DNS isn't pointing at the cluster yet.
