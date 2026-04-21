@@ -109,6 +109,15 @@ These are hard rules. A guide that violates them is not publish-ready regardless
 
 When flagging a violation, quote the offending line and suggest a concrete rewrite.
 
+## Scope
+
+A guide's job is to walk a reader through a sequence of configuration actions. Background material (internals, protocol mechanics, data model descriptions, design rationale) competes with the steps for the reader's attention and makes the guide slower to execute from. Reference and internals docs exist for that material; a guide should link to them rather than inline them.
+
+- **Link to explainers, don't inline them.** If a concept is load-bearing for a step, fold one load-bearing sentence into the step itself and link to the reference or internals doc for the full story. A useful test: if you can remove a paragraph and the reader can still complete the procedure without confusion, that paragraph belongs elsewhere. Common offenders are sections titled "How X works" or "What state lives in Y" that appear between prerequisites and the first numbered step.
+- **When flagging a violation, suggest the link target along with the rewrite.** The fix is rarely "delete this paragraph"; it's "move this paragraph to `/docs/reference/X` and replace it here with a one-sentence prereq plus a link."
+
+This is a judgment call, not a binary check. A short explainer that genuinely anchors the next step is fine; a multi-paragraph conceptual sidebar is not. When unsure, err toward linking out.
+
 ## Diagram guidelines
 
 When a guide needs diagrams, follow these rules:
