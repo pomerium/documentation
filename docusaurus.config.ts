@@ -165,10 +165,6 @@ const config: Config = {
               label: 'v0.31',
             },
             {
-              to: 'https://0-30-0.docs.pomerium.com/docs',
-              label: 'v0.30',
-            },
-            {
               type: 'html',
               value: '<hr>',
             },
