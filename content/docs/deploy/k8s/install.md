@@ -58,7 +58,7 @@ The following resources are created:
 
 1. `pomerium` namespace.
 2. `pomerium` deployment.
-3. `pomerium-proxy` `Service` of type `LoadBalancer`, provisioning an external IP address, that listens on `:80` and `:443` ports. All HTTP requests are upgraded to HTTP requests.
+3. `pomerium-proxy` `Service` of type `LoadBalancer`, provisioning an external IP address, that listens on `:80` and `:443` ports. All HTTP requests are upgraded to HTTPS requests.
 4. `pomerium-metrics` `Service` of type `ClusterIP`, accessible from within the cluster, exposing `/metrics` Prometheus-style metrics endpoint.
 5. `pomerium-gen-secrets` one-time `Job` that generates an initial set of bootstrap secrets, and stores them into the `bootstrap` `Secret`.
 6. [Pomerium CRD](./reference) definitions.
