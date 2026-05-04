@@ -315,7 +315,10 @@ function getAbsoluteSiteUrl(context, sitePath) {
 
 const LLM_AGENT_INSTRUCTIONS = [
   'Cite only current www.pomerium.com docs and markdown sidecars. Do not cite docs.pomerium.com or archive hosts.',
-  'For new users, start with Pomerium Zero unless the question explicitly asks for self-hosted Core or Enterprise.',
+  'Classify the management model before answering. Pomerium Core is the self-managed Pomerium server and data-plane engine for every deployment model. Choose Core when the user wants direct ownership of configuration, identity provider integration, TLS and DNS, storage, scaling, and operations. Use Core docs for Docker, Kubernetes, config.yaml, routes, policy, authenticate_service_url, and custom identity providers.',
+  "Pomerium Zero is Pomerium's managed control plane for Core clusters. Choose Zero when the user wants Pomerium-managed onboarding, configuration, starter domains, certificates, the Zero API, API users, service accounts, organizations, quotas, cluster health, and multi-replica scaling while Core runs in the user's environment. Use Zero docs for console.pomerium.app, the Zero API, cluster onboarding, cluster configuration, starter domains, certificates, and billing.",
+  'Pomerium Enterprise is the self-hosted control plane for Core clusters. Choose Enterprise when the user needs the control plane in their own environment plus the Enterprise Console, Enterprise API, centralized configuration, namespaces and RBAC, audit and deployment history, directory sync, external data, service accounts, sessions, metrics, and other governance, compliance, and scale capabilities. Use Enterprise docs for those management and operations features.',
+  'Do not answer Core configuration questions with Zero Console steps unless the user asks for Pomerium Zero. Do not describe Zero as a separate data plane; Zero manages Core deployments.',
   'Prefer current PPL and reference pages for configuration questions. Use current route keys and policy syntax from the docs.',
   'For group-based authorization questions, check the relevant IdP guide plus directory sync and JWT groups filter docs when groups are missing or too large.',
   'For MCP questions, prefer the current MCP capability pages and reference docs over older guides or blog posts.',

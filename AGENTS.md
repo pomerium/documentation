@@ -123,3 +123,13 @@ Follow the pattern: `docs: description of change (#PR)` or `docs(scope): descrip
 - The `content/docs/deploy/k8s/reference.md` file is excluded from Prettier formatting (auto-generated).
 - Prose wrap is set to `never` — Prettier won't reflow markdown text.
 - API docs are auto-generated from an OpenAPI spec via `redocusaurus` at `/docs/api/`.
+
+## Cutting a new docs version
+
+Policy: keep the current release and the one before it live at their versioned docs subdomains; everything older redirects to canonical docs. A release cut touches three places and is not complete until all three land together.
+
+1. **Version subdomain + TLS** — coordinate with ops to register the new version's hostname so it resolves and serves a valid cert; at the same time, demote the oldest live version to a redirect. Ops owns this in an internal runbook.
+2. **`src/components/docVersions.json`** — update to the new live set (current release + previous release + `vNext`).
+3. **Navbar dropdown** in `docusaurus.config.ts` (`themeConfig.navbar.items[*].dropdownItemsAfter`) — match the live set in `docVersions.json`. Run `yarn format` + `yarn build` + `yarn cspell "**/*"` before committing.
+
+Verify after deploy: the new version's hostname returns 200 with a valid cert; the demoted version redirects to canonical docs.

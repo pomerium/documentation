@@ -82,11 +82,9 @@ Once a Route is created, the Metric Name field will populate. You can use this n
     - https://b.example.com
 ```
 
+Both `http://` and `https://` URLs are supported, as well as `http+unix:///var/run/example.sock` and `https+unix:///var/run/example.sock` for local unix addresses. If the `from` address starts with `tcp+https://`, use `tcp://` for the upstream. If the `from` address starts with `udp+https://`, use `udp://` for the upstream.
+
 A load balancing weight may be associated with a particular upstream by appending `,[weight]` to the URL. The exact behavior depends on your [`lb_policy`](#load-balancing-method) setting.
-
-> **For more details and examples, see our dedicated [Upstream Load Balancing page](/docs/capabilities/routing).**
-
-Should be `tcp://` if `from` is `tcp+https://`, or `udp://` if `from` is `udp+https://`.
 
 :::warning Be careful with trailing slash.
 
@@ -420,7 +418,7 @@ routes:
       - http://myapp-srv-5:8080,10
 ```
 
-### Route matching order
+### Route Matching Order
 
 Pomerium matches routes in a specific order; an incoming request will be sent to the first route that matches.
 
@@ -447,6 +445,21 @@ If Pomerium receives a request to access `https://a.example.com:8080`, Pomerium 
   to: http://example:8080
   allow_any_authenticated_user: true
 ```
+
+### Advanced
+
+#### Allow Upgrades
+
+If set, enable proxying of an HTTP upgrade request and its payload. This option takes a list of strings and can be set both at the global level for all routes and for a specific route (in which case it overrides the global option).
+
+```yaml
+allow_upgrades:
+  - custom-upgrade-type
+  - websocket
+  - spdy/3.1
+```
+
+Using `websocket` is equivalent to enabling the `allow_websockets` option and `spdy/3.1` is equivalent to enabling the `allow_spdy` option.
 
 ## Certificates
 
