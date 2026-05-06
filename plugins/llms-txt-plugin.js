@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const yaml = require('js-yaml');
 const {remark} = require('remark');
 const remarkParse = require('remark-parse').default;
 const remarkStringify = require('remark-stringify').default;
@@ -109,8 +110,7 @@ async function cleanMarkdownForLLM(rawContent) {
 function filterDocumentationRoutes(routes) {
   return routes.filter((route) => {
     return (
-      route.path.startsWith('/docs/') &&
-      route.path !== '/docs/' &&
+      (route.path === '/docs' || route.path.startsWith('/docs/')) &&
       !route.path.includes('/api/') &&
       !route.path.includes('/_') &&
       route.component !== '@theme/NotFound/Content'
@@ -147,17 +147,16 @@ async function scanDocumentationFiles(contentDir) {
           (entry.name.endsWith('.mdx') || entry.name.endsWith('.md')) &&
           !entry.name.startsWith('_')
         ) {
-          // Create a route-like object from the file
-          const urlPath =
+          // Read file to get frontmatter metadata
+          const metadata = await extractMetadata(fullPath);
+          const sourceRoutePath =
             '/docs/' +
             relativePath.replace(/\.(mdx?|md)$/, '').replace(/\\/g, '/');
 
-          // Read file to get frontmatter metadata
-          const metadata = await extractMetadata(fullPath);
-
           files.push({
-            path: urlPath,
+            path: buildFallbackRoutePath(relativePath, metadata),
             filePath: fullPath,
+            sourceRoutePath,
             metadata: metadata,
           });
         }
@@ -182,30 +181,23 @@ async function extractMetadata(filePath) {
     // Extract frontmatter
     const frontmatterMatch = content.match(/^---\n([\s\S]*?)\n---/);
     if (frontmatterMatch) {
-      const frontmatter = frontmatterMatch[1];
+      const frontmatter = yaml.load(frontmatterMatch[1]) || {};
 
-      // Simple YAML parsing for title and description
-      const titleMatch = frontmatter.match(/^title:\s*['"]?(.*?)['"]?$/m);
-      if (titleMatch) {
-        metadata.title = titleMatch[1];
+      if (typeof frontmatter.title === 'string') {
+        metadata.title = frontmatter.title;
       }
-
-      const descBlockMatch = frontmatter.match(
-        /^description:\s*[|>][-+0-9]*\s*\n((?:[ \t]+.*(?:\n|$))*)/m,
-      );
-      if (descBlockMatch) {
-        metadata.description = descBlockMatch[1]
+      if (typeof frontmatter.id === 'string') {
+        metadata.id = frontmatter.id;
+      }
+      if (typeof frontmatter.slug === 'string') {
+        metadata.slug = frontmatter.slug;
+      }
+      if (typeof frontmatter.description === 'string') {
+        metadata.description = frontmatter.description
           .split('\n')
           .map((line) => line.trim())
           .filter(Boolean)
           .join(' ');
-      } else {
-        const descMatch = frontmatter.match(
-          /^description:\s*['"]?(.*?)['"]?$/m,
-        );
-        if (descMatch) {
-          metadata.description = descMatch[1];
-        }
       }
     }
 
@@ -225,6 +217,34 @@ async function extractMetadata(filePath) {
     );
     return {};
   }
+}
+
+function buildFallbackRoutePath(relativePath, metadata = {}) {
+  if (metadata.slug) {
+    return buildDocsPath(metadata.slug);
+  }
+
+  const relativeRoutePath = relativePath
+    .replace(/\.(mdx?|md)$/, '')
+    .replace(/\\/g, '/');
+  const pathParts = relativeRoutePath.split('/').filter(Boolean);
+  const fileName = pathParts.pop() || '';
+
+  if (fileName !== 'index' && fileName !== 'readme') {
+    pathParts.push(metadata.id || fileName);
+  }
+
+  return buildDocsPath(pathParts.join('/'));
+}
+
+function buildDocsPath(routePath) {
+  const normalizedRoutePath = routePath
+    .trim()
+    .replace(/^\/+/, '')
+    .replace(/^docs\/?/, '')
+    .replace(/\/+$/, '');
+
+  return normalizedRoutePath ? `/docs/${normalizedRoutePath}` : '/docs';
 }
 
 /**
@@ -482,12 +502,21 @@ function isCuratedRoute(routePath) {
   return CURATED_ROUTES.has(routePath);
 }
 
-function isTier1Route(routePath) {
-  return TIER1_ROUTES.has(routePath);
+function routeMatchesPathSet(route, pathSet) {
+  if (typeof route === 'string') return pathSet.has(route);
+
+  return (
+    pathSet.has(route.path) ||
+    (route.sourceRoutePath && pathSet.has(route.sourceRoutePath))
+  );
+}
+
+function isTier1Route(route) {
+  return routeMatchesPathSet(route, TIER1_ROUTES);
 }
 
 function filterCuratedRoutes(routes) {
-  return routes.filter((route) => isCuratedRoute(route.path));
+  return routes.filter((route) => routeMatchesPathSet(route, CURATED_ROUTES));
 }
 
 function normalizeRouteMarkdownPath(routePath) {
@@ -507,14 +536,25 @@ function normalizeRouteMarkdownPath(routePath) {
 }
 
 function buildMarkdownUrl(route, context) {
-  const routePath = normalizeRouteMarkdownPath(route.path);
-  if (!routePath) return '';
+  const outputPath = buildCanonicalMarkdownOutputPath(route.path);
+  return outputPath ? getAbsoluteSiteUrl(context, outputPath) : '';
+}
 
-  // Avoid double-index for routes that already end in /index (e.g., /docs/index)
-  if (routePath.endsWith('/index')) {
-    return getAbsoluteSiteUrl(context, `${routePath}.md`);
+function normalizeCanonicalMarkdownPath(routePath) {
+  const normalizedRoutePath = normalizeRouteMarkdownPath(routePath);
+  if (!normalizedRoutePath) return '';
+
+  const pathParts = normalizedRoutePath.split('/').filter(Boolean);
+  if (pathParts[pathParts.length - 1] === 'index') {
+    pathParts.pop();
   }
-  return getAbsoluteSiteUrl(context, `${routePath}/index.md`);
+
+  return pathParts.join('/');
+}
+
+function buildCanonicalMarkdownOutputPath(routePath) {
+  const normalizedRoutePath = normalizeCanonicalMarkdownPath(routePath);
+  return normalizedRoutePath ? `${normalizedRoutePath}.md` : '';
 }
 
 function buildRouteMarkdownOutputPath(routePath) {
@@ -522,8 +562,41 @@ function buildRouteMarkdownOutputPath(routePath) {
   return normalizedRoutePath ? `${normalizedRoutePath}/index.md` : '';
 }
 
-function resolveRouteMarkdownOutputFile(outDir, routePath) {
-  const outputPath = buildRouteMarkdownOutputPath(routePath);
+function buildSourceRoutePath(route, docsRoot) {
+  if (route.sourceRoutePath) return route.sourceRoutePath;
+  if (!route.filePath) return '';
+
+  const relativeFilePath = path
+    .relative(docsRoot, route.filePath)
+    .replace(/\\/g, '/');
+
+  if (!relativeFilePath || relativeFilePath.startsWith('..')) return '';
+
+  return `/docs/${relativeFilePath.replace(/\.(mdx?|md)$/, '')}`;
+}
+
+function buildRouteMarkdownOutputPaths(route, docsRoot) {
+  const outputPaths = new Set();
+
+  const canonicalOutputPath = buildCanonicalMarkdownOutputPath(route.path);
+  if (canonicalOutputPath) outputPaths.add(canonicalOutputPath);
+
+  const routeSidecarOutputPath = buildRouteMarkdownOutputPath(route.path);
+  if (routeSidecarOutputPath) outputPaths.add(routeSidecarOutputPath);
+
+  const sourceRoutePath = buildSourceRoutePath(route, docsRoot);
+  if (sourceRoutePath && sourceRoutePath !== route.path) {
+    const sourceSidecarRoutePath = sourceRoutePath.replace(/\/index$/, '');
+    const sourceSidecarOutputPath = buildRouteMarkdownOutputPath(
+      sourceSidecarRoutePath,
+    );
+    if (sourceSidecarOutputPath) outputPaths.add(sourceSidecarOutputPath);
+  }
+
+  return [...outputPaths];
+}
+
+function resolveMarkdownOutputFile(outDir, outputPath) {
   if (!outputPath) return '';
 
   const resolvedOutputPath = path.resolve(outDir, outputPath);
@@ -540,6 +613,12 @@ function resolveRouteMarkdownOutputFile(outDir, routePath) {
   return resolvedOutputPath;
 }
 
+function resolveRouteMarkdownOutputFiles(outDir, route, docsRoot) {
+  return buildRouteMarkdownOutputPaths(route, docsRoot)
+    .map((outputPath) => resolveMarkdownOutputFile(outDir, outputPath))
+    .filter(Boolean);
+}
+
 function shouldSkipMarkdownCopy(srcFile) {
   const skipPatterns = [
     '_template.mdx',
@@ -553,23 +632,35 @@ function shouldSkipMarkdownCopy(srcFile) {
   );
 }
 
-function validateRouteMarkdownCollisions(routes) {
+function validateRouteMarkdownCollisions(routes, docsRoot) {
   const routeOutputs = new Map();
 
   for (const route of routes) {
     if (!route.filePath || shouldSkipMarkdownCopy(route.filePath)) continue;
 
-    const outputPath = buildRouteMarkdownOutputPath(route.path);
-    if (!outputPath) continue;
+    const outputPaths = buildRouteMarkdownOutputPaths(route, docsRoot);
+    for (const outputPath of outputPaths) {
+      if (!outputPath) continue;
 
-    if (routeOutputs.has(outputPath)) {
-      throw new Error(
-        `Duplicate route markdown output path "${outputPath}" for "${route.path}" and "${routeOutputs.get(outputPath)}"`,
-      );
+      const existingRoute = routeOutputs.get(outputPath);
+      if (existingRoute && existingRoute.filePath !== route.filePath) {
+        throw new Error(
+          `Duplicate route markdown output path "${outputPath}" for "${route.path}" and "${existingRoute.path}"`,
+        );
+      }
+
+      routeOutputs.set(outputPath, route);
     }
-
-    routeOutputs.set(outputPath, route.path);
   }
+}
+
+function getMatchedManifestPaths(route, pathSet) {
+  const matches = [];
+  if (pathSet.has(route.path)) matches.push(route.path);
+  if (route.sourceRoutePath && pathSet.has(route.sourceRoutePath)) {
+    matches.push(route.sourceRoutePath);
+  }
+  return matches;
 }
 
 /**
@@ -641,8 +732,8 @@ For common Pomerium questions, start with the curated context bundle:
 For exhaustive page discovery:
 - [llms-index.txt](${indexUrl}): Complete documentation index
 
-For a specific page, fetch its markdown sidecar by appending /index.md:
-- Example: https://www.pomerium.com/docs/capabilities/mcp/index.md
+For a generated documentation page under /docs/ (excluding API pages), fetch its markdown version by appending .md:
+- Example: https://www.pomerium.com/docs/capabilities/mcp.md
 
 ${LLM_AGENT_INSTRUCTIONS.map((i) => `- ${i}`).join('\n')}
 
@@ -698,7 +789,7 @@ ${LLM_AGENT_INSTRUCTIONS.map((i) => `- ${i}`).join('\n')}
     sortedRoutes.forEach((route) => {
       const body = cleanedContentMap.get(route.path);
       if (
-        activeTier1.has(route.path) &&
+        routeMatchesPathSet(route, activeTier1) &&
         body &&
         !inlinedPaths.has(route.path)
       ) {
@@ -759,9 +850,6 @@ function generateAgenticFooter(
   const indexUrl = getAbsoluteSiteUrl(context, 'llms-index.txt');
   const buildDate = new Date().toISOString().slice(0, 10);
 
-  const fullSizeHint = fullTxtSize ? ` (${fullTxtSize})` : '';
-  const indexSizeHint = indexSize ? ` (${indexSize})` : '';
-
   return `---
 
 ## How to Use These Docs
@@ -775,7 +863,7 @@ This documentation is publicly available and approved for LLM training and refer
 | Navigator | ${llmsTxtUrl} | ${navSize || '~14KB'} | Quick orientation and curated links |
 | Context bundle | ${fullUrl} | ${fullTxtSize || '~80K tokens'} | Key docs inline — start here for most questions |
 | Full index | ${indexUrl} | ${indexSize || '~36KB'} | Exhaustive page discovery |
-| Individual page | Append \`/index.md\` to any doc URL | varies | Deep-dive on a specific topic |
+| Individual page | Append \`.md\` to generated \`/docs/\` page URLs (excluding API pages) | varies | Deep-dive on a specific topic |
 
 Cite only \`www.pomerium.com\` docs. Do not cite \`docs.pomerium.com\` or archive hosts.
 `;
@@ -1061,11 +1149,12 @@ async function pluginLlmsTxt(context, options) {
           finalRoutes = await scanDocumentationFiles(contentDir);
         }
 
-        validateRouteMarkdownCollisions(finalRoutes);
-
         // ── 2. Clean + copy markdown sidecars, collect Tier 1 content ─
         const docsRoot = path.join(context.siteDir, 'content', 'docs');
+        validateRouteMarkdownCollisions(finalRoutes, docsRoot);
+
         const cleanedContentMap = new Map();
+        const tier1RoutesWithMarkdown = new Set();
         let copied = 0,
           errors = 0;
 
@@ -1081,9 +1170,10 @@ async function pluginLlmsTxt(context, options) {
             destRel = path.basename(srcFile).replace(/\.(mdx|md)$/, '.md');
           }
           const contentDestFile = path.join(outDir, 'content', 'docs', destRel);
-          const routeDestFile = resolveRouteMarkdownOutputFile(
+          const routeDestFiles = resolveRouteMarkdownOutputFiles(
             outDir,
-            route.path,
+            route,
+            docsRoot,
           );
 
           await fs.promises.mkdir(path.dirname(contentDestFile), {
@@ -1097,15 +1187,9 @@ async function pluginLlmsTxt(context, options) {
             try {
               cleanedContent = await cleanMarkdownForLLM(preCleanedContent);
             } catch (err) {
-              console.warn(
-                `Warning: Could not fully process ${srcFile}, writing pre-cleaned version instead:`,
-                err.message,
+              throw new Error(
+                `Could not fully process cleaned markdown for ${srcFile}: ${err.message}`,
               );
-              // Apply post-processing that cleanMarkdownForLLM would have done
-              cleanedContent = preCleanedContent
-                .replace(/\n{3,}/g, '\n\n')
-                .replace(/ \\{#[^}]+}/g, '');
-              errors++;
             }
 
             // Write sidecar copies
@@ -1114,15 +1198,17 @@ async function pluginLlmsTxt(context, options) {
               cleanedContent,
               'utf8',
             );
-            if (routeDestFile) {
-              await fs.promises.mkdir(path.dirname(routeDestFile), {
-                recursive: true,
-              });
-              await fs.promises.writeFile(
-                routeDestFile,
-                cleanedContent,
-                'utf8',
-              );
+            if (routeDestFiles.length > 0) {
+              for (const routeDestFile of routeDestFiles) {
+                await fs.promises.mkdir(path.dirname(routeDestFile), {
+                  recursive: true,
+                });
+                await fs.promises.writeFile(
+                  routeDestFile,
+                  cleanedContent,
+                  'utf8',
+                );
+              }
             } else {
               console.warn(
                 `Warning: Could not resolve route markdown path for ${route.path}, skipping route-mirrored copy.`,
@@ -1130,17 +1216,37 @@ async function pluginLlmsTxt(context, options) {
             }
 
             // Collect cleaned content for Tier 1 routes
-            if (isTier1Route(route.path) && cleanedContent.trim().length > 0) {
+            if (isTier1Route(route) && cleanedContent.trim().length > 0) {
               cleanedContentMap.set(route.path, cleanedContent);
+              for (const matchedPath of getMatchedManifestPaths(
+                route,
+                TIER1_ROUTES,
+              )) {
+                tier1RoutesWithMarkdown.add(matchedPath);
+              }
             }
 
             copied++;
           } catch (err) {
             console.warn(
-              `Warning: Could not read or write ${srcFile}:`,
+              `Warning: Could not generate cleaned markdown for ${srcFile}:`,
               err.message,
             );
             errors++;
+          }
+        }
+
+        if (errors > 0) {
+          throw new Error(
+            `Failed to generate cleaned markdown for ${errors} documentation source${errors === 1 ? '' : 's'}.`,
+          );
+        }
+
+        for (const tier1Route of TIER1_ROUTES) {
+          if (!tier1RoutesWithMarkdown.has(tier1Route)) {
+            throw new Error(
+              `TIER1_ROUTES entry "${tier1Route}" did not generate a markdown artifact.`,
+            );
           }
         }
 
@@ -1157,7 +1263,11 @@ async function pluginLlmsTxt(context, options) {
         }
 
         // Warn about stale manifest entries that no longer match any route
-        const knownPaths = new Set(finalRoutes.map((r) => r.path));
+        const knownPaths = new Set(
+          finalRoutes.flatMap((r) =>
+            r.sourceRoutePath ? [r.path, r.sourceRoutePath] : [r.path],
+          ),
+        );
         for (const manifest of [
           {name: 'CURATED_ROUTES', set: CURATED_ROUTES},
           {name: 'TIER1_ROUTES', set: TIER1_ROUTES},
@@ -1189,8 +1299,18 @@ async function pluginLlmsTxt(context, options) {
         let demotions = 0;
         for (const demotePath of TIER1_DEMOTION_ORDER) {
           if (llmsFullTxtContent.length <= LLMS_FULL_SIZE_LIMIT) break;
-          if (!cleanedContentMap.has(demotePath)) continue;
+          const matchingRoute = finalRoutes.find(
+            (route) =>
+              (route.path === demotePath ||
+                route.sourceRoutePath === demotePath) &&
+              cleanedContentMap.has(route.path),
+          );
+          if (!matchingRoute) continue;
           activeTier1.delete(demotePath);
+          activeTier1.delete(matchingRoute.path);
+          if (matchingRoute.sourceRoutePath) {
+            activeTier1.delete(matchingRoute.sourceRoutePath);
+          }
           llmsFullTxtContent = generateLlmsFullTxtContent(
             routesByCategory,
             context,
@@ -1257,8 +1377,10 @@ async function pluginLlmsTxt(context, options) {
         // ── 8. Report ───────────────────────────────────────────────
         const fullSizeKB = (finalLlmsFullTxt.length / 1024).toFixed(0);
         const fullTokens = Math.round(finalLlmsFullTxt.length / 4);
-        const inlineCount = [...activeTier1].filter((p) =>
-          cleanedContentMap.has(p),
+        const inlineCount = finalRoutes.filter(
+          (route) =>
+            routeMatchesPathSet(route, activeTier1) &&
+            cleanedContentMap.has(route.path),
         ).length;
         const linkedCount = finalRoutes.length - inlineCount;
 
