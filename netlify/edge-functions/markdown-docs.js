@@ -38,6 +38,7 @@ function prefersMarkdown(acceptHeader) {
 function mentionsMarkdown(acceptHeader) {
   if (!acceptHeader) return false;
 
+  // A q=0 markdown entry still means the representation decision varied on Accept.
   return acceptHeader
     .split(',')
     .some(
@@ -100,8 +101,10 @@ async function passThroughWithVary(request, context) {
   return responseWithVary;
 }
 
-async function passThrough(request, context, shouldVary = false) {
+async function continueStaticRequest(request, context, shouldVary = false) {
   if (shouldVary) return passThroughWithVary(request, context);
+
+  // Returning undefined lets Netlify continue the normal static request chain.
 }
 
 export default async (request, context) => {
@@ -113,14 +116,14 @@ export default async (request, context) => {
 
   const acceptHeader = request.headers.get('accept');
   if (!prefersMarkdown(acceptHeader)) {
-    return passThrough(
+    return continueStaticRequest(
       request,
       context,
       isNegotiableDocsPath && mentionsMarkdown(acceptHeader),
     );
   }
 
-  if (!markdownPath) return passThrough(request, context);
+  if (!markdownPath) return continueStaticRequest(request, context);
 
   const markdownUrl = new URL(request.url);
   markdownUrl.pathname = markdownPath;

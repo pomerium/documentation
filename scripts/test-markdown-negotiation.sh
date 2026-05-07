@@ -7,6 +7,7 @@ DOC_PATH="/docs/capabilities/mcp/protect-mcp-server"
 API_PATH="/docs/api"
 FIXTURE_DIR="build/docs/capabilities/markdown-negotiation-test"
 MISSING_DOC_PATH="/docs/capabilities/markdown-negotiation-test/missing"
+UNDERSCORE_DOC_PATH="/docs/capabilities/markdown-negotiation-test/_partial"
 LEGACY_INDEX_PATH="${DOC_PATH}/index.md"
 LOG_FILE="$(mktemp -t pomerium-docs-netlify-dev.XXXXXX.log)"
 NETLIFY_PID=""
@@ -258,7 +259,10 @@ do
 done
 
 assert_response "HEAD markdown negotiation" "${DOC_PATH}" 200 "text/markdown" "vary" -I -H "Accept: text/markdown"
+headers="$(response_headers "${DOC_PATH}" -H "Accept: text/markdown")"
+assert_header_contains "${headers}" "content-type" "charset=UTF-8"
 assert_markdown_body_shape "${DOC_PATH}" -H "Accept: text/markdown"
+assert_markdown_body_starts_with "${DOC_PATH}" "# Protect an MCP Server" -H "Accept: text/markdown"
 
 for header in \
   "" \
@@ -278,7 +282,11 @@ do
 done
 
 assert_response "API exclusion" "${API_PATH}" 200 "text/html" "any-vary" -H "Accept: text/markdown"
+assert_response "HEAD API exclusion" "${API_PATH}" 200 "text/html" "any-vary" -I -H "Accept: text/markdown"
 headers="$(response_headers "${API_PATH}" -H "Accept: text/markdown")"
+assert_header_not_contains "${headers}" "content-type" "text/markdown"
+assert_response "underscore path exclusion" "${UNDERSCORE_DOC_PATH}" 404 "text/html" "any-vary" -H "Accept: text/markdown"
+headers="$(response_headers "${UNDERSCORE_DOC_PATH}" -H "Accept: text/markdown")"
 assert_header_not_contains "${headers}" "content-type" "text/markdown"
 
 for fixture_path in "${DOTTED_DOC_PATH}" "${FILE_LIKE_DOC_PATH}"; do
@@ -288,6 +296,7 @@ assert_markdown_body_starts_with "${DOTTED_DOC_PATH}" "# Dotted Slug" -H "Accept
 assert_markdown_body_starts_with "${FILE_LIKE_DOC_PATH}" "# File-Like Slug" -H "Accept: text/markdown"
 
 assert_response "missing markdown fallback" "${MISSING_DOC_PATH}" 404 "text/html" "vary" -H "Accept: text/markdown"
+assert_response "HEAD missing markdown fallback" "${MISSING_DOC_PATH}" 404 "text/html" "vary" -I -H "Accept: text/markdown"
 headers="$(response_headers "${MISSING_DOC_PATH}" -H "Accept: text/markdown")"
 assert_header_not_contains "${headers}" "content-type" "text/markdown"
 assert_response "direct missing .md" "${MISSING_DOC_PATH}.md" 404 "text/html" "any-vary"
