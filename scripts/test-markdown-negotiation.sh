@@ -7,6 +7,7 @@ DOC_PATH="/docs/capabilities/mcp/protect-mcp-server"
 API_PATH="/docs/api"
 FIXTURE_DIR="build/docs/markdown-negotiation-test"
 MISSING_DOC_PATH="/docs/markdown-negotiation-test/missing"
+LEGACY_INDEX_PATH="${DOC_PATH}/index.md"
 LOG_FILE="$(mktemp -t pomerium-docs-netlify-dev.XXXXXX.log)"
 NETLIFY_PID=""
 NETLIFY_DIR_EXISTED=0
@@ -94,6 +95,27 @@ ${headers}"
   fi
 }
 
+assert_vary_contains_accept() {
+  local headers="$1"
+
+  echo "${headers}" |
+    awk 'BEGIN {IGNORECASE=1} index($0, "vary:") == 1 {sub(/^[^:]*:[[:space:]]*/, ""); print}' |
+    grep -Eiq '(^|,)[[:space:]]*accept[[:space:]]*(,|$)' ||
+    fail "expected Vary header to contain Accept; got:
+${headers}"
+}
+
+assert_vary_not_contains_accept() {
+  local headers="$1"
+
+  if echo "${headers}" |
+    awk 'BEGIN {IGNORECASE=1} index($0, "vary:") == 1 {sub(/^[^:]*:[[:space:]]*/, ""); print}' |
+    grep -Eiq '(^|,)[[:space:]]*accept[[:space:]]*(,|$)'; then
+    fail "expected Vary header not to contain Accept; got:
+${headers}"
+  fi
+}
+
 assert_response() {
   local label="$1"
   local request_path="$2"
@@ -108,10 +130,33 @@ assert_response() {
   assert_header_contains "${headers}" "content-type" "${expected_content_type}"
 
   if [[ "${expect_vary}" == "vary" ]]; then
-    assert_header_contains "${headers}" "vary" "Accept"
+    assert_vary_contains_accept "${headers}"
+  elif [[ "${expect_vary}" == "no-vary" ]]; then
+    assert_vary_not_contains_accept "${headers}"
+  elif [[ "${expect_vary}" == "any-vary" ]]; then
+    true
+  else
+    fail "unknown Vary expectation: ${expect_vary}"
   fi
 
   echo "ok - ${label}"
+}
+
+assert_markdown_body_shape() {
+  local request_path="$1"
+  shift
+
+  local body
+  local first_line
+  body="$(response_body "${request_path}" "$@")"
+  first_line="$(echo "${body}" | sed -n '1p')"
+  [[ "${first_line}" == "# "* ]] ||
+    fail "expected ${request_path} body to start with a markdown H1; got: ${first_line}"
+  if echo "${body}" | grep -Eq '(^|[[:space:]]):::[[:alpha:]]|<TabItem'; then
+    fail "expected ${request_path} body to be cleaned markdown without Docusaurus MDX syntax"
+  fi
+
+  echo "ok - ${request_path} body is cleaned markdown"
 }
 
 assert_markdown_body_starts_with() {
@@ -156,12 +201,28 @@ wait_for_netlify() {
 }
 
 require_command curl
+require_command grep
 require_command netlify
 
 [[ -d build ]] || fail "build/ does not exist; run yarn build first"
 [[ -f build/docs.md ]] || fail "build/docs.md does not exist; run yarn build first"
 [[ -f build${DOC_PATH}.md ]] ||
   fail "build${DOC_PATH}.md does not exist; run yarn build first"
+[[ -f build${LEGACY_INDEX_PATH} ]] ||
+  fail "build${LEGACY_INDEX_PATH} does not exist; run yarn build first"
+[[ -f build/docs/reference/routes.md ]] ||
+  fail "build/docs/reference/routes.md does not exist; run yarn build first"
+[[ -f build/docs/reference/routes/index.md ]] ||
+  fail "build/docs/reference/routes/index.md does not exist; run yarn build first"
+[[ ! -e build/docs/capabilities/mcp/protect-mcp-server/index/index.md ]] ||
+  fail "unexpected build/docs/capabilities/mcp/protect-mcp-server/index/index.md was generated"
+grep -q "https://www.pomerium.com/docs/capabilities/mcp/protect-mcp-server.md" build/llms.txt ||
+  fail "llms.txt does not link to canonical protect-mcp-server.md"
+grep -q "https://www.pomerium.com/docs/capabilities/mcp/protect-mcp-server.md" build/llms-index.txt ||
+  fail "llms-index.txt does not link to canonical protect-mcp-server.md"
+if grep -Eq "https://www\\.pomerium\\.com/docs/.*/index\\.md\\)" build/llms.txt build/llms-index.txt; then
+  fail "llms link files should not prefer legacy /index.md sidecars"
+fi
 
 DOTTED_DOC_PATH="/docs/markdown-negotiation-test/v1.2.3"
 FILE_LIKE_DOC_PATH="/docs/markdown-negotiation-test/config.json"
@@ -179,6 +240,10 @@ NETLIFY_PID="$!"
 wait_for_netlify
 
 assert_response "direct .md" "${DOC_PATH}.md" 200 "text/markdown" "no-vary"
+assert_response "direct /docs.md" "/docs.md" 200 "text/markdown" "no-vary"
+assert_response "legacy /index.md" "${LEGACY_INDEX_PATH}" 200 "text/markdown" "no-vary"
+assert_response "root /docs markdown negotiation" "/docs" 200 "text/markdown" "vary" -H "Accept: text/markdown"
+assert_response "root /docs/ markdown negotiation" "/docs/" 200 "text/markdown" "vary" -H "Accept: text/markdown"
 
 for header in \
   "Accept: text/markdown" \
@@ -189,7 +254,7 @@ do
 done
 
 assert_response "HEAD markdown negotiation" "${DOC_PATH}" 200 "text/markdown" "vary" -I -H "Accept: text/markdown"
-assert_markdown_body_starts_with "${DOC_PATH}" "# Protect an MCP Server" -H "Accept: text/markdown"
+assert_markdown_body_shape "${DOC_PATH}" -H "Accept: text/markdown"
 
 for header in \
   "" \
@@ -204,7 +269,7 @@ do
   fi
 done
 
-assert_response "API exclusion" "${API_PATH}" 200 "text/html" "vary" -H "Accept: text/markdown"
+assert_response "API exclusion" "${API_PATH}" 200 "text/html" "no-vary" -H "Accept: text/markdown"
 headers="$(response_headers "${API_PATH}" -H "Accept: text/markdown")"
 assert_header_not_contains "${headers}" "content-type" "text/markdown"
 
@@ -217,5 +282,6 @@ assert_markdown_body_starts_with "${FILE_LIKE_DOC_PATH}" "# File-Like Slug" -H "
 assert_response "missing markdown fallback" "${MISSING_DOC_PATH}" 404 "text/html" "vary" -H "Accept: text/markdown"
 headers="$(response_headers "${MISSING_DOC_PATH}" -H "Accept: text/markdown")"
 assert_header_not_contains "${headers}" "content-type" "text/markdown"
+assert_response "direct missing .md" "${MISSING_DOC_PATH}.md" 404 "text/html" "any-vary"
 
 echo "markdown negotiation test passed on ${BASE_URL}"

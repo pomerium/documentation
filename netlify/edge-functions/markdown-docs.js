@@ -39,6 +39,7 @@ function toMarkdownPath(pathname) {
   const normalizedPathname = pathname.replace(/\/+$/, '') || '/';
 
   if (
+    // Direct markdown sidecars pass through; this also prevents rewrite recursion.
     normalizedPathname.endsWith('.md') ||
     normalizedPathname === '/docs/api' ||
     normalizedPathname.startsWith('/docs/api/') ||
@@ -88,16 +89,24 @@ async function passThroughWithVary(request, context) {
   return responseWithVary;
 }
 
+async function passThrough(request, context, shouldVary = false) {
+  if (shouldVary) return passThroughWithVary(request, context);
+
+  return context.next();
+}
+
 export default async (request, context) => {
   if (request.method !== 'GET' && request.method !== 'HEAD') return;
 
-  if (!prefersMarkdown(request.headers.get('accept'))) {
-    return passThroughWithVary(request, context);
-  }
-
   const url = new URL(request.url);
   const markdownPath = toMarkdownPath(url.pathname);
-  if (!markdownPath) return passThroughWithVary(request, context);
+  const isNegotiableDocsPath = Boolean(markdownPath);
+
+  if (!prefersMarkdown(request.headers.get('accept'))) {
+    return passThrough(request, context, isNegotiableDocsPath);
+  }
+
+  if (!markdownPath) return passThrough(request, context);
 
   const markdownUrl = new URL(request.url);
   markdownUrl.pathname = markdownPath;
@@ -112,12 +121,16 @@ export default async (request, context) => {
     return passThroughWithVary(request, context);
   }
 
-  if (
-    !markdownResponse.ok ||
-    !isMarkdownCompatibleContentType(
-      markdownResponse.headers.get('content-type'),
-    )
-  ) {
+  const markdownContentType = markdownResponse.headers.get('content-type');
+  const isMarkdownContentType =
+    isMarkdownCompatibleContentType(markdownContentType);
+  if (markdownResponse.ok && !isMarkdownContentType) {
+    console.warn(
+      `Markdown variant for ${url.pathname} returned incompatible content-type: ${markdownContentType || 'none'}`,
+    );
+  }
+
+  if (!markdownResponse.ok || !isMarkdownContentType) {
     return passThroughWithVary(request, context);
   }
 

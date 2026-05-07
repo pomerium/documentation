@@ -238,13 +238,18 @@ function buildFallbackRoutePath(relativePath, metadata = {}) {
 }
 
 function buildDocsPath(routePath) {
-  const normalizedRoutePath = routePath
+  const pathParts = routePath
     .trim()
     .replace(/^\/+/, '')
-    .replace(/^docs\/?/, '')
-    .replace(/\/+$/, '');
+    .replace(/\/+$/, '')
+    .split('/')
+    .filter(Boolean);
 
-  return normalizedRoutePath ? `/docs/${normalizedRoutePath}` : '/docs';
+  if (pathParts[0] === 'docs') {
+    pathParts.shift();
+  }
+
+  return pathParts.length ? `/docs/${pathParts.join('/')}` : '/docs';
 }
 
 /**
@@ -1262,21 +1267,29 @@ async function pluginLlmsTxt(context, options) {
           );
         }
 
-        // Warn about stale manifest entries that no longer match any route
+        // Fail on stale manifest entries so curated LLM docs cannot silently drift.
         const knownPaths = new Set(
           finalRoutes.flatMap((r) =>
             r.sourceRoutePath ? [r.path, r.sourceRoutePath] : [r.path],
           ),
         );
+        const staleManifestEntries = [];
         for (const manifest of [
           {name: 'CURATED_ROUTES', set: CURATED_ROUTES},
           {name: 'TIER1_ROUTES', set: TIER1_ROUTES},
         ]) {
           for (const p of manifest.set) {
             if (!knownPaths.has(p)) {
-              console.warn(`⚠️  ${manifest.name} contains stale entry: ${p}`);
+              staleManifestEntries.push(`${manifest.name}: ${p}`);
             }
           }
+        }
+        if (staleManifestEntries.length > 0) {
+          throw new Error(
+            `Stale llms route manifest entries:\n${staleManifestEntries
+              .map((entry) => `- ${entry}`)
+              .join('\n')}`,
+          );
         }
 
         const curatedRoutesByCategory = await groupRoutesByCategoryAuto(
