@@ -82,6 +82,22 @@ function appendVary(headers, headerName) {
   }
 }
 
+function removeVary(headers, headerName) {
+  const vary = headers.get('vary');
+  if (!vary || vary === '*') return;
+
+  const remainingHeaders = vary
+    .split(',')
+    .map((value) => value.trim())
+    .filter((value) => value.toLowerCase() !== headerName.toLowerCase());
+
+  if (remainingHeaders.length === 0) {
+    headers.delete('vary');
+  } else {
+    headers.set('vary', remainingHeaders.join(', '));
+  }
+}
+
 function isMarkdownCompatibleContentType(contentType) {
   if (!contentType) return false;
 
@@ -100,10 +116,21 @@ async function passThroughWithVary(request, context) {
   return responseWithVary;
 }
 
+async function passThroughWithoutVary(request, context) {
+  const response = await context.next();
+  const responseWithoutVary = new Response(
+    request.method === 'HEAD' ? null : response.body,
+    response,
+  );
+  removeVary(responseWithoutVary.headers, 'Accept');
+
+  return responseWithoutVary;
+}
+
 async function passThrough(request, context, shouldVary = false) {
   if (shouldVary) return passThroughWithVary(request, context);
 
-  return context.next();
+  return passThroughWithoutVary(request, context);
 }
 
 export default async (request, context) => {
@@ -167,5 +194,4 @@ export default async (request, context) => {
 // Inline config keeps this repo from needing a netlify.toml just to register one edge function.
 export const config = {
   path: '/docs/:path*',
-  excludedPath: ['/docs/api', '/docs/api/*', '/docs/*.md', '/docs/:path*.md'],
 };
