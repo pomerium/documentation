@@ -5,8 +5,8 @@ PORT="${PORT:-8899}"
 BASE_URL="http://localhost:${PORT}"
 DOC_PATH="/docs/capabilities/mcp/protect-mcp-server"
 API_PATH="/docs/api"
-FIXTURE_DIR="build/docs/markdown-negotiation-test"
-MISSING_DOC_PATH="/docs/markdown-negotiation-test/missing"
+FIXTURE_DIR="build/docs/capabilities/markdown-negotiation-test"
+MISSING_DOC_PATH="/docs/capabilities/markdown-negotiation-test/missing"
 LEGACY_INDEX_PATH="${DOC_PATH}/index.md"
 LOG_FILE="$(mktemp -t pomerium-docs-netlify-dev.XXXXXX.log)"
 NETLIFY_PID=""
@@ -224,8 +224,8 @@ if grep -Eq "https://www\\.pomerium\\.com/docs/.*/index\\.md\\)" build/llms.txt 
   fail "llms link files should not prefer legacy /index.md sidecars"
 fi
 
-DOTTED_DOC_PATH="/docs/markdown-negotiation-test/v1.2.3"
-FILE_LIKE_DOC_PATH="/docs/markdown-negotiation-test/config.json"
+DOTTED_DOC_PATH="/docs/capabilities/markdown-negotiation-test/v1.2.3"
+FILE_LIKE_DOC_PATH="/docs/capabilities/markdown-negotiation-test/config.json"
 create_markdown_fixture "${DOTTED_DOC_PATH}" "Dotted Slug"
 create_markdown_fixture "${FILE_LIKE_DOC_PATH}" "File-Like Slug"
 
@@ -263,9 +263,13 @@ for header in \
   "Accept: text/html, text/markdown;q=0.5"
 do
   if [[ -n "${header}" ]]; then
-    assert_response "HTML fallback (${header})" "${DOC_PATH}" 200 "text/html" "vary" -H "${header}"
+    if [[ "${header}" == "Accept: */*" ]]; then
+      assert_response "HTML fallback (${header})" "${DOC_PATH}" 200 "text/html" "no-vary" -H "${header}"
+    else
+      assert_response "HTML fallback (${header})" "${DOC_PATH}" 200 "text/html" "vary" -H "${header}"
+    fi
   else
-    assert_response "HTML fallback (no Accept)" "${DOC_PATH}" 200 "text/html" "vary"
+    assert_response "HTML fallback (no Accept)" "${DOC_PATH}" 200 "text/html" "no-vary"
   fi
 done
 

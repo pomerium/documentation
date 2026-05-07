@@ -150,5 +150,27 @@ export default async (request, context) => {
 
 // Inline config keeps this repo from needing a netlify.toml just to register one edge function.
 export const config = {
-  pattern: '^/docs(?:$|/(?!api(?:/|$))(?!.*\\.md$).*)',
+  path: [
+    '/docs',
+    '/docs/',
+    '/docs/capabilities',
+    '/docs/capabilities/*',
+    '/docs/courses',
+    '/docs/deploy',
+    '/docs/deploy/*',
+    '/docs/get-started',
+    '/docs/get-started/*',
+    '/docs/guides',
+    '/docs/guides/*',
+    '/docs/integrations',
+    '/docs/integrations/*',
+    '/docs/internals',
+    '/docs/internals/*',
+    '/docs/reference',
+    '/docs/reference/*',
+    '/docs/versions',
+  ],
+  header: {
+    accept: 'text/markdown',
+  },
 };
