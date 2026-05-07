@@ -9,7 +9,10 @@ routes:
                 is: user@example.com
   - from: https://console.localhost.pomerium.io
     to: http://pomerium_console:8701
-    allowed_users:
-      - user@example.com
+    policy:
+      - allow:
+          or:
+            - email:
+                is: user@example.com
     pass_identity_headers: true
 ```
