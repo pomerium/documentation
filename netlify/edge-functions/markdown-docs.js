@@ -168,7 +168,4 @@ export default async (request, context) => {
 export const config = {
   path: '/docs/:path*',
   excludedPath: ['/docs/api', '/docs/api/*', '/docs/*.md', '/docs/:path*.md'],
-  header: {
-    accept: 'text/markdown',
-  },
 };
