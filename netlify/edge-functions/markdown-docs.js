@@ -35,6 +35,17 @@ function prefersMarkdown(acceptHeader) {
   return markdownQ > 0 && markdownQ >= htmlQ;
 }
 
+function mentionsMarkdown(acceptHeader) {
+  if (!acceptHeader) return false;
+
+  return acceptHeader
+    .split(',')
+    .some(
+      (entry) =>
+        entry.split(';', 1)[0].trim().toLowerCase() === 'text/markdown',
+    );
+}
+
 function toMarkdownPath(pathname) {
   const normalizedPathname = pathname.replace(/\/+$/, '') || '/';
 
@@ -102,8 +113,13 @@ export default async (request, context) => {
   const markdownPath = toMarkdownPath(url.pathname);
   const isNegotiableDocsPath = Boolean(markdownPath);
 
-  if (!prefersMarkdown(request.headers.get('accept'))) {
-    return passThrough(request, context, isNegotiableDocsPath);
+  const acceptHeader = request.headers.get('accept');
+  if (!prefersMarkdown(acceptHeader)) {
+    return passThrough(
+      request,
+      context,
+      isNegotiableDocsPath && mentionsMarkdown(acceptHeader),
+    );
   }
 
   if (!markdownPath) return passThrough(request, context);
