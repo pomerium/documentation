@@ -239,9 +239,13 @@ netlify dev \
 NETLIFY_PID="$!"
 wait_for_netlify
 
-assert_response "direct .md" "${DOC_PATH}.md" 200 "text/markdown" "no-vary"
+# Netlify's deployed edge router adds Vary: Accept to paths covered by the
+# /docs edge route even when local netlify dev does not. Keep these assertions
+# focused on representation correctness and only require no-vary for /docs.md,
+# which is outside the edge route.
+assert_response "direct .md" "${DOC_PATH}.md" 200 "text/markdown" "any-vary"
 assert_response "direct /docs.md" "/docs.md" 200 "text/markdown" "no-vary"
-assert_response "legacy /index.md" "${LEGACY_INDEX_PATH}" 200 "text/markdown" "no-vary"
+assert_response "legacy /index.md" "${LEGACY_INDEX_PATH}" 200 "text/markdown" "any-vary"
 assert_response "root /docs markdown negotiation" "/docs" 200 "text/markdown" "vary" -H "Accept: text/markdown"
 assert_response "root /docs/ markdown negotiation" "/docs/" 200 "text/markdown" "vary" -H "Accept: text/markdown"
 
@@ -264,16 +268,16 @@ for header in \
 do
   if [[ -n "${header}" ]]; then
     if [[ "${header}" == "Accept: */*" ]]; then
-      assert_response "HTML fallback (${header})" "${DOC_PATH}" 200 "text/html" "no-vary" -H "${header}"
+      assert_response "HTML fallback (${header})" "${DOC_PATH}" 200 "text/html" "any-vary" -H "${header}"
     else
       assert_response "HTML fallback (${header})" "${DOC_PATH}" 200 "text/html" "vary" -H "${header}"
     fi
   else
-    assert_response "HTML fallback (no Accept)" "${DOC_PATH}" 200 "text/html" "no-vary"
+    assert_response "HTML fallback (no Accept)" "${DOC_PATH}" 200 "text/html" "any-vary"
   fi
 done
 
-assert_response "API exclusion" "${API_PATH}" 200 "text/html" "no-vary" -H "Accept: text/markdown"
+assert_response "API exclusion" "${API_PATH}" 200 "text/html" "any-vary" -H "Accept: text/markdown"
 headers="$(response_headers "${API_PATH}" -H "Accept: text/markdown")"
 assert_header_not_contains "${headers}" "content-type" "text/markdown"
 
