@@ -240,13 +240,14 @@ netlify dev \
 NETLIFY_PID="$!"
 wait_for_netlify
 
-# Netlify's deployed edge router adds Vary: Accept to paths covered by the
-# /docs edge route even when local netlify dev does not. Keep these assertions
-# focused on representation correctness and only require no-vary for /docs.md,
-# which is outside the edge route.
-assert_response "direct .md" "${DOC_PATH}.md" 200 "text/markdown" "any-vary"
+# Static markdown sidecars and non-negotiated fallbacks should not fragment
+# caches by Accept. Only responses that actually consider Accept should vary.
+assert_response "direct .md" "${DOC_PATH}.md" 200 "text/markdown" "no-vary"
 assert_response "direct /docs.md" "/docs.md" 200 "text/markdown" "no-vary"
-assert_response "legacy /index.md" "${LEGACY_INDEX_PATH}" 200 "text/markdown" "any-vary"
+assert_response "legacy /index.md" "${LEGACY_INDEX_PATH}" 200 "text/markdown" "no-vary"
+assert_response "HEAD direct .md" "${DOC_PATH}.md" 200 "text/markdown" "no-vary" -I -H "Accept: text/markdown"
+assert_response "HEAD direct /docs.md" "/docs.md" 200 "text/markdown" "no-vary" -I -H "Accept: text/markdown"
+assert_response "HEAD legacy /index.md" "${LEGACY_INDEX_PATH}" 200 "text/markdown" "no-vary" -I -H "Accept: text/markdown"
 assert_response "root /docs markdown negotiation" "/docs" 200 "text/markdown" "vary" -H "Accept: text/markdown"
 assert_response "root /docs/ markdown negotiation" "/docs/" 200 "text/markdown" "vary" -H "Accept: text/markdown"
 
@@ -267,25 +268,26 @@ assert_markdown_body_starts_with "${DOC_PATH}" "# Protect an MCP Server" -H "Acc
 for header in \
   "" \
   "Accept: */*" \
+  "Accept: text/*" \
   "Accept: text/markdown;q=0, text/html" \
   "Accept: text/html, text/markdown;q=0.5"
 do
   if [[ -n "${header}" ]]; then
-    if [[ "${header}" == "Accept: */*" ]]; then
-      assert_response "HTML fallback (${header})" "${DOC_PATH}" 200 "text/html" "any-vary" -H "${header}"
+    if [[ "${header}" == "Accept: */*" || "${header}" == "Accept: text/*" ]]; then
+      assert_response "HTML fallback (${header})" "${DOC_PATH}" 200 "text/html" "no-vary" -H "${header}"
     else
       assert_response "HTML fallback (${header})" "${DOC_PATH}" 200 "text/html" "vary" -H "${header}"
     fi
   else
-    assert_response "HTML fallback (no Accept)" "${DOC_PATH}" 200 "text/html" "any-vary"
+    assert_response "HTML fallback (no Accept)" "${DOC_PATH}" 200 "text/html" "no-vary"
   fi
 done
 
-assert_response "API exclusion" "${API_PATH}" 200 "text/html" "any-vary" -H "Accept: text/markdown"
-assert_response "HEAD API exclusion" "${API_PATH}" 200 "text/html" "any-vary" -I -H "Accept: text/markdown"
+assert_response "API exclusion" "${API_PATH}" 200 "text/html" "no-vary" -H "Accept: text/markdown"
+assert_response "HEAD API exclusion" "${API_PATH}" 200 "text/html" "no-vary" -I -H "Accept: text/markdown"
 headers="$(response_headers "${API_PATH}" -H "Accept: text/markdown")"
 assert_header_not_contains "${headers}" "content-type" "text/markdown"
-assert_response "underscore path exclusion" "${UNDERSCORE_DOC_PATH}" 404 "text/html" "any-vary" -H "Accept: text/markdown"
+assert_response "underscore path exclusion" "${UNDERSCORE_DOC_PATH}" 404 "text/html" "no-vary" -H "Accept: text/markdown"
 headers="$(response_headers "${UNDERSCORE_DOC_PATH}" -H "Accept: text/markdown")"
 assert_header_not_contains "${headers}" "content-type" "text/markdown"
 
@@ -299,6 +301,7 @@ assert_response "missing markdown fallback" "${MISSING_DOC_PATH}" 404 "text/html
 assert_response "HEAD missing markdown fallback" "${MISSING_DOC_PATH}" 404 "text/html" "vary" -I -H "Accept: text/markdown"
 headers="$(response_headers "${MISSING_DOC_PATH}" -H "Accept: text/markdown")"
 assert_header_not_contains "${headers}" "content-type" "text/markdown"
-assert_response "direct missing .md" "${MISSING_DOC_PATH}.md" 404 "text/html" "any-vary"
+assert_response "direct missing .md" "${MISSING_DOC_PATH}.md" 404 "text/html" "no-vary"
+assert_response "HEAD direct missing .md" "${MISSING_DOC_PATH}.md" 404 "text/html" "no-vary" -I -H "Accept: text/markdown"
 
 echo "markdown negotiation test passed on ${BASE_URL}"

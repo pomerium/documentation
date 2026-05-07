@@ -69,7 +69,6 @@ function toMarkdownPath(pathname) {
 
 function appendVary(headers, headerName) {
   const vary = headers.get('vary');
-  if (vary === '*') return;
   if (!vary) {
     headers.set('vary', headerName);
     return;
@@ -78,6 +77,7 @@ function appendVary(headers, headerName) {
   const existingHeaders = vary
     .split(',')
     .map((value) => value.trim().toLowerCase());
+  if (existingHeaders.includes('*')) return;
   if (!existingHeaders.includes(headerName.toLowerCase())) {
     headers.set('vary', `${vary}, ${headerName}`);
   }
@@ -92,6 +92,7 @@ function isMarkdownCompatibleContentType(contentType) {
 
 async function passThroughWithVary(request, context) {
   const response = await context.next();
+  if (request.method === 'HEAD') response.body?.cancel?.();
   const responseWithVary = new Response(
     request.method === 'HEAD' ? null : response.body,
     response,
@@ -123,6 +124,7 @@ export default async (request, context) => {
     );
   }
 
+  // Non-negotiable paths are invariant in Accept, even when the request prefers markdown.
   if (!markdownPath) return continueStaticRequest(request, context);
 
   const markdownUrl = new URL(request.url);
@@ -154,6 +156,7 @@ export default async (request, context) => {
   const headers = new Headers(markdownResponse.headers);
   headers.set('content-type', MARKDOWN_CONTENT_TYPE);
   appendVary(headers, 'Accept');
+  if (request.method === 'HEAD') markdownResponse.body?.cancel?.();
 
   return new Response(
     request.method === 'HEAD' ? null : markdownResponse.body,
