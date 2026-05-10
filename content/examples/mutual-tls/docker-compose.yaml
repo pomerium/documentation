@@ -1,0 +1,19 @@
+services:
+  pomerium:
+    image: pomerium/pomerium:latest
+    environment:
+      - CERTIFICATE
+      - CERTIFICATE_KEY
+      - COOKIE_SECRET
+    volumes:
+      - ./example.config.yaml:/pomerium/config.yaml:ro
+      - ./out:/pomerium/out:ro
+    ports:
+      - 443:443
+
+  mtls:
+    build: .
+    env_file:
+      - ./.env
+    ports:
+      - 8443:8443
