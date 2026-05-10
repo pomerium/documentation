@@ -41,7 +41,7 @@ services:
   postgres:
     networks:
       main: {}
-    image: postgres:13
+    image: postgres:17
     restart: always
     ports:
       - 5432:5432

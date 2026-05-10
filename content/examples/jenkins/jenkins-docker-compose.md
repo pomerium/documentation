@@ -21,7 +21,7 @@ services:
  jenkins:
    networks:
      main: {}
-   image: jenkins/jenkins:lts-jdk11
+   image: jenkins/jenkins:lts-jdk21
    privileged: true
    user: root
    ports:
@@ -31,5 +31,5 @@ services:
      # File path to Jenkins_home -- stores configs, build logs, and artifacts
      - ./home/jenkins_compose/jenkins_configuration:/var/jenkins_home
      # "sock" is the Unix socket the Docker daemon listens on by default
-     - ./var/run/docker.sock:/var/run/docker.sock
+     - /var/run/docker.sock:/var/run/docker.sock
 ```

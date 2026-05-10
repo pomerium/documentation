@@ -4,7 +4,9 @@
 ```bash title="deploy.sh"
 #!/bin/bash
 
-# Install gcloud beta
+# domain-mappings on fully-managed Cloud Run is still under `gcloud beta`
+# (the GA `gcloud run domain-mappings` is Cloud Run for Anthos only and
+# rejects --region as of gcloud SDK 555+).
 gcloud components install beta
 
 # Capture current project number
