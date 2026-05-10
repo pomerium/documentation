@@ -13,6 +13,12 @@ For example:
 
 -->
 
+## AI disclosure
+
+<!-- If this PR was assisted by AI (Claude, Copilot, Cursor, Amp, etc.),
+state which tool and roughly how much of the work was AI-assisted (e.g.
+"Cursor autocomplete only", "Claude Code drafted scaffolding, I rewrote
+the routing config"). If no AI was used, write "none". See AI_POLICY.md. -->
 
 ## Checklist
 
@@ -20,4 +26,4 @@ For example:
 - [ ] updated docs
 - [ ] updated UPGRADING.md
 - [ ] updated CHANGELOG.md
-
+- [ ] disclosed AI usage (or wrote "none") per AI_POLICY.md
