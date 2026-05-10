@@ -6,6 +6,8 @@ COPY . /go/src/app
 RUN go mod download
 RUN CGO_ENABLED=0 go build -trimpath -ldflags="-s -w" -o /app .
 
-FROM gcr.io/distroless/static:latest@sha256:47b2d72ff90843eb8a768b5c2f89b40741843b639d065b9b937b07cd59b479c6
+FROM gcr.io/distroless/static:nonroot@sha256:e3f945647ffb95b5839c07038d64f9811adf17308b9121d8a2b87b6a22a80a39
 COPY --from=build-env /app /app
+USER nonroot:nonroot
+EXPOSE 8443
 CMD ["/app"]
