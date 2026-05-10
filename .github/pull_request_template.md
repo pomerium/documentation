@@ -13,7 +13,6 @@ For example:
 
 -->
 
-
 ## AI disclosure
 
 <!-- If this PR was assisted by AI (Claude, Copilot, Cursor, Amp, etc.),
@@ -28,4 +27,3 @@ the routing config"). If no AI was used, write "none". See AI_POLICY.md. -->
 - [ ] updated UPGRADING.md
 - [ ] updated CHANGELOG.md
 - [ ] disclosed AI usage (or wrote "none") per AI_POLICY.md
-
