@@ -81,7 +81,6 @@ func newClientCertTLSListener(addr, tlsCert, tlsKey, clientCA string) (net.Liste
 			tls.TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,
 			tls.TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305,
 		},
-		PreferServerCipherSuites: true,
 		CurvePreferences: []tls.CurveID{
 			tls.X25519,
 			tls.CurveP256,
@@ -89,7 +88,6 @@ func newClientCertTLSListener(addr, tlsCert, tlsKey, clientCA string) (net.Liste
 		Certificates: []tls.Certificate{*cert},
 		NextProtos:   []string{"h2"},
 	}
-	tlsConfig.BuildNameToCertificate()
 
 	ln, err := net.Listen("tcp", addr)
 	if err != nil {
@@ -102,11 +100,11 @@ func newClientCertTLSListener(addr, tlsCert, tlsKey, clientCA string) (net.Liste
 func decodeCertPoolFromPEM(encPemCerts string) (*x509.CertPool, error) {
 	pemCerts, err := base64.StdEncoding.DecodeString(encPemCerts)
 	if err != nil {
-		return nil, fmt.Errorf("couldn't decode pem %v: %w", pemCerts, err)
+		return nil, fmt.Errorf("decode CA pem: %w", err)
 	}
 	certPool := x509.NewCertPool()
 	if ok := certPool.AppendCertsFromPEM(pemCerts); !ok {
-		return nil, fmt.Errorf("failed to append certs from pem")
+		return nil, fmt.Errorf("append CA certs from pem")
 	}
 	return certPool, nil
 }
@@ -114,11 +112,11 @@ func decodeCertPoolFromPEM(encPemCerts string) (*x509.CertPool, error) {
 func decodeCertificate(cert, key string) (*tls.Certificate, error) {
 	decodedCert, err := base64.StdEncoding.DecodeString(cert)
 	if err != nil {
-		return nil, fmt.Errorf("failed to decode certificate cert %v: %w", decodedCert, err)
+		return nil, fmt.Errorf("decode cert: %w", err)
 	}
 	decodedKey, err := base64.StdEncoding.DecodeString(key)
 	if err != nil {
-		return nil, fmt.Errorf("failed to decode certificate key %v: %w", decodedKey, err)
+		return nil, fmt.Errorf("decode key: %w", err)
 	}
 	x509, err := tls.X509KeyPair(decodedCert, decodedKey)
 	return &x509, err

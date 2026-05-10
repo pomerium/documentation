@@ -1,6 +1,12 @@
 services:
+  # Reference Pomerium service. Requires real CERTIFICATE / CERTIFICATE_KEY /
+  # COOKIE_SECRET and working IdP credentials in example.config.yaml; left
+  # behind a Compose profile so it doesn't auto-start and crash-loop during
+  # the basic curl-against-mtls demo.
   pomerium:
     image: pomerium/pomerium:latest
+    profiles:
+      - reference
     environment:
       - CERTIFICATE
       - CERTIFICATE_KEY

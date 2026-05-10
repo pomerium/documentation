@@ -31,10 +31,12 @@ certstrap --depot-path out sign bad-curl --CA bad-ca
 
 # Emit a .env file consumed by docker-compose for the mtls service. Compose
 # expects TLS_CERT/TLS_KEY/CLIENT_CA as base64-encoded blobs.
+umask 077
 {
 	printf 'TLS_CERT=%s\n' "$(base64 < out/web-app.crt | tr -d '\n')"
 	printf 'TLS_KEY=%s\n' "$(base64 < out/web-app.key | tr -d '\n')"
 	printf 'CLIENT_CA=%s\n' "$(base64 < out/good-ca.crt | tr -d '\n')"
 } > .env
+chmod 600 .env
 
 echo "Generated certs in ./out/ and env vars in ./.env"

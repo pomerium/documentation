@@ -1,7 +1,7 @@
 FROM golang:1.26.2-bookworm@sha256:4f4ab2c90005e7e63cb631f0b4427f05422f241622ee3ec4727cc5febbf83e34 AS build-env
 
 WORKDIR /go/src/app
-ADD . /go/src/app
+COPY . /go/src/app
 
 RUN go mod download
 RUN CGO_ENABLED=0 go build -trimpath -ldflags="-s -w" -o /app .

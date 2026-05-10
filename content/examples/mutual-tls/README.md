@@ -19,17 +19,18 @@ end-to-end requires your own identity provider credentials and external TLS.
 
 ## Quick start
 
-Prerequisites: Docker, [`certstrap`](https://github.com/square/certstrap),
-`base64`.
+Prerequisites: Docker and [`certstrap`](https://github.com/square/certstrap).
 
 ```bash
-./scripts/generate_certs.sh   # creates ./out/* and ./.env
+./scripts/generate_certs.sh   # wipes and recreates ./out/, writes ./.env
 docker compose up mtls -d     # builds the Go server and runs it on :8443
 ./scripts/curl.sh             # mTLS round-trip against the running server
 ```
 
-`./out/` (certs and keys) and `./.env` (base64-encoded cert material consumed
-by Compose) are generated on demand and gitignored.
+`./out/` and `./.env` are generated on demand and gitignored. Re-running
+`generate_certs.sh` deletes any existing `./out/` first so re-runs produce
+clean state. `./.env` is `chmod 600` because it contains the server's
+private key in base64.
 
 ## Files
 
