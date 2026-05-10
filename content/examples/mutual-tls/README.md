@@ -29,18 +29,22 @@ docker compose up mtls -d     # builds the Go server and runs it on :8443
 
 `./out/` and `./.env` are generated on demand and gitignored. Re-running
 `generate_certs.sh` deletes any existing `./out/` first so re-runs produce
-clean state. The script runs under `umask 077`, so every file in `./out/`
-(including the private keys) and `./.env` itself land with `0600`
-permissions.
+clean state. The script runs under `umask 077`, so the `out/` directory and
+`./.env` land at `0600` (and certstrap writes its own files at `0400`,
+which is also owner-only and therefore consistent with the umask).
 
 If you run the reference `pomerium` Compose service (`docker compose
---profile reference up`), the container reads cert/key files from
-`/pomerium/out` mounted read-only from `./out`. The default Pomerium image
-runs as a non-root user, so the `0600` files won't be readable; for the
-reference profile you'll either need to relax the perms (`chmod -R 0644
-out/*.crt && chmod 0640 out/*.key` plus a matching group), or run the
-container with a UID that matches your local owner via `user:` in the
-Compose service.
+--profile reference up`), the container reads three specific cert/key files
+that are bind-mounted individually from `./out`: `good-ca.crt`,
+`pomerium.crt`, and `pomerium.key`. The CA private keys and the curl test
+client keys stay on the host. On Linux, the default Pomerium image runs as
+a non-root user (`nonroot`, UID 65532) and the `0400`/`0600` files won't be
+readable through a bind mount that preserves host ownership. Either relax
+the perms on just the three mounted files (`chmod a+r out/good-ca.crt
+out/pomerium.crt out/pomerium.key`), or run the container with a `user:`
+matching your local owner. Docker Desktop and OrbStack on macOS remap
+bind-mount ownership to the container user, so this is not an issue on
+those platforms.
 
 ## Files
 

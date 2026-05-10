@@ -11,9 +11,14 @@ services:
       - CERTIFICATE
       - CERTIFICATE_KEY
       - COOKIE_SECRET
+    # Mount only the specific certs Pomerium needs for the upstream connection.
+    # Mounting the whole ./out/ directory would expose CA private keys and the
+    # curl test client keys that don't belong inside this container.
     volumes:
       - ./example.config.yaml:/pomerium/config.yaml:ro
-      - ./out:/pomerium/out:ro
+      - ./out/good-ca.crt:/pomerium/out/good-ca.crt:ro
+      - ./out/pomerium.crt:/pomerium/out/pomerium.crt:ro
+      - ./out/pomerium.key:/pomerium/out/pomerium.key:ro
     ports:
       - 443:443
 

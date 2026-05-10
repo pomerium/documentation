@@ -71,7 +71,7 @@ func hello(w http.ResponseWriter, r *http.Request) {
 			fmt.Fprintf(w, "\t[%s]:\n\t\t[redacted]\n", k)
 			continue
 		}
-		fmt.Fprintf(w, "\t[%s]:\n\t\t%s\n", k, v)
+		fmt.Fprintf(w, "\t[%s]:\n\t\t%s\n", k, strings.Join(v, ", "))
 	}
 }
 
