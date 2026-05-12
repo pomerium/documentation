@@ -1,7 +1,7 @@
 ---
 title: Pomerium Enterprise
 description: Install, configure, and operate the self-hosted Pomerium Enterprise control plane for Pomerium Core clusters.
-sidebar_position: 0
+sidebar_position: 3
 keywords:
   [
     Pomerium Enterprise,
