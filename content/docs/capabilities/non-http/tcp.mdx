@@ -46,6 +46,17 @@ Otherwise, the HTTP proxy in front of Pomerium must know how to properly handle 
 
 :::
 
+## Two ports, one transport
+
+A TCP route involves two ports that are easy to confuse:
+
+1. The **transport port** the client uses to reach Pomerium. If no explicit port is set in `--pomerium-url`, `pomerium-cli` opens its HTTPS connection on TCP/443. You do not configure that on the route; it's whichever port Pomerium's [`address`](/docs/reference/address), or the edge in front of it, is exposed on.
+2. The **route-match port** in `from: tcp+https://HOST:PORT`. This is the port carried in the HTTP CONNECT `:authority` header and is what Pomerium uses to match the right route. Use the destination service port here (`:22` for SSH, `:5432` for Postgres, `:3389` for RDP, etc.).
+
+The same hostname can carry multiple TCP routes for different services by varying the route-match port. Do not use `:443` in the `from` URL just to satisfy an outbound firewall rule. Use the actual service port instead, and keep the client-to-Pomerium transport on HTTPS/TCP 443.
+
+For a complete SSH example with an L4 edge in front of Pomerium, see [SSH over TCP/443 through an L4 edge](/docs/guides/ssh-tcp-l4-passthrough).
+
 ## Configure TCP routes
 
 TCP configuration is simple. Just specify the correct scheme and ports in your route [`to`](/docs/reference/routes/to) and [`from`](/docs/reference/routes/from) fields.
@@ -149,5 +160,6 @@ The guides below demonstrate how to proxy TCP tunnels with Pomerium to well-know
 - [**RDP**](./examples/rdp)
 - [**Redis**](./examples/redis)
 - [**SSH**](./examples/ssh)
+- [**SSH over TCP/443 through an L4 edge**](/docs/guides/ssh-tcp-l4-passthrough) - for environments restricted to outbound TCP/443
 
 :::

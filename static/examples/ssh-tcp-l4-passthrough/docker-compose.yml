@@ -1,0 +1,70 @@
+name: pomerium-ssh-l4
+
+services:
+  sshd:
+    image: lscr.io/linuxserver/openssh-server:latest
+    environment:
+      PUID: "1000"
+      PGID: "1000"
+      TZ: Etc/UTC
+      USER_NAME: demo
+      USER_PASSWORD: demo-password
+      PASSWORD_ACCESS: "true"
+      SUDO_ACCESS: "false"
+      LOG_STDOUT: "true"
+    healthcheck:
+      test: ["CMD-SHELL", "nc -z localhost 2222 || exit 1"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+      start_period: 5s
+
+  pomerium:
+    image: pomerium/pomerium:latest
+    depends_on:
+      sshd:
+        condition: service_healthy
+    volumes:
+      - ./certs:/certs:ro
+      - ./config/pomerium.yaml:/pomerium.yaml:ro
+    command: ["--config", "/pomerium.yaml"]
+    healthcheck:
+      test: ["CMD", "pomerium", "health"]
+      interval: 3s
+      timeout: 3s
+      retries: 30
+      start_period: 5s
+
+  nginx:
+    image: nginx:alpine
+    depends_on:
+      pomerium:
+        condition: service_healthy
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    networks:
+      default:
+        aliases:
+          - ssh.localhost.pomerium.io
+          - authenticate.localhost.pomerium.io
+    healthcheck:
+      test: ["CMD-SHELL", "nc -z 127.0.0.1 443 || exit 1"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+      start_period: 5s
+
+  client:
+    build:
+      context: .
+      dockerfile_inline: |
+        FROM pomerium/cli:latest AS cli
+        FROM alpine:3.21
+        RUN apk add --no-cache bash bind-tools busybox-extras ca-certificates openssh-client sshpass
+        COPY --from=cli /bin/pomerium-cli /usr/local/bin/pomerium-cli
+    depends_on:
+      nginx:
+        condition: service_healthy
+    volumes:
+      - ./certs:/certs:ro
+    entrypoint: ["sleep", "infinity"]
