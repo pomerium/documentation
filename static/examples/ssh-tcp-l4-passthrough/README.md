@@ -11,8 +11,6 @@ It runs four services:
 - `sshd`: SSH target
 - `client`: in-network test client with `pomerium-cli`, `ssh`, and `sshpass`
 
-Verified on May 14, 2026 with `pomerium/pomerium:v0.32.7` and `pomerium/cli:v0.32.2`.
-
 ## Run
 
 Generate the local demo certificate first:
@@ -75,7 +73,14 @@ docker compose exec -T client sh -lc \
     -o UserKnownHostsFile=/dev/null \
     -o LogLevel=ERROR \
     -p 2222 demo@127.0.0.1 \
-    'echo TUNNEL-OK; whoami; uname -srm'"
+    'echo POMERIUM-SSH-OK; whoami'"
+```
+
+Expected output:
+
+```text
+POMERIUM-SSH-OK
+demo
 ```
 
 Clean up:
