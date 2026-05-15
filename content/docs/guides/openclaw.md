@@ -1,26 +1,30 @@
 ---
-title: Secure OpenClaw Gateway with Pomerium
-sidebar_label: OpenClaw Gateway
+title: Harden Access to OpenClaw with Pomerium
+sidebar_label: OpenClaw
 lang: en-US
 keywords: [pomerium, openclaw, claude, ai, gateway, docker, ssh, zero-trust]
-description: Learn how to deploy a secure OpenClaw gateway behind Pomerium with zero-trust authentication, SSH access, and persistent storage.
+description: Deploy OpenClaw behind Pomerium with a single install script that wires up zero-trust authentication, SSH access, and trusted-proxy auth, all automated.
 ---
 
-# Secure OpenClaw Gateway with Pomerium
+# Harden Access to OpenClaw with Pomerium
 
-This guide shows you how to deploy [OpenClaw](https://openclaw.ai) (formerly Clawdbot/Moltbot) gateway behind Pomerium for secure, authenticated access. OpenClaw is an open-source personal AI assistant that features persistent memory, system access (file operations, shell commands), browser automation, and supports multiple chat platforms. In this guide, we'll deploy it in a Docker container on your deployment host.
+This guide shows you how to add authentication and authorization to [OpenClaw](https://openclaw.ai) (formerly Clawdbot/Moltbot) using Pomerium as an identity-aware access proxy. OpenClaw is an open-source personal AI assistant with persistent memory, file and shell access, browser automation, and multi-platform chat integrations.
+
+The setup is automated by an install script. One `curl | bash` command clones the [openclaw-pomerium-guide](https://github.com/pomerium/openclaw-pomerium-guide) repository, prompts for four values, then provisions everything: Pomerium policy, SSH route, web route, cluster SSH config, JWT claim header mapping, and OpenClaw's trusted-proxy auth configuration.
+
+This guide is for anyone hosting their own OpenClaw, whether that's an individual on a homelab, a team running it for shared use, or an org standing it up for a department. The setup uses Docker Compose on a single host, which fits most single-server deployments. If you need to run OpenClaw across multiple nodes or in Kubernetes, this isn't the right starting point. And because OpenClaw itself is still maturing, the sweet spot is single-team or small-group use rather than large multi-tenant production.
 
 :::caution Security Scope
 
-OpenClaw is not production-ready software and has known security limitations. **This guide secures access to OpenClaw** (SSH and gateway portal) using Pomerium's identity-aware proxy, but **does not address OpenClaw's internal security model**. For details on OpenClaw's security considerations, see the [OpenClaw Gateway Security documentation](https://docs.openclaw.ai/gateway/security).
+OpenClaw is not production-ready software and has known security limitations. **This guide secures access to OpenClaw** (SSH and gateway portal) using Pomerium's identity-aware proxy, but **does not address OpenClaw's internal security model**. For details, see the [OpenClaw Gateway Security documentation](https://docs.openclaw.ai/gateway/security).
 
-**What Pomerium Secures:**
+**What Pomerium secures:**
 
 - User authentication and identity verification
 - Access control to SSH and gateway endpoints
 - Network-level protection
 
-**What This Guide Does NOT Secure:**
+**What this guide does NOT secure:**
 
 - OpenClaw's internal operations and tool execution
 - Code or commands run by authenticated users
@@ -29,546 +33,320 @@ OpenClaw is not production-ready software and has known security limitations. **
 
 ## What You'll Build
 
-By the end of this guide, you'll have:
+By the end of this guide you'll have:
 
-- **Complete stack**: Pomerium + OpenClaw running in Docker
-- **Identity-aware proxy**: Pomerium verifies user identity through your identity provider (Google, Okta, Azure AD, etc.) and enforces access policies on every request to the gateway
-- **SSH access**: Secure SSH access to the OpenClaw container via [Pomerium SSH routes](/docs/capabilities/native-ssh-access)
-- **Persistent storage**: OpenClaw configuration and workspace data that survives container restarts
+- **Pomerium + OpenClaw** running in Docker on your deployment host
+- **Identity-aware web route** at `https://openclaw.<your-cluster-domain>` with WebSocket support and the `operator.admin` [OpenClaw scope](https://docs.openclaw.ai/gateway/operator-scopes) injected for the authorized user
+- **SSH route** at `ssh://openclaw@<your-cluster-domain>:2200` to reach the OpenClaw container
+- **OpenClaw configured with trusted-proxy auth mode**, with Pomerium as the trusted proxy
+- **Persistent storage** for OpenClaw configuration and workspace data in `./pomclaw/openclaw-data/`
+
+## How It Works
+
+```mermaid
+flowchart LR
+    user[User browser/SSH client] -->|HTTPS or SSH| pomerium[Pomerium]
+    pomerium -->|JWT claim headers| openclaw[OpenClaw Gateway]
+    pomerium -.->|IdP login| idp[(Hosted IdP)]
+```
+
+Pomerium authenticates the user against the hosted identity provider, signs a JWT, and forwards three headers to OpenClaw on the web route:
+
+- `X-Pomerium-Jwt-Assertion`: a signed assertion proving the request came through Pomerium
+- `X-Pomerium-Claim-Email`: the authenticated user's email, mapped via the cluster's `jwtClaimsHeaders` setting
+- `X-Openclaw-Scopes`: the OpenClaw scope granted to the authorized user (`operator.admin`), injected as a route-level request header
+
+OpenClaw runs in **trusted-proxy auth mode**: it trusts the configured upstream IP (Pomerium's container IP) and treats the email header as the authenticated user. The container is not exposed to the internet; all traffic flows through Pomerium.
+
+For more on JWT claim headers, see [Getting the user's identity](/docs/capabilities/getting-users-identity).
 
 ## Before You Start
 
-To complete this guide, you need:
+You'll need:
 
 - A [Pomerium Zero](https://www.pomerium.com/docs/get-started/quickstart) account (free)
-- A deployment machine (VPS, bare metal server, or local machine) with:
-  - [Docker](https://docs.docker.com/install/) and [Docker Compose](https://docs.docker.com/compose/install/) installed
-  - Ports 443 and 2200 accessible (see [Network Requirements](#network-requirements) below)
+- A **deployment host** (VPS, bare-metal server, or local machine) with:
+  - [Docker](https://docs.docker.com/install/) and [Docker Compose](https://docs.docker.com/compose/install/)
+  - `git` and `ssh-keygen` (both pre-installed on macOS and most Linux distributions)
+  - Ports 443 and 2200 reachable from the internet (see [Network Requirements](#network-requirements) below)
+
+The script uses `curl` and `jq` _inside_ the OpenClaw container for its Pomerium Zero API calls, so you don't need them on the host.
 
 ### Network Requirements
 
-Your deployment host must meet these network requirements:
+- **Port 443 inbound**: users connect to Pomerium on HTTPS
+- **Port 2200 inbound**: Pomerium's native SSH listener (configurable; avoid 22 to keep the host's standard SSH port free for direct administration)
+- **Outbound to `console.pomerium.app`**: required to reach the managed control plane and the Pomerium Zero API
 
-- **Port 443 accessible from the internet** - Users connect to Pomerium on this port for HTTPS traffic
-  - Configure your firewall to allow inbound traffic on port 443
-  - If using a cloud provider (AWS, GCP, Azure, DigitalOcean, etc.), ensure security groups/firewall rules allow port 443
-- **Port 2200 accessible from the internet** - Pomerium SSH traffic uses this port
-  - Configure your firewall to allow inbound traffic on port 2200
-  - Required for SSH access to the OpenClaw container and any other SSH routes
-  - Note: Port 2200 is configurable in Pomerium - you can use any available port except 22 (which would conflict with the standard SSH port)
-- **Outbound connectivity** - The host must be able to reach the managed control plane (Pomerium Zero) at `console.pomerium.app`
-
-:::note
-
-Pomerium provides zero-trust access without requiring traditional VPN infrastructure.
-
-:::
+If you're on a cloud provider, make sure the security group or firewall allows inbound 443 and 2200.
 
 ## Step 1: Set Up Pomerium Zero
 
-Before deploying the Docker stack, you'll need a Pomerium Zero account and cluster.
+If you don't already have a Pomerium Zero cluster:
 
-1. **Create a Pomerium Zero account** at [pomerium.com](https://www.pomerium.com/docs/get-started/quickstart) (free)
+1. Create an account at [pomerium.com](https://www.pomerium.com/docs/get-started/quickstart) and follow the onboarding wizard.
+2. When the wizard offers a deployment method, you can pick **Docker** (or any option). The install script doesn't use the docker-compose file the wizard hands you; you only need the cluster to exist.
+3. Save the **POMERIUM_ZERO_TOKEN** the wizard shows you. You'll paste it into the install script.
 
-2. During cluster creation, select **Docker** as your setup method
+:::tip Your cluster comes with a free `*.pomerium.app` domain
 
-3. **Configure a custom identity provider** (required for SSH access)
-
-   :::caution Required for SSH Access
-
-   Soon you'll be able to use the Pomerium hosted authenticate service, but for now you must configure a custom identity provider in order to use native SSH routes.
-
-   During the onboarding wizard:
-   - Select a custom identity provider (Google, Okta, Azure AD, GitHub, etc.)
-   - Complete the provider configuration steps
-   - Save your provider credentials
-
-   For detailed instructions, see [Configuring a Custom Identity Provider in Pomerium Zero](https://www.pomerium.com/docs/get-started/fundamentals/zero/zero-custom-idp).
-
-   :::
-
-4. The onboarding wizard will provide:
-   - Your **POMERIUM_ZERO_TOKEN**
-   - Your cluster domain (e.g., `fantastic-fox-1234.pomerium.app`)
-
-5. Save both the token and your cluster domain for the next step
-
-:::note Ignore the Docker Compose File
-
-The Pomerium Zero onboarding will provide you with a docker-compose file. **You don't need it** - the openclaw-pomerium-guide repository (cloned in Step 2) already includes the necessary docker-compose setup. Just save your **POMERIUM_ZERO_TOKEN** and **cluster domain** for the next step.
+You can [configure a custom domain](https://www.pomerium.com/docs/capabilities/custom-domains) later if preferred.
 
 :::
 
-:::tip
+### Generate a Pomerium Zero API Token
 
-Your Pomerium Zero cluster comes with a built-in `*.pomerium.app` domain that you can use immediately. You can [configure a custom domain](https://www.pomerium.com/docs/capabilities/custom-domains) later if preferred.
+The install script uses the Pomerium Zero management API to create routes, policies, and cluster settings on your behalf. Generate an API user token:
+
+1. Go to [console.pomerium.app/app/management/api-tokens](https://console.pomerium.app/app/management/api-tokens).
+2. Create a token and copy it. You'll paste it into the install script.
+
+:::tip Forgot to save a token?
+
+Both the cluster bootstrap token (`POMERIUM_ZERO_TOKEN`) and the API user token (`POMERIUM_ZERO_API_TOKEN`) can be rotated at any time from the Pomerium Zero console. If you didn't capture one during the wizard, just generate a fresh one and use that.
 
 :::
 
-## Step 2: Clone and Configure the Repository
+:::note API token is bootstrap-only
 
-1. **Clone the repository** to your deployment host:
+The API token is only needed during install. When the script finishes it offers to remove the token from your local `.env` file. You should then revoke it in the Pomerium Zero console. Generate a fresh one if you ever re-run the script.
+
+:::
+
+## Step 2: Run the Install Script
+
+On your deployment host, run:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/pomerium/openclaw-pomerium-guide/main/install.sh | bash
+```
+
+This clones the repository into `./pomclaw` and hands off to `bootstrap.sh`. To install somewhere else, pass a path:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/pomerium/openclaw-pomerium-guide/main/install.sh | bash -s -- ~/openclaw
+```
+
+:::tip Inspect before running
+
+If you'd rather review the scripts first, clone the [repository](https://github.com/pomerium/openclaw-pomerium-guide) manually and run `./bootstrap.sh`. The prompts work the same way.
+
+:::
+
+The script prompts for four values:
+
+| Prompt | What to enter |
+| --- | --- |
+| `POMERIUM_ZERO_TOKEN` | Cluster bootstrap token from the Pomerium Zero onboarding wizard |
+| `POMERIUM_ZERO_API_TOKEN` | API user token from [the API tokens page](https://console.pomerium.app/app/management/api-tokens) |
+| Cluster selection | If you only have one Pomerium Zero cluster, there's nothing to do here. If you have more than one, you'll see a numbered picker with the most recently created cluster as the default |
+| `OPERATOR_EMAIL` | The IdP email you sign in with, used to allow you in the route policy |
+
+The values are written to `./pomclaw/.env` (mode 600). From there the script:
+
+1. Generates SSH host keys and the Pomerium User CA key
+2. Builds the bespoke OpenClaw Docker image (`openclaw:<version>`)
+3. Starts the `openclaw-gateway` and `pomerium` containers
+4. Pushes SSH cluster settings (`sshAddress`, `sshHostKeys`, `sshUserCaKey`) and `jwtClaimsHeaders` (`x-pomerium-claim-email: email`) to Pomerium Zero
+5. Creates an allow-by-email policy for your `OPERATOR_EMAIL`
+6. Creates the SSH route `ssh://openclaw` → `ssh://openclaw-gateway:22`
+7. Creates the web route `https://openclaw.<your-cluster-domain>` → `http://openclaw-gateway:18789` with WebSocket support and the `x-openclaw-scopes: operator.admin` request header (the [OpenClaw scope](https://docs.openclaw.ai/gateway/operator-scopes) that grants the authorized user admin privileges)
+8. Configures OpenClaw for [trusted-proxy auth mode](https://docs.openclaw.ai/gateway/trusted-proxy-auth) and restarts the gateway
+9. Brings up the rest of the stack
+10. Offers to remove the API token from `.env` so you can revoke it in the Pomerium Zero console
+
+The script is idempotent; re-running picks up from the current state.
+
+When the script finishes, it prints the SSH command and web URL you'll use to reach OpenClaw.
+
+## Step 3: Revoke the API Token
+
+The Pomerium Zero API token is no longer needed once the install script finishes. For least privilege:
+
+1. When the script prompts `Remove API token from .env? [y/N]:`, type `y`.
+2. Open [console.pomerium.app/app/management/api-tokens](https://console.pomerium.app/app/management/api-tokens) and revoke the token.
+
+Adding or removing operator emails is done in the [Pomerium Zero console](https://console.pomerium.app), not by re-running the script. If you ever do need to re-run `bootstrap.sh` (for example to regenerate keys), generate a fresh API token at the same URL.
+
+## Step 4: Verify the Install
+
+When the install script finished it printed two things to try:
+
+- A **web URL** like `https://openclaw.<your-cluster-domain>`. Open it in a browser, sign in with your `OPERATOR_EMAIL`, and you should land on the OpenClaw UI.
+- An **SSH command** like `ssh claw@openclaw@<your-cluster-domain> -p 2200`. Run it; Pomerium will prompt you to authenticate via browser before dropping you into the OpenClaw container.
+
+If either doesn't work as expected, head to [Troubleshooting](#troubleshooting) for diagnostic checks (stack health, logs, route verification, etc.).
+
+## Step 5: Upgrade OpenClaw (Optional, Recommended)
+
+OpenClaw is pinned to a specific version in `.env` (e.g. `OPENCLAW_VERSION=2026.5.12`) so installs are reproducible. Staying on a recent version is recommended for security and bug fixes, but OpenClaw is still maturing and upstream releases can introduce breaking changes, so **always check the OpenClaw release notes before bumping the version**.
+
+To upgrade:
+
+1. Review the OpenClaw release notes for the target version.
+2. Edit `OPENCLAW_VERSION` in `./pomclaw/.env`.
+3. Run:
 
    ```bash
-   # via git clone
-   git clone https://github.com/pomerium/openclaw-pomerium-guide
-
-   # or via GitHub CLI
-   gh repo clone pomerium/openclaw-pomerium-guide
-
-   cd openclaw-pomerium-guide
+   docker compose down
+   docker compose up -d
    ```
 
-   **All subsequent setup commands should be run from this directory.**
+The new image will build and the gateway will come back online.
 
-2. **Configure environment variables**:
+## Operations
+
+### Manage access
+
+Once the install script has finished, day-to-day access changes (adding or removing operator emails, tightening the policy, adjusting route headers) are done directly in the [Pomerium Zero console](https://console.pomerium.app). You don't need to re-run `bootstrap.sh` or hold onto an API token for routine policy edits.
+
+### Backup
+
+Persistent data lives in `./pomclaw/openclaw-data/`:
+
+- `config/`: OpenClaw configuration
+- `workspace/`: agent workspace (mounted at `/home/claw/workspace`)
+- `pomerium-ssh/`: Pomerium User CA public key
+
+Back this directory up regularly to prevent data loss.
+
+### Tear down
+
+To remove the deployment completely:
+
+1. Stop the containers and delete their volumes:
 
    ```bash
-   cp .env.example .env
+   cd ./pomclaw
+   docker compose down -v
    ```
 
-3. Edit `.env` and set your values:
+2. In the [Pomerium Zero console](https://console.pomerium.app), delete the `openclaw users` policy and the two routes (`ssh://openclaw` and the web route). The cluster-level SSH and `jwtClaimsHeaders` settings can stay if you plan to use Pomerium Zero for other routes; otherwise clear them under **Manage → Settings**.
+3. Optionally remove the local install directory and its persisted data:
 
-   ```bash title=".env"
-   # Your Pomerium Zero token from the onboarding wizard
-   POMERIUM_ZERO_TOKEN=your-token-here
-
-   # Your cluster subdomain (e.g., fantastic-fox-1234.pomerium.app)
-   POMERIUM_CLUSTER_DOMAIN=fantastic-fox-1234.pomerium.app
-
-   # OpenClaw version (optional, defaults to `latest`)
-   OPENCLAW_VERSION=2026.2.6
+   ```bash
+   rm -rf ./pomclaw
    ```
 
-## Step 3: Generate SSH Keys for Pomerium SSH Access
+## Troubleshooting
 
-The openclaw-pomerium-guide repository's [Dockerfile](https://github.com/pomerium/openclaw-pomerium-guide/blob/main/openclaw/Dockerfile) includes an SSH server that allows you to remotely access the OpenClaw container via [Pomerium SSH routes](/docs/capabilities/native-ssh-access). You'll need to generate SSH keys for this functionality.
-
-### Quick Setup (Recommended)
-
-For automated setup, use the provided script:
+### Verify the stack is running
 
 ```bash
-./setup-ssh.sh
-```
-
-The script will:
-
-- Generate all required SSH keys (User CA and Host keys)
-- Install the User CA public key in the openclaw-gateway container
-- Optionally configure the host SSH daemon to trust Pomerium CA (recommended for jump box access via Pomerium)
-- Display instructions for Pomerium Zero configuration
-- Show all private keys needed for Pomerium
-
-### Manual Setup
-
-If you prefer to set up SSH manually, follow these steps:
-
-#### Generate SSH Keys
-
-Generate all keys in the repository root following the [Pomerium Native SSH Access guide](/docs/capabilities/native-ssh-access):
-
-```bash
-# User CA key pair (used by Pomerium to sign SSH certificates)
-ssh-keygen -N "" -f pomerium_user_ca_key -C "Pomerium User CA"
-
-# Host keys (for different SSH algorithms)
-ssh-keygen -t ed25519 -f ssh_host_ed25519_key -N ""
-ssh-keygen -t rsa -b 3072 -f ssh_host_rsa_key -N ""
-ssh-keygen -t ecdsa -b 256 -f ssh_host_ecdsa_key -N ""
-```
-
-:::info Security Note
-
-All private keys stay in the repository root. Only the User CA public key will be copied to the container.
-
-:::
-
-#### Install User CA Public Key
-
-Copy the User CA public key to the container mount location:
-
-```bash
-# Copy to container mount
-cp pomerium_user_ca_key.pub ./openclaw-data/pomerium-ssh/
-```
-
-The container is configured to trust certificates signed by this CA.
-
-#### Optional: Configure Host SSH Access
-
-If you want to SSH directly to the host machine via Pomerium (useful as a jump box), configure the host SSH daemon:
-
-```bash
-# Copy to system SSH directory
-sudo cp pomerium_user_ca_key.pub /etc/ssh/pomerium_user_ca_key.pub
-sudo chmod 644 /etc/ssh/pomerium_user_ca_key.pub
-
-# Configure SSH daemon to trust it
-echo "TrustedUserCAKeys /etc/ssh/pomerium_user_ca_key.pub" | sudo tee -a /etc/ssh/sshd_config
-
-# Restart SSH daemon
-sudo systemctl restart sshd
-```
-
-For security, create a dedicated non-root user for SSH access:
-
-```bash
-# Create user (example: clawadmin)
-sudo useradd -m -s /bin/bash clawadmin
-
-# Optional: Add to sudo group if you need admin privileges
-sudo usermod -aG sudo clawadmin
-```
-
-## Step 4: Start the Docker Stack
-
-Start all services with Docker Compose:
-
-```bash
-docker compose up -d
-```
-
-**Note**: The first run will build the OpenClaw image, which may take a few minutes.
-
-```bash
-❯ docker compose build openclaw-gateway
-[+] Building 2.8s (5/10)
- => [internal] load local bake definitions                                0.0s
- => => reading from stdin 640B                                            0.0s
- => [internal] load build definition from Dockerfile                      0.0s
- => => transferring dockerfile: 1.81kB                                    0.0s
- => [internal] load metadata for docker.io/library/node:24-slim           0.1s
- => [internal] load .dockerignore                                         0.0s
- => => transferring context: 2B                                           0.0s
- => CACHED [1/6] FROM docker.io/library/node:24-slim@sha256:4660b1ca8b28  0.0s
- => [2/6] RUN apt-get update &&     apt-get install -y git openssh-serve  2.6s
- => => # Get:91 http://deb.debian.org/debian bookworm/main amd64 psmisc amd64
- => => # 23.6-1 [259 kB]
- => => # Get:92 http://deb.debian.org/debian bookworm/main amd64 publicsuffix
- => => # all 20230209.2326-1 [126 kB]
- => => # Get:93 http://deb.debian.org/debian bookworm/main amd64 xauth amd64 1
- => => # :1.1.2-1 [36.0 kB]
-[+] build 0/1
- ⠙ Image openclaw:2026.2.6 Building                                        2.8s
-```
-
-:::info Custom Docker Image
-
-Since OpenClaw doesn't provide an official Docker image, the openclaw-pomerium-guide repository includes a custom [Dockerfile](https://github.com/pomerium/openclaw-pomerium-guide/blob/main/openclaw/Dockerfile) that packages OpenClaw with an SSH server. This Dockerfile can be customized to add additional tools or utilities you need. For example, you might want to add:
-
-- Development tools (git, vim, etc.)
-- Language runtimes (Node.js, Python, etc.)
-- CLI utilities specific to your workflow
-
-Simply edit `openclaw/Dockerfile` and rebuild with `docker compose up -d --build`.
-
-:::
-
-Verify all services are running:
-
-```bash
+cd ./pomclaw
 docker compose ps
 ```
 
 You should see three services running:
 
-- `pomerium` - The authentication proxy (port 443)
-- `verify` - Pomerium's verification service
-- `openclaw-gateway` - The OpenClaw gateway container
+- `pomerium`: the authentication proxy
+- `openclaw-gateway`: OpenClaw running in trusted-proxy mode
+- `verify`: Pomerium's identity verification service (used for testing auth)
+
+### Check the logs
+
+When something isn't working, the next move is almost always to tail the logs. The Pomerium container will show auth/policy decisions and any proxy errors; the OpenClaw container will show what (if anything) it received from Pomerium.
 
 ```bash
-❯ docker ps
-CONTAINER ID   IMAGE                       COMMAND                  CREATED          STATUS                          PORTS     NAMES
-a6882babc788   pomerium/pomerium:v0.32.0   "/bin/pomerium --con…"   47 seconds ago   Restarting (1) 18 seconds ago             openclaw-pomerium-pomerium-1
-d03c1849ab7d   pomerium/verify:latest      "/bin/verify"            47 seconds ago   Up 47 seconds (healthy)                   openclaw-pomerium-verify-1
-190520ccdc2f   openclaw:2026.2.3          "docker-entrypoint.s…"   47 seconds ago   Up 47 seconds (healthy)         22/tcp    openclaw-pomerium-openclaw-gateway-1
-```
-
-## Step 5: Configure Pomerium SSH Routes
-
-Now configure SSH routes in Pomerium Zero to access your OpenClaw container.
-
-### Configure Global SSH Settings (First-Time Only)
-
-If this is your first SSH route you're creating in Pomerium Zero or you haven't configured SSH in your Pomerium cluster's main settings, you'll need to configure global SSH settings as part of the route creation process.
-
-1. Navigate to **Manage → Routes** in the Pomerium Zero console
-
-   ![Routes management page in Pomerium Zero console](./img/zero-ssh/routes-page.png)
-
-2. Click **New Route** → **Guided SSH Route**
-   - Configure global SSH settings:
-
-     ![Global SSH settings configuration page](./img/zero-ssh/guided-route-global-ssh-settings.png)
-
-   - **SSH Address**: `0.0.0.0:2200`
-   - **SSH Host Keys**: Paste all three private host keys from your repository root:
-     - Contents of `ssh_host_ed25519_key`
-     - Contents of `ssh_host_rsa_key`
-     - Contents of `ssh_host_ecdsa_key`
-
-     ![SSH Host Keys configuration](./img/zero-ssh/configure-ssh-host-keys.png)
-
-   - **SSH User CA Key**: Paste the contents of `pomerium_user_ca_key` (private key)
-
-     ![SSH User CA Key configuration](./img/zero-ssh/configure-ssh-user-ca.png)
-
-:::note
-
-These are cluster-wide settings shared by all SSH routes. If you've already configured SSH for your cluster, these steps won't be shown.
-
-:::
-
-For detailed SSH configuration instructions, see the [Pomerium Zero Native SSH Configuration Guide](/docs/guides/zero-ssh).
-
-### Create SSH Route to OpenClaw Container
-
-1. Create a new **Guided SSH Route** with the following settings:
-   - **Name**: `openclaw` (or your preferred name)
-   - **From URL**: `ssh://openclaw`
-   - **To URL**: `ssh://openclaw-gateway:22`
-
-   ![Configuring From and To URLs for SSH route](./img/openclaw/configure-ssh-route-openclaw.png)
-   - **Access Policies**: Configure who can connect (e.g., allow your email address)
-
-   ![Creating and applying access policies](./img/zero-ssh/create-apply-policies.png)
-
-2. Save and apply the route
-
-### Optional: Create SSH Route to Host Machine
-
-If you configured host SSH access in Step 3, create another route for the host:
-
-1. Create another **Guided SSH Route**:
-   - **Name**: `jumpbox`
-   - **From URL**: `ssh://jumpbox`
-   - **To URL**: `ssh://host.docker.internal:22`
-   - **Access Policies**: Configure who can connect
-
-2. Save and apply the route
-
-## Step 6: Configure OpenClaw
-
-Now that SSH access is configured, connect to the container and set up OpenClaw.
-
-### Connect via SSH
-
-SSH into the OpenClaw container via your Pomerium SSH route:
-
-```bash
-# note: use the container username 'claw' not 'root'
-ssh claw@openclaw@your-cluster.pomerium.app -p 2200
-```
-
-Replace `your-cluster.pomerium.app` with your actual Pomerium Zero cluster domain.
-
-Pomerium will prompt you to authenticate via your identity provider, then connect you to the container.
-
-### Configure OpenClaw Authentication
-
-Inside the container, run the OpenClaw configuration wizard:
-
-```bash
-openclaw configure
-```
-
-This will guide you through setting up authentication for Claude API access. The configuration method depends on your model provider (API key, browser login, etc.).
-
-### Get the Gateway Token
-
-Retrieve the gateway authentication token (needed for client connections):
-
-```bash
-openclaw config get gateway.auth.token
-```
-
-:::caution
-
-Change the default auth token (`configure-gateway-token`) before allowing access. You can update it with:
-
-```bash
-openclaw config set gateway.auth.token "your-secure-token-here"
-```
-
-:::
-
-## Step 7: Configure Gateway Web Interface Route
-
-To access the OpenClaw gateway website in your browser, create a route in Pomerium Zero with WebSocket support enabled.
-
-1. Navigate to **Manage → Routes** in Pomerium Zero
-2. Click **New Route** → **Custom Route**
-3. Configure the route:
-   - **From**: `https://openclaw.your-cluster.pomerium.app`
-   - **To**: `http://openclaw-gateway:18789`
-   - **Policies**: Configure access policies for who can connect
-
-   ![Configuring access policies for the web interface route](./img/zero-ssh/create-apply-policies-2.png)
-
-4. **Enable WebSocket support** (required for the web interface to function):
-   - Go to **Advanced → Timeouts**
-   - Enable WebSocket support
-5. Save and apply the route
-
-:::note
-
-WebSocket support is required for the OpenClaw gateway web interface to work properly. Without it, the web UI will fail to connect to the gateway.
-
-:::
-
-For more information on WebSocket configuration, see the [Pomerium timeouts documentation](/docs/reference/routes/timeouts).
-
-Once configured, you can access the OpenClaw gateway at `https://openclaw.your-cluster.pomerium.app` in your browser.
-
-## Step 8: Approve Device Pairing
-
-OpenClaw requires device pairing for security. Each new device or browser must be explicitly approved before connecting.
-
-### What Triggers Device Pairing
-
-Device pairing is required for:
-
-- New browsers (Chrome on your laptop is different from Firefox)
-- New devices (phone, colleague's computer, etc.)
-- Incognito/private browsing windows
-- Cleared browser cache
-
-### Approve Pairing Requests
-
-For more information on device pairing, see the [OpenClaw pairing documentation](https://docs.openclaw.ai/start/pairing).
-
-When someone tries to connect for the first time:
-
-1. **List pending requests** (via SSH):
-
-   ```bash
-   ssh claw@openclaw@your-cluster.pomerium.app -p 2200
-   openclaw devices list
-   ```
-
-   You'll see output showing pending device requests. Copy the `<request-id>` for the device you want to approve.
-
-2. **Approve the request**:
-
-   ```bash
-   openclaw devices approve <request-id>
-   ```
-
-3. The user can now refresh their browser and connect without seeing the pairing error.
-
-:::note Why Pairing with Pomerium?
-
-- **Pomerium** authenticates the _user_ (who you are)
-- **Device pairing** authorizes the _device_ (which devices that user can use)
-
-This provides defense-in-depth: even if someone steals a user's Pomerium credentials, they can't access OpenClaw from a new device without admin approval.
-
-:::
-
-## Configuration
-
-OpenClaw configuration is persisted in `./openclaw-data/config/.openclaw/openclaw.json`. The repository includes a starting configuration with:
-
-- Gateway port: `18789`
-- Auth token: `configure-gateway-token` (change this!)
-- Workspace: `/home/claw/workspace`
-- Bind mode: `lan` (accessible from network)
-
-### Updating Configuration
-
-Access the container and use OpenClaw commands:
-
-```bash
-# Access container via SSH or docker exec
-ssh claw@openclaw@your-cluster.pomerium.app
-
-# Run OpenClaw configuration
-openclaw configure
-```
-
-## Troubleshooting
-
-### Check Container Status
-
-```bash
-# View all containers
-docker compose ps
-
-# View logs
+docker compose logs -f pomerium
 docker compose logs -f openclaw-gateway
-
-# View recent logs
-docker compose logs --tail=100 openclaw-gateway
 ```
 
-### Configuration Issues
+### Verify the web route
+
+Open `https://openclaw.<your-cluster-domain>` in your browser. Pomerium will redirect you to your identity provider; sign in with the email you configured as `OPERATOR_EMAIL`. After authenticating you should land on the OpenClaw web UI.
+
+### Verify the SSH route
 
 ```bash
-# Access container and run diagnostics
-ssh claw@openclaw@your-cluster.pomerium.app
-openclaw doctor
+ssh claw@openclaw@<your-cluster-domain> -p 2200
 ```
 
-### SSH Connection Issues
+Note the double-`@` syntax: `claw` is the container user, `openclaw` is the Pomerium SSH route name, and `<your-cluster-domain>` is the Pomerium host. Pomerium will prompt you to authenticate via browser, then drop you into the OpenClaw container.
 
-- Verify the User CA public key is in `./openclaw-data/pomerium-ssh/`
-- Check file permissions are 600 on private keys
-- Confirm the SSH route is configured correctly in Pomerium Zero
-- Test with verbose SSH: `ssh -v claw@openclaw@your-cluster.pomerium.app`
-- Enable SSH server debugging: Set `LogLevel DEBUG3` in `/etc/ssh/sshd_config` and check logs
+### Verify auth mode
 
-### WebSocket Connection Issues
-
-If you see "pairing required" errors:
-
-1. This is normal for first-time connections
-2. Check for pending pairing requests:
-   ```bash
-   ssh claw@openclaw@your-cluster.pomerium.app
-   openclaw devices list
-   ```
-3. Approve the pending request
-4. Refresh your browser/client
-
-### Gateway Not Starting
-
-Check the container logs for errors:
+From inside the container:
 
 ```bash
-docker compose logs openclaw-gateway
+openclaw config get gateway.auth.mode
 ```
 
-Common issues:
+This should print `"trusted-proxy"`. From the host you can also run `./bootstrap.sh status` (from the `pomclaw` directory) for the same information plus the configured `trustedProxy` block.
 
-- Port 18789 already in use
-- Invalid configuration in `./openclaw-data/config/`
-- Missing User CA public key in `./openclaw-data/pomerium-ssh/`
+### Reset
 
-## Persistent Data
+If something goes sideways and you need to start over without re-running the full bootstrap:
 
-Data is persisted in the `./openclaw-data/` directory:
+```bash
+./bootstrap.sh reset
+```
 
-- `./openclaw-data/config/` - OpenClaw configuration files
-- `./openclaw-data/workspace/` - Agent workspace (mounted at `/claw/workspace`)
-- `./openclaw-data/pomerium-ssh/` - Pomerium User CA public key
+This is **destructive**: it clears OpenClaw's paired devices and flips the gateway back to token mode. **Pomerium Zero routes and policies are left in place**. Re-run `./bootstrap.sh` to bring the gateway back to trusted-proxy mode.
 
-:::caution Backup Your Data
+### Install script aborts: target directory already exists
 
-Regularly backup the `./openclaw-data/` directory to prevent data loss.
+The install script refuses to overwrite an existing directory. If you already have a `./pomclaw` (or whatever path you passed), the right move is:
 
-:::
+```bash
+cd ./pomclaw
+./bootstrap.sh
+```
+
+`bootstrap.sh` is idempotent and picks up where the last run left off.
+
+### Install script aborts: no controlling TTY
+
+If you're piping `curl | bash` from a non-interactive shell (CI job, automation), `bootstrap.sh` can't prompt for the four required values. Either:
+
+- Run the install from an interactive shell, or
+- Clone the repository, populate `./pomclaw/.env` manually, then run `./bootstrap.sh` directly.
+
+### Pomerium Zero API token authentication fails
+
+The script prints `API token authentication failed (HTTP <code>)`. The API token is either expired, revoked, or copied incorrectly. Generate a fresh one at [console.pomerium.app/app/management/api-tokens](https://console.pomerium.app/app/management/api-tokens) and re-run.
+
+### Web route returns 403 / "Access denied"
+
+Pomerium authenticated you, but the route policy doesn't include your email. Check the `OPERATOR_EMAIL` value in `./pomclaw/.env` matches the address your IdP returns. If they don't match (for example you signed in with a different work account), edit the policy named `openclaw users` in the Pomerium Zero console or re-run `./bootstrap.sh` after correcting `OPERATOR_EMAIL`.
+
+### OpenClaw web UI loads but fails to connect
+
+The web route needs WebSocket support enabled; the install script does this by default. If you've manually edited the route since, check that **Advanced → Timeouts → Allow WebSockets** is still enabled. See the [Pomerium timeouts documentation](/docs/reference/routes/timeouts).
+
+### Gateway rejects requests with `trusted_proxy_user_missing`
+
+OpenClaw is in trusted-proxy mode but isn't seeing the `x-pomerium-claim-email` header. Two things to check:
+
+1. The cluster's `jwtClaimsHeaders` setting maps `email` to `x-pomerium-claim-email`. The script sets this; you can confirm it under **Manage → Settings → Headers** in the Pomerium Zero console.
+2. The web route has **Pass Identity Headers** enabled. Set by the script as `passIdentityHeaders: true`.
+
+### SSH connection fails
+
+- Confirm port 2200 is open inbound on your firewall and cloud security group.
+- Test with verbose SSH for protocol-level debug output: `ssh -vvv claw@openclaw@<your-cluster-domain> -p 2200`.
+- Check the User CA public key is in `./pomclaw/openclaw-data/pomerium-ssh/`.
+- For more SSH-specific debugging see [Pomerium Native SSH Access](/docs/capabilities/native-ssh-access).
+
+## Security Considerations
+
+- **Don't commit `.env`.** It contains your Pomerium Zero cluster token. The `.gitignore` in the repo excludes it, and the script writes it as mode 600.
+- **Revoke the Pomerium Zero API token** after install. The script offers to strip it from `.env`; revoking it in the console fully invalidates it server-side. Generate a fresh token only when you need to re-run bootstrap.
+- **Trusted-proxy auth keys on container IPs.** OpenClaw trusts the Pomerium container's IP to inject identity headers. Don't attach untrusted containers to the `pomclaw_main` Docker network, since any container on that network with the same IP could forge identity. Two defenses are layered: requiring the signed `X-Pomerium-Jwt-Assertion` header means an attacker on the network would still need to mint a Pomerium-signed JWT, and the policy on the route gates which authenticated identity can reach the gateway at all.
+- **OpenClaw runs commands on behalf of authorized users.** Pomerium controls _who_ can reach OpenClaw; it does not constrain what OpenClaw does once authorized. Treat the operator email as a privileged credential.
 
 ## Next Steps
 
-- Configure [advanced policies](/docs/internals/ppl) for granular access control
-- Set up [custom domains](/docs/capabilities/custom-domains) instead of `*.pomerium.app`
+- Configure [advanced policies](/docs/internals/ppl) for granular access control (groups, device posture, time-of-day, etc.)
+- Set up a [custom domain](/docs/capabilities/custom-domains) instead of `*.pomerium.app`
 - Explore [OpenClaw documentation](https://docs.openclaw.ai) for advanced features
+- Read about [trusted-proxy auth in OpenClaw](https://docs.openclaw.ai/gateway/trusted-proxy-auth)
 
 ## Additional Resources
 
-- [Pomerium Zero Native SSH Configuration Guide](/docs/guides/zero-ssh)
+- [openclaw-pomerium-guide repository](https://github.com/pomerium/openclaw-pomerium-guide): the install and bootstrap scripts
 - [Pomerium Native SSH Access](/docs/capabilities/native-ssh-access)
+- [Pomerium Zero Native SSH Configuration Guide](/docs/guides/zero-ssh)
 - [Pomerium Policy Language (PPL)](/docs/internals/ppl)
+- [Getting the user's identity](/docs/capabilities/getting-users-identity)
 - [OpenClaw](https://openclaw.ai)
-- [OpenClaw Security Guidelines](https://docs.openclaw.ai/security)
