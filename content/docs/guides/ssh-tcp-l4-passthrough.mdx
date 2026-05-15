@@ -1,8 +1,8 @@
 ---
-title: 'SSH over TCP/443 through an L4 edge'
-sidebar_label: 'SSH over TCP/443'
+title: 'SSH over port 443 through an L4 edge'
+sidebar_label: 'SSH over port 443'
 lang: en-US
-description: 'Tunnel SSH through Pomerium when client outbound access is restricted to TCP/443 and Pomerium is behind an L4 edge.'
+description: 'Tunnel SSH through Pomerium when client outbound access is restricted to port 443 and Pomerium is behind an L4 edge.'
 keywords:
   [
     pomerium,
@@ -16,30 +16,34 @@ keywords:
   ]
 ---
 
-{/* cSpell:ignore Acreateserial extfile nslookup sshpass testuser */}
+import NginxConf from '!!raw-loader!@site/content/examples/ssh-tcp-l4-passthrough/nginx/nginx.conf';
 
-# SSH over TCP/443 through an L4 edge
+import CodeBlock from '@theme/CodeBlock';
 
-This guide shows how to tunnel SSH through Pomerium when users can only make outbound connections on TCP/443 and Pomerium sits behind a reverse proxy, WAF, or load balancer.
+{/* cSpell:ignore sshpass testuser */}
 
-For most SSH deployments, [Native SSH Access](/docs/capabilities/native-ssh-access) provides a better user experience with OAuth login, ephemeral certificates, and SSH-aware access controls. Use this TCP tunneling pattern when you need SSH to travel over the same HTTPS/TCP 443 path as other Pomerium traffic, cannot change SSH server configuration, or need the same pattern for other TCP protocols.
+# SSH over port 443 through an L4 edge
 
-The key configuration detail is that the port in `from: tcp+https://HOST:PORT` is the **route-match port** carried in the HTTP CONNECT authority. It is not the user's network egress port. For SSH, use `:22` in the TCP route and let `pomerium-cli` reach Pomerium over HTTPS/TCP 443.
+This guide shows how to tunnel SSH through Pomerium when users can only make outbound connections on port 443 and Pomerium sits behind a reverse proxy, WAF, or load balancer.
+
+For most SSH deployments, [Native SSH Access](/docs/capabilities/native-ssh-access) provides a better user experience with OAuth login, ephemeral certificates, and SSH-aware access controls. Use this TCP tunneling pattern when SSH must travel over the same HTTPS port as other Pomerium traffic, when you cannot change SSH server configuration, or when you need the same pattern for other TCP protocols.
+
+The key configuration detail is that the port in `from: tcp+https://HOST:PORT` is the **route-match port** carried in the HTTP CONNECT authority. It is not the user's network egress port. For a normal SSH destination, use `:22` in the TCP route and let `pomerium-cli` reach Pomerium over HTTPS on port 443.
 
 ## Recommended architecture
 
 ```mermaid
 flowchart LR
-  C[SSH client<br/>pomerium-cli] -->|HTTPS CONNECT<br/>TCP/443| E[L4 edge<br/>TCP passthrough]
-  E -->|same TLS stream<br/>TCP/443| P[Pomerium<br/>TLS terminates here]
-  P -->|SSH<br/>TCP/22| S[SSH target]
+  C[SSH client<br/>pomerium-cli] -->|HTTPS CONNECT<br/>port 443| E[L4 edge<br/>TCP passthrough]
+  E -->|same TLS stream<br/>port 443| P[Pomerium<br/>terminates TLS]
+  P -->|SSH<br/>port 22| S[SSH target]
 ```
 
 Use L4/TCP passthrough between the public edge and Pomerium. The edge forwards the TCP byte stream to Pomerium unchanged, Pomerium terminates TLS, and Pomerium receives the CONNECT request from `pomerium-cli`.
 
 If the fronting layer includes a WAF, either create an L4 passthrough exception for this hostname or use an L7 mode that explicitly supports CONNECT tunneling and preserves the CONNECT authority. HTTP WAFs generally cannot inspect this tunnel and preserve it at the same time; use a separate L4 path for SSH TCP routes.
 
-If Pomerium is exposed directly on TCP/443, drop the L4 edge from the diagram. The TCP route and SSH client configuration stay the same.
+If Pomerium is exposed directly on port 443, drop the L4 edge from the diagram. The TCP route and SSH client configuration stay the same.
 
 ## Production route and SSH config
 
@@ -53,9 +57,10 @@ routes:
       - allow:
           and:
             - authenticated_user: true
+            # Add group, device, MFA, or claim requirements here.
 ```
 
-The `and` block is shown so you can add group, device, MFA, or claim requirements under the same policy. See [Pomerium Policy Language](/docs/internals/ppl) for full policy syntax.
+See [Pomerium Policy Language](/docs/internals/ppl) for full policy syntax.
 
 Use the same destination in SSH:
 
@@ -64,20 +69,23 @@ Host ssh-prod
   HostName ssh.example.com
   Port 22
   User testuser
-  ProxyCommand pomerium-cli tcp --listen - %h:%p --pomerium-url https://pomerium.example.com
+  ProxyCommand pomerium-cli tcp --listen - %h:%p
 ```
 
 With this configuration:
 
 - `%h:%p` becomes `ssh.example.com:22`.
-- `pomerium-cli` sends `CONNECT ssh.example.com:22`.
-- `--pomerium-url https://pomerium.example.com` tells the CLI which Pomerium edge endpoint to dial. With no explicit port, HTTPS uses TCP/443.
+- `pomerium-cli` connects to Pomerium over HTTPS on port 443 and sends `CONNECT ssh.example.com:22`.
 - Pomerium matches `from: tcp+https://ssh.example.com:22`.
 - Pomerium connects to `target.internal.example.com:22`.
 
-If `ssh.example.com` resolves directly to the Pomerium edge on TCP/443 and the edge serves a certificate valid for `ssh.example.com`, the `--pomerium-url` override is optional. Keep it when the SSH destination hostname and the Pomerium edge hostname are different.
+Pass `--pomerium-url https://pomerium.example.com` if Pomerium is not reachable at the SSH hostname on port 443. The URL should point to the Pomerium edge endpoint that accepts the TCP route.
 
-Do not set the SSH `Port` to `443` just to satisfy an outbound firewall rule. SSH `Port` becomes the CONNECT authority and therefore the Pomerium route-match port. The outbound firewall requirement is satisfied by the Pomerium HTTPS URL, which defaults to TCP/443.
+:::note Route-match port
+
+The route-match port can be `:443` if your SSH client intentionally requests `ssh.example.com:443`, for example with `ssh -p 443`. Do not use `:443` only because the user's outbound firewall allows port 443. Most SSH configurations should keep `Port 22` and `from: tcp+https://ssh.example.com:22`.
+
+:::
 
 ## Prerequisites
 
@@ -89,45 +97,24 @@ For the local example, install:
 
 ## Run the local example
 
-The runnable example lives in [`static/examples/ssh-tcp-l4-passthrough`](https://github.com/pomerium/documentation/tree/main/static/examples/ssh-tcp-l4-passthrough). It runs NGINX in TCP passthrough mode, Pomerium, an SSH target, and a client container with `pomerium-cli`.
+The runnable example lives in [`content/examples/ssh-tcp-l4-passthrough`](https://github.com/pomerium/documentation/tree/main/content/examples/ssh-tcp-l4-passthrough). It runs NGINX in TCP passthrough mode, Pomerium, an SSH target, and a client container with `pomerium-cli`.
+
+The Compose file uses Docker network aliases so `ssh.localhost.pomerium.io` resolves to the NGINX L4 edge inside the example network. In production, point your real DNS name at the L4 edge.
 
 1. Clone the docs repository and enter the example directory.
 
    ```bash
    git clone https://github.com/pomerium/documentation
-   cd documentation/static/examples/ssh-tcp-l4-passthrough
+   cd documentation/content/examples/ssh-tcp-l4-passthrough
    ```
 
 1. Generate a demo CA and server certificate.
 
    ```bash
-   mkdir -p certs
-
-   openssl genrsa -out certs/ca.key 4096
-   openssl req -x509 -new -nodes -days 365 \
-     -key certs/ca.key \
-     -out certs/ca.crt \
-     -subj "/CN=localhost.pomerium.io demo CA"
-
-   openssl genrsa -out certs/pomerium.key 2048
-   openssl req -new \
-     -key certs/pomerium.key \
-     -out certs/pomerium.csr \
-     -config certs/openssl.cnf
-
-   openssl x509 -req -days 365 \
-     -in certs/pomerium.csr \
-     -CA certs/ca.crt \
-     -CAkey certs/ca.key \
-     -CAcreateserial \
-     -out certs/pomerium.crt \
-     -extensions v3_req \
-     -extfile certs/openssl.cnf
-
-   rm certs/ca.key certs/ca.srl certs/pomerium.csr
+   ./gen-certs.sh
    ```
 
-   The CA is only for this local demo. In production, use a publicly trusted certificate or your organization's managed trust chain. If you revisit the example after the certificate expires, rerun this step.
+   The script writes a local demo CA and a server certificate for `ssh.localhost.pomerium.io`, then deletes the CA private key. In production, use a publicly trusted certificate or your organization's managed trust chain.
 
 1. Review the demo TCP route in `config/pomerium.yaml`.
 
@@ -138,7 +125,7 @@ The runnable example lives in [`static/examples/ssh-tcp-l4-passthrough`](https:/
        allow_public_unauthenticated_access: true
    ```
 
-   The route is public for the local example. If you remove `allow_public_unauthenticated_access`, configure a real IdP and policy before testing authenticated access.
+   The route is public in this example because we're mainly interested in demonstrating connectivity over port 443. In production, you'll want to configure a real IdP and policy rules.
 
 1. Start the stack.
 
@@ -146,18 +133,6 @@ The runnable example lives in [`static/examples/ssh-tcp-l4-passthrough`](https:/
    docker compose up -d --build
    docker compose ps
    ```
-
-1. Confirm that the client resolves the SSH hostname to the L4 edge and can reach it on TCP/443.
-
-   ```bash
-   docker compose exec -T client \
-     nslookup ssh.localhost.pomerium.io
-
-   docker compose exec -T client \
-     nc -z ssh.localhost.pomerium.io 443
-   ```
-
-   `nslookup` should return the `nginx` container's IP on the Compose network. The `nc` command should exit successfully with no output.
 
 1. Start a local `pomerium-cli` listener in the client container.
 
@@ -174,38 +149,28 @@ The runnable example lives in [`static/examples/ssh-tcp-l4-passthrough`](https:/
 
    In this local stack, `pomerium-cli` dials `ssh.localhost.pomerium.io:443`, and Docker resolves that hostname to the `nginx` L4 edge.
 
-1. Wait for the listener.
-
-   ```bash
-   docker compose exec -T client sh -lc \
-     'for i in $(seq 1 100); do
-        nc -z 127.0.0.1 2222 && exit 0
-        sleep 0.2
-      done
-      cat /tmp/pomerium-cli.log
-      exit 1'
-   ```
-
 1. Run an SSH command through the tunnel.
 
    ```bash
-   docker compose exec -T client sh -lc \
+   docker compose exec client sh -lc \
      "sshpass -p demo-password ssh \
        -o StrictHostKeyChecking=no \
-       -o UserKnownHostsFile=/dev/null \
        -o LogLevel=ERROR \
        -p 2222 demo@127.0.0.1 \
-       'echo POMERIUM-SSH-OK; whoami'"
+       'hostname; whoami; uname -srm'"
    ```
 
    Expected output:
 
    ```text
-   POMERIUM-SSH-OK
+   sshd
    demo
+   Linux 6.19.13-orbstack-gbd1dc07b8cf4 aarch64
    ```
 
-   Inside the client container, this is plain SSH to the local listener on `127.0.0.1:2222`. `pomerium-cli` carries that connection to Pomerium over HTTPS/TCP 443.
+   The kernel version will vary by Docker host.
+
+   Inside the client container, this is plain SSH to the local listener on `127.0.0.1:2222`. `pomerium-cli` carries that connection to Pomerium over HTTPS on port 443.
 
 ## Verify the path
 
@@ -239,25 +204,15 @@ docker compose logs --tail=100 nginx \
   | grep -E 'bytes_sent=[0-9]{3,} bytes_received=[0-9]{3,}'
 ```
 
-You might also see an unrelated `GET` from `pomerium-cli` with `"response-code":404`. Ignore that entry; the successful proof is the `CONNECT` log.
-
 For log field definitions, see [Authorize Log Fields](/docs/reference/authorize-log-fields) and [Access Log Fields](/docs/reference/access-log-fields).
 
-## Fronting proxy example
+## Configure the L4 edge
 
 For NGINX, use `stream {}` for L4 passthrough:
 
-```nginx
-events {}
-
-stream {
-    server {
-        listen 443;
-        proxy_pass pomerium:443;
-        proxy_timeout 1h;
-    }
-}
-```
+<CodeBlock language="nginx" title="nginx/nginx.conf">
+  {NginxConf}
+</CodeBlock>
 
 NGINX OSS `stream`, NGINX Plus TCP/UDP load balancing, HAProxy `mode tcp`, AWS Network Load Balancer, Google Cloud passthrough Network Load Balancer, and F5 LTM FastL4 are examples of this pattern.
 
@@ -279,7 +234,7 @@ stream {
 }
 ```
 
-Then enable Pomerium's bootstrap [`use_proxy_protocol`](/docs/reference/use-proxy-protocol) setting:
+Then enable Pomerium's [`use_proxy_protocol`](/docs/reference/use-proxy-protocol) setting:
 
 ```yaml
 use_proxy_protocol: true
@@ -287,7 +242,9 @@ use_proxy_protocol: true
 
 Only enable this when every connection to the Pomerium listener comes from a PROXY-protocol-speaking edge. Direct clients that do not send the PROXY header will fail.
 
-## Why `:443` in `from` does not work for SSH
+## Troubleshoot `route_not_found`
+
+If Pomerium logs a CONNECT request with `response-code-details="route_not_found"`, the tunnel reached Pomerium but no TCP route matched the CONNECT authority.
 
 This route:
 
@@ -308,7 +265,7 @@ It does not match:
 CONNECT ssh.example.com:22
 ```
 
-For SSH, the fix is to use `:22` in both the TCP route `from` URL and the SSH destination, while keeping the Pomerium HTTPS transport on TCP/443. The same logic applies to any other non-`:22` route-match port, such as `:10443`.
+For a normal SSH destination, the fix is to use `:22` in both the TCP route `from` URL and the SSH destination, while keeping the Pomerium HTTPS transport on port 443. The same logic applies to any other route-match port, such as `:10443`.
 
 ## Clean up
 
