@@ -43,14 +43,18 @@ By the end of this guide you'll have:
 
 ## How It Works
 
+The web route and the SSH route authenticate the same user against the same identity provider, but they hand off to OpenClaw in very different ways.
+
+### Web route
+
 ```mermaid
 flowchart LR
-    user[User browser/SSH client] -->|HTTPS or SSH| pomerium[Pomerium]
-    pomerium -->|JWT claim headers| openclaw[OpenClaw Gateway]
+    user[User browser] -->|HTTPS| pomerium[Pomerium]
+    pomerium -->|HTTP + JWT claim headers| openclaw[OpenClaw Gateway :18789]
     pomerium -.->|IdP login| idp[(Hosted IdP)]
 ```
 
-Pomerium authenticates the user against the hosted identity provider, signs a JWT, and forwards three headers to OpenClaw on the web route:
+Pomerium authenticates the user against the hosted identity provider, signs a JWT, and forwards three headers to OpenClaw:
 
 - `X-Pomerium-Jwt-Assertion`: a signed assertion proving the request came through Pomerium
 - `X-Pomerium-Claim-Email`: the authenticated user's email, mapped via the cluster's `jwtClaimsHeaders` setting
@@ -59,6 +63,19 @@ Pomerium authenticates the user against the hosted identity provider, signs a JW
 OpenClaw runs in **trusted-proxy auth mode**: it trusts the configured upstream IP (Pomerium's container IP) and treats the email header as the authenticated user. The container is not exposed to the internet; all traffic flows through Pomerium.
 
 For more on JWT claim headers, see [Getting the user's identity](/docs/capabilities/getting-users-identity).
+
+### SSH route
+
+```mermaid
+flowchart LR
+    user[User SSH client] -->|SSH :2200| pomerium[Pomerium SSH]
+    pomerium -->|SSH + User CA-signed cert| openclaw[openclaw-gateway :22]
+    pomerium -.->|Browser IdP login| idp[(Hosted IdP)]
+```
+
+Pomerium's native SSH listener terminates the user's SSH session on port 2200 and prompts them to authenticate via browser against the same IdP. Once authorized, Pomerium opens a fresh SSH connection to `openclaw-gateway:22` and authenticates with a short-lived certificate signed by the Pomerium User CA, whose public key is mounted into the OpenClaw container. The user lands in the container as the `claw` user. No JWT or HTTP headers are involved on this path.
+
+For more on Pomerium's SSH proxy, see [Pomerium Native SSH Access](/docs/capabilities/native-ssh-access).
 
 ## Before You Start
 
