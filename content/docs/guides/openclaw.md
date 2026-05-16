@@ -73,7 +73,7 @@ flowchart LR
     pomerium -.->|Browser IdP login| idp[(Hosted IdP)]
 ```
 
-Pomerium's native SSH listener terminates the user's SSH session on port 2200 and prompts them to authenticate via browser against the same IdP. Once authorized, Pomerium opens a fresh SSH connection to `openclaw-gateway:22` and authenticates with a short-lived certificate signed by the Pomerium User CA, whose public key is mounted into the OpenClaw container. The user lands in the container as the `claw` user. No JWT or HTTP headers are involved on this path.
+Pomerium's native SSH listener terminates the user's SSH session on port 2200 and prompts them to authenticate via browser against the same Identity Provider (IdP). Once authorized, Pomerium opens a fresh SSH connection to `openclaw-gateway:22` and authenticates with a short-lived certificate signed by the Pomerium User CA, whose public key is mounted into the OpenClaw container. The user lands in the container as the `claw` user. No JWT or HTTP headers are involved on this path.
 
 For more on Pomerium's SSH proxy, see [Pomerium Native SSH Access](/docs/capabilities/native-ssh-access).
 
@@ -154,10 +154,10 @@ The script prompts for four values:
 
 | Prompt | What to enter |
 | --- | --- |
-| `POMERIUM_ZERO_TOKEN` | Cluster bootstrap token from the Pomerium Zero onboarding wizard |
-| `POMERIUM_ZERO_API_TOKEN` | API user token from [the API tokens page](https://console.pomerium.app/app/management/api-tokens) |
+| Pomerium Zero Token | Cluster bootstrap token from the Pomerium Zero onboarding wizard |
+| Pomerium Zero API Token | API user token from [the API tokens page](https://console.pomerium.app/app/management/api-tokens) |
 | Cluster selection | If you only have one Pomerium Zero cluster, there's nothing to do here. If you have more than one, you'll see a numbered picker with the most recently created cluster as the default |
-| `OPERATOR_EMAIL` | The IdP email you sign in with, used to allow you in the route policy |
+| Email | The IdP email you sign in with, used to allow you in the route policy |
 
 The values are written to `./pomclaw/.env` (mode 600). From there the script:
 
