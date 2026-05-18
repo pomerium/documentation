@@ -379,6 +379,7 @@ Each Ingress should be backed by a Service. Pomerium supports certain extensions
 Pomerium can directly proxy SSH connections. See [Native SSH Access](/docs/capabilities/native-ssh-access) for information about this capabilitiy.
 
 To configure a native SSH route, you will need to:
+
 - Set the `ingress.pomerium.io/ssh_upstream` annotation to `'true'`.
 - Set the [`pathType`](https://kubernetes.io/docs/concepts/services-networking/ingress/#path-types) to `ImplementationSpecific`.
 - Do not set a `path`.
