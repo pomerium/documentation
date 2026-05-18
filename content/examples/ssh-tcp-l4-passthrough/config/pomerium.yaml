@@ -1,0 +1,22 @@
+address: :443
+
+# Demo-only placeholder required by the config schema. This hostname loops back
+# to the same local Pomerium through NGINX. Any route that requires
+# authentication will fail until you configure a real authenticate service.
+authenticate_service_url: https://authenticate.localhost.pomerium.io
+
+certificate_file: /certs/pomerium.crt
+certificate_key_file: /certs/pomerium.key
+
+# Demo-only static secrets. Use generated secrets in production, for example:
+# head -c32 /dev/urandom | base64
+cookie_secret: KTY/DF276AcHctxYwKU2RGBCq62KEDskPcEe3ImoMXQ=
+shared_secret: SkqCcCo1LuOtr8pW6SyENjDadPH/j41HpLpXAnWtEKA=
+
+log_level: info
+
+routes:
+  - from: tcp+https://ssh.localhost.pomerium.io:22
+    to: tcp://sshd:2222
+    # DEMO ONLY: replace with your normal Pomerium policy in production.
+    allow_public_unauthenticated_access: true
