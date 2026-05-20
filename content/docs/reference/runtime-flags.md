@@ -35,6 +35,7 @@ The available flags are:
 | Runtime Flag | Description | Default |
 | :-- | :-- | :-- |
 | `add_extra_metrics_labels` | Enables adding extra labels to metrics (host and installation id). | `true` |
+| `allow_any_sign_out_redirect_uri` | Allows the `pomerium_redirect_uri` query parameter on the `/.pomerium/sign_out` endpoint to override the sign-out redirect. | `false` |
 | `authorize_use_synced_data` | Enables synced data for querying the databroker for certain types of data. | `true` |
 | `config_hot_reload` | Enables automatic config reloading triggered whenever a configuration file is written to (either the main Pomerium configuration file or a file referenced from the main configuration). In some rare cases this may not work correctly, so this setting provides a way to disable this behavior. (See issue [#5079](https://github.com/pomerium/pomerium/issues/5079) for more context.) | `true` |
 | `debug_admin_endpoints` | Enables the admin endpoints for the debug listener. | `false` |
