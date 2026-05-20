@@ -193,8 +193,9 @@ The remaining annotations are specific to or behave differently than they do whe
 | `ingress.pomerium.io/set_request_headers_secret` | Name of Kubernetes Secret containing the contents of the request header to send upstream. When used, `ingress.pomerium.io/set_request_headers` should not contain overlapping keys. |
 | `ingress.pomerium.io/set_response_headers_secret` | Name of Kubernetes Secret containing the contents of the response header to send downstream. When used, `ingress.pomerium.io/set_response_headers` should not contain overlapping keys. |
 | `ingress.pomerium.io/service_proxy_upstream` | When set to `"true"` forces Pomerium to connect to upstream servers through the k8s service proxy, and not individual endpoints. <br/> This is useful when deploying Pomerium inside a service mesh. |
-| `ingress.pomerium.io/tcp_upstream` | When set to `"true"`, defines the route as supporting a TCP tunnel. See the [example below](/docs/deploy/k8s/ingress#tcpudp-services) for more information. |
-| `ingress.pomerium.io/udp_upstream` | When set to `"true"`, defines the route as supporting a UDP tunnel. See the [example below](/docs/deploy/k8s/ingress#tcpudp-services) for more information. |
+| `ingress.pomerium.io/ssh_upstream` | When set to `"true"`, enables native SSH proxying for the route. See the [example below](#native-ssh) for more information. |
+| `ingress.pomerium.io/tcp_upstream` | When set to `"true"`, defines the route as supporting a TCP tunnel. See the [example below](#tcpudp-services) for more information. |
+| `ingress.pomerium.io/udp_upstream` | When set to `"true"`, defines the route as supporting a UDP tunnel. See the [example below](#tcpudp-services) for more information. |
 | `ingress.pomerium.io/tls_client_secret` | Name of Kubernetes `tls` Secret containing a [client certificate][tls_client_certificate] for connecting to the upstream. |
 | `ingress.pomerium.io/tls_custom_ca_secret` | Name of Kubernetes `tls` Secret containing a custom [CA certificate][`tls_custom_ca_secret`] for the upstream. |
 | `ingress.pomerium.io/tls_downstream_client_ca_secret` | Name of Kubernetes `tls` Secret containing a [Client CA][client-certificate-authority] for validating downstream clients. |
@@ -373,6 +374,41 @@ The following Ingress features are not supported:
 
 Each Ingress should be backed by a Service. Pomerium supports certain extensions while communicating to Kubernetes services, beyond plaintext HTTP interaction via Service Load Balancer.
 
+### Native SSH
+
+Pomerium can directly proxy SSH connections. See [Native SSH Access](/docs/capabilities/native-ssh-access) for information about this capabilitiy.
+
+To configure a native SSH route, you will need to:
+
+- Set the `ingress.pomerium.io/ssh_upstream` annotation to `'true'`.
+- Set the [`pathType`](https://kubernetes.io/docs/concepts/services-networking/ingress/#path-types) to `ImplementationSpecific`.
+- Do not set a `path`.
+
+For example:
+
+```yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ssh-example
+  annotations:
+    ingress.pomerium.io/ssh_upstream: 'true'
+spec:
+  ingressClassName: pomerium
+  rules:
+    - host: 'my-ssh-host'
+      http:
+        paths:
+          - pathType: ImplementationSpecific
+            backend:
+              service:
+                name: ssh-service
+                port:
+                  name: ssh
+```
+
+This corresponds to a route with a From URL of `ssh://my-ssh-host` in Pomerium Core.
+
 ### TCP/UDP Services
 
 Pomerium is capable of creating secure connections to services like SSH, Databases, and more by creating a TCP or UDP tunnel to the service with a local client.
@@ -402,7 +438,7 @@ spec:
 
 The important points to note in this example:
 
-- The annotation `ingress.pomerium.io/tcp_upstream` is set to `"true"`,
+- The annotation `ingress.pomerium.io/tcp_upstream` is set to `'true'`,
 - `spec.rules.[].http.paths.[].path` is omitted,
 - `spec.rules.[].http.paths.[].pathType` is set to `ImplementationSpecific`,
 - `spec.rules.[].host` and `spec.rules.[].paths.[].backend.service.port.name/number` together define the address used when connecting to the route using the [Pomerium Desktop or CLI clients](/docs/deploy/clients),
