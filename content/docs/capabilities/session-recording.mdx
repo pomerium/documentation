@@ -1,0 +1,127 @@
+---
+title: SSH Session Recording
+description: Learn how to set up SSH session recording.
+lang: en-US
+sidebar_label: 'Session Recording'
+keywords: [pomerium, ssh, recording, session recording, audit]
+sidebar_class_name: enterprise
+---
+
+import TabItem from '@theme/TabItem';
+import Tabs from '@theme/Tabs';
+
+:::enterprise
+
+This article describes a use case available to
+[Pomerium Enterprise](/docs/deploy/enterprise/install) customers.
+
+:::
+
+## Overview
+
+Pomerium supports recording, storage, and playback (via Enterprise Console) of
+interactive SSH sessions for auditing and compliance needs.
+
+## Setup
+
+:::danger important
+
+Recording SSH sessions carries inherent risk. Anything the user sees in their
+terminal is recorded as-is without modification or redaction. This can include
+sensitive information such as private keys, passwords, etc.
+
+:::
+
+:::important
+
+Session recording capabilities are _not_ present in the standard Pomerium binary
+distributions. These features require a separate extension which Pomerium must
+load from disk on startup. If the extension is not loaded, Pomerium does not
+have the ability to record SSH sessions, even if configured to do so.
+
+:::
+
+### 1. Obtain the session recording extension
+
+The session recording extension is distributed as a container image:
+
+`docker.cloudsmith.io/pomerium/enterprise/session-recording-extension`
+
+This image contains a single file, `/session_recording_extension.so`. It is
+recommended to use
+[Image Volumes](https://kubernetes.io/docs/tasks/configure-pod-container/image-volumes/)
+to mount the extension into the Pomerium Core container. Alternatively, you can
+copy the binary out of the image for non-Kubernetes deployments.
+
+**Extension binaries are built for a specific version (commit) of Pomerium
+Core.** The extension container images are tagged both with specific git
+revisions, as well as release version numbers (for the corresponding tagged
+commits). This tag must match the version of Pomerium Core you are using.
+
+:::note
+
+These extensions are loaded into Envoy, not the Pomerium control plane. If you
+build Envoy yourself instead of using the pre-built binaries, please reach out
+to us at [support@pomerium.com](mailto:support@pomerium.com).
+
+:::
+
+### 2. Configure the extension
+
+<Tabs>
+<TabItem value="Core" label="Core">
+
+| **Config file key**        | **Type**           |
+| :------------------------- | :----------------- |
+| `envoy_dynamic_extensions` | `array of strings` |
+
+Example:
+
+```yaml
+envoy_dynamic_extensions:
+  - /path/to/session_recording_extension.so
+```
+
+</TabItem>
+<TabItem value="Enterprise" label="Enterprise">
+
+TODO fill this in
+
+</TabItem>
+<TabItem value="Kubernetes" label="Kubernetes">
+
+An example deployment might look like the following:
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+# ...
+spec:
+  template:
+    spec:
+      containers:
+        - name: pomerium
+          image: docker.io/pomerium/pomerium:vX.Y.Z
+          # ...
+          volumeMounts:
+            - name: sessionRecordingExtension
+              mountPath: /extensions/session_recording/
+      volumes:
+        - name: sessionRecordingExtension
+          image:
+            # Note the matching tag
+            reference: docker.cloudsmith.io/pomerium/enterprise/session-recording-extension:vX.Y.Z
+            pullPolicy: IfNotPresent
+```
+
+Then, Pomerium can be configured to load the extension from
+`/extensions/session_recording/session_recording_extension.so`.
+
+</TabItem>
+</Tabs>
+
+## Route Configuration
+
+Recording is enabled on a per-route basis.
+
+TODO
