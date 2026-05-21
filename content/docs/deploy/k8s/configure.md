@@ -46,7 +46,7 @@ Bootstrap secrets are provisioned via `secrets` property of the [CRD](/docs/depl
 
 Integration with your Identity Provider is configured using [`identityProvider`](/docs/integrations/user-identity/identity-providers) parameter.
 
-### Authenticate endpoint
+### Authenticate Endpoint
 
 Each Pomerium installation has a special route that unauthenticated users are redirected to that handles sign-in via your Identity Provider. It is configured via the [`authenticate`](/docs/deploy/k8s/reference#authenticate) parameter of the [CRD](./reference#authenticate).
 
@@ -60,11 +60,34 @@ However, you should provision a matching certificate, and supply it via [`certif
 
 :::
 
+### Certificate Auto-Provisioning
+
+Generally [`cert-manager`](./ingress#cert-manager-integration) can be used with ingress definitions to provision certificates. However if routes are created through a different mechanism, for example with the [Enterprise Console](/docs/deploy/enterprise#enterprise-console), the Pomerium Ingress controller can also be configured to provision certificates for those routes via the `certificateAutoProvision` option. When enabled cert-manager Certificates will automatically be created for any routes which lack a matching certificate.
+
+```yaml
+apiVersion: ingress.pomerium.io/v1
+kind: Pomerium
+metadata:
+  name: global
+spec:
+  certificateAutoProvision:
+    issuer: pomerium/self-signed
+  # other global options ...
+---
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  namespace: pomerium
+  name: self-signed
+spec:
+  selfSigned: {}
+```
+
 ### Routes (Ingress)
 
 See a [dedicated Ingress guide](./ingress) for details on how to configure Pomerium to serve Ingress.
 
-### Supported configuration options
+### Supported Configuration Options
 
 All Pomerium features are available in the Kubernetes deployment, except for `autocert`. Use [`cert-manager`](./ingress#cert-manager-integration) or other Kubernetes-native certificate solution instead.
 
