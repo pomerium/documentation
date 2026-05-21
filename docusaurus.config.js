@@ -39,13 +39,6 @@ const config = {
     },
   ],
 
-  scripts: [
-    {
-      src: './static/js/syft.js',
-      async: false,
-    },
-  ],
-
   presets: [
     [
       '@docusaurus/preset-classic',
