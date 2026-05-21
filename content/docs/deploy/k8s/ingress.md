@@ -138,38 +138,39 @@ The expandable list below contains the annotations available, which behave as de
 <summary>Pomerium-Standard Annotations</summary>
 <div>
 
-- [`ingress.pomerium.io/allow_any_authenticated_user`]
-- [`ingress.pomerium.io/allow_public_unauthenticated_access`]
-- [`ingress.pomerium.io/allow_spdy`]
-- [`ingress.pomerium.io/allow_websockets`]
-- [`ingress.pomerium.io/cors_allow_preflight`]
-- [`ingress.pomerium.io/depends_on`]
-- [`ingress.pomerium.io/host_path_regex_rewrite_pattern`]
-- [`ingress.pomerium.io/host_path_regex_rewrite_substitution`]
-- [`ingress.pomerium.io/host_rewrite`]
-- [`ingress.pomerium.io/host_rewrite_header`]
-- [`ingress.pomerium.io/idle_timeout`]
-- [`ingress.pomerium.io/name`]
-- [`ingress.pomerium.io/mcp_client`]
-- [`ingress.pomerium.io/mcp_server`]
-- [`ingress.pomerium.io/mcp_server_max_request_bytes`]
-- [`ingress.pomerium.io/mcp_server_upstream_oauth2_secret`]
-- [`ingress.pomerium.io/mcp_server_upstream_oauth2_token_url`]
-- [`ingress.pomerium.io/mcp_server_upstream_oauth2_scopes`]
-- [`ingress.pomerium.io/outlier_detection`]
-- [`ingress.pomerium.io/pass_identity_headers`]
-- [`ingress.pomerium.io/policy`]
-- [`ingress.pomerium.io/prefix_rewrite`]
-- [`ingress.pomerium.io/preserve_host_header`]
-- [`ingress.pomerium.io/regex_rewrite_pattern`]
-- [`ingress.pomerium.io/regex_rewrite_substitution`]
-- [`ingress.pomerium.io/remove_request_headers`]
-- [`ingress.pomerium.io/rewrite_response_headers`]
-- [`ingress.pomerium.io/set_request_headers`]
-- [`ingress.pomerium.io/set_response_headers`]
-- [`ingress.pomerium.io/timeout`]
-- [`ingress.pomerium.io/tls_server_name`]
-- [`ingress.pomerium.io/tls_skip_verify`]
+- [`ingress.pomerium.io/allow_any_authenticated_user`](/docs/reference/routes/allow-any-authenticated-user)
+- [`ingress.pomerium.io/allow_public_unauthenticated_access`](/docs/reference/routes/public-access)
+- [`ingress.pomerium.io/allow_spdy`](/docs/reference/routes/timeouts#spdy)
+- [`ingress.pomerium.io/allow_websockets`](/docs/reference/routes/timeouts#websocket-connections)
+- [`ingress.pomerium.io/bearer_token_format`](/docs/reference/bearer-token-format)
+- [`ingress.pomerium.io/circuit_breaker_thresholds`](/docs/reference/circuit-breaker-thresholds)
+- [`ingress.pomerium.io/cors_allow_preflight`](/docs/reference/routes/cors-preflight)
+- [`ingress.pomerium.io/depends_on`](/docs/reference/routes/additional-login-redirect-hosts)
+- [`ingress.pomerium.io/description`](/docs/reference/routes/description)
+- [`ingress.pomerium.io/health_checks`](/docs/reference/routes/load-balancing#health-checks)
+- `ingress.pomerium.io/healthy_panic_threshold`
+- [`ingress.pomerium.io/host_path_regex_rewrite_pattern`](/docs/reference/routes/headers#2-host-rewrite)
+- [`ingress.pomerium.io/host_path_regex_rewrite_substitution`](/docs/reference/routes/headers#2-host-rewrite)
+- [`ingress.pomerium.io/host_rewrite`](/docs/reference/routes/headers#2-host-rewrite)
+- [`ingress.pomerium.io/host_rewrite_header`](/docs/reference/routes/headers#2-host-rewrite)
+- [`ingress.pomerium.io/idle_timeout`](/docs/reference/routes/timeouts#idle-timeout)
+- [`ingress.pomerium.io/idp_access_token_allowed_audiences`](/docs/reference/idp-access-token-allowed-audiences)
+- [`ingress.pomerium.io/load_balancing_policy`](/docs/reference/routes/load-balancing#load-balancing-policy)
+- [`ingress.pomerium.io/logo_url`](/docs/reference/routes/logo-url)
+- [`ingress.pomerium.io/outlier_detection`](/docs/reference/routes/outlier-detection)
+- [`ingress.pomerium.io/pass_identity_headers`](/docs/reference/routes/pass-identity-headers-per-route)
+- [`ingress.pomerium.io/policy`](/docs/reference/routes/policy)
+- [`ingress.pomerium.io/prefix_rewrite`](/docs/reference/routes/path-rewriting#prefix-rewrite)
+- [`ingress.pomerium.io/preserve_host_header`](/docs/reference/routes/headers#2-host-rewrite)
+- [`ingress.pomerium.io/regex_rewrite_pattern`](/docs/reference/routes/path-rewriting#regex-rewrite)
+- [`ingress.pomerium.io/regex_rewrite_substitution`](/docs/reference/routes/path-rewriting#regex-rewrite)
+- [`ingress.pomerium.io/remove_request_headers`](/docs/reference/routes/headers#remove-request-headers)
+- [`ingress.pomerium.io/rewrite_response_headers`](/docs/reference/routes/headers#rewrite-response-headers)
+- [`ingress.pomerium.io/set_request_headers`](/docs/reference/routes/headers#set-request-headers)
+- [`ingress.pomerium.io/set_response_headers`](/docs/reference/routes/headers#set-response-headers)
+- [`ingress.pomerium.io/timeout`](/docs/reference/routes/timeouts#route-timeout)
+- [`ingress.pomerium.io/tls_server_name`](/docs/reference/routes/tls#tls-server-name)
+- [`ingress.pomerium.io/tls_skip_verify`](/docs/reference/routes/tls#tls-skip-verification)
 
 </div>
 </details>
@@ -179,6 +180,7 @@ The remaining annotations are specific to or behave differently than they do whe
 | Annotation | Description |
 | --- | --- |
 | `ingress.pomerium.io/kubernetes_service_account_token_secret` | Name of a Kubernetes Secret containing a [Kubernetes Service Account Token](/docs/reference/routes/kubernetes-service-account-token) in a `token` key. |
+| `ingress.pomerium.io/name` | Sets a human-readable name for the route. See [Route Naming](#route-naming) below. |
 | `ingress.pomerium.io/mcp_client` | When set to `"true"`, configures the route as an MCP (Model Context Protocol) client. The URL is defined by the service backend. |
 | `ingress.pomerium.io/mcp_server` | When set to `"true"`, configures the route as an MCP (Model Context Protocol) server. The URL is defined by the service backend. Optional if other MCP server annotations are present. |
 | `ingress.pomerium.io/mcp_server_max_request_bytes` | Sets the maximum request body size for MCP server routes. |
@@ -191,13 +193,12 @@ The remaining annotations are specific to or behave differently than they do whe
 | `ingress.pomerium.io/set_request_headers_secret` | Name of Kubernetes Secret containing the contents of the request header to send upstream. When used, `ingress.pomerium.io/set_request_headers` should not contain overlapping keys. |
 | `ingress.pomerium.io/set_response_headers_secret` | Name of Kubernetes Secret containing the contents of the response header to send downstream. When used, `ingress.pomerium.io/set_response_headers` should not contain overlapping keys. |
 | `ingress.pomerium.io/service_proxy_upstream` | When set to `"true"` forces Pomerium to connect to upstream servers through the k8s service proxy, and not individual endpoints. <br/> This is useful when deploying Pomerium inside a service mesh. |
-| `ingress.pomerium.io/tcp_upstream` | When set to `"true"`, defines the route as supporting a TCP tunnel. See the [example below](/docs/deploy/k8s/ingress#tcp-services) for more information. |
+| `ingress.pomerium.io/ssh_upstream` | When set to `"true"`, enables native SSH proxying for the route. See the [example below](#native-ssh) for more information. |
+| `ingress.pomerium.io/tcp_upstream` | When set to `"true"`, defines the route as supporting a TCP tunnel. See the [example below](#tcpudp-services) for more information. |
+| `ingress.pomerium.io/udp_upstream` | When set to `"true"`, defines the route as supporting a UDP tunnel. See the [example below](#tcpudp-services) for more information. |
 | `ingress.pomerium.io/tls_client_secret` | Name of Kubernetes `tls` Secret containing a [client certificate][tls_client_certificate] for connecting to the upstream. |
 | `ingress.pomerium.io/tls_custom_ca_secret` | Name of Kubernetes `tls` Secret containing a custom [CA certificate][`tls_custom_ca_secret`] for the upstream. |
 | `ingress.pomerium.io/tls_downstream_client_ca_secret` | Name of Kubernetes `tls` Secret containing a [Client CA][client-certificate-authority] for validating downstream clients. |
-| `ingress.pomerium.io/policy` | [Pomerium Policy Language](/docs/internals/ppl) YAML or JSON block (as string) |
-| `ingress.pomerium.io/allow_any_authenticated_user` | When set to `"true"`, allows access to any user that was successfully authenticated with your Identity Provider. |
-| `ingress.pomerium.io/allow_public_unauthenticated_access` | When set to `"true"`, does not require authentication, grants public access |
 | `ingress.pomerium.io/identity_provider_secret` | Name of Kubernetes `opaque` Secret containing `client_id` and `client_secret` to use for the route. |
 
 ### Set authorization policy
@@ -373,9 +374,44 @@ The following Ingress features are not supported:
 
 Each Ingress should be backed by a Service. Pomerium supports certain extensions while communicating to Kubernetes services, beyond plaintext HTTP interaction via Service Load Balancer.
 
-### TCP Services
+### Native SSH
 
-Pomerium is capable of creating secure connections to services like SSH, Databases, and more by creating a TCP tunnel to the service with a local client.
+Pomerium can directly proxy SSH connections. See [Native SSH Access](/docs/capabilities/native-ssh-access) for information about this capabilitiy.
+
+To configure a native SSH route, you will need to:
+
+- Set the `ingress.pomerium.io/ssh_upstream` annotation to `'true'`.
+- Set the [`pathType`](https://kubernetes.io/docs/concepts/services-networking/ingress/#path-types) to `ImplementationSpecific`.
+- Do not set a `path`.
+
+For example:
+
+```yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ssh-example
+  annotations:
+    ingress.pomerium.io/ssh_upstream: 'true'
+spec:
+  ingressClassName: pomerium
+  rules:
+    - host: 'my-ssh-host'
+      http:
+        paths:
+          - pathType: ImplementationSpecific
+            backend:
+              service:
+                name: ssh-service
+                port:
+                  name: ssh
+```
+
+This corresponds to a route with a From URL of `ssh://my-ssh-host` in Pomerium Core.
+
+### TCP/UDP Services
+
+Pomerium is capable of creating secure connections to services like SSH, Databases, and more by creating a TCP or UDP tunnel to the service with a local client.
 
 The example route below defines a route providing a tunneled TCP connection to an upstream service listening for non-web traffic. Pomerium provides [command line and GUI](/docs/deploy/clients) clients to interact with the TCP services.
 
@@ -402,7 +438,7 @@ spec:
 
 The important points to note in this example:
 
-- The annotation `ingress.pomerium.io/tcp_upstream:` is set to `"true"`,
+- The annotation `ingress.pomerium.io/tcp_upstream` is set to `'true'`,
 - `spec.rules.[].http.paths.[].path` is omitted,
 - `spec.rules.[].http.paths.[].pathType` is set to `ImplementationSpecific`,
 - `spec.rules.[].host` and `spec.rules.[].paths.[].backend.service.port.name/number` together define the address used when connecting to the route using the [Pomerium Desktop or CLI clients](/docs/deploy/clients),
@@ -410,7 +446,7 @@ The important points to note in this example:
 
 :::note
 
-Unlike a standalone Pomerium configuration, you may not create multiple TCP routes using the same hostname with different ports. This limitation was made to avoid confusion, and because additional configuration parameters, such as the Ingress resource, do not allow passing port numbers in the `spec.rules.host` parameter.
+Unlike a standalone Pomerium configuration, you may not create multiple TCP or UDP routes using the same hostname with different ports. This limitation was made to avoid confusion, and because additional configuration parameters, such as the Ingress resource, do not allow passing port numbers in the `spec.rules.host` parameter.
 
 :::
 
@@ -700,42 +736,6 @@ For more information on the Pomerium Ingress Controller or the Kubernetes concep
 - [Ingress (Kubernetes Docs)](https://kubernetes.io/docs/concepts/services-networking/ingress/)
 - [Pomerium Kubernetes Ingress Controller (code repository)](https://github.com/pomerium/ingress-controller)
 
-[`ingress.pomerium.io/allow_any_authenticated_user`]: /docs/reference/routes/allow-any-authenticated-user
-[`ingress.pomerium.io/allow_public_unauthenticated_access`]: /docs/reference/routes/public-access
-[`ingress.pomerium.io/allow_spdy`]: /docs/reference/routes/timeouts#spdy
-[`ingress.pomerium.io/allow_websockets`]: /docs/reference/routes/timeouts#websocket-connections
-[`ingress.pomerium.io/cors_allow_preflight`]: /docs/reference/routes/cors-preflight
-[`ingress.pomerium.io/depends_on`]: /docs/reference/routes/additional-login-redirect-hosts
-[`ingress.pomerium.io/health_checks`]: /docs/reference/health-checks
-[`ingress.pomerium.io/host_path_regex_rewrite_pattern`]: /docs/reference/routes/headers#host-rewrite
-[`ingress.pomerium.io/host_path_regex_rewrite_substitution`]: /docs/reference/routes/headers#host-rewrite
-[`ingress.pomerium.io/host_rewrite_header`]: /docs/reference/routes/headers#host-rewrite
-[`ingress.pomerium.io/host_rewrite`]: /docs/reference/routes/headers#host-rewrite
-[`ingress.pomerium.io/idle_timeout`]: /docs/reference/routes/timeouts#idle-timeout
-[`ingress.pomerium.io/lb_config`]: /docs/reference/load-balancing-policy-config
-[`ingress.pomerium.io/outlier_detection`]: /docs/reference/routes/outlier-detection
-[`ingress.pomerium.io/pass_identity_headers`]: /docs/reference/routes/pass-identity-headers-per-route
-[`ingress.pomerium.io/policy`]: /docs/reference/routes/policy
-[`ingress.pomerium.io/prefix_rewrite`]: /docs/reference/routes/path-rewriting#prefix-rewrite
-[`ingress.pomerium.io/preserve_host_header`]: /docs/reference/routes/headers#host-rewrite
-[`ingress.pomerium.io/regex_rewrite_pattern`]: /docs/reference/routes/path-rewriting#regex-rewrite
-[`ingress.pomerium.io/regex_rewrite_substitution`]: /docs/reference/routes/path-rewriting#regex-rewrite
-[`ingress.pomerium.io/remove_request_headers`]: /docs/reference/routes/headers#remove-request-headers
-[`ingress.pomerium.io/rewrite_response_headers`]: /docs/reference/routes/headers#rewrite-response-headers
-[`ingress.pomerium.io/set_request_headers`]: /docs/reference/routes/headers#set-request-headers
-[`ingress.pomerium.io/set_response_headers`]: /docs/reference/set-response-headers
-[`ingress.pomerium.io/timeout`]: /docs/reference/routes/timeouts#route-timeout
-[`ingress.pomerium.io/tls_upstream_server_name`]: /docs/reference/routes/tls#tls-upstream-server-name
-[`ingress.pomerium.io/tls_downstream_server_name`]: /docs/reference/routes/tls-downstream-server-name
-[`ingress.pomerium.io/tls_server_name`]: /docs/reference/routes/tls#tls-upstream-server-name
-[`ingress.pomerium.io/tls_skip_verify`]: /docs/reference/routes/tls#tls-skip-verification
-[`tls_custom_ca_secret`]: /docs/reference/routes/tls#tls-custom-certificate-authority
-[client-certificate-authority]: /docs/reference/certificates
-[hsts]: https://en.wikipedia.org/wiki/HTTP_Strict_Transport_Security
-[re2 regular expression]: https://github.com/google/re2/wiki/Syntax
-[regex101.com]: https://regex101.com
-[tls_client_certificate]: /docs/reference/routes/tls#tls-client-certificate
-
 ## MCP (Model Context Protocol) Configuration
 
 The Pomerium Ingress Controller supports Model Context Protocol (MCP) through specific annotations. MCP routes can be configured as either servers or clients, with additional configuration options for OAuth2 upstream authentication.
@@ -945,3 +945,10 @@ spec:
 - OAuth2 credentials are handled securely through Kubernetes secrets, preventing exposure in annotations
 - The secret must be in the same namespace as the ingress resource
 - Use appropriate RBAC controls to limit access to OAuth2 credential secrets
+
+[`tls_custom_ca_secret`]: /docs/reference/routes/tls#tls-custom-certificate-authority
+[client-certificate-authority]: /docs/reference/certificates
+[hsts]: https://en.wikipedia.org/wiki/HTTP_Strict_Transport_Security
+[re2 regular expression]: https://github.com/google/re2/wiki/Syntax
+[regex101.com]: https://regex101.com
+[tls_client_certificate]: /docs/reference/routes/tls#tls-client-certificate

@@ -8,6 +8,8 @@ Pomerium's documentation is built using [Docusaurus 2](https://docusaurus.io/). 
 
 The steps below detail the installation of this site locally for development.
 
+Contributions assisted by AI tools must follow the [AI usage policy](./AI_POLICY.md) — disclose the tool used and the extent of AI assistance.
+
 ### Installation
 
 ```sh
