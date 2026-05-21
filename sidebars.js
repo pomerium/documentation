@@ -60,6 +60,7 @@ const sidebars = {
         'docs/capabilities/kubernetes-access',
         'docs/capabilities/native-ssh-access',
         'docs/capabilities/reverse-tunneling',
+        'docs/capabilities/session-recording',
         {
           type: 'category',
           label: 'Non-HTTP Protocols',
