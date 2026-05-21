@@ -12,25 +12,32 @@ import Tabs from '@theme/Tabs';
 
 :::enterprise
 
-This article describes a use case available to [Pomerium Enterprise](/docs/deploy/enterprise/install) customers.
+This article describes a use case available to
+[Pomerium Enterprise](/docs/deploy/enterprise/install) customers.
 
 :::
 
 ## Overview
 
-Pomerium supports recording, storage, and playback (via Enterprise Console) of interactive SSH sessions for auditing and compliance needs.
+Pomerium supports recording, storage, and playback (via Enterprise Console) of
+interactive SSH sessions for auditing and compliance needs.
 
 ## Setup
 
 :::danger important
 
-Recording SSH sessions carries inherent risk. Anything the user sees in their terminal is recorded as-is without modification or redaction. This can include sensitive information such as private keys, passwords, etc.
+Recording SSH sessions carries inherent risk. Anything the user sees in their
+terminal is recorded as-is without modification or redaction. This can include
+sensitive information such as private keys, passwords, etc.
 
 :::
 
 :::important
 
-Session recording capabilities are _not_ present in the standard Pomerium binary distributions. These features require a separate extension which Pomerium must load from disk on startup. If the extension is not loaded, Pomerium does not have the ability to record SSH sessions, even if configured to do so.
+Session recording capabilities are _not_ present in the standard Pomerium binary
+distributions. These features require a separate extension which Pomerium must
+load from disk on startup. If the extension is not loaded, Pomerium does not
+have the ability to record SSH sessions, even if configured to do so.
 
 :::
 
@@ -40,13 +47,22 @@ The session recording extension is distributed as a container image:
 
 `docker.cloudsmith.io/pomerium/enterprise/session-recording-extension`
 
-This image contains a single file, `/session_recording_extension.so`. It is recommended to use [Image Volumes](https://kubernetes.io/docs/tasks/configure-pod-container/image-volumes/) to mount the extension into the Pomerium Core container. Alternatively, you can copy the binary out of the image for non-containerized deployments.
+This image contains a single file, `/session_recording_extension.so`. It is
+recommended to use
+[Image Volumes](https://kubernetes.io/docs/tasks/configure-pod-container/image-volumes/)
+to mount the extension into the Pomerium Core container. Alternatively, you can
+copy the binary out of the image for non-containerized deployments.
 
-**Extension binaries are built for a specific version (commit) of Pomerium Core.** The extension container images are tagged both with specific git revisions, as well as release version numbers (for the corresponding tagged commits). This tag must match the version of Pomerium Core you are using.
+**Extension binaries are built for a specific version (commit) of Pomerium
+Core.** The extension container images are tagged both with specific git
+revisions, as well as release version numbers (for the corresponding tagged
+commits). This tag must match the version of Pomerium Core you are using.
 
 :::note
 
-These extensions are loaded into Envoy, not the Pomerium control plane. If you build Envoy yourself instead of using the pre-built binaries, please reach out to us at [support@pomerium.com](mailto:support@pomerium.com).
+These extensions are loaded into Envoy, not the Pomerium control plane. If you
+build Envoy yourself instead of using the pre-built binaries, please reach out
+to us at [support@pomerium.com](mailto:support@pomerium.com).
 
 :::
 
@@ -103,7 +119,8 @@ spec:
             pullPolicy: IfNotPresent
 ```
 
-Then, Pomerium can be configured to load the extension from `/extensions/session_recording/session_recording_extension.so`.
+Then, Pomerium can be configured to load the extension from
+`/extensions/session_recording/session_recording_extension.so`.
 
 </TabItem>
 </Tabs>
@@ -115,19 +132,25 @@ Session recordings are stored in Blob (Binary Large Object) stores.
 Pomerium uploads the following information to the storage layer:
 
 - recording of the session
-- metadata associated with the session, such as user information & pomerium route information
-- metadata associated with the provenance of the recording, such as the version of Pomerium used to produce the recording.
+- metadata associated with the session, such as user information & pomerium
+  route information
+- metadata associated with the provenance of the recording, such as the version
+  of Pomerium used to produce the recording.
 
 <Tabs>
 <TabItem value="Core" label="Core">
 
 :::important
 
-Pomerium instances must be initially connected to Pomerium Enterprise to be able to upload to Blob stores, since Pomerium Enterprise assigns cluster IDs. (TODO: reword)
+Pomerium instances must be initially connected to Pomerium Enterprise to be able
+to upload to Blob stores, since Pomerium Enterprise assigns cluster IDs. (TODO:
+reword)
 
-Configuring the bucket in core alone will not make the recordings visible in Enterprise and the bucket will have to be configured in enterprise as well.
+Configuring the bucket in core alone will not make the recordings visible in
+Enterprise and the bucket will have to be configured in enterprise as well.
 
-It is strongly recommended to set up the storage configuration through Pomerium Enterprise or its Terraform provider.
+It is strongly recommended to set up the storage configuration through Pomerium
+Enterprise or its Terraform provider.
 
 :::
 
@@ -140,7 +163,8 @@ blob_storage:
 
 <TabItem value="Enterprise" label="Enterprise">
 
-Navigate to the recording datasources section. Each blob datasource is scoped per-namespace.
+Navigate to the recording datasources section. Each blob datasource is scoped
+per-namespace.
 
 ![Datasource menu](./img/session-recording/recording-datasource-menu.png)
 
@@ -152,11 +176,13 @@ Navigate to the clusters settings for this namespace.
 
 ![](./img/session-recording/navigate-to-settings.png)
 
-Set the blob storage from a list of available datasources configured for this namespace:
+Set the blob storage from a list of available datasources configured for this
+namespace:
 
 ![](./img/session-recording/set-blob-storage.png)
 
-When users access an ssh route with `session_recording.enabled=true`, the recording will show up in the Recordings tab where it is available for playback:
+When users access an ssh route with `session_recording.enabled=true`, the
+recording will show up in the Recordings tab where it is available for playback:
 
 ![](./img/session-recording/session-recordings-showup.png)
 
@@ -216,15 +242,19 @@ Blob storage configurations follow a URI format:
 
 :::danger important
 
-Since session recording can contain privileged information about remote environments, it is recommended to enable strict storage security & integrity parameters.
+Since session recording can contain privileged information about remote
+environments, it is recommended to enable strict storage security & integrity
+parameters.
 
-End users may wish to consult information related to object locking and retention for their cloud provider:
+End users may wish to consult information related to object locking and
+retention for their cloud provider:
 
 - [AWS S3](https://docs.aws.amazon.com/AmazonS3/latest/userguide/object-lock.html)
 - [GCS Storage](https://docs.cloud.google.com/storage/docs/bucket-lock)
 - [Azure](https://learn.microsoft.com/en-us/azure/storage/blobs/immutable-storage-overview)
 
-For specific privileged access management compliance standards, end-users will want to consult further documentation for each cloud provider's blob store.
+For specific privileged access management compliance standards, end-users will
+want to consult further documentation for each cloud provider's blob store.
 
 :::
 
@@ -233,7 +263,10 @@ For specific privileged access management compliance standards, end-users will w
 
 **Credential setup**:
 
-By default the instances connected with this bucket URI, will use [Application Default Credentials for google cloud](https://docs.cloud.google.com/sdk/gcloud/reference/auth/application-default/login). For alternative credential configuration for Google Cloud, see [Application Default Credentials](https://docs.cloud.google.com/docs/authentication#service-accounts).
+By default the instances connected with this bucket URI, will use
+[Application Default Credentials for google cloud](https://docs.cloud.google.com/sdk/gcloud/reference/auth/application-default/login).
+For alternative credential configuration for Google Cloud, see
+[Application Default Credentials](https://docs.cloud.google.com/docs/authentication#service-accounts).
 
 **Bucket URI**:
 
@@ -244,14 +277,15 @@ gs://example-bucket
 - Scheme: `gs`
 - Path: `<bucket-name>`
 
-| Parameter | Description |
-| --- | --- |
-| `anonymous` | A value of `"true"` forces the use of an unauthenticated client. |
-| `access_id` | Sets `Options.GoogleAccessID`; only used in `SignedURL`, except that a value of `"-"` forces the use of an unauthenticated client. |
-| `private_key_path` | Path to read for `Options.PrivateKey`; only used in `SignedURL`. |
-| `universe_domain` | Sets the universe domain for the client. |
+| Parameter          | Description                                                                                                                        |
+| ------------------ | ---------------------------------------------------------------------------------------------------------------------------------- |
+| `anonymous`        | A value of `"true"` forces the use of an unauthenticated client.                                                                   |
+| `access_id`        | Sets `Options.GoogleAccessID`; only used in `SignedURL`, except that a value of `"-"` forces the use of an unauthenticated client. |
+| `private_key_path` | Path to read for `Options.PrivateKey`; only used in `SignedURL`.                                                                   |
+| `universe_domain`  | Sets the universe domain for the client.                                                                                           |
 
-For more details about how pomerium uses the google cloud APIs, see [here](https://pkg.go.dev/gocloud.dev/blob/gcsblob?utm_source=godoc#URLOpener)
+For more details about how pomerium uses the google cloud APIs, see
+[here](https://pkg.go.dev/gocloud.dev/blob/gcsblob?utm_source=godoc#URLOpener)
 
 </TabItem>
 <TabItem value="S3" label="S3">
@@ -265,18 +299,19 @@ TODO:
 - Scheme: `s3`
 - Path: `<bucket-name>`
 
-| Parameter | Description |
-| --- | --- |
-| `ssetype` | The type of server side encryption used (`AES256`, `aws:kms`, `aws:kms:dsse`). |
-| `kmskeyid` | The KMS key ID for server side encryption. |
-| `accelerate` | A value of `"true"` uses the S3 Transfer Acceleration endpoints. |
-| `use_path_style` | A value of `true` sets the `UsePathStyle` option. |
-| `s3ForcePathStyle` | Same as `use_path_style`, for backwards compatibility with V1. |
-| `disable_https` | A value of `true` disables HTTPS in the `Endpoint` options. |
+| Parameter          | Description                                                                    |
+| ------------------ | ------------------------------------------------------------------------------ |
+| `ssetype`          | The type of server side encryption used (`AES256`, `aws:kms`, `aws:kms:dsse`). |
+| `kmskeyid`         | The KMS key ID for server side encryption.                                     |
+| `accelerate`       | A value of `"true"` uses the S3 Transfer Acceleration endpoints.               |
+| `use_path_style`   | A value of `true` sets the `UsePathStyle` option.                              |
+| `s3ForcePathStyle` | Same as `use_path_style`, for backwards compatibility with V1.                 |
+| `disable_https`    | A value of `true` disables HTTPS in the `Endpoint` options.                    |
 
 :::note
 
-For S3 compatible storage servers that recognize the same REST HTTP endpoints as S3, like Minio, Cepth or SeaweedFS, you can configure the bucket uri as follows:
+For S3 compatible storage servers that recognize the same REST HTTP endpoints as
+S3, like Minio, Cepth or SeaweedFS, you can configure the bucket uri as follows:
 
 ```
 s3://mybucket?endpoint=my.minio.local:8080&disableSSL=true&s3ForcePathStyle=true
@@ -286,7 +321,9 @@ s3://mybucket?endpoint=my.minio.local:8080&disableSSL=true&s3ForcePathStyle=true
 
 :::important
 
-Pomerium writes recordings using WORM (Write Once Read Many) semantics, which means it is compatible with each blob storage integration's strictest data compliance & governance standards.
+Pomerium writes recordings using WORM (Write Once Read Many) semantics, which
+means it is compatible with each blob storage integration's strictest data
+compliance & governance standards.
 
 More details can be found in the Integrity & Auditing section.
 
@@ -305,12 +342,12 @@ TODO
 - Scheme : `azblob`
 - Path : `<bucket-name>`
 
-| Parameter | Description |
-| --- | --- |
-| `domain` | Overrides `Options.StorageDomain`. |
+| Parameter  | Description                                                                                                                                                                            |
+| ---------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `domain`   | Overrides `Options.StorageDomain`.                                                                                                                                                     |
 | `protocol` | Protocol can be provided to specify protocol to access Azure Blob Storage. Protocols that can be specified are "http" for local emulator and "https" for general. Defaults to "https". |
-| `cdn` | IsCDN can be set to true when using a CDN URL pointing to a [blob storage account](https://docs.microsoft.com/en-us/azure/cdn/cdn-create-a-storage-account-with-cdn) |
-| `localemu` | IsLocalEmulator should be set to true when targeting Local Storage Emulator (Azurite). |
+| `cdn`      | IsCDN can be set to true when using a CDN URL pointing to a [blob storage account](https://docs.microsoft.com/en-us/azure/cdn/cdn-create-a-storage-account-with-cdn)                   |
+| `localemu` | IsLocalEmulator should be set to true when targeting Local Storage Emulator (Azurite).                                                                                                 |
 
 </TabItem>
 
@@ -318,7 +355,9 @@ TODO
 
 :::
 
-danger important File storage is not recommended for production setups. Additionally, for Enterprise to replay recordings, it must be on the same host as the instances writing to file storage.
+danger important File storage is not recommended for production setups.
+Additionally, for Enterprise to replay recordings, it must be on the same host
+as the instances writing to file storage.
 
 :::
 
@@ -331,14 +370,14 @@ file://<file-path>
 - Schema : `file`
 - Path : filesystem path to write recordings to
 
-| Parameter | Description |
-| --- | --- |
-| `create_dir` | (any non-empty value) the directory is created (using `os.MkDirAll`) if it does not already exist. |
-| `dir_file_mode` | Any directories that are created (the base directory when `create_dir` is true, or subdirectories for keys) are created using this `os.FileMode`, parsed using `os.ParseUint`. Defaults to `0777`. |
-| `no_tmp_dir` | (any non-empty value) temporary files are created next to the final path instead of in `os.TempDir`. |
-| `base_url` | The base URL to use to construct signed URLs; see `URLSignerHMAC`. |
-| `secret_key_path` | Path to read for the secret key used to construct signed URLs; see `URLSignerHMAC`. |
-| `metadata` | If set to `"skip"`, won't write metadata such as `blob.Attributes` as per the package docstring. |
+| Parameter         | Description                                                                                                                                                                                        |
+| ----------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `create_dir`      | (any non-empty value) the directory is created (using `os.MkDirAll`) if it does not already exist.                                                                                                 |
+| `dir_file_mode`   | Any directories that are created (the base directory when `create_dir` is true, or subdirectories for keys) are created using this `os.FileMode`, parsed using `os.ParseUint`. Defaults to `0777`. |
+| `no_tmp_dir`      | (any non-empty value) temporary files are created next to the final path instead of in `os.TempDir`.                                                                                               |
+| `base_url`        | The base URL to use to construct signed URLs; see `URLSignerHMAC`.                                                                                                                                 |
+| `secret_key_path` | Path to read for the secret key used to construct signed URLs; see `URLSignerHMAC`.                                                                                                                |
+| `metadata`        | If set to `"skip"`, won't write metadata such as `blob.Attributes` as per the package docstring.                                                                                                   |
 
 </TabItem>
 </Tabs>
@@ -382,12 +421,16 @@ Recordings are stored in blob stores using the following path structure
                 ├── signature
 ```
 
-- `pomerium-cluster-id` is the cluster ID associated to a pomerium cluster when it is connected to enterprise.
+- `pomerium-cluster-id` is the cluster ID associated to a pomerium cluster when
+  it is connected to enterprise.
 - `recording-id` is unique identifier for a recording
 
 - `metadata.<ext>` contains metadata about the session
-- `recording_*` contains the actual contents. Recordings are separated into separate chunks. Chunks ids are monotonic increasing. Stored in protobuf format.
-- signature contains some meta information about the provenance of the artifact. Currently holds the full pomerium version.
+- `recording_*` contains the actual contents. Recordings are separated into
+  separate chunks. Chunks ids are monotonic increasing. Stored in protobuf
+  format.
+- signature contains some meta information about the provenance of the artifact.
+  Currently holds the full pomerium version.
 
 </details>
 
@@ -400,19 +443,20 @@ Pomerium captures the follow metadata for each recording:
 - `session_id` : pomerium session id
 - `user_id` : pomerium user id
 - `stream_id` : internal stream id for correlation with logs
-- `route_name` : pomerium route name, e.g. `to: ssh://example`, the route_name would be `example`
-- `upstream` : upstream target, e.g. `from: ssh://0.0.0.0:22`, the upstream would be `0.0.0.0:22`
+- `route_name` : pomerium route name, e.g. `to: ssh://example`, the route_name
+  would be `example`
+- `upstream` : upstream target, e.g. `from: ssh://0.0.0.0:22`, the upstream
+  would be `0.0.0.0:22`
 - `pty_info` : info about the shell where the recording came from
 
 ## Playback & Querying
 
 TODO: WIP
 
-Navigate to the recordings tab to view available recordings. They are separate by Pomerium Enterprise Namespace and Cluster.
+Navigate to the recordings tab to view available recordings. They are separate
+by Pomerium Enterprise Namespace and Cluster.
 
 ![Recordings](./img/session-recording/session-recordings-showup.png)
-
-
 
 ## Integrity & Auditing
 
