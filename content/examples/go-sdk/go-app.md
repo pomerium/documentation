@@ -9,7 +9,6 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"time"
 
 	"github.com/go-jose/go-jose/v3/jwt"
 	"github.com/pomerium/sdk-go"

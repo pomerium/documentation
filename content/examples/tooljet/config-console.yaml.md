@@ -11,16 +11,16 @@ routes:
     to: http://verify:8000
     pass_identity_headers: true
     policy:
-      - allows:
-           or:
+      - allow:
+          or:
             - email:
-                 is: user@example.com
+                is: user@example.com
   - from: https://console.localhost.pomerium.io
     to: http://pomerium_console:8701
     pass_identity_headers: true
     policy:
-      - allows:
-           or:
+      - allow:
+          or:
             - email:
-                 is: user@example.com
+                is: user@example.com
 ```

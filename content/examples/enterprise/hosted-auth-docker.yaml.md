@@ -40,7 +40,7 @@ services:
       - metrics:/data:rw
       - ./console-config.yaml:/pomerium/console-config.yaml:ro
   database:
-    image: postgres:latest
+    image: postgres:16
     restart: always
     healthcheck:
       test: ['CMD-SHELL', 'pg_isready -d postgres -U postgres']

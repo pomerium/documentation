@@ -1,11 +1,8 @@
 ```yaml
 # This file contains only route and policy configuration details. Other
-# configuration settings required by pomerium are excluded for clarity.
-# See: https://www.pomerium.io/docs/reference/
-
-#
-# For a complete self contained configuration see : config.example.yaml.
-# Or, mix and match a policy file (this) with env vars : config.example.env
+# configuration settings required by Pomerium are excluded for clarity.
+# See https://www.pomerium.com/docs/reference for the full configuration
+# reference.
 
 routes:
   - from: https://verify.localhost.pomerium.io
