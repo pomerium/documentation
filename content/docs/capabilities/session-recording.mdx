@@ -47,16 +47,78 @@ The session recording extension is distributed as a container image:
 
 `docker.cloudsmith.io/pomerium/enterprise/session-recording-extension`
 
+For official release versions of Pomerium, extension images will be tagged with
+that version (in the form `vX.Y.Z`). If you are using an unreleased version of
+Pomerium, or building it yourself, see below for instructions on finding the
+correct extension version.
+
+<details>
+<summary>
+Finding extension image tags
+</summary>
+The extension image tag must match the _Envoy version_ for the version of Pomerium
+Core you are using. There are several ways to find this version:
+
+1. It is logged immediately upon startup:
+
+   ```json
+   {"level":"info","envoy-version":"20260519214603-7724aff26b06","version":"v0.32.5-rc.1.0.20260521140818-2483887bbf28-2026-05-22T18:07:36Z","time":"2026-05-22T20:05:30Z","message":"cmd/pomerium"}
+                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   ```
+
+2. It will be displayed when running `pomerium --version`:
+
+   ```
+   pomerium: v0.32.5-rc.1-99-g2483887bb+2483887bb
+   envoy: 20260519214603-7724aff26b06
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   ```
+
+3. It can be found in the Pomerium `go.mod` in the version string of
+   `github.com/pomerium/envoy-custom` (only the part highlighted below)
+
+   ```
+   require (
+     ...
+     github.com/pomerium/envoy-custom vX.X.X-XXX.X.20260519214603-7724aff26b06
+                                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+     ...
+   )
+   ```
+
+</details>
+
 This image contains a single file, `/session_recording_extension.so`. It is
 recommended to use
 [Image Volumes](https://kubernetes.io/docs/tasks/configure-pod-container/image-volumes/)
 to mount the extension into the Pomerium Core container. Alternatively, you can
 copy the binary out of the image for non-containerized deployments.
 
-**Extension binaries are built for a specific version (commit) of Pomerium
-Core.** The extension container images are tagged both with specific git
-revisions, as well as release version numbers (for the corresponding tagged
-commits). This tag should match the version of Pomerium Core you are using.
+An example deployment might look like the following:
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+# ...
+spec:
+  template:
+    spec:
+      containers:
+        - name: pomerium
+          image: docker.io/pomerium/pomerium:vX.Y.Z
+          # ...
+          volumeMounts:
+            - name: session-recording-extension
+              mountPath: /extensions/session_recording/
+      volumes:
+        - name: session-recording-extension
+          image:
+            reference: docker.cloudsmith.io/pomerium/enterprise/session-recording-extension:vX.Y.Z
+            pullPolicy: IfNotPresent
+```
+
+Then, Pomerium can be configured to load the extension from <br />
+`/extensions/session_recording/session_recording_extension.so`.
 
 :::note
 
@@ -93,36 +155,6 @@ TODO fill this in
 <TabItem value="Terraform" label="Terraform">
 
 TODO fill this in
-
-</TabItem>
-<TabItem value="Kubernetes" label="Kubernetes">
-
-An example deployment might look like the following:
-
-```yaml
-apiVersion: apps/v1
-kind: Deployment
-# ...
-spec:
-  template:
-    spec:
-      containers:
-        - name: pomerium
-          image: docker.io/pomerium/pomerium:vX.Y.Z
-          # ...
-          volumeMounts:
-            - name: sessionRecordingExtension
-              mountPath: /extensions/session_recording/
-      volumes:
-        - name: sessionRecordingExtension
-          image:
-            # Note the matching tag
-            reference: docker.cloudsmith.io/pomerium/enterprise/session-recording-extension:vX.Y.Z
-            pullPolicy: IfNotPresent
-```
-
-Then, Pomerium can be configured to load the extension from <br />
-`/extensions/session_recording/session_recording_extension.so`.
 
 </TabItem>
 </Tabs>
