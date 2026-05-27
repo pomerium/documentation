@@ -88,37 +88,69 @@ Core you are using. There are several ways to find this version:
 
 </details>
 
-This image contains a single file, `/session_recording_extension.so`. It is
-recommended to use
-[Image Volumes](https://kubernetes.io/docs/tasks/configure-pod-container/image-volumes/)
-to mount the extension into the Pomerium Core container. Alternatively, you can
-copy the binary out of the image for non-containerized deployments.
+This image contains a single file, `/session_recording_extension.so`. See below
+for how to modify existing deployments to make this file available to Pomerium:
 
-An example deployment might look like the following:
+<Tabs>
+<TabItem value="Kubernetes" label="Kubernetes">
+
+For Kubernetes deployments, it is recommended to use
+[image volumes](https://kubernetes.io/docs/tasks/configure-pod-container/image-volumes/)
+to mount the extension into the Pomerium Core container.
 
 ```yaml
 apiVersion: apps/v1
 kind: Deployment
-# ...
 spec:
   template:
     spec:
       containers:
         - name: pomerium
-          image: docker.io/pomerium/pomerium:vX.Y.Z
-          # ...
+          image: pomerium/ingress-controller:vX.Y.Z
           volumeMounts:
             - name: session-recording-extension
               mountPath: /extensions/session_recording/
+              readOnly: true
       volumes:
         - name: session-recording-extension
           image:
             reference: docker.cloudsmith.io/pomerium/enterprise/session-recording-extension:vX.Y.Z
-            pullPolicy: IfNotPresent
+      imagePullSecrets:
+        # This should be the same image pull secret used for enterprise console
+        - name: pomerium-enterprise-docker
 ```
 
-Then, Pomerium can be configured to load the extension from <br />
-`/extensions/session_recording/session_recording_extension.so`.
+</TabItem>
+<TabItem value="DockerCompose" label="Docker Compose">
+
+For Docker Compose deployments, you can mount the extension image directly into
+the container with an
+[image volume](https://docs.docker.com/reference/compose-file/services/#volumes):
+
+```yaml
+services:
+  pomerium:
+    image: pomerium/pomerium:vX.Y.Z
+    volumes:
+      - type: image
+        source: docker.cloudsmith.io/pomerium/enterprise/session-recording-extension:vX.Y.Z
+        target: /extensions/session_recording/
+        read_only: true
+```
+
+</TabItem>
+<TabItem value="Manual" label="Manual">
+
+To manually extract the extension (`session_recording_extension.so`) from the
+container image:
+
+```bash
+$ ID=$(docker create docker.cloudsmith.io/pomerium/enterprise/session-recording-extension:vX.Y.Z) && \
+    docker export $ID | tar -xf - session_recording_extension.so && docker rm $ID
+```
+
+</TabItem>
+</Tabs>
 
 :::note
 
@@ -132,29 +164,39 @@ source code to build and/or audit yourself, please reach out to us at
 
 ### 2. Configure the extension
 
+Once the extension is accessible on the filesystem, Pomerium must be configured
+to load the extension by file path.
+
+If you used the paths from the examples in the previous section, the absolute
+path to the session recording extension will be <br />
+`/extensions/session_recording/session_recording_extension.so`
+
 <Tabs>
-<TabItem value="Core" label="Core">
+<TabItem value="EnterpriseConsole" label="Enterprise Console">
 
-| **Config file key**        | **Type**           |
-| :------------------------- | :----------------- |
-| `envoy_dynamic_extensions` | `array of strings` |
+In Enterprise Console, navigate to Settings > Global and add the path to the
+Extension File Paths list.
 
-Example:
-
-```yaml
-envoy_dynamic_extensions:
-  - /path/to/session_recording_extension.so
-```
-
-</TabItem>
-<TabItem value="Enterprise" label="Enterprise">
-
-TODO fill this in
+![](./img/session-recording/extension-file-paths.png)
 
 </TabItem>
 <TabItem value="Terraform" label="Terraform">
 
 TODO fill this in
+
+</TabItem>
+<TabItem value="ConfigYaml" label="Config File">
+
+Extension file paths can be configured in the Pomerium config.yaml as follows:
+
+| **Config file key**        | **Type**           |
+| :------------------------- | :----------------- |
+| `envoy_dynamic_extensions` | `array of strings` |
+
+```yaml title="config.yaml"
+envoy_dynamic_extensions:
+  - /extensions/session_recording/session_recording_extension.so
+```
 
 </TabItem>
 </Tabs>
