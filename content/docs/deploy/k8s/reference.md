@@ -97,7 +97,7 @@ PomeriumSpec defines Pomerium-specific configuration parameters.
                     (<a href="#certificateautoprovision">certificateAutoProvision</a>)
                 </p>
                 <p>
-                    CertificateAutoProvision sets the certificate auto provision settings. This is a fallback for routes that are not defined via Ingress or Gateway resources.
+                    CertificateAutoProvision sets the certificate auto provision settings. This is a fallback for routes that are not defined via Ingress or Gateway resources. When configured, cert-manager certificate resources will be created for any routes which have no matching TLS certificate.
                 </p>
             </td>
         </tr>
@@ -388,7 +388,7 @@ Authenticate sets authenticate service parameters. If not specified, a Pomerium-
 
 ### `certificateAutoProvision`
 
-CertificateAutoProvision sets the certificate auto provision settings. This is a fallback for routes that are not defined via Ingress or Gateway resources.
+CertificateAutoProvision sets the certificate auto provision settings. This is a fallback for routes that are not defined via Ingress or Gateway resources. When configured, cert-manager certificate resources will be created for any routes which have no matching TLS certificate.
 
 <table>
     <thead>
@@ -401,6 +401,7 @@ CertificateAutoProvision sets the certificate auto provision settings. This is a
                     <strong>string</strong>&#160;
                 </p>
                 <p>
+                    The cert-manager ClusterIssuer that will be used for new certificates. Certificates will be created in the same namespace as the controller pod.
                 </p>
             </td>
         </tr>
@@ -412,6 +413,7 @@ CertificateAutoProvision sets the certificate auto provision settings. This is a
                     (namespace/name)
                 </p>
                 <p>
+                    The cert-manager Issuer that will be used for new certificates. Certificates will be created in the same namespace as the Issuer.
                 </p>
                 Format: reference to Kubernetes resource with namespace prefix: <code>namespace/name</code> format.
             </td>
