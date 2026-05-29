@@ -150,6 +150,26 @@ routes:
     to: http://second-proxy.example.corp.com:10003
 ```
 
+### Connecting through an HTTP forward proxy {#forward-proxy}
+
+In some networks the client running `pomerium-cli` has no direct outbound internet access, and all external HTTPS must traverse an HTTP/HTTPS forward proxy (for example, Squid). A common question is whether `pomerium-cli tcp` can be pointed at such a proxy with the standard `HTTP_PROXY` / `HTTPS_PROXY` environment variables.
+
+As of Pomerium v0.32, the answer is no: **the TCP tunnel does not traverse a forward proxy.** The behavior splits across the two kinds of connection the client makes:
+
+| Connection the CLI makes | Honors `HTTP_PROXY` / `HTTPS_PROXY`? |
+| --- | --- |
+| Authentication / token requests (the OIDC login flow) | Yes |
+| The TCP tunnel itself (the initial connection check and the `CONNECT`) | No — dialed directly |
+
+Because the tunnel connection is dialed directly to the Pomerium endpoint, in a network that allows no direct outbound HTTPS the tunnel fails to connect. The authentication step _would_ honor the proxy, but the tunnel's direct dial fails first: in a proxy-only network the CLI's initial connection check fails before authentication is ever attempted. This is distinct from the [Bastion host](#bastion-host) feature above: a bastion is Pomerium itself reachable at an alternate address, not an arbitrary forward proxy, so pointing `pomerium-cli` at a Squid instance as if it were a bastion does not work.
+
+There are also no `pomerium-cli` flags or configuration files for forward-proxy settings; the standard environment variables are the only proxy mechanism, and they apply only to the authentication requests as shown above.
+
+To use `pomerium-cli tcp` from such a network, use one of the following:
+
+- **Allow a narrow direct-egress exception** on the proxy or firewall for just the Pomerium endpoint (the [`address`](/docs/reference/address) host on port `443`). The tunnel then connects directly to Pomerium while the rest of the network stays proxy-only.
+- **Run `pomerium-cli` on a jump host** that has direct egress to the Pomerium endpoint, and reach its local listener from the client (for example, an SSH `-L` local forward to the jump host).
+
 :::info TCP examples
 
 The guides below demonstrate how to proxy TCP tunnels with Pomerium to well-known services:
