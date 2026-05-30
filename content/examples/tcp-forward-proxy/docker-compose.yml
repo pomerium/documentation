@@ -1,0 +1,82 @@
+name: pomerium-tcp-forward-proxy
+
+services:
+  # The upstream TCP service, reached with psql through the tunnel.
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_PASSWORD: postgres
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U postgres']
+      interval: 3s
+      timeout: 3s
+      retries: 20
+      start_period: 5s
+
+  pomerium:
+    image: pomerium/pomerium:latest
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./certs:/certs:ro
+      - ./config/pomerium.yaml:/pomerium.yaml:ro
+    command: ['--config', '/pomerium.yaml']
+    networks:
+      default:
+        # The *.localhost.pomerium.io names resolve to 127.0.0.1 publicly, which
+        # is wrong inside Docker. These aliases let the proxies resolve the edge
+        # name to this container.
+        aliases:
+          - proxy.localhost.pomerium.io
+          - authenticate.localhost.pomerium.io
+          - pgsql.localhost.pomerium.io
+    healthcheck:
+      test: ['CMD', 'pomerium', 'health']
+      interval: 3s
+      timeout: 3s
+      retries: 30
+      start_period: 5s
+
+  # An HTTP forward proxy standing in for a corporate egress proxy (HTTP CONNECT).
+  squid:
+    image: ubuntu/squid:latest
+    command: ['squid', '-N', '-d', '1', '-f', '/etc/squid/squid.conf']
+    volumes:
+      - ./squid/squid.conf:/etc/squid/squid.conf:ro
+    healthcheck:
+      test: ['CMD-SHELL', 'bash -c "</dev/tcp/127.0.0.1/3128" || exit 1']
+      interval: 3s
+      timeout: 3s
+      retries: 20
+      start_period: 5s
+
+  # A SOCKS5 forward proxy, for the ALL_PROXY / socks5:// variant. The image
+  # is built FROM scratch (no shell), so it has no healthcheck; it listens
+  # immediately on start.
+  socks5:
+    image: serjs/go-socks5-proxy:latest
+    environment:
+      REQUIRE_AUTH: 'false'
+
+  # In-network client with pomerium-cli and psql. It reaches the proxies by
+  # name and, through them, the Pomerium edge. Requires a pomerium-cli that
+  # supports --forward-proxy (see the guide for the minimum version).
+  client:
+    build:
+      context: .
+      dockerfile_inline: |
+        FROM pomerium/cli:latest AS cli
+        FROM alpine:3.21
+        RUN apk add --no-cache bash ca-certificates postgresql-client
+        COPY --from=cli /bin/pomerium-cli /usr/local/bin/pomerium-cli
+    depends_on:
+      pomerium:
+        condition: service_healthy
+      squid:
+        condition: service_healthy
+      socks5:
+        condition: service_started
+    volumes:
+      - ./certs:/certs:ro
+    entrypoint: ['sleep', 'infinity']

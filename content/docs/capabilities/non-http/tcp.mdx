@@ -150,6 +150,55 @@ routes:
     to: http://second-proxy.example.corp.com:10003
 ```
 
+### Connect through a client-side forward proxy {#forward-proxy}
+
+When the machine running `pomerium-cli` can only reach the internet through an HTTP or SOCKS5 forward proxy, route the TCP tunnel through it with `--forward-proxy`:
+
+```bash
+pomerium-cli tcp db.internal:5432 \
+  --pomerium-url https://pomerium.example.com \
+  --forward-proxy http://proxy.internal:3128
+```
+
+The proxy carries the connection from `pomerium-cli` to the **Pomerium edge**, not to the upstream TCP service. Write proxy allowlists and `NO_PROXY` entries for the Pomerium edge hostname, not for the database, SSH server, or other upstream. This is different from [Proxy chaining support](#proxy-chaining-support), which places a second proxy behind Pomerium.
+
+:::info Requires pomerium-cli vX.Y or later
+
+Proxy-aware tunneling was added to `pomerium-cli` in vX.Y. Check your client with `pomerium-cli tcp --help | grep forward-proxy` and upgrade if `--forward-proxy` is not listed.
+
+:::
+
+`pomerium-cli` selects a proxy in this order:
+
+| Order | Source | `NO_PROXY` | Notes |
+| --- | --- | --- | --- |
+| 1 | `--forward-proxy` | Ignored | Authoritative; used as-is when set. |
+| 2 | `HTTPS_PROXY` / `HTTP_PROXY` | Honored | Scheme-aware, based on the Pomerium edge URL. Lowercase variants also work. |
+| 3 | `ALL_PROXY` | Honored | Fallback when no scheme-specific proxy applies. |
+| 4 | none | n/a | Direct connection; unchanged from earlier behavior. |
+
+Both the tunnel and `pomerium-cli`'s own authentication and token requests use the selected proxy. If the command opens a system browser to log in, the browser uses its own network and proxy settings, not `--forward-proxy`.
+
+The proxy URL takes any of these forms (and must not include a path, query, or fragment):
+
+| Form | Meaning |
+| --- | --- |
+| `proxy.internal:3128` | Same as `http://proxy.internal:3128`. |
+| `http://proxy.internal:3128` | HTTP CONNECT proxy. |
+| `https://proxy.internal:8443` | TLS to the proxy, then HTTP CONNECT. |
+| `socks5://proxy.internal:1080` | SOCKS5 proxy. |
+| `socks5h://proxy.internal:1080` | SOCKS5 proxy (`socks5h` scheme). |
+| `http://user:pass@proxy.internal:3128` | HTTP proxy with Basic authentication; URL-encode special characters. |
+
+A few more things to know:
+
+- TCP tunnels use the proxy; `pomerium-cli udp` (MASQUE) always dials directly.
+- When a proxy is selected, `pomerium-cli tcp` skips HTTP/3 and uses the HTTP/1 tunnel, since QUIC can't traverse a CONNECT or SOCKS proxy.
+- `--alternate-ca-path` configures trust for the Pomerium edge certificate. It does not configure trust for an `https://` forward proxy; a proxy that terminates TLS with a private CA must be trusted by the operating system running `pomerium-cli`.
+- Credentials in an `http://user:pass@proxy` URL are sent to the proxy in cleartext.
+
+For a runnable walkthrough with Pomerium, an upstream service, and a Squid proxy, see [Connect through a client-side forward proxy](/docs/guides/tcp-forward-proxy).
+
 :::info TCP examples
 
 The guides below demonstrate how to proxy TCP tunnels with Pomerium to well-known services:
@@ -161,5 +210,6 @@ The guides below demonstrate how to proxy TCP tunnels with Pomerium to well-know
 - [**Redis**](./examples/redis)
 - [**SSH**](./examples/ssh)
 - [**SSH over port 443 through an L4 edge**](/docs/guides/ssh-tcp-l4-passthrough) - for environments restricted to outbound port 443
+- [**Connect through a client-side forward proxy**](/docs/guides/tcp-forward-proxy) - for clients whose only egress is an HTTP or SOCKS5 proxy
 
 :::
