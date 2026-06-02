@@ -43,8 +43,10 @@ services:
       FORGEJO__security__REVERSE_PROXY_AUTHENTICATION_USER: 'X-Pomerium-Sub'
       FORGEJO__security__REVERSE_PROXY_AUTHENTICATION_EMAIL: 'X-Pomerium-Claim-Email'
       FORGEJO__security__REVERSE_PROXY_AUTHENTICATION_FULL_NAME: 'X-Pomerium-Claim-Name'
-      # Trust only the proxy in front of Forgejo. This MUST be an IP/CIDR, not a
-      # hostname. The Compose network below gives Pomerium a fixed address.
+      # For X-Forwarded-For client-IP parsing, list only Pomerium. This does not
+      # restrict which peer the reverse-proxy auth header is trusted from. Must
+      # be an IP/CIDR, not a hostname; the Compose network gives Pomerium a
+      # fixed address.
       FORGEJO__security__REVERSE_PROXY_TRUSTED_PROXIES: '172.30.0.2/32'
       FORGEJO__security__REVERSE_PROXY_LIMIT: '1'
 

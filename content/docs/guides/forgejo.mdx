@@ -103,6 +103,8 @@ docker compose up
 
 In your browser, navigate to `https://forgejo.localhost.pomerium.io`. Pomerium prompts you to authenticate with your identity provider; after a successful login it forwards your identity to Forgejo, which signs you in and provisions your account from the headers. No Forgejo password is required. The account carries your real email; its Forgejo username comes from the configured username claim, and its full name is populated only if your identity provider supplies a `name` claim.
 
+![A Forgejo profile auto-provisioned from the signed-in Pomerium identity](img/forgejo/forgejo-sso-account.png)
+
 ### Verify the trust boundary
 
 The security model rests on Forgejo being reachable only through Pomerium, because reverse-proxy auth trusts the identity header from **any** peer that can reach Forgejo. `REVERSE_PROXY_TRUSTED_PROXIES` does not change that; only the network path does. Check both halves.
