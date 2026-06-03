@@ -24,13 +24,15 @@ import ForgejoPomeriumConfig from '@site/content/examples/forgejo/forgejo.pomeri
 
 # Secure Forgejo with Pomerium
 
-Learn how to add authentication, authorization, and single sign-on to a [Forgejo](https://forgejo.org/) instance with Pomerium. The same reverse-proxy authentication pattern applies to [Gitea](https://about.gitea.com/), which Forgejo is a soft-fork of, but this guide uses the Forgejo container image and `FORGEJO__` environment variables.
+Learn how to add authentication, authorization, and single sign-on to a [Forgejo](https://forgejo.org/) instance using Pomerium. Forgejo is a self-hosted Git service with a web UI.
+
+A similar setup can also be used with [Gitea](https://about.gitea.com/).
 
 ## Background
 
-Forgejo is a self-hosted Git service. Like most Git servers, it has its own local username and password database. Without single sign-on, every user has a second set of credentials in addition to your identity provider.
+Like many applications, Forgejo has its own local username and password database. Without single sign-on, every user would need to maintain a second set of credentials.
 
-Forgejo also supports [reverse-proxy authentication](https://forgejo.org/docs/latest/admin/setup/reverse-proxy/): it trusts an identity supplied in an HTTP header by a proxy in front of it. Pomerium is exactly that proxy. After Pomerium authenticates a user against your identity provider, it forwards the user's identity as request headers; Forgejo reads those headers, signs the user in, and (optionally) auto-creates the account on first visit. The result is single sign-on for the Forgejo **web UI** with no second password.
+However, Forgejo also supports [reverse-proxy authentication](https://forgejo.org/docs/latest/admin/setup/reverse-proxy/): it trusts an identity supplied in an HTTP header by a proxy in front of it. Pomerium is exactly that proxy. After Pomerium authenticates a user against your identity provider, it forwards the user's identity in request headers. Forgejo reads these headers, signs the user in, and can even automatically create an account on first visit. The result is single sign-on for the Forgejo web UI with no second password.
 
 :::caution This guide configures web UI sign-in only
 
@@ -47,11 +49,11 @@ Securing Forgejo involves two halves:
 
 :::danger Forgejo must be reachable only through Pomerium
 
-Reverse-proxy authentication means Forgejo believes the identity headers it receives. Forgejo does not verify Pomerium's signed `X-Pomerium-Jwt-Assertion` for login, so this integration depends entirely on **network isolation**: Forgejo must be reachable **only** through Pomerium. `REVERSE_PROXY_TRUSTED_PROXIES` does not gate this; it only controls how Forgejo reads `X-Forwarded-For`. Reverse-proxy auth trusts the identity header from any peer that can reach Forgejo, so the network path is the entire boundary.
+Reverse-proxy authentication means Forgejo believes the identity headers it receives. Forgejo does not verify Pomerium's signed `X-Pomerium-Jwt-Assertion` for login, so this integration depends entirely on **network isolation**: Forgejo must be reachable **only** through Pomerium. If another client can connect to Forgejo directly, it can set the same identity headers and impersonate a user.
 
-If another client can connect to Forgejo directly, it can set the same identity headers and impersonate a user. In Docker Compose, do not publish Forgejo's HTTP port and keep only Pomerium on its network. In Kubernetes, a `ClusterIP` service alone is not enough if arbitrary pods can connect to Forgejo; use a policy-enforcing CNI (container network interface) and a `NetworkPolicy`, or another network control, to restrict the backend to Pomerium.
+In Docker Compose, do not publish Forgejo's HTTP port and keep only Pomerium on its network. In Kubernetes, a `ClusterIP` service alone is not enough if arbitrary pods can connect to Forgejo; use a policy-enforcing CNI (container network interface) and a `NetworkPolicy`, or another network control, to restrict the backend to Pomerium.
 
-When an upstream app can verify the signed Pomerium JWT directly, prefer that model. Forgejo does not support that login mode today, so this guide uses header-based reverse-proxy authentication with a narrow trust boundary.
+Whenever possible, prefer using Pomerium JWT authentication, which does not depend on network isolation. Forgejo does not support that login mode today, so this guide uses header-based reverse-proxy authentication.
 
 :::
 
@@ -150,7 +152,7 @@ To sign in with that local account you must reach Forgejo without Pomerium's inj
 
 ## Clean up
 
-Stop the stack with `docker compose down`. Add `-v` only to also delete the `forgejo-data` volume and all Forgejo state. To undo the integration while keeping data, remove the Forgejo route from `config.yaml` and unset the `ENABLE_REVERSE_PROXY_*` settings, after creating a break-glass admin as above.
+Stop the stack with `docker compose down`. To delete the `forgejo-data` volume (with all Forgejo state), use `docker compose down -v`. To undo the integration while keeping data, remove the Forgejo route from `config.yaml` and unset the `ENABLE_REVERSE_PROXY_*` settings, after creating a break-glass admin as above.
 
 ## Mirroring and backups
 
