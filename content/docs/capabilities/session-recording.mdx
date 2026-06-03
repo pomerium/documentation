@@ -679,13 +679,15 @@ For end-users looking for detailed analytical querying it is recommended to inge
 
 ## Auditing
 
-The integrity & auditing section describes the "chain of custody" of session recording data, covering the methods Pomerium provides to maintain a verifiable, tamper-evident record of how session recording data was collected, stored, and accessed.
+The Integrity & Auditing section describes the "chain of custody" for session recording data, enabling end-users to meet strict compliance requirements for the handling and auditing of privileged information.
 
-Pomerium combines three complementary mechanisms to produce a tamper-evident record of session recordings:
+The "chain of custody" model Pomerium provides relies on:
 
-- **Storage access patterns** — write-once semantics that preserve the integrity of recording objects in the blob store
-- **Pomerium audit logs** — record every access of a recording made through Pomerium Enterprise.
-- **Cloud provider audit logs** — record every access of a recording at the storage layer. Requests originating from Pomerium are annotated with cryptographically verifiable metadata that ties them back to a Pomerium audit log entry.
+- **Storage access patterns** : guarantees about how the recordings are uploaded and accessed
+- **Enterprise audit logs** : records every access by end-users through Pomerium Enterprise
+- **Cloud provider audit logs** : Audit logs at the storage layer include metadata that can be correlated with Pomerium Enterprise, enabling verification when data was accessed through Pomerium Enterprise.
+
+This model provides a tamper-evident audit trail for the handling and access of session recording data.
 
 ### Storage access patterns
 
