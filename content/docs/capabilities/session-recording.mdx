@@ -832,7 +832,7 @@ REST.GET.OBJECT default/ssh/v1/681de6caeac458e53c787912f61fd45a/metadata.proto "
 
 :::note
 
-S3 server access logs transform some of the raw data. For example `/`, `=` and other special characters are collected as `-` in the `user_hmac_id`. For correlation with Enterprise logs, please be mindful of this behaviour.
+S3 server access logs transform some of the raw data. For example `/`, `=` and other special characters are collected as `-` in the `user_hmac_id`. For correlation with Enterprise logs, please be mindful of this behavior.
 
 :::
 
@@ -940,7 +940,7 @@ The optimal number of session recording worker threads to use depends on your en
 
 The session recording workers in Envoy upload recording data to Pomerium, which in turn uploads the data to external object storage. The workers in Envoy communicate with Pomerium via pipes shared with the Envoy subprocess. The maximum buffer size of these pipes is controlled by the [`fs.pipe-max-size`](https://man7.org/linux/man-pages/man7/pipe.7.html#:~:text=size%2E-,%2Fproc%2Fsys%2Ffs%2Fpipe%2Dmax%2Dsize) sysctl parameter and can be increased for better throughput when processing large recordings.
 
-The upload pipes (one per worker thread) will automatically be resized on startup to 4MiB (4194304) if allowed by the kernel, or otherwise to the value of `fs.pipe-max-size` if it is lower than 4194304. The default value of `fs.pipe-max-size` is usually 1MiB (1048576). If the process has [CAP_SYS_RESOURCE](https://man7.org/linux/man-pages/man7/capabilities.7.html#:~:text=CAP%5FSYS%5FRESOURCE), the pipe will be reiszed to 4MiB, ignoring `fs.pipe-max-size`.
+The upload pipes (one per worker thread) will automatically be resized on startup to 4MiB (4194304) if allowed by the kernel, or otherwise to the value of `fs.pipe-max-size` if it is lower than 4194304. The default value of `fs.pipe-max-size` is usually 1MiB (1048576). If the process has [CAP_SYS_RESOURCE](https://man7.org/linux/man-pages/man7/capabilities.7.html#:~:text=CAP%5FSYS%5FRESOURCE), the pipe will be resized to 4MiB, ignoring `fs.pipe-max-size`.
 
 ## Performance Tuning (Access)
 
