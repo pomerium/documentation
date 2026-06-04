@@ -75,7 +75,6 @@ Add the route to your `config.yaml`. Pomerium forwards the user's `sub`, `email`
 
 - [`jwt_claims_headers`](/docs/reference/jwt-claim-headers) forwards each claim as a request header. Forgejo usernames cannot use all characters that are valid in email addresses, so this example uses the stable OIDC `sub` claim for the username and carries the real address in `X-Pomerium-Claim-Email`. If your identity provider's `sub` claim is not a valid Forgejo username, use another stable claim that is unique and already sanitized for Forgejo.
 - [`pass_identity_headers`](/docs/reference/routes/pass-identity-headers-per-route) forwards those headers to Forgejo.
-- `remove_request_headers` strips inbound copies so a client cannot pre-set them.
 - `timeout: 0s` removes the total request cap so long Git smart-HTTP transfers are not cut off; `idle_timeout` still closes dead connections.
 - The policy authorizes who can reach Forgejo. Reverse-proxy auth trusts the header, so this policy is your real access gate; keep it tight.
 

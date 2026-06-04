@@ -17,8 +17,6 @@ services:
     # REVERSE_PROXY_TRUSTED_PROXIES does NOT change that (it only affects
     # X-Forwarded-For parsing). Network isolation is the trust boundary: keep
     # only Pomerium on this network and attach no untrusted containers.
-    expose:
-      - '3000'
     networks:
       forgejo-pomerium: {}
     volumes:
