@@ -391,17 +391,24 @@ This cluster status alert monitors the connection between the Pomerium Zero clou
 
 **Steps to resolve**: You may experience this issue if you're accessing Pomerium Zero behind a firewall. Check your firewall settings to make sure it allows HTTP and HTTPS traffic.
 
-### Cluster has no active replicas {#cluster_active_replicas}
+### Cluster has no active replicas \{#cluster_active_replicas}
 
 This cluster status alert checks whether a cluster has at least one active replica connected to Pomerium Zero. It runs periodically to verify cluster health.
 
 **What causes this alert**: None of the cluster's replicas are currently connected to the Pomerium Zero cloud. This could mean:
 
+- This is a new cluster, and a Pomerium replica has not been started with the cluster token yet
 - All replicas have been stopped or are unreachable
 - Network connectivity issues are preventing replicas from connecting
-- The cluster token may have been rotated without updating the replicas
+- The [cluster token](#rotate-cluster-token) may have been rotated without updating the replicas
+- A replica was started with a token from a different cluster or organization, so this cluster still reports no connected replicas
 
-**Steps to resolve**: Verify that at least one replica is running and can connect to the Pomerium Zero cloud. Check your replica logs for connection errors and ensure the cluster token is current.
+**Steps to resolve**:
+
+1. If this is a new cluster, deploy at least one replica by following the [Install Pomerium Zero](/docs/deploy/cloud/install) guide for your environment.
+1. If replicas are already deployed, make sure at least one process or pod is running and has the current `POMERIUM_ZERO_TOKEN` value. If you rotated the cluster token, update the replica configuration and restart it.
+1. Check the replica logs for authentication or connection errors. The replica must be able to reach the Pomerium Zero cloud over HTTPS.
+1. After a replica starts, wait for the periodic status check to update, then refresh the Zero Console [Status](https://console.pomerium.app/app/reports/status) page. The **Check Again** button can re-run health checks on connected replicas, but this active-replica status updates on its periodic schedule.
 
 ### Configuration build failed {#config_build}
 
