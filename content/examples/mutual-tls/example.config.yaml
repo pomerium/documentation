@@ -1,0 +1,26 @@
+# See detailed configuration settings : https://www.pomerium.com/docs/reference
+authenticate_service_url: https://authenticate.corp.domain.example
+authorize_service_url: https://authorize.corp.domain.example
+
+# identity provider settings : https://www.pomerium.com/docs/identity-providers
+idp_provider: google
+idp_client_id: REPLACE_ME
+idp_client_secret: REPLACE_ME
+
+routes:
+  - from: https://mtls.corp.domain.example
+    to: https://mtls:8443
+    policy:
+      - allow:
+          or:
+            - domain:
+                is: domain.example
+    # Verifies the upstream's server cert was issued by this CA.
+    tls_custom_ca_file: /pomerium/out/good-ca.crt
+    # Presented to the upstream when the upstream demands a client cert.
+    tls_client_cert_file: /pomerium/out/pomerium.crt
+    tls_client_key_file: /pomerium/out/pomerium.key
+
+  - from: https://verify.corp.domain.example
+    to: https://verify.pomerium.com
+    allow_public_unauthenticated_access: true

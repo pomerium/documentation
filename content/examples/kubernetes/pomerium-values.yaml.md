@@ -16,7 +16,7 @@ proxy:
 databroker:
   existingTLSSecret: pomerium-tls
   storage:
-    connectionString: postgres://://postgres.pomerium.svc.cluster.local #Replace with the path to your DB solution.
+    connectionString: postgres://USER:PASSWORD@postgres.pomerium.svc.cluster.local:5432/postgres # Replace with the path to your DB solution.
     type: postgres
     clientTLS:
       existingSecretName: pomerium-tls

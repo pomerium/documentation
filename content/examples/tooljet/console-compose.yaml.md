@@ -26,7 +26,7 @@ services:
         condition: service_healthy
       pomerium:
         condition: service_started
-    image: docker.cloudsmith.io/pomerium/enterprise/pomerium-console:v0.21.0
+    image: docker.cloudsmith.io/pomerium/enterprise/pomerium-console:v0.32.0
     command:
       - 'serve'
       - '--config'
@@ -49,7 +49,7 @@ services:
   database:
     networks:
       main: {}
-    image: postgres:latest
+    image: postgres:17
     restart: always
     healthcheck:
       test: ['CMD-SHELL', 'pg_isready -d postgres -U postgres']
@@ -93,7 +93,7 @@ services:
   postgres:
     networks:
       main: {}
-    image: postgres:13
+    image: postgres:17
     restart: always
     ports:
       - 5433:5432
