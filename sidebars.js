@@ -62,6 +62,11 @@ const sidebars = {
         'docs/capabilities/reverse-tunneling',
         'docs/capabilities/session-recording',
         {
+          type: 'doc',
+          id: 'docs/capabilities/session-recording-compliance',
+          className: 'enterprise',
+        },
+        {
           type: 'category',
           label: 'Non-HTTP Protocols',
           link: {type: 'doc', id: 'docs/deploy/clients/clients'},
