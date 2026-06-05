@@ -1,0 +1,33 @@
+address: :443
+
+# Required by the config schema even though the public route below needs no
+# login and no identity provider is configured.
+authenticate_service_url: https://authenticate.localhost.pomerium.io
+
+certificate_file: /certs/pomerium.crt
+certificate_key_file: /certs/pomerium.key
+
+# Demo-only static secrets. Use generated secrets in production, for example:
+# head -c 32 /dev/urandom | base64
+shared_secret: SkqCcCo1LuOtr8pW6SyENjDadPH/j41HpLpXAnWtEKA=
+cookie_secret: KTY/DF276AcHctxYwKU2RGBCq62KEDskPcEe3ImoMXQ=
+
+log_level: info
+
+routes:
+  # DEMO ONLY: public so the lab needs no identity provider. Replace
+  # allow_public_unauthenticated_access with a policy like the one below in
+  # production (see the guide).
+  - from: tcp+https://pgsql.localhost.pomerium.io:5432
+    to: tcp://postgres:5432
+    allow_public_unauthenticated_access: true
+
+  # Same upstream, but policy-gated. With no identity provider configured, an
+  # unauthenticated tunnel to this route is denied, which shows Pomerium
+  # enforcing access before the TCP connection reaches Postgres.
+  - from: tcp+https://secure.localhost.pomerium.io:5432
+    to: tcp://postgres:5432
+    policy:
+      - allow:
+          and:
+            - authenticated_user: true
