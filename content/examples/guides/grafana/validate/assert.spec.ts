@@ -1,5 +1,6 @@
 import { test, expect } from "@playwright/test";
 import { login, alice } from "../lib/authn";
+import { shot } from "../lib/shot";
 
 // App-specific success for Grafana: after the Pomerium SSO login, Grafana should
 // auto-sign-in the same identity via the forwarded Pomerium JWT assertion.
@@ -21,4 +22,8 @@ test("JWT SSO signs the authenticated user into Grafana", async ({ page }) => {
 
   const user = await res.json();
   expect(user.email, "Grafana should sign in the Pomerium identity").toBe(alice.email);
+
+  // Capture the profile page (shows fields "Synced via JWT") for the guide.
+  await page.goto(`${BASE}/profile`, { waitUntil: "networkidle" });
+  await shot(page, "grafana-profile");
 });

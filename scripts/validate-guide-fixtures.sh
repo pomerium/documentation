@@ -13,7 +13,8 @@ set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 GUIDES="$ROOT/content/examples/guides"
-GUIDE="${1:?usage: validate-guide-fixtures.sh <guide-id|--selftest>}"
+GUIDE="${1:?usage: validate-guide-fixtures.sh <guide-id|--selftest> [--update-screenshots]}"
+UPDATE_SHOTS="${2:-}"
 
 if [ "$GUIDE" = "--selftest" ]; then
   COMPOSE="$GUIDES/_harness/selftest/compose.yaml"
@@ -39,6 +40,22 @@ fi
 if [ ! -f "$COMPOSE" ]; then
   echo "No validation fixture for '$GUIDE' (expected $COMPOSE). Add validate/compose.validate.yaml, or validate/SKIP with a one-line reason for non-sealable guides." >&2
   exit 2
+fi
+
+# Media policy: a sealable guide must reference at least one screenshot, or record
+# why not in validate/screenshots-skip. Skipped during --update-screenshots (the run
+# that generates them) and for the harness self-test.
+if [ "$GUIDE" != "--selftest" ] && [ "$UPDATE_SHOTS" != "--update-screenshots" ]; then
+  doc=""
+  for ext in md mdx; do
+    [ -f "$ROOT/content/docs/guides/$GUIDE.$ext" ] && doc="$ROOT/content/docs/guides/$GUIDE.$ext"
+  done
+  if [ -n "$doc" ] && ! grep -qE '!\[|<img|\.(png|gif|jpe?g|webp)' "$doc" && [ ! -f "$DIR/screenshots-skip" ]; then
+    echo "Media policy: $GUIDE references no screenshot in $(basename "$doc") and has no validate/screenshots-skip marker." >&2
+    echo "  Generate one:  scripts/validate-guide-fixtures.sh $GUIDE --update-screenshots   then reference it in the guide." >&2
+    echo "  Or record why none applies:  echo '<reason>' > $DIR/screenshots-skip" >&2
+    exit 3
+  fi
 fi
 
 export POMERIUM_URL
@@ -94,6 +111,14 @@ else
 fi
 if [ -n "$spec_dir" ]; then
   run_opts=(-v "$spec_dir:/app/guide-tests:ro" -e PW_TEST_DIR=/app/guide-tests)
+fi
+# --update-screenshots: mount the guide's committed image dir and let specs write
+# screenshots there. Without the flag SCREENSHOT_DIR is unset and specs capture
+# nothing, so CI never rewrites committed images.
+if [ "$UPDATE_SHOTS" = "--update-screenshots" ] && [ "$GUIDE" != "--selftest" ]; then
+  imgdir="$ROOT/content/docs/guides/img/$GUIDE"
+  mkdir -p "$imgdir"
+  run_opts+=(-v "$imgdir:/app/artifacts" -e SCREENSHOT_DIR=/app/artifacts)
 fi
 # Empty-array-safe expansion (works on macOS bash 3.2 under `set -u`).
 dc run --rm --build ${run_opts[@]+"${run_opts[@]}"} test-runner

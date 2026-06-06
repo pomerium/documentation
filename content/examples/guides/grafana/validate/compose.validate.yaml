@@ -29,9 +29,11 @@ services:
   pomerium:
     image: pomerium/pomerium@sha256:e10d1d267af24f581157f485d9b0bc08469e2428675b696a08e42ceb09b2279c
     command: ['--config', '/pomerium/config.yaml']
+    env_file:
+      - ../../_harness/pomerium/validation.env
     volumes:
       - certs:/certs:ro
-      - ./pomerium.validate.yaml:/pomerium/config.yaml:ro
+      - ./routes.validate.yaml:/pomerium/config.yaml:ro
     depends_on:
       certs-init:
         condition: service_completed_successfully

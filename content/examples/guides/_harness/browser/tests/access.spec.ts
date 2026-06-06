@@ -1,5 +1,6 @@
 import { test, expect } from "@playwright/test";
 import { login, alice } from "../lib/authn";
+import { shot } from "../lib/shot";
 
 // Universal access checks for any HTTP upstream behind Pomerium: the route must
 // require authentication, and an allowed user must reach the app after login.
@@ -16,4 +17,8 @@ test("authenticated user reaches the upstream", async ({ page }) => {
 
   const res = await page.request.get(BASE, { ignoreHTTPSErrors: true });
   expect(res.status(), "upstream should respond OK after login").toBeLessThan(400);
+
+  // Render the app in the page and capture it for the guide.
+  await page.goto(BASE, { waitUntil: "networkidle" });
+  await shot(page, "app");
 });
