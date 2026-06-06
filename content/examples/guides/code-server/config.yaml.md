@@ -1,0 +1,21 @@
+```yaml title="config.yaml"
+# Pomerium Core configuration for code-server. Uses the hosted authenticate service,
+# so you don't run your own identity provider. To self-host the IdP, see the Keycloak
+# guide: https://www.pomerium.com/docs/integrations/user-identity/oidc
+authenticate_service_url: https://authenticate.pomerium.app
+
+# Obtain TLS certificates automatically from Let's Encrypt.
+autocert: true
+
+routes:
+  - from: https://code-server.yourdomain.com
+    to: http://code-server:8080
+    # code-server uses WebSockets for the editor connection, so the route must
+    # allow them.
+    allow_websockets: true
+    policy:
+      - allow:
+          or:
+            - email:
+                is: you@example.com
+```

@@ -1,0 +1,23 @@
+services:
+  pomerium:
+    image: pomerium/pomerium:latest
+    volumes:
+      - ./config.yaml:/pomerium/config.yaml:ro
+      - pomerium-cache:/data
+    ports:
+      - 443:443
+      - 80:80
+    restart: always
+
+  code-server:
+    image: codercom/code-server:latest
+    command: --auth none --disable-telemetry /home/coder/project
+    volumes:
+      - code-server-project:/home/coder/project
+      - code-server-config:/home/coder/.config
+    restart: always
+
+volumes:
+  pomerium-cache:
+  code-server-project:
+  code-server-config:

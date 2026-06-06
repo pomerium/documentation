@@ -1,0 +1,45 @@
+# Sealed E2E validation for the code-server guide. Reuses the shared harness
+# (Keycloak + certs + headless runner) and adds code-server + a Pomerium wired to the
+# in-network IdP. code-server just needs protecting behind Pomerium, so the default
+# access check applies (route requires auth; allowed user reaches the editor).
+# Note: the default check asserts auth-required + allowed-user-reaches-upstream over
+# HTTP; it does not open an editor WebSocket, so allow_websockets is exercised by
+# config validity here, not by a live WS upgrade assertion.
+# Run with: scripts/validate-guide-fixtures.sh code-server
+
+include:
+  - ../../_harness/compose/compose.harness.yaml
+
+services:
+  code-server:
+    image: codercom/code-server@sha256:6d46b83ea0687ab1826ec029b6d0e6342bbd55cc5c29b98258463e7faee16d1e
+    command: --auth none --disable-telemetry /home/coder/project
+    networks:
+      default:
+        aliases:
+          - code-server
+
+  pomerium:
+    image: pomerium/pomerium@sha256:e10d1d267af24f581157f485d9b0bc08469e2428675b696a08e42ceb09b2279c
+    command: ['--config', '/pomerium/config.yaml']
+    volumes:
+      - certs:/certs:ro
+      - ./pomerium.validate.yaml:/pomerium/config.yaml:ro
+    depends_on:
+      certs-init:
+        condition: service_completed_successfully
+      keycloak:
+        condition: service_healthy
+      code-server:
+        condition: service_started
+    networks:
+      default:
+        aliases:
+          - authenticate.localhost.pomerium.io
+          - code-server.localhost.pomerium.io
+    healthcheck:
+      test: ['CMD', 'pomerium', 'health']
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 10s
