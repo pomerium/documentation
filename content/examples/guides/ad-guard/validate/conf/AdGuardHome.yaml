@@ -1,0 +1,26 @@
+# Validation-only AdGuard Home seed config. It puts AdGuard past its first-run
+# install wizard with a single basic-auth admin user, so the control API expects
+# (and rejects) HTTP basic auth. The bcrypt hash below is for admin:pomerium-e2e-adguard
+# and is the credential Pomerium injects via set_request_headers.
+# Test-only. Never reuse these secrets anywhere real.
+http:
+  address: 0.0.0.0:3000
+  session_ttl: 720h
+users:
+  - name: admin
+    password: $2y$10$IEgPQnrEFkoahOkaa33uROJgfHLH4yZ1d4HbeRnBErXoi0XpFGzlu
+auth_attempts: 5
+block_auth_min: 15
+theme: auto
+dns:
+  bind_hosts:
+    - 0.0.0.0
+  port: 53
+  upstream_dns:
+    - https://dns10.quad9.net/dns-query
+  bootstrap_dns:
+    - 9.9.9.10
+filtering:
+  protection_enabled: true
+  filtering_enabled: true
+schema_version: 34

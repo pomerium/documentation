@@ -1,0 +1,24 @@
+# Pomerium Core configuration for AdGuard Home. Uses the hosted authenticate
+# service, so you don't run your own identity provider. To self-host the IdP, see
+# the Keycloak guide: https://www.pomerium.com/docs/integrations/user-identity/oidc
+authenticate_service_url: https://authenticate.pomerium.app
+
+# Obtain TLS certificates automatically from Let's Encrypt.
+autocert: true
+
+routes:
+  - from: https://adguard.yourdomain.com
+    to: http://adguard:3000
+    allow_websockets: true
+    # Pomerium authenticates the user, then injects AdGuard's single basic-auth
+    # credential on every upstream request so AdGuard never shows its own login
+    # prompt. Replace the placeholder below with your own value, generated with:
+    #   printf 'admin:YOUR_ADGUARD_PASSWORD' | base64
+    # Keep this secret: anyone who can send it to AdGuard directly is admin.
+    set_request_headers:
+      Authorization: Basic <BASE64_OF_ADMIN_AND_PASSWORD>
+    policy:
+      - allow:
+          or:
+            - email:
+                is: you@example.com

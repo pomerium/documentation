@@ -1,0 +1,75 @@
+# Sealed E2E validation for the AdGuard Home guide. Reuses the shared harness
+# (Keycloak + certs + headless runner) and adds AdGuard behind a Pomerium wired to
+# the in-network IdP. Pomerium injects the basic-auth credential AdGuard trusts.
+# Run with: scripts/validate-guide-fixtures.sh ad-guard
+#
+# Network isolation mirrors the guide's trust boundary: AdGuard sits ONLY on the
+# internal-only `adguard-internal` network, shared with pomerium alone. The
+# test-runner is on `default`, so it cannot reach AdGuard directly (the spec proves
+# this); the only path in is through Pomerium, which bridges both networks.
+
+include:
+  - ../../_harness/compose/compose.harness.yaml
+
+services:
+  # One-shot: copy the seeded AdGuardHome.yaml into a writable volume. AdGuard
+  # rewrites its config on startup (schema migration), so it can't run off a
+  # read-only mount; seeding via a volume keeps the committed fixture pristine.
+  adguard-init:
+    image: alpine:3.21
+    volumes:
+      - adguard-conf:/conf
+      - ./conf/AdGuardHome.yaml:/seed/AdGuardHome.yaml:ro
+    command: ['/bin/sh', '-c', 'cp /seed/AdGuardHome.yaml /conf/AdGuardHome.yaml']
+
+  adguard:
+    image: adguard/adguardhome@sha256:e6f2b8bcda06064ab055b44933a4f0e983c35558b9cdb8d2e7ab1efcee36d890
+    volumes:
+      - adguard-conf:/opt/adguardhome/conf
+    depends_on:
+      adguard-init:
+        condition: service_completed_successfully
+    networks:
+      adguard-internal:
+        aliases:
+          - adguard
+
+  pomerium:
+    image: pomerium/pomerium@sha256:e10d1d267af24f581157f485d9b0bc08469e2428675b696a08e42ceb09b2279c
+    command: ['--config', '/pomerium/config.yaml']
+    env_file:
+      - ../../_harness/pomerium/validation.env
+    volumes:
+      - certs:/certs:ro
+      - ./routes.validate.yaml:/pomerium/config.yaml:ro
+    depends_on:
+      certs-init:
+        condition: service_completed_successfully
+      keycloak:
+        condition: service_healthy
+      adguard:
+        condition: service_started
+    networks:
+      # On `default` for the IdP + test-runner, and on the internal-only network
+      # to reach AdGuard. This is the only service bridging the two.
+      default:
+        aliases:
+          - authenticate.localhost.pomerium.io
+          - ad-guard.localhost.pomerium.io
+          - ad-guard-noauth.localhost.pomerium.io
+      adguard-internal: {}
+    healthcheck:
+      test: ['CMD', 'pomerium', 'health']
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 10s
+
+networks:
+  # Internal-only: no route to the outside, and the test-runner is not attached,
+  # so AdGuard is reachable only via Pomerium.
+  adguard-internal:
+    internal: true
+
+volumes:
+  adguard-conf:
