@@ -1,0 +1,23 @@
+services:
+  pomerium:
+    image: pomerium/pomerium:latest
+    volumes:
+      - ./config.yaml:/pomerium/config.yaml:ro
+      - pomerium-cache:/data
+    ports:
+      - 443:443
+      - 80:80
+    restart: always
+
+  cockpit:
+    image: quay.io/cockpit/ws:latest
+    # Run cockpit-ws in plain-HTTP "bastion" mode. Pomerium terminates TLS, so
+    # Cockpit doesn't need its own certificate; it trusts the X-Forwarded-Proto
+    # header (set in cockpit.conf) to know the original request was HTTPS.
+    entrypoint: ['/container/label-run', '--no-tls']
+    volumes:
+      - ./cockpit.conf:/etc/cockpit/cockpit.conf:ro
+    restart: always
+
+volumes:
+  pomerium-cache:
