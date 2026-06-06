@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# cspell:ignore selftest gdir endgroup inblk
+# cspell:ignore selftest gdir endgroup inblk webp imgdir
 # Spin up a guide's sealed validation fixture, run its headless-browser (or CLI)
 # checks against the in-network Keycloak, and tear everything down.
 #
