@@ -1,0 +1,56 @@
+# Sealed E2E validation for the GitLab guide. Reuses the shared harness (Keycloak +
+# certs + headless runner) and adds GitLab + a Pomerium wired to the in-network IdP.
+# Run with: scripts/validate-guide-fixtures.sh gitlab
+#
+# GitLab is heavy and slow to boot (several minutes, multiple GB RAM), so its
+# healthcheck uses a very generous start_period; Pomerium waits for it to report
+# healthy before the browser checks run.
+
+include:
+  - ../../_harness/compose/compose.harness.yaml
+
+services:
+  gitlab:
+    image: gitlab/gitlab-ce@sha256:c7082004a0f64123634fda345e849453d52956621893bed7d2218fa6f088247f
+    environment:
+      GITLAB_OMNIBUS_CONFIG: |
+        external_url 'https://gitlab.localhost.pomerium.io'
+        letsencrypt['enable'] = false
+        nginx['listen_port'] = 80
+        nginx['listen_https'] = false
+    shm_size: '256m'
+    networks:
+      default:
+        aliases:
+          - gitlab
+    healthcheck:
+      test: ['CMD', '/opt/gitlab/bin/gitlab-healthcheck', '--fail', '--max-time', '10']
+      interval: 15s
+      timeout: 15s
+      retries: 80
+      start_period: 600s
+
+  pomerium:
+    image: pomerium/pomerium@sha256:e10d1d267af24f581157f485d9b0bc08469e2428675b696a08e42ceb09b2279c
+    command: ['--config', '/pomerium/config.yaml']
+    volumes:
+      - certs:/certs:ro
+      - ./pomerium.validate.yaml:/pomerium/config.yaml:ro
+    depends_on:
+      certs-init:
+        condition: service_completed_successfully
+      keycloak:
+        condition: service_healthy
+      gitlab:
+        condition: service_healthy
+    networks:
+      default:
+        aliases:
+          - authenticate.localhost.pomerium.io
+          - gitlab.localhost.pomerium.io
+    healthcheck:
+      test: ['CMD', 'pomerium', 'health']
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 10s

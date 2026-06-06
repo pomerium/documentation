@@ -1,0 +1,33 @@
+```yaml title="docker-compose.yaml"
+services:
+  pomerium:
+    image: pomerium/pomerium:latest
+    volumes:
+      - ./config.yaml:/pomerium/config.yaml:ro
+      - pomerium-cache:/data
+    ports:
+      - 443:443
+      - 80:80
+    restart: always
+
+  gitlab:
+    image: gitlab/gitlab-ce:latest
+    environment:
+      GITLAB_OMNIBUS_CONFIG: |
+        external_url 'https://gitlab.yourdomain.com'
+        letsencrypt['enable'] = false
+        nginx['listen_port'] = 80
+        nginx['listen_https'] = false
+    volumes:
+      - gitlab-config:/etc/gitlab
+      - gitlab-logs:/var/log/gitlab
+      - gitlab-data:/var/opt/gitlab
+    shm_size: '256m'
+    restart: always
+
+volumes:
+  pomerium-cache:
+  gitlab-config:
+  gitlab-logs:
+  gitlab-data:
+```
