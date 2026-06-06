@@ -1,0 +1,83 @@
+# Sealed E2E validation for the Forgejo guide. Reuses the shared harness (Keycloak +
+# certs + headless runner) and adds Forgejo + a Pomerium wired to the in-network IdP.
+# Run with: scripts/validate-guide-fixtures.sh forgejo
+#
+# Network isolation mirrors the guide's trust boundary: forgejo sits ONLY on the
+# internal-only `forgejo-internal` network, shared with pomerium alone. The
+# test-runner is on `default`, so it cannot reach forgejo directly (the spec proves
+# this); the only path in is through Pomerium, which bridges both networks.
+
+include:
+  - ../../_harness/compose/compose.harness.yaml
+
+services:
+  forgejo:
+    image: codeberg.org/forgejo/forgejo@sha256:db04c7114b656f896e206ba3873fe8d3a7adf2daa44907037f0274f4ba653fb9 # v15
+    environment:
+      FORGEJO__server__ROOT_URL: 'https://forgejo.localhost.pomerium.io/'
+      FORGEJO__database__DB_TYPE: 'sqlite3'
+      FORGEJO__security__INSTALL_LOCK: 'true'
+      FORGEJO__service__REQUIRE_SIGNIN_VIEW: 'true'
+
+      # Reverse-proxy SSO: Forgejo trusts the identity header Pomerium forwards.
+      # Web UI sign-in only, exactly as the published guide ships (API header auth
+      # stays off, matching the guide's caution and the assert, which verifies the
+      # authenticated web session rather than the API).
+      FORGEJO__service__ENABLE_REVERSE_PROXY_AUTHENTICATION: 'true'
+      FORGEJO__service__ENABLE_REVERSE_PROXY_AUTHENTICATION_API: 'false'
+      FORGEJO__service__ENABLE_REVERSE_PROXY_AUTO_REGISTRATION: 'true'
+      FORGEJO__service__ENABLE_REVERSE_PROXY_EMAIL: 'true'
+      FORGEJO__service__ENABLE_REVERSE_PROXY_FULL_NAME: 'true'
+      FORGEJO__service__DISABLE_REGISTRATION: 'false'
+      FORGEJO__service__ALLOW_ONLY_EXTERNAL_REGISTRATION: 'true'
+      FORGEJO__service__SHOW_REGISTRATION_BUTTON: 'false'
+
+      # Header names must match what Pomerium sends (routes.validate.yaml).
+      FORGEJO__security__REVERSE_PROXY_AUTHENTICATION_USER: 'X-Pomerium-Sub'
+      FORGEJO__security__REVERSE_PROXY_AUTHENTICATION_EMAIL: 'X-Pomerium-Claim-Email'
+      FORGEJO__security__REVERSE_PROXY_AUTHENTICATION_FULL_NAME: 'X-Pomerium-Claim-Name'
+      # '*' here is deliberate: this knob only affects X-Forwarded-For client-IP
+      # parsing, not which peer the identity header is trusted from. The reader
+      # compose pins it to Pomerium's IP for correct logging.
+      FORGEJO__security__REVERSE_PROXY_TRUSTED_PROXIES: '*'
+      FORGEJO__security__REVERSE_PROXY_LIMIT: '1'
+    networks:
+      forgejo-internal:
+        aliases:
+          - forgejo
+
+  pomerium:
+    image: pomerium/pomerium@sha256:e10d1d267af24f581157f485d9b0bc08469e2428675b696a08e42ceb09b2279c
+    command: ['--config', '/pomerium/config.yaml']
+    env_file:
+      - ../../_harness/pomerium/validation.env
+    volumes:
+      - certs:/certs:ro
+      - ./routes.validate.yaml:/pomerium/config.yaml:ro
+    depends_on:
+      certs-init:
+        condition: service_completed_successfully
+      keycloak:
+        condition: service_healthy
+      forgejo:
+        condition: service_started
+    networks:
+      # On `default` for the IdP + test-runner, and on the internal-only network
+      # to reach forgejo. This is the only service bridging the two.
+      default:
+        aliases:
+          - authenticate.localhost.pomerium.io
+          - forgejo.localhost.pomerium.io
+      forgejo-internal: {}
+    healthcheck:
+      test: ['CMD', 'pomerium', 'health']
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 10s
+
+networks:
+  # Internal-only: no route to the outside, and the test-runner is not attached,
+  # so forgejo is reachable only via Pomerium.
+  forgejo-internal:
+    internal: true
