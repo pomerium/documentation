@@ -1,0 +1,77 @@
+# Sealed E2E validation for the HedgeDoc guide. Reuses the shared harness (Keycloak +
+# certs + headless runner) and adds HedgeDoc + its Postgres database plus a Pomerium
+# wired to the in-network IdP. Run with: scripts/validate-guide-fixtures.sh hedgedoc
+
+include:
+  - ../../_harness/compose/compose.harness.yaml
+
+services:
+  database:
+    image: postgres@sha256:16bc17c64a573ef34162af9298258d1aec548232985b33ed7b1eac33ba35c229 # 16-alpine
+    environment:
+      POSTGRES_USER: hedgedoc
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: hedgedoc
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U hedgedoc -d hedgedoc']
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 10s
+    networks:
+      default:
+        aliases:
+          - database
+
+  hedgedoc:
+    image: quay.io/hedgedoc/hedgedoc@sha256:423f411721e70969332ba04ae434a1d643f3572f4966817c15c7b493ab3e448d # 1.10.8
+    environment:
+      CMD_DB_URL: postgres://hedgedoc:password@database:5432/hedgedoc
+      CMD_DOMAIN: hedgedoc.localhost.pomerium.io
+      CMD_PROTOCOL_USESSL: 'true'
+      CMD_URL_ADDPORT: 'false'
+      CMD_SESSION_SECRET: test-only-session-secret-do-not-reuse
+    depends_on:
+      database:
+        condition: service_healthy
+    healthcheck:
+      test:
+        [
+          'CMD-SHELL',
+          "node -e 'require(\"http\").get(\"http://127.0.0.1:3000/\",r=>process.exit(r.statusCode<500?0:1)).on(\"error\",()=>process.exit(1))'",
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 40
+      start_period: 90s
+    networks:
+      default:
+        aliases:
+          - hedgedoc
+
+  pomerium:
+    image: pomerium/pomerium@sha256:e10d1d267af24f581157f485d9b0bc08469e2428675b696a08e42ceb09b2279c # v0.32.7
+    command: ['--config', '/pomerium/config.yaml']
+    env_file:
+      - ../../_harness/pomerium/validation.env
+    volumes:
+      - certs:/certs:ro
+      - ./routes.validate.yaml:/pomerium/config.yaml:ro
+    depends_on:
+      certs-init:
+        condition: service_completed_successfully
+      keycloak:
+        condition: service_healthy
+      hedgedoc:
+        condition: service_healthy
+    networks:
+      default:
+        aliases:
+          - authenticate.localhost.pomerium.io
+          - hedgedoc.localhost.pomerium.io
+    healthcheck:
+      test: ['CMD', 'pomerium', 'health']
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 10s
