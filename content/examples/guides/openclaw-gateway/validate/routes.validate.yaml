@@ -1,0 +1,11 @@
+# Routes-only validation config. Shared settings (IdP, secrets, signing key, certs)
+# come from ../../_harness/pomerium/validation.env via env_file in compose.validate.yaml.
+routes:
+  - from: https://openclaw-gateway.localhost.pomerium.io
+    to: http://openclaw-gateway:18789
+    # OpenClaw's web UI uses WebSockets; allow_websockets keeps that connection open.
+    allow_websockets: true
+    policy:
+      - allow:
+          or:
+            - authenticated_user: true
