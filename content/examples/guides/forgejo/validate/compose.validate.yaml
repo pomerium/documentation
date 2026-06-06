@@ -1,0 +1,64 @@
+# Sealed E2E validation for the Forgejo guide. Reuses the shared harness (Keycloak +
+# certs + headless runner) and adds Forgejo + a Pomerium wired to the in-network IdP.
+# Run with: scripts/validate-guide-fixtures.sh forgejo
+
+include:
+  - ../../_harness/compose/compose.harness.yaml
+
+services:
+  forgejo:
+    image: codeberg.org/forgejo/forgejo@sha256:db04c7114b656f896e206ba3873fe8d3a7adf2daa44907037f0274f4ba653fb9
+    environment:
+      FORGEJO__server__ROOT_URL: 'https://forgejo.localhost.pomerium.io/'
+      FORGEJO__database__DB_TYPE: 'sqlite3'
+      FORGEJO__security__INSTALL_LOCK: 'true'
+      FORGEJO__service__REQUIRE_SIGNIN_VIEW: 'true'
+
+      # Reverse-proxy SSO: Forgejo trusts the identity header Pomerium forwards.
+      FORGEJO__service__ENABLE_REVERSE_PROXY_AUTHENTICATION: 'true'
+      # Validation-only: also accept the header on the API so the assert can read
+      # /api/v1/user and confirm the signed-in identity. The published guide keeps
+      # API reverse-proxy auth off (web UI sign-in only).
+      FORGEJO__service__ENABLE_REVERSE_PROXY_AUTHENTICATION_API: 'true'
+      FORGEJO__service__ENABLE_REVERSE_PROXY_AUTO_REGISTRATION: 'true'
+      FORGEJO__service__ENABLE_REVERSE_PROXY_EMAIL: 'true'
+      FORGEJO__service__ENABLE_REVERSE_PROXY_FULL_NAME: 'true'
+      FORGEJO__service__DISABLE_REGISTRATION: 'false'
+      FORGEJO__service__ALLOW_ONLY_EXTERNAL_REGISTRATION: 'true'
+      FORGEJO__service__SHOW_REGISTRATION_BUTTON: 'false'
+
+      # Header names must match what Pomerium sends (pomerium.validate.yaml).
+      FORGEJO__security__REVERSE_PROXY_AUTHENTICATION_USER: 'X-Pomerium-Sub'
+      FORGEJO__security__REVERSE_PROXY_AUTHENTICATION_EMAIL: 'X-Pomerium-Claim-Email'
+      FORGEJO__security__REVERSE_PROXY_AUTHENTICATION_FULL_NAME: 'X-Pomerium-Claim-Name'
+      FORGEJO__security__REVERSE_PROXY_TRUSTED_PROXIES: '*'
+      FORGEJO__security__REVERSE_PROXY_LIMIT: '1'
+    networks:
+      default:
+        aliases:
+          - forgejo
+
+  pomerium:
+    image: pomerium/pomerium@sha256:e10d1d267af24f581157f485d9b0bc08469e2428675b696a08e42ceb09b2279c
+    command: ['--config', '/pomerium/config.yaml']
+    volumes:
+      - certs:/certs:ro
+      - ./pomerium.validate.yaml:/pomerium/config.yaml:ro
+    depends_on:
+      certs-init:
+        condition: service_completed_successfully
+      keycloak:
+        condition: service_healthy
+      forgejo:
+        condition: service_started
+    networks:
+      default:
+        aliases:
+          - authenticate.localhost.pomerium.io
+          - forgejo.localhost.pomerium.io
+    healthcheck:
+      test: ['CMD', 'pomerium', 'health']
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 10s
