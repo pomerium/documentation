@@ -1,0 +1,58 @@
+# Sealed E2E validation for the AdGuard Home guide. Reuses the shared harness
+# (Keycloak + certs + headless runner) and adds AdGuard behind a Pomerium wired to
+# the in-network IdP. Pomerium injects the basic-auth credential AdGuard trusts.
+# Run with: scripts/validate-guide-fixtures.sh ad-guard
+
+include:
+  - ../../_harness/compose/compose.harness.yaml
+
+services:
+  # One-shot: copy the seeded AdGuardHome.yaml into a writable volume. AdGuard
+  # rewrites its config on startup (schema migration), so it can't run off a
+  # read-only mount; seeding via a volume keeps the committed fixture pristine.
+  adguard-init:
+    image: alpine:3.21
+    volumes:
+      - adguard-conf:/conf
+      - ./conf/AdGuardHome.yaml:/seed/AdGuardHome.yaml:ro
+    command: ['/bin/sh', '-c', 'cp /seed/AdGuardHome.yaml /conf/AdGuardHome.yaml']
+
+  adguard:
+    image: adguard/adguardhome@sha256:e6f2b8bcda06064ab055b44933a4f0e983c35558b9cdb8d2e7ab1efcee36d890
+    volumes:
+      - adguard-conf:/opt/adguardhome/conf
+    depends_on:
+      adguard-init:
+        condition: service_completed_successfully
+    networks:
+      default:
+        aliases:
+          - adguard
+
+  pomerium:
+    image: pomerium/pomerium@sha256:e10d1d267af24f581157f485d9b0bc08469e2428675b696a08e42ceb09b2279c
+    command: ['--config', '/pomerium/config.yaml']
+    volumes:
+      - certs:/certs:ro
+      - ./pomerium.validate.yaml:/pomerium/config.yaml:ro
+    depends_on:
+      certs-init:
+        condition: service_completed_successfully
+      keycloak:
+        condition: service_healthy
+      adguard:
+        condition: service_started
+    networks:
+      default:
+        aliases:
+          - authenticate.localhost.pomerium.io
+          - ad-guard.localhost.pomerium.io
+    healthcheck:
+      test: ['CMD', 'pomerium', 'health']
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 10s
+
+volumes:
+  adguard-conf:
