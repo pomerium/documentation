@@ -1,0 +1,12 @@
+# Routes-only validation config. Shared settings (IdP, secrets, signing key, certs)
+# come from ../../_harness/pomerium/validation.env via env_file in compose.validate.yaml.
+routes:
+  - from: https://tooljet.localhost.pomerium.io
+    to: http://tooljet:80
+    # ToolJet validates the Host header against TOOLJET_HOST; the from-host already
+    # equals it, so preserve the incoming Host to the upstream.
+    preserve_host_header: true
+    policy:
+      - allow:
+          or:
+            - authenticated_user: true
