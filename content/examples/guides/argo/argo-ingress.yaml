@@ -1,0 +1,38 @@
+# Routes argo.yourdomain.com through the Pomerium Ingress Controller to the
+# Argo Workflows Server. Replace argo.yourdomain.com with a domain you control
+# and you@example.com with the user(s) who should have access.
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: argo
+  namespace: argo
+  annotations:
+    # Forward the Pomerium identity headers (e.g. X-Pomerium-Claim-Email) to the
+    # Argo Server so downstream logs and audit trails can attribute the user.
+    ingress.pomerium.io/pass_identity_headers: 'true'
+    # Only allow the listed user(s). Swap in a group or domain match as needed.
+    ingress.pomerium.io/policy: |
+      - allow:
+          or:
+            - email:
+                is: you@example.com
+spec:
+  ingressClassName: pomerium
+  rules:
+    - host: argo.yourdomain.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                # Service created by the argo-workflows Helm chart with release
+                # name "argo": <release>-<chart>-server. Run
+                # `kubectl -n argo get svc` to confirm the name in your cluster.
+                name: argo-argo-workflows-server
+                port:
+                  number: 2746
+  tls:
+    - hosts:
+        - argo.yourdomain.com
+      secretName: argo-yourdomain-com-tls
