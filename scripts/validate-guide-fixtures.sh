@@ -89,6 +89,7 @@ fi
 if [ -n "$spec_dir" ]; then
   run_opts=(-v "$spec_dir:/app/guide-tests:ro" -e PW_TEST_DIR=/app/guide-tests)
 fi
-dc run --rm --build "${run_opts[@]}" test-runner
+# Empty-array-safe expansion (works on macOS bash 3.2 under `set -u`).
+dc run --rm --build ${run_opts[@]+"${run_opts[@]}"} test-runner
 
 echo ">> $GUIDE: PASS"
