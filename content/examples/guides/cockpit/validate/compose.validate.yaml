@@ -1,0 +1,46 @@
+# Validation fixture for the Cockpit guide. Reuses the shared harness (Keycloak +
+# certs + headless runner) and adds Cockpit + a Pomerium wired to the in-network IdP.
+# Cockpit keeps its own PAM/host login screen, so this is an auth + upstream smoke
+# test: the route requires SSO, and after login Cockpit's own login page is reachable
+# through Pomerium. Run with: scripts/validate-guide-fixtures.sh cockpit
+
+include:
+  - ../../_harness/compose/compose.harness.yaml
+
+services:
+  cockpit:
+    image: quay.io/cockpit/ws@sha256:ff018a28d50912dec3a1f6071e69cb6a7c252b68f1b8ec6964c3c6741c7dd96f
+    entrypoint: ['/container/label-run', '--no-tls']
+    volumes:
+      - ./cockpit.conf:/etc/cockpit/cockpit.conf:ro
+    networks:
+      default:
+        aliases:
+          - cockpit
+
+  pomerium:
+    image: pomerium/pomerium@sha256:e10d1d267af24f581157f485d9b0bc08469e2428675b696a08e42ceb09b2279c
+    command: ['--config', '/pomerium/config.yaml']
+    env_file:
+      - ../../_harness/pomerium/validation.env
+    volumes:
+      - certs:/certs:ro
+      - ./routes.validate.yaml:/pomerium/config.yaml:ro
+    depends_on:
+      certs-init:
+        condition: service_completed_successfully
+      keycloak:
+        condition: service_healthy
+      cockpit:
+        condition: service_started
+    networks:
+      default:
+        aliases:
+          - authenticate.localhost.pomerium.io
+          - cockpit.localhost.pomerium.io
+    healthcheck:
+      test: ['CMD', 'pomerium', 'health']
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 10s

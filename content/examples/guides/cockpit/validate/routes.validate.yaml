@@ -1,0 +1,13 @@
+# Routes-only validation config. Shared settings (IdP, secrets, signing key, certs)
+# come from ../../_harness/pomerium/validation.env via env_file in compose.validate.yaml.
+# Cockpit does not consume a Pomerium identity header; it keeps its own host login,
+# so no jwt_claims_headers are needed here.
+routes:
+  - from: https://cockpit.localhost.pomerium.io
+    to: http://cockpit:9090
+    allow_websockets: true
+    preserve_host_header: true
+    policy:
+      - allow:
+          or:
+            - authenticated_user: true
