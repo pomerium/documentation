@@ -1,173 +1,144 @@
 ---
-title: Self-Hosted LLM Behind Pomerium
-sidebar_label: Secure LLM WebUI
+title: Secure Open WebUI with Pomerium
+sidebar_label: Open WebUI (LLM)
 lang: en-US
-keywords:
-  - pomerium
-  - access proxy
-  - llm
-  - open webui
-  - authentication
-  - authorization
-  - ollama
-description: Secure a self-hosted LLM web interface (Open WebUI) behind Pomerium.
+keywords: [pomerium, open webui, llm, sso, oidc, identity aware proxy]
+description: Run a self-hosted LLM interface (Open WebUI) behind Pomerium with SSO and trusted-header identity.
 ---
 
-# Self-Hosted LLM Behind Pomerium
+import TabItem from '@theme/TabItem';
+import Tabs from '@theme/Tabs';
 
-This guide shows how to run a self-hosted LLM web interface (e.g., [Open WebUI](https://github.com/open-webui/open-webui)) and protect it behind Pomerium. Similar to the [code-server guide](https://www.pomerium.com/docs/guides/code-server), this setup applies enterprise-grade access controls to a local LLM, while passing user identity information through trusted headers so the upstream application knows who's accessing it.
+import Config from '/content/examples/guides/llm/config.yaml.md';
+import Compose from '/content/examples/guides/llm/docker-compose.yaml.md';
 
-## Why Use Open WebUI?
+# Secure Open WebUI with Pomerium
 
-Open WebUI is a self-hosted interface for interacting with local or remote LLMs. Hosting it locally allows:
+## What this guide does
 
-- Private experimentation with different LLMs
-- Full control over data and configuration
-- Integration of custom features like retrieval augmentation, voice, or browsing
+[Open WebUI](https://github.com/open-webui/open-webui) is a self-hosted web interface for talking to local or remote large language models (LLMs). This guide puts it behind Pomerium so that every request is authenticated against your identity provider before it reaches the model, and so that Open WebUI knows who the user is without running its own login.
 
-## Why Pomerium?
+Pomerium forwards the authenticated user's email to Open WebUI in a trusted header (`X-Pomerium-Claim-Email`). With trusted-header SSO enabled, Open WebUI provisions and signs in that account automatically, so the only credential prompt your users ever see is your corporate identity provider (IdP).
 
-By placing Open WebUI behind Pomerium, you can:
+## When to use this guide
 
-- Authenticate users with your existing IdP (e.g., Google, GitHub, corporate SSO).
-- Enforce policy-based access using user attributes like email domain.
-- Pass identity headers (e.g., `X-Pomerium-Claim-Email`) to the upstream app, letting it personalize the experience without separate logins.
+Use this guide when you host Open WebUI yourself and want one access control plane in front of it: SSO, per-user or per-group policy, and audit logging, without standing up and maintaining a separate login system inside the app. It applies whether your model backend is a local Ollama instance, a remote API, or anything Open WebUI supports; Pomerium sits in front of the UI regardless of the backend.
 
-Pomerium injects trusted identity information, so Open WebUI can recognize authenticated users and skip its own password handling.
-
-## Overview
-
-1. **Run Open WebUI** in Docker.
-2. **Configure Pomerium Zero** to secure it.
-3. **Access the LLM UI** through a protected URL. Pomerium handles auth, passes user identity, and ensures only allowed users access the LLM.
+If you only need to gate access and do not care about Open WebUI recognizing the user, you can skip the trusted-header settings and treat this as a plain HTTP app behind Pomerium.
 
 ## Prerequisites
 
-- [Pomerium Zero](https://console.pomerium.app/create-account) account
-- Docker and Docker Compose
-- A machine capable of running your chosen LLM backend
+- A completed [Pomerium quickstart](/docs/get-started/quickstart) (Zero or Core).
+- Docker and Docker Compose.
+- A domain you control for the route, for example `llm.yourdomain.com`.
 
-For GPU acceleration, follow Open WebUI's CUDA instructions.
+## Configure Pomerium
 
-## Configure Pomerium Zero
+<Tabs queryString="type">
+<TabItem value="zero" label="Pomerium Zero" default>
 
-### Create a Policy
+In the [Zero Console](https://console.pomerium.app), create a policy and a route.
 
-Define who can access the LLM interface. For example, restrict access to your email domain:
+1. Under **Policies**, create a policy that allows the users who should reach the LLM, for example an allow rule matching your email domain.
+2. Under **Routes**, create a route:
+   - **From**: `https://llm.yourdomain.com`
+   - **To**: `http://open-webui:8080`
+   - **Policy**: the policy from step 1.
+3. On the route, enable **Pass Identity Headers** so Pomerium forwards identity to Open WebUI, and enable **Allow WebSockets** so streamed responses work.
+4. Under **Settings**, configure **JWT Claim Headers** to emit the `email` claim as `X-Pomerium-Claim-Email`. Pass Identity Headers alone forwards only the signed assertion; the `X-Pomerium-Claim-Email` header Open WebUI reads comes from this mapping.
 
-1. In the Zero Console, go to **Policies** → **New Policy**.
-2. Name it **LLM Access**.
-3. Add an allow condition: `Domain` equals `example.com`.
+</TabItem>
+<TabItem value="core" label="Pomerium Core">
 
-This ensures only authenticated users with `example.com` email addresses can access the route.
+With Pomerium Core you supply a `config.yaml`. `jwt_claims_headers` emits the user's email as `X-Pomerium-Claim-Email`, the route's `pass_identity_headers` forwards it to Open WebUI, and `allow_websockets` keeps streamed responses working. Note that `pass_identity_headers` on its own only forwards the signed assertion; the `X-Pomerium-Claim-Email` header comes from `jwt_claims_headers`, so both are required.
 
-### Create a Route
+<Config />
 
-Map an external domain to the internal Open WebUI service. For example:
+`autocert: true` provisions TLS from Let's Encrypt for the route host. Replace `llm.yourdomain.com` with your domain and the `email` allow rule with the users or groups that should have access. This config uses the hosted authenticate service; to run your own identity provider instead, see the [Keycloak fallback](/docs/integrations/user-identity/oidc).
 
-![Screenshot of Pomerium route editing UI showing "LLM Access" route configuration](./img/llm/1.png)
+</TabItem>
+</Tabs>
 
-1. In the Zero Console, go to **Routes** → **New Route**.
-2. Name: `LLM Access`
-3. From: `https://llm.your-domain.pomerium.app`
-4. To: `http://openwebui:8080`
-5. Policies: Select **LLM Access**
+:::tip
 
-Save the route. Now only authorized users can reach `llm.your-domain.pomerium.app`.
+To self-host the identity provider rather than use the hosted authenticate service, follow the [OIDC / Keycloak integration](/docs/integrations/user-identity/oidc).
 
-### Enable Websockets
+:::
 
-LLM UIs often use streaming responses:
+## Configure Open WebUI
 
-![Screenshot of Pomerium Timeouts configuration with Allow Websockets enabled](./img/llm/2.png)
+Open WebUI reads the trusted email header through one environment variable:
 
-- Under **Timeouts**, toggle **Allow Websockets** to `On`.
+- `WEBUI_AUTH_TRUSTED_EMAIL_HEADER=X-Pomerium-Claim-Email` tells Open WebUI to trust the email Pomerium forwards, provision the account on first sight, and sign the user in without its own password prompt.
+- `WEBUI_URL` should match your external route so generated links are correct.
 
-### Preserve Host Header & Pass Identity
+The first user Open WebUI provisions becomes an admin; everyone provisioned after that lands in a pending role and sees a "waiting for activation" screen until an admin approves them. Plan for that, or set `DEFAULT_USER_ROLE=user` so new trusted-header users are active immediately.
 
-Enable these settings so Open WebUI receives the correct host header and identity claims:
+Trusted-header SSO is only safe when the app is unreachable except through Pomerium; see [Security considerations](#security-considerations).
 
-![Screenshot of Pomerium Headers configuration with Pass Identity Headers and Preserve Host Header enabled](./img/llm/3.png)
+## Run the stack
 
-- **Pass Identity Headers**: On
-- **Preserve Host Header**: On
+The compose file runs Pomerium and Open WebUI together. Open WebUI listens on `8080`, which Pomerium routes to internally; only Pomerium publishes ports to the host.
 
-This ensures Pomerium forwards identity info like `X-Pomerium-Claim-Email`. In **Settings**, you can define how claims map to headers:
-
-![Screenshot of Pomerium cluster settings mapping X-Pomerium-Claim-Email to the user's email](./img/llm/4.png)
-
-With these settings, Open WebUI trusts the identity headers and can attribute actions to the authenticated user.
-
-## Example Docker Compose
-
-Use placeholders for secrets and adjust `WEBUI_URL` to your external route. If you trust Pomerium's headers, set `WEBUI_AUTH=False` in Open WebUI.
-
-```yaml
-version: '3.9'
-services:
-  pomerium:
-    image: pomerium/pomerium:latest
-    ports:
-      - 443:443
-    restart: always
-    environment:
-      POMERIUM_ZERO_TOKEN: '<YOUR_CLUSTER_TOKEN>'
-      XDG_CACHE_HOME: /var/cache
-    volumes:
-      - pomerium-cache:/var/cache
-    networks:
-      main:
-        aliases:
-          - authenticate.<YOUR_CLUSTER_SUBDOMAIN>.pomerium.app
-
-  openwebui:
-    image: ghcr.io/open-webui/open-webui:main
-    environment:
-      HOST: '0.0.0.0'
-      OLLAMA_HOST: '0.0.0.0'
-      WEBUI_URL: 'https://llm.your-domain.pomerium.app'
-      WEBUI_AUTH_TRUSTED_EMAIL_HEADER: 'X-Pomerium-Claim-Email'
-      WEBUI_AUTH: 'False'
-    ports:
-      - 3000:8080
-    volumes:
-      - open-webui-data:/app/backend/data
-    restart: always
-    networks:
-      main: {}
-
-networks:
-  main:
-
-volumes:
-  pomerium-cache:
-  open-webui-data:
-```
-
-Replace `<YOUR_CLUSTER_TOKEN>` and `YOUR_CLUSTER_SUBDOMAIN`. For GPU support, see Open WebUI docs.
-
-## Run and Access
+<Compose />
 
 ```bash
 docker compose up -d
 ```
 
-Visit `https://llm.your-domain.pomerium.app`. After authenticating via your IdP, Pomerium routes you to Open WebUI with identity headers included.
+The Open WebUI image is large and its first boot runs a one-time database migration, so give the container a minute or two to become ready the first time you start it.
 
-## Test the LLM
+The compose file pins both images by digest so the example is reproducible. To move to a newer release, update the digests (or switch to a version tag you have tested) and re-pull.
 
-- Load a model, prompt it, and interact.
-- Your identity is passed through; Open WebUI sees your user email. No extra passwords needed.
-- The entire session is protected behind Pomerium's authentication and authorization.
+## Operations
 
-### Example of a Secured UI
+To stop the stack without losing data:
 
-![Screenshot of Open WebUI protected by Pomerium, user authenticated as "Bobby DeSimone"](./img/llm/llm.png)
+```bash
+docker compose down
+```
 
-## Next Steps
+To tear it down completely, including the `pomerium-cache` and `open-webui-data` volumes (this deletes your Open WebUI accounts, chats, and settings):
 
-- Refine policies: Add group-based rules or restrict certain endpoints.
-- Integrate different backends: Adjust `OLLAMA_BASE_URL` or `OPENAI_API_KEY`.
-- Add more routes behind Pomerium to scale your secure environment.
+```bash
+docker compose down -v
+```
 
-You've successfully secured a self-hosted LLM WebUI using Pomerium, with identity-aware access control and automatic user recognition upstream.
+To upgrade, pull the newer images and recreate the containers; your data persists in the named volumes unless you remove them:
+
+```bash
+docker compose pull
+docker compose up -d
+```
+
+## Verify the setup
+
+1. Visit `https://llm.yourdomain.com` while logged out. Pomerium should redirect you to your identity provider rather than show the Open WebUI login.
+2. Sign in with an allowed account. After the identity provider redirect you land in Open WebUI already signed in, with no second password prompt.
+
+   ![Open WebUI signed in as the SSO user, with no Open WebUI login prompt](./img/llm/llm.png)
+
+3. Confirm Open WebUI shows the right identity: the account in the top corner reflects your authenticated email, which Pomerium forwarded as `X-Pomerium-Claim-Email`.
+4. Sign in with a user the policy denies and confirm Pomerium blocks the request before it reaches Open WebUI.
+
+## Common failure modes
+
+- **Open WebUI shows its own login screen.** The trusted-header variable is unset or misspelled, or Pomerium is not emitting the claim header. Confirm `WEBUI_AUTH_TRUSTED_EMAIL_HEADER` matches the header name, that `jwt_claims_headers` (Core) or JWT Claim Headers (Zero) maps `email` to `X-Pomerium-Claim-Email`, and that the route has `pass_identity_headers` enabled.
+- **Streamed responses hang or never start.** WebSockets are not allowed on the route. Enable **Allow WebSockets** (Zero) or `allow_websockets: true` (Core).
+- **502 / connection refused from Pomerium.** Open WebUI is still booting its first-run migration, or the `to` address does not match the service name and port (`http://open-webui:8080`).
+- **Wrong or blank user in Open WebUI.** The forwarded header name does not match what Open WebUI expects. Both sides must agree on `X-Pomerium-Claim-Email`.
+
+## Security considerations
+
+Trusted-header SSO means Open WebUI believes whatever identity arrives in `X-Pomerium-Claim-Email`. Two properties keep that safe, and both must hold:
+
+- **Pomerium owns the header.** Pomerium overwrites any inbound `X-Pomerium-*` headers with the authenticated user before forwarding upstream, so a client cannot smuggle a forged email through Pomerium to impersonate someone else. The identity Open WebUI sees is always the one Pomerium authenticated.
+- **Pomerium is the only path to the app.** That guarantee is worth nothing if a user can reach Open WebUI directly on `8080` and set the header themselves. The compose file enforces this: Open WebUI publishes no host ports and sits on an `internal` Docker network shared only with Pomerium, so the only route to it is through Pomerium. Reproduce that isolation in production, and make sure no firewall, load balancer, or other route bypasses Pomerium.
+
+Treat any direct path to the upstream as an authentication bypass.
+
+## Next steps
+
+- Tighten the policy with group-based rules or [Pomerium Policy Language](/docs/internals/ppl).
+- Point Open WebUI at your model backend with `OLLAMA_BASE_URL` or an OpenAI-compatible endpoint.
+- Add more self-hosted tools behind the same Pomerium instance with additional routes.
