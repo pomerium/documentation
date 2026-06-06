@@ -1,0 +1,61 @@
+# Sealed E2E validation for the Grafana guide. Reuses the shared harness (Keycloak +
+# certs + headless runner) and adds Grafana + a Pomerium wired to the in-network IdP.
+# Run with: scripts/validate-guide-fixtures.sh grafana
+
+include:
+  - ../../_harness/compose/compose.harness.yaml
+
+services:
+  grafana:
+    image: grafana/grafana@sha256:8b37a2f028f164ce7b9889e1765b9d6ee23fec80f871d156fbf436d6198d32b7
+    environment:
+      GF_AUTH_JWT_ENABLED: 'true'
+      GF_AUTH_JWT_HEADER_NAME: X-Pomerium-Jwt-Assertion
+      GF_AUTH_JWT_EMAIL_CLAIM: email
+      GF_AUTH_JWT_USERNAME_CLAIM: email
+      GF_AUTH_JWT_JWK_SET_URL: https://grafana.localhost.pomerium.io/.well-known/pomerium/jwks.json
+      GF_AUTH_JWT_AUTO_SIGN_UP: 'true'
+      GF_AUTH_JWT_CACHE_TTL: 60m
+      # Trust the harness CA so Grafana can fetch Pomerium's JWKS over TLS.
+      # Validation-only; the published guide uses the public hosted authenticate cert.
+      SSL_CERT_FILE: /certs/ca.crt
+    volumes:
+      - certs:/certs:ro
+    networks:
+      default:
+        aliases:
+          - grafana
+
+  pomerium:
+    image: pomerium/pomerium@sha256:e10d1d267af24f581157f485d9b0bc08469e2428675b696a08e42ceb09b2279c
+    command: ['--config', '/pomerium/config.yaml']
+    volumes:
+      - certs:/certs:ro
+      - ./pomerium.validate.yaml:/pomerium/config.yaml:ro
+    depends_on:
+      certs-init:
+        condition: service_completed_successfully
+      keycloak:
+        condition: service_healthy
+      grafana:
+        condition: service_started
+    networks:
+      default:
+        aliases:
+          - authenticate.localhost.pomerium.io
+          - grafana.localhost.pomerium.io
+    healthcheck:
+      test: ['CMD', 'pomerium', 'health']
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 10s
+
+  test-runner:
+    depends_on:
+      pomerium:
+        condition: service_healthy
+    environment:
+      PW_TEST_DIR: /app/guide-tests
+    volumes:
+      - ./:/app/guide-tests:ro

@@ -1,0 +1,43 @@
+# Validation-only Pomerium config for the Grafana guide: self-hosted authenticate +
+# in-network Keycloak so the full SSO flow runs sealed. The published guide uses the
+# hosted authenticate service instead (see ../config.yaml.md).
+# Test-only. Never use these secrets in production.
+
+address: :443
+authenticate_service_url: https://authenticate.localhost.pomerium.io
+
+idp_provider: oidc
+idp_provider_url: http://keycloak.localhost.pomerium.io:8080/realms/pomerium-e2e
+idp_client_id: pomerium
+idp_client_secret: pomerium-e2e-secret
+idp_scopes:
+  - openid
+  - profile
+  - email
+  - groups
+
+certificate_file: /certs/pomerium.crt
+certificate_key_file: /certs/pomerium.key
+
+cookie_secret: dj5y7E03ULP9YebCgHNIXmxWnWfYlVXCgwbm9IEdysI=
+shared_secret: 0CdEkgO02jgxmgSC2AdkqIbFELAN4CGw0v0RY85xNr4=
+
+# Stable signing key so Pomerium publishes a JWKS that Grafana can verify the
+# forwarded assertion against. Test-only key (also shown in the Keycloak guide);
+# never reuse in production.
+signing_key: LS0tLS1CRUdJTiBFQyBQUklWQVRFIEtFWS0tLS0tCk1IY0NBUUVFSVA2TUN5UFI5OUNmSEVkU0s4cVdzbk51Q0RyMVZ3ay93RER1RVhyQitELzZvQW9HQ0NxR1NNNDkKQXdFSG9VUURRZ0FFQ0JTK3gyQnJRNVJqNHJFcU5PSEVsUFVESXJiRlNhRitoWEhEL1RYby9rQWVKU1lJSjJHVwpZMnE0a0NPNTU4RmdoYmxDTUplYVdjV1luT3JuZkpxeXRnPT0KLS0tLS1FTkQgRUMgUFJJVkFURSBLRVktLS0tLQo=
+
+log_level: info
+
+jwt_claims_headers:
+  X-Pomerium-Claim-Email: email
+  X-Pomerium-Claim-Groups: groups
+
+routes:
+  - from: https://grafana.localhost.pomerium.io
+    to: http://grafana:3000
+    pass_identity_headers: true
+    policy:
+      - allow:
+          or:
+            - authenticated_user: true

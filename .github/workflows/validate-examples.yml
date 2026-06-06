@@ -1,0 +1,90 @@
+name: validate-examples
+
+# Spins up each guide's sealed Docker Compose fixture and proves the full flow,
+# including a real SSO login against the in-network Keycloak. Per-PR runs are gated
+# to the guides that changed; a change to the shared harness (or the nightly
+# schedule) runs every fixture. The harness self-test always runs.
+
+on:
+  pull_request:
+    paths:
+      - 'content/examples/guides/**'
+      - 'scripts/validate-guide-fixtures.sh'
+      - '.github/workflows/validate-examples.yml'
+  schedule:
+    - cron: '0 7 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: validate-examples-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  discover:
+    runs-on: ubuntu-latest
+    outputs:
+      targets: ${{ steps.find.outputs.targets }}
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          fetch-depth: 0
+      - id: find
+        env:
+          EVENT: ${{ github.event_name }}
+          BASE: ${{ github.event.pull_request.base.sha }}
+        run: |
+          set -euo pipefail
+          base_dir=content/examples/guides
+          id_re='^[a-z0-9][a-z0-9-]*$'
+
+          # Guides that have opted into validation (well-formed ids only).
+          all=$(find "$base_dir" -mindepth 3 -maxdepth 3 -path '*/validate/compose.validate.yaml' -printf '%h\n' \
+                | sed -E "s#^$base_dir/([^/]+)/validate\$#\1#" | grep -E "$id_re" | sort -u || true)
+
+          full=false
+          changed=""
+          if [ "$EVENT" != "pull_request" ]; then
+            full=true
+          # Fail closed: if we can't compute the changed set (fork PRs, fetch edge
+          # cases), validate everything rather than silently validating nothing.
+          elif [ -z "$BASE" ] || ! changed=$(git diff --name-only "$BASE"...HEAD); then
+            full=true
+          # Shared harness / script / workflow change -> validate everything.
+          elif echo "$changed" | grep -qE "^$base_dir/_harness/|^scripts/validate-guide-fixtures\.sh\$|^\.github/workflows/validate-examples\.yml\$"; then
+            full=true
+          fi
+
+          selected=""
+          for g in $all; do
+            if [ "$full" = true ] || echo "${changed:-}" | grep -q "^$base_dir/$g/"; then
+              selected="$selected $g"
+            fi
+          done
+
+          # Report opt-outs (guides that ship a validate/SKIP marker) for auditability.
+          find "$base_dir" -mindepth 3 -maxdepth 3 -path '*/validate/SKIP' -printf '%h\n' \
+            | sed -E "s#^$base_dir/([^/]+)/validate\$#\1#" | sort -u \
+            | while read -r s; do echo "skipped (validate/SKIP): $s - $(head -1 "$base_dir/$s/validate/SKIP" 2>/dev/null || true)"; done
+
+          # The harness self-test always runs; JSON built with jq so ids can't corrupt it.
+          targets=$(printf '%s\n' '--selftest' $selected | grep -v '^$' | jq -R . | jq -s -c .)
+          echo "targets=$targets" >> "$GITHUB_OUTPUT"
+          echo "Selected targets: $targets"
+
+  validate:
+    needs: discover
+    if: needs.discover.outputs.targets != '[]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        target: ${{ fromJson(needs.discover.outputs.targets) }}
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      # Docker + Compose are preinstalled on ubuntu-latest; the Node/Playwright
+      # toolchain runs inside the test-runner container, so nothing else is needed.
+      - run: scripts/validate-guide-fixtures.sh "${{ matrix.target }}"

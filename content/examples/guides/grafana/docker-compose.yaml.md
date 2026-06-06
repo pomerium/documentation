@@ -1,0 +1,31 @@
+```yaml title="docker-compose.yaml"
+services:
+  pomerium:
+    image: pomerium/pomerium:latest
+    volumes:
+      - ./config.yaml:/pomerium/config.yaml:ro
+      - pomerium-cache:/data
+    ports:
+      - 443:443
+      - 80:80
+    restart: always
+
+  grafana:
+    image: grafana/grafana:latest
+    environment:
+      - GF_AUTH_JWT_ENABLED=true
+      - GF_AUTH_JWT_HEADER_NAME=X-Pomerium-Jwt-Assertion
+      - GF_AUTH_JWT_EMAIL_CLAIM=email
+      - GF_AUTH_JWT_USERNAME_CLAIM=email
+      - GF_AUTH_JWT_JWK_SET_URL=https://grafana.yourdomain.com/.well-known/pomerium/jwks.json
+      - GF_AUTH_JWT_AUTO_SIGN_UP=true
+      - GF_AUTH_JWT_CACHE_TTL=60m
+      - GF_AUTH_SIGNOUT_REDIRECT_URL=https://grafana.yourdomain.com/.pomerium/sign_out
+    volumes:
+      - grafana-storage:/var/lib/grafana
+    restart: always
+
+volumes:
+  pomerium-cache:
+  grafana-storage:
+```

@@ -1,0 +1,67 @@
+# Shared validation harness: the in-network IdP + cert bootstrap + browser runner
+# that every guide fixture reuses. A per-guide validate/compose.validate.yaml pulls
+# this in with `include:` and adds its own `pomerium` + upstream services.
+#
+# Paths here are relative to THIS file (content/examples/guides/_harness/compose/),
+# which is how Compose resolves paths inside an included file.
+#
+# Test-only. Never use these secrets, certs, or the open Keycloak admin anywhere real.
+
+services:
+  # One-shot: writes the CA + wildcard leaf into the shared `certs` volume, then exits.
+  certs-init:
+    image: alpine:3.21
+    volumes:
+      - certs:/certs
+      - ../gen-certs.sh:/gen-certs.sh:ro
+    command: ['/bin/sh', '/gen-certs.sh']
+
+  # In-network OIDC identity provider, seeded entirely from realm JSON (no clicks).
+  # Realm `pomerium-e2e`, client `pomerium`/`pomerium-e2e-secret`,
+  # user alice@company.com / password123 (groups: admins, engineering).
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.5.2
+    command:
+      - start-dev
+      - --import-realm
+      - --health-enabled=true
+      - --http-port=8080
+    environment:
+      KC_BOOTSTRAP_ADMIN_USERNAME: admin
+      KC_BOOTSTRAP_ADMIN_PASSWORD: admin
+      KC_HTTP_ENABLED: 'true'
+      KC_HOSTNAME: keycloak.localhost.pomerium.io
+      KC_HOSTNAME_STRICT: 'false'
+      KC_PROXY_HEADERS: xforwarded
+    volumes:
+      - ../keycloak/:/opt/keycloak/data/import/:ro
+    networks:
+      default:
+        aliases:
+          - keycloak.localhost.pomerium.io
+    healthcheck:
+      test:
+        [
+          'CMD-SHELL',
+          "exec 3<>/dev/tcp/127.0.0.1/9000; echo -e 'GET /health/ready HTTP/1.1\r\nHost: localhost\r\nConnection: close\r\n\r\n' >&3; cat <&3 | grep -q '\"status\": \"UP\"'",
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 30s
+
+  # Headless-browser test runner. Started on demand (profile `test`), not by `up`,
+  # so the stack can come up healthy first. The per-guide POMERIUM_URL selects the
+  # route under test; PW_TEST_DIR lets a guide point at its own assertion spec.
+  test-runner:
+    profiles: ['test']
+    build:
+      context: ../browser
+    environment:
+      POMERIUM_URL: ${POMERIUM_URL:?set POMERIUM_URL to the route under test}
+      PW_TEST_DIR: ${PW_TEST_DIR:-./tests}
+    volumes:
+      - certs:/certs:ro
+
+volumes:
+  certs:
