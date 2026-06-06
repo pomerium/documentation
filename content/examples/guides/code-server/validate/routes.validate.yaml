@@ -1,0 +1,14 @@
+# Routes-only validation config. Shared settings (IdP, secrets, signing key, certs)
+# come from ../../_harness/pomerium/validation.env via env_file in compose.validate.yaml.
+routes:
+  - from: https://code-server.localhost.pomerium.io
+    to: http://code-server:8080
+    # code-server drives the live editor over a WebSocket, so the route must allow it.
+    allow_websockets: true
+    # code-server checks the WebSocket Origin against the Host header and rejects the
+    # editor connection with 403 when they differ, so forward the original Host.
+    preserve_host_header: true
+    policy:
+      - allow:
+          or:
+            - authenticated_user: true

@@ -1,0 +1,55 @@
+# Sealed validation for the code-server guide. Reuses the shared harness (Keycloak +
+# certs + headless runner) and adds code-server + a Pomerium wired to the in-network
+# IdP. Run with: scripts/validate-guide-fixtures.sh code-server
+
+include:
+  - ../../_harness/compose/compose.harness.yaml
+
+services:
+  code-server:
+    image: codercom/code-server@sha256:6d46b83ea0687ab1826ec029b6d0e6342bbd55cc5c29b98258463e7faee16d1e
+    command: --auth none --disable-telemetry /home/coder/project
+    # Mirror the reader compose, which mounts a volume at the project dir; this makes
+    # the path exist so the editor opens a real workspace instead of prompting.
+    volumes:
+      - code-server-project:/home/coder/project
+    networks:
+      default:
+        aliases:
+          - code-server
+    healthcheck:
+      test: ['CMD', 'curl', '-fsS', 'http://127.0.0.1:8080/healthz']
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 10s
+
+  pomerium:
+    image: pomerium/pomerium@sha256:e10d1d267af24f581157f485d9b0bc08469e2428675b696a08e42ceb09b2279c
+    command: ['--config', '/pomerium/config.yaml']
+    env_file:
+      - ../../_harness/pomerium/validation.env
+    volumes:
+      - certs:/certs:ro
+      - ./routes.validate.yaml:/pomerium/config.yaml:ro
+    depends_on:
+      certs-init:
+        condition: service_completed_successfully
+      keycloak:
+        condition: service_healthy
+      code-server:
+        condition: service_healthy
+    networks:
+      default:
+        aliases:
+          - authenticate.localhost.pomerium.io
+          - code-server.localhost.pomerium.io
+    healthcheck:
+      test: ['CMD', 'pomerium', 'health']
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 10s
+
+volumes:
+  code-server-project:

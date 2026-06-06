@@ -1,0 +1,25 @@
+```yaml title="docker-compose.yaml"
+services:
+  pomerium:
+    image: pomerium/pomerium@sha256:e10d1d267af24f581157f485d9b0bc08469e2428675b696a08e42ceb09b2279c # v0.32.7
+    volumes:
+      - ./config.yaml:/pomerium/config.yaml:ro
+      - pomerium-cache:/data
+    ports:
+      - 443:443
+      - 80:80
+    restart: always
+
+  code-server:
+    image: codercom/code-server@sha256:6d46b83ea0687ab1826ec029b6d0e6342bbd55cc5c29b98258463e7faee16d1e
+    command: --auth none --disable-telemetry /home/coder/project
+    volumes:
+      - code-server-project:/home/coder/project
+      - code-server-config:/home/coder/.config
+    restart: always
+
+volumes:
+  pomerium-cache:
+  code-server-project:
+  code-server-config:
+```
