@@ -1,0 +1,30 @@
+# Validation-only Jenkins Configuration as Code (JCasC). Drives the JWT Auth plugin
+# headlessly so the sealed fixture can prove that Jenkins consumes Pomerium's signed
+# X-Pomerium-Jwt-Assertion end to end. The published guide configures the same plugin
+# through the Jenkins UI (see ../../../docs/guides/jenkins.mdx).
+# Test-only. Never reuse this configuration verbatim in production.
+jenkins:
+  securityRealm:
+    jwtAuth:
+      # The header Pomerium forwards the signed identity JWT in.
+      headerName: X-Pomerium-Jwt-Assertion
+      # Map Pomerium's assertion claims onto the Jenkins user.
+      userClaimName: email
+      emailClaimName: email
+      fullNameClaim: name
+      groupsClaimName: groups
+      groupsClaimSeparator: ","
+      # Pomerium signs the assertion with iss/aud set to the route host.
+      acceptedIssuer: jenkins.localhost.pomerium.io
+      acceptedAudience: jenkins.localhost.pomerium.io
+      # Pomerium publishes its public keys at the route's well-known endpoint.
+      jwksUrl: https://jenkins.localhost.pomerium.io/.well-known/pomerium/jwks.json
+      leewaySeconds: 30
+      # Require a verifiable signature: a request without a valid Pomerium JWT is
+      # rejected, which is what proves the assertion is actually being consumed.
+      allowVerificationFailures: false
+  # Any signed-in (JWT-verified) user can read; matches the guide's least-privilege
+  # posture where Pomerium policy is the real access gate.
+  authorizationStrategy:
+    loggedInUsersCanDoAnything:
+      allowAnonymousRead: false
