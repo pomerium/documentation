@@ -121,7 +121,7 @@ Jenkins prints an initial admin password to the container log on first start (`d
 | Jenkins shows its own login form instead of signing you in | The assertion didn't verify | Confirm the **JWKS JSON URL** is reachable from the Jenkins container, and that Pomerium has a `signing_key` (Core) so the JWKS isn't empty |
 | `unable to find valid certification path to requested target` in the Jenkins log | Jenkins (the Java runtime) doesn't trust the certificate on the JWKS endpoint | With the hosted authenticate service or a public certificate this won't happen; if you front Jenkins with a private CA, import that CA into the Java truststore |
 | `Unable to find a suitable verification key` for the JSON Web Signature (JWS) | Empty or unreachable JWKS: no published signing key, or the plugin can't fetch it | Set a `signing_key` (Core) and confirm the JWKS URL resolves from inside the container |
-| Redirect loop or certificate errors | DNS or autocert | Make sure DNS for `jenkins.yourdomain.com` points at Pomerium and that `autocert` could reach Let's Encrypt on ports 80 and 443 |
+| Redirect loop or certificate errors | DNS or autocert | Make sure DNS for `jenkins.yourdomain.com` points at Pomerium and that Pomerium can get a TLS certificate (Core needs ports 80/443 open for `autocert`; Zero manages it) |
 
 ## Security considerations
 

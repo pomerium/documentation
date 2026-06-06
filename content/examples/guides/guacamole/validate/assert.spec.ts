@@ -76,11 +76,17 @@ test("Guacamole is not reachable except through Pomerium", async ({ page }) => {
   // directly. If it could, anyone could forge X-Pomerium-Claim-Email straight at
   // Guacamole and bypass Pomerium entirely. The direct dial must fail while the
   // route through Pomerium keeps working.
-  const direct = page.request.get("http://guacamole:8080/", {
-    ignoreHTTPSErrors: true,
-    timeout: 5000,
-  });
-  await expect(direct, "guacamole must be unreachable directly").rejects.toThrow();
+  let directError = "";
+  try {
+    await page.request.get("http://guacamole:8080/", { ignoreHTTPSErrors: true, timeout: 5000 });
+  } catch (e) {
+    directError = String(e);
+  }
+  // Require a name-resolution / connection failure, not a bare timeout (which could
+  // mask an unrelated hang rather than proving isolation).
+  expect(directError, "direct dial to guacamole should be refused, not routed").toMatch(
+    /ENOTFOUND|getaddrinfo|EAI_AGAIN|ECONNREFUSED/i,
+  );
 
   const viaPomerium = await page.request.get(BASE, { ignoreHTTPSErrors: true });
   expect(

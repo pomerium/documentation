@@ -50,11 +50,24 @@ if [ "$GUIDE" != "--selftest" ] && [ "$UPDATE_SHOTS" != "--update-screenshots" ]
   for ext in md mdx; do
     [ -f "$ROOT/content/docs/guides/$GUIDE.$ext" ] && doc="$ROOT/content/docs/guides/$GUIDE.$ext"
   done
-  if [ -n "$doc" ] && ! grep -qE '!\[|<img|\.(png|gif|jpe?g|webp)' "$doc" && [ ! -f "$DIR/screenshots-skip" ]; then
-    echo "Media policy: $GUIDE references no screenshot in $(basename "$doc") and has no validate/screenshots-skip marker." >&2
-    echo "  Generate one:  scripts/validate-guide-fixtures.sh $GUIDE --update-screenshots   then reference it in the guide." >&2
-    echo "  Or record why none applies:  echo '<reason>' > $DIR/screenshots-skip" >&2
-    exit 3
+  if [ -n "$doc" ] && [ ! -f "$DIR/screenshots-skip" ]; then
+    refs=$(grep -oE '(\.?/)?img/[^) ]+\.(png|gif|jpe?g|webp)' "$doc" || true)
+    if [ -z "$refs" ]; then
+      echo "Media policy: $GUIDE references no screenshot in $(basename "$doc") and has no validate/screenshots-skip marker." >&2
+      echo "  Generate one:  scripts/validate-guide-fixtures.sh $GUIDE --update-screenshots   then reference it in the guide." >&2
+      echo "  Or record why none applies:  echo '<reason>' > $DIR/screenshots-skip" >&2
+      exit 3
+    fi
+    # Every referenced image must actually exist on disk (not just be referenced).
+    while IFS= read -r ref; do
+      [ -z "$ref" ] && continue
+      if [ ! -f "$ROOT/content/docs/guides/${ref#./}" ]; then
+        echo "Media policy: $GUIDE references '$ref' but no such file exists under content/docs/guides/." >&2
+        exit 3
+      fi
+    done <<REFS
+$refs
+REFS
   fi
 fi
 

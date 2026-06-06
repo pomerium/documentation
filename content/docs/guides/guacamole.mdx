@@ -115,11 +115,11 @@ On the first run, PostgreSQL loads Guacamole's schema before the web app can con
 
 - **Guacamole shows its own login form instead of signing you in.** The header didn't arrive. Confirm the route has `pass_identity_headers: true` and a `jwt_claims_headers` mapping for `X-Pomerium-Claim-Email`, and that `HTTP_AUTH_HEADER` matches it exactly.
 - **`Unexpected internal error` / `password is an empty string` in the Guacamole logs.** The web app can't reach PostgreSQL. Check the `POSTGRESQL_HOSTNAME`, `POSTGRESQL_USERNAME`, and `POSTGRESQL_PASSWORD` values on the `guacamole` service match the database, and that `init/initdb.sql` was generated and mounted.
-- **Redirect loop or certificate errors.** Make sure DNS for `guacamole.yourdomain.com` points at Pomerium and that `autocert` could reach Let's Encrypt on ports 80/443.
+- **Redirect loop or certificate errors.** Make sure DNS for `guacamole.yourdomain.com` points at Pomerium and that Pomerium can obtain a TLS certificate. On the Core path, `autocert` needs ports 80 and 443 reachable for Let's Encrypt; Zero manages certificates for you.
 
 ## Security considerations
 
-The whole setup rests on two properties. Both are enforced by the Compose file above, and both must hold in production.
+The header-auth model is only as safe as two properties the Compose file above enforces, plus two steps you own in production:
 
 - **Pomerium owns the identity header.** With `HEADER_ENABLED=true`, Guacamole signs in whoever the `X-Pomerium-Claim-Email` header names, with no password. The header is unsigned, so its trustworthiness depends on Pomerium setting it. Pomerium overwrites any inbound copy of the header with the authenticated user before the request reaches Guacamole, so a client that forges `X-Pomerium-Claim-Email` through Pomerium is still signed in as its real identity, never the spoofed one.
 - **Guacamole is reachable only through Pomerium.** The forged-header protection only matters if a client can't skip Pomerium and talk to Guacamole directly. The Compose file puts `guacd`, `postgres`, and `guacamole` on an `internal: true` network and publishes host ports only on `pomerium`, so nothing but Pomerium can route to `guacamole:8080`. If you deploy differently, keep Guacamole off public ports and off any network a client can reach. A client that could reach Guacamole directly would forge the header and bypass authentication entirely.

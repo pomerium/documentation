@@ -97,7 +97,7 @@ docker compose up -d
 - **Redirect loop or broken links inside HedgeDoc.** `CMD_DOMAIN`, `CMD_PROTOCOL_USESSL`, and `CMD_URL_ADDPORT` don't match how Pomerium serves the route. Set the domain to the route host, `CMD_PROTOCOL_USESSL=true`, and `CMD_URL_ADDPORT=false`.
 - **The editor never loads or notes don't sync.** The WebSocket upgrade is being dropped. Confirm `allow_websockets: true` is set on the route (Core) or that **Allow WebSockets** is enabled (Zero).
 - **Everyone gets signed out after a restart.** No fixed `CMD_SESSION_SECRET`. Set a stable, secret value so sessions survive restarts.
-- **Certificate errors reaching the route.** Make sure DNS for `hedgedoc.yourdomain.com` points at Pomerium and that `autocert` could reach Let's Encrypt on ports 80/443.
+- **Certificate errors reaching the route.** Make sure DNS for `hedgedoc.yourdomain.com` points at Pomerium and that Pomerium can obtain a TLS certificate. On the Core path, `autocert` needs ports 80 and 443 reachable for Let's Encrypt; Zero manages certificates for you.
 
 ## Security considerations
 

@@ -114,7 +114,7 @@ docker compose up -d
 ## Common failure modes
 
 - **`unknown policy criterion: date` on startup.** The `date` matcher requires Pomerium Zero or Enterprise. Open-source Core does not evaluate it; use a Zero cluster for time-limited grants.
-- **Access doesn't expire.** Check the `before` value is in the past and that the route actually uses the policy you edited. A typo in the email criterion silently keeps the rule from matching.
+- **Access doesn't expire.** Confirm the `before` timestamp has actually passed and that the route uses the policy you edited. A typo in the email criterion silently keeps the rule from matching.
 - **`jit-example` can't update the policy.** Confirm `API_USER_TOKEN`, `ORGANIZATION_ID`, and `CLUSTER_ID` are correct and that the token has permission to edit policies in that cluster.
 - **The app shows the wrong user, or no user.** Make sure **Pass Identity Headers** is enabled on the route so `jit-example` receives the JWT assertion.
 

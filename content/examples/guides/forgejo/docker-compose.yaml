@@ -1,6 +1,6 @@
 services:
   pomerium:
-    image: pomerium/pomerium@sha256:e10d1d267af24f581157f485d9b0bc08469e2428675b696a08e42ceb09b2279c
+    image: pomerium/pomerium@sha256:e10d1d267af24f581157f485d9b0bc08469e2428675b696a08e42ceb09b2279c # v0.32.7
     volumes:
       - ./config.yaml:/pomerium/config.yaml:ro
       - pomerium-cache:/data
@@ -8,19 +8,19 @@ services:
       - 443:443
       - 80:80
     networks:
-      forgejo-pomerium:
+      default: {}
+      forgejo-internal:
         ipv4_address: 172.30.0.2
     restart: always
 
   forgejo:
     image: codeberg.org/forgejo/forgejo@sha256:db04c7114b656f896e206ba3873fe8d3a7adf2daa44907037f0274f4ba653fb9 # v15
-    # Do not publish Forgejo's port to the host. Reverse-proxy auth trusts the
-    # identity header from ANY peer that can reach forgejo:3000, and
-    # REVERSE_PROXY_TRUSTED_PROXIES does NOT change that (it only affects
-    # X-Forwarded-For parsing). Network isolation is the trust boundary: keep
-    # only Pomerium on this network and attach no untrusted containers.
+    # Reverse-proxy auth trusts the identity header from ANY peer that can reach
+    # forgejo:3000, and REVERSE_PROXY_TRUSTED_PROXIES does NOT change that (it only
+    # affects X-Forwarded-For parsing). Network isolation is the trust boundary:
+    # forgejo sits on an internal-only network with Pomerium and nothing else.
     networks:
-      forgejo-pomerium: {}
+      forgejo-internal: {}
     volumes:
       - forgejo-data:/data
     environment:
@@ -55,8 +55,11 @@ services:
     restart: always
 
 networks:
-  forgejo-pomerium:
-    name: forgejo-pomerium
+  # internal: true keeps Forgejo off the host and reachable only by Pomerium, which
+  # the reverse-proxy-auth trust model requires. The fixed subnet gives Pomerium a
+  # stable address for REVERSE_PROXY_TRUSTED_PROXIES.
+  forgejo-internal:
+    internal: true
     ipam:
       config:
         - subnet: 172.30.0.0/24

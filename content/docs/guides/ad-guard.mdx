@@ -107,7 +107,7 @@ Then set your router (or each device) to use this host as its primary DNS server
 - **AdGuard prompts for a basic-auth login after you sign in to Pomerium.** The injected header is missing or wrong. Confirm `set_request_headers` is present on the route and that the base64 value decodes to exactly `admin:password` for a user AdGuard knows.
 - **AdGuard returns 401 Unauthorized through Pomerium.** The credential doesn't match. Re-run the install wizard or reset the password, then regenerate the base64 string from the new username and password.
 - **AdGuard shows its install wizard instead of the dashboard.** Its config volume was wiped or never persisted. Make sure the `conf` and `work` volumes are mounted so `AdGuardHome.yaml` survives restarts.
-- **Redirect loop or certificate errors.** Make sure DNS for `adguard.yourdomain.com` points at Pomerium and that `autocert` could reach Let's Encrypt on ports 80/443.
+- **Redirect loop or certificate errors.** Make sure DNS for `adguard.yourdomain.com` points at Pomerium and that Pomerium can obtain a TLS certificate. On the Core path, `autocert` needs ports 80 and 443 reachable for Let's Encrypt; Zero manages certificates for you.
 
 ## Security considerations
 

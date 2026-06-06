@@ -85,5 +85,5 @@ test("forgejo is not reachable except through Pomerium", async ({ page }) => {
   expect(
     directError,
     "forgejo must be unreachable directly; the only path in is through Pomerium",
-  ).toMatch(/ENOTFOUND|getaddrinfo|ECONNREFUSED|EAI_AGAIN|ETIMEDOUT|timeout/i);
+  ).toMatch(/ENOTFOUND|getaddrinfo|ECONNREFUSED|EAI_AGAIN/i);
 });

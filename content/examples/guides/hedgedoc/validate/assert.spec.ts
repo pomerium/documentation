@@ -35,6 +35,6 @@ test("the collaborative editor opens its WebSocket through the route", async ({ 
   await page.goto(`${BASE}/new`, { waitUntil: "domcontentloaded" });
   const ws = await socket;
   expect(ws.url(), "editor WebSocket should run over the route host").toContain(
-    "hedgedoc.localhost.pomerium.io",
+    new URL(BASE).host,
   );
 });

@@ -110,7 +110,7 @@ Pomerium gates the route, and once you're signed in it proxies through to Transm
 
 - **`409 Conflict` from the RPC endpoint.** Transmission's RPC requires a cross-site request forgery (CSRF) token (`X-Transmission-Session-Id`); a `409` on a raw request is expected and is the daemon working, not Pomerium. The web UI and proper RPC clients handle this automatically.
 - **`421 Misdirected Request` or a host-whitelist error.** Your daemon's `rpc-host-whitelist` doesn't include the hostname Pomerium forwards. Add `transmission.yourdomain.com` to the whitelist or disable it.
-- **Redirect loop or certificate errors.** Make sure DNS for `transmission.yourdomain.com` points at Pomerium and that `autocert` could reach Let's Encrypt on ports 80/443.
+- **Redirect loop or certificate errors.** Make sure DNS for `transmission.yourdomain.com` points at Pomerium and that Pomerium can obtain a TLS certificate. On the Core path, `autocert` needs ports 80 and 443 reachable for Let's Encrypt; Zero manages certificates for you.
 
 ## Security considerations
 

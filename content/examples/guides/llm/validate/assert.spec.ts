@@ -85,14 +85,20 @@ test("the upstream is unreachable except through Pomerium", async ({ page }) => 
   // default network, so a direct hit to open-webui:8080 must fail (DNS/connection
   // error) while the same flow THROUGH Pomerium works. If the runner could reach the
   // upstream directly, it could forge the trusted header and impersonate anyone.
-  const direct = page.request.get("http://open-webui:8080/api/v1/auths/", {
-    ignoreHTTPSErrors: true,
-    timeout: 5000,
-  });
-  await expect(
-    direct,
-    "test-runner must NOT be able to reach Open WebUI directly (network isolation)",
-  ).rejects.toThrow();
+  let directError = "";
+  try {
+    await page.request.get("http://open-webui:8080/api/v1/auths/", {
+      ignoreHTTPSErrors: true,
+      timeout: 5000,
+    });
+  } catch (e) {
+    directError = String(e);
+  }
+  // Require a name-resolution / connection failure, not a bare timeout.
+  expect(
+    directError,
+    "direct dial to Open WebUI should be refused, not routed (network isolation)",
+  ).toMatch(/ENOTFOUND|getaddrinfo|EAI_AGAIN|ECONNREFUSED/i);
 
   // The same route through Pomerium works after SSO.
   await login(page, BASE, alice);
