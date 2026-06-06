@@ -1,0 +1,19 @@
+# Pomerium Core configuration for the OpenClaw gateway. Uses the hosted
+# authenticate service, so you don't run your own identity provider. To self-host
+# the IdP, see the Keycloak guide:
+# https://www.pomerium.com/docs/integrations/user-identity/oidc
+authenticate_service_url: https://authenticate.pomerium.app
+
+# Obtain TLS certificates automatically from Let's Encrypt.
+autocert: true
+
+routes:
+  - from: https://openclaw.yourdomain.com
+    to: http://openclaw-gateway:18789
+    # OpenClaw's web UI uses WebSockets; allow_websockets keeps that connection open.
+    allow_websockets: true
+    policy:
+      - allow:
+          or:
+            - email:
+                is: you@example.com

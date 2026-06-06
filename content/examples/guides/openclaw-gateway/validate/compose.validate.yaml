@@ -1,0 +1,42 @@
+# Sealed E2E validation for the OpenClaw gateway guide. Reuses the shared harness
+# (Keycloak + certs + headless runner) and adds the OpenClaw gateway + a Pomerium
+# wired to the in-network IdP. The route uses the harness default access check:
+# unauthenticated requests are sent to the IdP, and an allowed user reaches the app.
+# Run with: scripts/validate-guide-fixtures.sh openclaw-gateway
+
+include:
+  - ../../_harness/compose/compose.harness.yaml
+
+services:
+  openclaw-gateway:
+    build:
+      context: ./openclaw
+    networks:
+      default:
+        aliases:
+          - openclaw-gateway
+
+  pomerium:
+    image: pomerium/pomerium@sha256:e10d1d267af24f581157f485d9b0bc08469e2428675b696a08e42ceb09b2279c
+    command: ['--config', '/pomerium/config.yaml']
+    volumes:
+      - certs:/certs:ro
+      - ./pomerium.validate.yaml:/pomerium/config.yaml:ro
+    depends_on:
+      certs-init:
+        condition: service_completed_successfully
+      keycloak:
+        condition: service_healthy
+      openclaw-gateway:
+        condition: service_healthy
+    networks:
+      default:
+        aliases:
+          - authenticate.localhost.pomerium.io
+          - openclaw-gateway.localhost.pomerium.io
+    healthcheck:
+      test: ['CMD', 'pomerium', 'health']
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 10s

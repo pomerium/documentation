@@ -1,0 +1,35 @@
+# Validation-only Pomerium config for the OpenClaw gateway guide: self-hosted
+# authenticate + in-network Keycloak so the full SSO flow runs sealed. The published
+# guide uses Pomerium Zero / the hosted authenticate service instead (see
+# ../config.yaml.md).
+# Test-only. Never use these secrets in production.
+
+address: :443
+authenticate_service_url: https://authenticate.localhost.pomerium.io
+
+idp_provider: oidc
+idp_provider_url: http://keycloak.localhost.pomerium.io:8080/realms/pomerium-e2e
+idp_client_id: pomerium
+idp_client_secret: pomerium-e2e-secret
+idp_scopes:
+  - openid
+  - profile
+  - email
+  - groups
+
+certificate_file: /certs/pomerium.crt
+certificate_key_file: /certs/pomerium.key
+
+cookie_secret: dj5y7E03ULP9YebCgHNIXmxWnWfYlVXCgwbm9IEdysI=
+shared_secret: 0CdEkgO02jgxmgSC2AdkqIbFELAN4CGw0v0RY85xNr4=
+
+log_level: info
+
+routes:
+  - from: https://openclaw-gateway.localhost.pomerium.io
+    to: http://openclaw-gateway:18789
+    allow_websockets: true
+    policy:
+      - allow:
+          or:
+            - authenticated_user: true
