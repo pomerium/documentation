@@ -1,0 +1,14 @@
+# Routes-only validation config. Shared settings (IdP, secrets, signing key, certs)
+# come from ../../_harness/pomerium/validation.env via env_file in compose.validate.yaml.
+# TiddlyWiki consumes the forwarded claim header, so jwt_claims_headers lives here.
+jwt_claims_headers:
+  X-Pomerium-Claim-Email: email
+
+routes:
+  - from: https://tiddlywiki.localhost.pomerium.io
+    to: http://tiddlywiki:8080
+    pass_identity_headers: true
+    policy:
+      - allow:
+          or:
+            - authenticated_user: true

@@ -1,0 +1,80 @@
+# Sealed E2E validation for the TiddlyWiki guide. Reuses the shared harness (Keycloak +
+# certs + headless runner) and adds TiddlyWiki + a Pomerium wired to the in-network IdP.
+# Run with: scripts/validate-guide-fixtures.sh tiddlywiki
+#
+# Network isolation mirrors the guide's trust boundary: tiddlywiki sits ONLY on the
+# internal-only `tiddlywiki-internal` network, shared with pomerium alone. The
+# test-runner is on `default`, so it cannot reach tiddlywiki directly (the spec proves
+# this); the only path in is through Pomerium, which bridges both networks.
+
+include:
+  - ../../_harness/compose/compose.harness.yaml
+
+services:
+  # One-shot: create the wiki folder with the Node.js server edition if it does not
+  # already exist, then exit. Idempotent so re-runs against a reused volume don't fail.
+  tiddlywiki-init:
+    image: elasticdog/tiddlywiki@sha256:6fdb8c46c92680c48be5eca5d35cf477b111285481e2ce1717c7dfa131476b17 # v5.1.23
+    entrypoint: ['/bin/sh', '-c']
+    command:
+      - 'test -f /tiddlywiki/mywiki/tiddlywiki.info || tiddlywiki mywiki --init server'
+    volumes:
+      - tiddlywiki-data:/tiddlywiki
+    networks:
+      tiddlywiki-internal: {}
+
+  tiddlywiki:
+    image: elasticdog/tiddlywiki@sha256:6fdb8c46c92680c48be5eca5d35cf477b111285481e2ce1717c7dfa131476b17 # v5.1.23
+    volumes:
+      - tiddlywiki-data:/tiddlywiki
+    command:
+      - mywiki
+      - --listen
+      - host=0.0.0.0
+      - authenticated-user-header=x-pomerium-claim-email
+    depends_on:
+      tiddlywiki-init:
+        condition: service_completed_successfully
+    networks:
+      tiddlywiki-internal:
+        aliases:
+          - tiddlywiki
+
+  pomerium:
+    image: pomerium/pomerium@sha256:e10d1d267af24f581157f485d9b0bc08469e2428675b696a08e42ceb09b2279c
+    command: ['--config', '/pomerium/config.yaml']
+    env_file:
+      - ../../_harness/pomerium/validation.env
+    volumes:
+      - certs:/certs:ro
+      - ./routes.validate.yaml:/pomerium/config.yaml:ro
+    depends_on:
+      certs-init:
+        condition: service_completed_successfully
+      keycloak:
+        condition: service_healthy
+      tiddlywiki:
+        condition: service_started
+    networks:
+      # On `default` for the IdP + test-runner, and on the internal-only network
+      # to reach tiddlywiki. This is the only service bridging the two.
+      default:
+        aliases:
+          - authenticate.localhost.pomerium.io
+          - tiddlywiki.localhost.pomerium.io
+      tiddlywiki-internal: {}
+    healthcheck:
+      test: ['CMD', 'pomerium', 'health']
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 10s
+
+networks:
+  # Internal-only: no route to the outside, and the test-runner is not attached,
+  # so tiddlywiki is reachable only via Pomerium.
+  tiddlywiki-internal:
+    internal: true
+
+volumes:
+  tiddlywiki-data:
