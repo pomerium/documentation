@@ -1,0 +1,12 @@
+# Routes-only validation config. Shared settings (IdP, secrets, signing key, certs)
+# come from ../../_harness/pomerium/validation.env via env_file in compose.validate.yaml.
+routes:
+  - from: https://hedgedoc.localhost.pomerium.io
+    to: http://hedgedoc:3000
+    # HedgeDoc's collaborative editor keeps a live connection open, so the route
+    # has to allow WebSocket upgrades.
+    allow_websockets: true
+    policy:
+      - allow:
+          or:
+            - authenticated_user: true
