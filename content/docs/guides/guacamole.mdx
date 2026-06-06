@@ -1,0 +1,121 @@
+---
+title: Secure Apache Guacamole with Pomerium
+sidebar_label: Apache Guacamole
+lang: en-US
+keywords:
+  [pomerium, guacamole, sso, oidc, identity aware proxy, header authentication]
+description: Put Apache Guacamole behind Pomerium and sign users in automatically by forwarding their identity in an HTTP header to Guacamole's header-auth extension.
+# cSpell:ignore guacd guacamole initdb POSTGRESQL
+---
+
+import TabItem from '@theme/TabItem';
+import Tabs from '@theme/Tabs';
+
+import Config from '/content/examples/guides/guacamole/config.yaml.md';
+import Compose from '/content/examples/guides/guacamole/docker-compose.yaml.md';
+
+# Secure Apache Guacamole with Pomerium
+
+## What this guide does
+
+You'll put [Apache Guacamole](https://guacamole.apache.org/) behind Pomerium so that Pomerium handles single sign-on and authorization, then forwards the authenticated user's email to Guacamole in an HTTP header. Guacamole's [header authentication extension](https://guacamole.apache.org/doc/gug/header-auth.html) reads that header and signs the user in, so there's no second login and no Guacamole password to manage.
+
+This guide secures access to the Guacamole gateway. It does not cover adding remote-desktop connections inside Guacamole.
+
+## When to use this guide
+
+Use it when you want one front door for Guacamole with your existing identity and you want Pomerium, not Guacamole, to own authentication. Because Guacamole trusts the forwarded header, this pattern depends on Guacamole never being reachable except through Pomerium. See [Security considerations](#security-considerations) before exposing it.
+
+## Prerequisites
+
+This guide assumes you've completed the [Quickstart](/docs/get-started/quickstart), so you already have Pomerium running and signing users in through the hosted authenticate service.
+
+You also need:
+
+- [Docker](https://docs.docker.com/install/) and [Docker Compose](https://docs.docker.com/compose/install/)
+- A domain you control for the Guacamole route (this guide uses `guacamole.yourdomain.com`)
+
+## Configure Pomerium
+
+<Tabs queryString="type">
+<TabItem value="zero" label="Pomerium Zero" default>
+
+In the [Zero Console](https://console.pomerium.app):
+
+1. Create a **Route**. In **From**, enter `https://guacamole.<your-starter-domain>`; in **To**, enter `http://guacamole:8080`.
+2. Set the policy to **Any Authenticated User** (or scope it to a group or domain).
+3. On the **Headers** tab, enable **Pass Identity Headers**, and add a JWT claim header mapping `email` to `X-Pomerium-Claim-Email`. That unsigned header is what Guacamole reads to identify the user.
+
+</TabItem>
+<TabItem value="core" label="Pomerium Core">
+
+Create a `config.yaml`. It routes `guacamole.yourdomain.com` to the Guacamole container, passes identity headers, and forwards the user's email as `X-Pomerium-Claim-Email`:
+
+<Config />
+
+Replace `guacamole.yourdomain.com` with your domain and `you@example.com` with your email. The `jwt_claims_headers` mapping is what produces the `X-Pomerium-Claim-Email` header that Guacamole's header-auth extension expects.
+
+:::tip Prefer to self-host the identity provider?
+
+This guide uses the hosted authenticate service so you don't have to run an IdP. To run your own instead, follow [Keycloak + Pomerium](/docs/integrations/user-identity/oidc) and swap the `authenticate_service_url` / `idp_*` settings into the config above.
+
+:::
+
+</TabItem>
+</Tabs>
+
+## Configure Guacamole
+
+Guacamole runs as three services: the `guacd` daemon, a PostgreSQL database, and the web application. The web application turns on header authentication with two environment variables:
+
+- `HEADER_ENABLED=true` enables the header-auth extension.
+- `HTTP_AUTH_HEADER=X-Pomerium-Claim-Email` tells Guacamole which header carries the already-authenticated user.
+
+When a request arrives with that header, Guacamole accepts the named user as authenticated. It does not validate a password, which is exactly why only Pomerium may reach it (see [Security considerations](#security-considerations)).
+
+Guacamole stores its users and connections in PostgreSQL, so the database needs Guacamole's schema loaded on first boot. Generate it once into an `init/` directory next to your Compose file:
+
+```bash
+mkdir -p init
+docker run --rm guacamole/guacamole /opt/guacamole/bin/initdb.sh --postgresql > init/initdb.sql
+```
+
+The Compose file below mounts that `init/` directory into PostgreSQL so the schema loads automatically.
+
+## Run the stack
+
+The Compose file runs Pomerium Core alongside Guacamole's three services (for Zero, drop the `pomerium` service and use the `compose.yaml` from the Quickstart with your `POMERIUM_ZERO_TOKEN`, keeping the rest below):
+
+<Compose />
+
+Start it:
+
+```bash
+docker compose up -d
+```
+
+## Verify the setup
+
+1. **The route requires authentication.** In a fresh browser, open `https://guacamole.yourdomain.com`. You should be redirected to sign in, not straight into Guacamole.
+2. **An allowed user gets in.** Sign in. Pomerium redirects you back to Guacamole.
+3. **Header auth signs you in.** You land on the Guacamole home screen as your own user, not the Guacamole username/password form. Guacamole's `/api/tokens` endpoint returns a token whose `username` is your forwarded email and whose `dataSource` is `header`.
+
+This guide ships a sealed end-to-end test (`content/examples/guides/guacamole/validate/`) that runs exactly these checks against an in-network identity provider on every change.
+
+## Common failure modes
+
+- **Guacamole shows its own login form instead of signing you in.** The header didn't arrive. Confirm the route has `pass_identity_headers: true` and a `jwt_claims_headers` mapping for `X-Pomerium-Claim-Email`, and that `HTTP_AUTH_HEADER` matches it exactly.
+- **`Unexpected internal error` / `password is an empty string` in the Guacamole logs.** The web app can't reach PostgreSQL. Check the `POSTGRESQL_HOSTNAME`, `POSTGRESQL_USERNAME`, and `POSTGRESQL_PASSWORD` values on the `guacamole` service match the database, and that `init/initdb.sql` was generated and mounted.
+- **Redirect loop or certificate errors.** Make sure DNS for `guacamole.yourdomain.com` points at Pomerium and that `autocert` could reach Let's Encrypt on ports 80/443.
+
+## Security considerations
+
+- **Guacamole trusts the `X-Pomerium-Claim-Email` header implicitly.** With `HEADER_ENABLED=true`, anyone who can set that header to a valid username is signed in as that user, no password required. The forwarded header is unsigned, so the security of this setup rests entirely on Pomerium being the only thing that can reach Guacamole.
+- **Never expose Guacamole directly.** Keep `guacamole:8080` off published host ports and on the internal Docker network so only the `pomerium` service can route to it. If a client could reach Guacamole directly and forge `X-Pomerium-Claim-Email`, it would bypass Pomerium entirely. Pomerium strips and re-sets the claim header on every request, so requests that arrive through it carry only the authenticated identity.
+- **Scope the route policy** to the group or domain that should have access. Header auth grants a Guacamole session to every user your Pomerium policy allows.
+
+## Next steps
+
+- [Build policies](/docs/get-started/fundamentals/zero/zero-build-policies)
+- [Pass identity headers](/docs/reference/routes/pass-identity-headers-per-route)
+- [Custom domains](/docs/capabilities/custom-domains)
