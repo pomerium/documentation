@@ -215,7 +215,7 @@ That exact hardware is not the point. The point is that the control plane stays 
 
 [Talos Linux](https://www.talos.dev) is a minimal, immutable operating system purpose-built for Kubernetes. There is no SSH, no shell, no package manager. You manage everything through the `talosctl` API.
 
-Use the latest stable Talos release when you build the cluster. A live-lab snapshot at the end of this guide shows the real cluster state this public example was cross-checked against on April 3, 2026.
+Use the latest stable Talos release when you build the cluster. The [live-lab snapshot](#14-current-live-lab-snapshot) at the end of this guide shows the real cluster state this example is based on.
 
 ### Generate machine configs
 
@@ -931,7 +931,7 @@ spec:
     spec:
       containers:
         - name: verify
-          image: pomerium/verify:v0.32.3
+          image: pomerium/verify:latest
           ports:
             - containerPort: 8000
               name: http
@@ -963,6 +963,8 @@ spec:
       port: 80
       targetPort: 8000
 ```
+
+Unlike the other components in this guide, `pomerium/verify` publishes only rolling tags (`latest`, `main`, `sha-*`), so it is intentionally not version-pinned. It is a throwaway smoke-test app, not part of your real workload set.
 
 Push the manifests and the Terraform route. Argo CD deploys the app, Terraform creates the route, Pomerium starts proxying.
 
@@ -1046,8 +1048,6 @@ It includes:
 
 The dashboard is derived from the live lab's existing `pomerium-consolidated` and `homelab-ops-control` dashboards. It is smaller, but it keeps the same intent: fast triage first, drill-down second.
 
-Representative PromQL queries from that bundle were executed successfully against the live lab's Prometheus API on April 3, 2026.
-
 Treat the JSON file as the source of truth. If you provision Grafana from files, UI edits are temporary and will be overwritten on the next reprovision or restart.
 
 ![Grafana control-room dashboard showing live Pomerium traffic, authorization, and latency panels](./img/homelab/grafana-dashboard.png)
@@ -1125,6 +1125,12 @@ Use the same failure model every time: identify the symptom, confirm which syste
 
 ## 13. Validate every change the same way
 
+:::note Verify against your own cluster
+
+This is a multi-component infrastructure guide (bare-metal Talos Kubernetes, Terraform Cloud, Argo CD, and a hosted Pomerium Zero control plane). There is no single command that proves the whole pipeline, so verify each layer against your own cluster using the checks below and the per-section checkpoints. The install versions here are normalized for a fresh deployment and differ from the [live-lab snapshot](#14-current-live-lab-snapshot), so treat them as a reviewed starting point rather than an exact replica.
+
+:::
+
 Treat the control loop as part of the system, not as background plumbing.
 
 For every change:
@@ -1134,8 +1140,6 @@ For every change:
 3. Confirm Argo CD is `Synced` and `Healthy`
 4. Confirm there are no broken pods
 5. Confirm the route behavior with `curl -I`
-
-These are the exact checks used against the live lab.
 
 Typical route test:
 
@@ -1150,11 +1154,11 @@ Expected behavior for a protected route:
 - not `502` (upstream down)
 - not `503` (Pomerium overloaded)
 
-On April 3, 2026, the live lab validated this successfully for representative routes including `verify`, `grafana`, and `argocd`. Each returned a `302` redirect to the authenticate service, and all Argo CD applications were `Synced` and `Healthy`.
+Run this against each protected route -- `verify`, `grafana`, and `argocd` -- and confirm every one returns a `302` redirect to the authenticate service while its Argo CD application stays `Synced` and `Healthy`.
 
 ## 14. Current live lab snapshot
 
-This public example was cross-checked against the real lab on April 3, 2026. The cluster was running:
+This example is based on a real lab. At the time of writing, that cluster was running:
 
 | Category           | Current state                   |
 | ------------------ | ------------------------------- |
@@ -1167,7 +1171,7 @@ This public example was cross-checked against the real lab on April 3, 2026. The
 | Control plane VIP  | `192.168.10.10`                 |
 | MetalLB range      | `192.168.10.100-192.168.10.110` |
 
-The snippets above are not a byte-for-byte export of that repo. They intentionally normalize a few lab-specific pins for public docs: the live lab is still on Argo CD `v3.1.0`, while the install example uses `v3.3.6` for a fresh deployment; the guide uses cleaner example domains instead of `k8s.bdd.io`; it uses a stable Pomerium image instead of the live lab's dogfood build; and it uses broader install/version examples where the real lab is carrying migration or upgrade lag.
+The snippets above are not a byte-for-byte export of that repo. Where the live lab carries migration or upgrade lag, the guide uses a newer reviewed version instead -- for example Argo CD `v3.3.6` in the install step versus the lab's running `v3.1.0`, and a stable Pomerium image instead of the lab's dogfood build.
 
 ## Next steps
 
