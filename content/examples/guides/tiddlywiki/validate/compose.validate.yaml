@@ -1,0 +1,62 @@
+# Sealed E2E validation for the TiddlyWiki guide. Reuses the shared harness (Keycloak +
+# certs + headless runner) and adds TiddlyWiki + a Pomerium wired to the in-network IdP.
+# Run with: scripts/validate-guide-fixtures.sh tiddlywiki
+
+include:
+  - ../../_harness/compose/compose.harness.yaml
+
+services:
+  # One-shot: create the wiki folder with the Node.js server edition if it does not
+  # already exist, then exit. Idempotent so re-runs against a reused volume don't fail.
+  tiddlywiki-init:
+    image: elasticdog/tiddlywiki:latest
+    entrypoint: ['/bin/sh', '-c']
+    command:
+      - 'test -f /tiddlywiki/mywiki/tiddlywiki.info || tiddlywiki mywiki --init server'
+    volumes:
+      - tiddlywiki-data:/tiddlywiki
+
+  tiddlywiki:
+    image: elasticdog/tiddlywiki@sha256:6fdb8c46c92680c48be5eca5d35cf477b111285481e2ce1717c7dfa131476b17
+    volumes:
+      - tiddlywiki-data:/tiddlywiki
+    command:
+      - mywiki
+      - --listen
+      - host=0.0.0.0
+      - authenticated-user-header=x-pomerium-claim-email
+    depends_on:
+      tiddlywiki-init:
+        condition: service_completed_successfully
+    networks:
+      default:
+        aliases:
+          - tiddlywiki
+
+  pomerium:
+    image: pomerium/pomerium@sha256:e10d1d267af24f581157f485d9b0bc08469e2428675b696a08e42ceb09b2279c
+    command: ['--config', '/pomerium/config.yaml']
+    volumes:
+      - certs:/certs:ro
+      - ./pomerium.validate.yaml:/pomerium/config.yaml:ro
+    depends_on:
+      certs-init:
+        condition: service_completed_successfully
+      keycloak:
+        condition: service_healthy
+      tiddlywiki:
+        condition: service_started
+    networks:
+      default:
+        aliases:
+          - authenticate.localhost.pomerium.io
+          - tiddlywiki.localhost.pomerium.io
+    healthcheck:
+      test: ['CMD', 'pomerium', 'health']
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 10s
+
+volumes:
+  tiddlywiki-data:
