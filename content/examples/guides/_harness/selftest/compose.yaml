@@ -37,12 +37,3 @@ services:
       timeout: 5s
       retries: 30
       start_period: 10s
-
-  test-runner:
-    depends_on:
-      pomerium:
-        condition: service_healthy
-    environment:
-      PW_TEST_DIR: /app/guide-tests
-    volumes:
-      - ./:/app/guide-tests:ro

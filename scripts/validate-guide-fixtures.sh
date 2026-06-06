@@ -74,6 +74,21 @@ echo ">> $GUIDE: building and starting stack (POMERIUM_URL=$POMERIUM_URL)"
 dc up -d --wait
 
 echo ">> $GUIDE: running validation checks"
-dc run --rm --build test-runner
+# The harness owns the test-runner service; a guide never redefines it (that would
+# conflict with the imported resource on stock Docker Compose). A guide-specific
+# spec is injected here at `run` time instead: if validate/assert.spec.ts exists
+# (or the selftest's identity spec), mount it and point Playwright at it.
+run_opts=()
+if [ "$GUIDE" = "--selftest" ]; then
+  spec_dir="$GUIDES/_harness/selftest"
+elif [ -f "$GUIDES/$GUIDE/validate/assert.spec.ts" ]; then
+  spec_dir="$GUIDES/$GUIDE/validate"
+else
+  spec_dir=""
+fi
+if [ -n "$spec_dir" ]; then
+  run_opts=(-v "$spec_dir:/app/guide-tests:ro" -e PW_TEST_DIR=/app/guide-tests)
+fi
+dc run --rm --build "${run_opts[@]}" test-runner
 
 echo ">> $GUIDE: PASS"
