@@ -1,0 +1,57 @@
+# Sealed E2E validation for the Jenkins guide. Reuses the shared harness (Keycloak +
+# certs + headless runner) and adds Jenkins (with the JWT Auth plugin driven via
+# JCasC) + a Pomerium wired to the in-network IdP.
+# Run with: scripts/validate-guide-fixtures.sh jenkins
+
+include:
+  - ../../_harness/compose/compose.harness.yaml
+
+services:
+  jenkins:
+    image: jenkins/jenkins@sha256:01c992ffef29dcf41c7164e8c16285c657c2368c4943dda8d68c93fdf54447d5
+    # Validation-only entrypoint: trusts the harness CA, installs the JWT Auth +
+    # JCasC plugins, and disables the first-run wizard so the API is reachable.
+    # The reader-facing compose keeps the normal first-run experience.
+    entrypoint: ['/bin/bash', '/usr/local/bin/jenkins-entrypoint.sh']
+    volumes:
+      - certs:/certs:ro
+      - ./jenkins-entrypoint.sh:/usr/local/bin/jenkins-entrypoint.sh:ro
+      - ./jenkins.casc.yaml:/var/jenkins_home/casc/jenkins.casc.yaml:ro
+    depends_on:
+      certs-init:
+        condition: service_completed_successfully
+    networks:
+      default:
+        aliases:
+          - jenkins
+    healthcheck:
+      test: ['CMD', 'curl', '-sf', 'http://localhost:8080/login']
+      interval: 10s
+      timeout: 5s
+      retries: 60
+      start_period: 60s
+
+  pomerium:
+    image: pomerium/pomerium@sha256:e10d1d267af24f581157f485d9b0bc08469e2428675b696a08e42ceb09b2279c
+    command: ['--config', '/pomerium/config.yaml']
+    volumes:
+      - certs:/certs:ro
+      - ./pomerium.validate.yaml:/pomerium/config.yaml:ro
+    depends_on:
+      certs-init:
+        condition: service_completed_successfully
+      keycloak:
+        condition: service_healthy
+      jenkins:
+        condition: service_healthy
+    networks:
+      default:
+        aliases:
+          - authenticate.localhost.pomerium.io
+          - jenkins.localhost.pomerium.io
+    healthcheck:
+      test: ['CMD', 'pomerium', 'health']
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 10s

@@ -1,0 +1,26 @@
+```yaml title="docker-compose.yaml"
+services:
+  pomerium:
+    image: pomerium/pomerium:latest
+    volumes:
+      - ./config.yaml:/pomerium/config.yaml:ro
+      - pomerium-cache:/data
+    ports:
+      - 443:443
+      - 80:80
+    restart: always
+
+  jenkins:
+    image: jenkins/jenkins:lts
+    # Jenkins is reached only through Pomerium, so no host ports are published.
+    # 8080 stays on the internal Docker network. You complete the first-run
+    # setup wizard and install the JWT Auth plugin through the browser, as the
+    # guide describes.
+    volumes:
+      - jenkins-home:/var/jenkins_home
+    restart: always
+
+volumes:
+  pomerium-cache:
+  jenkins-home:
+```
