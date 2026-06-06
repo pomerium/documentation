@@ -1,0 +1,42 @@
+services:
+  pomerium:
+    image: pomerium/pomerium:latest
+    volumes:
+      - ./config.yaml:/pomerium/config.yaml:ro
+      - pomerium-cache:/data
+    ports:
+      - 443:443
+      - 80:80
+    restart: always
+
+  hedgedoc:
+    # Check https://hedgedoc.org/latest-release for the current stable release.
+    image: quay.io/hedgedoc/hedgedoc:1.10.8
+    environment:
+      - CMD_DB_URL=postgres://hedgedoc:password@database:5432/hedgedoc
+      - CMD_DOMAIN=hedgedoc.yourdomain.com
+      - CMD_PROTOCOL_USESSL=true
+      - CMD_URL_ADDPORT=false
+      # Replace this with your own value: head -c32 /dev/urandom | base64
+      - CMD_SESSION_SECRET=replace-with-a-random-session-secret
+    volumes:
+      - hedgedoc-uploads:/hedgedoc/public/uploads
+    restart: always
+    depends_on:
+      - database
+
+  database:
+    image: postgres:16-alpine
+    environment:
+      - POSTGRES_USER=hedgedoc
+      # Change this before running anything beyond a local demo.
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=hedgedoc
+    volumes:
+      - hedgedoc-database:/var/lib/postgresql/data
+    restart: always
+
+volumes:
+  pomerium-cache:
+  hedgedoc-uploads:
+  hedgedoc-database:
