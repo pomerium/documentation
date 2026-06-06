@@ -1,0 +1,104 @@
+# Sealed E2E validation for the Apache Guacamole guide. Reuses the shared harness
+# (Keycloak + certs + headless runner) and adds Guacamole's full stack (guacd +
+# postgres + web app) behind a Pomerium wired to the in-network IdP.
+# Run with: scripts/validate-guide-fixtures.sh guacamole
+#
+# The guacamole stack lives on an internal-only network shared with pomerium, so the
+# test-runner (default network) can reach guacamole ONLY through Pomerium. The
+# assertion proves that isolation directly.
+
+include:
+  - ../../_harness/compose/compose.harness.yaml
+
+services:
+  guacd:
+    image: guacamole/guacd@sha256:8974eaa9ba32f713daf311e7cc8cd7e4cdfba1edea39eed75524e78ef4b08f4f
+    networks:
+      guac-internal:
+        aliases:
+          - guacd
+    # The 1.6.0 image bakes in a 5-minute health interval, which stalls
+    # `up --wait`. Override with a fast tcp probe of guacd's port (4822).
+    healthcheck:
+      test: ['CMD-SHELL', 'nc -z 127.0.0.1 4822 || exit 1']
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 5s
+
+  postgres:
+    image: postgres@sha256:df7bca0066e6f60cc3dd32faa70caddec20e2c22b58932f79498e5704b23854a
+    environment:
+      POSTGRES_DB: guacamole_db
+      POSTGRES_USER: guacamole_user
+      POSTGRES_PASSWORD: ChooseYourOwnPasswordHere1234
+    volumes:
+      - ./init:/docker-entrypoint-initdb.d:ro
+    networks:
+      guac-internal:
+        aliases:
+          - postgres
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U guacamole_user -d guacamole_db']
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 10s
+
+  guacamole:
+    image: guacamole/guacamole@sha256:f344085e618bb05e22b964b0208dbd06d3468275bac70206f93805245e067b40
+    environment:
+      GUACD_HOSTNAME: guacd
+      POSTGRESQL_HOSTNAME: postgres
+      POSTGRESQL_DATABASE: guacamole_db
+      POSTGRESQL_USERNAME: guacamole_user
+      POSTGRESQL_PASSWORD: ChooseYourOwnPasswordHere1234
+      HEADER_ENABLED: 'true'
+      HTTP_AUTH_HEADER: X-Pomerium-Claim-Email
+      # Serve the app at / so the route host maps straight to it (no /guacamole prefix).
+      WEBAPP_CONTEXT: ROOT
+    depends_on:
+      guacd:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+    networks:
+      guac-internal:
+        aliases:
+          - guacamole
+
+  pomerium:
+    image: pomerium/pomerium@sha256:e10d1d267af24f581157f485d9b0bc08469e2428675b696a08e42ceb09b2279c
+    command: ['--config', '/pomerium/config.yaml']
+    env_file:
+      - ../../_harness/pomerium/validation.env
+    volumes:
+      - certs:/certs:ro
+      - ./routes.validate.yaml:/pomerium/config.yaml:ro
+    depends_on:
+      certs-init:
+        condition: service_completed_successfully
+      keycloak:
+        condition: service_healthy
+      guacamole:
+        condition: service_started
+    # On the default network (reachable by the test-runner) AND the internal network
+    # (reachable to guacamole). This is the only service that bridges the two.
+    networks:
+      default:
+        aliases:
+          - authenticate.localhost.pomerium.io
+          - guacamole.localhost.pomerium.io
+      guac-internal: {}
+    healthcheck:
+      test: ['CMD', 'pomerium', 'health']
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 10s
+
+networks:
+  # No external access and not shared with the test-runner: guacamole is reachable
+  # only via pomerium, which is what the guide's trust model requires.
+  guac-internal:
+    internal: true
