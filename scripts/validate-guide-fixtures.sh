@@ -23,6 +23,12 @@ else
   DIR="$GUIDES/$GUIDE/validate"
   COMPOSE="$DIR/compose.validate.yaml"
   PROJECT="guide-$GUIDE"
+  # Non-sealable guides (Kubernetes, hardware, cloud, managed control plane) opt out
+  # by shipping validate/SKIP with a one-line reason. Report it and pass.
+  if [ -f "$DIR/SKIP" ]; then
+    echo ">> $GUIDE: SKIP (not sealable) - $(head -1 "$DIR/SKIP" 2>/dev/null)"
+    exit 0
+  fi
   if [ -f "$DIR/url.txt" ]; then
     POMERIUM_URL="$(tr -d '[:space:]' < "$DIR/url.txt")"
   else
@@ -31,7 +37,7 @@ else
 fi
 
 if [ ! -f "$COMPOSE" ]; then
-  echo "No validation fixture for '$GUIDE' (expected $COMPOSE)" >&2
+  echo "No validation fixture for '$GUIDE' (expected $COMPOSE). Add validate/compose.validate.yaml, or validate/SKIP with a one-line reason for non-sealable guides." >&2
   exit 2
 fi
 
