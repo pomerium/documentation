@@ -1,0 +1,12 @@
+# Routes-only validation config. Shared settings (IdP, secrets, signing key, certs)
+# come from ../../_harness/pomerium/validation.env via env_file in compose.validate.yaml.
+# The Jenkins JWT Auth plugin consumes the signed X-Pomerium-Jwt-Assertion header set
+# by pass_identity_headers, not individual claim headers, so no jwt_claims_headers here.
+routes:
+  - from: https://jenkins.localhost.pomerium.io
+    to: http://jenkins:8080
+    pass_identity_headers: true
+    policy:
+      - allow:
+          or:
+            - authenticated_user: true
