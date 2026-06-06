@@ -1,0 +1,88 @@
+# Sealed E2E validation for the ToolJet guide. Reuses the shared harness (Keycloak +
+# certs + headless runner) and adds ToolJet + PostgreSQL and a Pomerium wired to the
+# in-network IdP. ToolJet runs DB migrations on first boot, so it gets a generous
+# healthcheck start_period. The default access spec verifies Pomerium's gating
+# (unauthenticated -> IdP; allowed user reaches ToolJet); ToolJet's own auth/RBAC
+# and host check are out of scope here.
+# Run with: scripts/validate-guide-fixtures.sh tooljet
+
+include:
+  - ../../_harness/compose/compose.harness.yaml
+
+services:
+  postgres:
+    image: postgres@sha256:4b7183ac05f8ef417db21fd72d71047a4238340c261d3cc3ddb6d579ab5071ae
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U postgres']
+      interval: 5s
+      timeout: 5s
+      retries: 30
+    networks:
+      default:
+        aliases:
+          - postgres
+
+  tooljet:
+    image: tooljet/tooljet-ce@sha256:bc3f53b35a6264742f30384463ed062d9e6325c539805efd603281d899e943e6
+    tty: true
+    stdin_open: true
+    command: npm run start:prod
+    environment:
+      TOOLJET_HOST: https://tooljet.localhost.pomerium.io
+      PORT: '80'
+      SERVE_CLIENT: 'true'
+      # Test-only secrets. Never use these anywhere real.
+      LOCKBOX_MASTER_KEY: '0000000000000000000000000000000000000000000000000000000000000000'
+      SECRET_KEY_BASE: '0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000'
+      PG_HOST: postgres
+      PG_PORT: '5432'
+      PG_USER: postgres
+      PG_PASS: postgres
+      PG_DB: tooljet_production
+      # ToolJet's built-in database (PostgREST); reuses the same PostgreSQL server.
+      TOOLJET_DB: tooljet_db
+      TOOLJET_DB_HOST: postgres
+      TOOLJET_DB_USER: postgres
+      TOOLJET_DB_PASS: postgres
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      default:
+        aliases:
+          - tooljet
+    healthcheck:
+      test:
+        ['CMD-SHELL', "node -e 'require(\"http\").get(\"http://localhost:80/api/health\",r=>process.exit(r.statusCode<400?0:1)).on(\"error\",()=>process.exit(1))'"]
+      interval: 10s
+      timeout: 5s
+      retries: 60
+      start_period: 240s
+
+  pomerium:
+    image: pomerium/pomerium@sha256:e10d1d267af24f581157f485d9b0bc08469e2428675b696a08e42ceb09b2279c
+    command: ['--config', '/pomerium/config.yaml']
+    volumes:
+      - certs:/certs:ro
+      - ./pomerium.validate.yaml:/pomerium/config.yaml:ro
+    depends_on:
+      certs-init:
+        condition: service_completed_successfully
+      keycloak:
+        condition: service_healthy
+      tooljet:
+        condition: service_healthy
+    networks:
+      default:
+        aliases:
+          - authenticate.localhost.pomerium.io
+          - tooljet.localhost.pomerium.io
+    healthcheck:
+      test: ['CMD', 'pomerium', 'health']
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 10s

@@ -1,0 +1,60 @@
+services:
+  pomerium:
+    image: pomerium/pomerium:latest
+    volumes:
+      - ./config.yaml:/pomerium/config.yaml:ro
+      - pomerium-cache:/data
+    ports:
+      - 443:443
+      - 80:80
+    restart: always
+
+  tooljet:
+    image: tooljet/tooljet-ce:latest
+    tty: true
+    stdin_open: true
+    command: npm run start:prod
+    environment:
+      # The public URL Pomerium serves ToolJet on. ToolJet rejects requests whose
+      # Host header doesn't match, which is why the route preserves the Host header.
+      TOOLJET_HOST: https://tooljet.yourdomain.com
+      PORT: '80'
+      SERVE_CLIENT: 'true'
+      # Encryption keys. Generate your own and keep them secret:
+      #   openssl rand -hex 32   (LOCKBOX_MASTER_KEY)
+      #   openssl rand -hex 64   (SECRET_KEY_BASE)
+      LOCKBOX_MASTER_KEY: REPLACE_WITH_64_CHAR_HEX
+      SECRET_KEY_BASE: REPLACE_WITH_128_CHAR_HEX
+      # PostgreSQL connection. The bundled entrypoint runs migrations on first boot.
+      PG_HOST: postgres
+      PG_PORT: '5432'
+      PG_USER: postgres
+      PG_PASS: postgres
+      PG_DB: tooljet_production
+      # ToolJet's built-in database. It reuses the same PostgreSQL server here.
+      TOOLJET_DB: tooljet_db
+      TOOLJET_DB_HOST: postgres
+      TOOLJET_DB_USER: postgres
+      TOOLJET_DB_PASS: postgres
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: always
+
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U postgres']
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    restart: always
+
+volumes:
+  pomerium-cache:
+  postgres-data:
