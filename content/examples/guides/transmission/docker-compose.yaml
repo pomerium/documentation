@@ -1,0 +1,26 @@
+services:
+  pomerium:
+    image: pomerium/pomerium:latest
+    volumes:
+      - ./config.yaml:/pomerium/config.yaml:ro
+      - pomerium-cache:/data
+    ports:
+      - 443:443
+      - 80:80
+    restart: always
+
+  transmission:
+    image: lscr.io/linuxserver/transmission:latest
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Etc/UTC
+    volumes:
+      - transmission-config:/config
+      - transmission-downloads:/downloads
+    restart: always
+
+volumes:
+  pomerium-cache:
+  transmission-config:
+  transmission-downloads:
