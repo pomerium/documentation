@@ -366,6 +366,7 @@ const CURATED_ROUTES = new Set([
   '/docs/capabilities/mcp/limit-mcp-tools',
   '/docs/capabilities/mcp/delegate-mcp-to-llm',
   '/docs/capabilities/mcp/mcp-upstream-oauth',
+  '/docs/capabilities/mcp/tunnel-to-chatgpt',
   '/docs/capabilities/mcp/reference',
   // Internals
   '/docs/internals/ppl',
@@ -393,7 +394,6 @@ const CURATED_ROUTES = new Set([
   '/docs/guides/jenkins',
   '/docs/guides/grafana',
   '/docs/guides/code-server',
-  '/docs/guides/local-mcp',
   '/docs/guides/zero-ssh',
   '/docs/guides/llm',
 ]);
