@@ -1,0 +1,43 @@
+# Validation-only Pomerium config for the Open WebUI (LLM) guide: self-hosted
+# authenticate + in-network Keycloak so the full SSO flow runs sealed. The published
+# guide uses the hosted authenticate service instead (see ../config.yaml.md).
+# Test-only. Never use these secrets in production.
+
+address: :443
+authenticate_service_url: https://authenticate.localhost.pomerium.io
+
+idp_provider: oidc
+idp_provider_url: http://keycloak.localhost.pomerium.io:8080/realms/pomerium-e2e
+idp_client_id: pomerium
+idp_client_secret: pomerium-e2e-secret
+idp_scopes:
+  - openid
+  - profile
+  - email
+  - groups
+
+certificate_file: /certs/pomerium.crt
+certificate_key_file: /certs/pomerium.key
+
+cookie_secret: dj5y7E03ULP9YebCgHNIXmxWnWfYlVXCgwbm9IEdysI=
+shared_secret: 0CdEkgO02jgxmgSC2AdkqIbFELAN4CGw0v0RY85xNr4=
+
+log_level: info
+
+# Emits the same X-Pomerium-Claim-Email the published guide configures (the trusted
+# header Open WebUI reads), plus the groups claim used by the group-based policy below.
+jwt_claims_headers:
+  X-Pomerium-Claim-Email: email
+  X-Pomerium-Claim-Groups: groups
+
+routes:
+  - from: https://llm.localhost.pomerium.io
+    to: http://open-webui:8080
+    pass_identity_headers: true
+    allow_websockets: true
+    # Group-gated so the sealed test can exercise both the allow path (alice is in
+    # engineering) and the deny path (bob is a contractor, not in engineering).
+    policy:
+      - allow:
+          or:
+            - claim/groups: engineering
