@@ -1,0 +1,32 @@
+```yaml title="docker-compose.yaml"
+services:
+  # Pomerium Zero is driven by your cluster token; routes and the time-limited
+  # (date matcher) policy are managed in the Zero Console, not a local config file.
+  # The date matcher is a Zero/Enterprise feature, so this guide does not use Core.
+  pomerium:
+    image: pomerium/pomerium:latest
+    environment:
+      - POMERIUM_ZERO_TOKEN=REPLACE_WITH_YOUR_POMERIUM_ZERO_TOKEN
+    volumes:
+      - pomerium-cache:/data
+    ports:
+      - 443:443
+      - 80:80
+    restart: always
+
+  # jit-example has no published image; build it from the repo:
+  #   git clone https://github.com/pomerium/jit-example
+  # This is also the application the date-gated policy protects.
+  jit-example:
+    build: ./jit-example
+    environment:
+      - PORT=:8000
+      - ORGANIZATION_ID=REPLACE_WITH_YOUR_ORGANIZATION_ID
+      - CLUSTER_ID=REPLACE_WITH_YOUR_CLUSTER_ID
+      - API_USER_TOKEN=REPLACE_WITH_YOUR_API_USER_TOKEN
+      - JWKS_ENDPOINT=https://jit-example.yourdomain.com/.well-known/pomerium/jwks.json
+    restart: always
+
+volumes:
+  pomerium-cache:
+```

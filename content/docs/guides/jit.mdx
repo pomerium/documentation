@@ -1,0 +1,140 @@
+---
+title: Just-In-Time Access With Pomerium
+sidebar_label: Just-In-Time Access
+lang: en-US
+keywords: [pomerium, jit, just-in-time access, ppl, date matcher, authorization]
+description: Grant time-limited, Just-In-Time access with Pomerium by using the PPL date matcher, and automate the request and approve workflow with the jit-example app.
+---
+
+import Compose from '/content/examples/guides/jit/docker-compose.yaml.md';
+
+# Just-In-Time Access With Pomerium
+
+## What this guide does
+
+This guide shows how to grant time-limited access to a route with Pomerium. Instead of leaving a user permanently authorized, you attach a policy that allows them only until a set time, after which Pomerium denies the request automatically. You'll see the [Pomerium Policy Language](/docs/internals/ppl) (PPL) `date` matcher that expresses the time window, and the `jit-example` app that turns a manual request and approve exchange into a self-service workflow backed by the Pomerium Zero API.
+
+## When to use this guide
+
+Use it when access to an application should be the exception rather than the default: a contractor who needs an afternoon in an admin console, an on-call engineer granted access for the length of an incident, or any "break-glass" path you want to close on its own. If you only ever need permanent role- or group-based access, a standard [policy](/docs/get-started/fundamentals/zero/zero-build-policies) without a time window is simpler.
+
+## Prerequisites
+
+This guide assumes you've completed the [Quickstart](/docs/get-started/quickstart), so you already have Pomerium running and signing users in through the hosted authenticate service.
+
+You also need:
+
+- A working [Pomerium Zero](https://console.pomerium.app) cluster. If you don't have one, follow the [Quickstart](/docs/get-started/quickstart) first. The `date` matcher is evaluated by the Pomerium Zero and Enterprise policy engine, so the time-limited grant in this guide is a Zero/Enterprise feature.
+- A domain you control for the route (this guide uses `jit-example.yourdomain.com`).
+- For the automation section: [Docker](https://docs.docker.com/install/) and [Docker Compose](https://docs.docker.com/compose/install/).
+
+## The time-limited policy
+
+PPL supports time-limited access through the [`date`](/docs/internals/ppl#date-matcher) matcher. Combined with a `user` or `email` criterion, it grants a specific person access that expires on its own:
+
+```yaml
+allow:
+  and:
+    - email:
+        is: user@example.com
+    - date:
+        before: 2150-01-02T16:20:00
+```
+
+Here `user@example.com` may reach the route, but only before `2150-01-02T16:20:00`. After that moment Pomerium returns a 403 forbidden page. Nothing has to run to revoke the grant: the `date` matcher does it. To extend access, move the date forward; to grant a window in the future, add `after` alongside `before`.
+
+## Configure the grant in the Zero Console
+
+For an organization with infrequent requests, an administrator can maintain this by hand. In the [Zero Console](https://console.pomerium.app):
+
+1. Create or open the **Policy** attached to the route you want to protect.
+2. Add an **Allow** rule that combines the requester's email with a `date` matcher whose `before` value is when access should end, as in the snippet above.
+3. Save. Any route using that policy immediately honors the window, and the grant expires automatically when the time passes.
+
+An administrator might receive the request over Slack or email, edit the policy to add the criteria, and save. No follow-up is needed to revoke access later.
+
+:::tip Prefer to self-host the identity provider?
+
+This guide uses the hosted authenticate service so you don't have to run an IdP. To run your own instead, follow [Keycloak + Pomerium](/docs/integrations/user-identity/oidc) and swap the `authenticate_service_url` and `idp_*` settings into your configuration.
+
+:::
+
+## Automate the request and approve workflow
+
+Editing policies by hand scales poorly. Pomerium Zero exposes a public API, so a small application can drive the same edits and give users a self-service front door. To demonstrate this, Pomerium provides the [`jit-example`](https://github.com/pomerium/jit-example) app: a Go web server where users request access and administrators approve or reject it. Approving a request updates a policy in Pomerium Zero, which one or more routes can use.
+
+`jit-example` authenticates and authorizes through Pomerium itself, reading the [Pomerium JWT assertion header](/docs/reference/pass-identity-headers) to identify the current user. It exposes two endpoints:
+
+- `/` — the index page where users request access.
+- `/admin` — the admin page where administrators approve requests.
+
+Set up two routes in Pomerium Zero so any authenticated user can request access while only administrators can approve:
+
+- `jit-example.yourdomain.com`
+  - **From** is `https://jit-example.yourdomain.com`; **To** points to your `jit-example` instance.
+  - Attach an _Any Authenticated User_ policy.
+  - On the **Headers** tab, enable **Pass Identity Headers**.
+- `jit-example.yourdomain.com/admin`
+  - **From** is `https://jit-example.yourdomain.com`; **To** points to your `jit-example` instance.
+  - Under **Path Matching**, set **Prefix** to `/admin`; under **Path Rewriting**, set **Prefix Rewrite** to `/admin`.
+  - Attach a policy that restricts access to administrators.
+  - On the **Headers** tab, enable **Pass Identity Headers**.
+
+With this setup, any user reaches `https://jit-example.yourdomain.com`, but only administrators can approve requests at `/admin`.
+
+## Run the stack
+
+`jit-example` has no published image, so clone and build it from the repo. It reads its configuration from the environment:
+
+- `API_USER_TOKEN` — a Pomerium Zero API user token, created at [console.pomerium.app/app/management/api-tokens](https://console.pomerium.app/app/management/api-tokens).
+- `CLUSTER_ID` — the cluster where the `jit-example` policy is created.
+- `ORGANIZATION_ID` — your organization ID.
+- `JWKS_ENDPOINT` — the JSON Web Key Set (JWKS) URL of the Pomerium route in front of `jit-example`, used to verify the forwarded assertion, for example `https://jit-example.yourdomain.com/.well-known/pomerium/jwks.json`.
+- `PORT` — the port the web server listens on (defaults to `:8000`).
+
+The Compose file below runs Pomerium Zero (driven by your `POMERIUM_ZERO_TOKEN`) alongside `jit-example`. Zero is used because the `date` matcher is a Zero/Enterprise feature; routes and the time-limited policy are managed in the Zero Console as described above, not in a local config file. `jit-example` is itself the application the date-gated policy protects.
+
+<Compose />
+
+Replace the `REPLACE_WITH_*` values with your own, then start it:
+
+```bash
+git clone https://github.com/pomerium/jit-example
+docker compose up -d
+```
+
+## Verify the setup
+
+1. **The route requires authentication.** In a fresh browser, open `https://jit-example.yourdomain.com`. You should be redirected to sign in, not straight into the app.
+2. **An active grant is allowed.** While a user's `date` window is open, signing in lets them reach the route.
+3. **An expired grant is denied.** Once the `before` time has passed, the same authenticated user gets a 403 forbidden page with no change to the policy.
+4. **Only admins approve.** A non-admin who reaches `/admin` is denied by that route's policy.
+
+## Validation
+
+This guide is not covered by the repository's sealed end-to-end harness. That harness runs open-source Pomerium Core from a config file, and the `date` matcher is implemented in the Pomerium Zero/Enterprise policy engine, so Core rejects it at startup (`unknown policy criterion: date`). The time-window behavior was instead verified manually against a Pomerium Zero cluster: a grant with a future `before` date allowed the user, and the same grant with a past `before` date returned a 403 for the still-authenticated user. The `jit-example` automation was verified to create and update the cluster policy through the Zero API. See `content/examples/guides/jit/validate/SKIP` for the recorded reason.
+
+## Common failure modes
+
+- **`unknown policy criterion: date` on startup.** The `date` matcher requires Pomerium Zero or Enterprise. Open-source Core does not evaluate it; use a Zero cluster for time-limited grants.
+- **Access doesn't expire.** Check the `before` value is in the past and that the route actually uses the policy you edited. A typo in the email criterion silently keeps the rule from matching.
+- **`jit-example` can't update the policy.** Confirm `API_USER_TOKEN`, `ORGANIZATION_ID`, and `CLUSTER_ID` are correct and that the token has permission to edit policies in that cluster.
+- **The app shows the wrong user, or no user.** Make sure **Pass Identity Headers** is enabled on the route so `jit-example` receives the JWT assertion.
+
+## Security considerations
+
+- `jit-example` trusts the identity Pomerium forwards in the JWT assertion header, so **don't expose it directly** — only Pomerium should reach the app. Keep it off published ports and on the internal network.
+- Scope the `/admin` route to administrators with a real group or email policy; the approval path is what grants other users access.
+- An API user token that can edit policies is a powerful credential. Store it in a secret manager, not in source control, and scope it to the single cluster the automation manages.
+
+## Operations
+
+- **Revoke access before it expires.** A `date` grant closes on its own, but to cut access immediately, delete the `date` allow rule (or remove the user's email criterion) in the Zero Console. The next request the user makes returns a 403.
+- **Rotate the API token.** Treat `API_USER_TOKEN` like any other long-lived credential: rotate it on a schedule and after any suspected exposure, and re-deploy `jit-example` with the new value. Remove tokens you no longer use from the Zero Console.
+- **Tear down.** Run `docker compose down` to stop the stack; add `-v` to also drop the `pomerium-cache` volume. Policies you created in Zero persist independently and should be cleaned up in the Console.
+
+## Next steps
+
+- [Pomerium Policy Language](/docs/internals/ppl)
+- [Build policies](/docs/get-started/fundamentals/zero/zero-build-policies)
+- [Pass identity headers](/docs/reference/pass-identity-headers)
