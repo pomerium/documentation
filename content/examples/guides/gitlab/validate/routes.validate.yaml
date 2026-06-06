@@ -1,0 +1,12 @@
+# Routes-only validation config. Shared settings (IdP, secrets, signing key, certs)
+# come from ../../_harness/pomerium/validation.env via env_file in compose.validate.yaml.
+# GitLab runs its own auth, so the route is a front-door gate and forwards no
+# identity headers.
+routes:
+  - from: https://gitlab.localhost.pomerium.io
+    to: http://gitlab:80
+    preserve_host_header: true
+    policy:
+      - allow:
+          or:
+            - authenticated_user: true

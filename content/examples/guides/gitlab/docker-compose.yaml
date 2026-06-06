@@ -1,0 +1,31 @@
+services:
+  pomerium:
+    image: pomerium/pomerium@sha256:e10d1d267af24f581157f485d9b0bc08469e2428675b696a08e42ceb09b2279c # v0.32.7
+    volumes:
+      - ./config.yaml:/pomerium/config.yaml:ro
+      - pomerium-cache:/data
+    ports:
+      - 443:443
+      - 80:80
+    restart: always
+
+  gitlab:
+    image: gitlab/gitlab-ce@sha256:c7082004a0f64123634fda345e849453d52956621893bed7d2218fa6f088247f # 19.0.1-ce
+    environment:
+      GITLAB_OMNIBUS_CONFIG: |
+        external_url 'https://gitlab.yourdomain.com'
+        letsencrypt['enable'] = false
+        nginx['listen_port'] = 80
+        nginx['listen_https'] = false
+    volumes:
+      - gitlab-config:/etc/gitlab
+      - gitlab-logs:/var/log/gitlab
+      - gitlab-data:/var/opt/gitlab
+    shm_size: '256m'
+    restart: always
+
+volumes:
+  pomerium-cache:
+  gitlab-config:
+  gitlab-logs:
+  gitlab-data:
