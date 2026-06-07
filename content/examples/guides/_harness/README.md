@@ -1,8 +1,10 @@
 # Guide validation harness
 
-Shared scaffolding that proves a guide's **entire** flow — including a real SSO
-login — inside a sealed Docker Compose environment. CI runs it on every change to a
-guide's example; you can run it locally too.
+Shared scaffolding that proves a guide's Pomerium gate and any guide-specific
+assertions inside a sealed Docker Compose environment. Browser guides drive a real
+SSO login through an in-network Keycloak; the TCP/SSH example validates the transport
+path instead. CI runs it when a guide's example, prose, or shared guide media
+changes; you can run it locally too.
 
 This directory is internal tooling. It is never imported into a published guide and
 is excluded from spell-check and formatting (it lives under `content/examples/`).
@@ -14,8 +16,10 @@ which need real cloud calls, public DNS, and an interactive browser login and so
 cannot be sealed. To validate deterministically, the harness swaps that one piece
 for an **in-network Keycloak** — the same self-hosted IdP the guides link as the
 [Keycloak fallback](/docs/integrations/user-identity/oidc) — and drives the
-login with a headless browser. Everything else (routing, TLS, policy, identity
-headers, the upstream app) is exactly what the guide ships.
+login with a headless browser. The route, TLS, identity headers, and upstream image
+refs match the guide's runnable example; the validate route relaxes the policy to
+`authenticated_user: true` so the test identity can sign in. Each guide's
+`assert.spec.ts` determines how deep the app-specific validation goes.
 
 ## What's here
 
@@ -67,7 +71,7 @@ In `content/examples/guides/<id>/validate/`:
 Screenshots: `scripts/validate-guide-fixtures.sh <id> --update-screenshots` writes
 captured images into `content/docs/guides/img/<id>/`; reference one in the guide.
 Normal runs / CI never rewrite committed images. The script also enforces that a
-sealable guide references a screenshot or ships `validate/screenshots-skip` with a reason.
+guide references a screenshot or ships `validate/screenshots-skip` with a reason.
 
 Guides that can't be sealed (cloud, Kubernetes, hardware) ship `validate/SKIP` with a
 one-line reason; the script reports it and exits 0.

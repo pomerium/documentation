@@ -174,7 +174,7 @@ The Compose file uses Docker network aliases so `ssh.localhost.pomerium.io` reso
 
 ## Verify the path
 
-Check the Pomerium authorization log. This shows the CONNECT authority Pomerium used to match the route:
+Check the Pomerium authorization log. This shows the CONNECT authority Pomerium used to match the route and that the demo policy admitted the tunnel:
 
 ```bash
 docker compose logs --tail=100 pomerium \
@@ -189,14 +189,6 @@ Look for these fields:
 "allow":true
 ```
 
-Check the Pomerium access log for the successful tunnel:
-
-```bash
-docker compose logs --tail=100 pomerium \
-  | grep '"method":"CONNECT"' \
-  | grep '"response-code":200'
-```
-
 Check that bytes crossed the L4 edge:
 
 ```bash
@@ -204,7 +196,7 @@ docker compose logs --tail=100 nginx \
   | grep -E 'bytes_sent=[0-9]{3,} bytes_received=[0-9]{3,}'
 ```
 
-For log field definitions, see [Authorize Log Fields](/docs/reference/authorize-log-fields) and [Access Log Fields](/docs/reference/access-log-fields).
+For log field definitions, see [Authorize Log Fields](/docs/reference/authorize-log-fields).
 
 ## Configure the L4 edge
 

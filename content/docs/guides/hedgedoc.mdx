@@ -103,7 +103,7 @@ docker compose up -d
 
 HedgeDoc has no idea Pomerium is in front of it; it simply trusts whatever can reach `hedgedoc:3000`. That makes the trust boundary entirely Pomerium's job, so **don't expose HedgeDoc directly**. Keep the `hedgedoc` container off published host ports and only reachable on the internal Docker network, so the only path in is through Pomerium's policy.
 
-The Compose file above does not set `CMD_ALLOW_ANONYMOUS`, so HedgeDoc keeps its own login and registration in front of note creation even after Pomerium lets a user through. The route policy is your outer perimeter and HedgeDoc's own settings control what an authenticated user can do once inside. If you set `CMD_ALLOW_ANONYMOUS=true`, anyone your Pomerium policy admits can use HedgeDoc with no HedgeDoc account, so scope the route policy accordingly. The demo `database` password is `password`; change it before running anything beyond a local demo.
+The Compose file above leaves HedgeDoc's default guest-note behavior in place, so anyone your Pomerium policy admits can open the editor without a separate HedgeDoc account. Treat the route policy as the outer perimeter and tighten HedgeDoc's own authentication settings if note creation should require local accounts. The demo `database` password is `password`; change it before running anything beyond a local demo.
 
 ## Operations
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# cspell:ignore selftest gdir endgroup inblk webp imgdir
+# cspell:ignore selftest gdir endgroup inblk webp imgdir sshd sshpass pkill
 # Spin up a guide's sealed validation fixture, run its headless-browser (or CLI)
 # checks against the in-network Keycloak, and tear everything down.
 #
@@ -20,15 +20,27 @@ if [ "$GUIDE" = "--selftest" ]; then
   COMPOSE="$GUIDES/_harness/selftest/compose.yaml"
   PROJECT="guides-selftest"
   POMERIUM_URL="https://verify.localhost.pomerium.io"
+  SKIP_REASON=""
+elif [ "$GUIDE" = "ssh-tcp-l4-passthrough" ]; then
+  DIR="$ROOT/content/examples/ssh-tcp-l4-passthrough/validate"
+  COMPOSE="$ROOT/content/examples/ssh-tcp-l4-passthrough/docker-compose.yml"
+  PROJECT="guide-$GUIDE"
+  POMERIUM_URL="https://ssh.localhost.pomerium.io"
+  SKIP_REASON=""
 else
   DIR="$GUIDES/$GUIDE/validate"
   COMPOSE="$DIR/compose.validate.yaml"
   PROJECT="guide-$GUIDE"
   # Non-sealable guides (Kubernetes, hardware, cloud, managed control plane) opt out
-  # by shipping validate/SKIP with a one-line reason. Report it and pass.
+  # by shipping validate/SKIP with a one-line reason. Media policy still runs
+  # first, so a SKIP guide must either reference a screenshot or explain why not.
+  SKIP_REASON=""
   if [ -f "$DIR/SKIP" ]; then
-    echo ">> $GUIDE: SKIP (not sealable) - $(head -1 "$DIR/SKIP" 2>/dev/null)"
-    exit 0
+    SKIP_REASON="$(head -1 "$DIR/SKIP" 2>/dev/null)"
+    if [ -z "$(printf '%s' "$SKIP_REASON" | tr -d '[:space:]')" ]; then
+      echo "SKIP marker for '$GUIDE' is empty. Add a one-line reason." >&2
+      exit 3
+    fi
   fi
   if [ -f "$DIR/url.txt" ]; then
     POMERIUM_URL="$(tr -d '[:space:]' < "$DIR/url.txt")"
@@ -37,7 +49,7 @@ else
   fi
 fi
 
-if [ ! -f "$COMPOSE" ]; then
+if [ -z "$SKIP_REASON" ] && [ ! -f "$COMPOSE" ]; then
   echo "No validation fixture for '$GUIDE' (expected $COMPOSE). Add validate/compose.validate.yaml, or validate/SKIP with a one-line reason for non-sealable guides." >&2
   exit 2
 fi
@@ -50,24 +62,36 @@ if [ "$GUIDE" != "--selftest" ] && [ "$UPDATE_SHOTS" != "--update-screenshots" ]
   for ext in md mdx; do
     [ -f "$ROOT/content/docs/guides/$GUIDE.$ext" ] && doc="$ROOT/content/docs/guides/$GUIDE.$ext"
   done
-  if [ -n "$doc" ] && [ ! -f "$DIR/screenshots-skip" ]; then
+  if [ -n "$doc" ]; then
+    # Guide media is expected to use relative ./img/... references under
+    # content/docs/guides/.
     refs=$(grep -oE '(\.?/)?img/[^) ]+\.(png|gif|jpe?g|webp)' "$doc" || true)
-    if [ -z "$refs" ]; then
-      echo "Media policy: $GUIDE references no screenshot in $(basename "$doc") and has no validate/screenshots-skip marker." >&2
-      echo "  Generate one:  scripts/validate-guide-fixtures.sh $GUIDE --update-screenshots   then reference it in the guide." >&2
-      echo "  Or record why none applies:  echo '<reason>' > $DIR/screenshots-skip" >&2
-      exit 3
-    fi
-    # Every referenced image must actually exist on disk (not just be referenced).
-    while IFS= read -r ref; do
-      [ -z "$ref" ] && continue
-      if [ ! -f "$ROOT/content/docs/guides/${ref#./}" ]; then
-        echo "Media policy: $GUIDE references '$ref' but no such file exists under content/docs/guides/." >&2
+    if [ -f "$DIR/screenshots-skip" ]; then
+      screenshots_skip_reason="$(head -1 "$DIR/screenshots-skip" 2>/dev/null)"
+      if [ -z "$(printf '%s' "$screenshots_skip_reason" | tr -d '[:space:]')" ]; then
+        echo "Media policy: $GUIDE has an empty validate/screenshots-skip marker. Add a one-line reason." >&2
         exit 3
       fi
-    done <<REFS
+    fi
+    if [ -z "$refs" ]; then
+      if [ ! -f "$DIR/screenshots-skip" ]; then
+        echo "Media policy: $GUIDE references no screenshot in $(basename "$doc") and has no validate/screenshots-skip marker." >&2
+        echo "  Generate one:  scripts/validate-guide-fixtures.sh $GUIDE --update-screenshots   then reference it in the guide." >&2
+        echo "  Or record why none applies:  echo '<reason>' > $DIR/screenshots-skip" >&2
+        exit 3
+      fi
+    else
+      # Every referenced image must actually exist on disk (not just be referenced).
+      while IFS= read -r ref; do
+        [ -z "$ref" ] && continue
+        if [ ! -f "$ROOT/content/docs/guides/${ref#./}" ]; then
+          echo "Media policy: $GUIDE references '$ref' but no such file exists under content/docs/guides/." >&2
+          exit 3
+        fi
+      done <<REFS
 $refs
 REFS
+    fi
   fi
 fi
 
@@ -88,10 +112,70 @@ check_mirror() {
     exit 1
   fi
 }
-if [ "$GUIDE" != "--selftest" ]; then
+if [ "$GUIDE" != "--selftest" ] && [ "$GUIDE" != "ssh-tcp-l4-passthrough" ]; then
   gdir="$GUIDES/$GUIDE"
   check_mirror "$gdir/docker-compose.yaml.md" "$gdir/docker-compose.yaml"
   check_mirror "$gdir/config.yaml.md" "$gdir/config.yaml"
+fi
+
+if [ -n "$SKIP_REASON" ]; then
+  echo ">> $GUIDE: SKIP (not sealable) - $SKIP_REASON"
+  exit 0
+fi
+
+if [ "$GUIDE" = "ssh-tcp-l4-passthrough" ]; then
+  EXAMPLE="$ROOT/content/examples/ssh-tcp-l4-passthrough"
+  GENERATED_CERTS="$EXAMPLE/certs/ca.crt $EXAMPLE/certs/ca.key $EXAMPLE/certs/ca.srl $EXAMPLE/certs/pomerium.crt $EXAMPLE/certs/pomerium.csr $EXAMPLE/certs/pomerium.key"
+  cleanup_ssh_l4() {
+    status=$?
+    if [ "$status" -ne 0 ]; then
+      echo "::group::$PROJECT logs (failure)"; dc logs --no-color || true; echo "::endgroup::"
+    fi
+    dc down -v --remove-orphans >/dev/null 2>&1 || true
+    # shellcheck disable=SC2086
+    rm -f $GENERATED_CERTS
+    exit "$status"
+  }
+  trap cleanup_ssh_l4 EXIT
+
+  echo ">> $GUIDE: generating local certificates"
+  (cd "$EXAMPLE" && ./gen-certs.sh)
+
+  echo ">> $GUIDE: building and starting stack"
+  dc up -d --build --wait
+
+  echo ">> $GUIDE: starting pomerium-cli TCP listener"
+  dc exec -d client sh -lc \
+    'pomerium-cli tcp ssh.localhost.pomerium.io:22 \
+      --alternate-ca-path /certs/ca.crt \
+      --browser-cmd /bin/true \
+      --listen 127.0.0.1:2222 \
+      >/tmp/pomerium-cli.log 2>&1'
+
+  dc exec -T client sh -lc \
+    'for i in $(seq 1 30); do nc -z 127.0.0.1 2222 && exit 0; sleep 1; done; cat /tmp/pomerium-cli.log; exit 1'
+
+  echo ">> $GUIDE: running SSH command through the tunnel"
+  ssh_output="$(dc exec -T client sh -lc \
+    "sshpass -p demo-password ssh \
+      -o StrictHostKeyChecking=no \
+      -o LogLevel=ERROR \
+      -p 2222 demo@127.0.0.1 \
+      'hostname; whoami; uname -srm'")"
+  printf '%s\n' "$ssh_output"
+  printf '%s\n' "$ssh_output" | grep -qx 'sshd'
+  printf '%s\n' "$ssh_output" | grep -qx 'demo'
+  printf '%s\n' "$ssh_output" | grep -q '^Linux '
+
+  dc exec -T client sh -lc 'pkill pomerium-cli || true'
+  sleep 2
+
+  echo ">> $GUIDE: checking Pomerium and L4 edge logs"
+  dc logs --no-color pomerium | grep '"method":"CONNECT"' | grep '"host":"ssh.localhost.pomerium.io:22"' | grep '"allow":true' >/dev/null
+  dc logs --no-color nginx | grep -E 'bytes_sent=[0-9]{3,} bytes_received=[0-9]{3,}' >/dev/null
+
+  echo ">> $GUIDE: PASS"
+  exit 0
 fi
 
 cleanup() {

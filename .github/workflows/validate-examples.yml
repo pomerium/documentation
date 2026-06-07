@@ -9,6 +9,7 @@ on:
   pull_request:
     paths:
       - 'content/examples/guides/**'
+      - 'content/examples/ssh-tcp-l4-passthrough/**'
       - 'content/docs/guides/**'
       - 'content/docs/admonitions/**'
       - 'scripts/validate-guide-fixtures.sh'
@@ -40,13 +41,17 @@ jobs:
         run: |
           set -euo pipefail
           base=content/examples/guides
+          ssh_example=content/examples/ssh-tcp-l4-passthrough
           docs=content/docs/guides
           id_re='^[a-z0-9][a-z0-9-]*$'
 
           # A guide opts in with either a runnable fixture or a SKIP marker.
-          all=$( { find "$base" -mindepth 3 -maxdepth 3 -path '*/validate/compose.validate.yaml' -printf '%h\n';
-                   find "$base" -mindepth 3 -maxdepth 3 -path '*/validate/SKIP' -printf '%h\n'; } \
-                 | sed -E "s#^$base/([^/]+)/validate\$#\1#" | grep -E "$id_re" | sort -u || true)
+          all=$( { find "$base" -mindepth 3 -maxdepth 3 -path '*/validate/compose.validate.yaml' -printf '%h\n' \
+                     | sed -E "s#^$base/([^/]+)/validate\$#\1#";
+                   find "$base" -mindepth 3 -maxdepth 3 -path '*/validate/SKIP' -printf '%h\n' \
+                     | sed -E "s#^$base/([^/]+)/validate\$#\1#";
+                   [ -f "$ssh_example/docker-compose.yml" ] && printf 'ssh-tcp-l4-passthrough\n'; } \
+                 | grep -E "$id_re" | sort -u || true)
 
           full=false
           changed=""
@@ -56,16 +61,42 @@ jobs:
           # cases), validate everything rather than silently validating nothing.
           elif [ -z "$BASE" ] || ! changed=$(git diff --name-only "$BASE"...HEAD); then
             full=true
-          # Shared scaffolding change (harness, partials, admonitions, script, workflow) -> validate all.
-          elif echo "$changed" | grep -qE "^$base/_harness/|^$docs/_partials/|^content/docs/admonitions/|^scripts/validate-guide-fixtures\.sh\$|^\.github/workflows/validate-examples\.yml\$"; then
+          # Shared scaffolding or guide media change -> validate all. Some older
+          # guide image folders do not map cleanly to guide IDs, so media is
+          # intentionally conservative.
+          elif echo "$changed" | grep -qE "^$base/_harness/|^$docs/_partials/|^$docs/img/|^content/docs/admonitions/|^scripts/validate-guide-fixtures\.sh\$|^\.github/workflows/validate-examples\.yml\$"; then
             full=true
           fi
 
+          changed_ids=""
+          if [ -n "${changed:-}" ]; then
+            changed_ids=$( { printf '%s\n' "$changed" \
+                | sed -nE "s#^$base/([a-z0-9][a-z0-9-]*)/.*#\1#p; s#^$ssh_example/.*#ssh-tcp-l4-passthrough#p" \
+                | while read -r d; do
+                    if [ "$d" = "ssh-tcp-l4-passthrough" ]; then
+                      if [ -f "$ssh_example/docker-compose.yml" ] || [ -f "$docs/$d.md" ] || [ -f "$docs/$d.mdx" ]; then
+                        printf '%s\n' "$d"
+                      fi
+                    elif [ -f "$base/$d/validate/compose.validate.yaml" ] || [ -f "$base/$d/validate/SKIP" ] || [ -f "$docs/$d.md" ] || [ -f "$docs/$d.mdx" ]; then
+                      printf '%s\n' "$d"
+                    fi
+                  done;
+              printf '%s\n' "$changed" \
+                | sed -nE "s#^$docs/([a-z0-9][a-z0-9-]*)\.(md|mdx)\$#\1#p" \
+                | while read -r d; do
+                    if [ -f "$docs/$d.md" ] || [ -f "$docs/$d.mdx" ]; then
+                      printf '%s\n' "$d"
+                    fi
+                  done; } | grep -E "$id_re" | sort -u || true)
+          fi
+          candidates=$(printf '%s\n' $all $changed_ids | grep -E "$id_re" | sort -u || true)
+
           # Select a guide if its fixture OR its prose changed.
           selected=""
-          for g in $all; do
+          for g in $candidates; do
             if [ "$full" = true ] \
                || echo "${changed:-}" | grep -q "^$base/$g/" \
+               || { [ "$g" = "ssh-tcp-l4-passthrough" ] && echo "${changed:-}" | grep -q "^$ssh_example/"; } \
                || echo "${changed:-}" | grep -qE "^$docs/$g\.(md|mdx)\$"; then
               selected="$selected $g"
             fi

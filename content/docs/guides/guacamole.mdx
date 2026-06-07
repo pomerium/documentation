@@ -18,7 +18,7 @@ import Compose from '/content/examples/guides/guacamole/docker-compose.yaml.md';
 
 ## What this guide does
 
-You'll put [Apache Guacamole](https://guacamole.apache.org/) behind Pomerium so that Pomerium handles single sign-on and authorization, then forwards the authenticated user's email to Guacamole in an HTTP header. Guacamole's [header authentication extension](https://guacamole.apache.org/doc/gug/header-auth.html) reads that header and signs the user in, so there's no second login and no Guacamole password to manage.
+You'll put [Apache Guacamole](https://guacamole.apache.org/) behind Pomerium so that Pomerium handles single sign-on and authorization, then forwards the authenticated user's email to Guacamole in an HTTP header. Guacamole's [header authentication extension](https://guacamole.apache.org/doc/gug/header-auth.html) reads that header and signs the user in, so users don't get a second login prompt. Guacamole still seeds a local administrator account; rotate or delete it before exposing the service.
 
 This guide secures access to the Guacamole gateway. It does not cover adding remote-desktop connections inside Guacamole.
 
@@ -104,11 +104,16 @@ On the first run, PostgreSQL loads Guacamole's schema before the web app can con
 
    ![Guacamole home screen, signed in via the forwarded Pomerium identity](./img/guacamole/guacamole-home.png)
 
-   To confirm it's the header (not a form login) that authenticated you, mint a token through Guacamole's REST API and check the response. `username` is your forwarded email and `dataSource` is `header`:
+   To confirm it's the header (not a form login) that authenticated you, use the signed-in browser session to mint a token through Guacamole's REST API. Open your browser's developer console on the Guacamole page and run:
 
-   ```bash
-   curl -s -X POST https://guacamole.yourdomain.com/api/tokens
-   # {"authToken":"...","username":"you@example.com","dataSource":"header",...}
+   ```js
+   await fetch('/api/tokens', {method: 'POST'}).then((r) => r.json());
+   ```
+
+   The response should include your forwarded email as `username` and `header` as `dataSource`:
+
+   ```json
+   {"authToken": "...", "username": "you@example.com", "dataSource": "header"}
    ```
 
 ## Common failure modes

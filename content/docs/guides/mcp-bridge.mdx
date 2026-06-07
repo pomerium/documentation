@@ -166,7 +166,7 @@ In the Zero Console, go to **Routes → New Route**. On the **General** tab, fil
 | Policies              | leave empty for now; you'll attach one in step 3 |
 | Pass Identity Headers | leave default                                    |
 
-Click **Save Route**. The route will show up with **Assigned: None**. That's expected until you attach a policy.
+Click **Save Route**. The route will show up with **Assigned: None** until you attach a policy. The screenshot below was captured after the policy in step 3 was attached; for this step, use it to confirm the route type, `From`, and `To` fields.
 
 ![Route editor General tab for the Linear MCP route, showing Route Type MCP, From linear.slyfox-1234.pomerium.app, To https://mcp.linear.app, and the Pomerium Team policy attached](./img/mcp-bridge/route-linear-mcp-general.png)
 
@@ -287,13 +287,13 @@ You should see a log entry like:
 }
 ```
 
-The reasons in `allow-why-true` come from the PPL evaluator. For this guide's policy that's `domain-ok` (domain matched) and, for tool calls, `mcp-tool-ok` (the tool wasn't blocked by a `deny` rule). The `mcp-tool-parameters` object echoes the arguments the MCP client passed to the tool, which is useful for audit but may contain data you'd rather not retain; redact or drop that field in your log pipeline if that's a concern.
+The reasons in `allow-why-true` come from the PPL evaluator. For this guide's domain-only policy that's `domain-ok` (domain matched) and, for tool calls, `mcp-tool-ok` (no tool-specific rule blocked the call). The `mcp-tool-parameters` object echoes the arguments the MCP client passed to the tool, which is useful for audit but may contain data you'd rather not retain; redact or drop that field in your log pipeline if that's a concern.
 
-For a blocked call (try `issue_delete`), the same entry should show `"allow-why-false": ["mcp-tool-unauthorized"]` and Pomerium should return `403` to the client.
+After you add tool restrictions from [Limit MCP Tool Calling](/docs/capabilities/mcp/limit-mcp-tools), repeat this checkpoint with a blocked tool. A denied `issue_delete` call should show `"allow-why-false": ["mcp-tool-unauthorized"]` and Pomerium should return `403` to the client.
 
 :::note
 
-This flow depends on a managed Pomerium Zero control plane, Linear's hosted MCP server, and interactive OAuth consent from a real MCP client. Confirm it end to end by running the four checkpoints above against your own cluster, including the `issue_delete` -> `403` deny check in Checkpoint 4.
+This flow depends on a managed Pomerium Zero control plane, Linear's hosted MCP server, and interactive OAuth consent from a real MCP client. Confirm it end to end by running the four checkpoints above against your own cluster. If you layer on tool restrictions, verify a blocked tool call as a separate hardening check.
 
 :::
 
