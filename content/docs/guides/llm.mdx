@@ -44,8 +44,18 @@ In the [Zero Console](https://console.pomerium.app), create a policy and a route
    - **From**: `https://llm.yourdomain.com`
    - **To**: `http://open-webui:8080`
    - **Policy**: the policy from step 1.
-3. On the route, enable **Pass Identity Headers** so Pomerium forwards identity to Open WebUI, and enable **Allow WebSockets** so streamed responses work.
+
+   ![Zero Console route General tab with From, To, and Policy set for the LLM route](./img/llm/llm-route.png)
+
+3. On the route, enable **Pass Identity Headers** (Headers tab) so Pomerium forwards identity to Open WebUI, and enable **Allow WebSockets** (Timeouts tab) so streamed responses work.
+
+   ![Zero Console route Headers tab with Pass Identity Headers enabled](./img/llm/llm-headers.png)
+
+   ![Zero Console route Timeouts tab with Allow Websockets enabled](./img/llm/llm-timeouts.png)
+
 4. Under **Settings**, configure **JWT Claim Headers** to emit the `email` claim as `X-Pomerium-Claim-Email`. Pass Identity Headers alone forwards only the signed assertion; the `X-Pomerium-Claim-Email` header Open WebUI reads comes from this mapping.
+
+   ![Zero Console Settings with a JWT Claim Header mapping X-Pomerium-Claim-Email to the email claim](./img/llm/llm-claims.png)
 
 </TabItem>
 <TabItem value="core" label="Pomerium Core">
