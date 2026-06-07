@@ -29,13 +29,14 @@ test("allowed user passes the gate and signs in to GitLab as root", async ({ pag
   await shot(page, "gitlab-signin");
 
   // Sign in to GitLab itself as root. Submitting via Enter avoids depending on the
-  // exact sign-in button markup.
+  // exact sign-in button markup. Login succeeded once GitLab navigates away from its
+  // sign-in form; asserting the password field is gone (rather than watching the URL)
+  // fails fast and clearly if the credentials are ever rejected -- e.g. a future
+  // image bump tightening GitLab's password policy -- instead of an opaque timeout.
   await page.fill('input[name="user[login]"]', "root");
   await page.fill('input[name="user[password]"]', ROOT_PW);
-  await Promise.all([
-    page.waitForURL((url) => !/sign_in/.test(url.toString()), { timeout: 30000 }),
-    page.locator('input[name="user[password]"]').press("Enter"),
-  ]);
+  await page.locator('input[name="user[password]"]').press("Enter");
+  await expect(page.locator('input[name="user[password]"]')).toHaveCount(0, { timeout: 30000 });
 
   // GitLab's own API confirms the session is authenticated as root -- not merely
   // that a login page rendered. The request rides the same browser context, so it
