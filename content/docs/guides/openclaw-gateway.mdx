@@ -111,9 +111,11 @@ The first run builds the OpenClaw image, which takes a few minutes. Check status
 ## Verify the setup
 
 1. In a fresh private browser window, open `https://openclaw.yourdomain.com`. Pomerium should redirect you to your identity provider rather than showing the OpenClaw UI.
-2. Sign in as a user your policy allows. After login Pomerium proxies you to the OpenClaw control UI:
+2. Sign in as a user your policy allows. After login Pomerium proxies you to the OpenClaw Gateway Dashboard (its control UI), which presents a WebSocket connect form (WebSocket URL, an optional Gateway Token and password, and a **Connect** button) plus "How to connect" steps:
 
-   ![The OpenClaw gateway dashboard reached through Pomerium after signing in](./img/openclaw-gateway/openclaw-gateway.png)
+   ![The OpenClaw Gateway Dashboard, with its WebSocket connect form, reached through Pomerium after signing in](./img/openclaw-gateway/openclaw-gateway.png)
+
+   Reaching this dashboard confirms Pomerium authenticated you and the gateway is reachable through the route. Driving the assistant from here still depends on OpenClaw's own gateway token and device pairing, which Pomerium does not manage.
 
 3. Confirm the gateway is only reachable through Pomerium: a direct request to the container's `18789` port from outside the Docker network should fail or be refused.
 
