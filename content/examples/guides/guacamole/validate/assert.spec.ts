@@ -88,9 +88,22 @@ test("Guacamole is not reachable except through Pomerium", async ({ page }) => {
     /ENOTFOUND|getaddrinfo|EAI_AGAIN|ECONNREFUSED/i,
   );
 
-  const viaPomerium = await page.request.get(BASE, { ignoreHTTPSErrors: true });
+  // Positive control: the route through Pomerium must still reach Guacamole. A bare
+  // GET could be satisfied by a redirect or login page, so re-run header auth and
+  // assert Guacamole itself answered as alice via the header extension.
+  await login(page, BASE, alice);
+  const viaPomerium = await page.request.post(`${BASE}/api/tokens`, {
+    ignoreHTTPSErrors: true,
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    data: "",
+  });
   expect(
     viaPomerium.ok(),
-    "the route through Pomerium must still work",
+    "the authenticated route through Pomerium must still reach Guacamole",
   ).toBeTruthy();
+  const body = await viaPomerium.json();
+  expect(body.username, "positive control should prove Guacamole, not the IdP, responded").toBe(
+    alice.email,
+  );
+  expect(body.dataSource, "positive control should still use header auth").toBe("header");
 });
