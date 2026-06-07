@@ -48,8 +48,11 @@ This guide uses the hosted authenticate service so you don't have to run an IdP.
 In the [Zero Console](https://console.pomerium.app):
 
 1. Create a **Route**. In **From**, enter `https://jenkins.<your-starter-domain>`; in **To**, enter `http://jenkins:8080`.
-2. Set the policy to **Any Authenticated User** (or scope it to a group or domain).
-3. On the **Headers** tab, enable **Pass Identity Headers** and save.
+2. Set the policy to **Any Authenticated User** (or scope it to a group or domain). To restrict by email domain, create a policy with an **ALLOW** block matching the **Domain** criteria.
+
+   ![Zero Console policy builder with an ALLOW block matching the Domain criteria to pomerium.com](./img/jenkins/pz-jenkins-policy.png)
+
+3. On the **Headers** tab, enable **Pass Identity Headers**, then save the route.
 
 Zero manages the route's TLS certificate and the signing key behind its starter domain, so the JWT Auth plugin's JWKS URL is your authenticate service: `https://authenticate.<your-starter-domain>/.well-known/pomerium/jwks.json`. Use that value for the **JWKS JSON URL** in the next section.
 
@@ -88,7 +91,9 @@ Jenkins doesn't read a JWT out of the box, so install the JWT Auth plugin and po
    Pomerium sets the JWT's `iss` and `aud` to the route host, so use the host from your **From** URL: `jenkins.<your-starter-domain>` on Zero, or `jenkins.yourdomain.com` on Core.
 
 3. Leave **Allow verification failures** unchecked once the flow works. While you're first wiring it up, you can enable it temporarily so a misconfiguration doesn't lock you out, then turn it off so only verified Pomerium requests are trusted.
-4. Under **Authorization**, pick a strategy. **Logged-in users can do anything** is a reasonable start, since Pomerium's route policy is the real access gate; tighten it with matrix-based security as needed.
+4. Under **Authorization**, pick a strategy. **Logged-in users can do anything** is a reasonable start, since Pomerium's route policy is the real access gate; tighten it with matrix-based security as needed. With **Matrix-based security**, click **Add user...** and grant the signed-in user the permissions they need (for example, **Administer**) so you aren't locked out.
+
+   ![Jenkins matrix-based security with a user added and the Administer permission granted](./img/jenkins/pz-add-user-to-matrix.png)
 
 Save and restart Jenkins.
 
