@@ -82,8 +82,8 @@ flowchart LR
   Store --> Console[Pomerium Enterprise Console]
   Console --> Auditor[Audit evidence package]
 
-  Core -. route audit logs .-> Audit[Pomerium audit logs]
-  Console -. playback/download logs .-> Audit
+  Core -. emits audit logs .-> Audit[Pomerium audit logs]
+  Console -. emits playback/download logs .-> Audit
   Store -. provider data access logs .-> CloudLogs[Cloud storage audit logs]
   Audit --> Auditor
   CloudLogs --> Auditor
@@ -184,7 +184,7 @@ Pomerium delegates encryption to the storage layer. The durable control is a buc
 - GCS: set a default customer-managed encryption key (CMEK) on the bucket.
 - Azure: configure customer-managed keys in Key Vault for the storage account.
 
-Pomerium can also specify encryption per request through the bucket URI (for example S3 `ssetype=aws:kms&kmskeyid=...`), but rely on the bucket default so nothing can write unencrypted.
+On S3, Pomerium can also specify encryption per request through the bucket URI (`ssetype=aws:kms&kmskeyid=...`); this per-request option is S3-only. Rely on the bucket default regardless, so nothing can write unencrypted.
 
 How to verify: inspect a recording object's encryption status and confirm it reports your key.
 
@@ -225,7 +225,7 @@ Enable `StorageBlobLogs`. Pomerium requests carry a `ClientRequestId` and a `Pom
 </TabItem>
 </Tabs>
 
-2. Correlate. Enterprise audit entries (message `authorize blob read`) carry a `user_hmac_id`, and recording/download/metadata accesses also carry an `access_id`; the provider log carries the same values. Match on `access_id` where present (some operations, and `HEAD` requests, carry only `user_hmac_id`) to tie a storage access back to a specific user action and identity.
+2. Correlate. Enterprise audit entries (message `authorize blob read`) carry a `user_hmac_id`, and recording/download/metadata accesses also carry an `access_id`; the provider log carries the same values. Match on `access_id` where present (some operations carry only `user_hmac_id`) to tie a storage access back to a specific user action and identity. Existence checks (`HEAD` requests) are a special case: on S3 they appear in CloudTrail / access logs but carry neither the `pomerium_access_id` parameter nor the user-agent HMAC, so they cannot be correlated by those values; Azure and GCS generally do not surface existence checks in their audit logs at all.
 
 3. Preserve correlation across rotation. The `user_hmac_id` is derived from the Enterprise shared secret. If you rotate the shared secret, keep the previous secrets so older provider logs remain correlatable.
 
@@ -234,7 +234,7 @@ How to verify, end to end:
 1. In the Enterprise audit log, find the `authorize blob read` event for the recording and copy its `access_id`.
 2. Query the cloud-provider storage access log for the same value -- the `pomerium_access_id` query parameter (S3), the `x-goog-custom-audit-pomerium-access-id` annotation (GCS), or the `ClientRequestId` (Azure).
 3. Confirm the same `user_hmac_id` appears on both sides.
-4. Confirm there are no reads of the recording object that lack Pomerium's annotation. A storage read with no matching Pomerium `access_id`/HMAC is access outside the chain of custody and should be investigated.
+4. Confirm there are no reads of the recording object that lack Pomerium's annotation. A storage read with no matching Pomerium `access_id`/HMAC is access outside the chain of custody and should be investigated. On S3, exclude `HEAD` existence checks, which legitimately carry no annotation.
 
 ![Session recording replayed in the asciinema web player](./img/session-recording/compliance/asciinema-player-playback.png)
 
@@ -267,7 +267,6 @@ For each session you sample during an audit, collect the following. Most items c
 | Recording ID | Stable identifier for the reviewed session | Enterprise Console; object path `<cluster-id>/ssh/v1/<recording-id>/` |
 | Recording metadata | Start time, SSH login name, route, upstream, Pomerium user and session IDs | `metadata.json`; Console session details |
 | Replayable recording | What appeared in the terminal during the session | Console playback or downloaded `<recording-id>.asciicast.json` |
-| Route policy | Recording was enabled for that SSH route | Pomerium route config (`session_recording.enabled`) |
 | Identity evidence | The session is tied to an authenticated IdP user | Pomerium audit log; IdP |
 | Playback / download audit log | Who accessed the recording after capture | Enterprise audit log (`authorize blob read`, `access_type`) |
 | Cloud storage data-access log | The object was read through the expected Pomerium path | S3 CloudTrail; GCS Data Access logs; Azure StorageBlobLogs |
@@ -309,7 +308,7 @@ Pomerium session recording, configured as above, supports these controls. Each c
 
 ### SOC 2
 
-Use recordings as supporting evidence for access monitoring, incident investigation, and review of privileged infrastructure access. The recording, route policy, Enterprise audit log, and provider data-access log together show who accessed which system, when, and how the evidence was protected.
+Use recordings as supporting evidence for access monitoring, incident investigation, and review of privileged infrastructure access. The recording, Enterprise audit log, and provider data-access log together show who accessed which system, when, and how the evidence was protected.
 
 ### PCI DSS
 
