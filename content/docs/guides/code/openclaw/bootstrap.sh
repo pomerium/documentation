@@ -250,7 +250,7 @@ phase_env_setup() {
   fi
   echo >&2
 
-  local openclaw_version="${OPENCLAW_VERSION:-2026.5.12}"
+  local openclaw_version="${OPENCLAW_VERSION:-2026.6.1}"
   cat > .env.new <<EOF
 # Pomerium Zero Configuration
 # Get this token from https://console.pomerium.com/ when creating your cluster

@@ -196,7 +196,7 @@ If either doesn't work as expected, head to [Troubleshooting](#troubleshooting) 
 
 ## Step 5: Upgrade OpenClaw (Optional, Recommended)
 
-OpenClaw is pinned to a specific version in `.env` (e.g. `OPENCLAW_VERSION=2026.5.12`) so installs are reproducible. Staying on a recent version is recommended for security and bug fixes, but OpenClaw is still maturing and upstream releases can introduce breaking changes, so **always check the OpenClaw release notes before bumping the version**.
+OpenClaw is pinned to a specific version in `.env` (e.g. `OPENCLAW_VERSION=2026.6.1`) so installs are reproducible. Staying on a recent version is recommended for security and bug fixes, but OpenClaw is still maturing and upstream releases can introduce breaking changes, so **always check the OpenClaw release notes before bumping the version**.
 
 To upgrade:
 
