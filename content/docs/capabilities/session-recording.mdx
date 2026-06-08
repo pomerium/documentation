@@ -204,7 +204,7 @@ Uploading to blob stores requires a cluster ID, which is assigned by Pomerium En
 
 Configuring the bucket in Core alone is not sufficient — recordings will not appear in the Enterprise Console unless the same bucket is also configured in Enterprise.
 
-For this reason, we strongly recommend configuring storage through Pomerium Enterprise or the Terraform provider.
+For this reason, **we strongly recommend configuring storage through Pomerium Enterprise or the Terraform provider**.
 
 :::
 
@@ -269,7 +269,7 @@ resource "pomerium_settings" "test_session_recording_opts" {
 
 </Tabs>
 
-The HMAC of the user id is generated from the [**shared secret**](/docs/reference/shared-secret) Pomerium Enterprise uses. When rotating the shared secret, keep track of the previous secret in order to correlate against older audit logs.
+The HMAC of the user id is generated from the [**shared secret**](/docs/reference/shared-secret) Pomerium Enterprise uses. **When rotating the shared secret, keep track of the previous secret in order to correlate against older audit logs**.
 
 ### 4. Connect Pomerium instance to Enterprise
 
@@ -362,7 +362,7 @@ For specific privileged access management compliance standards, end-users will w
 
 :::important
 
-Both the instance uploading the recordings and the Enterprise instance need to be configured with credentials with valid access to the bucket(s) being configured. See below for each storage type.
+Credentials are not automatically shared from Enterprise to Core instances. Credentials must be configured on each instance separately.
 
 :::
 
@@ -653,7 +653,7 @@ Pomerium captures the following metadata for each recording:
 
 ### Playback
 
-Session recordings can be replayed in Pomerium Enterprise. Navigate to the "Records" page using the side panel link (under the "Recordings" heading) to view available recordings. They are available by Pomerium Enterprise Namespace and Cluster, and can only be accessed by the appropriate namespace administrator.
+Session recordings can be replayed in Pomerium Enterprise. Navigate to the "Recordings" page using the side panel link (under the **Recordings** section) to view available recordings. They are available by Pomerium Enterprise Namespace and Cluster, and can only be accessed by the appropriate namespace administrator.
 
 ![Recordings](./img/session-recording/session-recordings-showup.png)
 
