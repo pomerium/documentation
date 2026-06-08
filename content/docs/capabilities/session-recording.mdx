@@ -217,7 +217,7 @@ blob_storage:
 
 <TabItem value="Enterprise" label="Enterprise">
 
-Navigate to the Recordings > Datasource section. Each blob datasource is scoped per-namespace.
+Navigate to the "Datasource" page using the side panel link (under the "Recordings" heading). Each blob datasource is scoped per-namespace.
 
 ![Datasource menu](./img/session-recording/recording-datasource-menu.png)
 
@@ -269,14 +269,16 @@ resource "pomerium_settings" "test_session_recording_opts" {
 
 </Tabs>
 
+The HMAC of the user id is generated from the [**shared secret**](/docs/reference/shared-secret) Pomerium Enterprise uses. When rotating the shared secret, keep track of the previous secret in order to correlate against older audit logs.
+
 ### 4. Connect Pomerium instance to Enterprise
 
-Connect the instance on which you want to record sessions to Enterprise. To do so, you will need the `databroker service URL` & `shared secret` of that instance and, optionally, the certificates required to connect to it.
+Connect the instance on which you want to record sessions to Enterprise. To do so, you will need the [**databroker service URL**](/docs/reference/service-urls#databroker-service-url) and [**shared secret**](/docs/reference/shared-secret) of that instance and, optionally, the certificates required to connect to it.
 
 <Tabs>
 <TabItem label="Enterprise" value="Enterprise">
 
-Navigate to `Configure>Clusters` side panel tab, and click "Add Cluster":
+Navigate to the "Clusters" page using the side panel link (under the "Configure" heading), and click "Add Cluster":
 
 ![Connect Cluster to Enterprise](./img/session-recording/connect_cluster.png)
 
@@ -378,12 +380,12 @@ Blob storage configurations follow a URI format:
 <scheme>://<bucket>?<param1>=<value1>&<param2>=<value2>
 ```
 
-See cloud-provider-specific details below. You can configure them via Enterprise UI or Terraform.
+See cloud provider specific details below. You can configure them via Enterprise UI or Terraform.
 
 <Tabs>
 <TabItem value="Enterprise" label="Enterprise">
 
-Navigate to the Enterprise UI Section Recordings > Datasources. The UI provides drop down options for configuring the bucket URI parameters.
+Navigate to the "Datasources" page using the side panel link (under the "Recordings" heading). The UI provides drop down options for configuring the bucket URI parameters.
 
 Make sure the recording datasource is configured in the same namespace as the Pomerium cluster you wish to apply it to.
 
@@ -566,8 +568,8 @@ Please consult the [upstream documentation](https://learn.microsoft.com/en-us/az
 
 **Bucket URI**:
 
-- Scheme : `azblob`
-- Path : `<container-name>`
+- Scheme: `azblob`
+- Path: `<container-name>`
 
 | Parameter | Description |
 | --- | --- |
@@ -590,8 +592,8 @@ File storage is not recommended for production setups. Additionally, for Enterpr
 file://<file-path>
 ```
 
-- Scheme : `file`
-- Path : filesystem path to write recordings to
+- Scheme: `file`
+- Path: filesystem path to write recordings to
 
 | Parameter | Description |
 | --- | --- |
@@ -638,20 +640,20 @@ Recordings are stored in blob stores using the following path structure
 
 Pomerium captures the following metadata for each recording:
 
-- `start_time` : when the session started
-- `login_name` : the ssh user
-- `session_id` : pomerium session id
-- `user_id` : pomerium user id
-- `stream_id` : internal stream id for correlation with logs
-- `route_name` : pomerium route name, e.g. `from: ssh://example`, the route_name would be `example`
-- `upstream` : upstream target, e.g. `to: ssh://0.0.0.0:22`, the upstream would be `0.0.0.0:22`
-- `pty_info` : info about the shell where the recording came from
+- `start_time`: when the session started
+- `login_name`: the ssh user
+- `session_id`: pomerium session id
+- `user_id`: pomerium user id
+- `stream_id`: internal stream id for correlation with logs
+- `route_name`: pomerium route name, e.g. `from: ssh://example`, the route_name would be `example`
+- `upstream`: upstream target, e.g. `to: ssh://0.0.0.0:22`, the upstream would be `0.0.0.0:22`
+- `pty_info`: info about the shell where the recording came from
 
 ## Accessing recordings
 
 ### Playback
 
-Session recordings can be replayed in Pomerium Enterprise. Navigate to the `Recordings > Records` side-panel tab to view available recordings. They are available by Pomerium Enterprise Namespace and Cluster, and can only be accessed by the appropriate namespace administrator.
+Session recordings can be replayed in Pomerium Enterprise. Navigate to the "Records" page using the side panel link (under the "Recordings" heading) to view available recordings. They are available by Pomerium Enterprise Namespace and Cluster, and can only be accessed by the appropriate namespace administrator.
 
 ![Recordings](./img/session-recording/session-recordings-showup.png)
 
@@ -683,9 +685,9 @@ The Integrity & Auditing section describes the "chain of custody" for session re
 
 The "chain of custody" model Pomerium provides relies on:
 
-- **Storage access patterns** : guarantees about how the recordings are uploaded and accessed
-- **Enterprise audit logs** : records every access by end-users through Pomerium Enterprise
-- **Cloud provider audit logs** : Audit logs at the storage layer include metadata that can be correlated with Pomerium Enterprise, enabling verification when data was accessed through Pomerium Enterprise.
+- **Storage access patterns**: guarantees about how the recordings are uploaded and accessed
+- **Enterprise audit logs**: records every access by end-users through Pomerium Enterprise
+- **Cloud provider audit logs**: Audit logs at the storage layer include metadata that can be correlated with Pomerium Enterprise, enabling verification when data was accessed through Pomerium Enterprise.
 
 This model provides a tamper-evident audit trail for the handling and access of session recording data.
 
@@ -738,10 +740,9 @@ In Enterprise, each time a bucket or specific recording data is accessed, Enterp
 Some of the fields above were redacted for the docs, but will contain the relevant information related to access.
 
 | Field | Description | Sensitivity |
-| --- | --- | --- |
+| --- | --- | --- | --- | --- | --- | --- |
 | `access_id` | Unique identifier for a particular action. Note that an action here can have multiple access events - opening the bucket, reading metadata, and viewing the recording | Low |
-| `access_type` | The type of access. `recording` : the recording contents were viewed. `metadata` : the recording metadata was viewed. `bucket`(internal) : Pomerium Enterprise made a connection to the bucket for reading. `download` : the recording was downloaded | Low |
-| `deny` | Whether the access was denied. | Low |
+| `access_type` | The type of access. <ul><li>`recording`: the recording contents were viewed</li><li>`metadata`: the recording metadata was viewed</li><li>`bucket`: (internal) Pomerium Enterprise made a connection to the bucket for reading</li><li>`download`: the recording was downloaded</li></ul> | Low |  | `deny` | Whether the access was denied. | Low |
 | `success` | Whether the access succeeded. | Low |
 | `reason` | Optional. Provides additional details about failures | Low |
 | `recording_format` | Format of the recording being accessed (e.g. `ssh`). | Low |
@@ -758,9 +759,7 @@ Some of the fields above were redacted for the docs, but will contain the releva
 
 :::important
 
-The HMAC of the user id is generated from the shared_secret Pomerium Enterprise uses. Make sure when rotating shared_secrets to keep track of previous secrets for correlation on older logs.
-
-:::
+The HMAC of the user id is generated from the [**shared secret**](/docs/reference/shared-secret) Pomerium Enterprise uses. When rotating the shared secret, keep track of the previous secret in order to correlate against older audit logs. :::
 
 ### Auditing (Blob)
 
