@@ -1,6 +1,6 @@
 services:
   pomerium:
-    image: pomerium/pomerium@sha256:e10d1d267af24f581157f485d9b0bc08469e2428675b696a08e42ceb09b2279c # v0.32.7
+    image: pomerium/pomerium:v0.32.7@sha256:e10d1d267af24f581157f485d9b0bc08469e2428675b696a08e42ceb09b2279c
     volumes:
       - ./config.yaml:/pomerium/config.yaml:ro
       - pomerium-cache:/data
@@ -16,7 +16,7 @@ services:
     restart: always
 
   paperless:
-    image: ghcr.io/paperless-ngx/paperless-ngx@sha256:3421ebe06ed27662d014046cf5089e612de853aae0c676a2bc72f73b38080e57 # 2.18.4
+    image: ghcr.io/paperless-ngx/paperless-ngx:2.18.4@sha256:3421ebe06ed27662d014046cf5089e612de853aae0c676a2bc72f73b38080e57
     depends_on:
       - db
       - redis
@@ -42,7 +42,7 @@ services:
     restart: always
 
   db:
-    image: postgres@sha256:16bc17c64a573ef34162af9298258d1aec548232985b33ed7b1eac33ba35c229 # 16-alpine
+    image: postgres:16-alpine@sha256:16bc17c64a573ef34162af9298258d1aec548232985b33ed7b1eac33ba35c229
     environment:
       POSTGRES_DB: paperless
       POSTGRES_USER: paperless
@@ -54,7 +54,7 @@ services:
     restart: always
 
   redis:
-    image: redis@sha256:6ab0b6e7381779332f97b8ca76193e45b0756f38d4c0dcda72dbb3c32061ab99 # 7-alpine
+    image: redis:7-alpine@sha256:6ab0b6e7381779332f97b8ca76193e45b0756f38d4c0dcda72dbb3c32061ab99
     volumes:
       - paperless-redis:/data
     networks:

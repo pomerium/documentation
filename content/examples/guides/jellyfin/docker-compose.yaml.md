@@ -1,7 +1,7 @@
 ```yaml title="docker-compose.yaml"
 services:
   pomerium:
-    image: pomerium/pomerium@sha256:e10d1d267af24f581157f485d9b0bc08469e2428675b696a08e42ceb09b2279c # v0.32.7
+    image: pomerium/pomerium:v0.32.7@sha256:e10d1d267af24f581157f485d9b0bc08469e2428675b696a08e42ceb09b2279c
     volumes:
       - ./config.yaml:/pomerium/config.yaml:ro
       - pomerium-cache:/data

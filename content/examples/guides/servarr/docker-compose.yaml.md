@@ -1,7 +1,7 @@
 ```yaml title="docker-compose.yaml"
 services:
   pomerium:
-    image: pomerium/pomerium@sha256:e10d1d267af24f581157f485d9b0bc08469e2428675b696a08e42ceb09b2279c # v0.32.7
+    image: pomerium/pomerium:v0.32.7@sha256:e10d1d267af24f581157f485d9b0bc08469e2428675b696a08e42ceb09b2279c
     volumes:
       - ./config.yaml:/pomerium/config.yaml:ro
       - pomerium-cache:/data
@@ -16,7 +16,7 @@ services:
     restart: always
 
   sonarr:
-    image: lscr.io/linuxserver/sonarr@sha256:0b3f344388bd7bed4f2f770058de795e76447e4a481b83c8d5f8fed489371fde # 4.0.17
+    image: lscr.io/linuxserver/sonarr:4.0.17@sha256:0b3f344388bd7bed4f2f770058de795e76447e4a481b83c8d5f8fed489371fde
     environment:
       PUID: 1000
       PGID: 1000
@@ -28,7 +28,7 @@ services:
     restart: always
 
   radarr:
-    image: lscr.io/linuxserver/radarr@sha256:c0a4335d4249b46102f64cf6fa27ffc3bddfd9138fac1e4ddf238afd37f02d1f # 6.1.1
+    image: lscr.io/linuxserver/radarr:6.1.1@sha256:c0a4335d4249b46102f64cf6fa27ffc3bddfd9138fac1e4ddf238afd37f02d1f
     environment:
       PUID: 1000
       PGID: 1000
@@ -40,7 +40,7 @@ services:
     restart: always
 
   prowlarr:
-    image: lscr.io/linuxserver/prowlarr@sha256:2489c6dbaf11e3a6d71aeb2e6980d04193d4af611aa7064a974851222fd41722 # 2.3.5
+    image: lscr.io/linuxserver/prowlarr:2.3.5@sha256:2489c6dbaf11e3a6d71aeb2e6980d04193d4af611aa7064a974851222fd41722
     environment:
       PUID: 1000
       PGID: 1000
@@ -52,7 +52,7 @@ services:
     restart: always
 
   sabnzbd:
-    image: lscr.io/linuxserver/sabnzbd@sha256:3de84922d3b4c5e7062b3cbd1e08f57d8dc113a8be4dc0447d33e2da293bab26 # 5.0.3
+    image: lscr.io/linuxserver/sabnzbd:5.0.3@sha256:3de84922d3b4c5e7062b3cbd1e08f57d8dc113a8be4dc0447d33e2da293bab26
     environment:
       PUID: 1000
       PGID: 1000
