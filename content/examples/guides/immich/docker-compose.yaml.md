@@ -1,0 +1,51 @@
+```yaml title="docker-compose.yaml"
+services:
+  pomerium:
+    image: pomerium/pomerium@sha256:e10d1d267af24f581157f485d9b0bc08469e2428675b696a08e42ceb09b2279c # v0.32.7
+    volumes:
+      - ./config.yaml:/pomerium/config.yaml:ro
+      - pomerium-cache:/data
+    ports:
+      - 443:443
+      - 80:80
+    restart: always
+
+  immich-server:
+    image: ghcr.io/immich-app/immich-server@sha256:c15bff75068effb03f4355997d03dc7e0fc58720c2b54ad6f7f10d1bc57efaa5 # v2.7.5
+    environment:
+      DB_HOSTNAME: database
+      DB_USERNAME: postgres
+      DB_PASSWORD: postgres
+      DB_DATABASE_NAME: immich
+      REDIS_HOSTNAME: redis
+    volumes:
+      - immich-library:/data
+    depends_on:
+      - database
+      - redis
+    restart: always
+
+  # Immich requires this VectorChord/pgvecto-rs Postgres image. A stock
+  # postgres image crashes immich-server on first boot because the vector
+  # search extension is missing, so pin the exact image Immich ships.
+  database:
+    image: ghcr.io/immich-app/postgres:14-vectorchord0.4.3-pgvectors0.2.0@sha256:bcf63357191b76a916ae5eb93464d65c07511da41e3bf7a8416db519b40b1c23
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: immich
+      POSTGRES_INITDB_ARGS: '--data-checksums'
+    volumes:
+      - immich-db:/var/lib/postgresql/data
+    shm_size: 128mb
+    restart: always
+
+  redis:
+    image: docker.io/valkey/valkey:9@sha256:3b55fbaa0cd93cf0d9d961f405e4dfcc70efe325e2d84da207a0a8e6d8fde4f9
+    restart: always
+
+volumes:
+  pomerium-cache:
+  immich-library:
+  immich-db:
+```

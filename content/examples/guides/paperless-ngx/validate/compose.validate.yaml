@@ -1,0 +1,119 @@
+# Sealed E2E validation for the Paperless-ngx guide. Reuses the shared harness
+# (Keycloak + certs + headless runner) and adds the Paperless-ngx stack behind a
+# Pomerium wired to the in-network IdP.
+# Run with: scripts/validate-guide-fixtures.sh paperless-ngx
+#
+# This is a real end-to-end test: it proves Pomerium gates the route, an allowed
+# user passes the gate, and Paperless-ngx then serves its own Django sign-in page
+# behind that gate (HTTP 200 with the Paperless-ngx login markers). The admin
+# credential below is a throwaway bootstrap user for this sealed, ephemeral stack.
+#
+# Network isolation mirrors the guide's trust boundary: Paperless, Postgres, and
+# Redis sit ONLY on the internal-only `paperless-internal` network, shared with
+# pomerium alone. The test-runner is on `default`, so it cannot reach Paperless
+# directly (the spec proves this); the only path in is through Pomerium, which
+# bridges both networks.
+#
+# PAPERLESS_URL MUST equal the public route host. Paperless-ngx is a Django app and
+# derives ALLOWED_HOSTS / CSRF_TRUSTED_ORIGINS from it; a mismatch yields HTTP 400
+# behind the proxy. Paperless runs migrations + builds its search index on first
+# boot, so its healthcheck uses a generous start_period before Pomerium waits on it.
+
+include:
+  - ../../_harness/compose/compose.harness.yaml
+
+services:
+  redis:
+    image: redis@sha256:6ab0b6e7381779332f97b8ca76193e45b0756f38d4c0dcda72dbb3c32061ab99
+    networks:
+      paperless-internal:
+        aliases:
+          - redis
+
+  db:
+    image: postgres@sha256:16bc17c64a573ef34162af9298258d1aec548232985b33ed7b1eac33ba35c229
+    environment:
+      POSTGRES_DB: paperless
+      POSTGRES_USER: paperless
+      POSTGRES_PASSWORD: paperless-e2e-db-pass
+    networks:
+      paperless-internal:
+        aliases:
+          - db
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U paperless -d paperless']
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 20s
+
+  paperless:
+    image: ghcr.io/paperless-ngx/paperless-ngx@sha256:3421ebe06ed27662d014046cf5089e612de853aae0c676a2bc72f73b38080e57
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    environment:
+      PAPERLESS_REDIS: redis://redis:6379
+      PAPERLESS_DBHOST: db
+      PAPERLESS_DBUSER: paperless
+      PAPERLESS_DBPASS: paperless-e2e-db-pass
+      PAPERLESS_DBNAME: paperless
+      PAPERLESS_SECRET_KEY: paperless-e2e-throwaway-secret-key
+      # Must equal the public route host or Django answers HTTP 400 behind Pomerium.
+      PAPERLESS_URL: https://paperless.localhost.pomerium.io
+      PAPERLESS_ADMIN_USER: admin
+      PAPERLESS_ADMIN_PASSWORD: paperless-e2e-admin-pass
+    networks:
+      paperless-internal:
+        aliases:
+          - paperless
+    healthcheck:
+      # python3 ships in the image; hit the local Django sign-in page. 200 means
+      # migrations ran and the app is serving (not just the port being open).
+      test:
+        [
+          'CMD-SHELL',
+          'python3 -c "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen(''http://localhost:8000/accounts/login/'', timeout=5).status==200 else 1)"',
+        ]
+      interval: 10s
+      timeout: 10s
+      retries: 40
+      start_period: 180s
+
+  pomerium:
+    image: pomerium/pomerium@sha256:e10d1d267af24f581157f485d9b0bc08469e2428675b696a08e42ceb09b2279c
+    command: ['--config', '/pomerium/config.yaml']
+    env_file:
+      - ../../_harness/pomerium/validation.env
+    volumes:
+      - certs:/certs:ro
+      - ./routes.validate.yaml:/pomerium/config.yaml:ro
+    depends_on:
+      certs-init:
+        condition: service_completed_successfully
+      keycloak:
+        condition: service_healthy
+      paperless:
+        condition: service_healthy
+    networks:
+      # On `default` for the IdP + test-runner, and on the internal-only network to
+      # reach Paperless. This is the only service bridging the two.
+      default:
+        aliases:
+          - authenticate.localhost.pomerium.io
+          - paperless.localhost.pomerium.io
+      paperless-internal: {}
+    healthcheck:
+      test: ['CMD', 'pomerium', 'health']
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 10s
+
+networks:
+  # Internal-only: no route to the outside, and the test-runner is not attached,
+  # so Paperless is reachable only via Pomerium.
+  paperless-internal:
+    internal: true

@@ -1,0 +1,71 @@
+# Sealed E2E validation for the Jellyfin guide. Reuses the shared harness (Keycloak +
+# certs + headless runner) and adds Jellyfin behind a Pomerium wired to the in-network
+# IdP. Run with: scripts/validate-guide-fixtures.sh jellyfin
+#
+# This is a real end-to-end test: it proves Pomerium gates the route, an unauthenticated
+# request is bounced to the IdP, and an allowed user passes the gate and reaches a live
+# Jellyfin (its unauthenticated /System/Info/Public endpoint answers 200 JSON behind the
+# gate -- proof the upstream is live and the gate opened, since that endpoint 401s nothing).
+#
+# Network isolation mirrors the guide's trust boundary: Jellyfin sits ONLY on the
+# internal-only `jellyfin-internal` network, shared with pomerium alone. The test-runner
+# is on `default`, so it cannot reach Jellyfin directly (the spec proves this); the only
+# path in is through Pomerium, which bridges both networks.
+#
+# Jellyfin initializes its config and SQLite database on first boot, so its healthcheck
+# uses a generous start_period; Pomerium waits for it to report healthy first.
+
+include:
+  - ../../_harness/compose/compose.harness.yaml
+
+services:
+  jellyfin:
+    image: jellyfin/jellyfin@sha256:aefb67e6a7ff1debdd154a78a7bbb780fd0c873d8639210a7f6a2016ad2b35db
+    environment:
+      JELLYFIN_PublishedServerUrl: https://jellyfin.localhost.pomerium.io
+    networks:
+      jellyfin-internal:
+        aliases:
+          - jellyfin
+    healthcheck:
+      test: ['CMD', 'curl', '-fsS', 'http://127.0.0.1:8096/System/Info/Public']
+      interval: 10s
+      timeout: 10s
+      retries: 30
+      start_period: 120s
+
+  pomerium:
+    image: pomerium/pomerium@sha256:e10d1d267af24f581157f485d9b0bc08469e2428675b696a08e42ceb09b2279c
+    command: ['--config', '/pomerium/config.yaml']
+    env_file:
+      - ../../_harness/pomerium/validation.env
+    volumes:
+      - certs:/certs:ro
+      - ./routes.validate.yaml:/pomerium/config.yaml:ro
+    depends_on:
+      certs-init:
+        condition: service_completed_successfully
+      keycloak:
+        condition: service_healthy
+      jellyfin:
+        condition: service_healthy
+    networks:
+      # On `default` for the IdP + test-runner, and on the internal-only network to
+      # reach Jellyfin. This is the only service bridging the two.
+      default:
+        aliases:
+          - authenticate.localhost.pomerium.io
+          - jellyfin.localhost.pomerium.io
+      jellyfin-internal: {}
+    healthcheck:
+      test: ['CMD', 'pomerium', 'health']
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 10s
+
+networks:
+  # Internal-only: no route to the outside, and the test-runner is not attached, so
+  # Jellyfin is reachable only via Pomerium.
+  jellyfin-internal:
+    internal: true
