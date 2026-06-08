@@ -10,7 +10,7 @@ description: Deploy OpenClaw behind Pomerium with a single install script that w
 
 This guide shows you how to add authentication and authorization to [OpenClaw](https://openclaw.ai) (formerly Clawdbot/Moltbot) using Pomerium as an identity-aware access proxy. OpenClaw is an open-source personal AI assistant with persistent memory, file and shell access, browser automation, and multi-platform chat integrations.
 
-The setup is automated by an install script. One `curl | bash` command clones the [openclaw-pomerium-guide](https://github.com/pomerium/openclaw-pomerium-guide) repository, prompts for four values, then provisions everything: Pomerium policy, SSH route, web route, cluster SSH config, JWT claim header mapping, and OpenClaw's trusted-proxy auth configuration.
+The setup is automated by an install script. One `curl | bash` command pulls the OpenClaw guide code from the Pomerium documentation repository, prompts for four values, then provisions everything: Pomerium policy, SSH route, web route, cluster SSH config, JWT claim header mapping, and OpenClaw's trusted-proxy auth configuration.
 
 This guide is for anyone hosting their own OpenClaw, whether that's an individual on a homelab, a team running it for shared use, or an org standing it up for a department. The setup uses Docker Compose on a single host, which fits most single-server deployments. If you need to run OpenClaw across multiple nodes or in Kubernetes, this isn't the right starting point. And because OpenClaw itself is still maturing, the sweet spot is single-team or small-group use rather than large multi-tenant production.
 
@@ -135,18 +135,18 @@ The API token is only needed during install. When the script finishes it offers 
 On your deployment host, run:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/pomerium/openclaw-pomerium-guide/main/install.sh | bash
+curl -fsSL https://pomerium.com/docs/guides/code/openclaw/install.sh | bash
 ```
 
-This clones the repository into `./pomclaw` and hands off to `bootstrap.sh`. To install somewhere else, pass a path:
+This clones the guide code into `./pomclaw` and hands off to `bootstrap.sh`. To install somewhere else, pass a path:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/pomerium/openclaw-pomerium-guide/main/install.sh | bash -s -- ~/openclaw
+curl -fsSL https://pomerium.com/docs/guides/code/openclaw/install.sh | bash -s -- ~/openclaw
 ```
 
 :::tip Inspect before running
 
-If you'd rather review the scripts first, clone the [repository](https://github.com/pomerium/openclaw-pomerium-guide) manually and run `./bootstrap.sh`. The prompts work the same way.
+If you'd rather review the scripts first, the source lives in [`content/docs/guides/code/openclaw`](https://github.com/pomerium/documentation/tree/main/content/docs/guides/code/openclaw). Clone the documentation repository and run `./bootstrap.sh` from that directory. The prompts work the same way.
 
 :::
 
@@ -317,7 +317,7 @@ cd ./pomclaw
 If you're piping `curl | bash` from a non-interactive shell (CI job, automation), `bootstrap.sh` can't prompt for the four required values. Either:
 
 - Run the install from an interactive shell, or
-- Clone the repository, populate `./pomclaw/.env` manually, then run `./bootstrap.sh` directly.
+- Clone the documentation repository, copy the files from `content/docs/guides/code/openclaw`, populate `./pomclaw/.env` manually, then run `./bootstrap.sh` directly.
 
 ### Pomerium Zero API token authentication fails
 
@@ -361,7 +361,7 @@ OpenClaw is in trusted-proxy mode but isn't seeing the `x-pomerium-claim-email` 
 
 ## Additional Resources
 
-- [openclaw-pomerium-guide repository](https://github.com/pomerium/openclaw-pomerium-guide): the install and bootstrap scripts
+- [OpenClaw guide source code](https://github.com/pomerium/documentation/tree/main/content/docs/guides/code/openclaw): install and bootstrap scripts
 - [Pomerium Native SSH Access](/docs/capabilities/native-ssh-access)
 - [Pomerium Zero Native SSH Configuration Guide](/docs/guides/zero-ssh)
 - [Pomerium Policy Language (PPL)](/docs/internals/ppl)
