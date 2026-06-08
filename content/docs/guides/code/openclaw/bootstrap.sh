@@ -440,6 +440,7 @@ zero_login() {
 
 zero_resolve_ids() {
   # Resolve org/cluster/namespace IDs from the cluster's FQDN. These are
+  # cspell:ignore Bxrv Hfkb
   # opaque internal identifiers (e.g. `bKfXBzxQnkQcXkSBxrvHfkbVZnb`) that
   # users don't need to see -- they're only used as path components in
   # subsequent API calls. Errors that mention them are still surfaced.
