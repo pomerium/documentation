@@ -3,6 +3,7 @@
 title: Secure GitLab with Pomerium
 sidebar_label: GitLab
 lang: en-US
+image: ./img/gitlab/gitlab-dashboard.png
 keywords: [pomerium, gitlab, sso, oidc, identity aware proxy, self-hosted]
 description: Put self-hosted GitLab behind Pomerium so every request is authenticated and authorized at the front door before it reaches GitLab.
 ---
@@ -18,6 +19,13 @@ import Compose from '/content/examples/guides/gitlab/docker-compose.yaml.md';
 ## What this guide does
 
 You'll put a self-hosted [GitLab](https://gitlab.com/) instance behind Pomerium so that Pomerium becomes the single front door: every request is authenticated against your identity provider and checked against your policy before it ever reaches GitLab. GitLab keeps running its own login and authorization on top, so Pomerium acts as an additional gate rather than replacing GitLab's accounts.
+
+```mermaid
+flowchart LR
+    Browser --> Pomerium["Pomerium<br/>front-door authN + authZ"]
+    Pomerium -.->|"sign in"| IdP[Identity provider]
+    Pomerium --> GitLab["GitLab<br/>own login on top"]
+```
 
 ## When to use this guide
 
@@ -85,11 +93,22 @@ docker compose exec gitlab grep 'Password:' /etc/gitlab/initial_root_password
 
 ## Run the stack
 
-The Compose file runs Pomerium Core and GitLab together (for Zero, drop the `pomerium` service and use the `compose.yaml` from the Quickstart with your `POMERIUM_ZERO_TOKEN`, keeping the `gitlab` service below):
+The Compose file below runs Pomerium and GitLab together. Wire up Pomerium for your deployment, then start the stack:
+
+<Tabs queryString="type">
+<TabItem value="zero" label="Pomerium Zero" default>
+
+Drop the `pomerium` service and use the `compose.yaml` from the Quickstart with your `POMERIUM_ZERO_TOKEN`, keeping the `gitlab` service shown below.
+
+</TabItem>
+<TabItem value="core" label="Pomerium Core">
+
+Keep the `pomerium` service shown below and place the `config.yaml` from the previous step next to this `docker-compose.yaml`.
+
+</TabItem>
+</Tabs>
 
 <Compose />
-
-Start it:
 
 ```bash
 docker compose up -d
@@ -107,6 +126,8 @@ GitLab is heavy and slow to initialize. The container can take several minutes b
 3. **Sign in to GitLab.** Use the `root` account and the initial password from the previous section. GitLab authenticates you and lands you on its dashboard, served through Pomerium.
 
 ![The GitLab dashboard, signed in, reached through Pomerium](./img/gitlab/gitlab-dashboard.png)
+
+4. **A disallowed user is blocked.** Sign in as a user your policy excludes and open `https://gitlab.yourdomain.com`. Pomerium denies access, so the request never reaches GitLab's sign-in page.
 
 Pomerium gates the route; GitLab runs its own login on top. GitLab's root login and first-run setup are GitLab's concern, not Pomerium's.
 

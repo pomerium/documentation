@@ -86,6 +86,7 @@ docker compose up -d
 1. **The route requires authentication.** In a fresh browser, open `https://tiddlywiki.yourdomain.com`. You should be redirected to sign in, not straight into the wiki.
 2. **An allowed user gets in.** Sign in. Pomerium redirects you back to TiddlyWiki.
 3. **TiddlyWiki recognizes the identity.** Open `https://tiddlywiki.yourdomain.com/status`. The JSON response should show your email as `username` and `anonymous: false`, confirming TiddlyWiki trusts the forwarded header.
+4. **A disallowed user is blocked.** Sign in as a user your policy excludes and open `https://tiddlywiki.yourdomain.com`. Pomerium denies access, so no identity header is forwarded and you never reach the wiki.
 
 Signed in, the wiki loads with your identity in place of an anonymous visitor:
 

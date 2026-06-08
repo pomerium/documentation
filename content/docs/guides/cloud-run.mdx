@@ -21,7 +21,14 @@ description: Put Pomerium in front of a Cloud Run service as a standard upstream
 
 # Secure Cloud Run with Pomerium
 
-Securing a [Cloud Run](https://cloud.google.com/run) service no longer needs a special deployment recipe. A Cloud Run service is just an HTTPS endpoint, so you protect it the same way you protect any other upstream: add a Pomerium route whose `to` is the service URL. Pomerium handles the user-facing login and authorization, and forwards the request to Cloud Run.
+Protect an existing [Cloud Run](https://cloud.google.com/run) service by putting a standard Pomerium route in front of it. A Cloud Run service is just an HTTPS endpoint, so you secure it like any other upstream: point a route's `to` at the service URL and let Pomerium handle login and authorization. Where you can, keep the service private and let Pomerium send the signed Google authorization header Cloud Run expects.
+
+```mermaid
+flowchart LR
+    Browser --> Pomerium["Pomerium<br/>authN + authZ<br/>signed Google auth header"]
+    Pomerium -.->|"sign in"| IdP[Identity provider]
+    Pomerium --> CloudRun["Cloud Run<br/>private"]
+```
 
 ## Prerequisites
 
@@ -80,9 +87,21 @@ A Cloud Run service open to `allUsers` stays reachable on its public `*.run.app`
 
 :::
 
-## Verify
+## Verify the setup
 
-Browse to your `from` hostname, for example `https://hello.your-domain.example`. You should be sent through your identity provider's login and then land on the Cloud Run service. Requesting the `*.run.app` URL directly should fail when the service is private.
+Browse to your `from` hostname, for example `https://hello.your-domain.example`. You should be sent through your identity provider's login and then land on the Cloud Run service. Requesting the `*.run.app` URL directly should fail when the service is private. To confirm the deny path, sign in as a user your policy excludes and open the `from` hostname. Pomerium should deny access, so no authorization header is signed and the request never reaches Cloud Run.
+
+## Common failure modes
+
+- **`403 Forbidden` from Cloud Run after you sign in through Pomerium.** Pomerium reached the service but Google rejected the call. Confirm the route has `enable_google_cloud_serverless_authentication: true` and that the service account Pomerium runs as holds `roles/run.invoker` on that service. IAM grants can take a few minutes to propagate, so give a fresh grant time before retrying.
+- **Direct `*.run.app` requests still succeed.** The service still allows unauthenticated invocations, so the public Cloud Run URL bypasses Pomerium. Remove `run.invoker` from `allUsers` and rely on the serverless authentication route above.
+- **`could not find default credentials` or a similar auth error in Pomerium's logs.** Pomerium isn't running on GCP and has no ambient service account. Set the [Google Cloud Serverless Authentication Service Account](/docs/reference/google-cloud-serverless-authentication-service-account) explicitly.
+
+## Security considerations
+
+- **Keep the service private.** The strongest control is removing `run.invoker` from `allUsers` and granting it only to Pomerium's service account, so the `*.run.app` URL cannot be invoked around Pomerium's policy.
+- **Grant least privilege.** Give Pomerium's service account only `roles/run.invoker` on the specific services it fronts, not a broader project-wide role.
+- **Scope the route policy.** Cloud Run authorizes Pomerium's service account; Pomerium policy decides which signed-in users can use the route.
 
 ## Pass identity to your application
 

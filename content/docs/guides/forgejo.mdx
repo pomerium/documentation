@@ -3,6 +3,7 @@
 title: Secure Forgejo with Pomerium
 sidebar_label: Forgejo
 lang: en-US
+image: ./img/forgejo/forgejo-dashboard.png
 keywords:
   [
     pomerium,
@@ -119,7 +120,9 @@ The Compose file pins Forgejo and Pomerium by image digest so the stack is repro
 
    Open your Forgejo profile to confirm the account was provisioned from your Pomerium identity: the username comes from your username claim and the email matches the one Pomerium forwarded, with no Forgejo password ever set.
 
-   ![The Forgejo profile page for the account auto-provisioned from the Pomerium identity, showing the username and email carried over from SSO](img/forgejo/forgejo-sso-account.png)
+   ![The auto-provisioned Forgejo profile page, with the username and email carried over from the Pomerium SSO identity](img/forgejo/forgejo-sso-account.png)
+
+4. **A disallowed user is blocked.** Sign in as a user your policy excludes and open `https://forgejo.yourdomain.com`. Pomerium denies access, so no identity headers are forwarded and Forgejo never provisions an account.
 
 The first account Forgejo provisions becomes the instance administrator, so sign in through Pomerium first with the identity that should own Forgejo.
 

@@ -118,6 +118,7 @@ The first run builds the OpenClaw image, which takes a few minutes. Check status
    Reaching this dashboard confirms Pomerium authenticated you and the gateway is reachable through the route. Driving the assistant from here still depends on OpenClaw's own gateway token and device pairing, which Pomerium does not manage.
 
 3. Confirm the gateway is only reachable through Pomerium: a direct request to the container's `18789` port from outside the Docker network should fail or be refused.
+4. As a user your policy excludes, open `https://openclaw.yourdomain.com`. Pomerium should send you to sign in and then deny access, so you never reach the gateway dashboard.
 
 This confirms the access path: Pomerium gates the web gateway behind SSO and an allowed user reaches it. The SSH administration route and OpenClaw's device pairing are separate flows you set up and confirm by hand, as described in [Configure OpenClaw](#configure-openclaw).
 

@@ -2,6 +2,7 @@
 title: Secure Grafana with Pomerium
 sidebar_label: Grafana
 lang: en-US
+image: ./img/grafana/grafana-profile.png
 keywords:
   [
     pomerium,
@@ -26,9 +27,17 @@ import Compose from '/content/examples/guides/grafana/docker-compose.yaml.md';
 
 ## What this guide does
 
-You'll put Grafana behind Pomerium so that Pomerium handles single sign-on and authorization, then forwards a cryptographically signed identity JWT to Grafana. Grafana verifies that JWT and signs the user in automatically, so there's no second login prompt or separate Grafana password for users.
+Put Grafana behind Pomerium to gate it with SSO and route policy, then pass a signed identity JWT that lets Grafana sign users in automatically. Grafana verifies that JWT on each request, so there's no second login prompt or separate Grafana password for users.
+
+```mermaid
+flowchart LR
+    Browser --> Pomerium["Pomerium<br/>authN + authZ<br/>signs identity JWT"]
+    Pomerium -.->|"sign in"| IdP[Identity provider]
+    Pomerium -->|"signed JWT"| Grafana["Grafana<br/>verifies JWT, auto sign-in"]
+```
 
 <iframe
+  title="Video walkthrough: secure Grafana with Pomerium SSO"
   width="100%"
   height="500"
   src="https://www.youtube.com/embed/kpTcbu5s-xU?si=rlass29s-lncmFRe"
@@ -97,11 +106,22 @@ Grafana's [JWT authentication](https://grafana.com/docs/grafana/latest/setup-gra
 
 ## Run the stack
 
-The Compose file runs Pomerium Core and Grafana together (for Zero, drop the `pomerium` service and use the `compose.yaml` from the Quickstart with your `POMERIUM_ZERO_TOKEN`, keeping the `grafana` service below):
+The Compose file below runs Pomerium and Grafana together. Wire up Pomerium for your deployment, then start the stack:
+
+<Tabs queryString="type">
+<TabItem value="zero" label="Pomerium Zero" default>
+
+Drop the `pomerium` service and use the `compose.yaml` from the Quickstart with your `POMERIUM_ZERO_TOKEN`, keeping the `grafana` service shown below.
+
+</TabItem>
+<TabItem value="core" label="Pomerium Core">
+
+Keep the `pomerium` service shown below and place the `config.yaml` from the previous step next to this `docker-compose.yaml`.
+
+</TabItem>
+</Tabs>
 
 <Compose />
-
-Start it:
 
 ```bash
 docker compose up -d
@@ -114,6 +134,8 @@ docker compose up -d
 3. **JWT SSO works.** Grafana signs you in automatically. Open `/profile` and confirm your name, email, and username show **Synced via JWT**.
 
    ![Grafana profile page with Name, Email, and Username marked "Synced via JWT"](./img/grafana/grafana-profile.png)
+
+4. **A disallowed user is blocked.** Sign in as a user your policy excludes and open `https://grafana.yourdomain.com`. Pomerium denies access, so no JWT is forwarded and you never reach Grafana.
 
 ## Common failure modes
 

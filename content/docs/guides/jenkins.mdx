@@ -3,6 +3,7 @@
 title: Secure Jenkins with Pomerium
 sidebar_label: Jenkins
 lang: en-US
+image: ./img/jenkins/jenkins-whoami.png
 keywords: [pomerium, jenkins, sso, oidc, jwt, identity aware proxy]
 description: Put Jenkins behind Pomerium for single sign-on, forwarding a signed identity JWT that the Jenkins JWT Auth plugin verifies to sign users in automatically.
 ---
@@ -117,7 +118,9 @@ Jenkins prints an initial admin password to the container log on first start (`d
 2. **An allowed user gets in.** Sign in. Pomerium redirects you back to Jenkins.
 3. **JWT SSO works.** Once the JWT Auth plugin is configured, Jenkins signs you in automatically as the identity in the assertion. The top-right corner shows your account, and the **Who Am I** page (`/whoAmI`) reports your email under **Name** and **IsAuthenticated?: true**.
 
-   ![Jenkins Who Am I page showing Name set to the signed-in user and IsAuthenticated? true, with the groups from the Pomerium JWT assertion](./img/jenkins/jenkins-whoami.png)
+   ![Jenkins Who Am I page showing the signed-in user name, IsAuthenticated true, and the groups from the Pomerium JWT](./img/jenkins/jenkins-whoami.png)
+
+4. **A disallowed user is blocked.** Sign in as a user your policy excludes and open `https://jenkins.yourdomain.com`. Pomerium denies access, so no JWT assertion is forwarded and you never reach Jenkins.
 
 ## Common failure modes
 

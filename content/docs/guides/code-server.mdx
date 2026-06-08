@@ -2,6 +2,7 @@
 title: Secure code-server with Pomerium
 sidebar_label: code-server
 lang: en-US
+image: ./img/code-server/code-server-editor.png
 # cSpell:ignore codercom
 keywords: [pomerium, code-server, vscode, sso, oidc, identity aware proxy]
 description: Run code-server (VS Code in the browser) in Docker and put authentication and authorization in front of it with Pomerium.
@@ -20,6 +21,13 @@ import Compose from '/content/examples/guides/code-server/docker-compose.yaml.md
 ## What this guide does
 
 This guide puts code-server behind Pomerium so that every request is authenticated and authorized before it reaches the editor. code-server itself runs with its own password disabled (`--auth none`); Pomerium becomes the single front door, applying your identity provider's login and your access policy. The result is VS Code in the browser that only the people you name can open.
+
+```mermaid
+flowchart LR
+    Browser --> Pomerium["Pomerium<br/>authN + authZ<br/>WebSocket upgrade, preserve host"]
+    Pomerium -.->|"sign in"| IdP[Identity provider]
+    Pomerium --> CodeServer["code-server<br/>auth none"]
+```
 
 ![The code-server VS Code editor running in the browser after signing in through Pomerium.](img/code-server/code-server-editor.png)
 
@@ -85,17 +93,28 @@ If you prefer not to disable code-server's own login, you can instead set `PASSW
 
 ## Run the stack
 
-The Compose file runs Pomerium and code-server together on a shared network.
+The Compose file runs Pomerium and code-server together on a shared network; the `To` address `http://code-server:8080` works because both containers share it.
 
 <Compose />
 
-Bring it up:
+Wire up Pomerium for your deployment, then bring the stack up:
+
+<Tabs queryString="type">
+<TabItem value="zero" label="Pomerium Zero" default>
+
+Replace the mounted `config.yaml` on the `pomerium` service with a `POMERIUM_ZERO_TOKEN` environment variable holding your cluster token.
+
+</TabItem>
+<TabItem value="core" label="Pomerium Core">
+
+Place the `config.yaml` from the previous step next to this `docker-compose.yaml`.
+
+</TabItem>
+</Tabs>
 
 ```bash
 docker compose up -d
 ```
-
-If you run Pomerium Core, place the `config.yaml` from the previous step next to this `docker-compose.yaml`. With Pomerium Zero, replace the mounted `config.yaml` on the `pomerium` service with a `POMERIUM_ZERO_TOKEN` environment variable holding your cluster token; the `To` address `http://code-server:8080` works because both containers share this Compose network.
 
 When you are done, tear the stack down with `docker compose down -v`. The `-v` flag also removes the named volumes, which wipes your project files and editor configuration, so omit it if you want to keep them.
 
@@ -104,6 +123,7 @@ When you are done, tear the stack down with `docker compose down -v`. The `-v` f
 1. Open `https://code-server.yourdomain.com` in a fresh browser session. Pomerium should redirect you to your identity provider to sign in.
 2. Sign in as an allowed user. Pomerium redirects you back and the VS Code interface loads.
 3. Confirm the editor is fully interactive: open a file, type in it, and use the terminal. A working editor means the WebSocket upgrade is passing through the route.
+4. **A disallowed user is blocked.** Sign in as a user your policy excludes and open `https://code-server.yourdomain.com`. Pomerium should deny access, so you never reach the editor.
 
 ## Common failure modes
 

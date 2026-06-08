@@ -116,6 +116,8 @@ On the first run, PostgreSQL loads Guacamole's schema before the web app can con
    {"authToken": "...", "username": "you@example.com", "dataSource": "header"}
    ```
 
+4. **A disallowed user is blocked.** Sign in as a user your policy excludes and open `https://guacamole.yourdomain.com`. Pomerium denies access, so no identity header is forwarded and you never reach Guacamole.
+
 ## Common failure modes
 
 - **Guacamole shows its own login form instead of signing you in.** The header didn't arrive. Confirm the route has `pass_identity_headers: true` and a `jwt_claims_headers` mapping for `X-Pomerium-Claim-Email`, and that `HTTP_AUTH_HEADER` matches it exactly.

@@ -147,7 +147,7 @@ In the Zero Console:
 2. Under the **Allowed AS Metadata Domains** subsection, click the **+** and enter `mcp.linear.app`.
 3. Click **Save Settings**.
 
-![Zero Console Settings showing the MCP section with Allowed Client ID Domains set to vscode.dev and Allowed AS Metadata Domains set to mcp.linear.app](./img/mcp-bridge/settings-mcp.png)
+![Zero Console Settings MCP section with Allowed Client ID Domains vscode.dev and AS Metadata Domains mcp.linear.app](./img/mcp-bridge/settings-mcp.png)
 
 This section also contains the **Allowed Client ID Domains** subsection, a related but separate allowlist for MCP clients that authenticate using URL-based client IDs. The default list includes `vscode.dev`, which is what this guide uses as the test client. Add other hosted MCP clients you want to permit, for example `claude.ai` or `chatgpt.com`. Leave the default in place if you only need VS Code.
 
@@ -168,11 +168,11 @@ In the Zero Console, go to **Routes → New Route**. On the **General** tab, fil
 
 Click **Save Route**. The route will show up with **Assigned: None** until you attach a policy. The screenshot below was captured after the policy in step 3 was attached; for this step, use it to confirm the route type, `From`, and `To` fields.
 
-![Route editor General tab for the Linear MCP route, showing Route Type MCP, From linear.slyfox-1234.pomerium.app, To https://mcp.linear.app, and the Pomerium Team policy attached](./img/mcp-bridge/route-linear-mcp-general.png)
+![Route editor General tab for the Linear MCP route: Route Type MCP, To mcp.linear.app, with the policy attached](./img/mcp-bridge/route-linear-mcp-general.png)
 
 After saving, open the route again and go to **Advanced → MCP**. Set **Path** to `/mcp` (Linear's MCP endpoint) and leave everything else at its defaults. That's enough to enable [auto-discovery](/docs/capabilities/mcp/mcp-upstream-oauth#auto-discovery-rfc-9728): Pomerium registers itself with Linear via a [Client ID Metadata Document (CIMD)](/docs/capabilities/mcp/mcp-upstream-oauth#auto-discovery-rfc-9728) on the first connection and caches the registration.
 
-![Route editor Advanced tab MCP panel for the Linear MCP route, showing Server mode selected, Upstream OAuth2 Properties toggled off, and Path set to /mcp](./img/mcp-bridge/route-advanced-mcp-panel.png)
+![Route editor Advanced tab MCP panel: Server mode selected, Upstream OAuth2 Properties off, and Path set to /mcp](./img/mcp-bridge/route-advanced-mcp-panel.png)
 
 ### 3. Create and attach an authorization policy
 
@@ -191,7 +191,7 @@ This is the point of the whole exercise. You'll create a reusable policy and att
 
 ![Policies list page showing the Pomerium Team policy assigned to the mcp bridging cluster](./img/mcp-bridge/policies-list.png)
 
-![Policy editor General tab for Pomerium Team, showing a single Allow block with an AND condition: Criteria Domain, Operator Is, Domain pomerium.com](./img/mcp-bridge/policy-pomerium-team.png)
+![Policy editor General tab for Pomerium Team: a single Allow block with an AND condition matching Domain Is pomerium.com](./img/mcp-bridge/policy-pomerium-team.png)
 
 Now attach the policy to the route:
 
@@ -209,7 +209,7 @@ Once this domain-only policy is working, see [Limit MCP Tool Calling](/docs/capa
 
 In **Settings → Logging**, scroll to **Authorize Log Fields**, select **Custom Logged Fields**, and check at least the fields below. The MCP-specific entries (`mcp-method`, `mcp-tool`, and `mcp-tool-parameters`) are the reason this step matters: without them, your authorize logs record that a request happened but not _which tool was called_ or _with what arguments_.
 
-![Zero Console Settings → Logging showing Authorize Log Fields with Custom Logged Fields selected and mcp-method, mcp-tool, and mcp-tool-parameters checked alongside other fields](./img/mcp-bridge/settings-authorize-log-fields.png)
+![Zero Console Logging settings with Custom Logged Fields and mcp-method, mcp-tool, and mcp-tool-parameters checked](./img/mcp-bridge/settings-authorize-log-fields.png)
 
 Without this, your authorize logs won't tell you which tool was called or by whom, and [Checkpoint 4](#checkpoint-4-authorize-log-records-the-tool-call) below depends on it.
 
@@ -228,7 +228,7 @@ In the Inspector UI:
 3. Leave **Authentication** collapsed (Client ID and Client Secret empty). The Inspector will run its quick OAuth flow automatically on connect.
 4. Click **Connect**.
 
-![MCP Inspector connection form with Transport Type set to Streamable HTTP and URL set to https://linear.slyfox-1234.pomerium.app/mcp, ready to click Connect](./img/mcp-bridge/inspector-connect-form.png)
+![MCP Inspector connection form with Transport Type Streamable HTTP and the route URL, ready to click Connect](./img/mcp-bridge/inspector-connect-form.png)
 
 You'll be redirected through two sign-ins in sequence: first Pomerium → your IdP, then Pomerium → Linear. After the second one you land back in the Inspector with a green **Connected** status on the connection banner.
 
