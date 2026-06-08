@@ -1,0 +1,34 @@
+name: link-check
+
+# Weekly external-link audit for the docs content. This is report-only and is
+# never a required PR gate: it runs on a schedule and on manual dispatch only,
+# and every step is non-fatal (continue-on-error) so a flaky or rate-limited
+# external host can never block contributors. Use the run summary to triage
+# genuinely broken links.
+
+on:
+  schedule:
+    - cron: '0 8 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: link-check-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  link-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Check external links
+        continue-on-error: true
+        uses: lycheeverse/lychee-action@a8c4c7cb88f0c7386610c35eb25108e448569cb0 # v2.7.0
+        with:
+          # Only chase external (http/https) links; internal routing is covered
+          # by the Docusaurus build, not by this audit.
+          args: --no-progress --scheme https --scheme http content/docs/**/*.md content/docs/**/*.mdx
+          fail: false
