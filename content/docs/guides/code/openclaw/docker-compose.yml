@@ -6,7 +6,7 @@ services:
       - 2200:22 # SSH proxy: host 2200 -> Pomerium's SSH listener on container port 22
     restart: always
     extra_hosts:
-      - "host.docker.internal:host-gateway"
+      - 'host.docker.internal:host-gateway'
     env_file:
       - .env
     environment:
@@ -29,12 +29,12 @@ services:
     healthcheck:
       test:
         [
-          "CMD",
-          "wget",
-          "--no-verbose",
-          "--tries=1",
-          "--spider",
-          "http://localhost:8000",
+          'CMD',
+          'wget',
+          '--no-verbose',
+          '--tries=1',
+          '--spider',
+          'http://localhost:8000',
         ]
       interval: 30s
       timeout: 5s
@@ -62,7 +62,7 @@ services:
       - main
     # Note: SSH accessible via Pomerium SSH route (port 22 in container)
     healthcheck:
-      test: ["CMD", "pgrep", "-f", "openclaw"]
+      test: ['CMD', 'pgrep', '-f', 'openclaw']
       interval: 30s
       timeout: 5s
       retries: 3
