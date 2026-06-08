@@ -113,7 +113,7 @@ The request surface is the whole point of putting it behind Pomerium:
 
 ## Run the stack
 
-The Compose file runs Pomerium Core alongside Paperless-ngx, PostgreSQL, and Redis (for Zero, drop the `pomerium` service and use the `compose.yaml` from the Quickstart with your `POMERIUM_ZERO_TOKEN`, keeping the `paperless`, `db`, and `redis` services below, on the same Docker network as the Quickstart's `pomerium` service (the Quickstart names it `main`) so Pomerium can resolve `paperless` by name):
+The Compose file runs Pomerium Core alongside Paperless-ngx, PostgreSQL, and Redis. For Zero, drop the Core `pomerium` service, keep `paperless`, `db`, and `redis` on `paperless-internal`, and attach the Quickstart's `pomerium` service to `paperless-internal` so it can resolve `paperless` by name.
 
 <Compose />
 
@@ -137,7 +137,7 @@ Paperless-ngx runs database migrations and builds its search index on first boot
 
 Pomerium gates the route; Paperless-ngx runs its own login on top. The admin account and first-run setup are Paperless-ngx's concern, not Pomerium's.
 
-When you're done testing, tear the stack down with `docker compose down -v` (the `-v` also removes the database, media, and credential volumes).
+When you're done testing, stop the stack with `docker compose down`. Add `-v` only if you mean to delete the database, media, Redis, and credential volumes.
 
 ## Common failure modes
 
@@ -148,13 +148,14 @@ When you're done testing, tear the stack down with `docker compose down -v` (the
 
 ## Security considerations
 
-- Paperless-ngx runs its own authentication, so Pomerium here is a front-door gate, not a header-trust integration. Even so, **don't expose Paperless-ngx directly**: only Pomerium should reach `paperless:8000`. The Compose file keeps Paperless-ngx (and its PostgreSQL and Redis) on an internal-only Docker network with no published host ports, so the only path in is through Pomerium and the policy can't be bypassed.
+- Paperless-ngx runs its own authentication, so this guide uses Pomerium as a front-door gate on top of that login. (If you'd rather have Pomerium sign users in directly, Paperless-ngx natively supports trusted-header SSO; see [Next steps](#next-steps).) Either way, **don't expose Paperless-ngx directly**: only Pomerium should reach `paperless:8000`. The Compose file keeps Paperless-ngx (and its PostgreSQL and Redis) on an internal-only Docker network with no published host ports, so the only path in is through Pomerium and the policy can't be bypassed.
 - Scope the route policy (group or domain) to who should have any access to Paperless-ngx at all. Paperless-ngx's per-user document permissions still apply on top of that.
-- Paperless-ngx holds sensitive documents and exposes an API and admin interface under the same host. Because the whole host sits behind Pomerium, those surfaces inherit the same SSO and policy gate; don't add a second public route that bypasses it.
+- Paperless-ngx holds sensitive documents and exposes an API and admin interface under the same host. Because the whole host sits behind Pomerium, those surfaces inherit the same SSO and policy gate; don't add a second public route that bypasses it. That also means Paperless API tokens, mobile clients, scanner automation, and share links are not externally usable through this route unless the request also authenticates to Pomerium, for example with a Zero or Enterprise service account.
 - Generate a unique `PAPERLESS_SECRET_KEY` and strong database and admin passwords. The placeholders in this guide are examples, not safe defaults.
 
 ## Next steps
 
+- **Go further: let Pomerium sign users in.** Paperless-ngx supports trusted-header SSO ([`PAPERLESS_ENABLE_HTTP_REMOTE_USER`](https://docs.paperless-ngx.com/configuration/)). Set `pass_identity_headers: true` on the route so Pomerium forwards the verified identity as an `X-Pomerium-Claim-*` header, then point `PAPERLESS_HTTP_REMOTE_USER_HEADER_NAME` at that header so Paperless-ngx logs the user in directly instead of keeping a separate login. Only do this when Pomerium is the sole path in and strips any client-supplied copy of that header.
 - [Build policies](/docs/get-started/fundamentals/zero/zero-build-policies)
 - [Custom domains](/docs/capabilities/custom-domains)
 - [Self-host the identity provider](/docs/integrations/user-identity/oidc)

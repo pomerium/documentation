@@ -1,10 +1,11 @@
 # Routes-only validation config. Shared settings (IdP, secrets, signing key, certs)
 # come from ../../_harness/pomerium/validation.env via env_file in compose.validate.yaml.
-# Immich runs its own login, so the route is a front-door gate and forwards no
-# identity headers.
+# Immich runs its own login, so the route is a front-door gate.
 routes:
   - from: https://immich.localhost.pomerium.io
     to: http://immich-server:2283
+    allow_websockets: true
+    preserve_host_header: true
     # Photo and video uploads (and original-quality downloads) can be large and
     # long-running, so don't cap total request time at the proxy.
     timeout: 0s

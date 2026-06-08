@@ -44,8 +44,8 @@ sequenceDiagram
   P ->> P: Evaluate policy (allow group / email)
   P ->> J: Proxy request (gate passed)
   J -->> U: Jellyfin web client (its own login on top)
-  Note over T,J: Native apps send Jellyfin API tokens<br/>directly and never hit the Pomerium gate
-  T ->> J: Direct API call (bypasses Pomerium)
+  Note over T,J: Native apps send Jellyfin API tokens<br/>and cannot complete the browser SSO gate
+  T ->> J: Direct API call, if you expose a separate path
 ```
 
 ## When to use this guide
@@ -79,12 +79,13 @@ In the [Zero Console](https://console.pomerium.app):
 1. Create a **Route**. In **From**, enter `https://jellyfin.<your-starter-domain>`; in **To**, enter `http://jellyfin:8096`.
 2. On the route's settings, enable **Allow WebSockets**. The Jellyfin web client streams playback and session state over WebSockets; without this the UI loads but never updates.
 3. Enable **Preserve Host Header** so Jellyfin's absolute URLs (web client, casting) match the public name rather than the container name.
-4. Set the policy to scope access to who should reach Jellyfin (for example, **Any Authenticated User** or a specific group or domain).
+4. Raise the request **Timeout** (or set it to 0 for no limit), and set a generous **Idle Timeout** such as `600s`. Direct-play streams and file downloads are long plain HTTP responses, separate from the WebSocket control channel.
+5. Set the policy to scope access to who should reach Jellyfin (for example, **Any Authenticated User** or a specific group or domain).
 
 </TabItem>
 <TabItem value="core" label="Pomerium Core">
 
-Create a `config.yaml`. It routes `jellyfin.yourdomain.com` to the Jellyfin container, allows WebSockets for the web client, and preserves the host header so Jellyfin's links stay correct.
+Create a `config.yaml`. It routes `jellyfin.yourdomain.com` to the Jellyfin container, allows WebSockets for the web client, preserves the host header so Jellyfin's links stay correct, and removes the total request-time cap for long playback and downloads.
 
 <Config />
 
@@ -104,7 +105,7 @@ After first boot, finish Jellyfin's own setup wizard and create your Jellyfin ac
 
 ## Run the stack
 
-The Compose file runs Pomerium Core and Jellyfin together (for Zero, drop the `pomerium` service and use the `compose.yaml` from the Quickstart with your `POMERIUM_ZERO_TOKEN`, keeping the `jellyfin` service below):
+The Compose file runs Pomerium Core and Jellyfin together. For Zero, drop the `pomerium` service and use the `compose.yaml` from the Quickstart with your `POMERIUM_ZERO_TOKEN`, keeping the `jellyfin` service below; put `jellyfin` on the same Docker network as the Quickstart's `pomerium` service (the Quickstart names it `main`) so Pomerium can resolve `jellyfin` by name.
 
 <Compose />
 
@@ -114,13 +115,15 @@ Start it:
 docker compose up -d
 ```
 
-Jellyfin initializes its configuration and database on first boot; watch `docker compose ps` until its status changes from `health: starting` to `healthy`, or follow `docker compose logs -f jellyfin`.
+Jellyfin initializes its configuration and database on first boot; watch `docker compose ps` until the container is `Up`, then follow `docker compose logs -f jellyfin` until the web server is listening if the page is not ready yet.
 
-When you're done, tear the Core stack down. The `-v` flag also removes the named volumes:
+When you're done testing, stop the Core stack:
 
 ```bash
-docker compose down -v
+docker compose down
 ```
+
+Add `-v` only if you mean to delete Jellyfin's config and cache volumes.
 
 ## Verify the setup
 
@@ -138,19 +141,20 @@ Pomerium gates the route; Jellyfin runs its own login on top. Jellyfin's account
 
 Gating the host root protects the browser web client. Native apps do not pass through it. This is the single most important thing to understand before you put Jellyfin behind any front-door proxy:
 
-![Matrix of Jellyfin client surfaces against a host-root Pomerium gate: only the browser web client is protected; native TV, Chromecast, mobile, and direct API clients bypass it](./img/jellyfin/jellyfin-client-gating.svg)
+![Matrix: only Jellyfin's web client clears the Pomerium gate; TV, casting, mobile, and API clients need a direct path](./img/jellyfin/jellyfin-client-gating.svg)
 
 ## Common failure modes
 
 - **The web client loads but playback state never updates.** The route is missing `allow_websockets`. The Jellyfin web client streams session and playback events over WebSockets; enable WebSockets on the route.
+- **Direct-play video or a large download stops after about 30 seconds.** The route is still using the default request timeout. Raise the route `timeout` (or set it to `0s` on Pomerium Core) and keep a generous `idle_timeout`; WebSockets do not cover direct-play or download responses.
 - **Redirects or absolute links point at the container name or the wrong host.** Jellyfin's `JELLYFIN_PublishedServerUrl` doesn't match the public route, or `preserve_host_header` isn't set. Make both agree on `jellyfin.yourdomain.com`.
 - **Jellyfin shows every client as a remote connection, or rejects the proxied request.** Jellyfin isn't trusting the Pomerium hop. In **Dashboard > Networking**, keep remote connections enabled and add Pomerium to **Known proxies** so Jellyfin trusts the forwarded headers.
 - **Native TV, Chromecast, or mobile apps stop connecting after you add the gate.** Those clients authenticate directly to Jellyfin's API and never complete a browser SSO flow, so the gate blocks them. See [Security considerations](#security-considerations).
 
 ## Security considerations
 
-- **Native and casting clients bypass the browser SSO gate.** Jellyfin's native TV apps, mobile apps, and Chromecast authenticate directly to Jellyfin's API with Jellyfin tokens. They do not perform the browser redirect flow Pomerium uses, so gating the entire host root breaks them. If you depend on those clients, don't gate the whole host: serve them on a separate, network-restricted path or keep Jellyfin on a private network and gate only the browser entry point. Treat the gate as protecting browser access, not as locking down every way into Jellyfin.
-- **Jellyfin runs its own authentication, so Pomerium here is a front-door gate, not a header-trust integration.** Even so, **don't expose Jellyfin directly** -- only Pomerium should reach `jellyfin:8096`. Keep Jellyfin off published host ports and on an internal-only network (as the validation fixture does) so the policy can't be bypassed by hitting the container directly.
+- **Native and casting clients cannot use the browser SSO gate.** Jellyfin's native TV apps, mobile apps, and Chromecast authenticate directly to Jellyfin's API with Jellyfin tokens. They do not perform the browser redirect flow Pomerium uses, so gating the entire host root breaks them. If you depend on those clients, don't gate the whole host: serve them on a separate, network-restricted path or keep Jellyfin on a private network and gate only the browser entry point. Treat the gate as protecting browser access, not as locking down every way into Jellyfin.
+- **Jellyfin runs its own authentication, so this guide uses Pomerium as a front-door gate on top of that login.** Core Jellyfin has no native single sign-on and doesn't trust a reverse-proxy identity header; a community SSO plugin can add OIDC for the web client only, and native and casting clients still can't use it, so for most setups the front-door gate is the practical ceiling. Either way, **don't expose Jellyfin directly** -- only Pomerium should reach `jellyfin:8096`. Keep Jellyfin off published host ports on a Docker network shared only with Pomerium in this stack, so the policy can't be bypassed by hitting the container directly.
 - **Scope the route policy.** Limit the route to the users or groups who should reach the media server at all, rather than allowing every authenticated user. Jellyfin's own per-user library permissions still apply on top of that.
 
 ## Next steps

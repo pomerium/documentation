@@ -15,7 +15,7 @@ services:
     environment:
       DB_HOSTNAME: database
       DB_USERNAME: postgres
-      DB_PASSWORD: postgres
+      DB_PASSWORD: change-this-database-password
       DB_DATABASE_NAME: immich
       REDIS_HOSTNAME: redis
     volumes:
@@ -32,7 +32,7 @@ services:
     image: ghcr.io/immich-app/postgres:14-vectorchord0.4.3-pgvectors0.2.0@sha256:bcf63357191b76a916ae5eb93464d65c07511da41e3bf7a8416db519b40b1c23
     environment:
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_PASSWORD: change-this-database-password
       POSTGRES_DB: immich
       POSTGRES_INITDB_ARGS: '--data-checksums'
     volumes:
@@ -41,7 +41,7 @@ services:
     restart: always
 
   redis:
-    image: docker.io/valkey/valkey:9@sha256:3b55fbaa0cd93cf0d9d961f405e4dfcc70efe325e2d84da207a0a8e6d8fde4f9
+    image: docker.io/valkey/valkey:9.0.3@sha256:3b55fbaa0cd93cf0d9d961f405e4dfcc70efe325e2d84da207a0a8e6d8fde4f9
     restart: always
 
 volumes:

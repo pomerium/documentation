@@ -145,23 +145,31 @@ test("the *arr apps are not reachable except through Pomerium", async ({ page })
   );
   expect(viaPomerium.ok(), "the route through Pomerium should work").toBeTruthy();
 
-  // Each app's only built-in auth is a static API key, so network isolation is the
-  // real trust boundary and must be real: the apps sit on an internal-only network
-  // shared with Pomerium alone. The test-runner is not on that network, so a direct
-  // hit at sonarr:8989 (bypassing Pomerium) must fail at name resolution /
-  // connection, NOT with an HTTP response. Asserting the specific error keeps a typo
-  // or a down service from masquerading as isolation.
-  let directError = "";
-  try {
-    await page.request.get("http://sonarr:8989/api/v3/system/status", {
-      ignoreHTTPSErrors: true,
-      timeout: 5000,
-    });
-  } catch (e) {
-    directError = String(e);
+  // Each app's only built-in API auth is a static key, so network isolation is
+  // the real trust boundary and must be real: the apps sit on an internal-only
+  // network shared with Pomerium alone. The test-runner is not on that network,
+  // so direct hits must fail at name resolution / connection, NOT with HTTP
+  // responses. Asserting the specific error keeps a typo or a down service from
+  // masquerading as isolation.
+  const directUrls = [
+    "http://sonarr:8989/api/v3/system/status",
+    "http://radarr:7878/api/v3/system/status",
+    "http://prowlarr:9696/api/v1/system/status",
+    "http://sabnzbd:8080/api?mode=queue&output=json",
+  ];
+  for (const url of directUrls) {
+    let directError = "";
+    try {
+      await page.request.get(url, {
+        ignoreHTTPSErrors: true,
+        timeout: 5000,
+      });
+    } catch (e) {
+      directError = String(e);
+    }
+    expect(
+      directError,
+      `${url} must be unreachable directly; the only path in is through Pomerium`,
+    ).toMatch(/ENOTFOUND|getaddrinfo|EAI_AGAIN|ECONNREFUSED/i);
   }
-  expect(
-    directError,
-    "the apps must be unreachable directly; the only path in is through Pomerium",
-  ).toMatch(/ENOTFOUND|getaddrinfo|EAI_AGAIN|ECONNREFUSED/i);
 });

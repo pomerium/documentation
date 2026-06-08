@@ -15,6 +15,10 @@ routes:
     # Forward the original Host so Jellyfin's absolute URLs (web client, casting)
     # match the public name instead of the container name.
     preserve_host_header: true
+    # Direct-play streams and downloads are long plain HTTP responses, separate
+    # from the web client's WebSocket control channel.
+    timeout: 0s
+    idle_timeout: 600s
     policy:
       - allow:
           or:

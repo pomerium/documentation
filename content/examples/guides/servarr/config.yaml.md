@@ -8,8 +8,8 @@ authenticate_service_url: https://authenticate.pomerium.app
 # Obtain TLS certificates automatically from Let's Encrypt.
 autocert: true
 
-# One route per app. Each app keeps its own API key; Pomerium does not forward any
-# identity to them, so these are front-door gates, not header-trust integrations.
+# One route per app. Each app keeps its own API key, so these are front-door gates,
+# not header-trust integrations.
 routes:
   - from: https://sonarr.yourdomain.com
     to: http://sonarr:8989

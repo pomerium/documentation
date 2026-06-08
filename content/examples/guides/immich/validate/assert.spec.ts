@@ -31,3 +31,31 @@ test("allowed user passes the gate and reaches Immich", async ({ page }) => {
   await page.goto(BASE, { waitUntil: "networkidle" });
   await shot(page, "immich-login");
 });
+
+test("Immich is not reachable except through Pomerium", async ({ page }) => {
+  // Positive control first: Immich IS serving through Pomerium after SSO. This
+  // proves the service is up, so the direct-hit failure below is caused by
+  // network topology, not a dead or typo'd endpoint.
+  await login(page, BASE, alice);
+  const viaPomerium = await page.request.get(`${BASE}/api/server/ping`, {
+    ignoreHTTPSErrors: true,
+  });
+  expect(viaPomerium.ok(), "the route through Pomerium should work").toBeTruthy();
+
+  // The test-runner is not attached to immich-internal, so a direct hit at
+  // immich-server:2283 must fail at name resolution / connection, not return
+  // an HTTP response.
+  let directError = "";
+  try {
+    await page.request.get("http://immich-server:2283/api/server/ping", {
+      ignoreHTTPSErrors: true,
+      timeout: 5000,
+    });
+  } catch (e) {
+    directError = String(e);
+  }
+  expect(
+    directError,
+    "Immich must be unreachable directly; the only path in is through Pomerium",
+  ).toMatch(/ENOTFOUND|getaddrinfo|EAI_AGAIN|ECONNREFUSED/i);
+});
