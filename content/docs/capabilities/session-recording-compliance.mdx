@@ -82,8 +82,8 @@ flowchart LR
   Store --> Console[Pomerium Enterprise Console]
   Console --> Auditor[Audit evidence package]
 
-  Core -. emits audit logs .-> Audit[Pomerium audit logs]
-  Console -. emits playback/download logs .-> Audit
+  Core -. default cluster emits Console access logs .-> Audit[Pomerium audit logs]
+  Console -. surfaces session recording access logs .-> Audit
   Store -. provider data access logs .-> CloudLogs[Cloud storage audit logs]
   Audit --> Auditor
   CloudLogs --> Auditor
@@ -225,7 +225,7 @@ Enable `StorageBlobLogs`. Pomerium requests carry a `ClientRequestId` and a `Pom
 </TabItem>
 </Tabs>
 
-2. Correlate. Enterprise audit entries (message `authorize blob read`) carry a `user_hmac_id`, and recording/download/metadata accesses also carry an `access_id`; the provider log carries the same values. Match on `access_id` where present (some operations carry only `user_hmac_id`) to tie a storage access back to a specific user action and identity. Existence checks (`HEAD` requests) are a special case: on S3 they appear in CloudTrail / access logs but carry neither the `pomerium_access_id` parameter nor the user-agent HMAC, so they cannot be correlated by those values; Azure and GCS generally do not surface existence checks in their audit logs at all.
+2. Correlate. Enterprise audit entries (message `authorize blob read`) carry a `user_hmac_id`, and recording/download/metadata accesses also carry an `access_id`; the provider log carries the same values. Match on `access_id` where present (some operations carry only `user_hmac_id`) to tie a storage access back to a specific user action and identity.
 
 3. Preserve correlation across rotation. The `user_hmac_id` is derived from the Enterprise shared secret. If you rotate the shared secret, keep the previous secrets so older provider logs remain correlatable.
 
@@ -234,7 +234,7 @@ How to verify, end to end:
 1. In the Enterprise audit log, find the `authorize blob read` event for the recording and copy its `access_id`.
 2. Query the cloud-provider storage access log for the same value -- the `pomerium_access_id` query parameter (S3), the `x-goog-custom-audit-pomerium-access-id` annotation (GCS), or the `ClientRequestId` (Azure).
 3. Confirm the same `user_hmac_id` appears on both sides.
-4. Confirm there are no reads of the recording object that lack Pomerium's annotation. A storage read with no matching Pomerium `access_id`/HMAC is access outside the chain of custody and should be investigated. On S3, exclude `HEAD` existence checks, which legitimately carry no annotation.
+4. Confirm there are no reads of the recording object that lack Pomerium's annotation. A storage read with no matching Pomerium `access_id`/HMAC is access outside the chain of custody and should be investigated.
 
 ![Session recording replayed in the asciinema web player](./img/session-recording/compliance/asciinema-player-playback.png)
 
