@@ -742,14 +742,12 @@ cmd_bootstrap() {
 
   phase_generate_ssh_keys
 
-  log "Authenticating with Pomerium Zero API"
   zero_login
   zero_resolve_ids
   zero_set_cluster_settings
   zero_get_or_create_policy
   zero_get_or_create_route "openclaw-ssh" "ssh://openclaw" "ssh://openclaw-gateway:22" "ssh"
   zero_get_or_create_route "openclaw-web" "https://openclaw.$POMERIUM_CLUSTER_DOMAIN" "http://openclaw-gateway:18789" "web"
-  log_ok "Pomerium Zero API configuration complete"
 
   log "Building openclaw-gateway image (cached on re-runs)"
   DC build openclaw-gateway >/dev/null
