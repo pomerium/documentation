@@ -194,7 +194,21 @@ When the install script finished it printed two things to try:
 
 If either doesn't work as expected, head to [Troubleshooting](#troubleshooting) for diagnostic checks (stack health, logs, route verification, etc.).
 
-## Step 5: Upgrade OpenClaw (Optional, Recommended)
+## Step 5: Configure a Model
+
+OpenClaw needs a model configured before it can respond to prompts. From the `pomclaw` directory, list available models and set one:
+
+```bash
+# list available models
+docker compose exec openclaw-gateway openclaw models list
+
+# set model from one in the list
+docker compose exec openclaw-gateway openclaw models set <provider>/<model>
+```
+
+See the [OpenClaw Models CLI documentation](https://docs.openclaw.ai/concepts/models#cli-commands) for provider IDs, fallback models, and auth options.
+
+## Step 6: Upgrade OpenClaw (Optional, Recommended)
 
 OpenClaw is pinned to a specific version in `.env` (e.g. `OPENCLAW_VERSION=2026.6.5`) so installs are reproducible. Staying on a recent version is recommended for security and bug fixes, but OpenClaw is still maturing and upstream releases can introduce breaking changes, so **always check the OpenClaw release notes before bumping the version**.
 
