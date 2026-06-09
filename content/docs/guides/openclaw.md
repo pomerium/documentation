@@ -10,7 +10,7 @@ description: Deploy OpenClaw behind Pomerium with a single install script that w
 
 This guide shows you how to add authentication and authorization to [OpenClaw](https://openclaw.ai) (formerly Clawdbot/Moltbot) using Pomerium as an identity-aware access proxy. OpenClaw is an open-source personal AI assistant with persistent memory, file and shell access, browser automation, and multi-platform chat integrations.
 
-The setup is automated by an install script. One `curl | bash` command pulls the OpenClaw guide code from the Pomerium documentation repository, prompts for four values, then provisions everything: Pomerium policy, SSH route, web route, cluster SSH config, JWT claim header mapping, and OpenClaw's trusted-proxy auth configuration.
+The setup is automated by an install script. One `curl | bash` command pulls the OpenClaw guide code from the Pomerium documentation repository, collects three credentials and auto-selects your Pomerium Zero cluster, then provisions everything: Pomerium policy, SSH route, web route, cluster SSH config, JWT claim header mapping, and OpenClaw's trusted-proxy auth configuration.
 
 This guide is for anyone hosting their own OpenClaw, whether that's an individual on a homelab, a team running it for shared use, or an org standing it up for a department. The setup uses Docker Compose on a single host, which fits most single-server deployments. If you need to run OpenClaw across multiple nodes or in Kubernetes, this isn't the right starting point. And because OpenClaw itself is still maturing, the sweet spot is single-team or small-group use rather than large multi-tenant production.
 
@@ -150,13 +150,13 @@ If you'd rather review the scripts first, the source lives in [`content/docs/gui
 
 :::
 
-The script prompts for four values:
+The script collects three credentials and selects your cluster:
 
 | Prompt | What to enter |
 | --- | --- |
 | Pomerium Zero Token | Cluster bootstrap token from the Pomerium Zero onboarding wizard |
 | Pomerium Zero API Token | API user token from [the API tokens page](https://console.pomerium.app/app/management/api-tokens) |
-| Cluster selection | If you only have one Pomerium Zero cluster, there's nothing to do here. If you have more than one, you'll see a numbered picker with the most recently created cluster as the default |
+| Cluster selection | Auto-selected if you have one cluster; otherwise a numbered picker with the most recent cluster as the default |
 | Email | The IdP email you sign in with, used to allow you in the route policy |
 
 The values are written to `./pomclaw/.env` (mode 600). From there the script:
@@ -168,7 +168,7 @@ The values are written to `./pomclaw/.env` (mode 600). From there the script:
 5. Creates an allow-by-email policy for your `OPERATOR_EMAIL`
 6. Creates the SSH route `ssh://openclaw` → `ssh://openclaw-gateway:22`
 7. Creates the web route `https://openclaw.<your-cluster-domain>` → `http://openclaw-gateway:18789` with WebSocket support and the `x-openclaw-scopes: operator.admin` request header (the [OpenClaw scope](https://docs.openclaw.ai/gateway/operator-scopes) that grants the authorized user admin privileges)
-8. Configures OpenClaw for [trusted-proxy auth mode](https://docs.openclaw.ai/gateway/trusted-proxy-auth) and restarts the gateway
+8. Configures OpenClaw for [trusted-proxy auth mode](https://docs.openclaw.ai/gateway/trusted-proxy-auth)
 9. Brings up the rest of the stack
 10. Offers to remove the API token from `.env` so you can revoke it in the Pomerium Zero console
 
@@ -303,7 +303,7 @@ From inside the container:
 openclaw config get gateway.auth.mode
 ```
 
-This should print `"trusted-proxy"`. From the host you can also run `./bootstrap.sh status` (from the `pomclaw` directory) for the same information plus the configured `trustedProxy` block.
+This should print `"trusted-proxy"`. From the host you can also run `./bootstrap.sh status` (from the `pomclaw` directory) for the same information plus whether the `trustedProxy` block is configured.
 
 ### Reset
 
@@ -328,7 +328,7 @@ cd ./pomclaw
 
 ### Install script aborts: no controlling TTY
 
-If you're piping `curl | bash` from a non-interactive shell (CI job, automation), `bootstrap.sh` can't prompt for the four required values. Either:
+If you're piping `curl | bash` from a non-interactive shell (CI job, automation), `bootstrap.sh` can't prompt for the required values. Either:
 
 - Run the install from an interactive shell, or
 - Clone the documentation repository, copy the files from `content/docs/guides/code/openclaw`, populate `./pomclaw/.env` manually, then run `./bootstrap.sh` directly.
