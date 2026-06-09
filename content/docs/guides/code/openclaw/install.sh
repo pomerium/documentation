@@ -54,7 +54,7 @@ log_ok "clone complete"
 cd "$TARGET_DIR"
 
 log "Checking out only the OpenClaw guide files"
-git sparse-checkout set --no-cone "/*" "!/*/" "$SPARSE_PATH"
+git sparse-checkout set --no-cone "$SPARSE_PATH"
 git checkout
 
 log "Moving files into place"
