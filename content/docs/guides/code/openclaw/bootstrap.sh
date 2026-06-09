@@ -686,6 +686,13 @@ phase_configure_trusted_proxy() {
   #     actually assigned -- works whether the compose pins
   #     ipv4_address: 172.30.0.10 or a user picked a different subnet to avoid
   #     a collision.
+  #   - gateway.controlUi.dangerouslyDisableDeviceAuth : trusted-proxy WebSocket
+  #     connections lack device identity, so operator scopes are cleared without
+  #     this flag, causing the Control UI to show a pairing screen even though
+  #     the connection is authorized. Pomerium (the identity-aware proxy)
+  #     handles hardening, so disabling device auth here is safe.
+  #     (In a future OpenClaw release this may default to true automatically
+  #     when auth.mode is trusted-proxy.)
   log "Configuring trusted-proxy auth mode..."
   local pomerium_ip
   pomerium_ip=$(resolve_pomerium_replica_ip)
@@ -700,6 +707,7 @@ phase_configure_trusted_proxy() {
   INSIDE "openclaw config set gateway.trustedProxies --strict-json '$proxies'" >/dev/null 2>&1
   INSIDE "openclaw config set gateway.auth.mode trusted-proxy" >/dev/null 2>&1
   INSIDE "openclaw config unset gateway.auth.token" >/dev/null 2>&1 || true
+  INSIDE "openclaw config set gateway.controlUi.dangerouslyDisableDeviceAuth true" >/dev/null 2>&1
 
   DC restart openclaw-gateway
   if ! wait_for "gateway responding after trusted-proxy switch" 60 2 gateway_listening; then
