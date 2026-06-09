@@ -81,8 +81,10 @@ For more on Pomerium's SSH proxy, see [Pomerium Native SSH Access](/docs/capabil
 
 You'll need:
 
-- A [Pomerium Zero](https://www.pomerium.com/docs/get-started/quickstart) account (free)
-- A **deployment host** (VPS, bare-metal server, or local machine) with:
+- A [Pomerium Zero](https://www.pomerium.com/docs/get-started/quickstart) account (free).
+  If you don't have a cluster yet, Step 1 walks you through creating one.
+  If you already have a cluster but didn't save your bootstrap token, you can rotate it from the three-dot menu on the [Clusters page](https://console.pomerium.app/app/clusters).
+- A **deployment host** (Virtual Private Server (VPS), bare-metal server, or local machine) with:
   - [Docker](https://docs.docker.com/install/) and [Docker Compose](https://docs.docker.com/compose/install/)
   - `git` and `ssh-keygen` (both pre-installed on macOS and most Linux distributions)
   - Ports 443 and 2200 reachable from the internet (see [Network Requirements](#network-requirements) below)
