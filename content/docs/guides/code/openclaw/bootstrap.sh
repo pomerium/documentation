@@ -665,49 +665,37 @@ phase_configure_trusted_proxy() {
   # only needs three pieces of static config, we set them directly and skip
   # the WebSocket handshake entirely.
   #
-  # The pieces written:
-  #   - gateway.auth.trustedProxy.userHeader      : header carrying the user
-  #     id. Pomerium emits "x-pomerium-claim-email" once the cluster's
-  #     jwtClaimsHeaders maps email -> that header name (set in
-  #     zero_set_cluster_settings) AND the route has passIdentityHeaders=true.
-  #   - gateway.auth.trustedProxy.requiredHeaders : the gateway requires this
-  #     header set on every request before honoring userHeader. Pomerium emits
-  #     X-Pomerium-Jwt-Assertion when passIdentityHeaders=true; requiring it
-  #     means an attacker who can sit on the trusted-proxy IP (e.g. a rogue
-  #     container on the docker network) would *also* need to mint a credible
-  #     Pomerium-signed JWT to spoof identity.
-  #   - `allowUsers` is intentionally NOT set: Pomerium's route policy is the
-  #     single source of truth for who can reach this gateway. Duplicating
-  #     the allowlist here drifts.
-  #   - gateway.trustedProxies                    : list of exact upstream IPs
-  #     allowed to inject those headers. OpenClaw doesn't support CIDR here,
-  #     so we list one IP. We resolve it from `docker inspect` (see
-  #     resolve_pomerium_replica_ip) so the value reflects whatever Docker
-  #     actually assigned -- works whether the compose pins
-  #     ipv4_address: 172.30.0.10 or a user picked a different subnet to avoid
-  #     a collision.
-  #   - gateway.controlUi.dangerouslyDisableDeviceAuth : trusted-proxy WebSocket
-  #     connections lack device identity, so operator scopes are cleared without
-  #     this flag, causing the Control UI to show a pairing screen even though
-  #     the connection is authorized. Pomerium (the identity-aware proxy)
-  #     handles hardening, so disabling device auth here is safe.
-  #     (In a future OpenClaw release this may default to true automatically
-  #     when auth.mode is trusted-proxy.)
+  # The static pieces (userHeader, requiredHeaders,
+  # dangerouslyDisableDeviceAuth) are pre-written by entrypoint.sh on first
+  # boot so the gateway starts reliably. This phase only needs to supply the
+  # dynamic Pomerium IP and flip auth.mode.
   log "Configuring trusted-proxy auth mode..."
   local pomerium_ip
   pomerium_ip=$(resolve_pomerium_replica_ip)
-  local tp_block
-  tp_block=$(zero_jq -n \
-    --arg uh "x-pomerium-claim-email" \
-    --arg jwt "X-Pomerium-Jwt-Assertion" \
-    '{userHeader: $uh, requiredHeaders: [$jwt]}')
   local proxies
   proxies=$(zero_jq -n --arg ip "$pomerium_ip" '[$ip]')
-  INSIDE "openclaw config set gateway.auth.trustedProxy --strict-json '$tp_block'" >/dev/null 2>&1
   INSIDE "openclaw config set gateway.trustedProxies --strict-json '$proxies'" >/dev/null 2>&1
-  INSIDE "openclaw config set gateway.auth.mode trusted-proxy" >/dev/null 2>&1
-  INSIDE "openclaw config unset gateway.auth.token" >/dev/null 2>&1 || true
-  INSIDE "openclaw config set gateway.controlUi.dangerouslyDisableDeviceAuth true" >/dev/null 2>&1
+
+  # Switch to trusted-proxy mode (failures must be visible)
+  INSIDE "openclaw config set gateway.auth.mode trusted-proxy"
+  # Remove the temporary password the entrypoint set so auth is fully
+  # delegated to the trusted proxy.
+  INSIDE "openclaw config unset gateway.auth.password" >/dev/null 2>&1 || true
+
+  # Verify the config actually persisted
+  local verified_mode verified_proxies
+  verified_mode="$(INSIDE "openclaw config get gateway.auth.mode" 2>/dev/null | tr -d '"\r\n ' || true)"
+  verified_proxies="$(INSIDE "openclaw config get gateway.trustedProxies" 2>/dev/null | tr -d '\r\n ' || true)"
+  if [[ "$verified_mode" != "trusted-proxy" ]]; then
+    log_err "gateway.auth.mode did not persist (got: '${verified_mode:-<empty>}')."
+    log_err "Check docker compose logs openclaw-gateway for startup errors."
+    exit 1
+  fi
+  if [[ -z "$verified_proxies" || "$verified_proxies" == "null" || "$verified_proxies" == "[]" ]]; then
+    log_err "gateway.trustedProxies did not persist (got: '${verified_proxies:-<empty>}')."
+    log_err "Check docker compose logs openclaw-gateway for startup errors."
+    exit 1
+  fi
 
   DC restart openclaw-gateway
   if ! wait_for "gateway responding after trusted-proxy switch" 60 2 gateway_listening; then
@@ -779,6 +767,7 @@ cmd_reset() {
   INSIDE "openclaw devices clear --yes --pending" >/dev/null 2>&1 || true
   INSIDE "openclaw config set gateway.auth.mode token" >/dev/null 2>&1
   INSIDE "openclaw config set gateway.auth.token 'configure-gateway-token'" >/dev/null 2>&1
+  INSIDE "openclaw config unset gateway.auth.password" >/dev/null 2>&1 || true
   INSIDE "openclaw config unset gateway.auth.trustedProxy" >/dev/null 2>&1 || true
   INSIDE "openclaw config unset gateway.trustedProxies"   >/dev/null 2>&1 || true
   INSIDE "openclaw config unset gateway.controlUi.dangerouslyDisableDeviceAuth" >/dev/null 2>&1 || true
