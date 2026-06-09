@@ -4,12 +4,11 @@
 # What this does:
 #   Pre-bootstrap: Interactively prompts for the four required values when
 #                  .env is missing or incomplete (no-op on full .env).
-#   Phase 0:       Generates SSH keys, brings up openclaw-gateway + pomerium
-#                  (pomerium up so its container IP is resolvable for the
-#                  trusted-proxy step), patches the cluster's SSH config +
-#                  jwtClaimsHeaders in Pomerium Zero, creates the policy +
-#                  SSH route + web route via the Pomerium Zero API.
-#   Phase 1:       Configures the gateway for trusted-proxy auth directly
+#   Phase 0:       Generates SSH keys and configures Pomerium Zero via the
+#                  Zero API (cluster SSH config, jwtClaimsHeaders, policy,
+#                  SSH route, web route).
+#   Phase 1:       Brings up openclaw-gateway + pomerium, then configures
+#                  the gateway for trusted-proxy auth directly
 #                  (gateway.auth.trustedProxy + gateway.trustedProxies +
 #                  auth.mode=trusted-proxy). Replaces the older token-mode
 #                  -> WebSocket-pairing -> switch dance that broke in
@@ -26,8 +25,7 @@
 #                             https://console.pomerium.app/app/management/api-tokens
 #   OPERATOR_EMAIL            Sign-in email allowed by the route policy
 #
-# Host prereqs: docker, docker compose, ssh-keygen. (curl + jq run inside the
-# openclaw-gateway container, so the host doesn't need them.)
+# Host prereqs: docker, docker compose, ssh-keygen, curl, jq.
 #
 # Usage:
 #   ./bootstrap.sh                       # bootstrap (default; interactive if .env missing)
@@ -394,17 +392,10 @@ gateway_is_bootstrapped() {
   [[ -n "$tp" && "$tp" != "null" && "$tp" != "{}" ]]
 }
 
-# ---- Pomerium Zero API helpers (run inside the openclaw-gateway container) ----
-#
-# We use the gateway container's installed curl + jq so the host doesn't need
-# either tool. The container needs to be up before we call these; phase_zero_api
-# brings it up first and uses it as a "JSON utility container" for the API
-# bootstrap, then phase_stack_up brings up the rest.
+# ---- Pomerium Zero API helpers ----
 
 zero_curl() {
   # zero_curl <METHOD> <PATH-OR-URL> [<JSON-BODY>]
-  # If ID_TOKEN is set on the host, it's passed in via --env so curl inside
-  # the container can use it for the Authorization header.
   local method="$1" path="$2" body="${3:-}"
   local url
   if [[ "$path" == http* ]]; then url="$path"; else url="$ZERO_API$path"; fi
@@ -416,7 +407,7 @@ zero_curl() {
   # -w '\n%{http_code}' appends the HTTP status as the last line; we split it
   # off and surface a non-zero exit + log on >=400.
   local response status out
-  response=$(INSIDE_ROOT curl "${args[@]}" -w $'\n%{http_code}')
+  response=$(curl "${args[@]}" -w $'\n%{http_code}')
   status=${response##*$'\n'}
   out=${response%$'\n'*}
 
@@ -429,9 +420,7 @@ zero_curl() {
 }
 
 zero_jq() {
-  # Run jq inside the gateway container. Args: jq filter (and any flags).
-  # Stdin is forwarded.
-  INSIDE_ROOT jq "$@"
+  jq "$@"
 }
 
 zero_login() {
@@ -600,39 +589,6 @@ phase_generate_ssh_keys() {
   log_ok "User CA pub installed at openclaw-data/pomerium-ssh/"
 }
 
-phase_zero_api() {
-  log "Configuring SSH, policy and routes"
-  phase_generate_ssh_keys
-
-  # Bring up openclaw-gateway and pomerium together. The gateway is needed
-  # for its installed curl + jq (used to call the Pomerium Zero API below);
-  # pomerium is started here too so phase_configure_trusted_proxy can resolve
-  # its container IP without an extra `up -d` step. The verify service comes
-  # up later in phase_stack_up.
-  #
-  # `DC build` first: `docker-compose.yml` tags the service `image: openclaw:VERSION`
-  # which doesn't exist on any public registry; without an explicit build the
-  # `docker compose up` step prints a noisy "pull access denied for openclaw"
-  # warning before falling back to the build context. Building explicitly
-  # skips the pull attempt. Cached on re-runs.
-  log "Building openclaw-gateway image (cached on re-runs)"
-  DC build openclaw-gateway >/dev/null
-  log "Starting openclaw-gateway + pomerium"
-  DC up -d openclaw-gateway pomerium
-  if ! wait_for "openclaw-gateway exec ready" 60 2 \
-       sh -c 'docker compose exec -T openclaw-gateway sh -c "command -v curl && command -v jq" >/dev/null 2>&1'; then
-    log_err "openclaw-gateway did not become exec-ready"
-    exit 1
-  fi
-
-  zero_login
-  zero_resolve_ids
-  zero_set_cluster_settings
-  zero_get_or_create_policy
-  zero_get_or_create_route "openclaw-ssh" "ssh://openclaw" "ssh://openclaw-gateway:22" "ssh"
-  zero_get_or_create_route "openclaw-web" "https://openclaw.$POMERIUM_CLUSTER_DOMAIN" "http://openclaw-gateway:18789" "web"
-}
-
 phase_stack_up() {
   DC up -d
   if ! wait_for "gateway responding" 60 2 gateway_listening; then
@@ -782,9 +738,28 @@ cmd_bootstrap() {
   phase_env_setup
   load_env
   require_env POMERIUM_ZERO_TOKEN POMERIUM_CLUSTER_DOMAIN POMERIUM_ZERO_API_TOKEN OPERATOR_EMAIL
-  require_tools docker ssh-keygen
+  require_tools docker ssh-keygen curl jq
 
-  phase_zero_api
+  phase_generate_ssh_keys
+
+  log "Authenticating with Pomerium Zero API"
+  zero_login
+  zero_resolve_ids
+  zero_set_cluster_settings
+  zero_get_or_create_policy
+  zero_get_or_create_route "openclaw-ssh" "ssh://openclaw" "ssh://openclaw-gateway:22" "ssh"
+  zero_get_or_create_route "openclaw-web" "https://openclaw.$POMERIUM_CLUSTER_DOMAIN" "http://openclaw-gateway:18789" "web"
+  log_ok "Pomerium Zero API configuration complete"
+
+  log "Building openclaw-gateway image (cached on re-runs)"
+  DC build openclaw-gateway >/dev/null
+  log "Starting openclaw-gateway + pomerium"
+  DC up -d openclaw-gateway pomerium
+  if ! wait_for "openclaw-gateway exec ready" 60 2 \
+       sh -c 'docker compose exec -T openclaw-gateway sh -c "command -v curl && command -v jq" >/dev/null 2>&1'; then
+    log_err "openclaw-gateway did not become exec-ready"
+    exit 1
+  fi
 
   if gateway_is_bootstrapped; then
     log_ok "already bootstrapped"
@@ -792,7 +767,13 @@ cmd_bootstrap() {
     phase_configure_trusted_proxy
   fi
 
-  phase_stack_up
+  log "Bringing up remaining services"
+  DC up -d
+  if ! wait_for "gateway responding" 60 2 gateway_listening; then
+    log_err "gateway did not come up. Run: docker compose logs openclaw-gateway"
+    exit 1
+  fi
+  log_ok "stack is up"
 
   phase_offer_token_revocation
 
@@ -848,8 +829,7 @@ Required env vars in .env:
   POMERIUM_ZERO_API_TOKEN ($API_TOKENS_URL),
   OPERATOR_EMAIL (your IdP email; used in the route policy).
 
-Host prereqs: docker, docker compose, ssh-keygen.
-(curl + jq run inside the openclaw-gateway container; not required on host.)
+Host prereqs: docker, docker compose, ssh-keygen, curl, jq.
 EOF
     ;;
   *)
