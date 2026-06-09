@@ -337,17 +337,17 @@ resolve_pomerium_replica_ip() {
 
 # ---- generic helpers ----
 retry() {
-  local attempts="$1" sleep_s="$2" max_s="$3"
-  shift 3
-  local i=0
-  while (( i < attempts )); do
+  # Retry a command up to N times with a fixed 1s sleep between attempts.
+  # Usage: retry <label> <max-attempts> <command...>
+  local label="$1" max="$2"
+  shift 2
+  local i=1
+  while (( i <= max )); do
     if "$@"; then return 0; fi
+    if (( i == max )); then break; fi
+    log_warn "$label: attempt $i/$max failed, retrying in 1s"
+    sleep 1
     i=$((i + 1))
-    if (( i >= attempts )); then break; fi
-    log_warn "attempt $i/$attempts failed; sleeping ${sleep_s}s"
-    sleep "$sleep_s"
-    sleep_s=$((sleep_s * 2))
-    (( sleep_s > max_s )) && sleep_s="$max_s"
   done
   return 1
 }
@@ -382,6 +382,16 @@ gateway_listening() {
   INSIDE "openclaw config get gateway.mode" >/dev/null 2>&1 \
     && INSIDE_ROOT curl -s --max-time 5 -o /dev/null \
                    http://127.0.0.1:18789/ >/dev/null 2>&1
+}
+
+gateway_is_bootstrapped() {
+  # Durable idempotency signal: both auth.mode and the trustedProxy block
+  # must be present. Returns 0 when fully bootstrapped.
+  local mode tp
+  mode="$(INSIDE "openclaw config get gateway.auth.mode" 2>/dev/null | tr -d '"\r\n ' || true)"
+  [[ "$mode" == "trusted-proxy" ]] || return 1
+  tp="$(INSIDE "openclaw config get gateway.auth.trustedProxy" 2>/dev/null | tr -d '\r\n ' || true)"
+  [[ -n "$tp" && "$tp" != "null" && "$tp" != "{}" ]]
 }
 
 # ---- Pomerium Zero API helpers (run inside the openclaw-gateway container) ----
@@ -554,46 +564,22 @@ zero_get_or_create_route() {
   fi
 
   log "Creating $kind route ($from -> $to)"
+  local ws='false'
+  [[ "$kind" == "web" ]] && ws='true'
   local body
-  # Common fields required by the Pomerium Zero API. `allowWebsockets` is
-  # intentionally NOT in this block -- each route kind sets it explicitly
-  # (web=true, ssh=false). It used to live here, but jq object construction
-  # is last-write-wins, so an earlier `allowWebsockets: true` in the route
-  # body was being silently clobbered by this block when it expanded after.
-  local common_fields='
-    allowSpdy: false,
-    enableGoogleCloudServerlessAuthentication: false,
-    preserveHostHeader: false,
-    showErrorDetails: false,
-    tlsSkipVerify: false,
-    tlsUpstreamAllowRenegotiation: false
-  '
-  if [[ "$kind" == "web" ]]; then
-    body=$(zero_jq -n \
-      --arg ns "$NAMESPACE_ID" --arg name "$name" \
-      --arg from "$from" --arg to "$to" --arg pid "$POLICY_ID" \
-      "{
-        namespaceId: \$ns, name: \$name, from: \$from, to: [\$to],
-        policyIds: [\$pid],
-        passIdentityHeaders: true,
-        setRequestHeaders: { \"x-openclaw-scopes\": \"operator.admin\" },
-        $common_fields,
-        allowWebsockets: true
-      }")
-  else
-    body=$(zero_jq -n \
-      --arg ns "$NAMESPACE_ID" --arg name "$name" \
-      --arg from "$from" --arg to "$to" --arg pid "$POLICY_ID" \
-      "{
-        namespaceId: \$ns, name: \$name, from: \$from, to: [\$to],
-        policyIds: [\$pid],
-        $common_fields,
-        allowWebsockets: false
-      }")
-  fi
-  local rid
-  rid=$(zero_curl POST "/organizations/$ORG_ID/routes" "$body" \
-    | zero_jq -r '.id')
+  body=$(zero_jq -n \
+    --arg ns "$NAMESPACE_ID" --arg name "$name" \
+    --arg from "$from" --arg to "$to" --arg pid "$POLICY_ID" --argjson ws "$ws" \
+    '{
+      namespaceId: $ns, name: $name, from: $from, to: [$to],
+      policyIds: [$pid], passIdentityHeaders: true,
+      setRequestHeaders: {"x-openclaw-scopes": "operator.admin"},
+      allowSpdy: false, enableGoogleCloudServerlessAuthentication: false,
+      preserveHostHeader: false, showErrorDetails: false,
+      tlsSkipVerify: false, tlsUpstreamAllowRenegotiation: false,
+      allowWebsockets: $ws
+    }')
+  zero_curl POST "/organizations/$ORG_ID/routes" "$body" >/dev/null
   log_ok "$kind route created"
 }
 
@@ -676,29 +662,13 @@ phase_configure_trusted_proxy() {
   proxies=$(zero_jq -n --arg ip "$pomerium_ip" '[$ip]')
   # Retry on ConfigMutationConflictError: rapid sequential mutations from
   # separate docker exec sessions can race with the gateway's config watcher.
-  local attempt=0
-  while (( attempt < 5 )); do
-    if INSIDE "openclaw config set gateway.trustedProxies --strict-json '$proxies'">/dev/null 2>&1; then
-      break
-    fi
-    attempt=$((attempt + 1))
-    sleep 1
-  done
+  retry "set trustedProxies" 5 \
+    INSIDE "openclaw config set gateway.trustedProxies --strict-json '$proxies'" || true
 
-  # Switch to trusted-proxy mode (failures must be visible)
-  attempt=0
-  while true; do
-    if INSIDE "openclaw config set gateway.auth.mode trusted-proxy"; then
-      break
-    fi
-    attempt=$((attempt + 1))
-    if (( attempt >= 5 )); then
-      log_err "Failed to set gateway.auth.mode after $attempt attempts (ConfigMutationConflictError)"
-      exit 1
-    fi
-    log_warn "Config mutation conflict, retrying in 1s... (attempt $attempt/5)"
-    sleep 1
-  done
+  retry "set auth.mode" 5 \
+    INSIDE "openclaw config set gateway.auth.mode trusted-proxy" \
+    || { log_err "Failed to set gateway.auth.mode after 5 attempts (ConfigMutationConflictError)"; exit 1; }
+
   # openclaw automatically removes the inactive password when switching to
   # trusted-proxy mode; the explicit unset is a harmless no-op fallback.
   INSIDE "openclaw config unset gateway.auth.password" >/dev/null 2>&1 || true
@@ -761,16 +731,14 @@ cmd_status() {
     log_warn "gateway is not responding (is the stack up? \`docker compose up -d\`)"
     return 1
   fi
-  local mode tp_set
+  local mode
   mode="$(INSIDE "openclaw config get gateway.auth.mode" 2>/dev/null | tr -d '"\r\n ' || true)"
-  tp_set="$(INSIDE "openclaw config get gateway.auth.trustedProxy" 2>/dev/null | tr -d '\r\n ' || true)"
-  if [[ -n "$tp_set" && "$tp_set" != "null" && "$tp_set" != "{}" ]]; then
-    tp_set=yes
-  else
-    tp_set=no
-  fi
   log "auth.mode:    ${mode:-unknown}"
-  log "trustedProxy: $tp_set"
+  if gateway_is_bootstrapped; then
+    log "trustedProxy: yes"
+  else
+    log "trustedProxy: no"
+  fi
 }
 
 cmd_reset() {
@@ -805,26 +773,8 @@ cmd_bootstrap() {
 
   phase_zero_api
 
-  local mode tp_set
-  # `|| true`: on a fresh install gateway.auth.mode is unset and openclaw
-  # exits non-zero -- without this, set -euo pipefail kills the script
-  # silently before phase_configure_trusted_proxy can run.
-  mode="$(INSIDE "openclaw config get gateway.auth.mode" 2>/dev/null | tr -d '"\r\n ' || true)"
-  # `gateway.auth.trustedProxy` populated is the durable signal that the
-  # trusted-proxy switch has run.
-  tp_set="$(INSIDE "openclaw config get gateway.auth.trustedProxy" 2>/dev/null | tr -d '\r\n ' || true)"
-  if [[ -n "$tp_set" && "$tp_set" != "null" && "$tp_set" != "{}" ]]; then
-    tp_set=yes
-  else
-    tp_set=no
-  fi
-
-  if [[ "$mode" == "trusted-proxy" && "$tp_set" == "yes" ]]; then
+  if gateway_is_bootstrapped; then
     log_ok "already bootstrapped"
-  elif [[ "$mode" == "trusted-proxy" && "$tp_set" == "no" ]]; then
-    log_err "inconsistent state (trusted-proxy mode without trustedProxy config)."
-    log_err "Run: ./bootstrap.sh reset"
-    exit 1
   else
     phase_configure_trusted_proxy
   fi
