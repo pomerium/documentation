@@ -1,0 +1,46 @@
+# Sealed validation for the Transmission guide. Reuses the shared harness (Keycloak +
+# certs + headless runner) and adds Transmission + a Pomerium wired to the in-network
+# IdP. Transmission consumes no identity, so the auth + upstream reachability spec is
+# the whole check. Run with: scripts/validate-guide-fixtures.sh transmission
+
+include:
+  - ../../_harness/compose/compose.harness.yaml
+
+services:
+  transmission:
+    image: lscr.io/linuxserver/transmission@sha256:aa4926b22bc25e89820acf427f8a5d1426c34a7ae9bd834e06eda43b12d839c3
+    environment:
+      PUID: '1000'
+      PGID: '1000'
+      TZ: Etc/UTC
+    networks:
+      default:
+        aliases:
+          - transmission
+
+  pomerium:
+    image: pomerium/pomerium@sha256:e10d1d267af24f581157f485d9b0bc08469e2428675b696a08e42ceb09b2279c
+    command: ['--config', '/pomerium/config.yaml']
+    env_file:
+      - ../../_harness/pomerium/validation.env
+    volumes:
+      - certs:/certs:ro
+      - ./routes.validate.yaml:/pomerium/config.yaml:ro
+    depends_on:
+      certs-init:
+        condition: service_completed_successfully
+      keycloak:
+        condition: service_healthy
+      transmission:
+        condition: service_started
+    networks:
+      default:
+        aliases:
+          - authenticate.localhost.pomerium.io
+          - transmission.localhost.pomerium.io
+    healthcheck:
+      test: ['CMD', 'pomerium', 'health']
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 10s

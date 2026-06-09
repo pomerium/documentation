@@ -1,0 +1,174 @@
+---
+title: Secure SSH with Pomerium Zero
+sidebar_label: Native SSH (Zero)
+lang: en-US
+keywords:
+  [
+    pomerium,
+    ssh,
+    zero,
+    native ssh,
+    oidc,
+    identity aware proxy,
+    ssh certificates,
+  ]
+description: Configure native, identity-aware SSH access through Pomerium Zero using OAuth login and short-lived SSH certificates.
+---
+
+# Secure SSH with Pomerium Zero
+
+## What this guide does
+
+You'll put your SSH servers behind Pomerium Zero so users authenticate with your identity provider and connect over standard SSH, with no VPN, no bastion host, and no long-lived keys to manage. Pomerium acts as a [native SSH](/docs/capabilities/native-ssh-access) reverse proxy: it terminates the SSH connection, runs the user through OAuth, and presents a short-lived, certificate-based identity to the upstream server. Your target servers only have to trust one certificate authority (CA) that Pomerium holds.
+
+The whole flow is driven from the [Zero Console](https://console.pomerium.app), which manages the SSH listener address, host keys, and signing CA for your cluster. You generate a few keys locally once, paste them into the Console, trust the CA on your servers, and from then on access is policy-controlled from one place.
+
+## When to use this guide
+
+Use it when you want browser-based single sign-on in front of SSH and short-lived certificate auth on the wire, without changing how people invoke `ssh`. If you only need a raw, encrypted tunnel to a host on a private network and don't want OAuth in the path, a plain [TCP route](/docs/capabilities/non-http) (covered in [TCP routes in Zero](/docs/get-started/fundamentals/zero/zero-tcp-routes)) is a simpler fit.
+
+## Prerequisites
+
+This guide assumes you've completed the [Quickstart](/docs/get-started/quickstart), so you already have a Pomerium Zero cluster running and signing users in through the hosted authenticate service.
+
+You also need:
+
+- A Zero cluster on [Pomerium 0.30](https://www.pomerium.com/blog/announcing-pomerium-v030) or higher, since native SSH lands in 0.30.
+- Administrative access to the [Zero Console](https://console.pomerium.app).
+- An OpenSSH client (`ssh`, `ssh-keygen`) on user machines.
+- One or more target SSH servers you control, where you can edit `sshd` configuration as root.
+
+## Generate the SSH keys
+
+Native SSH needs two things from you: a **User CA** key pair that Pomerium uses to sign per-session user certificates, and a set of **host keys** that Pomerium presents to clients as its own SSH server identity. Generate them once on a trusted workstation.
+
+Create the User CA key pair. The private key goes into the Zero Console; the public key gets distributed to your servers:
+
+```shell
+ssh-keygen -N "" -f pomerium_user_ca_key -C "Pomerium User CA"
+```
+
+This writes `pomerium_user_ca_key` (private) and `pomerium_user_ca_key.pub` (public).
+
+Then generate host keys. Generating all three algorithms gives the broadest client compatibility, but ED25519 alone is fine for modern clients:
+
+```shell
+ssh-keygen -N "" -t ed25519 -f pomerium_ssh_host_ed25519_key
+ssh-keygen -N "" -t rsa -b 3072 -f pomerium_ssh_host_rsa_key
+ssh-keygen -N "" -t ecdsa -b 256 -f pomerium_ssh_host_ecdsa_key
+```
+
+The `-N ""` flag generates the keys without a passphrase, which is required because Pomerium loads them non-interactively.
+
+## Configure target SSH servers
+
+On every server you want to reach, tell `sshd` to trust certificates signed by your User CA. Copy the public CA key to the server, then point `TrustedUserCAKeys` at it.
+
+Place the public key in any root-owned location, for example `/etc/ssh/pomerium_user_ca_key.pub`:
+
+```shell
+sudo cp pomerium_user_ca_key.pub /etc/ssh/pomerium_user_ca_key.pub
+sudo chown root:root /etc/ssh/pomerium_user_ca_key.pub
+sudo chmod 644 /etc/ssh/pomerium_user_ca_key.pub
+```
+
+This is a public key, so it does not need to be secret; the important part is that it is owned by root and not writable by anyone else. Next, add a drop-in `sshd` config so you don't edit the main file:
+
+```shell title="/etc/ssh/sshd_config.d/50-pomerium.conf"
+TrustedUserCAKeys /etc/ssh/pomerium_user_ca_key.pub
+PubkeyAuthentication yes
+```
+
+Reload `sshd` so the change takes effect, then confirm it's healthy:
+
+```shell
+sudo systemctl restart sshd   # use "ssh" instead of "sshd" on Ubuntu/Debian
+sudo systemctl status sshd
+```
+
+The server now accepts any user certificate signed by your CA. Pomerium controls who actually gets a certificate, and for which username, through policy.
+
+## Configure SSH in the Zero Console
+
+In the [Zero Console](https://console.pomerium.app), native SSH is set up through a guided flow that walks you through the cluster-wide SSH settings and your first route together.
+
+Open **Manage → Routes** and select **New Route**, then choose **Guided SSH Route**.
+
+![The Routes overview page in the Zero Console](./img/zero-ssh/routes-page.png)
+
+The first time you create an SSH route, the Console prompts for the global SSH settings that apply to the whole cluster:
+
+![The Configure Global SSH Settings step in the Zero Console](./img/zero-ssh/guided-route-global-ssh-settings.png)
+
+- **SSH Address** is where Pomerium listens for SSH connections, for example `0.0.0.0:22`. Pick a different port if something else already owns 22 on the data plane.
+
+  ![Configuring the SSH listen address in the Zero Console](./img/zero-ssh/configure-ssh-address.png)
+
+- **SSH Host Keys** are the host private keys you generated. Paste the full contents of the first key (including the `-----BEGIN OPENSSH PRIVATE KEY-----` / `-----END OPENSSH PRIVATE KEY-----` lines), then use the **+** button to add the RSA and ECDSA keys.
+- **SSH User CA Key** is the **private** half of the CA you generated (`pomerium_user_ca_key`). Pomerium uses it to sign each session's user certificate.
+
+Both fields appear in the Configure Global SSH Settings step shown above. Paste the private keys, not the `.pub` files, into the host-key and CA fields. The Console has a **How to generate SSH keys?** helper if you need the commands again. Select **Next** to move on to the route.
+
+![The guided SSH route help panel in the Zero Console](./img/zero-ssh/guided-ssh-route-help.png)
+
+Now configure the route itself:
+
+- **Route Name**: a descriptive label, such as `prod-server-ssh`.
+- **From**: the hostname users will connect to, in `ssh://hostname` form, for example `ssh://prod-server`. This name resolves to your cluster (the built-in starter domain handles this for you, see below).
+- **To**: the upstream server in `ssh://host:port` form, for example `ssh://10.0.1.100:22`.
+
+![Configuring the From and To addresses for an SSH route](./img/zero-ssh/configure-from-to-routes.png)
+
+The Console shows the exact `ssh` command users will run. Select **Next** to attach a policy.
+
+## Configure access policies
+
+The final guided step secures the route. You can attach an existing cluster policy or create a new one with **Allow** and **Deny** blocks. For SSH, leave **Public Access** off; **Any Authenticated User** is a reasonable starting point that you can tighten later.
+
+![Creating and applying a policy to the SSH route](./img/zero-ssh/create-apply-policies.png)
+
+By default an authenticated user can request any Linux username on the target (`ssh root@route@...` as easily as `ssh ubuntu@route@...`). Constrain that with SSH-specific [Pomerium Policy Language (PPL)](/docs/internals/ppl) criteria in the policy:
+
+- `ssh_username` pins the allowed username(s), e.g. `ssh_username: ubuntu`.
+- `ssh_username_matches_claim` ties the username to an OAuth token claim.
+- `ssh_username_matches_email` forces the username to match the local part of the user's email.
+
+For example, `ssh_username_matches_email: true` ensures each person can only log in as the account matching their own email and never as `root`. Apply the policy and select **Next** to finish. The cluster-wide SSH settings are now saved, so additional SSH routes can be created from either the guided flow or a custom route.
+
+## DNS and connecting
+
+Your cluster ships with a built-in `*.pomerium.app` starter domain, so there's nothing to configure to start connecting:
+
+```shell
+ssh myuser@myroute@your-cluster.pomerium.app
+```
+
+In that command, `myuser` is the account on the target server, `myroute` is the route's **From** hostname, and the final field is your cluster address, which Pomerium uses to route to the upstream. The first connection opens a browser for OAuth login; after that Pomerium issues a short-lived certificate and connects you, with no special SSH client config required.
+
+To use your own domain instead, follow [adding a custom domain in Zero](/docs/get-started/fundamentals/zero/zero-custom-idp#next-steps-add-a-custom-domain). A common convention is an `ssh.` prefix, so the command becomes `ssh myuser@myroute@ssh.company.com`.
+
+## Verify the setup
+
+1. **The route requires authentication.** From a user machine, run `ssh myuser@myroute@your-cluster.pomerium.app`. Pomerium should print a URL (or open a browser) asking you to sign in, rather than connecting straight through.
+2. **An allowed user gets a shell.** Complete the OAuth login as a user your policy allows. Pomerium signs a short-lived certificate and drops you onto the target server's shell.
+3. **Policy is enforced.** If you set a username restriction, try connecting as a disallowed username (for example `ssh root@myroute@...` when only `ubuntu` is allowed) and confirm Pomerium refuses it.
+
+## Common failure modes
+
+- **Certificate authentication fails on the target.** Confirm `pomerium_user_ca_key.pub` is installed on the server, that `TrustedUserCAKeys` points at it, and that you restarted `sshd`. Run `ssh -vvv` to see whether a certificate is presented and accepted, and set `LogLevel DEBUG3` in `sshd_config` plus `journalctl -u sshd` for server-side detail.
+- **You reach the wrong SSH server.** If the data plane listens on a non-standard port, make sure you're connecting to Pomerium's port and that the route's **From** hostname resolves to the cluster, not directly to the upstream.
+- **Key format errors in the Console.** The host-key and CA fields take the full private key with its header and footer lines, generated without a passphrase (`-N ""`). Paste the private keys, not the `.pub` files.
+- **Username restriction has no effect.** Re-check the `ssh_username*` criteria in the route policy, and remember the username must also exist as a real account on the target server. Pomerium decides which usernames are allowed; the Linux account still has to be present.
+
+## Security considerations
+
+- **The User CA is the trust anchor.** Any server that trusts `pomerium_user_ca_key.pub` will accept any certificate Pomerium signs. Keep the private CA key only in the Zero Console, store your local copy securely, and rotate the CA and host keys on your organization's schedule (regenerate, update under **Settings → SSH**, and redistribute the new public CA key to servers).
+- **Scope usernames with policy.** Without `ssh_username*` criteria, any allowed user can request `root`. Use `ssh_username_matches_email` or an explicit `ssh_username` list to prevent privilege escalation to shared system accounts.
+- **Harden the upstream too.** Pomerium's certificate auth complements, but doesn't replace, normal server hardening (disable password auth, keep the OS patched). Avoid `fail2ban` in front of a Pomerium SSH route, since connections arrive from Pomerium's address and you can lock everyone out at once.
+
+## Next steps
+
+- [Build additional routes](/docs/get-started/fundamentals/zero/zero-build-routes) for your other servers.
+- [Build policies](/docs/get-started/fundamentals/zero/zero-build-policies) and [advanced policies](/docs/internals/ppl) for granular, per-route access.
+- Review the [Native SSH Access](/docs/capabilities/native-ssh-access) capability page for the full configuration reference.
+- See the general [security best practices](/docs/internals/security) for monitoring, segmentation, and policy hygiene.

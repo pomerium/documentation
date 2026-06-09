@@ -1,0 +1,45 @@
+```yaml title="docker-compose.yaml"
+services:
+  pomerium:
+    image: pomerium/pomerium@sha256:e10d1d267af24f581157f485d9b0bc08469e2428675b696a08e42ceb09b2279c # v0.32.7
+    volumes:
+      - ./config.yaml:/pomerium/config.yaml:ro
+      - pomerium-cache:/data
+    ports:
+      - 443:443
+      - 80:80
+    # Pomerium is the only service on the default network (where its ports are
+    # published) and is also on the internal network so it can reach Open WebUI.
+    networks:
+      default: {}
+      internal: {}
+    restart: always
+
+  open-webui:
+    image: ghcr.io/open-webui/open-webui@sha256:7f1b0a1a50cfbac23da3b16f96bc968fd757b26dc9e54e93813d61768ea9184e # main
+    environment:
+      # Trust the email Pomerium forwards and skip Open WebUI's own login screen.
+      - WEBUI_AUTH_TRUSTED_EMAIL_HEADER=X-Pomerium-Claim-Email
+      - WEBUI_URL=https://llm.yourdomain.com
+      # The first provisioned user becomes admin; later users default to "pending" and
+      # must be approved. Uncomment to make new SSO users active immediately instead.
+      # - DEFAULT_USER_ROLE=user
+    volumes:
+      - open-webui-data:/app/backend/data
+    # Open WebUI is ONLY on the internal network, so nothing but Pomerium can reach it
+    # and the trusted email header cannot be forged by going around Pomerium.
+    networks:
+      internal: {}
+    restart: always
+
+volumes:
+  pomerium-cache:
+  open-webui-data:
+
+networks:
+  default: {}
+  # internal: true has no route to the host or outside world; only services attached
+  # to it (Pomerium and Open WebUI) can talk on it.
+  internal:
+    internal: true
+```

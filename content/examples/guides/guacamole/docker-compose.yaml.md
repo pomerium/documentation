@@ -1,0 +1,66 @@
+```yaml title="docker-compose.yaml"
+services:
+  # The guacd daemon renders remote desktop protocols (VNC, RDP, SSH) for the web app.
+  guacd:
+    image: guacamole/guacd@sha256:8974eaa9ba32f713daf311e7cc8cd7e4cdfba1edea39eed75524e78ef4b08f4f # 1.6.0
+    restart: always
+    networks: [guac-internal]
+
+  # PostgreSQL stores Guacamole's users, connections, and history. The schema is
+  # loaded once from ./init on first boot; generate it with:
+  #   docker run --rm guacamole/guacamole /opt/guacamole/bin/initdb.sh --postgresql > init/initdb.sql
+  postgres:
+    image: postgres@sha256:df7bca0066e6f60cc3dd32faa70caddec20e2c22b58932f79498e5704b23854a # 15-alpine
+    environment:
+      POSTGRES_DB: guacamole_db
+      POSTGRES_USER: guacamole_user
+      POSTGRES_PASSWORD: ChooseYourOwnPasswordHere1234
+    volumes:
+      - ./init:/docker-entrypoint-initdb.d:ro
+      - guacamole-data:/var/lib/postgresql/data
+    restart: always
+    networks: [guac-internal]
+
+  # The Guacamole web application. HEADER_ENABLED turns on header authentication and
+  # HTTP_AUTH_HEADER tells it which header carries the already-authenticated user.
+  guacamole:
+    image: guacamole/guacamole@sha256:f344085e618bb05e22b964b0208dbd06d3468275bac70206f93805245e067b40 # 1.6.0
+    depends_on:
+      - guacd
+      - postgres
+    environment:
+      GUACD_HOSTNAME: guacd
+      POSTGRESQL_HOSTNAME: postgres
+      POSTGRESQL_DATABASE: guacamole_db
+      POSTGRESQL_USERNAME: guacamole_user
+      POSTGRESQL_PASSWORD: ChooseYourOwnPasswordHere1234
+      HEADER_ENABLED: 'true'
+      HTTP_AUTH_HEADER: X-Pomerium-Claim-Email
+      # Serve the app at / so the route host maps straight to it (no /guacamole prefix).
+      WEBAPP_CONTEXT: ROOT
+    restart: always
+    networks: [guac-internal]
+
+  pomerium:
+    image: pomerium/pomerium@sha256:e10d1d267af24f581157f485d9b0bc08469e2428675b696a08e42ceb09b2279c # v0.32.7
+    volumes:
+      - ./config.yaml:/pomerium/config.yaml:ro
+      - pomerium-cache:/data
+    ports:
+      - 443:443
+      - 80:80
+    restart: always
+    # Pomerium is the only service with published ports and the only one bridging to
+    # the internal network, so Guacamole is reachable only through Pomerium.
+    networks: [default, guac-internal]
+
+networks:
+  # No host access: keeps guacd/postgres/guacamole off the host and reachable only by
+  # pomerium, which the header-auth trust model requires.
+  guac-internal:
+    internal: true
+
+volumes:
+  guacamole-data:
+  pomerium-cache:
+```

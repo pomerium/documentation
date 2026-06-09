@@ -1,267 +1,128 @@
 ---
-title: ToolJet
+title: Secure ToolJet with Pomerium
+sidebar_label: ToolJet
 lang: en-US
-description: Secure ToolJet with Pomerium and build internal developer tools.
-keywords: [tooljet, pomerium, internal developer tools]
+keywords: [pomerium, tooljet, sso, oidc, identity aware proxy, internal tools]
+description: Put ToolJet behind Pomerium so only authenticated users can reach your low-code internal tools.
 ---
 
 import TabItem from '@theme/TabItem';
 import Tabs from '@theme/Tabs';
 
-import ConfigConsole from '/content/examples/tooljet/config-console.yaml.md';
-import PomeriumConfig from '/content/examples/tooljet/config-tooljet.yaml.md';
-import ConsoleCompose from '/content/examples/tooljet/console-compose.yaml.md';
-import ToolJetCompose from '/content/examples/tooljet/docker-compose.yaml.md';
-import PomeriumCompose from '/content/examples/tooljet/docker-compose.yaml.md';
+import Config from '/content/examples/guides/tooljet/config.yaml.md';
+import Compose from '/content/examples/guides/tooljet/docker-compose.yaml.md';
 
-# Run ToolJet with Docker
+# Secure ToolJet with Pomerium
 
-Run Pomerium with Docker Compose to secure your ToolJet application.
+## What this guide does
 
-## What is ToolJet?
+[ToolJet](https://www.tooljet.com/) is a self-hosted, low-code platform for building internal tools. This guide puts a self-hosted ToolJet instance behind Pomerium so every request is authenticated against your identity provider before it reaches the app. Pomerium acts as the front door: unauthenticated visitors are redirected to your IdP and never touch ToolJet.
 
-[ToolJet](https://www.tooljet.com/) is a self-hosted, low-code platform that helps you build and deploy internal developer tools.
+ToolJet keeps its own accounts and role-based access control, so Pomerium does not replace ToolJet's login. Instead, Pomerium gates network access to the instance, and ToolJet's RBAC governs what each signed-in user can do once inside.
 
-## Why use Pomerium with ToolJet?
+## When to use this guide
 
-Pomerium can secure ToolJet by applying policy to your routes that only grants access to ToolJet to certain users.
+Use this guide when you run ToolJet yourself with Docker Compose and want a single, identity-aware entry point in front of it. It is a good fit if you already protect other services with Pomerium and want ToolJet to follow the same access policy.
 
-ToolJet provides its own RBAC-based [permissions](https://docs.tooljet.com/docs/org-management/permissions) and several [user authentication](https://docs.tooljet.com/docs/user-authentication/sso/saml/) flows, so proxied requests will require users to sign in twice.
+If you only need ToolJet's built-in SSO and have no other services to protect, you may not need Pomerium at all. The value here is a consistent policy boundary across all of your internal tools.
 
-## Before you begin
+## Prerequisites
 
-To complete this guide, you need:
+- A working Pomerium deployment. If you don't have one, follow the [quickstart](/docs/get-started/quickstart) first.
+- [Docker](https://docs.docker.com/install/) and [Docker Compose](https://docs.docker.com/compose/install/).
+- A domain you control, with a DNS record pointing the ToolJet hostname (for example `tooljet.yourdomain.com`) at your Pomerium instance.
 
-- [Docker](https://docs.docker.com/install/) and [Docker Compose](https://docs.docker.com/compose/install/)
-- An [identity provider](/docs/integrations/user-identity/identity-providers)
+## Configure Pomerium
 
-## Set up Pomerium
+<Tabs queryString="type">
+<TabItem value="zero" label="Pomerium Zero" default>
 
-<Tabs>
-<TabItem value="Core" label="Core">
+In the [Zero Console](https://console.pomerium.app), create a route for ToolJet:
 
-Create a `config.yaml` file and add the following code:
+1. Set **From** to the external URL you want, for example `https://tooljet.yourdomain.com`.
+2. Set **To** to the ToolJet service, for example `http://tooljet:80`.
+3. Under **Headers**, enable **Preserve host header**. ToolJet validates the incoming `Host` against its `TOOLJET_HOST` value, so the forwarded request must carry the public hostname rather than the internal service name.
+4. Attach a policy that allows the users who should reach ToolJet.
 
-<PomeriumConfig />
-
-Next, you need to:
-
-- Update the IdP configuration variables with your own (See the [GitHub](/docs/integrations/user-identity/github) guide for more information)
-- Replace user@example.com with the email associated with your IdP
-- Generate a signing key
-
-To generate a [signing key](/docs/reference/signing-key), use the commands below:
-
-```bash
-# Generates a P-256 (ES256) signing key
-openssl ecparam  -genkey  -name prime256v1  -noout  -out ec_private.pem
-# Prints the base64 encoded value of the signing key
-cat ec_private.pem | base64
-```
-
-Add the base64-encoded signing key to the `signing_key` variable in your `config.yaml` file.
-
-## Add Pomerium services to Docker Compose
-
-Update `docker-compose.yaml` with the following configuration:
-
-<PomeriumCompose />
-
-This configuration also includes the Docker image to run ToolJet.
-
-## Set up ToolJet
-
-In the root folder of your project, create a folder called `postgres_data` to run ToolJet's [in-built PostgreSQL](https://docs.tooljet.com/docs/setup/docker) database:
-
-```bash
-mkdir postgres_data
-```
-
-Add a `.env` file pre-populated with ToolJet's environment variables:
-
-```bash
-curl -LO https://raw.githubusercontent.com/ToolJet/ToolJet/main/deploy/docker/.env.example
-mv .env.example .env
-```
-
-In your `.env` file, make the following changes:
-
-- Update `LOCKBOX_MASTER_KEY` and `SECRET_KEY_BASE` following ToolJet's [environment variable](https://docs.tooljet.com/docs/setup/env-vars) docs
-- Replace `TOOLJET_HOSTNAME` with your Pomerium [external route](/docs/reference/routes/from) URL instead
-
-For example:
-
-```env
-TOOLJET_HOSTNAME=https://tooljet.localhost.pomerium.io
-```
-
-Keep the default values for the database configuration and the other environment variables.
-
-## Run ToolJet
-
-Run `docker compose up` to run your Pomerium and ToolJet containers.
-
-In your terminal, wait until ToolJet is in a ready state:
-
-![ToolJet ready state](./img/tooljet/ready-to-use.png)
-
-In your browser, go to the external ToolJet URL to set up your workspace.
+That's the whole Pomerium side. Zero manages the hosted authenticate service and TLS for you.
 
 </TabItem>
-<TabItem value="Enterprise" label="Enterprise">
+<TabItem value="core" label="Pomerium Core">
 
-:::enterprise
+Create a `config.yaml` for Pomerium Core:
 
-This guide assumes you can access the [Enterprise Console](/docs/deploy/enterprise/install).
+<Config />
 
-The Docker Compose configuration in the Enterprise portion of this guide uses same implementation as the [Enterprise Quickstart](/docs/deploy/enterprise/quickstart).
+Replace `tooljet.yourdomain.com` with your hostname and `you@example.com` with the identity that should be allowed in. The `preserve_host_header: true` setting is what makes ToolJet accept the proxied request: ToolJet rejects any request whose `Host` header does not match `TOOLJET_HOST`. Because the route's external hostname already equals `TOOLJET_HOST`, preserving the incoming `Host` forwards the right value to the upstream.
+
+This config uses the hosted authenticate service (`authenticate.pomerium.app`), so you don't run your own identity provider.
+
+:::tip Prefer to self-host the identity provider?
+
+To run your own IdP instead, point `authenticate_service_url` at your own authenticate service and configure an OIDC provider. See the [Keycloak fallback](/docs/integrations/user-identity/oidc) for a fully self-hosted setup.
 
 :::
-
-The Enterprise Console configuration in this guide consists of three files:
-
-- `config.yaml`
-- `console-config.yaml`
-- `docker-compose.yaml`
-
-In your `config.yaml` file, add the following code:
-
-<ConfigConsole />
-
-Next, you need to:
-
-- Update the IdP configuration variables with your own (See the [GitHub](/docs/integrations/user-identity/github) guide for more information)
-- Replace user@example.com with the email associated with your IdP
-- Generate a signing key
-
-To generate a [signing key](/docs/reference/signing-key), use the commands below:
-
-```bash
-# Generates a P-256 (ES256) signing key
-openssl ecparam  -genkey  -name prime256v1  -noout  -out ec_private.pem
-# Prints the base64 encoded value of the signing key
-cat ec_private.pem | base64
-```
-
-Add the base64-encoded signing key to the `signing_key` variable in your `config.yaml` file.
-
-## Add Console services to Docker Compose
-
-Update your `docker-compose.yaml` file with the following configuration:
-
-<ConsoleCompose />
-
-Add the signing key you generated in `config.yaml` to the `SIGNING_KEY` environment variable.
-
-Add the following configuration settings to `console-config.yaml` and replace the values with your own:
-
-```yaml title="console-config.yaml"
-administrators: admin@example.com
-license_key: YOUR_LICENSE_KEY
-```
-
-## Set up ToolJet
-
-In the root of your project, create a folder called `postgres_data` to run ToolJet's [in-built PostgreSQL](https://docs.tooljet.com/docs/setup/docker) database:
-
-```bash
-mkdir postgres_data
-```
-
-Add a `.env` file pre-populated with ToolJet's environment variables:
-
-```bash
-curl -LO https://raw.githubusercontent.com/ToolJet/ToolJet/main/deploy/docker/.env.example
-mv .env.example .env
-```
-
-In your `.env` file, make the following changes:
-
-- Update `LOCKBOX_MASTER_KEY` and `SECRET_KEY_BASE` following ToolJet's [environment variable](https://docs.tooljet.com/docs/setup/env-vars) docs.
-- Replace `TOOLJET_HOSTNAME` with your Pomerium [external route](/docs/reference/routes/from) URL instead.
-
-For example:
-
-```env
-TOOLJET_HOSTNAME=https://tooljet.localhost.pomerium.io
-```
-
-Keep the default values for the database configuration and the other environment variables.
-
-## Build a route and policy
-
-Run `docker compose up` and go to your Console dashboard.
-
-In your Enterprise Console, create a policy:
-
-1. Name your policy (for example, **tooljet**), then select the **Builder** tab
-2. Select **ADD ALLOW BLOCK**, then select the **+** icon to add an **OR** operator
-3. In the **Criteria** field, select **Email**
-4. In the **Value** field, enter the email address associated with your IdP
-
-![Build a policy](./img/tooljet/add-policy.png)
-
-Save your policy.
-
-Create an external route to access ToolJet:
-
-1. Name your route and enter the external route in the **from:** field
-2. Enter the scheme and hostname in the **to:** field
-3. In the **Policies** field, select the policy you built for ToolJet
-4. Select **Pass Identity Headers**
-
-![Build a route](./img/tooljet/build-route.png)
-
-Configure your route to rewrite the host header:
-
-1. Select **Headers** from the sidebar
-2. In the **Host Headers** dropdown, select **Rewrite to Header**
-3. In the **Host Rewrite to Header** field, enter the external route without the protocol
-
-![Rewrite headers](./img/tooljet/rewrite-headers.png)
-
-Save your route.
-
-## Access ToolJet from Console
-
-In your terminal, wait until ToolJet is in a ready state:
-
-![ToolJet ready state](./img/tooljet/ready-to-use.png)
-
-In your browser, go to the external ToolJet URL to set up your workspace.
 
 </TabItem>
 </Tabs>
 
-## Set up ToolJet workspace
+## Configure ToolJet
 
-Set up your admin account:
+ToolJet needs a PostgreSQL database and a few secrets. Generate the two encryption keys before you start:
 
-![Set up admin](./img/tooljet/set-up-admin.png)
+```bash
+# LOCKBOX_MASTER_KEY: 32 bytes of hex
+openssl rand -hex 32
+# SECRET_KEY_BASE: 64 bytes of hex
+openssl rand -hex 64
+```
 
-Set up your workspace:
+Put those values into the `LOCKBOX_MASTER_KEY` and `SECRET_KEY_BASE` environment variables in the Compose file below, and set `TOOLJET_HOST` to the same external URL you used in your Pomerium route. The `PG_*` variables point ToolJet at the bundled PostgreSQL service, and the `TOOLJET_DB_*` variables back ToolJet's built-in database, which reuses the same PostgreSQL server here.
 
-![Set up ToolJet workspace](./img/tooljet/set-up-workspace.png)
+You do not need to run migrations by hand. The `tooljet/tooljet-ce` image waits for PostgreSQL and runs its database setup automatically on first boot, which is why the first start takes a few minutes. The image also bundles Redis, so no separate Redis service is required for a single-instance deployment.
 
-Skip the prompts asking for your company information.
+See ToolJet's [environment variable reference](https://docs.tooljet.com/docs/setup/env-vars) for the full list of options.
 
-You should now be in your ToolJet dashboard.
+## Run the stack
 
-### Invite a user
+The Compose file below runs Pomerium Core, ToolJet, and PostgreSQL together:
 
-To invite a user:
+<Compose />
 
-1. Select **Workspace settings** (the **Gear** icon)
-2. In the **Users & Permissions** window, select **Invite new user**
-3. Enter their details and select **Create User**
-4. Copy their invite link
+Start everything:
 
-![Copy invite link](./img/tooljet/invite-url.png)
+```bash
+docker compose up -d
+```
 
-Open the link in a new tab:
+The first boot runs ToolJet's database migrations, so give it a few minutes. Watch `docker compose logs -f tooljet` until ToolJet reports it is ready.
 
-![Join workspace](./img/tooljet/join-workspace.png)
+## Verify the setup
 
-Create a password and accept the invite to log in to the workspace.
+1. In a private browser window, go to `https://tooljet.yourdomain.com`. Pomerium should redirect you to your identity provider rather than showing ToolJet.
+2. Sign in with a user your policy allows. After login you should land on ToolJet's own setup screen, served through Pomerium:
 
-From here, you can sign in as an admin and create apps within a workspace, create new workspaces, build apps within a given workspace, and configure workplace permissions to manage access and privileges for users and groups within ToolJet.
+   ![ToolJet's admin setup screen reached through Pomerium after SSO](./img/tooljet/tooljet.png)
+
+3. Complete ToolJet's first-run workspace setup and create your admin account. From here ToolJet's own RBAC governs the workspace.
+4. **A disallowed user is blocked.** Sign in as a user your policy excludes and open `https://tooljet.yourdomain.com`. Pomerium should deny access, so you never reach ToolJet.
+
+If an unauthenticated request reaches ToolJet directly, or an allowed user can't get past the IdP, revisit the route policy and the preserve-host-header setting.
+
+## Common failure modes
+
+- **ToolJet returns a host or "invalid host" error.** The forwarded `Host` header doesn't match `TOOLJET_HOST`. Confirm the route forwards the public hostname (`preserve_host_header: true` in Core, or **Preserve host header** in Zero) and that `TOOLJET_HOST` exactly matches your external URL, including the scheme.
+- **ToolJet never becomes healthy on first boot.** Migrations run against PostgreSQL at startup; check `docker compose logs tooljet` and `docker compose logs postgres`. A wrong `PG_HOST`, `PG_USER`, `PG_PASS`, or `PG_DB` will stall the setup step.
+- **Login loops or "signature" errors.** Make sure `LOCKBOX_MASTER_KEY` and `SECRET_KEY_BASE` are set to stable, sufficiently long values and aren't regenerated between restarts.
+
+## Security considerations
+
+Pomerium only protects ToolJet if ToolJet is unreachable except through Pomerium. Do not publish ToolJet's port directly; keep it on the internal Compose network so the proxy is the only path in. In the example, ToolJet is reachable on the Compose network as `http://tooljet:80` and is never published to the host.
+
+Because ToolJet runs its own authentication and RBAC, users sign in twice: once at your IdP through Pomerium, and once to ToolJet. That is expected. Treat Pomerium as the network gate and ToolJet's RBAC as the in-app authorization layer, and keep both policies aligned so the two layers don't drift apart.
+
+## Next steps
+
+- Tighten the route policy to specific groups or domains. See [policy](/docs/reference/routes/policy).
+- Review ToolJet's own [permissions model](https://docs.tooljet.com/docs/org-management/permissions) to map IdP groups onto ToolJet roles.
+- Put your other internal tools behind the same Pomerium instance for one consistent access boundary.

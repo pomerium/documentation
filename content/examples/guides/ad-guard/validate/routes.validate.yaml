@@ -1,0 +1,28 @@
+# Routes-only validation config. Shared settings (IdP, secrets, signing key, certs)
+# come from ../../_harness/pomerium/validation.env via env_file in compose.validate.yaml.
+routes:
+  # Primary route, exactly as the guide ships: Pomerium injects AdGuard's single
+  # basic-auth credential after the user authenticates, so AdGuard's control API
+  # auto-authenticates. The value is base64("admin:pomerium-e2e-adguard"), matching
+  # the seeded bcrypt user.
+  - from: https://ad-guard.localhost.pomerium.io
+    to: http://adguard:3000
+    allow_websockets: true
+    set_request_headers:
+      Authorization: Basic YWRtaW46cG9tZXJpdW0tZTJlLWFkZ3VhcmQ=
+    policy:
+      - allow:
+          or:
+            - authenticated_user: true
+
+  # Same upstream, but WITHOUT the injected credential. A request through this route
+  # reaches AdGuard with no Authorization header, so AdGuard's own basic auth must
+  # reject it (401). This is how the sealed test proves the injected credential is
+  # what gates access, now that AdGuard is unreachable directly from the test-runner.
+  - from: https://ad-guard-noauth.localhost.pomerium.io
+    to: http://adguard:3000
+    allow_websockets: true
+    policy:
+      - allow:
+          or:
+            - authenticated_user: true

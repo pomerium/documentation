@@ -1,0 +1,175 @@
+---
+title: Secure Synology NAS with Pomerium
+sidebar_label: Synology NAS
+lang: en-US
+keywords: [pomerium, synology, dsm, nas, sso, oidc, identity aware proxy]
+description: Put the apps on your Synology NAS behind Pomerium so you get single sign-on and per-route authorization for remote access without running a VPN.
+---
+
+# Secure Synology NAS with Pomerium
+
+## What this guide does
+
+You'll run Pomerium in Docker on a [Synology](https://www.synology.com/en-us/dsm) network attached storage (NAS) device so the self-hosted apps on that NAS sit behind single sign-on and per-route authorization. Pomerium authenticates every request before it reaches an app, which lets you expose services to the internet by subdomain (for example `httpbin.int.nas.example`) without a virtual private network (VPN) and without relying on each app's own login.
+
+Pomerium is lightweight: a single instance typically uses well under 50 MB of memory and very little CPU, so it runs comfortably alongside your other containers on the NAS.
+
+## When to use this guide
+
+Use it when you have a [Docker-capable Synology](https://www.synology.com/en-us/dsm/packages/Docker) NAS and want one authenticated front door for its web apps. Synology is its own deployment environment: DiskStation Manager (DSM), Synology's operating system, terminates TLS with its built-in nginx and forwards traffic to Pomerium, and you control internet exposure with a port-forward on your router. That hardware and router setup is specific to the NAS, so this guide is written as a single Synology path rather than the usual Zero/Core tabs.
+
+## Prerequisites
+
+This guide assumes you've completed the [Quickstart](/docs/get-started/quickstart), so you already have a Pomerium Zero account and a cluster token, and Pomerium signs users in through the hosted authenticate service.
+
+You also need:
+
+- A working Pomerium Zero cluster with its cluster token. If you don't have one, follow the [Quickstart](/docs/get-started/quickstart) first.
+- A [Docker-capable Synology](https://www.synology.com/en-us/dsm/packages/Docker) product with DSM.
+- A subdomain you control for each app (for example `httpbin.int.nas.example`), with DNS pointing at your NAS.
+- A wildcard [TLS certificate](/docs/internals/certificates-and-tls) covering those subdomains, for DSM to serve on the public port. DSM's built-in Let's Encrypt support does not issue wildcard certificates (those need DNS validation), so generate one separately if you don't already have it.
+
+:::tip Prefer to self-host the identity provider?
+
+This guide uses the hosted authenticate service so you don't have to run an identity provider (IdP) yourself. To run your own instead, follow [Keycloak + Pomerium](/docs/integrations/user-identity/oidc).
+
+:::
+
+## Configure the router
+
+Forward inbound HTTPS traffic from port `443` on your router to a high port on the NAS (this guide uses `8443`). DSM will listen on that port and hand requests to Pomerium. The exact screens vary by router model.
+
+![Configuring the router firewall rules to forward port 443 to the NAS](./img/synology/synology-firewall-rules.png)
+
+## Configure DSM
+
+DSM uses nginx under the hood to proxy incoming requests. Configure it to terminate TLS and forward to the port Pomerium will listen on.
+
+### Reverse proxy
+
+Go to **Control Panel** > **Application Portal** > **Reverse Proxy** and click **Create**. Set these rules:
+
+| Field                | Value     |
+| -------------------- | --------- |
+| Description          | pomerium  |
+| Source Protocol      | HTTPS     |
+| Source Hostname      | \*        |
+| Source Port          | 8443      |
+| HTTP/2               | Enabled   |
+| HSTS                 | Enabled   |
+| Destination Protocol | HTTP      |
+| Destination Hostname | localhost |
+| Destination Port     | 32443     |
+
+![Setting up the DSM reverse proxy rule](./img/synology/synology-reverse-proxy.png)
+
+This forwards incoming HTTPS traffic to the Pomerium container, which you'll publish on port `32443` later.
+
+### Certificate
+
+Go to **Control Panel** > **Security** > **Certificate**, then **Add** > **Import certificate** and import your wildcard certificate chain. Once it appears in the list, click **Configure** and assign it to the reverse-proxy service so DSM uses it for traffic on `8443`:
+
+| Service | Certificate         |
+| ------- | ------------------- |
+| \*:8443 | `*.int.nas.example` |
+
+![Assigning the wildcard certificate to the reverse-proxy service in DSM](./img/synology/synology-certifciate-assignment.png)
+
+## Configure the upstream app
+
+Pick any app on your NAS to protect. This guide uses [httpbin](https://httpbin.org), a small test server, but it could be any [self-hosted app](https://github.com/awesome-selfhosted/awesome-selfhosted): a wiki, a download client, Plex, and so on.
+
+In the DSM **Container Manager** (formerly **Docker**), open the **Registry**, search for `kennethreitz/httpbin`, and download it. Then go to **Image**, select it, and launch a container named `httpbin`, keeping the defaults. This runs a small web server on port `80`; the container name becomes the network alias Pomerium routes to.
+
+![Launching the httpbin container in DSM](./img/synology/synology-docker-httpbin.png)
+
+## Add the route in the Zero Console
+
+In the [Zero Console](https://console.pomerium.app):
+
+1. Create a **Route**. In **From**, enter `https://httpbin.int.nas.example`; in **To**, enter `http://httpbin`. The `To` value is the container alias you'll link to Pomerium on the NAS in the next step.
+2. Set the policy to the users, groups, or domain that should have access. Scope it deliberately rather than allowing everyone.
+3. On the **Headers** tab, enable **Pass Identity Headers** so the authenticated user's identity reaches the app, then save.
+
+Zero manages the hosted authenticate service, your IdP connection, and the route's signing key, so there is nothing else to wire up for login.
+
+## Configure Pomerium
+
+Download the official `pomerium/pomerium` image from the DSM **Registry**. In the tag dialog, choose a specific version tag (for example `v0.32.7`) rather than `latest`, so a registry update can't change your proxy out from under you.
+
+![Downloading the Pomerium image from the DSM registry](./img/synology/synology-docker-pomerium-package.png)
+
+### Launch the container
+
+In **Image**, select **pomerium/pomerium** and click **Launch**, naming the container `pomerium`. Open **Advanced Settings** and configure:
+
+- **Port Settings:** map local port `32443` to container port `443` (TCP). This is the port DSM's reverse proxy forwards to.
+
+  ![Mapping the Pomerium container port settings in DSM](./img/synology/synology-docker-port-settings.png)
+
+- **Links:** add a link to the `httpbin` container with the alias `httpbin`.
+
+  :::caution
+
+  The alias must match the host in your route's **To** value, or Pomerium can't reach the app.
+
+  :::
+
+  ![Linking the httpbin container to Pomerium with a matching alias](./img/synology/synology-docker-pomerium-alias.png)
+
+- **Environment:** set the variables below.
+
+  | Variable | Value |
+  | --- | --- |
+  | `POMERIUM_ZERO_TOKEN` | the cluster token from your Zero Console |
+  | `INSECURE_SERVER` | `TRUE` (DSM has already terminated TLS, so the container listens over HTTP) |
+
+The Zero token connects this container to your cluster and pulls down the route and policy you defined in the Console, so you don't manage routes or secrets on the NAS itself.
+
+Click **Launch**. If everything is configured correctly the container starts and stays running; if not, check the container's **Log** tab.
+
+![The running Pomerium container in DSM](./img/synology/synology-docker-pomerium-done.png)
+
+## Verify the setup
+
+1. **The route requires authentication.** In a fresh browser, open `https://httpbin.int.nas.example`. You should be redirected to sign in, not straight into the app.
+
+   ![Pomerium redirecting to the identity provider login](./img/synology/synology-step-1-redirect.png)
+
+2. **An allowed user gets in.** Sign in (completing multi-factor authentication if your IdP requires it). Pomerium redirects you back to httpbin.
+
+   ![Reaching httpbin after a successful login](./img/synology/synology-step-3-validate-header.png)
+
+3. **Identity is available.** Open `https://httpbin.int.nas.example/.pomerium/` to see the signed-in user Pomerium is forwarding.
+
+   ![The Pomerium endpoint showing the current user](./img/logged-in-as.png)
+
+4. **An unauthorized user is denied.** Sign in with an account your policy doesn't allow. You should get a `403`.
+
+   ![A 403 page for an unauthorized user](./img/synology/synology-step-4-unauthorized.png)
+
+## Common failure modes
+
+- **Certificate or TLS errors in the browser.** DSM must serve your wildcard certificate on `8443`. Confirm the certificate is imported and assigned to the `*:8443` service, and that DNS for the subdomain resolves to your NAS.
+- **`502` or connection refused after login.** Pomerium can't reach the upstream. Check the **Links** alias matches the **To** host on the route and that the app container is running.
+- **Redirect loop or sign-in errors.** Confirm the route's **From** host matches the one defined in the Zero Console and is served by this cluster, that it's covered by your wildcard certificate, and that it's reachable through the same DSM reverse proxy.
+- **Everything returns `404`.** The requested host doesn't match any route's **From**. Verify the subdomain and the route in the Zero Console.
+
+## Security considerations
+
+- With identity headers enabled, the upstream app trusts the identity Pomerium forwards, so the app **must not be reachable except through Pomerium**. Keep the upstream container off published NAS ports and only link it to Pomerium on the internal Docker network. The only port exposed to the router should be the one DSM forwards to Pomerium.
+- Scope each route's policy to the specific users, groups, or domain that should have access. Widen it deliberately, not by default.
+- `INSECURE_SERVER=TRUE` only disables TLS inside the container because DSM already terminated it. External traffic is still TLS-terminated by DSM, so don't expose the `32443` container port to the internet.
+
+## Operations
+
+- **Update the image.** Update on your own schedule by pulling a newer `pomerium/pomerium` tag and recreating the container, rather than tracking `latest`.
+- **Update a route.** Edit the route or policy in the Zero Console; the connected container picks up the change without recreating the container.
+- **Rotate the token.** If the cluster token may be exposed, rotate it in the Zero Console and update the container's `POMERIUM_ZERO_TOKEN` environment variable.
+- **Tear down.** Stop and remove the `pomerium` and `httpbin` containers in Container Manager, then delete the DSM reverse-proxy rule and the router port-forward to stop exposing the service.
+
+## Next steps
+
+- [Build policies](/docs/get-started/fundamentals/zero/zero-build-policies)
+- [Pass identity headers](/docs/reference/routes/pass-identity-headers-per-route)
+- [Identity providers](/docs/integrations/user-identity/identity-providers)

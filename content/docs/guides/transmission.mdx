@@ -1,0 +1,126 @@
+---
+title: Secure Transmission with Pomerium
+sidebar_label: Transmission
+lang: en-US
+keywords: [pomerium, transmission, bittorrent, sso, oidc, identity aware proxy]
+description: Put Transmission's RPC and web interface behind Pomerium for single sign-on, TLS, and per-user authorization.
+---
+
+import TabItem from '@theme/TabItem';
+import Tabs from '@theme/Tabs';
+
+import Config from '/content/examples/guides/transmission/config.yaml.md';
+import Compose from '/content/examples/guides/transmission/docker-compose.yaml.md';
+
+# Secure Transmission with Pomerium
+
+## What this guide does
+
+[Transmission](https://transmissionbt.com/) is a BitTorrent client that is often run as a daemon and managed remotely through its RPC interface and the bundled web UI. Both speak plain, unencrypted HTTP on port 9091 and protect access with nothing stronger than HTTP basic auth. You'll put Transmission behind Pomerium so that Pomerium terminates TLS, requires single sign-on through your identity provider, and only forwards authenticated, authorized users to the daemon.
+
+## When to use this guide
+
+Use it when you want to reach Transmission's web UI or RPC interface from a browser with your existing identity, instead of exposing basic auth to the network. Because Transmission consumes no identity from Pomerium, this is a straightforward HTTP route: Pomerium authenticates the user and proxies the request through. If you only need a raw RPC tunnel for a desktop client over a private network, a plain [TCP route](/docs/capabilities/non-http) is the better fit.
+
+## Prerequisites
+
+This guide assumes you've completed the [Quickstart](/docs/get-started/quickstart), so you already have Pomerium running and signing users in through the hosted authenticate service.
+
+You also need:
+
+- [Docker](https://docs.docker.com/install/) and [Docker Compose](https://docs.docker.com/compose/install/)
+- A domain you control for the Transmission route (this guide uses `transmission.yourdomain.com`)
+
+:::tip Prefer to self-host the identity provider?
+
+This guide uses the hosted authenticate service so you don't have to run your own identity provider (IdP). To run your own instead, follow [Keycloak + Pomerium](/docs/integrations/user-identity/oidc) and swap the `authenticate_service_url` / `idp_*` settings into the config below.
+
+:::
+
+## Configure Pomerium
+
+<Tabs queryString="type">
+<TabItem value="zero" label="Pomerium Zero" default>
+
+In the [Zero Console](https://console.pomerium.app):
+
+1. Create a **Route**. In **From**, enter `https://transmission.<your-starter-domain>`; in **To**, enter `http://transmission:9091`.
+2. Set the policy to **Any Authenticated User**, or scope it to the specific users or groups who should reach the daemon.
+
+Zero manages the route's TLS certificate behind your starter domain, so there's nothing else to configure on the Pomerium side.
+
+</TabItem>
+<TabItem value="core" label="Pomerium Core">
+
+Create a `config.yaml`. It routes `transmission.yourdomain.com` to the Transmission container and allows a single authorized user:
+
+<Config />
+
+Replace `transmission.yourdomain.com` with your domain and `you@example.com` with the email (or group) that should have access. Restart Pomerium after saving.
+
+</TabItem>
+</Tabs>
+
+## Configure Transmission
+
+The [LinuxServer.io Transmission image](https://docs.linuxserver.io/images/docker-transmission/) serves the web UI and RPC interface on port 9091 and ships with HTTP authentication off and the RPC whitelists disabled, which is what you want when Pomerium is the gatekeeper. The Compose file below runs it with no extra settings.
+
+If you're running Transmission from a distribution package instead of this image, edit `/etc/transmission-daemon/settings.json` (stop the daemon first, since it rewrites the file on exit) so Pomerium owns authentication:
+
+```json
+"rpc-authentication-required": false,
+"rpc-enabled": true,
+"rpc-host-whitelist": "transmission.yourdomain.com",
+"rpc-host-whitelist-enabled": true,
+"rpc-whitelist": "<pomerium-host-ip>",
+"rpc-whitelist-enabled": true
+```
+
+The host whitelist pins the daemon to the exact hostname you serve from Pomerium (mitigating DNS-rebinding), and the IP whitelist restricts the daemon to accept connections only from the Pomerium host. See the [Security considerations](#security-considerations) below for why both matter.
+
+## Run the stack
+
+The Compose file runs Pomerium Core and Transmission together (for Zero, drop the `pomerium` service and use the `compose.yaml` from the Quickstart with your `POMERIUM_ZERO_TOKEN`, keeping the `transmission` service below):
+
+<Compose />
+
+Start it:
+
+```bash
+docker compose up -d
+```
+
+When you're done, tear the Core stack down. The `-v` flag also removes the named volumes, including any downloaded data:
+
+```bash
+docker compose down -v
+```
+
+## Verify the setup
+
+1. **The route requires authentication.** In a fresh browser, open `https://transmission.yourdomain.com`. You should be redirected to sign in, not straight into the web UI.
+2. **An allowed user gets in.** Sign in. Pomerium redirects you back and the Transmission web interface loads over TLS.
+3. **The session is yours.** Open `https://transmission.yourdomain.com/.pomerium` to confirm your identity and session details.
+4. **A disallowed user is blocked.** Sign in as a user your policy excludes and open `https://transmission.yourdomain.com`. Pomerium denies access, so you never reach the web UI.
+
+![The Transmission web interface, reached through Pomerium after single sign-on](img/transmission/transmission.png)
+
+Pomerium gates the route, and once you're signed in it proxies through to Transmission's web UI and RPC interface. Transmission's own RPC authentication is a separate layer; configure it (or leave it disabled, as below) according to your trust boundary.
+
+## Common failure modes
+
+- **`409 Conflict` from the RPC endpoint.** Transmission's RPC requires a cross-site request forgery (CSRF) token (`X-Transmission-Session-Id`); a `409` on a raw request is expected and is the daemon working, not Pomerium. The web UI and proper RPC clients handle this automatically.
+- **`421 Misdirected Request` or a host-whitelist error.** Your daemon's `rpc-host-whitelist` doesn't include the hostname Pomerium forwards. Add `transmission.yourdomain.com` to the whitelist or disable it.
+- **Redirect loop or certificate errors.** Make sure DNS for `transmission.yourdomain.com` points at Pomerium and that Pomerium can obtain a TLS certificate. On the Core path, `autocert` needs ports 80 and 443 reachable for Let's Encrypt; Zero manages certificates for you.
+
+## Security considerations
+
+- **The Pomerium-to-Transmission hop is unencrypted.** Transmission's RPC has no transport security, so the link between Pomerium and the daemon must stay on a trusted private network. Running both on the same host or the same Docker network (as the Compose file does) keeps that traffic local. Note that some cloud providers' "private networking" is visible to every tenant in a datacenter; prefer a VLAN or same-host deployment.
+- **Don't expose Transmission directly.** Only Pomerium should reach `transmission:9091`. With HTTP auth disabled, the daemon trusts whoever can connect, so keep it off published ports and behind Pomerium. The Compose file leaves Transmission's `rpc-whitelist` and `rpc-host-whitelist` off on purpose because the daemon is already isolated to the Pomerium-only Docker network; if you run it where other hosts can reach `9091`, turn on `rpc-whitelist` (restrict to the Pomerium host) and `rpc-host-whitelist` (pin the served hostname) as defense in depth.
+- **Scope the route policy.** Limit the route to the users or groups who should control the daemon rather than allowing every authenticated user.
+
+## Next steps
+
+- [Build policies](/docs/get-started/fundamentals/zero/zero-build-policies)
+- [Routes reference](/docs/reference/routes)
+- [Custom domains](/docs/capabilities/custom-domains)

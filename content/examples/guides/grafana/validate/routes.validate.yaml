@@ -1,0 +1,10 @@
+# Routes-only validation config. Shared settings (IdP, secrets, signing key, certs)
+# come from ../../_harness/pomerium/validation.env via env_file in compose.validate.yaml.
+routes:
+  - from: https://grafana.localhost.pomerium.io
+    to: http://grafana:3000
+    pass_identity_headers: true
+    policy:
+      - allow:
+          or:
+            - authenticated_user: true

@@ -1,0 +1,29 @@
+services:
+  pomerium:
+    image: pomerium/pomerium@sha256:e10d1d267af24f581157f485d9b0bc08469e2428675b696a08e42ceb09b2279c # v0.32.7
+    volumes:
+      - ./config.yaml:/pomerium/config.yaml:ro
+      - pomerium-cache:/data
+    ports:
+      - 443:443
+      - 80:80
+    restart: always
+
+  grafana:
+    image: grafana/grafana@sha256:8b37a2f028f164ce7b9889e1765b9d6ee23fec80f871d156fbf436d6198d32b7
+    environment:
+      - GF_AUTH_JWT_ENABLED=true
+      - GF_AUTH_JWT_HEADER_NAME=X-Pomerium-Jwt-Assertion
+      - GF_AUTH_JWT_EMAIL_CLAIM=email
+      - GF_AUTH_JWT_USERNAME_CLAIM=email
+      - GF_AUTH_JWT_JWK_SET_URL=https://grafana.yourdomain.com/.well-known/pomerium/jwks.json
+      - GF_AUTH_JWT_AUTO_SIGN_UP=true
+      - GF_AUTH_JWT_CACHE_TTL=60m
+      - GF_AUTH_SIGNOUT_REDIRECT_URL=https://grafana.yourdomain.com/.pomerium/sign_out
+    volumes:
+      - grafana-storage:/var/lib/grafana
+    restart: always
+
+volumes:
+  pomerium-cache:
+  grafana-storage:

@@ -1,0 +1,21 @@
+# Routes-only validation config. Shared settings (IdP, secrets, signing key, certs)
+# come from ../../_harness/pomerium/validation.env via env_file in compose.validate.yaml.
+#
+# jwt_claims_headers stays here because this guide's upstream consumes a claim header:
+# Open WebUI's trusted-header SSO reads X-Pomerium-Claim-Email. pass_identity_headers
+# alone only forwards the signed assertion, so the explicit claim mapping is required.
+jwt_claims_headers:
+  X-Pomerium-Claim-Email: email
+  X-Pomerium-Claim-Groups: groups
+
+routes:
+  - from: https://llm.localhost.pomerium.io
+    to: http://open-webui:8080
+    pass_identity_headers: true
+    allow_websockets: true
+    # Group-gated so the sealed test exercises both the allow path (alice is in
+    # engineering) and the deny path (bob is a contractor, not in engineering).
+    policy:
+      - allow:
+          or:
+            - claim/groups: engineering

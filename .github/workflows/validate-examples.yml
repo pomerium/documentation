@@ -1,0 +1,128 @@
+name: validate-examples
+
+# Spins up each guide's sealed Docker Compose fixture and proves the flow against the
+# in-network Keycloak. Triggers when a guide's example OR its prose changes (so a
+# doc-only edit can't bypass the gate), and when shared scaffolding changes (then the
+# whole matrix runs). Non-sealable guides ship validate/SKIP and pass with a reason.
+
+on:
+  pull_request:
+    paths:
+      - 'content/examples/guides/**'
+      - 'content/examples/ssh-tcp-l4-passthrough/**'
+      - 'content/docs/guides/**'
+      - 'content/docs/admonitions/**'
+      - 'scripts/validate-guide-fixtures.sh'
+      - '.github/workflows/validate-examples.yml'
+  schedule:
+    - cron: '0 7 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: validate-examples-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  discover:
+    runs-on: ubuntu-latest
+    outputs:
+      targets: ${{ steps.find.outputs.targets }}
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          fetch-depth: 0
+      - id: find
+        env:
+          EVENT: ${{ github.event_name }}
+          BASE: ${{ github.event.pull_request.base.sha }}
+        run: |
+          set -euo pipefail
+          base=content/examples/guides
+          ssh_example=content/examples/ssh-tcp-l4-passthrough
+          docs=content/docs/guides
+          id_re='^[a-z0-9][a-z0-9-]*$'
+
+          # A guide opts in with either a runnable fixture or a SKIP marker.
+          all=$( { find "$base" -mindepth 3 -maxdepth 3 -path '*/validate/compose.validate.yaml' -printf '%h\n' \
+                     | sed -E "s#^$base/([^/]+)/validate\$#\1#";
+                   find "$base" -mindepth 3 -maxdepth 3 -path '*/validate/SKIP' -printf '%h\n' \
+                     | sed -E "s#^$base/([^/]+)/validate\$#\1#";
+                   [ -f "$ssh_example/docker-compose.yml" ] && printf 'ssh-tcp-l4-passthrough\n'; } \
+                 | grep -E "$id_re" | sort -u || true)
+
+          full=false
+          changed=""
+          if [ "$EVENT" != "pull_request" ]; then
+            full=true
+          # Fail closed: if the changed set can't be computed (fork PRs, fetch edge
+          # cases), validate everything rather than silently validating nothing.
+          elif [ -z "$BASE" ] || ! changed=$(git diff --name-only "$BASE"...HEAD); then
+            full=true
+          # Shared scaffolding or guide media change -> validate all. Some older
+          # guide image folders do not map cleanly to guide IDs, so media is
+          # intentionally conservative.
+          elif echo "$changed" | grep -qE "^$base/_harness/|^$docs/_partials/|^$docs/img/|^content/docs/admonitions/|^scripts/validate-guide-fixtures\.sh\$|^\.github/workflows/validate-examples\.yml\$"; then
+            full=true
+          fi
+
+          changed_ids=""
+          if [ -n "${changed:-}" ]; then
+            changed_ids=$( { printf '%s\n' "$changed" \
+                | sed -nE "s#^$base/([a-z0-9][a-z0-9-]*)/.*#\1#p; s#^$ssh_example/.*#ssh-tcp-l4-passthrough#p" \
+                | while read -r d; do
+                    if [ "$d" = "ssh-tcp-l4-passthrough" ]; then
+                      if [ -f "$ssh_example/docker-compose.yml" ] || [ -f "$docs/$d.md" ] || [ -f "$docs/$d.mdx" ]; then
+                        printf '%s\n' "$d"
+                      fi
+                    elif [ -f "$base/$d/validate/compose.validate.yaml" ] || [ -f "$base/$d/validate/SKIP" ] || [ -f "$docs/$d.md" ] || [ -f "$docs/$d.mdx" ]; then
+                      printf '%s\n' "$d"
+                    fi
+                  done;
+              printf '%s\n' "$changed" \
+                | sed -nE "s#^$docs/([a-z0-9][a-z0-9-]*)\.(md|mdx)\$#\1#p" \
+                | while read -r d; do
+                    if [ -f "$docs/$d.md" ] || [ -f "$docs/$d.mdx" ]; then
+                      printf '%s\n' "$d"
+                    fi
+                  done; } | grep -E "$id_re" | sort -u || true)
+          fi
+          candidates=$(printf '%s\n' $all $changed_ids | grep -E "$id_re" | sort -u || true)
+
+          # Select a guide if its fixture OR its prose changed.
+          selected=""
+          for g in $candidates; do
+            if [ "$full" = true ] \
+               || echo "${changed:-}" | grep -q "^$base/$g/" \
+               || { [ "$g" = "ssh-tcp-l4-passthrough" ] && echo "${changed:-}" | grep -q "^$ssh_example/"; } \
+               || echo "${changed:-}" | grep -qE "^$docs/$g\.(md|mdx)\$"; then
+              selected="$selected $g"
+            fi
+          done
+
+          # Audit: list the non-sealable guides and why.
+          find "$base" -mindepth 3 -maxdepth 3 -path '*/validate/SKIP' -printf '%h\n' \
+            | sed -E "s#^$base/([^/]+)/validate\$#\1#" | sort -u \
+            | while read -r s; do echo "skip-marker: $s - $(head -1 "$base/$s/validate/SKIP" 2>/dev/null || true)"; done
+
+          # The harness self-test always runs; JSON built with jq so ids can't corrupt it.
+          targets=$(printf '%s\n' '--selftest' $selected | grep -v '^$' | jq -R . | jq -s -c .)
+          echo "targets=$targets" >> "$GITHUB_OUTPUT"
+          echo "Selected targets: $targets"
+
+  validate:
+    needs: discover
+    if: needs.discover.outputs.targets != '[]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        target: ${{ fromJson(needs.discover.outputs.targets) }}
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      # Docker + Compose are preinstalled on ubuntu-latest; the Node/Playwright
+      # toolchain runs inside the test-runner container, so nothing else is needed.
+      - run: scripts/validate-guide-fixtures.sh "${{ matrix.target }}"

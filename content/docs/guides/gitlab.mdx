@@ -1,275 +1,150 @@
 ---
-# cSpell:ignore omni caroot omniauth
-
-title: GitLab
+# cSpell:ignore omniauth
+title: Secure GitLab with Pomerium
+sidebar_label: GitLab
 lang: en-US
-keywords:
-  [
-    pomerium,
-    identity access proxy,
-    gitlab,
-    gitlab-ee,
-    docker,
-    authentication,
-    authorization,
-    self-hosted,
-  ]
-description: This guide covers how to secure self-hosted GitLab behind Pomerium, providing authentication and authorization through your IdP.
+image: ./img/gitlab/gitlab-dashboard.png
+keywords: [pomerium, gitlab, sso, oidc, identity aware proxy, self-hosted]
+description: Put self-hosted GitLab behind Pomerium so every request is authenticated and authorized at the front door before it reaches GitLab.
 ---
-
-import InstallMkcert from '@site/content/docs/admonitions/_install-mkcert.md';
 
 import TabItem from '@theme/TabItem';
 import Tabs from '@theme/Tabs';
 
-[GitLab] is a highly customizable, highly configurable tool to manage source code, project management, and many other aspects of project development. In addition to the SaaS product, its self-hosted solution and easy free-to-enterprise upgrade path make it a popular choice for those managing sensitive code bases.
+import Config from '/content/examples/guides/gitlab/config.yaml.md';
+import Compose from '/content/examples/guides/gitlab/docker-compose.yaml.md';
 
-This guide demonstrates how to configure a self-hosted GitLab server (a.k.a. gitlab-ee) behind Pomerium for identity-aware access.
+# Secure GitLab with Pomerium
 
-## Before You Begin
+## What this guide does
 
-- This guide is written for an environment using [Docker Compose].
+You'll put a self-hosted [GitLab](https://gitlab.com/) instance behind Pomerium so that Pomerium becomes the single front door: every request is authenticated against your identity provider and checked against your policy before it ever reaches GitLab. GitLab keeps running its own login and authorization on top, so Pomerium acts as an additional gate rather than replacing GitLab's accounts.
 
-- This guide assumes a running instance of Pomerium, already configured with an identity Provider (**IdP**) and running as a docker container on the same host/swarm. See our [Quick-Start] page for more information on installing Pomerium with Docker Compose.
+```mermaid
+flowchart LR
+    Browser --> Pomerium["Pomerium<br/>front-door authN + authZ"]
+    Pomerium -.->|"sign in"| IdP[Identity provider]
+    Pomerium --> GitLab["GitLab<br/>own login on top"]
+```
 
-  :::caution
+## When to use this guide
 
-  While Pomerium can be configured to use self-hosted GitLab [as an IdP][gitlab-idp], we do not recommend doing so while also running it behind Pomerium. In addition to the potential to lock out access to the IdP (breaking access to all routes), we consider it best practice to separate your identity provider and protected services, especially those housing sensitive data like source code.
+Use it when you run self-hosted GitLab and want to make sure only people from your organization can even reach it, without exposing GitLab's web interface directly to the internet. Pomerium handles the network-level access decision; GitLab continues to manage projects, permissions, and its own user sessions behind that gate.
 
-  :::
+If you instead want to reach GitLab over a private network without a browser SSO flow (for example, plain Git over SSH), a [TCP route](/docs/capabilities/non-http) is a better fit.
 
-- The initial setup documented here uses un-encrypted HTTP traffic between Pomerium and GitLab. The last section covers upgrading the GitLab configuration with a TLS certificate.
+## Prerequisites
 
-## Install GitLab
+This guide assumes you've completed the [Quickstart](/docs/get-started/quickstart), so you already have Pomerium running and signing users in through the hosted authenticate service.
 
-:::tip
+You also need:
 
-While we do our best to keep our documentation up to date, changes to third-party systems are outside our control. Refer to [GitLab Docker Images] from GitLab's docs as needed, or [let us know](https://github.com/pomerium/documentation/issues/new?assignees=&labels=&template=doc-error.md) if we need to re-visit this section.
+- [Docker](https://docs.docker.com/install/) and [Docker Compose](https://docs.docker.com/compose/install/)
+- A domain you control for the GitLab route (this guide uses `gitlab.yourdomain.com`)
+
+:::caution Don't use GitLab as both your IdP and a protected service
+
+Pomerium can use self-hosted GitLab [as an identity provider](/docs/integrations/user-identity/gitlab), but do not do that while also running GitLab behind Pomerium. You risk locking yourself out of every route if the IdP becomes unreachable, and it's best practice to keep your identity provider separate from the services it protects, especially one holding source code.
 
 :::
 
-### Prepare The Environment
+:::tip Prefer to self-host the identity provider?
 
-1.  Create volumes for persistent data. This guide uses the base directory `/srv/gitlab`; adjust this path for your local environment:
+This guide uses the hosted authenticate service so you don't have to run an IdP. To run your own instead, follow [Keycloak + Pomerium](/docs/integrations/user-identity/oidc) and swap the `authenticate_service_url` / `idp_*` settings into the config below.
 
-    ```bash
-    mkdir -p /srv/gitlab #Adjust the path based on your common Docker volume location.
-    ```
+:::
 
-1.  Create three sub-directories: `config`, `data`, and `logs`:
+## Configure Pomerium
 
-    ```bash
-    mkdir -p /srv/gitlab/{config,data,logs}
-    ```
+<Tabs queryString="type">
+<TabItem value="zero" label="Pomerium Zero" default>
 
-### Install and Configure GitLab
+In the [Zero Console](https://console.pomerium.app):
 
-1.  Edit your `docker-compose.yml` file to define a new service for GitLab:
+1. Create a **Route**. In **From**, enter `https://gitlab.<your-starter-domain>`; in **To**, enter `http://gitlab:80`.
+2. On the route's settings, enable **Preserve Host Header**. GitLab builds its redirect URLs from its own `external_url`, so the original host must reach GitLab unchanged.
+3. Set the policy to scope access to who should reach GitLab (for example, **Any Authenticated User** or a specific group or domain).
 
-    ```yaml title="docker-compose.yml"
-    services:
-    ---
-    gitlab:
-      container_name: gitlab
-      image: gitlab/gitlab-ee:latest
-      environment:
-        GITLAB_OMNIBUS_CONFIG: |
-          external_url 'https://gitlab.pomerium.localhost.io'
-          letsencrypt['enable'] = false
-          nginx['listen_port'] = 80
-          nginx['listen_https'] = false
-      volumes:
-        - '/srv/gitlab/config:/etc/gitlab'
-        - '/srv/gitlab/logs:/var/log/gitlab'
-        - '/srv/gitlab/data:/var/opt/gitlab'
-      expose:
-        - 80
-        - 443
-        - 22
-      restart: always
-      shm_size: '256m'
-    ```
+</TabItem>
+<TabItem value="core" label="Pomerium Core">
 
-    - Adjust `external_url` and `registry_external_url` to match the external path, which we will define in Pomerium later in the process.
-    - Adjust the paths under `volumes` to match the directories created in [the previous section](#prepare-the-environment).
+Create a `config.yaml`. It routes `gitlab.yourdomain.com` to the GitLab container and preserves the host header so GitLab's redirects stay correct.
 
-    :::tip
+<Config />
 
-    Additional integrations like [Mattermost](https://docs.gitlab.com/ee/integration/mattermost/) and [Pages](https://docs.gitlab.com/ee/user/project/pages/) will require additional configuration (i.e. `mattermost_nginx[*]`).
+Replace `gitlab.yourdomain.com` with your domain and `you@example.com` with the email (or switch to a group or domain match) that should be allowed through.
 
-    :::
+</TabItem>
+</Tabs>
 
-1.  Bring up the new Docker Compose configuration:
+## Configure GitLab
 
-    ```bash
-    docker-compose up -d
-    ```
+GitLab's Omnibus configuration only needs to know its public URL and to serve plain HTTP on the internal Docker network, since Pomerium terminates TLS at the front door. The key settings in the Compose file below:
 
-    The container may take several minutes to initialize. Once complete, the status provided to `docker ps` will change from `health:starting` to `healthy`.
+- `external_url 'https://gitlab.yourdomain.com'` — GitLab generates links and redirects from this value, so it must match the public route host, not the container name.
+- `nginx['listen_port'] = 80` and `nginx['listen_https'] = false` — GitLab listens on plain HTTP inside the network; Pomerium handles HTTPS for users.
+- `letsencrypt['enable'] = false` — Pomerium, not GitLab, manages the public certificate.
 
-    You can also monitor the progress with `docker logs -f gitlab`. Note that even after the process is complete, the log file will continue to output log messages.
-
-## Configure a Pomerium Route
-
-Edit `config.yaml` and add a route for GitLab:
-
-```yaml title="config.yaml"
-- from: https://gitlab.localhost.pomerium.io
-  to: http://gitlab
-  preserve_host_header: true
-  policy:
-    - allow:
-        or:
-          - domain:
-              is: example.com
-```
-
-Once the route is applied, you should be able to access GitLab from `https://gitlab.localhost.pomerium.io`. Note that when using Docker, you may need to restart the Pomerium container to apply the changes as file change detection can be finicky on mounted docker volumes.
-
-Use `grep` within the container to find the default root password:
+GitLab keeps its own login. The first time you reach it, sign in as `root` with the initial password, which GitLab writes to a file inside the container:
 
 ```bash
-sudo docker exec -it gitlab grep 'Password:' /etc/gitlab/initial_root_password
+docker compose exec gitlab grep 'Password:' /etc/gitlab/initial_root_password
 ```
 
-### Configure TCP Connections
+## Run the stack
 
-1.  An additional route will provide an encrypted TCP tunnel through which users can securely access code using Git:
+The Compose file below runs Pomerium and GitLab together. Wire up Pomerium for your deployment, then start the stack:
 
-    ```yaml title="config.yaml"
-    - from: tcp+https://gitlab.localhost.pomerium.io
-      to: tcp://gitlab:22
-      policy:
-        - allow:
-            or:
-              - claim/groups: devs@example.com
-    ```
+<Tabs queryString="type">
+<TabItem value="zero" label="Pomerium Zero" default>
 
-1.  Once this route is applied, users can create an encrypted connection using [pomerium-cli] or the [Pomerium Desktop] app:
+Drop the `pomerium` service and use the `compose.yaml` from the Quickstart with your `POMERIUM_ZERO_TOKEN`, keeping the `gitlab` service shown below.
 
-              ```bash
-              pomerium-cli tcp gitlab.pomerium.localhost.io:22 --listen :2202
-              ```
+</TabItem>
+<TabItem value="core" label="Pomerium Core">
 
-              The `--listen` key defines what port the tunnel listens at locally.
+Keep the `pomerium` service shown below and place the `config.yaml` from the previous step next to this `docker-compose.yaml`.
 
-              ![An encrypted tunnel for git connections using Pomerium Desktop](img/gitlab/gitlab-desktop-connection.png)
+</TabItem>
+</Tabs>
 
-1.  Add the tunneled connection as a remote:
+<Compose />
 
-    ```bash
-    git remote add gitlab-tunneled ssh://git@127.0.0.1:2202/username/project-name
-    ```
+```bash
+docker compose up -d
+```
 
-Now when you first initiate a `pull`, `push`, or `fetch` command your web browser will open to authenticate and authorize the connection.
+GitLab is heavy and slow to initialize. The container can take several minutes before it answers requests; watch `docker compose ps` until its status changes from `health: starting` to `healthy`, or follow `docker compose logs -f gitlab`.
 
-## Identity Management
+## Verify the setup
 
-While GitLab has a [JWT OmniAuth provider], it only accepts a JSON web token (**JWT**) as a callback url parameter and not as an HTTP header [provided by Pomerium](/docs/reference/routes/pass-identity-headers-per-route). If your IdP is a [supported OmniAuth provider](https://docs.gitlab.com/ee/integration/omniauth.html#supported-providers), you can integrate it directly to GitLab to re-use your current session, but it will require signing in twice; once with Pomerium and again with GitLab:
+1. **The route requires authentication.** In a fresh browser, open `https://gitlab.yourdomain.com`. You should be redirected to sign in through Pomerium, not straight to GitLab.
+2. **An allowed user reaches GitLab.** Sign in with a user your policy allows. Pomerium redirects you back and GitLab's own sign-in page loads behind the gate.
 
-<video controls muted={true} width="100%">
-  <source src="/gitlab-login.webm" type="video/webm" />
-  Your browser does not support the video tag.
-</video>
+![GitLab's sign-in page reached through Pomerium](./img/gitlab/gitlab-signin.png)
 
-## Upstream TLS
+3. **Sign in to GitLab.** Use the `root` account and the initial password from the previous section. GitLab authenticates you and lands you on its dashboard, served through Pomerium.
 
-As part of a complete [zero trust][background] security model, all connections should be encrypted and [mutually authenticated][mtls]. An important step in this process is configuring GitLab to serve content to Pomerium using HTTPS.
+![The GitLab dashboard, signed in, reached through Pomerium](./img/gitlab/gitlab-dashboard.png)
 
-Because GitLab's internal Nginx server is configured to use the [FQDN] even when behind a proxy service, GitLab itself must use a separate, internal certificate for `gitlab.pomerium.localhost.io`. This is unique from the certificate Pomerium uses to serve the route to end users.
+4. **A disallowed user is blocked.** Sign in as a user your policy excludes and open `https://gitlab.yourdomain.com`. Pomerium denies access, so the request never reaches GitLab's sign-in page.
 
-Create this certificate using your infrastructure's preferred internal certificate solution. If you don't have a solution in place, you can use [mkcert] to generate testing certificates:
+Pomerium gates the route; GitLab runs its own login on top. GitLab's root login and first-run setup are GitLab's concern, not Pomerium's.
 
-1.  Create a certificate for the domain that will be used for the GitLab route. For example:
+## Common failure modes
 
-    ```bash
-    mkcert "gitlab.pomerium.localhost.io"
-    ```
+- **Redirects send you to the container name or the wrong host.** GitLab's `external_url` doesn't match the public route, or `preserve_host_header` isn't set. Make both agree on `gitlab.yourdomain.com`.
+- **`502` or `503` right after `docker compose up`.** GitLab hasn't finished booting. Wait for the container to report `healthy`; first boot routinely takes several minutes and a couple of GB of RAM.
+- **Mixed-content or TLS errors.** Make sure GitLab serves plain HTTP internally (`nginx['listen_https'] = false`) and that Pomerium is the only service terminating TLS for the public hostname.
 
-1.  Note the location of the mkcert root certificate files with `mkcert -CAROOT`. You will need to provide this path to your Pomerium configuration to validate the certificate provided by GitLab.
+## Security considerations
 
-If you have an internal certificate solution, generate a certificate for `gitlab.pomerium.localhost.io` and note the path to the certificate authority (**CA**) root before proceeding.
+- GitLab runs its own authentication, so Pomerium here is a front-door gate, not a header-trust integration. Even so, **don't expose GitLab directly** — only Pomerium should reach `gitlab:80`. Keep GitLab off published host ports and on the internal Docker network so the policy can't be bypassed.
+- Scope the route policy (group or domain) to who should have any access to GitLab at all. GitLab's project-level permissions still apply on top of that.
+- Do not point Pomerium's identity provider at this same GitLab instance. Keeping the IdP separate avoids a circular dependency that can lock you out of every route at once.
 
-:::tip
+## Next steps
 
-Integrations that use unique subdomains will require their own certificates and Pomerium routes.
-
-:::
-
-1.  Create the directory `/srv/gitlab/config/ssl/` (adjusted for your local Docker volume path), and move the certificate and key files there:
-
-    ```bash
-    mkdir /srv/gitlab/config/ssl
-    mv gitlab.pomerium.localhost.io.pem gitlab.pomerium.localhost.io-key.pem /srv/gitlab/config/ssl
-    ```
-
-    **Note:** You will need elevated permissions (sudo or root access) regardless of the directory location, as GitLab restricts permissions from within the Docker container on the volume mount.
-
-1.  Adjust the `docker-compose.yml` entry for Pomerium to mount the internal certificate authority, and the entry for GitLab to specify the certificate and key files:
-
-    ```yaml title="docker-compose.yml"
-    services:
-
-    ...
-
-      pomerium:
-        image: pomerium/pomerium:latest
-        container_name: pomerium
-        volumes:
-          - ./srv/pomerium/config.yaml:/pomerium/config.yaml:ro
-          - ~/.local/share/mkcert:/pomerium/ssl:ro # Adjust to the location of your internal certificate authority.
-        ports:
-          - 443:443
-          - 80:80
-    ...
-
-    gitlab:
-      container_name: gitlab
-      image: gitlab/gitlab-ee:latest
-      environment:
-        GITLAB_OMNIBUS_CONFIG: |
-        external_url 'https://gitlab.pomerium.localhost.io'
-        letsencrypt['enable'] = false
-        nginx['listen_port'] = 443
-        nginx['listen_https'] = true
-        nginx['ssl_certificate'] = "/etc/gitlab/ssl/gitlab.localhost.pomerium.io.pem"
-        nginx['ssl_certificate_key'] = "/etc/gitlab/ssl/gitlab.localhost.pomerium.io-key.pem"
-      volumes:
-        - '/srv/gitlab/config:/etc/gitlab'
-        - '/srv/gitlab/logs:/var/log/gitlab'
-        - '/srv/gitlab/data:/var/opt/gitlab'
-      expose:
-        - 80
-        - 443
-        - 22
-      restart: always
-      shm_size: '256m'
-    ```
-
-1.  Adjust the route in Pomerium's `config.yaml` to connect to GitLab using HTTPS:
-
-    ```yaml title="config.yaml"
-    - from: https://gitlab.localhost.pomerium.io
-      to: https://gitlab-ee
-      preserve_host_header: true
-      policy:
-        - allow:
-            or:
-              - domain:
-                  is: example.com
-    ```
-
-1.  Run `docker-compose up -d` to recreate the containers with the adjusted settings.
-
-[background]: /docs/internals/zero-trust.md
-[docker compose]: https://docs.docker.com/compose/
-[fqdn]: https://en.wikipedia.org/wiki/Fully_qualified_domain_name
-[gitlab]: https://gitlab.com/
-[gitlab-idp]: /docs/integrations/user-identity/gitlab
-[gitlab docker images]: https://docs.gitlab.com/ee/install/docker.html
-[jwt omniauth provider]: https://docs.gitlab.com/ee/administration/auth/jwt.html
-[mkcert]: https://github.com/FiloSottile/mkcert
-[mtls]: /docs/internals/mutual-auth.md#mtls-protocol-based-mutual-authentication
-[pomerium-cli]: /docs/deploy/clients
-[pomerium desktop]: https://github.com/pomerium/desktop-client/releases
-[quick-start]: /docs/get-started/quickstart
+- [Build policies](/docs/get-started/fundamentals/zero/zero-build-policies)
+- [Non-HTTP (TCP) routes](/docs/capabilities/non-http)
+- [Custom domains](/docs/capabilities/custom-domains)

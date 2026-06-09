@@ -1,128 +1,114 @@
 ---
-# cSpell:ignore vals secretref gcpsecrets signin
-
-title: Securing Cloud Run endpoints
+# cSpell:ignore serverless
+title: Secure Cloud Run with Pomerium
 sidebar_label: Cloud Run
 lang: en-US
 keywords:
-  [pomerium, identity access proxy, gcp, google, iap, serverless, cloudrun]
-description: This guide covers how to deploy Pomerium to Cloud Run and use it to protect other endpoints via Authorization Headers.
+  [
+    pomerium,
+    cloud run,
+    cloudrun,
+    gcp,
+    google,
+    iap,
+    serverless,
+    sso,
+    oidc,
+    identity aware proxy,
+  ]
+description: Put Pomerium in front of a Cloud Run service as a standard upstream route, with signed authorization headers for GCP serverless authentication.
 ---
 
-import CloudRunConfig from '/content/examples/cloudrun/config.yaml.md';
-import DeployScript from '/content/examples/cloudrun/deploy.sh.md';
-import PolicyTemplate from '/content/examples/cloudrun/policy.template.yaml.md';
-import Zonefile from '/content/examples/cloudrun/zonefile.txt.md';
+# Secure Cloud Run with Pomerium
 
-:::caution
+Protect an existing [Cloud Run](https://cloud.google.com/run) service by putting a standard Pomerium route in front of it. A Cloud Run service is just an HTTPS endpoint, so you secure it like any other upstream: point a route's `to` at the service URL and let Pomerium handle login and authorization. Where you can, keep the service private and let Pomerium send the signed Google authorization header Cloud Run expects.
 
-This guide is outdated and will not work with Pomerium's current environment settings. We are actively working on updating the guide so that it's compatible with the latest versions of Google Cloud and Pomerium Core.
+```mermaid
+flowchart LR
+    Browser --> Pomerium["Pomerium<br/>authN + authZ<br/>signed Google auth header"]
+    Pomerium -.->|"sign in"| IdP[Identity provider]
+    Pomerium --> CloudRun["Cloud Run<br/>private"]
+```
 
-See [this GitHub issue](https://github.com/pomerium/pomerium/issues/4091) for more information, or refer to the [v0.17.0 Cloud Run guide](https://0-17-0.docs.pomerium.com/guides/cloud-run.html) for a working version.
+## Prerequisites
+
+- A running Pomerium cluster. See the [quickstart](/docs/get-started/quickstart) if you do not have one yet.
+- A deployed Cloud Run service. Note its `*.run.app` URL, which is the address Google assigns to the service.
+- `gcloud` or IAM access to grant `roles/run.invoker` on that service.
+
+## Recommended: lock the service to Pomerium with serverless authentication
+
+The most robust option is to keep the Cloud Run service private and have Pomerium send a signed Google [authorization header](https://cloud.google.com/run/docs/authenticating/service-to-service) on each request. Keep `roles/run.invoker` off `allUsers`, grant it to the service account Pomerium runs as, then enable serverless authentication on the route:
+
+```yaml
+routes:
+  - from: https://hello.your-domain.example
+    to: https://hello-abcdef-uc.a.run.app
+    enable_google_cloud_serverless_authentication: true
+    policy:
+      - allow:
+          and:
+            - domain:
+                is: your-company.example
+```
+
+The `from` value is the hostname users visit; the `to` value is the Cloud Run service's `*.run.app` URL. With the service private, only Pomerium's service account can invoke it, so requests cannot bypass Pomerium's policy.
+
+When Pomerium runs in GCP it picks up the ambient service account credentials automatically. To supply credentials explicitly, set the [Google Cloud Serverless Authentication Service Account](/docs/reference/google-cloud-serverless-authentication-service-account). See the [Enable Google Cloud Serverless Authentication](/docs/reference/routes/enable-google-cloud-serverless-authentication) route reference for details.
+
+This pattern also works for other GCP serverless products that accept the same authorization header, such as Cloud Functions and App Engine.
+
+:::note
+
+`enable_google_cloud_serverless_authentication` is a Core and Enterprise route setting. The Kubernetes Ingress Controller does not support it.
 
 :::
 
-This recipe's sources can be found [on github](https://github.com/pomerium/pomerium/tree/main/examples/cloudrun)
+## Alternative: a service that allows unauthenticated invocations
 
-## Background
+If the Cloud Run service already permits unauthenticated invocations, point a route at it like any other HTTPS upstream:
 
-Services on [Cloud Run](https://cloud.google.com/run) and other Google Cloud serverless products can be restricted to only permit access with a properly signed [bearer token](https://cloud.google.com/run/docs/authenticating/service-to-service). This allows requests from other services running in GCP or elsewhere to be securely authorized despite the endpoints being public.
-
-These bearer tokens are not easily set in a browser session and must be refreshed on a regular basis, preventing them from being useful for end user authorization. Pomerium, however, can generate compatible tokens on behalf of end users and proxy the request to these services.
-
-## How it works
-
-![cloudrun architecture](img/cloud-run/architecture.svg)
-
-- Add an IAM policy delegating `roles/run.invoker` permissions to a service account
-- Run Pomerium with access to a key for the corresponding service account
-- Publish DNS records for each protected application pointing to Pomerium
-- Configure Pomerium with appropriate policy and `enable_google_cloud_serverless_authentication`
-
-The protected application delegates trust to a GCP service account which Pomerium runs as, and Pomerium performs user based authorization on a per route basis. This turns Pomerium into a bridge between a user-centric and service-centric authorization models.
-
-## Pre-requisites
-
-This guide assumes you have Editor access to a Google Cloud project which can be used for isolated testing, and a DNS zone which you are also able to control. DNS does not need to be inside Google Cloud for the example to work.
-
-## Set Up
-
-To deploy Pomerium to Cloud Run securely and easily, a special [image](https://console.cloud.google.com/gcr/images/pomerium-io/GLOBAL/pomerium) is available at `gcr.io/pomerium-io/pomerium:[version]-cloudrun`. It allows sourcing configuration from GCP Secrets Manager, and sets some defaults for Cloud Run to keep configuration minimal. We will be leveraging it in this example to store IdP credentials. Our policy contains no secrets so we can place it directly in an ENV var.
-
-[Dockerfile](https://github.com/pomerium/pomerium/blob/main/.github/Dockerfile-cloudrun) Based on [vals-entrypoint](https://github.com/pomerium/vals-entrypoint)
-
-The image expects a config file at `/pomerium/config.yaml`. Set `VALS_FILES=[secretref]:/pomerium/config.yaml` and set any other Pomerium Environment Variables directly or with secret refs such as `ref+gcpsecrets://PROJECT/SECRET(#/key])`.
-
-### Config
-
-Set up a `config.yaml` file to contain your IdP credentials and secrets:
-
-<CloudRunConfig />
-
-Substitute `cloudrun.pomerium.io` for your own subdomain and your e-mail domain if appropriate:
-
-<PolicyTemplate />
-
-### DNS
-
-Substitute `cloudrun.pomerium.io` for your own subdomain (zonefile.txt):
-
-<Zonefile />
-
-Or set an equivalent CNAME in your DNS provider.
-
-## Deploy
-
-Ensure you have set a default project:
-
-```shell
-gcloud config set default-project MY_TEST_PROJECT
+```yaml
+routes:
+  - from: https://hello.your-domain.example
+    to: https://hello-abcdef-uc.a.run.app
+    policy:
+      - allow:
+          and:
+            - domain:
+                is: your-company.example
 ```
 
-<DeployScript />
+See the [`from`](/docs/reference/routes/from) and [`to`](/docs/reference/routes/to) route references for the full set of options.
 
-## Results
+:::warning
 
-### Overview
+A Cloud Run service open to `allUsers` stays reachable on its public `*.run.app` URL, so anyone who learns that URL can bypass Pomerium's policy entirely. Prefer the serverless authentication approach above, or otherwise ensure the service is only reachable through Pomerium.
 
-We should see two applications deployed. The `hello` app is our protected app, and pomerium is...Pomerium!
+:::
 
-![Cloud Run Overview](img/cloud-run/cloudrun-overview.png)
+## Verify the setup
 
-Notice that Pomerium allows unauthenticated access, but `hello` does not.
+Browse to your `from` hostname, for example `https://hello.your-domain.example`. You should be sent through your identity provider's login and then land on the Cloud Run service. Requesting the `*.run.app` URL directly should fail when the service is private. To confirm the deny path, sign in as a user your policy excludes and open the `from` hostname. Pomerium should deny access, so no authorization header is signed and the request never reaches Cloud Run.
 
-Here are the domain mappings set up:
+## Common failure modes
 
-![Cloud Run Domains](img/cloud-run/cloudrun-domains.png)
+- **`403 Forbidden` from Cloud Run after you sign in through Pomerium.** Pomerium reached the service but Google rejected the call. Confirm the route has `enable_google_cloud_serverless_authentication: true` and that the service account Pomerium runs as holds `roles/run.invoker` on that service. IAM grants can take a few minutes to propagate, so give a fresh grant time before retrying.
+- **Direct `*.run.app` requests still succeed.** The service still allows unauthenticated invocations, so the public Cloud Run URL bypasses Pomerium. Remove `run.invoker` from `allUsers` and rely on the serverless authentication route above.
+- **`could not find default credentials` or a similar auth error in Pomerium's logs.** Pomerium isn't running on GCP and has no ambient service account. Set the [Google Cloud Serverless Authentication Service Account](/docs/reference/google-cloud-serverless-authentication-service-account) explicitly.
 
-### Direct Access
+## Security considerations
 
-Let's verify we cannot access the main application directly by visiting [https://hello-direct.cloudrun.pomerium.io](https://hello-direct.cloudrun.pomerium.io)
+- **Keep the service private.** The strongest control is removing `run.invoker` from `allUsers` and granting it only to Pomerium's service account, so the `*.run.app` URL cannot be invoked around Pomerium's policy.
+- **Grant least privilege.** Give Pomerium's service account only `roles/run.invoker` on the specific services it fronts, not a broader project-wide role.
+- **Scope the route policy.** Cloud Run authorizes Pomerium's service account; Pomerium policy decides which signed-in users can use the route.
 
-![Hello Direct Access](img/cloud-run/hello-direct.png)
+## Pass identity to your application
 
-You should see a 403 error because you do not have the proper credentials.
+If your service is not on GCP, or you want it to read the end user's identity rather than rely on the GCP authorization header, enable [pass identity headers](/docs/reference/routes/pass-identity-headers-per-route) on the route. Pomerium then forwards the authenticated user's identity to the upstream. See [getting the user's identity](/docs/capabilities/getting-users-identity) for how to consume it.
 
-### Authenticated Access
+## Next steps
 
-Now let's access via [https://hello.cloudrun.pomerium.io](https://hello.cloudrun.pomerium.io)
-
-We should get an auth flow through your IdP:
-
-![Hello Sign In](img/cloud-run/hello-signin.png)
-
-And a hello page:
-
-![Hello](img/cloud-run/hello-success.png)
-
-### Non-GCP Applications
-
-If your target application is not running on GCP, you can also perform your own header validation.
-
-Browse to [https://verify.cloudrun.pomerium.io](https://verify.cloudrun.pomerium.io/headers)
-
-You should see your identity header set:
-
-![Hello](img/cloud-run/headers.png)
-
-See [getting user's identity](/docs/capabilities/getting-users-identity) for more details on using this header.
+- [Routes reference](/docs/reference/routes/from) for the full route configuration surface.
+- [Quickstart](/docs/get-started/quickstart) to stand up Pomerium if you have not already.
+- [Getting the user's identity](/docs/capabilities/getting-users-identity) to consume identity in your application.

@@ -1,0 +1,72 @@
+# Sealed E2E validation for the Open WebUI (LLM) guide. Reuses the shared harness
+# (Keycloak + certs + headless runner) and adds Open WebUI + a Pomerium wired to the
+# in-network IdP. Open WebUI consumes the trusted email header Pomerium forwards.
+# Run with: scripts/validate-guide-fixtures.sh llm
+
+include:
+  - ../../_harness/compose/compose.harness.yaml
+
+services:
+  open-webui:
+    image: ghcr.io/open-webui/open-webui@sha256:7f1b0a1a50cfbac23da3b16f96bc968fd757b26dc9e54e93813d61768ea9184e
+    environment:
+      # Trust the email Pomerium forwards and skip Open WebUI's own login. Same header
+      # the published guide configures (WEBUI_AUTH_TRUSTED_EMAIL_HEADER reads it).
+      WEBUI_AUTH_TRUSTED_EMAIL_HEADER: X-Pomerium-Claim-Email
+      WEBUI_URL: https://llm.localhost.pomerium.io
+      # No external model backend in the sealed fixture; the identity flow is what we
+      # assert. Offline mode keeps startup from reaching out to the network.
+      HF_HUB_OFFLINE: '1'
+      WEBUI_SECRET_KEY: pomerium-e2e-test-key
+    # Open WebUI lives ONLY on the internal network it shares with Pomerium. It is not
+    # on `default`, so the test-runner cannot reach :8080 directly (proven in
+    # assert.spec.ts). This is the real trust boundary: the trusted email header is
+    # only safe because the upstream is unreachable except through Pomerium.
+    networks:
+      internal:
+        aliases:
+          - open-webui
+    healthcheck:
+      test: ['CMD-SHELL', 'python3 -c "import urllib.request; urllib.request.urlopen(''http://localhost:8080/health'')"']
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      # Open WebUI is a large image and does a slow first-boot migration; give it room.
+      start_period: 180s
+
+  pomerium:
+    image: pomerium/pomerium@sha256:e10d1d267af24f581157f485d9b0bc08469e2428675b696a08e42ceb09b2279c
+    command: ['--config', '/pomerium/config.yaml']
+    env_file:
+      - ../../_harness/pomerium/validation.env
+    volumes:
+      - certs:/certs:ro
+      - ./routes.validate.yaml:/pomerium/config.yaml:ro
+    depends_on:
+      certs-init:
+        condition: service_completed_successfully
+      keycloak:
+        condition: service_healthy
+      open-webui:
+        condition: service_healthy
+    # Pomerium straddles both networks: `default` so the runner and Keycloak can reach
+    # it, `internal` so it alone can route to Open WebUI.
+    networks:
+      default:
+        aliases:
+          - authenticate.localhost.pomerium.io
+          - llm.localhost.pomerium.io
+      internal: {}
+    healthcheck:
+      test: ['CMD', 'pomerium', 'health']
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 10s
+
+networks:
+  # internal: true means no gateway to the host/outside; only services explicitly
+  # attached (open-webui + pomerium) can talk on it, and nothing on `default` (the
+  # test-runner) can reach open-webui directly.
+  internal:
+    internal: true

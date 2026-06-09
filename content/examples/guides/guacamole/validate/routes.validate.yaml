@@ -1,0 +1,17 @@
+# Routes-only validation config. Shared settings (IdP, secrets, signing key, certs)
+# come from ../../_harness/pomerium/validation.env via env_file in compose.validate.yaml.
+#
+# Guacamole authenticates on the unsigned X-Pomerium-Claim-Email header, so Pomerium
+# must forward the authenticated user's email there. jwt_claims_headers produces it,
+# and Pomerium overwrites any inbound copy with the real identity.
+jwt_claims_headers:
+  X-Pomerium-Claim-Email: email
+
+routes:
+  - from: https://guacamole.localhost.pomerium.io
+    to: http://guacamole:8080
+    pass_identity_headers: true
+    policy:
+      - allow:
+          or:
+            - authenticated_user: true

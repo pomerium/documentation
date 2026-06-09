@@ -1,0 +1,10 @@
+# Routes-only validation config. Shared settings (IdP, secrets, signing key, certs)
+# come from ../../_harness/pomerium/validation.env via env_file in compose.validate.yaml.
+# Transmission consumes no identity, so no jwt_claims_headers are forwarded.
+routes:
+  - from: https://transmission.localhost.pomerium.io
+    to: http://transmission:9091
+    policy:
+      - allow:
+          or:
+            - authenticated_user: true
