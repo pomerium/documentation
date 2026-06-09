@@ -1,0 +1,15 @@
+# Routes-only validation config. Shared settings (IdP, secrets, signing key, certs)
+# come from ../../_harness/pomerium/validation.env via env_file in compose.validate.yaml.
+# Jellyfin runs its own login, so the route is a front-door gate; allow_websockets
+# keeps the web client's event stream working.
+routes:
+  - from: https://jellyfin.localhost.pomerium.io
+    to: http://jellyfin:8096
+    allow_websockets: true
+    preserve_host_header: true
+    timeout: 0s
+    idle_timeout: 600s
+    policy:
+      - allow:
+          or:
+            - authenticated_user: true

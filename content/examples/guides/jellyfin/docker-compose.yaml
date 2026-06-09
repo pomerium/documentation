@@ -1,0 +1,26 @@
+services:
+  pomerium:
+    image: pomerium/pomerium:v0.32.7@sha256:e10d1d267af24f581157f485d9b0bc08469e2428675b696a08e42ceb09b2279c
+    volumes:
+      - ./config.yaml:/pomerium/config.yaml:ro
+      - pomerium-cache:/data
+    ports:
+      - 443:443
+      - 80:80
+    restart: always
+
+  jellyfin:
+    image: jellyfin/jellyfin:10.10.7@sha256:7ae36aab93ef9b6aaff02b37f8bb23df84bb2d7a3f6054ec8fc466072a648ce2
+    environment:
+      # Jellyfin builds absolute URLs (DLNA, casting, the web client) from this
+      # value, so it must be the public route, not the container name.
+      JELLYFIN_PublishedServerUrl: https://jellyfin.yourdomain.com
+    volumes:
+      - jellyfin-config:/config
+      - jellyfin-cache:/cache
+    restart: always
+
+volumes:
+  pomerium-cache:
+  jellyfin-config:
+  jellyfin-cache:
