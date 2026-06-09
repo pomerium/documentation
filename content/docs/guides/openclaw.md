@@ -81,9 +81,7 @@ For more on Pomerium's SSH proxy, see [Pomerium Native SSH Access](/docs/capabil
 
 You'll need:
 
-- A [Pomerium Zero](https://www.pomerium.com/docs/get-started/quickstart) account (free).
-  If you don't have a cluster yet, Step 1 walks you through creating one.
-  If you already have a cluster but didn't save your bootstrap token, you can rotate it from the three-dot menu on the [Clusters page](https://console.pomerium.app/app/clusters).
+- A [Pomerium Zero](https://www.pomerium.com/docs/get-started/quickstart) account (free). If you don't have a cluster yet, Step 1 walks you through creating one. If you already have a cluster but didn't save your bootstrap token, you can rotate it from the three-dot menu on the [Clusters page](https://console.pomerium.app/app/clusters).
 - A **deployment host** (Virtual Private Server (VPS), bare-metal server, or local machine) with:
   - [Docker](https://docs.docker.com/install/) and [Docker Compose](https://docs.docker.com/compose/install/)
   - `git` and `ssh-keygen` (both pre-installed on macOS and most Linux distributions)
@@ -166,7 +164,7 @@ The values are written to `./pomclaw/.env` (mode 600). From there the script:
 1. Generates SSH host keys and the Pomerium User CA key
 2. Builds the bespoke OpenClaw Docker image (`openclaw:<version>`)
 3. Starts the `openclaw-gateway` and `pomerium` containers
-4. Pushes SSH cluster settings (`sshAddress`, `sshHostKeys`, `sshUserCaKey`) and `jwtClaimsHeaders` (`x-pomerium-claim-email: email`) to Pomerium Zero
+4. Pushes SSH cluster settings (`sshAddress`, `sshHostKeys`, `sshUserCaKey`), `jwtClaimsHeaders` (`x-pomerium-claim-email: email`), and `databrokerStorageConnection` (`file:///var/lib/pomerium`) to Pomerium Zero
 5. Creates an allow-by-email policy for your `OPERATOR_EMAIL`
 6. Creates the SSH route `ssh://openclaw` → `ssh://openclaw-gateway:22`
 7. Creates the web route `https://openclaw.<your-cluster-domain>` → `http://openclaw-gateway:18789` with WebSocket support and the `x-openclaw-scopes: operator.admin` request header (the [OpenClaw scope](https://docs.openclaw.ai/gateway/operator-scopes) that grants the authorized user admin privileges)
@@ -254,7 +252,7 @@ To remove the deployment completely:
    docker compose down -v
    ```
 
-2. In the [Pomerium Zero console](https://console.pomerium.app), delete the `openclaw users` policy and the two routes (`ssh://openclaw` and the web route). The cluster-level SSH and `jwtClaimsHeaders` settings can stay if you plan to use Pomerium Zero for other routes; otherwise clear them under **Manage → Settings**.
+2. In the [Pomerium Zero console](https://console.pomerium.app), delete the `openclaw users` policy and the two routes (`ssh://openclaw` and the web route). The cluster-level SSH, `jwtClaimsHeaders`, and `databrokerStorageConnection` settings can stay if you plan to use Pomerium Zero for other routes; otherwise clear them under **Manage → Settings**.
 3. Optionally remove the local install directory and its persisted data:
 
    ```bash

@@ -483,7 +483,7 @@ zero_resolve_ids() {
 }
 
 zero_set_cluster_settings() {
-  log "Setting cluster SSH config + JWT claim header mapping"
+  log "Setting cluster SSH config + JWT claim header mapping + databroker storage"
   # Read the key files from the host and pass them as raw stdin to jq inside
   # the container, which builds the JSON Patch payload.
   local h_ed h_rsa h_ecdsa user_ca
@@ -507,14 +507,15 @@ zero_set_cluster_settings() {
     --arg ecdsa "$h_ecdsa" \
     --arg ca "$user_ca" \
     '[
-      {op: "add", path: "/sshAddress",       value: "0.0.0.0:22"},
-      {op: "add", path: "/sshHostKeys",      value: [$ed, $rsa, $ecdsa]},
-      {op: "add", path: "/sshUserCaKey",     value: $ca},
-      {op: "add", path: "/jwtClaimsHeaders", value: {"x-pomerium-claim-email": "email"}}
+      {op: "add", path: "/sshAddress",                value: "0.0.0.0:22"},
+      {op: "add", path: "/sshHostKeys",               value: [$ed, $rsa, $ecdsa]},
+      {op: "add", path: "/sshUserCaKey",              value: $ca},
+      {op: "add", path: "/jwtClaimsHeaders",          value: {"x-pomerium-claim-email": "email"}},
+      {op: "add", path: "/databrokerStorageConnection", value: "file:///var/lib/pomerium"}
     ]')
 
   zero_curl PATCH "/organizations/$ORG_ID/clusters/$CLUSTER_ID/settings" "$patch" >/dev/null
-  log_ok "cluster settings applied (SSH config + jwtClaimsHeaders)"
+  log_ok "cluster settings applied (SSH config + jwtClaimsHeaders + databroker storage)"
 }
 
 zero_get_or_create_policy() {
