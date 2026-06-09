@@ -662,12 +662,29 @@ phase_configure_trusted_proxy() {
   proxies=$(zero_jq -n --arg ip "$pomerium_ip" '[$ip]')
   # Retry on ConfigMutationConflictError: rapid sequential mutations from
   # separate docker exec sessions can race with the gateway's config watcher.
-  retry "set trustedProxies" 5 \
-    INSIDE "openclaw config set gateway.trustedProxies --strict-json '$proxies'" || true
+  local attempt=0
+  while (( attempt < 5 )); do
+    if INSIDE "openclaw config set gateway.trustedProxies --strict-json '$proxies'">/dev/null 2>&1; then
+      break
+    fi
+    attempt=$((attempt + 1))
+    sleep 1
+  done
 
-  retry "set auth.mode" 5 \
-    INSIDE "openclaw config set gateway.auth.mode trusted-proxy" \
-    || { log_err "Failed to set gateway.auth.mode after 5 attempts (ConfigMutationConflictError)"; exit 1; }
+  # Switch to trusted-proxy mode (failures must be visible)
+  attempt=0
+  while true; do
+    if INSIDE "openclaw config set gateway.auth.mode trusted-proxy"; then
+      break
+    fi
+    attempt=$((attempt + 1))
+    if (( attempt >= 5 )); then
+      log_err "Failed to set gateway.auth.mode after $attempt attempts (ConfigMutationConflictError)"
+      exit 1
+    fi
+    log_warn "Config mutation conflict, retrying in 1s... (attempt $attempt/5)"
+    sleep 1
+  done
 
   # openclaw automatically removes the inactive password when switching to
   # trusted-proxy mode; the explicit unset is a harmless no-op fallback.
@@ -688,11 +705,6 @@ phase_configure_trusted_proxy() {
     exit 1
   fi
 
-  DC restart openclaw-gateway
-  if ! wait_for "gateway responding after trusted-proxy switch" 60 2 gateway_listening; then
-    log_err "gateway did not come back up. Run: docker compose logs openclaw-gateway"
-    exit 1
-  fi
   log_ok "gateway in trusted-proxy mode"
 }
 

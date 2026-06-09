@@ -1,7 +1,9 @@
 #!/bin/sh
 set -e
 
-# Ensure claw user owns its home directory contents
+# Ensure the config directory exists and claw owns its home directory contents.
+# The .openclaw directory must exist before any openclaw config calls.
+mkdir -p /claw/.openclaw
 chown -R claw:claw /claw
 
 # Configure allowed origins
