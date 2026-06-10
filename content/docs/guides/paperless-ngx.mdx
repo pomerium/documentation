@@ -83,7 +83,7 @@ Replace `paperless.yourdomain.com` with your domain and `you@example.com` with t
 
 Paperless-ngx runs as a Django application backed by PostgreSQL and Redis. Pomerium terminates TLS at the front door, so Paperless-ngx serves plain HTTP on the internal Docker network. The key settings in the Compose file below:
 
-- `PAPERLESS_URL: https://paperless.yourdomain.com`: Paperless-ngx derives Django's `ALLOWED_HOSTS` and `CSRF_TRUSTED_ORIGINS` from this. It must equal the public route host, or Django answers `HTTP 400` to every request that arrives behind the proxy.
+- `PAPERLESS_URL: https://paperless.yourdomain.com`: Paperless-ngx derives Django's `ALLOWED_HOSTS` and `CSRF_TRUSTED_ORIGINS` from this. It must equal the route's **From** URL, or Django answers `HTTP 400` to every request that arrives behind the proxy.
 - `PAPERLESS_REDIS` and the `PAPERLESS_DB*` values: point Paperless-ngx at the Redis broker and PostgreSQL database that ship in the same Compose file.
 - `PAPERLESS_SECRET_KEY`: Django's signing key. Generate your own with `openssl rand -base64 48`; never reuse the placeholder.
 - `PAPERLESS_ADMIN_USER` / `PAPERLESS_ADMIN_PASSWORD`: bootstrap the first superuser on first startup.
@@ -128,7 +128,7 @@ API clients and scanner apps authenticate to Paperless-ngx directly and can't co
 
 ## Common failure modes
 
-- **`HTTP 400 Bad Request` on every page.** `PAPERLESS_URL` doesn't match the public route host, so Django rejects the host. Set `PAPERLESS_URL` to exactly `https://paperless.yourdomain.com` and make sure `preserve_host_header` is enabled on the route.
+- **`HTTP 400 Bad Request` on every page.** `PAPERLESS_URL` doesn't match the route's **From** URL, so Django rejects the host. Set `PAPERLESS_URL` to exactly `https://paperless.yourdomain.com` and make sure `preserve_host_header` is enabled on the route.
 - **Redirects or links point at the container name or the wrong host.** `preserve_host_header` isn't set, so Paperless-ngx sees `paperless:8000` instead of the public name. Enable it on the route.
 - **`502` or `503` right after `docker compose up`.** Paperless-ngx hasn't finished its first-boot migrations and search-index build yet. Wait until `docker compose logs -f paperless` shows the web server listening; first boot routinely takes a couple of minutes.
 - **CSRF verification failures when signing in or uploading.** The browser's `Origin` doesn't match Django's `CSRF_TRUSTED_ORIGINS`. This is the same root cause as the `400` above: keep `PAPERLESS_URL` and the route host identical, over HTTPS.
