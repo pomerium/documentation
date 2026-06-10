@@ -5,7 +5,7 @@ lang: en-US
 keywords:
   [pomerium, immich, sso, oidc, identity aware proxy, self-hosted, photos]
 description: Put self-hosted Immich behind Pomerium so every browser request is authenticated and authorized at the front door before it reaches your photo library.
-# cSpell:ignore immich vectorchord pgvecto valkey healthcheck
+# cSpell:ignore immich vectorchord valkey
 ---
 
 import TabItem from '@theme/TabItem';
@@ -18,45 +18,27 @@ import Compose from '/content/examples/guides/immich/docker-compose.yaml.md';
 
 ## What this guide does
 
-You'll put a self-hosted [Immich](https://immich.app/) instance behind Pomerium so that Pomerium becomes the single front door for its web interface: every browser request is authenticated against your identity provider (IdP) and checked against your policy before it ever reaches Immich. Immich keeps running its own login and accounts on top, so Pomerium acts as an additional gate rather than replacing Immich's user database.
+Put a self-hosted [Immich](https://immich.app/) instance behind Pomerium so every browser request to its web interface is authenticated against your identity provider (IdP) and checked against your route policy before it reaches Immich. You get centralized single sign-on (SSO), one place to express group and domain policy, and an audit trail of who reached the service. Immich keeps its own login and accounts on top; Pomerium decides who can reach them at all.
 
-The value of putting Immich behind Pomerium is not a second login. It is centralized single sign-on (SSO), one place to express group and domain policy, an audit trail of who reached the service, and keeping the whole web surface off the public internet behind your identity provider.
+```mermaid
+flowchart LR
+    Browser --> Pomerium["Pomerium<br/>SSO + route policy"]
+    Pomerium -.->|"sign in"| IdP[Identity provider]
+    Pomerium --> Immich["Immich<br/>web + API"]
+    Mobile["Mobile / API client"] -->|"access token"| Immich
+```
 
 ## When to use this guide
 
-Use it when you run self-hosted Immich and want to make sure only people from your organization can even reach the web app, without exposing Immich's interface directly to the internet. Pomerium handles the network-level access decision; Immich continues to manage albums, sharing, and its own user sessions behind that gate.
+Use it when you run self-hosted Immich and don't want its web interface exposed directly to the internet. Pomerium makes the access decision; Immich continues to manage albums, sharing, and its own user sessions behind it.
 
-This guide gates the web interface. Immich's mobile apps and API clients authenticate with their own access tokens and cannot complete an interactive browser SSO flow, so they need a deliberate routing choice. See [Security considerations](#security-considerations) before you gate the API host.
-
-## How the request flows
-
-```mermaid
-sequenceDiagram
-    actor User as User (web browser)
-    participant Pomerium
-    participant IdP as Identity provider
-    participant Immich as Immich (web + API)
-    actor Mobile as Mobile / API client
-
-    User->>Pomerium: GET https://immich.yourdomain.com
-    Pomerium->>IdP: No session: redirect to sign in
-    IdP-->>Pomerium: Authenticated identity + claims
-    Pomerium->>Pomerium: Evaluate route policy (allow / deny)
-    Pomerium->>Immich: Forward request for an allowed user
-    Immich-->>User: Immich's own login, then the app
-
-    Note over Mobile,Immich: Mobile and API clients carry their own Immich<br/>access token and skip the browser SSO gate
-    Mobile-->>Immich: API call with access token (bypasses SSO if routed here)
-```
+This guide covers the web interface. Immich's mobile apps and API clients authenticate with Immich's own access tokens and never perform a browser SSO redirect, so a route that requires Pomerium SSO blocks them. Either serve the API or mobile hostname on a separate [public access](/docs/reference/routes/public-access) route (not identity-protected, so Immich's token auth is then the only control), or keep that host off Pomerium and reach it over a virtual private network (VPN). [Security considerations](#security-considerations) walks through the trade-offs.
 
 ## Prerequisites
 
-This guide assumes you've completed the [Quickstart](/docs/get-started/quickstart), so you already have Pomerium running and signing users in through the hosted authenticate service.
-
-You also need:
-
 - [Docker](https://docs.docker.com/install/) and [Docker Compose](https://docs.docker.com/compose/install/)
-- A domain you control for the Immich route (this guide uses `immich.yourdomain.com`)
+- For the Pomerium Zero path: a [Pomerium Zero](https://console.pomerium.app) account with its Pomerium instance running locally via the [Quickstart](/docs/get-started/quickstart) Compose file; the route uses the starter domain that comes with it
+- For the Pomerium Core path: a domain you control for the Immich route (this guide uses `immich.yourdomain.com`), with DNS pointed at the host running Pomerium and ports 80 and 443 reachable so `autocert` can provision certificates; the Compose file below runs Pomerium itself
 
 :::tip Prefer to self-host the identity provider?
 
@@ -92,7 +74,7 @@ Replace `immich.yourdomain.com` with your domain and `you@example.com` with the 
 
 ## Configure Immich
 
-Immich keeps its own login and account database. The first time you reach it through Pomerium, Immich serves its own onboarding screen where you create the initial admin account; after that it enforces its own sessions on top of the Pomerium gate.
+Immich keeps its own login and account database. The first time you reach it through Pomerium, Immich serves its own onboarding screen where you create the initial admin account; after that it enforces its own sessions on top of Pomerium's SSO.
 
 This minimal stack includes what the Immich web/API server needs to boot behind Pomerium:
 
@@ -112,7 +94,7 @@ Immich requires the [VectorChord](https://docs.immich.app/administration/postgre
 
 ## Run the stack
 
-The Compose file runs Pomerium Core together with the Immich server, its VectorChord PostgreSQL database, and Redis (Valkey). Pomerium publishes ports 80 and 443 for the protected route; the Immich server publishes no host ports, and Pomerium reaches it by service name on the Compose project network. For Zero, drop the `pomerium` service and use the `compose.yaml` from the Quickstart with your `POMERIUM_ZERO_TOKEN`, keeping the Immich services below; put those services on the same Docker network as the Quickstart's `pomerium` service (the Quickstart names it `main`) so Pomerium can resolve `immich-server` by name.
+The Compose file runs Pomerium Core together with the Immich server, its VectorChord PostgreSQL database, and Redis (Valkey). Pomerium publishes ports 80 and 443 for the protected route; the Immich server publishes no host ports, and Pomerium reaches it by service name on the Compose project network. For Zero, drop the `pomerium` service and use the `compose.yaml` from the [Quickstart](/docs/get-started/quickstart) with your `POMERIUM_ZERO_TOKEN`, keeping the Immich services below; put those services on the same Docker network as the Quickstart's `pomerium` service (the Quickstart names it `main`) so Pomerium can resolve `immich-server` by name.
 
 <Compose />
 
@@ -131,13 +113,13 @@ This guide was last tested with Immich v2.7.5 and Pomerium v0.32.7. Newer Immich
 ## Verify the setup
 
 1. **The route requires authentication.** In a fresh browser, open `https://immich.yourdomain.com`. You should be redirected to sign in through Pomerium, not straight to Immich.
-2. **An allowed user passes the gate.** Sign in with a user your policy allows. Pomerium redirects you back and Immich's own onboarding or login screen loads behind the gate.
+2. **An allowed user gets in.** Sign in with a user your policy allows. Pomerium redirects you back and Immich's own onboarding or login screen loads.
 
 ![Immich's web login reached through Pomerium](./img/immich/immich-login.png)
 
-3. **Immich answers behind the gate.** In the same browser where you signed in, open `https://immich.yourdomain.com/api/server/ping`. The browser carries your Pomerium session, so the request reaches Immich and returns `{"res":"pong"}`. A plain `curl` with no Pomerium session is redirected to sign in instead. On Pomerium Zero or Enterprise, you can script the check by attaching a [Pomerium service account](/docs/capabilities/service-accounts) token that your route policy allows.
+3. **Immich answers through Pomerium.** In the same browser where you signed in, open `https://immich.yourdomain.com/api/server/ping`. The browser carries your Pomerium session, so the request reaches Immich and returns `{"res":"pong"}`. A plain `curl` with no Pomerium session is redirected to sign in instead. On Pomerium Zero or Enterprise, you can script the check by attaching a [Pomerium service account](/docs/capabilities/service-accounts) token that your route policy allows.
 
-Pomerium gates the route; Immich runs its own login on top. Immich's admin onboarding and first-run setup are Immich's concern, not Pomerium's.
+Pomerium decides who reaches Immich; Immich runs its own login on top. Immich's admin onboarding and first-run setup are Immich's concern, not Pomerium's.
 
 ## Common failure modes
 
@@ -148,19 +130,23 @@ Pomerium gates the route; Immich runs its own login on top. Immich's admin onboa
 
 ## Security considerations
 
-Immich runs its own authentication, so this guide uses Pomerium as a front-door gate on top of that login. (Immich can also sign users in itself with native OIDC against your identity provider; see [Next steps](#next-steps).) The trust boundary depends on Pomerium being the only path to the web interface, and on understanding which clients that gate actually covers.
+Immich runs its own authentication, so this guide puts Pomerium in front of that login as the front door. (Immich can also sign users in itself with native OIDC against your identity provider; see [Next steps](#next-steps).) The trust boundary depends on Pomerium being the only path to the web interface, and on understanding which clients the route actually protects.
 
 - **Don't expose Immich directly.** Only Pomerium should reach `immich-server:2283`. Keep the Immich server off published host ports and on the Docker network Pomerium uses to reach it, so the policy can't be bypassed by hitting Immich's port directly.
 - **Scope the route policy** (group or domain) to who should have any access to Immich at all. Immich's own per-user albums and sharing still apply on top of that.
-- **The SSO gate covers the web browser, not token-based clients.** The Immich mobile apps and API or command-line clients authenticate with their own Immich access tokens and cannot complete an interactive browser SSO (single sign-on) flow. If you put the host the mobile app talks to behind Pomerium's browser gate, the mobile app breaks: it has no way to satisfy the interactive redirect. Gate the web UI, and make a deliberate choice for the API host rather than gating it by default and locking out every mobile client. Practical options: serve the API or mobile hostname on a separate route with [public access](/docs/reference/routes/public-access) so Immich's own token auth handles it, or keep that host off Pomerium entirely and reach it over a virtual private network (VPN). If you use public access, treat that route as protected only by Immich's own authentication: Pomerium will not authenticate or authorize matching requests, so scope the host or path as narrowly as Immich supports.
+- **Pomerium's SSO covers the web browser, not token-based clients.** The Immich mobile apps and API or command-line clients authenticate with their own Immich access tokens and never perform a browser SSO redirect. If the host the mobile app talks to requires Pomerium SSO, the app breaks: it has no way to satisfy the interactive redirect. Make a deliberate choice for that host. Either serve the API or mobile hostname on a separate route with [public access](/docs/reference/routes/public-access), or keep that host off Pomerium entirely and reach it over a VPN. On a public-access route, Pomerium will not authenticate or authorize matching requests, so Immich's own token auth is the only control; scope the host or path as narrowly as Immich supports.
 
-The matrix below summarizes which client surfaces the browser SSO gate actually covers:
+Each access channel is protected by a different control:
 
-![Matrix: Pomerium gates Immich's web browser; the app and API/CLI use their own tokens to reach Immich directly](./img/immich/client-surface-gating-matrix.svg)
+| Access channel | What gates it | Credential the client presents |
+| --- | --- | --- |
+| Web interface in a browser | Pomerium route policy, then Immich's own login | Pomerium SSO session, then an Immich session |
+| Mobile apps | Immich's own authentication (reach it over a public access route or a VPN) | Immich access token from the app's login |
+| API and CLI clients | Immich's own authentication (reach it over a public access route or a VPN) | Immich API key |
 
 ## Next steps
 
-- **Go further: single sign-on into Immich.** Immich supports [native OIDC](https://docs.immich.app/administration/oauth/). Point it at the same identity provider Pomerium uses, turn on Auto Register, and users land already signed in instead of meeting a second Immich login. This is Immich doing its own OIDC, not something Pomerium forwards, so it also covers the mobile app's login (which the browser SSO gate above cannot).
+- **Go further: single sign-on into Immich.** Immich supports [native OIDC](https://docs.immich.app/administration/oauth/). Point it at the same identity provider Pomerium uses, turn on Auto Register, and users land already signed in instead of meeting a second Immich login. This is Immich doing its own OIDC, not something Pomerium forwards, so it also covers the mobile app's login (which Pomerium's browser-based SSO cannot).
 - [Build policies](/docs/get-started/fundamentals/zero/zero-build-policies)
 - [Set route timeouts](/docs/reference/routes/timeouts)
 - [Custom domains](/docs/capabilities/custom-domains)
