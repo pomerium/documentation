@@ -273,7 +273,7 @@ A guide that omits this baseline prereq fails this dimension and cannot score ab
 
 **Weight:** 1x **Question:** Is the guide easy to scan, extract, update, and keep correct over time?
 
-**Style rules (hard fail):** Prose must not contain em dashes (`—`) or en dashes (`–`), and the guide must not contain emojis (decorative, status, or bullets — ✅ ❌ ⚠️ 🎉 🚀 💡 and similar). Use plain punctuation and Docusaurus admonitions (`:::note`, `:::tip`, `:::warning`, `:::danger`, `:::info`) instead. Code, config, CLI output, and quoted external content are exempt. A guide that violates either rule is not publish-ready regardless of its score on this dimension.
+**Style rules (hard fail):** Real em dashes (`—`) are fine in prose; what fails is faking them with double hyphens (`--`). The guide must not contain emojis (decorative, status, or bullets — ✅ ❌ ⚠️ 🎉 🚀 💡 and similar). Use plain punctuation and Docusaurus admonitions (`:::note`, `:::tip`, `:::warning`, `:::danger`, `:::info`) instead. Code, config, CLI output, and quoted external content are exempt. A guide that violates either rule is not publish-ready regardless of its score on this dimension.
 
 **Acronym rule (hard fail):** Every acronym must be expanded on first use in the guide, formatted as full term followed by the acronym in parentheses (for example, `Pomerium Policy Language (PPL)`). Widely-understood internet-infrastructure acronyms (HTTP, HTTPS, URL, TLS, DNS, IP, JSON, YAML, API, SDK, CLI, UI, OS, SSO, OAuth, OIDC, SAML, JWT, CSV, PDF, CDN, SaaS, CI, CD, SQL, REST, RFC, and similar) are exempt. Product-specific or guide-local acronyms (for example TE, TI, AS, PRM, DCR, CIMD, PPL, IdP, SIEM, MCP) are not exempt. For long guides, reintroduce the full form at least once per major section, or substitute a descriptive noun (for example "the cached upstream token" instead of "the cached TI") so that readers who land mid-page are not forced to scroll back to the definition.
 
@@ -328,5 +328,5 @@ Before marking a guide ready for review:
 - The expected end state is explicit
 - The guide helps the reader decide whether to use this pattern
 - The guide can be skimmed without losing the implementation flow
-- No em dashes (`—`) or en dashes (`–`) in prose, and no emojis anywhere in the guide (see dimension 10 style rules)
+- No double-hyphen (`--`) fake em dashes in prose, and no emojis anywhere in the guide (see dimension 10 style rules)
 - Every product-specific or guide-local acronym is expanded on first use (see dimension 10 acronym rule)
