@@ -32,52 +32,39 @@ import Compose from '/content/examples/guides/servarr/docker-compose.yaml.md';
 
 The "Servarr" apps are a family of self-hosted media-automation tools that are almost always run together: [Sonarr](https://sonarr.tv/) (TV), [Radarr](https://radarr.video/) (movies), [Prowlarr](https://prowlarr.com/) (indexer management), and a download client like [SABnzbd](https://sabnzbd.org/) (usenet). Each ships its own web interface and HTTP API on its own port, and none of them speak single sign-on (SSO), the [OpenID Connect (OIDC)](https://openid.net/developers/how-connect-works/) protocol, or any header-based identity. Their built-in access control is per-app web UI authentication plus a static API key for HTTP API and inter-app calls.
 
-You'll put the whole suite behind one Pomerium so that Pomerium becomes the single front door for every app's web interface: each request is authenticated against your identity provider (IdP) and checked against your policy before it ever reaches Sonarr, Radarr, Prowlarr, or SABnzbd. The apps keep their own API keys for programmatic and inter-app calls; Pomerium gates the browser surface in front of all of them.
+You'll put the whole suite behind one Pomerium so that Pomerium becomes the single front door for every app's web interface: each request is authenticated against your identity provider (IdP) and checked against your policy before it ever reaches Sonarr, Radarr, Prowlarr, or SABnzbd. The apps keep their own API keys for programmatic and inter-app calls; Pomerium protects browser access to all of them.
 
 ## When to use this guide
 
 Use it when you run a Servarr stack and want one identity-aware front door for the whole suite instead of exposing four separate web UIs, each with its own local login and separate API key for automation. In a typical home or lab deployment these apps run on a separate host or network-attached storage (NAS) box and are only meant to be reached over your private network; Pomerium lets you reach them from anywhere with your existing identity, while keeping their ports off the public internet.
 
-The win is not replacing each app's own access controls. The win is centralized SSO, group-based policy, an audit trail of who reached which app, and shrinking the attack surface to a single authenticated entry point. The trade-off to be honest about up front: because the apps consume no identity from Pomerium, this is a front-door gate, and each app's API key remains a separate credential you still have to protect.
+You get centralized SSO, group-based policy, an audit trail of who reached which app, and a single authenticated entry point instead of four exposed ports. The trade-off: the apps consume no identity from Pomerium, so this is a front-door gate, and each app's API key remains a separate credential you still have to protect.
 
-### What Pomerium gates, and what it does not
+### What Pomerium protects, and what it doesn't
 
-A Servarr stack is reached through three different channels, and Pomerium only sits in front of one of them. This matrix is the mental model for the rest of the guide:
+A Servarr stack is reached through three channels, and Pomerium sits in front of only one of them. The same model applies to all four apps:
 
-![Matrix: Pomerium gates each app's web UI; the API uses the app's own key and native/mobile clients bypass the gate](./img/servarr/servarr-gating-matrix.svg)
-
-- **Web UI (browser).** This is what Pomerium gates. Every app's dashboard is reached only after SSO and a policy check.
-- **HTTP API.** Reached with the app's own API key. Prowlarr talks to Sonarr and Radarr this way; once a request reaches an app with a valid API key, the app authorizes it independently of your Pomerium session. Keep these calls on the internal network (see [Security considerations](#security-considerations)).
-- **Native or mobile clients.** Apps like mobile remotes expect a direct connection and do not run a browser SSO flow. Those bypass Pomerium's interactive gate and need a separate path, such as a [TCP tunnel](/docs/capabilities/non-http) or a VPN.
+| Access channel | What gates it | Credential the client presents |
+| --- | --- | --- |
+| Web UI (browser) | Pomerium route policy (SSO and a policy check) before any request reaches an app | Pomerium SSO session |
+| HTTP API, including Prowlarr's calls into Sonarr and Radarr | The app itself, independent of any Pomerium session; keep these calls on the internal network (see [Security considerations](#security-considerations)) | The app's API key |
+| Native or mobile clients | The app itself: these clients can't run a browser SSO flow and need a separate path, such as a virtual private network (VPN) or a [TCP tunnel](/docs/capabilities/non-http) on a device that can run Pomerium CLI | The app's API key |
 
 ```mermaid
-sequenceDiagram
-    participant User as Browser
-    participant Pomerium as Pomerium
-    participant IdP as Identity Provider
-    participant App as Sonarr / Radarr / Prowlarr / SABnzbd
-    participant Bypass as Native client (API key)
-
-    User->>Pomerium: GET https://sonarr.yourdomain.com
-    Pomerium->>IdP: Redirect for authentication
-    IdP->>Pomerium: Authenticated identity
-    Pomerium->>Pomerium: Evaluate policy (group / email)
-    Pomerium->>App: Forward request (no identity header)
-    App->>User: App web UI
-    Note over Bypass,App: Bypass risk: a client with the app's API key<br/>that can reach the app port skips Pomerium entirely
-    Bypass--xApp: Direct API call if the port is exposed
+flowchart LR
+    Browser --> Pomerium["Pomerium<br/>SSO + route policy"]
+    Pomerium -.->|"sign in"| IdP[Identity provider]
+    Pomerium --> Apps["Sonarr / Radarr /<br/>Prowlarr / SABnzbd"]
+    Clients["API / native clients"] -->|"app API key"| Apps
 ```
 
-The dashed line is the reason network isolation matters: keep the app ports off published interfaces and reachable only through Pomerium, or the API key becomes the whole security model.
+Inter-app calls (Prowlarr into Sonarr and Radarr) happen on the internal Docker network with nothing but an API key, and any client that can reach an app's port is authorized the same way. Keep the app ports off published interfaces and reachable only through Pomerium, or the API key becomes the whole security model.
 
 ## Prerequisites
 
-This guide assumes you've completed the [Quickstart](/docs/get-started/quickstart), so you already have Pomerium running and signing users in through the hosted authenticate service.
-
-You also need:
-
 - [Docker](https://docs.docker.com/install/) and [Docker Compose](https://docs.docker.com/compose/install/)
-- A domain you control for the routes (this guide uses `sonarr.yourdomain.com`, `radarr.yourdomain.com`, `prowlarr.yourdomain.com`, and `sabnzbd.yourdomain.com`)
+- For the Pomerium Zero path: a [Pomerium Zero](https://console.pomerium.app) account with its Pomerium instance running locally via the [Quickstart](/docs/get-started/quickstart) Compose file; the routes use the starter domain that comes with it
+- For the Pomerium Core path: a domain you control for the routes (this guide uses `sonarr.yourdomain.com`, `radarr.yourdomain.com`, `prowlarr.yourdomain.com`, and `sabnzbd.yourdomain.com`), with DNS pointed at the host running Pomerium and ports 80 and 443 reachable so `autocert` can provision certificates; the Compose file below runs Pomerium itself
 
 :::tip Prefer to self-host the identity provider?
 
@@ -87,17 +74,17 @@ This guide uses the hosted authenticate service so you don't have to run your ow
 
 ## Configure Pomerium
 
-You'll create one route per app. The routes are plain HTTP front-door gates: Pomerium authenticates the user and proxies the request through without injecting any identity, because the apps have no header or token identity to consume.
+You'll create one route per app. Each route does the same thing: Pomerium authenticates the user, checks policy, and proxies the request through without injecting any identity, because the apps have no header or token identity to consume.
 
 <Tabs queryString="type">
 <TabItem value="zero" label="Pomerium Zero" default>
 
 In the [Zero Console](https://console.pomerium.app), create one **Route** per app:
 
-1. **Sonarr** -- **From** `https://sonarr.<your-starter-domain>`, **To** `http://sonarr:8989`.
-2. **Radarr** -- **From** `https://radarr.<your-starter-domain>`, **To** `http://radarr:7878`.
-3. **Prowlarr** -- **From** `https://prowlarr.<your-starter-domain>`, **To** `http://prowlarr:9696`.
-4. **SABnzbd** -- **From** `https://sabnzbd.<your-starter-domain>`, **To** `http://sabnzbd:8080`. On this route, enable **Preserve Host Header**: SABnzbd checks the incoming host against its `host_whitelist`, so it must see the public name.
+1. **Sonarr:** **From** `https://sonarr.<your-starter-domain>`, **To** `http://sonarr:8989`.
+2. **Radarr:** **From** `https://radarr.<your-starter-domain>`, **To** `http://radarr:7878`.
+3. **Prowlarr:** **From** `https://prowlarr.<your-starter-domain>`, **To** `http://prowlarr:9696`.
+4. **SABnzbd:** **From** `https://sabnzbd.<your-starter-domain>`, **To** `http://sabnzbd:8080`. On this route, enable **Preserve Host Header**: SABnzbd checks the incoming host against its `host_whitelist`, so it must see the public name.
 
 Set each route's policy to scope access to who should reach the suite (for example, **Any Authenticated User** or a specific group). Zero manages the routes' TLS certificates behind your starter domain.
 
@@ -117,14 +104,14 @@ Replace each `*.yourdomain.com` host with your domain and `you@example.com` with
 
 The [LinuxServer.io](https://www.linuxserver.io/) images for these apps generate their config on first start, so there is little to set by hand. The two things that matter for running behind Pomerium:
 
-- **Authentication method.** For Sonarr, Radarr, and Prowlarr, `External` is configured in `config.xml`, not from the normal settings UI. Stop each container, edit its `/config/config.xml` so the top-level auth entries are `<AuthenticationMethod>External</AuthenticationMethod>` and `<AuthenticationRequired>DisabledForLocalAddresses</AuthenticationRequired>`, then restart. Be precise about what this does: it tells the app to skip its own web-UI login for requests that arrive from a local/private network address, on the assumption that a reverse proxy already authenticated the user. The app does not validate a Pomerium identity or a signed header -- it trusts the network position. Pomerium is that reverse proxy, which is exactly why the app ports must be reachable only through Pomerium (see [Security considerations](#security-considerations)). The API key still guards API calls regardless of this setting.
-- **API keys.** Each app shows its API key under **Settings -> General**. Prowlarr uses these keys to push indexer config into Sonarr and Radarr, and any external client uses them too. Treat each key like a password.
+- **Authentication method.** For Sonarr, Radarr, and Prowlarr, `External` is configured in `config.xml`, not from the normal settings UI. Stop each container, edit its `/config/config.xml` so the top-level auth entries are `<AuthenticationMethod>External</AuthenticationMethod>` and `<AuthenticationRequired>DisabledForLocalAddresses</AuthenticationRequired>`, then restart. This tells the app to skip its own web-UI login for requests that arrive from a local/private network address, on the assumption that a reverse proxy already authenticated the user. The app does not validate a Pomerium identity or a signed header; it trusts the network position. Pomerium is that reverse proxy, so the app ports must be reachable only through Pomerium (see [Security considerations](#security-considerations)). The API key still guards API calls regardless of this setting.
+- **API keys.** Each app shows its API key under **Settings > General**. Prowlarr uses these keys to push indexer config into Sonarr and Radarr, and any external client uses them too. Treat each key like a password.
 
-SABnzbd is configured the same way in spirit: under **Config -> General**, note its API key, and add your public SABnzbd host to **Config -> Special -> host_whitelist** so it accepts the host Pomerium forwards.
+For SABnzbd, note its API key under **Config > General**, and add your public SABnzbd host to **Config > Special > host_whitelist** so it accepts the host Pomerium forwards.
 
 :::caution The API key is a separate credential from your SSO identity
 
-Signing in through Pomerium does not authenticate you to an app's API. The API key is the app's own credential and is not derived from your Pomerium session. Anyone who can present a valid API key to an app, and reach its port, is authorized by that app -- which is exactly why the next sections keep the app ports off the network.
+Signing in through Pomerium does not authenticate you to an app's API. The API key is the app's own credential and is not derived from your Pomerium session. Anyone who can present a valid API key to an app, and reach its port, is authorized by that app; that's why the next sections keep the app ports off the network.
 
 :::
 
@@ -150,12 +137,12 @@ Add `-v` only if you mean to delete the named volumes, including each app's conf
 
 ## Verify the setup
 
-1. **The route requires authentication.** In a fresh browser, open `https://sonarr.yourdomain.com`. You should be redirected to sign in through Pomerium, not straight into Sonarr. Repeat for `radarr`, `prowlarr`, and `sabnzbd` -- every app is gated.
-2. **An allowed user reaches each app.** Sign in with a user your policy allows. Pomerium redirects you back and the app's own dashboard loads behind the gate.
+1. **The route requires authentication.** In a fresh browser, open `https://sonarr.yourdomain.com`. You should be redirected to sign in through Pomerium, not straight into Sonarr. Repeat for `radarr`, `prowlarr`, and `sabnzbd` to confirm every app is gated.
+2. **An allowed user reaches each app.** Sign in with a user your policy allows. Pomerium redirects you back and the app's own dashboard loads.
 
 ![The Sonarr web interface reached through Pomerium after single sign-on](./img/servarr/servarr-sonarr.png)
 
-3. **The API answers its own key, not your session.** Pomerium still gates the route, so reach these from your signed-in browser. For Pomerium Zero or Enterprise routes, you can also use a [Pomerium service account](/docs/capabilities/service-accounts) token that your route policy allows; for self-managed Core without service accounts, use an interactive browser session. A plain `curl` with no Pomerium session is redirected to sign in. Past the gate, each app's status API responds to its own API key. The path differs by app -- Sonarr and Radarr use `/api/v3`, Prowlarr uses `/api/v1`, and SABnzbd uses its `mode` query:
+3. **The API answers its own key, not your session.** Pomerium still gates the route, so reach these from your signed-in browser. For Pomerium Zero or Enterprise routes, you can also use a [Pomerium service account](/docs/capabilities/service-accounts) token that your route policy allows; for self-managed Core without service accounts, use an interactive browser session. A plain `curl` with no Pomerium session is redirected to sign in. Once you're signed in, each app's status API responds to its own API key. The path differs by app (Sonarr and Radarr use `/api/v3`, Prowlarr uses `/api/v1`, and SABnzbd uses its `mode` query):
 
 ```bash
 export POMERIUM_SERVICE_ACCOUNT_JWT='raw-service-account-jwt'
@@ -173,7 +160,7 @@ curl -H "Authorization: Bearer Pomerium-${POMERIUM_SERVICE_ACCOUNT_JWT}" \
   "https://sabnzbd.yourdomain.com/api?mode=queue&output=json&apikey=YOUR_SABNZBD_KEY"
 ```
 
-Pomerium gates the browser surface; the apps keep their own API keys behind that gate. If you leave Forms or Basic auth enabled instead of `External`, that local login remains as an additional prompt. First-run setup is each app's concern, not Pomerium's.
+Pomerium protects browser access; the apps keep their own API keys behind it. If you leave Forms or Basic auth enabled instead of `External`, that local login remains as an additional prompt. First-run setup is each app's concern, not Pomerium's.
 
 ## Common failure modes
 
@@ -191,7 +178,7 @@ Pomerium gates the browser surface; the apps keep their own API keys behind that
 
 ## Next steps
 
-- [Secure Transmission with Pomerium](/docs/guides/transmission) -- the same front-door pattern for a BitTorrent download client, including its RPC host-whitelist mechanics.
+- [Secure Transmission with Pomerium](/docs/guides/transmission): the same front-door pattern for a BitTorrent download client, including its RPC host-whitelist mechanics.
 - [Build policies](/docs/get-started/fundamentals/zero/zero-build-policies)
-- [Non-HTTP (TCP) routes](/docs/capabilities/non-http) -- for native or mobile clients that can't run a browser SSO flow.
+- [Non-HTTP (TCP) routes](/docs/capabilities/non-http) for native or mobile clients that can't run a browser SSO flow.
 - [Custom domains](/docs/capabilities/custom-domains)
