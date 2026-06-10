@@ -63,7 +63,7 @@ In the [Zero Console](https://console.pomerium.app):
 
 1. Create a **Route**. In **From**, enter `https://jellyfin.<your-starter-domain>`; in **To**, enter `http://jellyfin:8096`.
 2. On the route's settings, enable **Allow WebSockets**. The Jellyfin web client streams playback and session state over WebSockets; without this the UI loads but never updates.
-3. Enable **Preserve Host Header** so Jellyfin's absolute URLs (web client, casting) match the public name rather than the container name.
+3. Enable **Preserve Host Header** so Jellyfin's absolute URLs (web client, casting) match the **From** URL rather than the container name.
 4. Raise the request **Timeout** (or set it to 0 for no limit), and set a generous **Idle Timeout** such as `600s`. Direct-play streams and file downloads are long plain HTTP responses, separate from the WebSocket control channel.
 5. Set the policy to scope access to who should reach Jellyfin (for example, **Any Authenticated User** or a specific group or domain).
 
@@ -132,7 +132,7 @@ Pomerium authenticates and authorizes browser requests on the route. Jellyfin's 
 
 - **The web client loads but playback state never updates.** The route is missing `allow_websockets`. The Jellyfin web client streams session and playback events over WebSockets; enable WebSockets on the route.
 - **Direct-play video or a large download stops after about 30 seconds.** The route is still using the default request timeout. Raise the route `timeout` (or set it to `0s` on Pomerium Core) and keep a generous `idle_timeout`; WebSockets do not cover direct-play or download responses.
-- **Redirects or absolute links point at the container name or the wrong host.** Jellyfin's `JELLYFIN_PublishedServerUrl` doesn't match the public route, or `preserve_host_header` isn't set. Make both agree on `jellyfin.yourdomain.com`.
+- **Redirects or absolute links point at the container name or the wrong host.** Jellyfin's `JELLYFIN_PublishedServerUrl` doesn't match the route's **From** URL, or `preserve_host_header` isn't set. Make both agree on `jellyfin.yourdomain.com`.
 - **Jellyfin shows every client as a remote connection, or rejects the proxied request.** Jellyfin isn't trusting the Pomerium hop. In **Dashboard > Networking**, keep remote connections enabled and add Pomerium to **Known proxies** so Jellyfin trusts the forwarded headers.
 - **Native TV, Chromecast, or mobile apps stop connecting.** Those apps authenticate straight to Jellyfin's API and never perform the browser redirect, so a route that requires SSO blocks them. See [When to use this guide](#when-to-use-this-guide) for the alternatives.
 
