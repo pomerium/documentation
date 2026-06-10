@@ -63,9 +63,9 @@ const config: Config = {
             extendDefaults: true,
           },
           versions: {
+            // On a numbered release branch, override this label to that version.
             current: {
-              label: 'vNext (upcoming release)',
-              badge: true,
+              label: 'Latest (main)',
             },
           },
         },
@@ -151,7 +151,7 @@ const config: Config = {
           dropdownItemsAfter: [
             {
               to: 'https://0-32-0.docs.pomerium.com/docs',
-              label: 'v0.32',
+              label: 'Latest stable (v0.32)',
             },
             {
               to: 'https://0-31-0.docs.pomerium.com/docs',
@@ -260,7 +260,7 @@ const config: Config = {
         id: process.env.GTM,
       },
     ],
-    // Branch deploys default to disallow; release branches rewrite robots.txt.
+    // Only the production build of `main` is indexable.
     require.resolve('./plugins/robots-txt-plugin'),
     // Generate llms.txt file for LLM consumption
     require.resolve('./plugins/llms-txt-plugin'),

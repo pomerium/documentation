@@ -126,13 +126,18 @@ Follow the pattern: `docs: description of change (#PR)` or `docs(scope): descrip
 
 ## Cutting a new docs version
 
-Policy: keep the current release and the one before it live at their versioned docs subdomains; everything older redirects to canonical docs. A release cut touches three places and is not complete until all three land together.
+`main` is the canonical, indexed docs at `www.pomerium.com/docs/` (it is the Netlify production branch; only its production build is indexable — see `plugins/robots-txt-plugin.js`). Numbered release branches are noindex pinned snapshots served at `<version>.docs.pomerium.com`. Policy: keep the latest stable pin and the one before it live; everything older redirects to canonical docs.
 
-1. **Version subdomain + TLS** — coordinate with ops to register the new version's hostname so it resolves and serves a valid cert; at the same time, demote the oldest live version to a redirect. Ops owns this in an internal runbook.
-2. **`src/components/docVersions.json`** — update to the new live set (current release + previous release + `vNext`).
-3. **Navbar dropdown** in `docusaurus.config.ts` (`themeConfig.navbar.items[*].dropdownItemsAfter`) — match the live set in `docVersions.json`. Run `yarn format` + `yarn build` + `yarn cspell "**/*"` before committing.
+A release cut (e.g. `0-33-0`):
 
-Verify after deploy: the new version's hostname returns 200 with a valid cert; the demoted version redirects to canonical docs.
+1. **Cut the branch from `main`.** On the new branch only, override `presets[0].docs.versions.current.label` in `docusaurus.config.ts` to that version (e.g. `v0.33`) so the snapshot doesn't call itself "Latest (main)". The robots plugin needs no per-branch changes — numbered branches build noindex automatically. (Branches cut before this plugin landed carry the old allow-by-regex plugin and need explicit demotion via `static/_headers`.)
+2. **Confirm the pin serves** — Netlify maps `<branch>.docs.pomerium.com` to the branch deploy automatically under the `docs.pomerium.com` custom domain; the GCP docs LB passes unmatched `*.docs.pomerium.com` hosts through to Netlify with the Host header preserved.
+3. **`src/components/docVersions.json` + navbar dropdown** in `docusaurus.config.ts` (`themeConfig.navbar.items[*].dropdownItemsAfter`), on `main`: relabel the new pin "Latest stable (vX.Y)", demote the previous one to plain `vX.Y`, drop the oldest. Keep both files in sync. Backport the same dropdown update to still-live pinned branches. Run `yarn format` + `yarn build` + `yarn cspell "**/*"` before committing.
+4. **Retire the oldest pin** — ops appends it to `redirect_versions` in `infrastructure-terraform/terraform/gcp/public-prd/docs.tf` (applied via Terraform Cloud), which 301s the hostname to canonical docs.
+
+Verify after deploy: the new pin returns 200 with a valid cert and `X-Robots-Tag: noindex`; the retired version 301s to canonical docs; `www.pomerium.com/docs/` still serves `main` with `X-Robots-Tag: all`.
+
+Never merge robots/noindex changes (e.g. `static/_headers`) to a branch while it is Netlify's production branch — they would apply to the live canonical docs, not just a snapshot.
 
 ## AI Usage Policy
 

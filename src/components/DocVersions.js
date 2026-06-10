@@ -2,7 +2,7 @@ import React from 'react';
 
 import data from './docVersions.json';
 
-const versions = Object.values(data);
+const versions = Object.values(data).sort((a, b) => a.order - b.order);
 
 const DocVersions = () => {
   return (
