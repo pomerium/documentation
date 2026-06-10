@@ -27,6 +27,12 @@ function preCleanDocusaurusMDX(raw) {
   raw = raw.replace(/<\/?Tabs[^>]*>/g, '');
   raw = raw.replace(/<\/?TabItem[^>]*>/g, '');
 
+  // Convert inline <Since version="x.y" /> badges to plain text
+  raw = raw.replace(
+    /<Since\s+version=["']v?([^"']+)["']\s*\/>/g,
+    '(added in v$1)',
+  );
+
   // Unwrap admonition blocks but keep their body text (handles indented blocks too)
   raw = raw.replace(
     /^[ \t]*:::(info|note|caution|tip|danger|important|success|failure|admonition|enterprise|warning)[^\n]*\n([\s\S]*?)^[ \t]*:::\s*$/gm,
