@@ -83,7 +83,7 @@ Replace `jellyfin.yourdomain.com` with your domain and `you@example.com` with th
 
 Two settings in the Compose file keep Jellyfin's URLs correct behind the proxy:
 
-- `JELLYFIN_PublishedServerUrl: https://jellyfin.yourdomain.com`: Jellyfin builds absolute URLs (the web client, casting, Digital Living Network Alliance (DLNA) discovery) from this value, so it must match the **From** URL chosen above.
+- `JELLYFIN_PublishedServerUrl: https://jellyfin.yourdomain.com` — Jellyfin builds absolute URLs (the web client, casting, Digital Living Network Alliance (DLNA) discovery) from this value, so it must match the **From** URL chosen above.
 - Leave the network base URL empty. This guide serves Jellyfin at the root of the **From** URL, so there is no base-path prefix to set.
 
 The Compose file runs Pomerium Core and Jellyfin together. For Zero, drop the `pomerium` service and use the `compose.yaml` from the [Quickstart](/docs/get-started/quickstart) with your `POMERIUM_ZERO_TOKEN`, keeping the `jellyfin` service; put `jellyfin` on the same Docker network as the Quickstart's `pomerium` service (the Quickstart names it `main`) so Pomerium can resolve `jellyfin` by name.
@@ -118,7 +118,7 @@ Add `-v` only if you mean to delete Jellyfin's config and cache volumes.
 3. **The upstream is live.** With your session, open `https://jellyfin.yourdomain.com/System/Info/Public`. Jellyfin answers `200` with a small JSON document (it includes a `Version`); that endpoint needs no Jellyfin login, so a JSON response confirms the proxy reached a running Jellyfin rather than an error page.
 4. **The session is yours.** Open `https://jellyfin.yourdomain.com/.pomerium` to confirm your identity and the group claims Pomerium evaluated.
 
-## What Pomerium protects, and what it doesn't
+## What Pomerium protects — and what it doesn't
 
 Pomerium authenticates and authorizes browser requests on the route. Jellyfin's other client channels never complete a browser sign-in, so wherever they connect, Jellyfin's own authentication is the control:
 
