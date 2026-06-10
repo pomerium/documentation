@@ -14,7 +14,7 @@ keywords:
     django,
   ]
 description: Put self-hosted Paperless-ngx behind Pomerium so every request is authenticated and authorized at the front door before it reaches your documents.
-# cSpell:ignore paperless ngx celery
+# cSpell:ignore paperless ngx
 ---
 
 import TabItem from '@theme/TabItem';
@@ -27,43 +27,26 @@ import Compose from '/content/examples/guides/paperless-ngx/docker-compose.yaml.
 
 ## What this guide does
 
-You'll put a self-hosted [Paperless-ngx](https://docs.paperless-ngx.com/) instance behind Pomerium so that Pomerium becomes the single front door: every request is authenticated against your identity provider (IdP) and checked against your policy before it ever reaches Paperless-ngx. Paperless-ngx keeps running its own login and per-user document permissions on top, so Pomerium acts as an additional gate rather than replacing Paperless-ngx's accounts.
+Put a self-hosted [Paperless-ngx](https://docs.paperless-ngx.com/) instance behind Pomerium so every request is authenticated against your identity provider (IdP) and checked against the route policy before it reaches Paperless-ngx; unauthenticated requests are blocked at the front door. You get single sign-on (SSO), group-based policy, and an audit log of who reached the route. Paperless-ngx keeps its own login and per-user document permissions on top.
+
+```mermaid
+flowchart LR
+    Browser --> Pomerium["Pomerium<br/>SSO + route policy"]
+    Pomerium -.->|"sign in"| IdP[Identity provider]
+    Pomerium --> Paperless["Paperless-ngx<br/>own login + permissions"]
+```
 
 Paperless-ngx is a document management system that stores scanned and digitized records, often a household's or a company's most sensitive paperwork: tax filings, contracts, medical records, and IDs. That makes it a high-value target to keep off the open internet.
 
 ## When to use this guide
 
-Use it when you run self-hosted Paperless-ngx and want to make sure only people from your organization can even reach it, without exposing its web interface directly to the internet. Pomerium handles the network-level access decision through centralized single sign-on (SSO), group-based policy, and an audit trail of who reached the route; Paperless-ngx continues to manage documents, tags, and its own user sessions behind that gate.
-
-The value here is not "add a second login." Paperless-ngx already has a login. The value is moving the access decision to a single, centrally managed front door so you can enforce SSO and group policy, get an audit log of access, and shrink the attack surface that faces the internet.
-
-```mermaid
-sequenceDiagram
-  actor U as User (browser)
-  participant P as Pomerium
-  participant I as Identity provider
-  participant A as Paperless-ngx (Django)
-  actor S as Scanner / attacker
-
-  U ->> P: GET https://paperless.yourdomain.com
-  P ->> I: No session: redirect to IdP for SSO
-  I ->> P: SSO success (identity + groups)
-  P ->> P: Evaluate policy (allowed?)
-  P ->> A: Allowed: forward request (Host preserved)
-  A ->> P: Paperless-ngx login, then documents
-  P ->> U: Response (proxied back through Pomerium)
-  S ->> P: Direct probe of the public host
-  P ->> S: No session, not allowed: blocked at the gate
-```
+Use it when you run self-hosted Paperless-ngx and want only people from your organization to reach it. This guide layers Pomerium in front of Paperless-ngx's stock login; if you want Pomerium to sign users into Paperless-ngx directly, Paperless-ngx supports trusted-header SSO natively (see [Next steps](#next-steps)).
 
 ## Prerequisites
 
-This guide assumes you've completed the [Quickstart](/docs/get-started/quickstart), so you already have Pomerium running and signing users in through the hosted authenticate service.
-
-You also need:
-
 - [Docker](https://docs.docker.com/install/) and [Docker Compose](https://docs.docker.com/compose/install/)
-- A domain you control for the Paperless-ngx route (this guide uses `paperless.yourdomain.com`)
+- For the Pomerium Zero path: a [Pomerium Zero](https://console.pomerium.app) account with its Pomerium instance running locally via the [Quickstart](/docs/get-started/quickstart) Compose file; the route uses the starter domain that comes with it
+- For the Pomerium Core path: a domain you control for the route (this guide uses `paperless.yourdomain.com`), with DNS pointed at the host running Pomerium and ports 80 and 443 reachable so `autocert` can provision certificates; the Compose file below runs Pomerium itself
 
 This guide was last tested with Paperless-ngx 2.18.4 and Pomerium 0.32.7.
 
@@ -100,24 +83,18 @@ Replace `paperless.yourdomain.com` with your domain and `you@example.com` with t
 
 Paperless-ngx runs as a Django application backed by PostgreSQL and Redis. Pomerium terminates TLS at the front door, so Paperless-ngx serves plain HTTP on the internal Docker network. The key settings in the Compose file below:
 
-- `PAPERLESS_URL: https://paperless.yourdomain.com`: Paperless-ngx derives Django's `ALLOWED_HOSTS` and `CSRF_TRUSTED_ORIGINS` from this. It **must** equal the public route host, or Django answers `HTTP 400` to every request that arrives behind the proxy.
+- `PAPERLESS_URL: https://paperless.yourdomain.com`: Paperless-ngx derives Django's `ALLOWED_HOSTS` and `CSRF_TRUSTED_ORIGINS` from this. It must equal the public route host, or Django answers `HTTP 400` to every request that arrives behind the proxy.
 - `PAPERLESS_REDIS` and the `PAPERLESS_DB*` values: point Paperless-ngx at the Redis broker and PostgreSQL database that ship in the same Compose file.
 - `PAPERLESS_SECRET_KEY`: Django's signing key. Generate your own with `openssl rand -base64 48`; never reuse the placeholder.
-- `PAPERLESS_ADMIN_USER` / `PAPERLESS_ADMIN_PASSWORD`: bootstrap the first superuser on the very first startup.
+- `PAPERLESS_ADMIN_USER` / `PAPERLESS_ADMIN_PASSWORD`: bootstrap the first superuser on first startup.
 
-Paperless-ngx keeps its own login. The first time you reach it, sign in with the admin user you bootstrapped above.
-
-The request surface is the whole point of putting it behind Pomerium:
-
-![With vs without Pomerium: a directly exposed Paperless-ngx app versus a front-door gated one](./img/paperless-ngx/request-surface.svg)
-
-## Run the stack
-
-The Compose file runs Pomerium Core alongside Paperless-ngx, PostgreSQL, and Redis. For Zero, drop the Core `pomerium` service, keep `paperless`, `db`, and `redis` on `paperless-internal`, and attach the Quickstart's `pomerium` service to `paperless-internal` so it can resolve `paperless` by name.
+The Compose file runs Pomerium Core alongside Paperless-ngx, PostgreSQL, and Redis. For Zero, drop the Core `pomerium` service, keep `paperless`, `db`, and `redis` on `paperless-internal`, and attach your Zero `pomerium` service (the [Quickstart](/docs/get-started/quickstart) Compose service with your `POMERIUM_ZERO_TOKEN`) to `paperless-internal` so it can resolve `paperless` by name. On the Zero path, also set `PAPERLESS_URL` to the route's **From** URL, `https://paperless.<your-starter-domain>`, so Django's host and CSRF checks accept the proxied requests.
 
 <Compose />
 
-Start it:
+## Run the stack
+
+Start the stack:
 
 ```bash
 docker compose up -d
@@ -128,16 +105,26 @@ Paperless-ngx runs database migrations and builds its search index on first boot
 ## Verify the setup
 
 1. **The route requires authentication.** In a fresh browser, open `https://paperless.yourdomain.com`. You should be redirected to sign in through Pomerium, not straight to Paperless-ngx.
-2. **An allowed user reaches Paperless-ngx.** Sign in with a user your policy allows. Pomerium redirects you back and Paperless-ngx's own sign-in page loads behind the gate.
+2. **An allowed user reaches Paperless-ngx.** Sign in with a user your policy allows. Pomerium redirects you back and Paperless-ngx's own sign-in page loads.
 
 ![The Paperless-ngx sign-in page reached through Pomerium](./img/paperless-ngx/paperless-login.png)
 
 3. **Sign in to Paperless-ngx.** Use the admin account you bootstrapped. Paperless-ngx authenticates you and lands you on its document dashboard, served through Pomerium.
-4. **A request that skips the gate is blocked.** In the Compose file above, Paperless-ngx sits on an internal-only Docker network with no published host ports, so a direct probe of the upstream cannot even resolve or connect; the only path in is through Pomerium.
-
-Pomerium gates the route; Paperless-ngx runs its own login on top. The admin account and first-run setup are Paperless-ngx's concern, not Pomerium's.
+4. **A request that bypasses Pomerium fails.** In the Compose file above, Paperless-ngx sits on an internal-only Docker network with no published host ports, so a direct probe of the upstream cannot resolve or connect; the only path in is through Pomerium.
 
 When you're done testing, stop the stack with `docker compose down`. Add `-v` only if you mean to delete the database, media, Redis, and credential volumes.
+
+## What Pomerium protects, and what it doesn't
+
+Everything in this guide lives on one host behind one route, so Pomerium's SSO and policy stand in front of every way into Paperless-ngx:
+
+| Access channel | What gates it | Credential the client presents |
+| --- | --- | --- |
+| Web interface in a browser | Pomerium route policy, then Paperless-ngx's login | Pomerium SSO session, then a Paperless-ngx login |
+| REST API | The same Pomerium route; API clients can't complete browser SSO, so the route blocks them | Paperless-ngx API token, on a path you deliberately provide |
+| Mobile scanner apps | The same Pomerium route, with the same constraint as the API | Stored Paperless-ngx credentials or API token |
+
+API clients and scanner apps authenticate to Paperless-ngx directly and can't complete browser SSO, so they don't work through this route. If you need them, the options are a separate [public access](/docs/reference/routes/public-access) route (not identity-protected, so Paperless-ngx's own auth becomes the only control), [a TCP tunnel](/docs/capabilities/non-http), or access over the private network. API clients that can send custom headers have one more option on Pomerium Zero or Enterprise: authenticate to this protected route with a [Pomerium service account](/docs/capabilities/service-accounts) token, with Paperless-ngx's API token authorizing the call as usual.
 
 ## Common failure modes
 
@@ -148,14 +135,14 @@ When you're done testing, stop the stack with `docker compose down`. Add `-v` on
 
 ## Security considerations
 
-- Paperless-ngx runs its own authentication, so this guide uses Pomerium as a front-door gate on top of that login. (If you'd rather have Pomerium sign users in directly, Paperless-ngx natively supports trusted-header SSO; see [Next steps](#next-steps).) Either way, **don't expose Paperless-ngx directly**: only Pomerium should reach `paperless:8000`. The Compose file keeps Paperless-ngx (and its PostgreSQL and Redis) on an internal-only Docker network with no published host ports, so the only path in is through Pomerium and the policy can't be bypassed.
+- **Don't expose Paperless-ngx directly**: only Pomerium should reach `paperless:8000`. The Compose file keeps Paperless-ngx (and its PostgreSQL and Redis) on an internal-only Docker network with no published host ports, so the only path in is through Pomerium and the policy can't be bypassed.
 - Scope the route policy (group or domain) to who should have any access to Paperless-ngx at all. Paperless-ngx's per-user document permissions still apply on top of that.
-- Paperless-ngx holds sensitive documents and exposes an API and admin interface under the same host. Because the whole host sits behind Pomerium, those surfaces inherit the same SSO and policy gate; don't add a second public route that bypasses it. That also means Paperless API tokens, mobile clients, scanner automation, and share links are not externally usable through this route unless the request also authenticates to Pomerium, for example with a Zero or Enterprise service account.
+- Paperless-ngx exposes an API and admin interface under the same host as the web interface. Because the whole host sits behind Pomerium, those surfaces inherit the same SSO and policy; don't add a second public route that bypasses them.
 - Generate a unique `PAPERLESS_SECRET_KEY` and strong database and admin passwords. The placeholders in this guide are examples, not safe defaults.
 
 ## Next steps
 
-- **Go further: let Pomerium sign users in.** Paperless-ngx supports trusted-header SSO ([`PAPERLESS_ENABLE_HTTP_REMOTE_USER`](https://docs.paperless-ngx.com/configuration/)). Set `pass_identity_headers: true` on the route so Pomerium forwards the verified identity as an `X-Pomerium-Claim-*` header, then point `PAPERLESS_HTTP_REMOTE_USER_HEADER_NAME` at that header so Paperless-ngx logs the user in directly instead of keeping a separate login. Only do this when Pomerium is the sole path in and strips any client-supplied copy of that header.
+- **Let Pomerium sign users in.** Paperless-ngx supports trusted-header SSO ([`PAPERLESS_ENABLE_HTTP_REMOTE_USER`](https://docs.paperless-ngx.com/configuration/)). Set `pass_identity_headers: true` on the route so Pomerium forwards the verified identity as an `X-Pomerium-Claim-*` header, then point `PAPERLESS_HTTP_REMOTE_USER_HEADER_NAME` at that header so Paperless-ngx logs the user in directly instead of keeping a separate login. Only do this when Pomerium is the sole path in and strips any client-supplied copy of that header.
 - [Build policies](/docs/get-started/fundamentals/zero/zero-build-policies)
 - [Custom domains](/docs/capabilities/custom-domains)
 - [Self-host the identity provider](/docs/integrations/user-identity/oidc)
