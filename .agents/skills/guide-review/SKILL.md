@@ -60,7 +60,7 @@ A guide is not publish-ready if any of the following are true:
 - Steps depend on unexplained environment assumptions
 - Moved or deprecated content is listed as an active guide without clear labeling
 - The guide cannot be followed without guessing at key values, sequence, or expected outcomes
-- Prose contains em dashes (`—`, `–`) or emojis (see **Style rules** below)
+- Prose contains emojis or fake em dashes built from double hyphens (`--`) (see **Style rules** below)
 - An acronym is used before being defined (see **Style rules** below). Well-known internet-infrastructure acronyms are exempt; product-specific and guide-local acronyms are not.
 
 ## Minimum evidence requirements
@@ -102,7 +102,7 @@ Every guide should include, at minimum:
 
 These are hard rules. A guide that violates them is not publish-ready regardless of score.
 
-- **No em dashes (`—`) or en dashes (`–`) in prose.** Use a period, comma, colon, parentheses, or rewrite the sentence. Em dashes are a strong LLM-output tell and read inconsistent across the guides set. This rule applies to body prose, callouts, list items, headings, and table cells. It does not apply to code, config, CLI output, or content quoted from external sources.
+- **Em dashes are fine; never fake them.** A real em dash (`—`) is welcome wherever the sentence calls for one, including headings and table cells. What fails review is faking one with a double hyphen (`--`) in prose, or leaning on dashes so heavily that they crowd out ordinary punctuation. Code, config, CLI output, and quoted content are exempt as always.
 - **No emojis anywhere.** No decorative emojis in headings, no status emojis (✅ ❌ ⚠️ 🎉 🚀 💡 etc.) in prose or lists, no emoji bullets. Use plain Markdown and Docusaurus admonitions (`:::note`, `:::tip`, `:::warning`, `:::danger`, `:::info`) for emphasis and tone instead. Unicode symbols that are not emoji (arrows like `→`, checkmarks inside code examples, mathematical symbols) are fine when they carry meaning.
 - **Expand every acronym on first use.** The first time an acronym appears in the guide, write the full term followed by the acronym in parentheses, for example `Security Information and Event Management (SIEM)`, `Client ID Metadata Document (CIMD)`, `Pomerium Policy Language (PPL)`. Subsequent uses may use the short form. This applies to the body, admonitions, tables, diagrams captions, and front-matter descriptions. Widely-understood internet-infrastructure acronyms where spelling out would read as noise (HTTP, HTTPS, HTML, URL, TLS, DNS, IP, JSON, YAML, API, SDK, CLI, UI, OS, VM, CPU, RAM, UUID, SSO, OAuth, OIDC, SAML, JWT, CSV, PDF, MIME, PKI, CA, CRL, CDN, SaaS, IaaS, PaaS, CI, CD, PR, SQL, REST, gRPC, RPC, RFC) are exempt from this rule. Product-specific or guide-local acronyms (for example TE / TI / AS / PRM / DCR / CIMD / PPL / IdP / SIEM / MCP on first use in that guide) are **not** exempt. When in doubt, expand.
 - **Prefer descriptive nouns over bare acronyms in later paragraphs when the guide spans many sections.** If the guide is long enough that a reader might land on a later section without reading the definition, reintroduce the full form once per major section heading, or reword to use a descriptive noun ("the cached upstream token") instead of the bare acronym ("the cached TI"). Readability beats strict consistency.
