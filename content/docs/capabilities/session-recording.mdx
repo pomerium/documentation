@@ -173,7 +173,7 @@ envoy_dynamic_extensions:
 
 ```hcl
 resource "pomerium_settings" "test_session_recording_opts" {
-  namespace_id    = # target namespace
+  namespace_id = var.namespace_id
 
   # File paths to extensions to be loaded by envoy at runtime.
   envoy_dynamic_extensions = [
@@ -248,7 +248,7 @@ Setting up recording datasources for viewing in the Enterprise Console:
 ```hcl
 resource "pomerium_recording_data_source" "gcs_dev" {
   name       = "gcs_dev"
-  namespace  = # target namespace id
+  namespace  = var.namespace_id
   bucket_uri = "gs://alex-test-bucket-session-recording"
 }
 ```
@@ -257,14 +257,15 @@ Remember to pass this bucket to the Core instance associated with this namespace
 
 ```hcl
 resource "pomerium_settings" "test_session_recording_opts" {
-  namespace_id    = pomerium_cluster.test.namespace_id
-  blob_storage    = {
+  namespace_id = pomerium_cluster.test.namespace_id
+  blob_storage = {
     bucket_uri : pomerium_recording_data_source.gcs_dev.bucket_uri
   }
   # File paths to extensions to be loaded by envoy at runtime.
-  envoy_dynamic_extensions = # make sure this is configured as well!
+  envoy_dynamic_extensions = [
+    "/usr/local/config/pomerium/extensions/session_recording_extension.so"
+  ]
 }
-
 ```
 
 </TabItem>
@@ -331,10 +332,10 @@ The session recording tab is available only for routes that have a valid SSH `fr
 ```hcl
 resource "pomerium_route" "ssh_recorded" {
   name         = "ssh_recorded"
-  namespace_id = # your namespace ID here
+  namespace_id = var.namespace_id
   from         = "ssh://terraform"
   to           = ["ssh://0.0.0.0:22"]
-  policies     = # your policy here
+  policies     = [pomerium_policy.ssh_access.id]
 
   # Enable session recording for this route.
   session_recording = {
