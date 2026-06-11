@@ -78,7 +78,13 @@ const config: Config = {
         sitemap: {
           filename: 'docs/sitemap.xml',
           // Keep the docs sitemap restricted to canonical docs routes.
-          ignorePatterns: ['/', '/docs/examples/**', '/examples/**'],
+          ignorePatterns: [
+            '/',
+            '/blog',
+            '/blog/**',
+            '/docs/examples/**',
+            '/examples/**',
+          ],
         },
       },
     ],
