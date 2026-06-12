@@ -1,0 +1,326 @@
+---
+title: Session Recording Storage
+description: Storage configuration reference for SSH session recording blob stores.
+lang: en-US
+keywords: [pomerium, ssh, recording, session recording, storage, blob]
+---
+
+import TabItem from '@theme/TabItem';
+import Tabs from '@theme/Tabs';
+
+:::enterprise
+
+This article describes a feature available to [Pomerium Enterprise](/docs/deploy/enterprise/install) customers.
+
+:::
+
+## Overview
+
+Session recordings are stored in Blob (Binary Large Object) stores. Blob storage configurations follow a URI format:
+
+```
+<scheme>://<bucket>?<param1>=<value1>&<param2>=<value2>
+```
+
+Pomerium uploads the following information to the storage layer:
+
+- Recording of the SSH session.
+- Metadata associated with the session, such as user information and Pomerium route information.
+- Metadata associated with the provenance of the recording, such as the version of Pomerium used to produce the recording.
+
+:::danger important
+
+Since session recording can contain privileged information about remote environments, it is recommended to enable strict storage security, encryption, and integrity parameters.
+
+End users may wish to consult information related to object locking and retention for their cloud provider:
+
+- [AWS S3](https://docs.aws.amazon.com/AmazonS3/latest/userguide/object-lock.html)
+- [GCS Storage](https://docs.cloud.google.com/storage/docs/bucket-lock)
+- [Azure](https://learn.microsoft.com/en-us/azure/storage/blobs/immutable-storage-overview)
+
+For specific privileged access management compliance standards, end-users will want to consult further documentation for each cloud provider's blob store.
+
+:::
+
+:::important
+
+Credentials are not automatically shared from Enterprise to Core instances. Credentials must be configured on each instance separately.
+
+:::
+
+:::important
+
+Pomerium writes recordings using WORM (Write Once Read Many) semantics, which means it is compatible with each blob storage integration's strictest data compliance and governance standards.
+
+More details can be found in the [Session Recording Auditing](/docs/internals/session-recording-auditing) documentation.
+
+:::
+
+## Datasource Configuration
+
+You can configure blob storage datasources via the Enterprise Console or the Terraform provider.
+
+<Tabs>
+<TabItem value="Enterprise" label="Enterprise">
+
+Navigate to the **Datasources** page using the side panel link (under the **Recordings** heading). The UI provides dropdown options for configuring the bucket URI parameters.
+
+Make sure the recording datasource is configured in the same namespace as the Pomerium cluster you wish to apply it to.
+
+</TabItem>
+<TabItem value="Terraform" label="Terraform">
+
+The Terraform provider configures datasources. Make sure the recording datasource is configured in the same namespace as the Pomerium cluster you wish to apply it to.
+
+Below is an example of a Google Cloud bucket configured via a Terraform resource:
+
+```hcl
+resource "pomerium_recording_data_source" "gcs_dev" {
+  name       = "gcs_dev"
+  namespace  = var.namespace_id
+  bucket_uri = "gs://alex-test-bucket-session-recording"
+}
+
+// this needs to be set on the cluster settings as well!
+// This allows the instance uploading the recordings to use this datasource
+
+resource "pomerium_settings" "test_session_recording_opts" {
+  namespace_id = pomerium_cluster.test.namespace_id
+  // other settings ...
+
+  // Pass in the bucket configured above
+  blob_storage = {
+    bucket_uri : pomerium_recording_data_source.gcs_dev.bucket_uri
+  }
+}
+```
+
+</TabItem>
+</Tabs>
+
+## Provider Configuration
+
+### GCS
+
+**Credential setup**:
+
+By default, the instances connected with this Google Cloud Storage (GCS) bucket URI will use [Application Default Credentials](https://docs.cloud.google.com/sdk/gcloud/reference/auth/application-default/login). For alternative credential configuration for Google Cloud, see [Application Default Credentials](https://docs.cloud.google.com/docs/authentication#service-accounts).
+
+A convenient way to pass in credentials is through the environment variable:
+
+```bash
+GOOGLE_APPLICATION_CREDENTIALS=</path/to/credentials-file>
+```
+
+At minimum, the instance uploading the recordings will require `Storage Object Creator` and `Storage Object Viewer` permissions and the Enterprise instance will require the `Storage Object Viewer` permissions.
+
+:::note
+
+Cloud Run instances do not need to specify service account paths. They will use the service account you configured the instance with. Make sure this service account has the correct Storage Object permissions.
+
+:::
+
+:::note
+
+Make sure your access is properly scoped. Depending on your configuration the Enterprise instance will require access to multiple buckets, while the instance uploading to the buckets will require permissions for just one bucket.
+
+:::
+
+**Bucket URI**:
+
+```
+gs://example-bucket
+```
+
+- Scheme: `gs`
+- Path: `<bucket-name>`
+
+| Parameter | Description |
+| --- | --- |
+| `anonymous` | A value of `"true"` forces the use of an unauthenticated client. |
+| `access_id` | Sets `GoogleAccessID`; only used in `SignedURL`, except that a value of `"-"` forces the use of an unauthenticated client. |
+| `private_key_path` | Optional path to read for `PrivateKey`; only used in `SignedURL`. |
+| `universe_domain` | Sets the universe domain for the client. |
+
+For more details about how Pomerium uses the Google Cloud APIs, see the [upstream documentation](https://pkg.go.dev/gocloud.dev/blob/gcsblob?utm_source=godoc#URLOpener).
+
+### S3
+
+**Credential setup**:
+
+For AWS S3, or any S3-compatible object store, the recommended way to pass in credentials is to use a credentials file:
+
+```bash
+export AWS_SHARED_CREDENTIALS_FILE=/path/to/my/credentials
+# or
+export AWS_CONFIG_FILE=/path/to/my/config
+```
+
+:::note
+
+The default path is `~/.aws/credentials`.
+
+:::
+
+The credentials file uses the INI format and looks like:
+
+```ini
+[profile-name]
+aws_access_key_id = ...
+aws_secret_access_key = ...
+region = ...
+```
+
+The specific profile to load is configured via the `?profile=<profile-name>` parameter.
+
+:::note
+
+EC2 instances don't have to specify custom filepaths. Make sure you associate the right instance profile with the EC2 instance for access to S3. See [use instance profiles](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_use_switch-role-ec2_instance-profiles.html) for more information.
+
+:::
+
+**Bucket URI**:
+
+- Scheme: `s3`
+- Path: `<bucket-name>`
+
+| Parameter | Description |
+| --- | --- |
+| `ssetype` | The type of server side encryption used (`AES256`, `aws:kms`, `aws:kms:dsse`). |
+| `kmskeyid` | The KMS key ID for server side encryption. |
+| `accelerate` | A value of `"true"` uses the S3 Transfer Acceleration endpoints. |
+| `use_path_style` | A value of `true` sets the `UsePathStyle` option. |
+| `s3ForcePathStyle` | Same as `use_path_style`, for backwards compatibility with V1. |
+| `disable_https` | A value of `true` disables HTTPS |
+| `profile` | Profile name in the credentials file to use for access to this Bucket |
+
+:::note
+
+For S3-compatible storage servers that recognize the same REST HTTP endpoints as S3, like Minio, Ceph, or SeaweedFS, you can configure the bucket URI as follows:
+
+```
+s3://mybucket?endpoint=http://my.minio.local:8080&disable_https=true&s3ForcePathStyle=true
+```
+
+Regions must still be set for credential configuration on self-hosted solutions. Using a placeholder like `us-east-1` is the recommended default.
+
+:::
+
+### Azure
+
+**Credential Setup**:
+
+Azure container storage keys can be loaded from:
+
+```bash
+AZURE_STORAGE_KEY=<base64-key>
+AZURE_STORAGE_ACCOUNT=<storage-account>
+```
+
+Or via a Shared Access Signature (SAS) token:
+
+```bash
+export AZURE_STORAGE_ACCOUNT=<storage-account>
+export AZURE_STORAGE_SAS_TOKEN="sv=...&sig=..."
+```
+
+Or via a full connection string:
+
+```bash
+export AZURE_STORAGE_CONNECTION_STRING="<full-connection-string>"
+export AZURE_STORAGE_ACCOUNT=<storage account> # if not specified in the connection string
+```
+
+For more granular control:
+
+```bash
+export AZURE_CLIENT_ID=...
+export AZURE_TENANT_ID=...
+export AZURE_CLIENT_SECRET=...               # client secret, OR:
+export AZURE_CLIENT_CERTIFICATE_PATH=/path/to/cert.pem
+```
+
+Please consult the [upstream documentation](https://learn.microsoft.com/en-us/azure/storage/blobs/) for additional details.
+
+**Bucket URI**:
+
+- Scheme: `azblob`
+- Path: `<container-name>`
+
+| Parameter | Description |
+| --- | --- |
+| `domain` | Sets custom domain name for the storage. |
+| `protocol` | Protocol can be provided to specify protocol to access Azure Blob Storage. Protocols that can be specified are "http" for local emulator and "https" for general. Defaults to "https". |
+| `cdn` | IsCDN can be set to true when using a CDN URL pointing to a [blob storage account](https://docs.microsoft.com/en-us/azure/cdn/cdn-create-a-storage-account-with-cdn) |
+| `localemu` | IsLocalEmulator should be set to true when targeting Local Storage Emulator (Azurite). |
+
+### File
+
+:::danger important
+
+File storage is not recommended for production setups. Additionally, for Enterprise to replay recordings, it must be on the same host as the instances writing to file storage.
+
+:::
+
+**Bucket URI**
+
+```
+file://<file-path>
+```
+
+- Scheme: `file`
+- Path: filesystem path to write recordings to
+
+| Parameter | Description |
+| --- | --- |
+| `create_dir` | (any non-empty value) the directory is created (using `os.MkDirAll`) if it does not already exist. |
+| `dir_file_mode` | Any directories that are created (the base directory when `create_dir` is true, or subdirectories for keys) are created using this `os.FileMode`, parsed using `os.ParseUint`. Defaults to `0777`. |
+| `no_tmp_dir` | (any non-empty value) temporary files are created next to the final path instead of in `os.TempDir`. |
+| `base_url` | The base URL to use to construct signed URLs; see `URLSignerHMAC`. |
+| `secret_key_path` | Path to read for the secret key used to construct signed URLs; see `URLSignerHMAC`. |
+| `metadata` | If set to `"skip"`, won't write metadata such as `blob.Attributes` as per the package docstring. |
+
+## Object Format
+
+<details>
+<summary>
+(Advanced) Storage layer format
+</summary>
+
+Recordings are stored in blob stores using the following path structure:
+
+```
+└── <pomerium-cluster-id>
+    └── ssh
+        └── v1
+             ├──<recording-id>
+                ├── manifest
+                ├── metadata.json
+                ├── metadata.proto
+                ├── recording_0000000000
+                ├── recording_0000000001
+                ├── ...
+                ├── recording_XXXXXXXXXX
+                ├── signature
+```
+
+- `pomerium-cluster-id` is the cluster ID associated with a Pomerium cluster when it is connected to Enterprise.
+- `recording-id` is a unique identifier for a recording.
+- `metadata.<ext>` contains metadata about the session.
+- `recording_*` contains the actual contents. Recordings are split into chunks. Chunk IDs are monotonically increasing. Stored in protobuf format.
+- `signature` contains metadata about the provenance of the artifact. Currently holds the full Pomerium version.
+
+</details>
+
+### Metadata
+
+Pomerium captures the following metadata for each recording:
+
+- `start_time`: when the session started
+- `login_name`: the ssh user
+- `session_id`: pomerium session id
+- `user_id`: pomerium user id
+- `stream_id`: internal stream id for correlation with logs
+- `route_name`: pomerium route name, e.g. `from: ssh://example`, the route_name would be `example`
+- `upstream`: upstream target, e.g. `to: ssh://0.0.0.0:22`, the upstream would be `0.0.0.0:22`
+- `pty_info`: info about the shell where the recording came from
