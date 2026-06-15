@@ -1,0 +1,81 @@
+services:
+  pomerium:
+    image: pomerium/pomerium:v0.32.7
+    ports:
+      - 443:443
+      - 2200:22 # SSH proxy: host 2200 -> Pomerium's SSH listener on container port 22
+    restart: always
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'
+    env_file:
+      - .env
+    environment:
+      XDG_CACHE_HOME: /var/cache
+    volumes:
+      - pomerium-cache:/var/cache
+      - pomerium-data:/data
+      - pomerium-databroker:/var/lib/pomerium
+    networks:
+      main:
+        ipv4_address: 172.30.0.10
+        aliases:
+          - verify.${POMERIUM_CLUSTER_DOMAIN}
+
+  verify:
+    image: pomerium/verify:latest
+    networks:
+      main:
+        aliases:
+          - verify
+    healthcheck:
+      test:
+        [
+          'CMD',
+          'wget',
+          '--no-verbose',
+          '--tries=1',
+          '--spider',
+          'http://localhost:8000',
+        ]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+  openclaw-gateway:
+    image: openclaw:${OPENCLAW_VERSION:-2026.6.5}
+    build:
+      context: ./openclaw
+      dockerfile: Dockerfile
+      args:
+        - OPENCLAW_VERSION=${OPENCLAW_VERSION:-2026.6.5}
+    environment:
+      HOME: /claw
+      TERM: xterm-256color
+      POMERIUM_CLUSTER_DOMAIN: ${POMERIUM_CLUSTER_DOMAIN}
+    volumes:
+      - ./openclaw-data/config:/claw
+      - ./openclaw-data/workspace:/claw/workspace
+      - ./openclaw-data/pomerium-ssh:/var/lib/pomerium:ro # For Pomerium User CA key (read-only)
+    init: true
+    restart: unless-stopped
+    networks:
+      - main
+    # Note: SSH accessible via Pomerium SSH route (port 22 in container)
+    healthcheck:
+      test: ['CMD', 'pgrep', '-f', 'openclaw']
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+
+networks:
+  main:
+    ipam:
+      config:
+        - subnet: 172.30.0.0/16
+
+volumes:
+  pomerium-cache:
+  pomerium-data:
+  pomerium-databroker:
