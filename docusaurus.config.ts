@@ -1,6 +1,9 @@
+/// <reference types="node" />
 // @ts-check
 // Note: type annotations allow type checking and IDEs autocompletion
+import type * as Preset from '@docusaurus/preset-classic';
 import {Config} from '@docusaurus/types';
+import type {Options as OpenApiPluginOptions} from 'docusaurus-plugin-openapi-docs';
 
 const dotenv = require('dotenv');
 const webpack = require('webpack');
@@ -24,7 +27,7 @@ const config: Config = {
       onBrokenMarkdownLinks: 'throw',
     },
   },
-  themes: ['@docusaurus/theme-mermaid'],
+  themes: ['@docusaurus/theme-mermaid', 'docusaurus-theme-openapi-docs'],
 
   customFields: {
     xgridKey: process.env.XGRID_KEY,
@@ -44,12 +47,13 @@ const config: Config = {
 
   presets: [
     [
-      '@docusaurus/preset-classic',
+      'classic',
       {
         docs: {
           path: 'content',
           routeBasePath: '/',
           sidebarPath: require.resolve('./sidebars.js'),
+          docItemComponent: '@theme/ApiItem',
           editUrl: 'https://github.com/pomerium/documentation/tree/main',
           admonitions: {
             keywords: [
@@ -80,18 +84,7 @@ const config: Config = {
           // Keep the docs sitemap restricted to canonical docs routes.
           ignorePatterns: ['/', '/docs/examples/**', '/examples/**'],
         },
-      },
-    ],
-    [
-      'redocusaurus',
-      {
-        specs: [
-          {
-            spec: 'https://console.pomerium.app/openapi.yaml',
-            route: '/docs/api/',
-          },
-        ],
-      },
+      } satisfies Preset.Options,
     ],
   ],
 
@@ -108,6 +101,29 @@ const config: Config = {
       defaultMode: 'light', // The color mode when user first visits the site. type: 'light' | 'dark' . Default is 'light'.
       respectPrefersColorScheme: true, // If true, respects the user's OS-level color scheme preference. Default is false.
     },
+    languageTabs: [
+      {
+        highlight: 'bash',
+        language: 'curl',
+        logoClass: 'curl',
+      },
+      {
+        highlight: 'python',
+        language: 'python',
+        logoClass: 'python',
+      },
+      {
+        highlight: 'go',
+        language: 'go',
+        logoClass: 'go',
+      },
+      {
+        highlight: 'java',
+        language: 'java',
+        logoClass: 'java',
+        variant: 'unirest',
+      },
+    ],
     navbar: {
       title: '',
       logo: {
@@ -292,6 +308,24 @@ const config: Config = {
     ],
 
     require.resolve('docusaurus-plugin-image-zoom'),
+    [
+      'docusaurus-plugin-openapi-docs',
+      {
+        id: 'api',
+        docsPluginId: 'classic',
+        config: {
+          api: {
+            specPath:
+              'https://raw.githubusercontent.com/pomerium/pomerium/main/pkg/grpc/config/config.openapi.yaml',
+            outputDir: 'content/docs/api',
+            sidebarOptions: {
+              groupPathsBy: 'tag',
+              categoryLinkSource: 'info',
+            },
+          } satisfies OpenApiPluginOptions,
+        },
+      },
+    ],
   ],
 };
 
