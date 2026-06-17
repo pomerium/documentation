@@ -12,7 +12,7 @@ This guide walks you through creating your first route and policy with the Pomer
 
 :::tip
 
-Throughout this guide, you can refer to either the [**Zero API reference**](/docs/api) or the Zero API playground at `https://console.pomerium.app/openapi`.
+Throughout this guide, you can refer to either the [**API reference**](/category/api) or the Zero API playground at `https://console.pomerium.app/openapi`.
 
 :::
 
