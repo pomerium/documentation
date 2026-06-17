@@ -320,7 +320,6 @@ const config: Config = {
             outputDir: 'content/docs/api',
             sidebarOptions: {
               groupPathsBy: 'tag',
-              categoryLinkSource: 'info',
             },
           } satisfies OpenApiPluginOptions,
         },

@@ -3,12 +3,12 @@ import type { SidebarsConfig } from "@docusaurus/plugin-content-docs";
 const sidebar: SidebarsConfig = {
   apisidebar: [
     {
+      type: "doc",
+      id: "docs/api/pomerium-api",
+    },
+    {
       type: "category",
       label: "pomerium.config.ConfigService",
-      link: {
-        type: "doc",
-        id: "docs/api/pomerium-api",
-      },
       items: [
         {
           type: "doc",
