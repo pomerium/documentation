@@ -84,7 +84,14 @@ const config: Config = {
           // Emit <lastmod> so Google prioritizes recrawl of changed pages.
           lastmod: 'date',
           // Keep the docs sitemap restricted to canonical docs routes.
-          ignorePatterns: ['/', '/docs/examples/**', '/examples/**'],
+          ignorePatterns: [
+            '/',
+            '/blog',
+            '/blog/**',
+            '/category/**',
+            '/docs/examples/**',
+            '/examples/**',
+          ],
         },
       } satisfies Preset.Options,
     ],
