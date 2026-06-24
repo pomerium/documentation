@@ -104,19 +104,19 @@ Use this option if you previously relied on `x-pomerium-authenticated-user-{emai
 
 Every JWT that Pomerium issues carries a fixed set of claims describing the session. These claims are always present in the signed assertion header (`X-Pomerium-Jwt-Assertion`), whether or not you configure `jwt_claims_headers`. Naming one of them in `jwt_claims_headers` also copies its value into an `X-Pomerium-Claim-*` header.
 
-| Claim    | Description |
-| :------- | :---------- |
-| `iss`    | The issuer. By default this is the route's hostname. If [`jwt_issuer_format`](/docs/reference/routes/jwt-issuer-format) is set to `uri`, it is `https://HOSTNAME/` instead. |
-| `aud`    | The audience: the route's hostname. |
-| `jti`    | A unique identifier for the token (a UUID). A new value is generated for every token. |
-| `iat`    | The time the token was issued, in seconds since the Unix epoch. |
-| `exp`    | The time the token expires, in seconds since the Unix epoch. Pomerium sets this to five minutes after `iat`. |
-| `sub`    | The subject: the user's ID. This is the same value as `user`. |
-| `user`   | The user's ID, as assigned by the identity provider. |
-| `email`  | The user's email address. |
+| Claim | Description |
+| :-- | :-- |
+| `iss` | The issuer. By default this is the route's hostname. If [`jwt_issuer_format`](/docs/reference/routes/jwt-issuer-format) is set to `uri`, it is `https://HOSTNAME/` instead. |
+| `aud` | The audience: the route's hostname. |
+| `jti` | A unique identifier for the token (a UUID). A new value is generated for every token. |
+| `iat` | The time the token was issued, in seconds since the Unix epoch. |
+| `exp` | The time the token expires, in seconds since the Unix epoch. Pomerium sets this to five minutes after `iat`. |
+| `sub` | The subject: the user's ID. This is the same value as `user`. |
+| `user` | The user's ID, as assigned by the identity provider. |
+| `email` | The user's email address. |
 | `groups` | The user's groups, listing both group IDs and group names. When the user has no groups this is an empty list rather than null. |
-| `sid`    | The session ID. |
-| `name`   | The user's name. |
+| `sid` | The session ID. |
+| `name` | The user's name. |
 
 A standard claim always takes precedence: an identity provider claim of the same name cannot override it.
 
