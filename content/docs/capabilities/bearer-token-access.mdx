@@ -33,23 +33,23 @@ Host: api.localhost.pomerium.io
 Authorization: Bearer <token>
 ```
 
-When a route is configured for it, Pomerium reads that token, establishes who the caller is from the token alone, and then applies the route's policy. No redirect, no cookie, no interactive step. This is how a service, a CI job, or a Kubernetes pod reaches an upstream behind Pomerium.
+When a route is configured for it, Pomerium reads that token, establishes who the caller is from the token alone, and then applies the route's policy. There is no redirect, no cookie, and no interactive step. This is how a service, a CI job, or a Kubernetes pod reaches an upstream behind Pomerium.
 
-This is the inbound direction: a client proves its identity _to_ Pomerium. It is the mirror image of [Continuous Identity Verification](/docs/capabilities/getting-users-identity), where Pomerium mints a JWT _for_ the upstream to verify. The two are independent — you can use either or both on the same route.
+This is the inbound direction: a client proves its identity to Pomerium. It is the mirror image of [Continuous Identity Verification](/docs/capabilities/getting-users-identity), where Pomerium mints a JWT for the upstream to verify. The two are independent. You can use either or both on the same route.
 
 ## How a bearer request is handled
 
 A single setting, [`bearer_token_format`](/docs/reference/bearer-token-format), decides what Pomerium does with the `Authorization: Bearer` header on a route. It can be set globally and overridden per route.
 
 1. **Extract.** If the route's format calls for interpreting the token, Pomerium takes the value after `Bearer ` from the `Authorization` header.
-2. **Interpret.** The format says what the token _is_ — an IdP access token, an IdP identity token, or a JWT from a trusted issuer — and Pomerium verifies it accordingly.
+2. **Interpret.** The format says what the token is — an IdP access token, an IdP identity token, or a JWT from a trusted issuer — and Pomerium verifies it accordingly.
 3. **Build a session.** A session is derived from the verified token and its claims. The same token maps to the same session, so repeated requests are cheap.
 4. **Authorize.** The route's [policy](/docs/internals/ppl) runs against the token's claims. Authorization is entirely policy-driven; verifying the token does not by itself grant access.
 
 Two rules apply to every bearer route:
 
-- **A cookie and a bearer token are mutually exclusive.** A session cookie comes from a browser; a bearer token comes from a machine. A request carrying both is rejected with **`400 Bad Request`** rather than guessing which one to trust.
-- **A missing token is a denial, not a sign-in prompt.** If a bearer route receives a request with no token, Pomerium returns **`401 Unauthorized`**. It does not redirect to the identity provider, because there is no browser to follow the redirect.
+- A cookie and a bearer token are mutually exclusive. A session cookie comes from a browser; a bearer token comes from a machine. A request carrying both is rejected with `400 Bad Request` rather than guessing which one to trust.
+- A missing token is a denial, not a sign-in prompt. If a bearer route receives a request with no token, Pomerium returns `401 Unauthorized`. It does not redirect to the identity provider, because there is no browser to follow the redirect.
 
 ## The four token formats
 
@@ -97,22 +97,22 @@ For each incoming token, Pomerium:
 1. **Selects the issuer.** It reads the token's `iss` claim and matches it to a configured issuer. A token whose issuer is not declared is rejected.
 2. **Checks the signature** against that issuer's public keys (JWKS), restricted to an allowlist of signing algorithms.
 3. **Checks `iss`, `exp`, and `nbf`** — the issuer must match and the token must be currently valid.
-4. **Checks the audience.** The token's `aud` claim must include at least one entry from the route's effective `jwt_allowed_audiences`. This is **fail-closed**: if no audience is configured, every token is rejected.
+4. **Checks the audience.** The token's `aud` claim must include at least one entry from the route's effective `jwt_allowed_audiences`. This is fail-closed: if no audience is configured, every token is rejected.
 
-If all four pass, Pomerium trusts the token's claims and hands them to the route's policy — **as-is**. There is no claim enrichment, no directory lookup, and no synthesized groups. Whatever you authorize on must be a claim the issuer actually put in the token.
+If all four pass, Pomerium trusts the token's claims and hands them to the route's policy as-is. Pomerium does not enrich the claims, consult a directory, or synthesize groups. Whatever you authorize on must be a claim the issuer actually put in the token.
 
 ### Per-issuer settings
 
 Each entry in `jwt_allowed_issuers` accepts:
 
 - **`issuer`** (required) — the exact `iss` value tokens carry. Pomerium uses it both to select the issuer and, by default, to discover its keys via OIDC (`<issuer>/.well-known/openid-configuration`).
-- **`jwks_url`** (optional) — an explicit JWKS endpoint. When set, OIDC discovery is skipped and keys are fetched directly. Use this when the issuer URL is not reachable from where Pomerium runs — for example a Kubernetes cluster's internal `https://kubernetes.default.svc.cluster.local`.
+- **`jwks_url`** (optional) — an explicit JWKS endpoint. When set, OIDC discovery is skipped and keys are fetched directly. Use this when the issuer URL is not reachable from where Pomerium runs, such as a Kubernetes cluster's internal `https://kubernetes.default.svc.cluster.local`.
 - **`supported_algs`** (optional) — the signing algorithms to accept. Defaults to `RS256`, `ES256`, and `EdDSA`.
 - **`name`** (optional) — a human-readable label that appears in audit logs.
 
 :::caution
 
-A route using `bearer_token_format: jwt` requires at least one `jwt_allowed_issuers` entry **and** a non-empty effective `jwt_allowed_audiences` (global or per-route). Pomerium refuses to start otherwise — there is no "accept any audience" mode.
+A route using `bearer_token_format: jwt` requires at least one `jwt_allowed_issuers` entry and a non-empty effective `jwt_allowed_audiences` (global or per-route). Pomerium refuses to start otherwise. There is no "accept any audience" mode.
 
 :::
 
@@ -192,7 +192,7 @@ curl -H "Authorization: Bearer $(cat /var/run/secrets/pomerium/token)" \
   https://api.localhost.pomerium.io/api/widgets
 ```
 
-Pomerium verifies the signature against the cluster's JWKS, confirms the audience is `pomerium.example.com`, and then evaluates the policy against the token's claims — here, that the subject is `system:serviceaccount:default:pom-tester`.
+Pomerium verifies the signature against the cluster's JWKS, confirms the audience is `pomerium.example.com`, and then evaluates the policy against the token's claims: here, that the subject is `system:serviceaccount:default:pom-tester`.
 
 ### Authorize on Kubernetes claims
 
