@@ -109,7 +109,7 @@ The `localhost` part is a **subdomain**, and `pomerium.io` is the **domain name*
 
 :::note
 
-We've hardcoded `localhost.pomerium.io` to always point to `127.0.0.1` so you can use it locally in your development environment.
+Any subdomain of `localhost.pomerium.io` (such as the `grafana.localhost.pomerium.io` route above) resolves to `127.0.0.1`, so you can reach your routes locally without editing `/etc/hosts`.
 
 :::
 
