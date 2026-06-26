@@ -1,0 +1,82 @@
+---
+# cSpell:ignore algs Algs jwks kubernetes githubusercontent
+
+id: jwt-allowed-issuers
+title: JWT Allowed Issuers
+description: |
+  JWT Allowed Issuers declares the trusted issuers whose JWT bearer tokens Pomerium verifies on routes using the jwt bearer token format.
+keywords:
+  - reference
+  - JWT Allowed Issuers
+  - jwt_allowed_issuers
+pagination_prev: null
+pagination_next: null
+toc_max_heading_level: 2
+---
+
+import TabItem from '@theme/TabItem';
+import Tabs from '@theme/Tabs';
+
+import EnterpriseConfiguration from '../../../src/components/EnterpriseConfiguration';
+
+# JWT Allowed Issuers
+
+## Summary
+
+**JWT Allowed Issuers** declares the issuers Pomerium trusts when a route uses the `jwt` [bearer token format](/docs/reference/bearer-token-format). For each incoming bearer token, Pomerium reads the token's `iss` claim, selects the matching issuer, fetches that issuer's public keys, and verifies the token's signature, `iss`, `exp`, and `nbf`. A token whose issuer is not listed here is rejected.
+
+Audience binding is enforced separately, via [`jwt_allowed_audiences`](/docs/reference/jwt-allowed-audiences); authorization on the verified claims is left to your [policy](/docs/internals/ppl) (`claim/…`). A route using the `jwt` format requires at least one entry here.
+
+See [Machine-to-Machine Access with Bearer Tokens](/docs/capabilities/bearer-token-access) for an overview and examples.
+
+Each issuer entry has the following fields:
+
+| Field | Type | Usage | Description |
+| :-- | :-- | :-- | :-- |
+| `issuer` | `string` | **required** | The `iss` claim tokens must carry. Used both to select the matching issuer for an incoming token and, by default, to discover its signing keys via OIDC (`<issuer>/.well-known/openid-configuration`). |
+| `jwks_url` | `string` | **optional** | An explicit JWKS endpoint. When set, OIDC discovery is skipped and keys are fetched directly from this URL. Useful when the issuer URL is not reachable from where Pomerium runs (for example, Kubernetes' `https://kubernetes.default.svc.cluster.local`). |
+| `supported_algs` | array of `string` | **optional** | The JWT signing algorithms to accept. Defaults to `RS256`, `ES256`, and `EdDSA`. |
+| `name` | `string` | **optional** | A human-readable identifier, used only for audit logging. |
+
+## How to Configure
+
+<Tabs>
+<TabItem value="Core" label="Core">
+
+| **Config file key**   | **Environment variable** | **Type**                |
+| :-------------------- | :----------------------- | :---------------------- |
+| `jwt_allowed_issuers` | `JWT_ALLOWED_ISSUERS`    | Array of issuer objects |
+
+### Examples
+
+```yaml
+jwt_allowed_issuers:
+  - issuer: https://kubernetes.default.svc.cluster.local
+    jwks_url: https://kubernetes.default.svc.cluster.local/openid/v1/jwks
+    supported_algs:
+      - RS256
+    name: kubernetes
+  - issuer: https://token.actions.githubusercontent.com
+    name: github-actions
+```
+
+</TabItem>
+<TabItem value="Enterprise" label="Enterprise">
+<EnterpriseConfiguration name="jwt_allowed_issuers" resource="settings" />
+
+</TabItem>
+<TabItem value="Kubernetes" label="Kubernetes">
+
+```yaml
+jwtAllowedIssuers:
+  - issuer: https://kubernetes.default.svc.cluster.local
+    jwksUrl: https://kubernetes.default.svc.cluster.local/openid/v1/jwks
+    supportedAlgs:
+      - RS256
+    name: kubernetes
+```
+
+See [Kubernetes - Global Configuration](/docs/deploy/k8s/configure) for more information.
+
+</TabItem>
+</Tabs>
