@@ -1,0 +1,63 @@
+---
+id: jwt-allowed-audiences
+title: JWT Allowed Audiences
+description: |
+  JWT Allowed Audiences is the allowlist of audiences Pomerium accepts when verifying JWT bearer tokens on routes using the jwt bearer token format.
+keywords:
+  - reference
+  - JWT Allowed Audiences
+  - jwt_allowed_audiences
+pagination_prev: null
+pagination_next: null
+toc_max_heading_level: 2
+---
+
+import TabItem from '@theme/TabItem';
+import Tabs from '@theme/Tabs';
+
+import EnterpriseConfiguration from '../../../src/components/EnterpriseConfiguration';
+
+# JWT Allowed Audiences
+
+## Summary
+
+**JWT Allowed Audiences** is the allowlist of audiences Pomerium accepts when a route uses the `jwt` [bearer token format](/docs/reference/bearer-token-format). A token is accepted only if its `aud` claim includes at least one of these values.
+
+This check is **fail-closed**: if the effective allowlist is empty, every token is rejected. There is no "accept any audience" mode. A route using the `jwt` format requires a non-empty effective allowlist, or Pomerium refuses to start.
+
+Trusted issuers are declared separately, via [`jwt_allowed_issuers`](/docs/reference/jwt-allowed-issuers); authorization on the verified claims is left to your [policy](/docs/internals/ppl) (`claim/…`).
+
+This option sets the cluster-wide default. It can also be configured at the route level, where it replaces (does not merge with) the global value for that route. See [Machine-to-Machine Access with Bearer Tokens](/docs/capabilities/bearer-token-access) for an overview and examples.
+
+## How to Configure
+
+<Tabs>
+<TabItem value="Core" label="Core">
+
+| **Config file key**     | **Environment variable** | **Type**         |
+| :---------------------- | :----------------------- | :--------------- |
+| `jwt_allowed_audiences` | `JWT_ALLOWED_AUDIENCES`  | Array of strings |
+
+### Examples
+
+```yaml
+jwt_allowed_audiences:
+  - pomerium.example.com
+```
+
+</TabItem>
+<TabItem value="Enterprise" label="Enterprise">
+<EnterpriseConfiguration name="jwt_allowed_audiences" resource="settings" />
+
+</TabItem>
+<TabItem value="Kubernetes" label="Kubernetes">
+
+```yaml
+jwtAllowedAudiences:
+  - pomerium.example.com
+```
+
+See [Kubernetes - Global Configuration](/docs/deploy/k8s/configure) for more information.
+
+</TabItem>
+</Tabs>
