@@ -175,7 +175,7 @@ For connections to the Pomerium Zero web console:
   - TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA
   ***
 
-### Encryption at rest[](https://www.pomerium.com/docs/internals/cryptography#encryption-at-rest)
+### Encryption at rest
 
 #### Hosted Services
 

@@ -249,3 +249,13 @@ td > .theme-code-block:last-child {
 .fab {
   font-family: 'Font Awesome 6 Brands';
 }
+
+/* Pin highlighted lines to table-row in numbered code blocks. Docusaurus's
+   `display: block` highlight rule has equal specificity to the table-row rule,
+   so unstable CSS bundle order can let `block` win and shatter the line-number
+   table (#2281, facebook/docusaurus#3678). Higher specificity settles it.
+   Don't remove: the breakage is invisible in `yarn start` and only shows in
+   production bundles. */
+[class*='codeBlockLinesWithNumbering'] .theme-code-block-highlighted-line {
+  display: table-row;
+}

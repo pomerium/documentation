@@ -27,7 +27,7 @@ Now, you have a production-ready Pomerium instance. You have everything you need
 Well, there's a few things you can do:
 
 - Review our Capabilities section to see what other features are available. Here are a few suggestions:
-  - Configure [Single Sign-out](https://www.pomerium.com/docs/capabilities/single-sign-out)
+  - Configure [Single Sign-out](/docs/capabilities/authentication#single-sign-out-sso)
   - Add client-side mTLS, also known as [Downstream mTLS](https://www.pomerium.com/docs/internals/certificates-and-tls)
   - Test out logging in Pomerium with our [Audit Logs](https://www.pomerium.com/docs/capabilities/audit-logs)
   - Explore global and route-level settings on our [Reference](https://www.pomerium.com/docs/reference) page
