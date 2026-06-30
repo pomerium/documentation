@@ -1,0 +1,187 @@
+# Sealed E2E validation for the Servarr suite guide. Reuses the shared harness
+# (Keycloak + certs + headless runner) and adds Sonarr, Radarr, Prowlarr, and
+# SABnzbd behind a single Pomerium wired to the in-network IdP.
+# Run with: scripts/validate-guide-fixtures.sh servarr
+#
+# Network isolation mirrors the guide's trust boundary: the *arr apps sit ONLY on
+# the internal-only `servarr-internal` network, shared with pomerium alone. The
+# test-runner is on `default`, so it cannot reach the apps directly (the spec proves
+# this); the only path in is through Pomerium, which bridges both networks.
+#
+# Each app's API key is seeded by a one-shot init container that copies a pristine
+# config into the app's /config volume. The *arr apps rewrite their config on
+# startup (schema migration), so they can't run off a read-only mount; seeding via a
+# volume keeps the committed fixture pristine. The shared test-only key is
+# SERVARRTESTKEY0123456789. Never reuse it anywhere real.
+
+include:
+  - ../../_harness/compose/compose.harness.yaml
+
+services:
+  sonarr-init:
+    image: alpine:3.21@sha256:48b0309ca019d89d40f670aa1bc06e426dc0931948452e8491e3d65087abc07d
+    volumes:
+      - sonarr-config:/config
+      - ./seed/sonarr.config.xml:/seed/config.xml:ro
+    command: ['/bin/sh', '-c', 'cp /seed/config.xml /config/config.xml']
+
+  radarr-init:
+    image: alpine:3.21@sha256:48b0309ca019d89d40f670aa1bc06e426dc0931948452e8491e3d65087abc07d
+    volumes:
+      - radarr-config:/config
+      - ./seed/radarr.config.xml:/seed/config.xml:ro
+    command: ['/bin/sh', '-c', 'cp /seed/config.xml /config/config.xml']
+
+  prowlarr-init:
+    image: alpine:3.21@sha256:48b0309ca019d89d40f670aa1bc06e426dc0931948452e8491e3d65087abc07d
+    volumes:
+      - prowlarr-config:/config
+      - ./seed/prowlarr.config.xml:/seed/config.xml:ro
+    command: ['/bin/sh', '-c', 'cp /seed/config.xml /config/config.xml']
+
+  sabnzbd-init:
+    image: alpine:3.21@sha256:48b0309ca019d89d40f670aa1bc06e426dc0931948452e8491e3d65087abc07d
+    volumes:
+      - sabnzbd-config:/config
+      - ./seed/sabnzbd.ini:/seed/sabnzbd.ini:ro
+    command: ['/bin/sh', '-c', 'cp /seed/sabnzbd.ini /config/sabnzbd.ini']
+
+  sonarr:
+    image: lscr.io/linuxserver/sonarr:4.0.17@sha256:0b3f344388bd7bed4f2f770058de795e76447e4a481b83c8d5f8fed489371fde
+    environment:
+      PUID: 1000
+      PGID: 1000
+      TZ: Etc/UTC
+    volumes:
+      - sonarr-config:/config
+    depends_on:
+      sonarr-init:
+        condition: service_completed_successfully
+    networks:
+      servarr-internal:
+        aliases:
+          - sonarr
+    healthcheck:
+      test: ['CMD', 'curl', '-fsS', 'http://localhost:8989/ping']
+      interval: 5s
+      timeout: 5s
+      retries: 60
+      start_period: 60s
+
+  radarr:
+    image: lscr.io/linuxserver/radarr:6.1.1@sha256:c0a4335d4249b46102f64cf6fa27ffc3bddfd9138fac1e4ddf238afd37f02d1f
+    environment:
+      PUID: 1000
+      PGID: 1000
+      TZ: Etc/UTC
+    volumes:
+      - radarr-config:/config
+    depends_on:
+      radarr-init:
+        condition: service_completed_successfully
+    networks:
+      servarr-internal:
+        aliases:
+          - radarr
+    healthcheck:
+      test: ['CMD', 'curl', '-fsS', 'http://localhost:7878/ping']
+      interval: 5s
+      timeout: 5s
+      retries: 60
+      start_period: 60s
+
+  prowlarr:
+    image: lscr.io/linuxserver/prowlarr:2.3.5@sha256:2489c6dbaf11e3a6d71aeb2e6980d04193d4af611aa7064a974851222fd41722
+    environment:
+      PUID: 1000
+      PGID: 1000
+      TZ: Etc/UTC
+    volumes:
+      - prowlarr-config:/config
+    depends_on:
+      prowlarr-init:
+        condition: service_completed_successfully
+    networks:
+      servarr-internal:
+        aliases:
+          - prowlarr
+    healthcheck:
+      test: ['CMD', 'curl', '-fsS', 'http://localhost:9696/ping']
+      interval: 5s
+      timeout: 5s
+      retries: 60
+      start_period: 60s
+
+  sabnzbd:
+    image: lscr.io/linuxserver/sabnzbd:5.0.3@sha256:3de84922d3b4c5e7062b3cbd1e08f57d8dc113a8be4dc0447d33e2da293bab26
+    environment:
+      PUID: 1000
+      PGID: 1000
+      TZ: Etc/UTC
+    volumes:
+      - sabnzbd-config:/config
+    depends_on:
+      sabnzbd-init:
+        condition: service_completed_successfully
+    networks:
+      servarr-internal:
+        aliases:
+          - sabnzbd
+    healthcheck:
+      test:
+        ['CMD', 'curl', '-fsS', 'http://localhost:8080/api?mode=version&output=json']
+      interval: 5s
+      timeout: 5s
+      retries: 60
+      start_period: 60s
+
+  pomerium:
+    image: pomerium/pomerium:v0.32.7@sha256:e10d1d267af24f581157f485d9b0bc08469e2428675b696a08e42ceb09b2279c
+    command: ['--config', '/pomerium/config.yaml']
+    env_file:
+      - ../../_harness/pomerium/validation.env
+    volumes:
+      - certs:/certs:ro
+      - ./routes.validate.yaml:/pomerium/config.yaml:ro
+    depends_on:
+      certs-init:
+        condition: service_completed_successfully
+      keycloak:
+        condition: service_healthy
+      sonarr:
+        condition: service_healthy
+      radarr:
+        condition: service_healthy
+      prowlarr:
+        condition: service_healthy
+      sabnzbd:
+        condition: service_healthy
+    networks:
+      # On `default` for the IdP + test-runner, and on the internal-only network to
+      # reach the apps. This is the only service bridging the two.
+      default:
+        aliases:
+          - authenticate.localhost.pomerium.io
+          - sonarr.localhost.pomerium.io
+          - radarr.localhost.pomerium.io
+          - prowlarr.localhost.pomerium.io
+          - sabnzbd.localhost.pomerium.io
+      servarr-internal: {}
+    healthcheck:
+      test: ['CMD', 'pomerium', 'health']
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 10s
+
+networks:
+  # Internal-only: no route to the outside, and the test-runner is not attached,
+  # so the *arr apps are reachable only via Pomerium.
+  servarr-internal:
+    internal: true
+
+volumes:
+  sonarr-config:
+  radarr-config:
+  prowlarr-config:
+  sabnzbd-config:
