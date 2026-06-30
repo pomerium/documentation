@@ -1,0 +1,236 @@
+---
+# cSpell:ignore serviceaccount serviceaccounts kubernetes SPIFFE SVID SVIDs svid jwks algs pomtester pom myservice githubusercontent curlimages
+
+title: Machine-to-Machine Access with Bearer Tokens
+sidebar_label: Bearer Token Access
+description: Let services, CI jobs, and Kubernetes workloads reach upstreams behind Pomerium by presenting a bearer token — an IdP access or identity token, or a verifiable JWT such as a Kubernetes service account token.
+keywords:
+  - bearer token
+  - jwt
+  - machine to machine
+  - m2m
+  - kubernetes
+  - service account
+  - idp access token
+  - spiffe
+  - github actions
+  - oidc
+  - bearer_token_format
+  - jwt_allowed_issuers
+  - jwt_allowed_audiences
+---
+
+import TabItem from '@theme/TabItem';
+import Tabs from '@theme/Tabs';
+
+# Machine-to-Machine Access with Bearer Tokens
+
+Pomerium usually authenticates a person. The browser is redirected to an identity provider, the user signs in, and Pomerium issues a session cookie. A machine has no browser and no one to click "sign in." Instead it already holds a credential — a token — and it presents that token on every request:
+
+```text
+GET /api/widgets HTTP/1.1
+Host: api.localhost.pomerium.io
+Authorization: Bearer <token>
+```
+
+When a route is configured for it, Pomerium reads that token, establishes who the caller is from the token alone, and then applies the route's policy. There is no redirect, no cookie, and no interactive step. This is how a service, a CI job, or a Kubernetes pod reaches an upstream behind Pomerium.
+
+This is the inbound direction: a client proves its identity to Pomerium. It is the mirror image of [Continuous Identity Verification](/docs/capabilities/getting-users-identity), where Pomerium mints a JWT for the upstream to verify. The two are independent. You can use either or both on the same route.
+
+## How a bearer request is handled
+
+A single setting, [`bearer_token_format`](/docs/reference/bearer-token-format), decides what Pomerium does with the `Authorization: Bearer` header on a route. It can be set globally and overridden per route.
+
+1. **Extract.** If the route's format calls for interpreting the token, Pomerium takes the value after `Bearer ` from the `Authorization` header.
+2. **Interpret.** The format says what the token is — an IdP access token, an IdP identity token, or a JWT from a trusted issuer — and Pomerium verifies it accordingly.
+3. **Build a session.** A session is derived from the verified token and its claims. The same token maps to the same session, so repeated requests are cheap.
+4. **Authorize.** The route's [policy](/docs/internals/ppl) runs against the token's claims. Authorization is entirely policy-driven; verifying the token does not by itself grant access.
+
+Two rules apply to every bearer route:
+
+- A cookie and a bearer token are mutually exclusive. A session cookie comes from a browser; a bearer token comes from a machine. A request carrying both is rejected with `400 Bad Request` rather than guessing which one to trust.
+- A missing token is a denial, not a sign-in prompt. If a bearer route receives a request with no token, Pomerium returns `401 Unauthorized`. It does not redirect to the identity provider, because there is no browser to follow the redirect.
+
+## The four token formats
+
+| Format | The token is… | How Pomerium checks it |
+| :-- | :-- | :-- |
+| `default` | Opaque to Pomerium | Passed through to the upstream unchanged. This is the behavior when the setting is unset. |
+| `idp_access_token` | An OAuth access token from your IdP | Validated with the identity provider; audiences are constrained by [`idp_access_token_allowed_audiences`](/docs/reference/idp-access-token-allowed-audiences). |
+| `idp_identity_token` | An OIDC identity (ID) token from your IdP | Validated with the identity provider. |
+| `jwt` | A JWT from any issuer you trust | Verified locally against the issuer's public keys, scoped to [`jwt_allowed_audiences`](/docs/reference/jwt-allowed-audiences). |
+
+`bearer_token_format` is a global setting that each route may override. An unset route uses the global value; an unset global means "default" (passthrough). For the IdP formats, see [Bearer Token Format](/docs/reference/bearer-token-format); the rest of this page covers the `jwt` format, which accepts tokens from issuers that are not the route's sign-in identity provider.
+
+## Verifiable JWTs
+
+The `jwt` format lets Pomerium accept a JWT issued by any issuer you declare as trusted — a Kubernetes cluster, a SPIFFE authority, GitHub Actions, or any OIDC-compliant system. Unlike the IdP formats, there is no call to an identity provider per request: Pomerium fetches the issuer's public keys once and verifies tokens locally.
+
+You declare trusted issuers globally with [`jwt_allowed_issuers`](/docs/reference/jwt-allowed-issuers) and the audiences you accept with [`jwt_allowed_audiences`](/docs/reference/jwt-allowed-audiences). A minimal configuration looks like this:
+
+```yaml title="config.yaml"
+bearer_token_format: jwt
+jwt_allowed_audiences:
+  - pomerium.example.com
+jwt_allowed_issuers:
+  - issuer: https://issuer.example.com
+    name: example
+routes:
+  - from: https://api.localhost.pomerium.io
+    to: http://api-backend
+    policy:
+      - allow:
+          and:
+            - claim/sub: my-service
+```
+
+A client then calls the route with its token:
+
+```bash
+curl -H "Authorization: Bearer $TOKEN" https://api.localhost.pomerium.io/api/widgets
+```
+
+### What "verify" means
+
+For each incoming token, Pomerium:
+
+1. **Selects the issuer.** It reads the token's `iss` claim and matches it to a configured issuer. A token whose issuer is not declared is rejected.
+2. **Checks the signature** against that issuer's public keys (JWKS), restricted to an allowlist of signing algorithms.
+3. **Checks `iss`, `exp`, and `nbf`** — the issuer must match and the token must be currently valid.
+4. **Checks the audience.** The token's `aud` claim must include at least one entry from the route's effective `jwt_allowed_audiences`. This is fail-closed: if no audience is configured, every token is rejected.
+
+If all four pass, Pomerium trusts the token's claims and hands them to the route's policy as-is. Pomerium does not enrich the claims, consult a directory, or synthesize groups. Whatever you authorize on must be a claim the issuer actually put in the token.
+
+### Per-issuer settings
+
+Each entry in `jwt_allowed_issuers` accepts:
+
+- **`issuer`** (required) — the exact `iss` value tokens carry. Pomerium uses it both to select the issuer and, by default, to discover its keys via OIDC (`<issuer>/.well-known/openid-configuration`).
+- **`jwks_url`** (optional) — an explicit JWKS endpoint. When set, OIDC discovery is skipped and keys are fetched directly. Use this when the issuer URL is not reachable from where Pomerium runs, such as a Kubernetes cluster's internal `https://kubernetes.default.svc.cluster.local`.
+- **`supported_algs`** (optional) — the signing algorithms to accept. Defaults to `RS256`, `ES256`, and `EdDSA`.
+- **`name`** (optional) — a human-readable label that appears in audit logs.
+
+:::caution
+
+A route using `bearer_token_format: jwt` requires at least one `jwt_allowed_issuers` entry and a non-empty effective `jwt_allowed_audiences` (global or per-route). Pomerium refuses to start otherwise. There is no "accept any audience" mode.
+
+:::
+
+## Example: Kubernetes service accounts
+
+A Kubernetes ServiceAccount token is a JWT signed by the cluster. By trusting the cluster as a JWT issuer, you let pods reach upstreams behind Pomerium using a token the cluster already knows how to mint and rotate.
+
+### Configure Pomerium to trust the cluster
+
+The default Kubernetes issuer is `https://kubernetes.default.svc.cluster.local`, and clusters sign these tokens with `RS256`. Because that issuer URL resolves only inside the cluster, point `jwks_url` at the cluster's JWKS endpoint:
+
+```yaml title="config.yaml"
+bearer_token_format: jwt
+jwt_allowed_audiences:
+  - pomerium.example.com
+jwt_allowed_issuers:
+  - issuer: https://kubernetes.default.svc.cluster.local
+    jwks_url: https://kubernetes.default.svc.cluster.local/openid/v1/jwks
+    supported_algs:
+      - RS256
+    name: kubernetes
+routes:
+  - from: https://api.localhost.pomerium.io
+    to: http://api-backend
+    policy:
+      - allow:
+          and:
+            - claim/sub: system:serviceaccount:default:pom-tester
+```
+
+:::note
+
+When Pomerium itself runs in the cluster, the issuer URL is reachable, so you can omit `jwks_url` and let OIDC discovery find the keys. Reading the cluster's discovery and JWKS endpoints may require granting your caller the `system:service-account-issuer-discovery` ClusterRole, depending on your cluster's configuration.
+
+:::
+
+### Mint a token scoped to Pomerium
+
+The token must carry an `aud` claim matching one of Pomerium's `jwt_allowed_audiences`. The audience is what binds a general-purpose cluster token to Pomerium: a token minted for some other audience is rejected even though the same cluster signed it.
+
+Project a token with the right audience into the pod with a `serviceAccountToken` volume:
+
+```yaml title="pod.yaml"
+apiVersion: v1
+kind: Pod
+metadata:
+  name: api-client
+  namespace: default
+spec:
+  serviceAccountName: pom-tester
+  containers:
+    - name: client
+      image: curlimages/curl
+      command: ['sleep', 'infinity']
+      volumeMounts:
+        - name: pomerium-token
+          mountPath: /var/run/secrets/pomerium
+          readOnly: true
+  volumes:
+    - name: pomerium-token
+      projected:
+        sources:
+          - serviceAccountToken:
+              audience: pomerium.example.com
+              expirationSeconds: 3600
+              path: token
+```
+
+Kubernetes mints the token, keeps it fresh, and writes it to `/var/run/secrets/pomerium/token`.
+
+### Call the upstream
+
+From inside the pod, present the projected token:
+
+```bash
+curl -H "Authorization: Bearer $(cat /var/run/secrets/pomerium/token)" \
+  https://api.localhost.pomerium.io/api/widgets
+```
+
+Pomerium verifies the signature against the cluster's JWKS, confirms the audience is `pomerium.example.com`, and then evaluates the policy against the token's claims: here, that the subject is `system:serviceaccount:default:pom-tester`.
+
+### Authorize on Kubernetes claims
+
+A cluster-issued token carries structured claims describing the workload. PPL reaches nested claims with a dotted path, so you can write policy against the namespace or service account name directly:
+
+```yaml
+policy:
+  - allow:
+      and:
+        - claim/kubernetes.io.namespace: platform
+```
+
+This allows any service account in the `platform` namespace and denies the rest. The available claims include `sub` (`system:serviceaccount:<namespace>:<name>`), `kubernetes.io.namespace`, and `kubernetes.io.serviceaccount.name`.
+
+## Other issuers
+
+The same mechanism works for any issuer that publishes a JWKS:
+
+- **SPIFFE JWT-SVIDs.** Trust your SPIFFE authority's issuer and (typically) accept `ES256`. Authorize on the SPIFFE ID in `claim/sub`.
+- **GitHub Actions OIDC.** Trust `https://token.actions.githubusercontent.com` to let a workflow authenticate without a long-lived secret. Authorize on claims such as `claim/repository` or `claim/ref`, and set `jwt_allowed_audiences` to the audience your workflow requests.
+
+In every case the pattern is the same: declare the issuer, scope the audience, and write policy against the claims the issuer provides.
+
+## Authorizing on claims
+
+Because verified claims are passed straight to policy with no enrichment, every bearer-token policy is written with the [`claim`](/docs/internals/ppl#criteria) criterion. The sub-path after `claim/` selects the claim, with dots descending into nested objects:
+
+```yaml
+allow:
+  and:
+    - claim/sub: my-service
+```
+
+See the [Pomerium Policy Language](/docs/internals/ppl) reference for the full set of criteria and matchers.
+
+## Reference
+
+- [Bearer Token Format](/docs/reference/bearer-token-format)
+- [JWT Allowed Issuers](/docs/reference/jwt-allowed-issuers)
+- [JWT Allowed Audiences](/docs/reference/jwt-allowed-audiences)
+- [IdP Access Token Allowed Audiences](/docs/reference/idp-access-token-allowed-audiences)
