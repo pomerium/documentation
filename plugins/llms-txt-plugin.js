@@ -698,6 +698,16 @@ function buildRouteMarkdownOutputPaths(route, docsRoot) {
       sourceSidecarRoutePath,
     );
     if (sourceSidecarOutputPath) outputPaths.add(sourceSidecarOutputPath);
+
+    // Also emit the flat `.md` for the source-filename path, so URLs guessed
+    // from the source filename resolve when frontmatter `id:` moved the route
+    // (e.g. pass-identity-headers.mdx -> .../pass-identity-headers.md). A future
+    // rename that makes this collide with another route's path fails loud via
+    // validateRouteMarkdownCollisions rather than silently overwriting.
+    const sourceCanonicalOutputPath = buildCanonicalMarkdownOutputPath(
+      sourceSidecarRoutePath,
+    );
+    if (sourceCanonicalOutputPath) outputPaths.add(sourceCanonicalOutputPath);
   }
 
   return [...outputPaths];
@@ -1480,6 +1490,26 @@ async function pluginLlmsTxt(context) {
         );
         await fs.promises.writeFile(
           path.join(outDir, 'llms-index.txt'),
+          finalLlmsIndexTxt,
+          'utf8',
+        );
+
+        // Mirror under /docs/ so the docs-prefixed guess-path resolves too.
+        // Root stays canonical; these inherit the existing /docs/* cache header.
+        const docsDir = path.join(outDir, 'docs');
+        await fs.promises.mkdir(docsDir, {recursive: true});
+        await fs.promises.writeFile(
+          path.join(docsDir, 'llms-full.txt'),
+          finalLlmsFullTxt,
+          'utf8',
+        );
+        await fs.promises.writeFile(
+          path.join(docsDir, 'llms.txt'),
+          finalLlmsTxt,
+          'utf8',
+        );
+        await fs.promises.writeFile(
+          path.join(docsDir, 'llms-index.txt'),
           finalLlmsIndexTxt,
           'utf8',
         );
