@@ -14,11 +14,11 @@ export default function MetadataWrapper(props) {
   const {permalink} = metadata;
   // Advertise the .md twin only where it's a genuine upgrade over the HTML. Skip:
   // - the '/' docs instance (home, /examples): no sidecar generated -> would 404.
-  // - /docs/api/*: ApiItem renders the full OpenAPI schema in HTML; the generated
-  //   sidecar there is a sub-50-byte stub, strictly worse than the page.
-  const advertiseMarkdown =
-    (permalink === '/docs' || permalink.startsWith('/docs/')) &&
-    !permalink.startsWith('/docs/api/');
+  // - the /docs/api tree: ApiItem renders the full OpenAPI schema in HTML; the
+  //   generated sidecars are sub-50-byte stubs, strictly worse than the page.
+  const isDocs = permalink === '/docs' || permalink.startsWith('/docs/');
+  const isApi = permalink === '/docs/api' || permalink.startsWith('/docs/api/');
+  const advertiseMarkdown = isDocs && !isApi;
   return (
     <>
       <Metadata {...props} />
