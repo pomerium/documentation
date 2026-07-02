@@ -376,7 +376,7 @@ Each Ingress should be backed by a Service. Pomerium supports certain extensions
 
 ### Native SSH
 
-Pomerium can directly proxy SSH connections. See [Native SSH Access](/docs/capabilities/native-ssh-access) for information about this capabilitiy.
+Pomerium can directly proxy SSH connections. See [Native SSH Access](/docs/capabilities/native-ssh-access) for information about this capability.
 
 To configure a native SSH route, you will need to:
 
