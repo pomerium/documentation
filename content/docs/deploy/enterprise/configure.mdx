@@ -29,6 +29,18 @@ Pomerium Enterprise Console may require outbound HTTPS (TCP 443) access to:
 - `analytics.pomerium.com` for Pomerium usage analytics.
 - `sentry.io` for Sentry error reporting - see https://docs.sentry.io/security-legal-pii/security/ip-ranges/
 
+## Directory sync
+
+Directory sync enumerates users and groups from a directory provider so Pomerium Core can use directory-backed identity data. In the Console, go to **Settings** > **Directory Sync**. The tab shows **Identity Provider**, **Polling Min Delay**, and **Polling Max Delay**. **Identity Provider** renders a provider selector with **None** as the empty value; leaving it empty disables directory sync. When a provider is selected, the Console shows provider-specific options below the selector.
+
+When the Console exports settings to Core, **Identity Provider** maps to `directory_provider`, the provider-specific values map to `directory_provider_options`, **Polling Min Delay** maps to `directory_provider_refresh_interval`, and **Polling Max Delay** maps to `directory_provider_refresh_timeout`. Core uses these settings to choose the directory provider, store provider options as a generic JSON object, refresh the directory cache, and limit a single refresh attempt.
+
+You can seed the same persisted Console settings at startup with `directory_provider`, `directory_provider_options`, `directory_provider_refresh_interval`, and `directory_provider_refresh_timeout` in `config.yaml`, or with the matching environment variables in the table below. If unset, the directory polling delays use `10m`.
+
+## Auto-apply changesets
+
+`auto_apply_changesets` controls whether configuration changesets apply automatically (`true`) or wait for an administrator to apply them (`false`). The Enterprise Console has no UI control for it; set it through the settings API. Pomerium Zero exposes it as the **Auto-apply changesets** toggle under **Settings** > **Advanced**.
+
 ## Variables
 
 The keys listed below can be applied in Pomerium Console's `config.yaml` file or as environment variables.
@@ -53,6 +65,10 @@ All values are case sensitive unless otherwise noted.
 | <a className="entRef-anchor" id="database-url">#</a><a href='#database-url'>DATABASE_URL</a> | The database Pomerium Enterprise Console will use. | `postgresql://pomerium:pomerium`<br/>`@localhost:5432/dashboard?sslmode=disable` |
 | <a className="entRef-anchor" id="databroker-service-url">#</a><a href='#databroker-service-url'>DATABROKER_SERVICE_URL</a> | Databroker service URL for Console to reach Core. Leave unset in the default single-process deployment (Console uses `http://localhost:5443`). Set only when the databroker runs on another host/port or Core is split/remote. | `http://localhost:5443` |
 | <a className="entRef-anchor" id="debug-config-dump">#</a><a href='#debug-config-dump'>DEBUG_CONFIG_DUMP</a> | Dumps the Databroker configuration. This is a debug option to be used only when specified by Pomerium Support. | `false` |
+| <a className="entRef-anchor" id="directory-provider">#</a><a href='#directory-provider'>DIRECTORY_PROVIDER</a> | Directory-sync provider Pomerium uses to enumerate users and groups. Empty disables directory sync. | none |
+| <a className="entRef-anchor" id="directory-provider-options">#</a><a href='#directory-provider-options'>DIRECTORY_PROVIDER_OPTIONS</a> | Provider-specific options for the directory provider, as a JSON object. | none |
+| <a className="entRef-anchor" id="directory-provider-refresh-interval">#</a><a href='#directory-provider-refresh-interval'>DIRECTORY_PROVIDER_REFRESH_INTERVAL</a> | How often Pomerium refreshes the directory cache. | `10m` |
+| <a className="entRef-anchor" id="directory-provider-refresh-timeout">#</a><a href='#directory-provider-refresh-timeout'>DIRECTORY_PROVIDER_REFRESH_TIMEOUT</a> | Per-attempt timeout for a single directory refresh cycle. | `10m` |
 | <a className="entRef-anchor" id="disable-feedback-widget">#</a><a href='#disable-feedback-widget'>DISABLE_FEEDBACK_WIDGET</a> | Disables third-party feedback widget and removes it from the Enterprise Console. | `false` |
 | <a className="entRef-anchor" id="disable-remote-diagnostics">#</a><a href='#disable-remote-diagnostics'>DISABLE_REMOTE_DIAGNOSTICS</a> | Disable remote diagnostics. | `true` |
 | <a className="entRef-anchor" id="disable-validation">#</a><a href='#disable-validation'>DISABLE_VALIDATION</a> | (deprecated, please update your configuration to set `VALIDATION_MODE=none` instead) Disable config validation. | `false` |
@@ -99,6 +115,10 @@ All values are case sensitive unless otherwise noted.
 | <a className="entRef-anchor" id="database-url">#</a><a href='#database-url'>database_url</a> | The database Pomerium Enterprise Console will use. | `postgresql://pomerium:pomerium`<br/>`@localhost:5432/dashboard?sslmode=disable` |
 | <a className="entRef-anchor" id="databroker-service-url">#</a><a href='#databroker-service-url'>databroker_service_url</a> | Databroker service URL for Console to reach Core. Leave unset in the default single-process deployment (Console uses `http://localhost:5443`). Set only when the databroker runs on another host/port or Core is split/remote. | `http://localhost:5443` |
 | <a className="entRef-anchor" id="debug-config-dump">#</a><a href='#debug-config-dump'>debug_config_dump</a> | Dumps the Databroker configuration. This is a debug option to be used only when specified by Pomerium Support. | `false` |
+| <a className="entRef-anchor" id="directory-provider">#</a><a href='#directory-provider'>directory_provider</a> | Directory-sync provider Pomerium uses to enumerate users and groups. Empty disables directory sync. | none |
+| <a className="entRef-anchor" id="directory-provider-options">#</a><a href='#directory-provider-options'>directory_provider_options</a> | Provider-specific options for the directory provider, as a JSON object. | none |
+| <a className="entRef-anchor" id="directory-provider-refresh-interval">#</a><a href='#directory-provider-refresh-interval'>directory_provider_refresh_interval</a> | How often Pomerium refreshes the directory cache. | `10m` |
+| <a className="entRef-anchor" id="directory-provider-refresh-timeout">#</a><a href='#directory-provider-refresh-timeout'>directory_provider_refresh_timeout</a> | Per-attempt timeout for a single directory refresh cycle. | `10m` |
 | <a className="entRef-anchor" id="disable-feedback-widget">#</a><a href='#disable-feedback-widget'>disable_feedback_widget</a> | Disables third-party feedback widget and removes it from the Enterprise Console. | `false` |
 | <a className="entRef-anchor" id="disable-remote-diagnostics">#</a><a href='#disable-remote-diagnostics'>disable_remote_diagnostics</a> | Disable remote diagnostics. | `true` |
 | <a className="entRef-anchor" id="disable-validation">#</a><a href='#disable-validation'>disable_validation</a> | (deprecated, please update your configuration to set `validation_mode=none` instead) Disable config validation. | `false` |
