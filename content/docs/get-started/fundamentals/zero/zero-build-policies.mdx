@@ -73,7 +73,7 @@ policy: # Policy object starts here
   allow: # At least one action
     and: # Logical operator
       - email: # Criterion
-        is: example@domain.com # Value
+          is: example@domain.com # Value
 ```
 
 :::tip
@@ -99,7 +99,21 @@ Again, the domain criterion checks for the domain portion of the user's email ad
 - If your email is `bob@gmail.com`, Pomerium will deny you access
 - If your email is `bob@example.com`, Pomerium will grant you access
 
-**Example 3**: TODO - Currently, `user` criterion isn't an option in Zero. Wait until Custom IdP is implemented to use "Groups" claim
+**Example 3**: Allow access based on the User ID criterion
+
+Email and domain policies match users by email address, but you can also write a policy that allows access if a user has a specific `user` ID.
+
+In the Zero Console, select **User ID** from the **Criteria** dropdown, keep the **Operator** set to **Is**, and enter the user's ID in the **Value** field.
+
+Let's quickly review this example as it would look in a YAML configuration file:
+
+```yaml
+policy: # Policy object starts here
+  allow: # At least one action
+    and: # Logical operator
+      - user: # Criterion
+          is: user-id # Value
+```
 
 Now that we've covered some examples, it's time to attach a policy to a route.
 
