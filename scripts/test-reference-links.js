@@ -61,7 +61,7 @@ function findTargetFile(resolvedPath) {
 
 function stripHeadingMarkdown(heading) {
   let text = heading.replace(EXPLICIT_HEADING_ID_PATTERN, '');
-  // strip tags to a fixpoint so nested fragments like `<<b>script>` cannot survive
+  // strip tags until no replacement occurs so nested fragments like `<<b>script>` cannot survive
   let previous;
   do {
     previous = text;
