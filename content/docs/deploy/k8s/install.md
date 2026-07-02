@@ -18,7 +18,7 @@ Use Pomerium as a first-class secure-by-default Ingress Controller. The Pomerium
 ## Deploy
 
 ```console
-kubectl apply -k github.com/pomerium/ingress-controller/config/default\?ref=v0.32.9
+kubectl apply -k github.com/pomerium/ingress-controller/config/default\?ref=0-32-0
 ```
 
 The Pomerium Ingress Controller is now installed into your cluster.
@@ -78,7 +78,7 @@ kustomize build config/default
 
 ```yaml title="kustomization.yaml"
 resources:
-  - https://raw.githubusercontent.com/pomerium/ingress-controller/v0.32.9/deployment.yaml
+  - https://raw.githubusercontent.com/pomerium/ingress-controller/0-32-0/deployment.yaml
 patches:
   - path: patch-proxy-external-dns.yaml
 ```
@@ -105,7 +105,7 @@ You must configure [storage persistence](/docs/internals/data-storage) in order 
 
 ```yaml title="kustomization.yaml"
 resources:
-  - https://raw.githubusercontent.com/pomerium/ingress-controller/v0.32.9/deployment.yaml
+  - https://raw.githubusercontent.com/pomerium/ingress-controller/0-32-0/deployment.yaml
 patches:
   - path: deployment.yaml
 ```
@@ -126,7 +126,7 @@ An `IngressClass` may be designated as a [default controller](https://kubernetes
 
 ```yaml title="kustomization.yaml"
 resources:
-  - https://raw.githubusercontent.com/pomerium/ingress-controller/v0.32.9/deployment.yaml
+  - https://raw.githubusercontent.com/pomerium/ingress-controller/0-32-0/deployment.yaml
 patches:
   - path: patch-proxy-external-dns.yaml
 ```
@@ -150,7 +150,7 @@ Make sure to always restrict access to the envoy admin interface ingress.
 
 ```yaml title="kustomization.yaml"
 resources:
-  - github.com/pomerium/ingress-controller/config/default?ref=v0.32.9
+  - github.com/pomerium/ingress-controller/config/default?ref=0-32-0
   - admin-service.yaml
   - admin-ingress.yaml
 patches:
