@@ -35,11 +35,11 @@ Directory sync enumerates users and groups from a directory provider so Pomerium
 
 When the Console exports settings to Core, **Identity Provider** maps to `directory_provider`, the provider-specific values map to `directory_provider_options`, **Polling Min Delay** maps to `directory_provider_refresh_interval`, and **Polling Max Delay** maps to `directory_provider_refresh_timeout`. Core uses these settings to choose the directory provider, store provider options as a generic JSON object, refresh the directory cache, and limit a single refresh attempt.
 
-You can seed the same persisted Console settings at startup with `directory_provider`, `directory_provider_options`, `directory_provider_refresh_interval`, and `directory_provider_refresh_timeout` in `config.yaml`, or with the matching environment variables in the table below. If unset, the directory polling delays use `10m`.
+You can seed the same persisted Console settings at startup with `directory_provider`, `directory_provider_options`, `directory_provider_refresh_interval`, and `directory_provider_refresh_timeout` in `config.yaml`, or with the matching environment variables in the table below. If unset, `directory_provider_refresh_interval` defaults to `10m`, and `directory_provider_refresh_timeout` — the deadline for a single refresh attempt — also defaults to `10m`.
 
 ## Auto-apply changesets
 
-`auto_apply_changesets` controls whether configuration changesets apply automatically (`true`) or wait for an administrator to apply them (`false`). The Enterprise Console has no UI control for it; set it through the settings API. Pomerium Zero exposes it as the **Auto-apply changesets** toggle under **Settings** > **Advanced**.
+`auto_apply_changesets` controls whether configuration changesets apply automatically (`true`) or wait for an administrator to apply them (`false`). The Enterprise Console has no UI control for it; set it through the [Console management API](/docs/internals/management-api-enterprise). Pomerium Zero exposes it as the **Auto-apply changesets** toggle under **Settings** > **Advanced**.
 
 ## Variables
 
