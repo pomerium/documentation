@@ -60,9 +60,14 @@ function findTargetFile(resolvedPath) {
 }
 
 function stripHeadingMarkdown(heading) {
-  return heading
-    .replace(EXPLICIT_HEADING_ID_PATTERN, '')
-    .replace(/<[^>]+>/g, '')
+  let text = heading.replace(EXPLICIT_HEADING_ID_PATTERN, '');
+  // strip tags to a fixpoint so nested fragments like `<<b>script>` cannot survive
+  let previous;
+  do {
+    previous = text;
+    text = text.replace(/<[^>]*>/g, '');
+  } while (text !== previous);
+  return text
     .replace(/!\[([^\]]*)]\([^)]+\)/g, '$1')
     .replace(/\[([^\]]+)]\([^)]+\)/g, '$1')
     .replace(/[`*_~]/g, '')
