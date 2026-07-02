@@ -40,7 +40,7 @@ HTTP health checks may not suit all environments. For instance, in environments 
 
 Pomerium exposes http probe endpoints on `127.0.0.1:28080` by default. This server exposes `/status`, `/startupz`, `/readyz` and `/healthz` for consumption by container orchestration frameworks, like Kubernetes.
 
-Set the Core `health_check_addr` configuration key, or the `HEALTH_CHECK_ADDR` environment variable, to bind this server to a different address. The default is `127.0.0.1:28080`; when you change it, pass the same address to the CLI probe with `pomerium health --health-addr`.
+Set `health_check_addr` in the configuration file, or the `HEALTH_CHECK_ADDR` environment variable, to bind this server to a different address. The default is `127.0.0.1:28080`; when you change it, pass the same address to the CLI probe with `pomerium health --health-addr`, and update the probe `port` values in manifests like the example below to match.
 
 For an overview on how probes work with Kubernetes see the [upstream documentation](https://kubernetes.io/docs/concepts/configuration/liveness-readiness-startup-probes/) and [their configuration options](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/).
 

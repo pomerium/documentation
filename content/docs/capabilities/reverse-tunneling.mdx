@@ -37,7 +37,18 @@ Suppose Alice is running a web server locally, and wants to allow Bob to connect
 
 Instead, Alice can configure the Pomerium route with the `upstream_tunnel` option. Here, a second Pomerium policy must be configured, `ssh_policy`. This second policy controls who can connect as an upstream for this route. Standard SSH policy rules can be used here; see [SSH Policy Criteria](/docs/capabilities/native-ssh-access#ssh-policy-criteria) for details.
 
-For Rego-based tunnel authorization at the same point, set `ssh_policy_rego` under `upstream_tunnel` with raw Rego policy text. Pomerium evaluates those Rego rules before opening the SSH tunnel to the upstream; see [Rego](/docs/internals/ppl#rego) for policy outputs and inputs.
+For Rego-based tunnel authorization at the same point, set `ssh_policy_rego` under `upstream_tunnel` with a list of raw Rego policies. Pomerium evaluates those Rego rules before opening the SSH tunnel to the upstream; see [Rego](/docs/internals/ppl#rego) for policy outputs and inputs. Note the nesting — `ssh_policy_rego` belongs inside the `upstream_tunnel` block, not at the route level:
+
+```yaml
+routes:
+  - from: ssh://tunnel.example.com
+    to: ssh://localhost:8080
+    upstream_tunnel:
+      ssh_policy_rego:
+        - |
+          # a policy that always allows access
+          allow := true
+```
 
 Once the route is configured, Alice connects to the Pomerium server via SSH and enables reverse port-forwarding with the `-R` flag (e.g. `ssh -R 0 pomerium.example.com`, assuming standard OpenSSH) and authenticates successfully. Then, Bob connects to the route. Pomerium will request that Alice's SSH client open a connection on `localhost:8080`. The SSH client can reach the local web server, so the connection can be established.
 
