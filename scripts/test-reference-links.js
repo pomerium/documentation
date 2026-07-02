@@ -61,7 +61,7 @@ function findTargetFile(resolvedPath) {
 
 function stripHeadingMarkdown(heading) {
   let text = heading.replace(EXPLICIT_HEADING_ID_PATTERN, '');
-  // strip tags until no replacement occurs so nested fragments like `<<b>script>` cannot survive
+  // repeat until stable: a single pass leaves nested fragments like <<b>script>
   let previous;
   do {
     previous = text;
@@ -83,8 +83,10 @@ function collectHeadingAnchors(filePath) {
   for (const line of lines) {
     const fenceMatch = line.match(FENCE_PATTERN);
     if (fenceMatch) {
-      const marker = fenceMatch[1][0];
-      if (fence === marker) {
+      const marker = fenceMatch[1];
+      // CommonMark 4.5: a closing fence uses the same character and is at
+      // least as long as the opening fence
+      if (fence && marker[0] === fence[0] && marker.length >= fence.length) {
         fence = null;
       } else if (!fence) {
         fence = marker;
