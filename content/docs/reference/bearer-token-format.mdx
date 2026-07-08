@@ -33,7 +33,7 @@ Pomerium's `default` behavior is to pass bearer tokens to upstream applications 
 
 Since v0.30 access and identity tokens are supported by all IdPs, except Apple does not support access tokens, and GitHub does not support identity tokens.
 
-If the `jwt` option is used, then the bearer token will be verified as a JWT issued by one of the trusted issuers declared in [`jwt_allowed_issuers`](/docs/reference/jwt-allowed-issuers) and scoped to [`jwt_allowed_audiences`](/docs/reference/jwt-allowed-audiences). Unlike the IdP options, the issuer does not need to be the route's sign-in identity provider, which makes this option suitable for machine identities such as Kubernetes service account tokens, SPIFFE JWT-SVIDs, and CI tokens. See [Machine-to-Machine Access with Bearer Tokens](/docs/capabilities/bearer-token-access) for details.
+If the `jwt` option is used, then the bearer token will be verified as a JWT issued by one of the trusted providers declared in [`identity_providers`](/docs/reference/identity-providers). Unlike the IdP options, the issuer does not need to be the route's sign-in identity provider, which makes this option suitable for machine identities such as Kubernetes service account tokens, SPIFFE JWT-SVIDs, and CI tokens. See [Machine-to-Machine Access with Bearer Tokens](/docs/capabilities/bearer-token-access) for details.
 
 This option can also be configured at the route-level.
 
@@ -69,7 +69,7 @@ curl -H "Authorization: Bearer $(az account get-access-token --query accessToken
 - `default`: Pass bearer tokens to upstream applications without interpreting them.
 - `idp_access_token`: The bearer token will be interpreted as an IdP-issued access token.
 - `idp_identity_token`: The bearer token will be interpreted as an IdP-issued identity token.
-- `jwt`: The bearer token will be verified as a JWT issued by a trusted issuer (see [`jwt_allowed_issuers`](/docs/reference/jwt-allowed-issuers) and [`jwt_allowed_audiences`](/docs/reference/jwt-allowed-audiences)).
+- `jwt`: The bearer token will be verified as a JWT issued by a trusted provider (see [`identity_providers`](/docs/reference/identity-providers)).
 
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
@@ -85,7 +85,7 @@ Set **Bearer Token Format** under **Proxy** settings in the Console:
 - "Default": Pass bearer tokens to upstream applications without interpreting them.
 - "IDP Access Token": The bearer token will be interpreted as an IdP-issued access token.
 - "IDP Identity Token": The bearer token will be interpreted as an IdP-issued identity token.
-- "JWT": The bearer token will be verified as a JWT issued by a trusted issuer (see [`jwt_allowed_issuers`](/docs/reference/jwt-allowed-issuers) and [`jwt_allowed_audiences`](/docs/reference/jwt-allowed-audiences)).
+- "JWT": The bearer token will be verified as a JWT issued by a trusted provider (see [`identity_providers`](/docs/reference/identity-providers)).
 
 </TabItem>
 <TabItem value="Kubernetes" label="Kubernetes">

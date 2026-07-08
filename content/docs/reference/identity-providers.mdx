@@ -1,0 +1,95 @@
+---
+# cSpell:ignore algs Algs jwks kubernetes githubusercontent SPIFFE SVIDs
+
+id: identity-providers
+title: JWT Identity Providers
+description: |
+  Identity Providers declares the additional identity providers whose JWT bearer tokens Pomerium verifies on routes using the jwt bearer token format.
+keywords:
+  - reference
+  - JWT Identity Providers
+  - identity_providers
+pagination_prev: null
+pagination_next: null
+toc_max_heading_level: 2
+---
+
+import TabItem from '@theme/TabItem';
+import Tabs from '@theme/Tabs';
+
+import EnterpriseConfiguration from '../../../src/components/EnterpriseConfiguration';
+
+# JWT Identity Providers
+
+## Summary
+
+**Identity Providers** (`identity_providers`) declares _additional_ identity providers as a map keyed by a name you choose. Today they are usable only to verify JWT bearer tokens issued by non-interactive workloads — Kubernetes service account tokens, GitHub Actions OIDC, SPIFFE JWT-SVIDs, and so on — on routes that use the `jwt` [bearer token format](/docs/reference/bearer-token-format). They do **not** replace the interactive single-sign-on provider you configure with the flat `idp_*` options; see [Identity Provider Settings](/docs/reference/identity-provider-settings).
+
+For each incoming bearer token, Pomerium reads the token's `iss` claim, selects the matching provider, fetches that provider's public keys, and verifies the token's signature, `iss`, `exp`, `nbf`, and `aud`. A token is rejected if its issuer is not declared here, or if its `aud` is not one of the matched provider's `audiences`. Authorization on the verified claims is left to your [policy](/docs/internals/ppl) (`claim/…`).
+
+A route using the `jwt` format requires at least one entry here, and each entry requires a non-empty `audiences`. A route may narrow which of these providers it accepts with the per-route [`identity_providers`](/docs/reference/routes/identity-providers-per-route) allowlist.
+
+See [Machine-to-Machine Access with Bearer Tokens](/docs/capabilities/bearer-token-access) for an overview and examples.
+
+Each provider is a map entry. The key is the provider name; the value has the following fields:
+
+| Field | Type | Usage | Description |
+| :-- | :-- | :-- | :-- |
+| _(map key)_ | `string` | **required** | The provider name. Must be non-empty and contain no `/`. Labels the provider in audit logs and namespaces the caller's user ID as `<provider-name>/<sub>`. Referenced by the per-route allowlist. |
+| `issuer` | `string` | **required** | The `iss` claim tokens must carry, unique across providers. Used both to select the matching provider for an incoming token and, by default, to discover its signing keys via OIDC (`<issuer>/.well-known/openid-configuration`). |
+| `jwks_url` | `string` | **optional** | An explicit JWKS endpoint. When set, OIDC discovery is skipped and keys are fetched directly from this URL. Useful when the issuer URL is not reachable from where Pomerium runs (for example, Kubernetes' `https://kubernetes.default.svc.cluster.local`). |
+| `supported_algs` | array of `string` | **optional** | The JWT signing algorithms to accept. Defaults to `RS256`, `ES256`, and `EdDSA`. Only asymmetric algorithms are allowed (`RS`/`PS`/`ES` 256/384/512 and `EdDSA`); symmetric (`HS*`) and `none` are rejected. |
+| `audiences` | array of `string` | **required** | The audiences accepted on this provider's tokens; a token's `aud` claim must include at least one. Must be non-empty — this is fail-closed, with no "accept any audience" mode. |
+
+TLS for JWKS and discovery fetches uses the global [`certificate_authority` / `certificate_authority_file`](/docs/reference/certificates); there is no per-provider CA setting.
+
+## How to Configure
+
+<Tabs>
+<TabItem value="Core" label="Core">
+
+| **Config file key**  | **Type**                |
+| :------------------- | :---------------------- |
+| `identity_providers` | Map of provider objects |
+
+`identity_providers` is structured configuration; set it in the config file or the Console rather than as an environment variable.
+
+### Examples
+
+```yaml
+identity_providers:
+  kubernetes:
+    issuer: https://kubernetes.default.svc.cluster.local
+    jwks_url: https://kubernetes.default.svc.cluster.local/openid/v1/jwks
+    supported_algs:
+      - RS256
+    audiences:
+      - pomerium.example.com
+  github-actions:
+    issuer: https://token.actions.githubusercontent.com
+    audiences:
+      - pomerium.example.com
+```
+
+</TabItem>
+<TabItem value="Enterprise" label="Enterprise">
+<EnterpriseConfiguration name="identity_providers" resource="settings" />
+
+</TabItem>
+<TabItem value="Kubernetes" label="Kubernetes">
+
+```yaml
+identityProviders:
+  kubernetes:
+    issuer: https://kubernetes.default.svc.cluster.local
+    jwksUrl: https://kubernetes.default.svc.cluster.local/openid/v1/jwks
+    supportedAlgs:
+      - RS256
+    audiences:
+      - pomerium.example.com
+```
+
+See [Kubernetes - Global Configuration](/docs/deploy/k8s/configure) for more information.
+
+</TabItem>
+</Tabs>

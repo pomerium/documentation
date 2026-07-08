@@ -1,0 +1,68 @@
+---
+# cSpell:ignore serviceaccount
+
+id: identity-providers-per-route
+title: Identity Providers (per route)
+keywords:
+  - reference
+  - identity providers
+  - identity_providers
+  - jwt
+pagination_prev: null
+pagination_next: null
+toc_max_heading_level: 2
+---
+
+import TabItem from '@theme/TabItem';
+import Tabs from '@theme/Tabs';
+
+# Identity Providers (per route)
+
+## Summary
+
+**Identity Providers (per route)** narrows which of the globally-declared [`identity_providers`](/docs/reference/identity-providers) are accepted on this route. It is an allowlist of provider names.
+
+This setting is only meaningful on a route whose effective [bearer token format](/docs/reference/bearer-token-format) is `jwt`. When left unset, the route accepts a token from **any** configured provider. When set, a token whose provider is not on the list is rejected before its signature is checked.
+
+Every name must exist in the global `identity_providers` map. Setting this on a route that does **not** use the `jwt` format is a configuration error, and Pomerium refuses to start.
+
+See [Machine-to-Machine Access with Bearer Tokens](/docs/capabilities/bearer-token-access) for an overview and examples.
+
+## How to configure
+
+<Tabs>
+<TabItem value="Core" label="Core">
+
+| **YAML**/**JSON** setting | **Type**          | **Usage**    |
+| :------------------------ | :---------------- | :----------- |
+| `identity_providers`      | array of `string` | **optional** |
+
+### Examples
+
+```yaml
+routes:
+  - from: https://api.localhost.pomerium.io
+    to: http://api-backend
+    bearer_token_format: jwt
+    identity_providers:
+      - kubernetes
+    policy:
+      - allow:
+          and:
+            - claim/sub: system:serviceaccount:default:pom-tester
+```
+
+</TabItem>
+<TabItem value="Kubernetes" label="Kubernetes">
+
+| **[Annotation name](/docs/deploy/k8s/ingress#set-ingress-annotations)** | **Type** | **Usage** |
+| :-- | :-- | :-- |
+| `identity_providers` | comma-separated `string` | **optional** |
+
+```yaml
+ingress.pomerium.io/bearer_token_format: jwt
+ingress.pomerium.io/identity_providers: kubernetes
+```
+
+</TabItem>
+</Tabs>
