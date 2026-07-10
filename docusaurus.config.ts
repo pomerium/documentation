@@ -38,7 +38,7 @@ const config: Config = {
       tagName: 'link',
       attributes: {
         rel: 'alternate',
-        type: 'text/plain',
+        type: 'text/markdown',
         href: '/llms.txt',
         title: 'LLM-readable documentation',
       },

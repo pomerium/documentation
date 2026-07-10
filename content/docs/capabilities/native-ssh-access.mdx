@@ -288,6 +288,19 @@ This feature is disabled by default, and can be enabled using a runtime flag ([s
 | `ssh_user_ca_key_file` | Path to the User CA private key file (if no ssh_user_ca_key is provided) |
 | `ssh_host_keys` | List of SSH private key files to use as Pomerium's host keys |
 | `ssh_host_key_files` | List of SSH private keys to use as Pomerium's host keys |
+| `ssh_rls_enabled` | Enables the Envoy rate-limit service for SSH connections |
+| `ssh_rls_additional_entries` | Additional `key`/`value` descriptor entries for SSH rate limiting, using Envoy substitution formatting |
+
+### SSH Rate Limit Service
+
+The SSH rate-limit service is disabled by default. Set `ssh_rls_enabled` to `true` to add Envoy's rate-limit filter to inbound SSH connections, and use `ssh_rls_additional_entries` to append extra substitution-format descriptor entries to the built-in SSH rate-limit descriptor:
+
+```yaml
+ssh_rls_enabled: true
+ssh_rls_additional_entries:
+  - key: client_address
+    value: '%DOWNSTREAM_REMOTE_ADDRESS_WITHOUT_PORT%'
+```
 
 ### SSH Route Configuration
 

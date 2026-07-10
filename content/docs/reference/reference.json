@@ -35,6 +35,7 @@
     "type": "bool"
   },
   "authenticate-internal-service-url": {
+    "description": "Internal URL Pomerium services use to reach the authenticate service in split-service deployments.",
     "id": "authenticate-internal-service-url",
     "path": "/service-urls#authenticate-internal-service-url",
     "services": [],
@@ -51,6 +52,7 @@
     "type": "URL"
   },
   "authorize-internal-service-url": {
+    "description": "Internal URL Pomerium services use to reach the authorize service in split-service deployments.",
     "id": "authorize-internal-service-url",
     "path": "/service-urls#authorize-internal-service-url",
     "services": [],
@@ -129,6 +131,7 @@
     "type": "email"
   },
   "autocert-must-staple": {
+    "description": "Forces Autocert to request certificates with the Must-Staple extension.",
     "id": "autocert-must-staple",
     "path": "/autocert#autocert-must-staple",
     "services": ["authenticate", "proxy"],
@@ -137,6 +140,7 @@
     "type": "bool"
   },
   "autocert-trusted-certificate-authority": {
+    "description": "X.509 CA bundle used to verify TLS connections to the ACME certificate authority.",
     "id": "autocert-trusted-certificate-authority",
     "path": "/autocert#autocert-trusted-certificate-authority",
     "services": ["authenticate", "proxy"],
@@ -163,6 +167,7 @@
     "type": "string"
   },
   "branding-settings": {
+    "description": "Configure Console branding: logo, favicon, and error messages.",
     "id": "branding",
     "path": "/branding",
     "short_description": "",
@@ -178,6 +183,7 @@
     "type": "string"
   },
   "certificates": {
+    "description": "Configure TLS certificate and certificate authority settings.",
     "id": "certificates",
     "path": "/certificates",
     "services": [],
@@ -188,11 +194,13 @@
   "circuit-breaker-thresholds": {
     "description": "Customizes circuit-breaking behavior in Pomerium.",
     "id": "circuit-breaker-thresholds",
+    "path": "/circuit-breaker-thresholds",
     "title": "Circuit Breaker Thresholds"
   },
   "cluster-identity": {
     "description": "The cluster token that associates this cluster with a personal account or organization.",
     "id": "cluster-identity",
+    "path": "/../internals/clusters#cluster-token",
     "title": "Cluster Identity"
   },
   "cluster-name": {
@@ -206,11 +214,13 @@
   "cluster-settings-name": {
     "description": "A customizable name that identifies a cluster. Defaults to the cluster's randomly generated starter domain name.",
     "id": "cluster-settings-name",
+    "path": "/../internals/clusters#cluster-name",
     "title": "Cluster Name"
   },
   "cluster-starter-domain": {
     "description": "The randomly generated starter domain assigned to this cluster. This domain is not changeable, and is designed to be used as a proof of concept.",
     "id": "cluster-starter-domain",
+    "path": "/../internals/clusters#starter-domain",
     "title": "Cluster Starter Domain"
   },
   "codec-type": {
@@ -231,6 +241,7 @@
     "type": "string"
   },
   "cookies-settings": {
+    "description": "Configure session cookie name, secret, domain, expiration, and SameSite settings.",
     "id": "cookies",
     "path": "/cookies",
     "services": [],
@@ -252,6 +263,7 @@
     "title": "Custom Domains"
   },
   "data-broker-internal-service-url": {
+    "description": "Internal URL Pomerium services use to reach the databroker service in split-service deployments.",
     "id": "data-broker-internal-service-url",
     "path": "/service-urls#databroker-internal-service-url",
     "services": [],
@@ -259,12 +271,15 @@
     "type": "URL"
   },
   "data-broker-service": {
+    "description": "The databroker service manages all persistent state within Pomerium.",
     "id": "data-broker-service",
-    "path": "/databroker#databroker-service",
+    "path": "/databroker",
     "services": ["databroker"],
-    "title": "Databroker Service"
+    "title": "Databroker Service",
+    "type": ""
   },
   "data-broker-service-url": {
+    "description": "Sets the URL Pomerium uses to reach the databroker in split-service or remote deployments.",
     "id": "data-broker-service-url",
     "path": "/service-urls#databroker-service-url",
     "services": [],
@@ -280,6 +295,7 @@
     "type": "string"
   },
   "data-broker-storage-type": {
+    "description": "Sets the backend storage type for databroker state.",
     "id": "data-broker-storage-type",
     "path": "/databroker#databroker-storage-type",
     "services": [],
@@ -287,6 +303,7 @@
     "type": "string"
   },
   "databroker-settings": {
+    "description": "Configure databroker storage and clustering settings.",
     "id": "databroker",
     "path": "/databroker",
     "services": ["databroker"],
@@ -303,7 +320,7 @@
   "default-upstream-timeout": {
     "description": "Sets the default timeout applied to a proxied route when no timeout key is specified by the policy.",
     "id": "default-upstream-timeout",
-    "path": "/default-upstream-timeout",
+    "path": "/global-timeouts",
     "services": [],
     "title": "Default Upstream Timeout",
     "type": ""
@@ -319,13 +336,14 @@
   "detected-ip-address": {
     "description": "The IP address detected for this cluster server.",
     "id": "detected-ip-address",
+    "path": "/../internals/clusters#detected-and-override-ip-address",
     "title": "Detected IP Address"
   },
   "devices": {
     "description": "Introduced in v0.16.0, the Manage Devices page lets administrators manage user devices for policy-based authorization.",
     "enterpriseOnly": true,
     "id": "devices",
-    "path": "/../enterprise/reference/manage#devices",
+    "path": "/../integrations/device-context/webauthn#manage-devices-enterprise",
     "title": "Devices"
   },
   "direct-response": {
@@ -466,15 +484,8 @@
     "description": "Specify if the user can enroll any device identity, or restrict it to a secure enclave.",
     "enterpriseOnly": true,
     "id": "enrollment-type",
-    "path": "/../capabilities/device-identity#new-enrollment",
+    "path": "/../integrations/device-context/webauthn#enroll-devices-as-an-administrator-enterprise",
     "title": "Enrollment Type"
-  },
-  "envoy-bootstrap-options": {
-    "id": "envoy-bootstrap-options",
-    "path": "/envoy-bootstrap-options",
-    "services": [],
-    "title": "Envoy Bootstrap Options",
-    "type": "string"
   },
   "error-message-header": {
     "description": "A paragraph that will appear on all Route Error Pages in the top section.",
@@ -495,10 +506,12 @@
     "type": "datetime"
   },
   "ext-data-client-tls-key": {
+    "description": "ID of the TLS key pair presented when connecting to the external data source.",
     "enterpriseOnly": true,
     "id": "ext-data-client-tls-key",
     "path": "/../integrations#client-tls-key",
-    "title": "Client TLS Key"
+    "title": "Client TLS Key",
+    "type": "string"
   },
   "ext-data-foreign-key": {
     "description": "Associates this key from a request to the external data",
@@ -515,16 +528,20 @@
     "title": "External Data Request Headers"
   },
   "ext-data-insecure-tls": {
+    "description": "Skips TLS certificate verification when connecting to the external data source.",
     "enterpriseOnly": true,
     "id": "ext-data-insecure-tls",
     "path": "/../integrations#allow-insecure-tls",
-    "title": "Allow Insecure TLS"
+    "title": "Allow Insecure TLS",
+    "type": "boolean"
   },
   "ext-data-polling": {
+    "description": "Sets the minimum and maximum delay between requests to the external data source.",
     "enterpriseOnly": true,
     "id": "ext-data-polling",
     "path": "/../integrations#polling-minmax-delay",
-    "title": "Polling Min / Max Delay"
+    "title": "Polling Min / Max Delay",
+    "type": "duration"
   },
   "ext-data-record-type": {
     "description": "Overridden by the directory structure of an archive file dataset",
@@ -566,6 +583,7 @@
     "type": ""
   },
   "google-cloud-serverless-authentication-service-account": {
+    "description": "Sets service account credentials for Google Cloud serverless authorization headers.",
     "id": "google-cloud-serverless-authentication-service-account",
     "path": "/google-cloud-serverless-authentication-service-account",
     "services": ["authorize"],
@@ -582,11 +600,12 @@
     "type": "string"
   },
   "grpc-client-timeout": {
+    "description": "Sets the timeout for gRPC client requests made to internal Pomerium services.",
     "id": "grpc-client-timeout",
     "path": "/grpc#grpc-client-timeout",
     "services": [],
     "title": "gRPC Client Timeout",
-    "type": ""
+    "type": "duration"
   },
   "grpc-health-check-authority": {
     "description": "Specifies the ':authority' header value in a gRPC health check request. Optional.",
@@ -619,6 +638,7 @@
     "type": "string"
   },
   "headers-settings": {
+    "description": "Configure route host, request, and response header settings.",
     "id": "headers-settings",
     "path": "/routes/headers",
     "title": "Headers Settings"
@@ -761,7 +781,7 @@
     "description": "Choose from a list of supported IDPs.",
     "enterpriseOnly": true,
     "id": "identity-provider",
-    "path": "/../identity-providers",
+    "path": "/../integrations/user-identity/identity-providers",
     "title": "Identity Provider",
     "type": "string"
   },
@@ -774,6 +794,7 @@
     "type": "string"
   },
   "identity-provider-client-id-per-route": {
+    "description": "Overrides the global identity provider client ID for this route.",
     "id": "identity-provider-client-id-per-route",
     "path": "/routes/identity-provider-client-id-per-route",
     "services": ["proxy"],
@@ -797,6 +818,7 @@
     "type": "string"
   },
   "identity-provider-client-secret-per-route": {
+    "description": "Overrides the global identity provider client secret for this route.",
     "id": "identity-provider-client-secret-per-route",
     "path": "/routes/identity-provider-client-secret-per-route",
     "services": ["proxy"],
@@ -865,7 +887,7 @@
     "description": "Click for information on Auth0",
     "enterpriseOnly": true,
     "id": "idp-options-auth0",
-    "path": "/../integrations/auth0",
+    "path": "/../integrations/user-identity/auth0",
     "title": "Identity Provider Auth0",
     "type": "string"
   },
@@ -873,7 +895,7 @@
     "description": "Click for information on Microsoft Entra ID",
     "enterpriseOnly": true,
     "id": "idp-options-azure",
-    "path": "/../integrations/azure",
+    "path": "/../integrations/user-identity/azure",
     "title": "Identity Provider Microsoft Entra ID",
     "type": "string"
   },
@@ -881,7 +903,7 @@
     "description": "Click for information on Github",
     "enterpriseOnly": true,
     "id": "idp-options-github",
-    "path": "/../integrations/github",
+    "path": "/../integrations/user-identity/github",
     "title": "Identity Provider Github",
     "type": "string"
   },
@@ -889,7 +911,7 @@
     "description": "Click for information on Gitlab",
     "enterpriseOnly": true,
     "id": "idp-options-gitlab",
-    "path": "/../integrations/gitlab",
+    "path": "/../integrations/user-identity/gitlab",
     "title": "Identity Provider Gitlab",
     "type": "string"
   },
@@ -897,7 +919,7 @@
     "description": "Click for information on getting a service account from Google.",
     "enterpriseOnly": true,
     "id": "idp-options-google",
-    "path": "/../integrations/google",
+    "path": "/../integrations/user-identity/google",
     "title": "Identity Provider Google",
     "type": "string"
   },
@@ -905,7 +927,7 @@
     "description": "Click for information on Keycloak",
     "enterpriseOnly": true,
     "id": "idp-options-keycloak",
-    "path": "/../integrations/keycloak",
+    "path": "/../integrations/user-identity/keycloak",
     "title": "Identity Provider Keycloak",
     "type": "string"
   },
@@ -913,7 +935,7 @@
     "description": "Click for information on Okta.",
     "enterpriseOnly": true,
     "id": "idp-options-okta",
-    "path": "/../integrations/okta",
+    "path": "/../integrations/user-identity/okta",
     "title": "Identity Provider Okta",
     "type": "string"
   },
@@ -921,7 +943,7 @@
     "description": "Click for information on Onelogin.",
     "enterpriseOnly": true,
     "id": "idp-options-onelogin",
-    "path": "/../integrations/one-login",
+    "path": "/../integrations/user-identity/one-login",
     "title": "Identity Provider Onelogin",
     "type": "string"
   },
@@ -929,7 +951,7 @@
     "description": "Click for information on Ping.",
     "enterpriseOnly": true,
     "id": "idp-options-ping",
-    "path": "/../integrations/ping",
+    "path": "/../integrations/user-identity/ping",
     "title": "Identity Provider Ping",
     "type": "string"
   },
@@ -991,7 +1013,7 @@
   "kubernetes-service-account-token-file": {
     "description": "File location containing a Kubernetes bearer token.",
     "id": "kubernetes-service-account-token-file",
-    "path": "/routes/kubernetes-service-account-token-file",
+    "path": "/routes/kubernetes-service-account-token",
     "services": ["proxy"],
     "title": "Kubernetes Service Account Token File",
     "type": "string"
@@ -1013,6 +1035,7 @@
     "type": "not currently supported"
   },
   "load-balancing-settings": {
+    "description": "Configure route load balancing policies and health checks.",
     "id": "load-balancing-settings",
     "path": "/routes/load-balancing",
     "title": "Load Balancing Settings"
@@ -1034,9 +1057,10 @@
     "type": "URL"
   },
   "manage-devices": {
+    "description": "Manage device enrollments and device identity for policy-based authorization.",
     "enterpriseOnly": true,
     "id": "manage-devices",
-    "path": "/../capabilities/device-identity",
+    "path": "/../integrations/device-context/webauthn#manage-devices-enterprise",
     "title": "Manage Devices"
   },
   "mcp-allowed-as-metadata-domains": {
@@ -1141,6 +1165,7 @@
     "type": "string"
   },
   "metrics-basic-authentication": {
+    "description": "Requires Basic HTTP Authentication to access the metrics endpoint.",
     "id": "metrics-basic-authentication",
     "path": "/metrics#metrics-basic-authentication",
     "services": [],
@@ -1175,15 +1200,18 @@
     "description": "A way to migrate routes from an existing Open Source Pomerium config file. You probably only want to do this once.",
     "enterpriseOnly": true,
     "id": "migrate-routes",
+    "path": "/../capabilities/routing",
     "title": "Migrate Routes"
   },
   "new-enrollment": {
+    "description": "Create enrollment links users can follow to register devices.",
     "enterpriseOnly": true,
     "id": "new-enrollment",
-    "path": "/../capabilities/device-identity#new-enrollment",
+    "path": "/../integrations/device-context/webauthn#new-enrollment-enterprise",
     "title": "New Enrollment"
   },
   "outlier-detection": {
+    "description": "Removes unhealthy upstream hosts from the load balancing set based on outlier detection.",
     "id": "outlier-detection",
     "path": "/routes/outlier-detection",
     "services": ["proxy"],
@@ -1201,6 +1229,7 @@
   "override-ip-address": {
     "description": "Manually sets the IP address of this cluster and overrides the detected IP. Use this setting if Pomerium can't connect to cluster over detected IP.",
     "id": "override-ip-address",
+    "path": "/../internals/clusters#detected-and-override-ip-address",
     "title": "Override IP Address"
   },
   "pass-identity-headers": {
@@ -1215,7 +1244,7 @@
   "pass-identity-headers-per-route": {
     "description": "If applied, passes X-Pomerium-Jwt-Assertion header and JWT Claims Headers to the upstream application.",
     "id": "pass-identity-headers-per-route",
-    "path": "/routes/pass-identity-headers-per-route",
+    "path": "/routes/pass-identity-headers",
     "services": ["proxy"],
     "short_description": "",
     "title": "Pass Identity Headers (per route)",
@@ -1256,6 +1285,7 @@
   "policy-definition": {
     "description": "Adds the explanation presented to an unauthorized user when they access a route with this policy. Optional.",
     "id": "policy-definition",
+    "path": "/../capabilities/self-remediation",
     "services": [],
     "title": "Definition",
     "type": "string"
@@ -1263,23 +1293,27 @@
   "policy-description": {
     "description": "Adds an optional description for this policy.",
     "id": "policy-description",
+    "path": "/../capabilities/authorization",
     "title": "Policy Description"
   },
   "policy-enforcement": {
     "description": "Determines if a policy applies to all routes or can be applied optionally to a given route.",
     "id": "policy-enforcement",
+    "path": "/../internals/namespacing#hierarchical-policy-enforcement",
     "title": "Policy Enforcement"
   },
   "policy-explanation": {
     "description": "Adds the explanation presented to an unauthorized user when they access a route with this policy. Optional.",
     "id": "policy-explanation",
+    "path": "/../capabilities/self-remediation",
     "services": [],
     "title": "Explanation",
     "type": "string"
   },
   "policy-inheritance": {
+    "description": "Controls whether child namespaces inherit policies enforced by parent namespaces.",
     "id": "policy-inheritance",
-    "path": "/../capabilities/namespacing#hierarchical-policy-enforcement",
+    "path": "/../internals/namespacing#hierarchical-policy-enforcement",
     "services": [],
     "title": "Enforcement",
     "type": "string"
@@ -1288,6 +1322,7 @@
     "description": "Adds the message, warning, or instructions presented to an unauthorized user to help them self-remediate. Optional.",
     "enterpriseOnly": "true",
     "id": "policy-remediation",
+    "path": "/../capabilities/self-remediation",
     "services": [],
     "title": "Remediation",
     "type": "string"
@@ -1366,6 +1401,7 @@
     "type": "string"
   },
   "programmatic-redirect-domain-whitelist": {
+    "description": "Restricts the allowed redirect domains for programmatic login.",
     "id": "programmatic-redirect-domain-whitelist",
     "path": "/programmatic-redirect-domain-whitelist",
     "services": [],
@@ -1409,7 +1445,7 @@
     "description": "Optional: The URL the user will be taken to after device enrollment is successful.",
     "enterpriseOnly": true,
     "id": "redirect-url",
-    "path": "/../capabilities/device-identity#create-an-enrollment-link",
+    "path": "/../integrations/device-context/webauthn#enroll-devices-as-an-administrator-enterprise",
     "title": "Redirect URL"
   },
   "regex": {
@@ -1533,7 +1569,7 @@
     "description": "New Enrollment URLs are only valid for the specified user.",
     "enterpriseOnly": true,
     "id": "search-users",
-    "path": "/../capabilities/device-identity#new-enrollment",
+    "path": "/../integrations/device-context/webauthn#enroll-devices-as-an-administrator-enterprise",
     "title": "Search Users"
   },
   "secondary-color": {
@@ -1648,6 +1684,7 @@
     "type": "string"
   },
   "signout-redirect-url": {
+    "description": "Sets the URL users are redirected to after signing out.",
     "id": "signout-redirect-url",
     "path": "/signout-redirect-url",
     "services": ["proxy"],
@@ -1716,6 +1753,7 @@
     "type": "uint32"
   },
   "timeouts": {
+    "description": "Configure route websocket, SPDY, route timeout, and idle timeout settings.",
     "id": "timeouts",
     "path": "/routes/timeouts",
     "title": "Timeouts Settings"
@@ -1736,10 +1774,12 @@
     "title": "TLS Custom Certificate Authority"
   },
   "tls-downstream-client-certificate-authority": {
+    "description": "PEM-encoded X.509 certificates used to verify downstream client certificates for a route.",
     "id": "tls-downstream-client-certificate-authority",
-    "path": "/tls#tls-downstream-client-certificate-authority",
+    "path": "/routes/tls#tls-downstream-client-certificate-authority",
     "services": ["proxy"],
-    "title": "TLS Downstream Client Certificate Authority"
+    "title": "TLS Downstream Client Certificate Authority",
+    "type": "string"
   },
   "tls-downstream-server-name": {
     "description": "This server name overrides the Hostname in the 'From:' field, and serves as the Server Name Indication when establishing a TLS connection with Pomerium.",
@@ -1750,6 +1790,7 @@
     "type": "string"
   },
   "tls-settings": {
+    "description": "Configure TLS route certificate authority, server name, verification, and client certificate settings.",
     "id": "tls-settings",
     "path": "/routes/tls",
     "services": ["proxy"],
@@ -1790,6 +1831,7 @@
     "type": "URL(s)"
   },
   "tracing": {
+    "description": "Configure OpenTelemetry tracing for request and authorization flow introspection.",
     "id": "tracing",
     "path": "/tracing",
     "services": [],
@@ -1824,10 +1866,11 @@
     "title": "Tracing Sample Rate"
   },
   "use-proxy-protocol": {
+    "description": "Requires the PROXY protocol on incoming connections.",
     "id": "use-proxy-protocol",
     "path": "/use-proxy-protocol",
     "services": [],
-    "title": "Use Proxy Protocol",
+    "title": "Use PROXY Protocol",
     "type": "bool"
   },
   "websocket-connections": {

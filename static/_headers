@@ -3,3 +3,16 @@
 
 /assets/*
   Cache-Control: public, max-age=31536000, immutable
+
+# s-maxage lets the user-facing GCP Cloud CDN cache pages and .md for 5 min; its
+# CACHE_ALL_STATIC mode skips html/markdown without an explicit directive. Short,
+# since GCP isn't purged on deploy.
+/docs/*
+  Cache-Control: public, max-age=0, s-maxage=300, must-revalidate
+
+# /docs.md is a sibling of /docs/, not under it, so the splat above misses it.
+/docs.md
+  Cache-Control: public, max-age=0, s-maxage=300, must-revalidate
+
+/llms*.txt
+  Cache-Control: public, max-age=0, s-maxage=300, must-revalidate

@@ -135,6 +135,8 @@ Primary secure listener. Terminates TLS and forwards to appropriate upstream clu
 
 Enables HTTP/3 over QUIC for improved performance (reduced latency, better performance on lossy networks). Requires UDP port open and [`codec_type: http3`](../reference/codec-type).
 
+When HTTP/3 is enabled, Pomerium adds an `Alt-Svc` response header on the non-QUIC listener so clients can upgrade to QUIC. The `http3_advertise_port` settings field overrides the port Pomerium derives from `address` for that advertised value; it is only settable through the settings API, not as a config-file key or environment variable.
+
 #### gRPC Ingress (`grpc-ingress`)
 
 Internal gRPC server endpoint used by other Pomerium services. TLS terminated unless `grpc_insecure` is set.
