@@ -1,6 +1,7 @@
 ---
 title: 'Whitelabeling'
 sidebar_label: 'Whitelabeling'
+sidebar_class_name: enterprise
 description: "Customize Pomerium's user-facing and administrative UI with your organization's branding."
 keywords:
   - 'pomerium'

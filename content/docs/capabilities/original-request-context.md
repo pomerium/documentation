@@ -2,6 +2,7 @@
 # cSpell:ignore companydomain autonumber rgba
 
 title: Original User Context
+sidebar_class_name: enterprise
 description: This article describes how the original user context is passed secondary requests.
 ---
 
