@@ -1,6 +1,7 @@
 ---
 #cSpell:ignore etag
 title: Service Accounts
+sidebar_class_name: enterprise
 description: Create and manage service accounts for machine-to-machine authentication between services protected by Pomerium.
 lang: en-US
 keywords:
