@@ -43,6 +43,14 @@ Each provider is a map entry. The key is the provider name; the value has the fo
 
 TLS for JWKS and discovery fetches uses the global [`certificate_authority` / `certificate_authority_file`](/docs/reference/certificates); there is no per-provider CA setting.
 
+## How Pomerium identifies the caller
+
+A verified token does not carry a Pomerium session; Pomerium derives one from the token so that policy, logging, and rate limiting have a stable identity to work with:
+
+- The session's identity provider is the **provider name** (the `identity_providers` map key), and the caller's user ID is **`<provider-name>/<sub>`** — the provider name prefixes the token's `sub` claim so two providers can't collide on one identity. A token with no `sub` is rejected.
+- The same token maps to the same session, so repeated requests are cheap. The session's lifetime is capped at the sooner of the token's `exp` and `cookie_expire`.
+- Pomerium does not store the raw token. Because of this, `$pomerium.id_token` substitution and the `id-token` authorize-log field are empty for these workload sessions, and Pomerium does not observe revocation before the token expires — a leaked token is usable until its `exp` (or the session cap) is reached.
+
 ## How to Configure
 
 <Tabs>
