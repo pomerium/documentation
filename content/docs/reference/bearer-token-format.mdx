@@ -60,6 +60,19 @@ Two rules apply to every bearer route:
 | `idp_identity_token` | An OIDC identity (ID) token from your IdP | Validated with the identity provider. |
 | `jwt` | A JWT from any issuer you trust | Verified locally against the public keys of a trusted provider declared in [`identity_providers`](/docs/reference/identity-providers), scoped to that provider's audiences. |
 
+```mermaid
+flowchart LR
+  A["Authorization: Bearer …"] --> B{bearer_token_format}
+  B -->|default| C[Passed through<br/>uninterpreted]
+  B -->|idp_access_token<br/>idp_identity_token| D[Validated with the<br/>sign-in IdP]
+  B -->|jwt| E[Verified locally against<br/>identity_providers]
+  D --> F[Session from claims]
+  E --> F
+  F --> G[Policy: allow / deny]
+  C --> H[Upstream]
+  G -->|allow| H
+```
+
 For the `jwt` format, [`identity_providers`](/docs/reference/identity-providers) documents the verification model and per-provider settings, and [Machine-to-Machine Access with Bearer Tokens](/docs/capabilities/bearer-token-access) walks through the workflow end to end.
 
 ## How to Configure

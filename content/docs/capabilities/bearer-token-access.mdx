@@ -44,6 +44,21 @@ Pomerium supports four bearer token formats, selected with [`bearer_token_format
 
 The `jwt` format lets Pomerium accept a JWT issued by any provider you declare as trusted — a Kubernetes cluster, a SPIFFE authority, GitHub Actions, or any OIDC-compliant system. Unlike the IdP formats, there is no call to an identity provider per request: Pomerium fetches the provider's public keys once and verifies tokens locally.
 
+```mermaid
+sequenceDiagram
+  participant I as Issuer<br/>(Kubernetes, SPIFFE, CI)
+  participant W as Workload
+  participant P as Pomerium
+  participant U as Upstream
+
+  P ->> I: Fetch public keys (JWKS, once — cached)
+  I ->> W: Issue JWT
+  W ->> P: GET /api/widgets<br/>Authorization: Bearer <token>
+  P ->> P: Verify signature, iss, exp, nbf, aud
+  P ->> P: Evaluate route policy against claims
+  P ->> U: Proxy request
+```
+
 You declare these trusted providers with [`identity_providers`](/docs/reference/identity-providers), a map keyed by a name you choose. These are _additional_ providers used only to verify JWT bearer tokens; they do not replace the interactive `idp_*` sign-in provider. Each entry names the issuer to trust and the audiences to accept. A minimal configuration looks like this:
 
 ```yaml title="config.yaml"
