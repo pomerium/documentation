@@ -78,6 +78,7 @@ Create a concise PR title, under 72 characters if possible.
 
 ```bash
 gh pr create --base main --title "<your generated PR title>" --body "<your generated PR body description>"
+```
 
 ### 6. Confirm
 
