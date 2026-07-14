@@ -23,7 +23,4 @@ the routing config"). If no AI was used, write "none". See AI_POLICY.md. -->
 ## Checklist
 
 - [ ] reference any related issues
-- [ ] updated docs
-- [ ] updated UPGRADING.md
-- [ ] updated CHANGELOG.md
 - [ ] disclosed AI usage (or wrote "none") per AI_POLICY.md

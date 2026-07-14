@@ -63,41 +63,21 @@ git push -u origin HEAD
 
 Use `gh pr create` with the repository's PR template structure from `.github/ISSUE_TEMPLATE/PULL_REQUEST_TEMPLATE`.
 
-The template has three sections:
+The PR description template has four sections:
 
-- **Summary** — Describe what changed and why
-- **Related** — Link related issues or PRs (especially from `pomerium/pomerium`)
-- **Checklist** — Task list of items to verify
+- **Summary** — Describe what changed and especially focus on the "why"
+- **Related** — Include links to related issues or PRs (especially from the `pomerium/pomerium` repo) or leave as "N/A"
+- **AI disclosure** — Disclose how this PR was generated using AI
+- **Checklist** — Check off task list items completed.
 
-#### Compose the PR Body
+Analyze all commits in `git log main..HEAD` to write the PR body description.
 
-Analyze all commits in `git log main..HEAD` to write the PR body:
-
-- **Title**: Follow commit convention — `docs: short description` (under 72 chars). Use `docs(scope):` when changes are scoped to a specific area.
-- **Summary**: 1-3 bullet points describing the changes and their purpose. Focus on "why" not "what".
-- **Related**: Include links to related issues/PRs if the user mentions them or if commit messages reference them. Otherwise leave as "N/A".
-- **Checklist**: Check off items that apply. For this docs repo, "updated docs" is almost always checked. UPGRADING.md and CHANGELOG.md typically don't apply unless the change is about a version release.
+Create a concise PR title, under 72 characters if possible.
 
 #### Execute
 
 ```bash
-gh pr create --base main --title "docs: description" --body "$(cat <<'EOF'
-## Summary
-
-- Description of changes
-
-## Related
-
-N/A
-
-## Checklist
-
-- [ ] reference any related issues
-- [x] updated docs
-- [ ] updated UPGRADING.md
-- [ ] updated CHANGELOG.md
-EOF
-)"
+gh pr create --base main --title "<your generated PR title>" --body "<your generated PR body description>"
 ```
 
 ### 6. Confirm
