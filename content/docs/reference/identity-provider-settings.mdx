@@ -231,22 +231,20 @@ See [`identityProvider.provider`](/docs/deploy/k8s/reference#identityprovider) f
 
 ```yaml
 idp_request_params:
-  client_id: client_id
-  response_type: response_type
-  redirect_uri: redirect_uri
+  prompt: login
 ```
 
 ```bash
-IDP_REQUEST_PARAMS='{"client_id":"client_id", "response_type":"response_type", "redirect_uri":"redirect_uri"}'
+IDP_REQUEST_PARAMS='{"prompt":"login"}'
 ```
+
+Pomerium generates the OAuth protocol parameters required for the sign-in flow, including the client ID, response type, and redirect URI. Values in `idp_request_params` cannot override generated parameters.
 
 </TabItem>
 <TabItem value="Enterprise" label="Enterprise">
 <EnterpriseConfiguration name="request_params" resource="settings">
 
 Configure **Identity Provider Request Params** under **Authenticate** settings in the Console:
-
-![Configure request parameters under authenticate settings in the console](./img/idp_options/idp-request-params.png)
 
 </EnterpriseConfiguration>
 </TabItem>
