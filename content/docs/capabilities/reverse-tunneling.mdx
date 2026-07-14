@@ -23,6 +23,12 @@ import CodeBlock from '@theme/CodeBlock';
 
 ![Diagram](./img/ssh/reverse-tunnel.svg)
 
+:::tip Interactive Tutorial
+
+Try the [**Native SSH Reverse Tunneling with Pomerium**](https://usepom.link/reverse-ssh) interactive tutorial on iximiuz labs for a hands-on walkthrough. It's free to use, but you'll need to create an account.
+
+:::
+
 Any HTTP or SSH route can be configured to route upstream traffic through authenticated SSH clients using reverse port-forwarding.
 
 When a route is in this mode, Pomerium will not route traffic for that route directly to upstream servers. Instead, SSH clients can connect to Pomerium and register themselves as upstream endpoints for the route (for as long as they remain connected and authenticated). Then, when a downstream client connects to the route, Pomerium will tell a connected SSH client to open a connection to the "real" upstream server via reverse port-forward.
