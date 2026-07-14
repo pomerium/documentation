@@ -1,8 +1,8 @@
 ---
-title: Auth0
-description: Configure Auth0 as an identity provider for Pomerium Core and Enterprise.
+title: Descope
+description: Configure Descope as an identity provider for Pomerium Core and Enterprise.
 lang: en-US
-keywords: [auth0, pomerium, identity provider, idp]
+keywords: [descope, pomerium, identity provider, idp]
 pagination_prev: null
 pagination_next: null
 ---
@@ -10,34 +10,32 @@ pagination_next: null
 import TabItem from '@theme/TabItem';
 import Tabs from '@theme/Tabs';
 
-This page documents how to configure an [Auth0](https://descope.com) application for use with Pomerium. It assumes you have already [installed Pomerium](/docs/get-started/quickstart).
+This page documents how to configure a [Descope](https://descope.com) Application for use with Pomerium. It assumes you have already [installed Pomerium](/docs/get-started/quickstart).
 
 :::caution
 
-While we do our best to keep our documentation up to date, changes to third-party systems are outside our control. Refer to [Applications in Auth0](https://auth0.com/docs/applications) from Auth0's docs as needed, or [let us know](https://github.com/pomerium/documentation/issues/new?assignees=&labels=&template=doc-error.md) if we need to re-visit this page.
+While we do our best to keep our documentation up to date, changes to third-party systems are outside our control. Refer to [OIDC Applications in Descope](https://docs.descope.com/identity-federation/applications/oidc-apps) from Descope's docs as needed, or [let us know](https://github.com/pomerium/documentation/issues/new?assignees=&labels=&template=doc-error.md) if we need to re-visit this page.
 
 :::
 
-## Create an Auth0 Application
+## Create a Descope OIDC Application
 
-1. [Log in to your Auth0 account](https://manage.auth0.com/) and head to your dashboard. Select **Applications → Applications** on the left menu. On the Applications page, click the **Create Application** button.
+1. [Log in to your Descope console](https://app.descope.com) and select [Federated Apps](https://app.descope.com/applications) in the left sidebar. On the Applications page,
+    you can use the default OIDC application configured out of the box, or  click the **+ Application** button to create a new application. From the app library, select **Generic OIDC Application**. 
+    Provide an **Application Name** and optionally an **Application ID** and **Description**, and then click **Create**.
 
-   ![Auth0 Applications Dashboard](./img/auth0/dashboard.png)
+   ![Descope Create OIDC Application Select Platform](./img/descope/create-oidc-app.png)
 
-1. On the **Create New Application** page, name your application and select the type **Native**, then click **Create**. This is the application that your users will log in to.
+1. Under the **IdP Configuration** tab, note the **Issuer** URL value, which will later become the **Identity Provider URL** when configuring Pomerium.
 
-   ![Auth0 Create Application Select Platform](./img/auth0/create.png)
+    ![Descope OIDC Application IdP Configuration](./img/descope/idp-configuration.png)
 
-1. Switch to the **Settings** tab, and note the **Domain**, **Client ID**, and **Client Secret** values. We'll need these later to configure Pomerium.
+    Here you can also customize the exact [Flow](https://docs.descope.com/flows) which users will use to authenticate, along with **Supported Claims** and an option to force re-authentication.
 
-1. Provide the following information for your application settings:
+1. Under the **SP Configuration** menu, select **Confidential** under **Client Authentication**, ensuring that your application can act as a confidential client and maintain a client secret. Note the **Client ID** 
+and **Client Secret** values. We will need these later when configuring Pomerium. 
 
-   | Field | Description |
-   | --- | --- |
-   | Name | The name of your application. |
-   | Application Login URI | [Authenticate Service URL] (e.g. `https://auth.example.com`) |
-   | Allowed Callback URLs | Redirect URL (e.g. `https://auth.example.com/oauth2/callback`). |
-   | Allowed Logout URLs | Sign Out URL (e.g. `https://auth.example.com/.pomerium/signed_out`). |
+    ![Descope OIDC Application SP Configuration](./img/descope/sp-configuration.png)
 
 1. In pomerium versions 0.31.X and below, if you want to use Pomerium's [**native SSH access**](/docs/capabilities/native-ssh-access): scroll down to **Advanced Settings** near the bottom of the page, then select the **Grant Types** tab. Make sure the **Device Code** box is checked:
 
@@ -45,7 +43,7 @@ While we do our best to keep our documentation up to date, changes to third-part
 
 The device code support is not needed in 0.32.0 and above.
 
-1. Click **Save** at the bottom of the page when you're done.
+Click **Save** at the bottom of the page when you're done.
 
 ## Configure Pomerium
 
@@ -55,30 +53,24 @@ You can now configure Pomerium with the identity provider settings retrieved in 
 <TabItem value="config-file-keys" label="Config file keys">
 
 ```yaml
-idp_provider: 'auth0'
-idp_provider_url: 'https://awesome-company.auth0.com'
-idp_client_id: 'REPLACE_ME' # from the web application
-idp_client_secret: 'REPLACE_ME' # from the web application
+idp_provider: 'descope'
+idp_provider_url: 'https://api.descope.com/<Project ID>'
+idp_client_id: 'REPLACE_ME' # from the Descope OIDC application
+idp_client_secret: 'REPLACE_ME' # from the Descope OIDC application
 ```
 
 </TabItem>
 <TabItem value="environment-variables" label="Environment Variables">
 
 ```bash
-IDP_PROVIDER="auth0"
-IDP_PROVIDER_URL="https://awesome-company.auth0.com"
-IDP_CLIENT_ID="REPLACE_ME" # from the web application
-IDP_CLIENT_SECRET="REPLACE_ME" # from the web application
+IDP_PROVIDER="descope"
+IDP_PROVIDER_URL="https://api.descope.com/<Project ID>"
+IDP_CLIENT_ID="REPLACE_ME" # from the Descope OIDC application
+IDP_CLIENT_SECRET="REPLACE_ME" # from the Descope OIDC application
 ```
 
 </TabItem>
 </Tabs>
-
-:::tip
-
-Remember to prepend the Auth0 **Domain** with `https://` to get the provider URL.
-
-:::
 
 ## Groups
 
@@ -87,7 +79,7 @@ Remember to prepend the Auth0 **Domain** with `https://` to get the provider URL
 
 ### Custom Claim
 
-To authorize users based on their group membership (roles in Auth0), a claim can be added to the identity token with a [login action](https://auth0.com/docs/customize/actions).
+To authorize users based on their group membership ([RBAC roles](https://docs.descope.com/authorization/role-based-access-control) in Descope), a claim can be added to the identity token with a [login action](https://auth0.com/docs/customize/actions).
 
 1. Create an action named `add groups` with the following code:
 
