@@ -218,6 +218,12 @@ See [`identityProvider.provider`](/docs/deploy/k8s/reference#identityprovider) f
 
 **Identity Provider Request Params** lists the parameters you want to include as part of a sign-in request using the OAuth 2.0 code flow.
 
+:::warning
+
+Do not set the `client_id`, `response_type`, `redirect_uri`, `scope`, `state`, or `nonce` parameters here. Pomerium sets these itself as part of the OAuth 2.0 code flow, and overriding them will break sign-in. Use this setting only for additional parameters your identity provider supports (for example, `prompt` or `access_type`).
+
+:::
+
 ### How to configure \{#identity-provider-request-params-how-to-configure}
 
 <Tabs>
@@ -231,13 +237,12 @@ See [`identityProvider.provider`](/docs/deploy/k8s/reference#identityprovider) f
 
 ```yaml
 idp_request_params:
-  client_id: client_id
-  response_type: response_type
-  redirect_uri: redirect_uri
+  foo: bar
+  baz: qux
 ```
 
 ```bash
-IDP_REQUEST_PARAMS='{"client_id":"client_id", "response_type":"response_type", "redirect_uri":"redirect_uri"}'
+IDP_REQUEST_PARAMS='{"foo":"bar", "baz":"qux"}'
 ```
 
 </TabItem>
