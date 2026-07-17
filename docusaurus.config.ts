@@ -69,7 +69,7 @@ const config: Config = {
           versions: {
             // On a numbered release branch, override this label to that version.
             current: {
-              label: 'Latest (main)',
+              label: 'v0.33',
             },
           },
         },
@@ -175,12 +175,12 @@ const config: Config = {
           dropdownActiveClassDisabled: true,
           dropdownItemsAfter: [
             {
-              to: 'https://0-32-0.docs.pomerium.com/docs',
-              label: 'Latest stable (v0.32)',
+              to: 'https://0-33-0.docs.pomerium.com/docs',
+              label: 'Latest stable (v0.33)',
             },
             {
-              to: 'https://0-31-0.docs.pomerium.com/docs',
-              label: 'v0.31',
+              to: 'https://0-32-0.docs.pomerium.com/docs',
+              label: 'v0.32',
             },
             {
               type: 'html',
