@@ -99,6 +99,7 @@ In order to use the service account token, Ingress Controller will need the shar
 
 ```
 kubectl get secret -n pomerium bootstrap -o jsonpath='{.data.shared_secret}' | \
+  base64 -d | \
   kubectl create secret generic -n pomerium api-token --from-file=token=/dev/stdin
 ```
 
