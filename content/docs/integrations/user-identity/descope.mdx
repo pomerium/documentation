@@ -1,8 +1,8 @@
 ---
 title: Descope
-description: Configure Descope as an identity provider for Pomerium Core and Enterprise.
+description: Configure Descope as an identity provider for Pomerium Core and Enterprise and set up Role Based Access Control.
 lang: en-US
-keywords: [descope, pomerium, identity provider, idp]
+keywords: [descope, pomerium, identity provider, idp, rbac]
 pagination_prev: null
 pagination_next: null
 ---
@@ -30,18 +30,12 @@ While we do our best to keep our documentation up to date, changes to third-part
 
     ![Descope OIDC Application IdP Configuration](./img/descope/idp-configuration.png)
 
-    Here you can also customize the exact [Flow](https://docs.descope.com/flows) which users will use to authenticate, along with **Supported Claims** and an option to force re-authentication.
+    Here you can also customize the exact [**Flow**](https://docs.descope.com/flows) which users will use to authenticate, along with **Supported Claims** and an option to force re-authentication.
 
 1. Under the **SP Configuration** menu, select **Confidential** under **Client Authentication**, ensuring that your application can act as a confidential client and maintain a client secret. Note the **Client ID** 
 and **Client Secret** values. We will need these later when configuring Pomerium. 
 
     ![Descope OIDC Application SP Configuration](./img/descope/sp-configuration.png)
-
-1. In pomerium versions 0.31.X and below, if you want to use Pomerium's [**native SSH access**](/docs/capabilities/native-ssh-access): scroll down to **Advanced Settings** near the bottom of the page, then select the **Grant Types** tab. Make sure the **Device Code** box is checked:
-
-   ![Auth0 Applications Dashboard](./img/auth0/device-code.png)
-
-The device code support is not needed in 0.32.0 and above.
 
 Click **Save** at the bottom of the page when you're done.
 
@@ -57,6 +51,7 @@ idp_provider: 'descope'
 idp_provider_url: 'https://api.descope.com/<Project ID>'
 idp_client_id: 'REPLACE_ME' # from the Descope OIDC application
 idp_client_secret: 'REPLACE_ME' # from the Descope OIDC application
+idp_scopes: 'openid, profile, email, offline_access, descope.claims, descope.custom_claims' # optionally include custom claims
 ```
 
 </TabItem>
@@ -67,42 +62,29 @@ IDP_PROVIDER="descope"
 IDP_PROVIDER_URL="https://api.descope.com/<Project ID>"
 IDP_CLIENT_ID="REPLACE_ME" # from the Descope OIDC application
 IDP_CLIENT_SECRET="REPLACE_ME" # from the Descope OIDC application
+IDP_SCOPES="openid, profile, offline_access, email, descope.claims, descope.custom_claims" # optionally include custom claims 
 ```
 
 </TabItem>
 </Tabs>
 
-## Groups
+## Role-Based Access Control and Custom Claims
 
-<Tabs queryString="get-groups">
-<TabItem value="custom-claim" label="Custom Claim (Open Source)">
+To authorize users' access based on [roles and permissions managed in Descope](https://docs.descope.com/authorization/role-based-access-control), 
+append the `descope.claims` scope to the default scopes in your Pomerium configuration. Pomerium will include this scope in the OIDC authorization request to Descope.
 
-### Custom Claim
+```yaml
+idp_provider: 'oidc'
+idp_provider_url: 'https://api.descope.com/<Project ID>'
+idp_client_id: '<APPLICATION_CLIENT_ID>' 
+idp_client_secret: '<APPLICATION_CLIENT_SECRET>' 
+idp_scopes: 'openid, profile, email, offline_access, descope.claims'
+```
 
-To authorize users based on their group membership ([RBAC roles](https://docs.descope.com/authorization/role-based-access-control) in Descope), a claim can be added to the identity token with a [login action](https://auth0.com/docs/customize/actions).
+The `descope.claims` scope automatically makes sure the returned ID token contains the user’s authorization information, such as Descope roles, permissions, and tenant authorization information.
+No other additional actions need to be taken in the Descope console. 
 
-1. Create an action named `add groups` with the following code:
-
-   ```javascript
-   exports.onExecutePostLogin = async (event, api) => {
-     if (event.authorization) {
-       api.idToken.setCustomClaim(
-         'pomerium.io/groups',
-         event.authorization.roles,
-       );
-     }
-   };
-   ```
-
-1. Deploy the action:
-
-   ![Auth0 Create Login Action](./img/auth0/action.png)
-
-1. Add it to the login flow:
-
-   ![Auth0 Create Login Flow](./img/auth0/flow.png)
-
-Now when users login they will have a claim named `pomerium.io/groups` that contains their groups (Auth0 roles) and the `claim` PPL criterion can be used for authorization:
+You can reference these claims directly using Pomerium’s claim policy criterion. For example, the following policy allows access only when the user’s roles claim contains the admin role:
 
 ```yaml
 routes:
@@ -111,41 +93,42 @@ routes:
     policy:
       - allow:
           and:
-            - claim/pomerium.io/groups: admin
+            - claim/roles: admin
 ```
 
-</TabItem>
-<TabItem value="directory-sync" label="Directory Sync (Enterprise)">
+Replace admin with the exact Descope role that should grant access to the route. 
+Pomerium evaluates the configured value against the claims contained in the authenticated user’s session.
 
-### Setting Up Directory Sync
+You can similarly authorize based on a Descope permission:
+```yaml
+policy:
+  - allow:
+      and:
+        - claim/permissions: users.read
+```
 
-1. Create a **Machine to Machine Application**. A different application is used for grabbing roles to keep things more secure.
+#### Custom Claims
+You can also include any additional [custom claims](https://docs.descope.com/management/token) in your Descope token by adding them with a with a [Custom Claims Flow Action](https://docs.descope.com/flows/actions/custom-claims) in your auth flow, or by configuring a 
+[JWT template](https://docs.descope.com/management/token/jwt-templates). To ensure Pomerium receives these custom claims in the returned ID token, make sure it requests the `descope.custom_claims` scope.
 
-   ![Auth Create Application Select Service Account Platform](./img/auth0/create-m2m.png)
+```yaml
+idp_scopes: 'openid, profile, email, offline_access, descope.claims, descope.custom_claims'
+```
 
-   Click **Create**.
+For example, if the issued token contains a custom department claim:
+```json
+{
+  "department": "engineering"
+}
+```
 
-1. On the next page select **Auth0 Management API** from the dropdown. Under **Permissions** use the filter on the right to narrow things down to `role`, and choose the `read:roles`, `read:role_members`, `read:users`, and `read:user_idp_tokens` roles.
+You can then reference it directly in a Pomerium policy:
+```yaml
+policy:
+  - allow:
+      and:
+        - claim/department: engineering
+```
 
-   ![Auth0 Management API Scopes](./img/auth0/m2m-scopes.png)
-
-   Then click **Authorize**.
-
-1. Retrieve the **Client ID** and **Client Secret** from the **Settings** tab.
-
-### Configure Pomerium Enterprise Console
-
-Under **Settings → Identity Providers**, select "Auth0" as the identity provider and set the Client ID, Client Secret and Domain.
-
-![Auth0 Settings](./img/auth0/auth0-idp.png)
-
-[auth0]: https://auth0.com/
-[authenticate service url]: /docs/reference/service-urls#authenticate-service-url
-[environmental variables]: https://en.wikipedia.org/wiki/Environment_variable
-
-</TabItem>
-</Tabs>
-
-[auth0]: https://auth0.com/
 [authenticate service url]: /docs/reference/service-urls#authenticate-service-url
 [environmental variables]: https://en.wikipedia.org/wiki/Environment_variable
