@@ -29,10 +29,6 @@ const config: Config = {
   },
   themes: ['@docusaurus/theme-mermaid', 'docusaurus-theme-openapi-docs'],
 
-  customFields: {
-    xgridKey: process.env.XGRID_KEY,
-  },
-
   headTags: [
     {
       tagName: 'link',

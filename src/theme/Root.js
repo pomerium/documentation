@@ -1,6 +1,4 @@
-import useDocusaurusContext from '@docusaurus/core/lib/client/exports/useDocusaurusContext';
 import {ThemeProvider, createTheme} from '@mui/material/styles';
-import {LicenseInfo} from '@mui/x-data-grid-pro';
 import React from 'react';
 
 import App from '../../src/components/App';
@@ -50,10 +48,6 @@ const theme = createTheme({
 });
 
 export default function Root({children}) {
-  const {
-    siteConfig: {customFields},
-  } = useDocusaurusContext();
-  LicenseInfo.setLicenseKey(customFields?.xgridKey?.toString());
   return (
     <>
       <ThemeProvider theme={theme}>
