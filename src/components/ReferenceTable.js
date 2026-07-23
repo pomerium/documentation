@@ -1,7 +1,7 @@
 import {useColorMode} from '@docusaurus/theme-common';
 import {FormControl, InputLabel, NativeSelect} from '@mui/material';
 import {GridToolbar} from '@mui/x-data-grid';
-import {DataGridPro} from '@mui/x-data-grid-pro/DataGridPro/DataGridPro';
+import {DataGridPro} from '@mui/x-data-grid-pro';
 import React, {useState} from 'react';
 
 import data from '../../content/docs/reference/reference.json';
@@ -71,10 +71,10 @@ function filterHidden(item) {
 }
 
 export default function ReferenceTable() {
-  const [pageSize, setPageSize] = useState(25);
-  const changePageSize = (pageSize) => {
-    setPageSize(pageSize);
-  };
+  const [paginationModel, setPaginationModel] = useState({
+    page: 0,
+    pageSize: 25,
+  });
 
   const {colorMode} = useColorMode();
 
@@ -128,12 +128,13 @@ export default function ReferenceTable() {
             sortModel: [{field: 'title', sort: 'asc'}],
           },
         }}
-        disableSelectionOnClick
+        disableRowSelectionOnClick
         autoHeight
-        rowsPerPageOptions={[5, 10, 25, 50]}
+        pageSizeOptions={[5, 10, 25, 50]}
         pagination
-        pageSize={pageSize}
-        onPageSizeChange={changePageSize}
+        paginationModel={paginationModel}
+        onPaginationModelChange={setPaginationModel}
+        showToolbar
         sx={{
           color:
             colorMode === 'dark'
@@ -158,7 +159,10 @@ export default function ReferenceTable() {
         }}
         columns={columns}
         rows={references.filter(filterHidden)}
-        componentsProps={{
+        slots={{
+          toolbar: GridToolbar,
+        }}
+        slotProps={{
           toolbar: {
             printOptions: {
               disableToolbarButton: true,
@@ -167,9 +171,6 @@ export default function ReferenceTable() {
               disableToolbarButton: true,
             },
           },
-        }}
-        components={{
-          Toolbar: GridToolbar,
         }}
       />
     </div>

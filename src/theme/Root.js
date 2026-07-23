@@ -1,6 +1,6 @@
 import useDocusaurusContext from '@docusaurus/core/lib/client/exports/useDocusaurusContext';
 import {ThemeProvider, createTheme} from '@mui/material/styles';
-import {LicenseInfo} from '@mui/x-data-grid-pro';
+import {LicenseInfo} from '@mui/x-license';
 import React from 'react';
 
 import App from '../../src/components/App';
