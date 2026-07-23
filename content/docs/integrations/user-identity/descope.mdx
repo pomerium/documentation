@@ -37,11 +37,33 @@ and **Client Secret** values. We will need these later when configuring Pomerium
 
     ![Descope OIDC Application SP Configuration](./img/descope/sp-configuration.png)
 
-Click **Save** at the bottom of the page when you're done.
+   Click **Create** at the bottom of the page when you're done.
+
+1. To configure Pomerium’s login, callback, and logout URLs as [**Approved Domains**](https://docs.descope.com/management/project-settings#approved-domains) in Descope, navigate to **[Project](https://app.descope.com/settings/project) → General → Security → Approved Domains**
+in the Descope console. 
+
+   Pomerium uses its Authenticate Service URL for the OIDC callback and post-logout redirect:
+
+   ```text
+   https://<authenticate-service-domain>/oauth2/callback
+   https://<authenticate-service-domain>/.pomerium/signed_out
+   ```
+
+   Under **Approved Domains**, add the domain from your Pomerium `authenticate_service_url`. For example, if the Authenticate Service URL is https://auth.example.com, add:
+
+   ```text
+   auth.example.com
+   ```
+   Enter only the domain, without `https://` or a URL path. Descope validates the Pomerium redirect URIs against this approved domain. 
+   Without this configuration, Descope rejects the authorization request because its redirect_uri is not approved.
+
+
+   Click **Save** at the bottom of the page when you're done.
+
 
 ## Configure Pomerium
 
-You can now configure Pomerium with the identity provider settings retrieved in the previous steps. Your `config.yaml` keys or [environmental variables] should look something like this.
+You can now configure Pomerium with the identity provider settings retrieved in the previous steps. Your `config.yaml` keys or environmental variables should look something like this.
 
 <Tabs queryString="configuration-settings">
 <TabItem value="config-file-keys" label="Config file keys">
@@ -62,7 +84,7 @@ IDP_PROVIDER="oidc"
 IDP_PROVIDER_URL="https://api.descope.com/<Project ID>"
 IDP_CLIENT_ID="REPLACE_ME" # from the Descope OIDC application
 IDP_CLIENT_SECRET="REPLACE_ME" # from the Descope OIDC application
-IDP_SCOPES="openid, profile, offline_access, email, descope.claims, descope.custom_claims" # optionally include custom claims 
+IDP_SCOPES="openid, profile, email, offline_access, descope.claims, descope.custom_claims" # optionally include custom claims 
 ```
 
 </TabItem>
@@ -108,7 +130,7 @@ policy:
 ```
 
 #### Custom Claims
-You can also include any additional [custom claims](https://docs.descope.com/management/token) in your Descope token by adding them with a with a [Custom Claims Flow Action](https://docs.descope.com/flows/actions/custom-claims) in your auth flow, or by configuring a 
+You can also include any additional [custom claims](https://docs.descope.com/management/token) in your Descope token by adding them with a [Custom Claims Flow Action](https://docs.descope.com/flows/actions/custom-claims) in your auth flow, or by configuring a 
 [JWT template](https://docs.descope.com/management/token/jwt-templates). To ensure Pomerium receives these custom claims in the returned ID token, make sure it requests the `descope.custom_claims` scope.
 
 ```yaml
