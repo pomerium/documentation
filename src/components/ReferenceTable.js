@@ -1,7 +1,6 @@
 import {useColorMode} from '@docusaurus/theme-common';
 import {FormControl, InputLabel, NativeSelect} from '@mui/material';
-import {GridToolbar} from '@mui/x-data-grid';
-import {DataGridPro} from '@mui/x-data-grid-pro';
+import {DataGrid, GridToolbar} from '@mui/x-data-grid';
 import React, {useState} from 'react';
 
 import data from '../../content/docs/reference/reference.json';
@@ -122,7 +121,7 @@ export default function ReferenceTable() {
 
   return (
     <div style={{width: '100%'}}>
-      <DataGridPro
+      <DataGrid
         initialState={{
           sorting: {
             sortModel: [{field: 'title', sort: 'asc'}],
