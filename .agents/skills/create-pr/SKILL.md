@@ -48,10 +48,10 @@ Then check what will be in the PR:
 Before pushing, run the checks that CI will enforce:
 
 ```bash
-yarn precommit
+npm run check
 ```
 
-This runs `format-check` and `cspell`. If formatting fails, run `yarn format` to fix, then re-stage and commit the fixes. If cspell fails on intentional terms, add them to `cspell.json`.
+This runs `format-check` and `cspell`. If formatting fails, run `npm run format` to fix, then re-stage and commit the fixes. If cspell fails on intentional terms, add them to `cspell.json`.
 
 ### 4. Push the Branch
 

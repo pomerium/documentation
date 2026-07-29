@@ -1,5 +1,5 @@
 // Crawler-mode regression tests for plugins/robots-txt-plugin.js.
-// Run: `yarn test:robots`.
+// Run: `npm run test:robots`.
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
