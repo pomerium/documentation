@@ -1,6 +1,6 @@
 import React, {PropsWithChildren, ReactNode} from 'react';
 
-import {ConfigType, Resource, getTypeName} from '../types';
+import {ConfigType, Resource} from '../types';
 import CoreConfigureTable from './CoreConfigureTable';
 
 type CoreConfigurationProps = PropsWithChildren<{
