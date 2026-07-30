@@ -1,69 +1,9 @@
 import {useColorMode} from '@docusaurus/theme-common';
-import {FormControl, InputLabel, NativeSelect} from '@mui/material';
 import {DataGrid, GridToolbar} from '@mui/x-data-grid';
 import React, {useState} from 'react';
 
 import data from '../../content/docs/reference/reference.json';
 import {renderCellExpand} from './RenderCellExpand';
-
-function ServiceSelector(props) {
-  const {item, applyValue} = props;
-
-  return (
-    <FormControl>
-      <InputLabel shrink id="serviceSelector">
-        Service
-      </InputLabel>
-      <NativeSelect
-        id="serviceSelector"
-        value={item?.value || ''}
-        onChange={(evt) => {
-          applyValue({...item, value: evt.target.value});
-        }}>
-        <option key="none" value="none">
-          &nbsp;
-        </option>
-        <option key="all" value="all">
-          All Services
-        </option>
-        <option key="proxy" value="proxy">
-          Proxy
-        </option>
-        <option key="authenticate" value="authenticate">
-          Authenticate
-        </option>
-        <option key="authorize" value="authorize">
-          Authorize
-        </option>
-        <option key="databroker" value="databroker">
-          Databroker
-        </option>
-      </NativeSelect>
-    </FormControl>
-  );
-}
-
-const serviceOperator = [
-  {
-    label: 'is',
-    value: 'is',
-    getApplyFilterFn: (filterItem) => {
-      if (
-        !filterItem.columnField ||
-        !filterItem.value ||
-        !filterItem.operatorValue ||
-        filterItem.value === 'none'
-      ) {
-        return null;
-      }
-
-      return (params) => {
-        return params.value.indexOf(filterItem.value) > -1;
-      };
-    },
-    InputComponent: ServiceSelector,
-  },
-];
 
 function filterHidden(item) {
   return !item.enterpriseOnly;
