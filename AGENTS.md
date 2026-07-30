@@ -7,14 +7,14 @@ Pomerium documentation site built with **Docusaurus 3.8** (React + MDX). Publish
 ```bash
 npm start                # Dev server on localhost:3001 (hot-reload)
 npm run build            # Production build to /build/
-npm run format           # Auto-fix formatting with Prettier
-npm run format-check     # Check formatting (no changes)
+npm run format           # Auto-fix formatting with oxfmt
+npm run format:check     # Check formatting (no changes)
 npm run check            # Run formatting and spelling checks
 npm run cspell           # Spell-check tracked source files
 npm run clear            # Clear Docusaurus cache (useful if build fails)
 ```
 
-This repo does not use the Python `pre-commit` framework. The CI `pre-commit` check runs the repo scripts directly (`npm run format-check`, `npm run cspell`), and the same commands are available locally via `npm run check`.
+This repo does not use the Python `pre-commit` framework. The CI `pre-commit` check runs the repo scripts directly (`npm run format:check`, `npm run cspell`), and the same commands are available locally via `npm run check`.
 
 ## Architecture
 
@@ -53,7 +53,7 @@ Enterprise-only sidebar items use `className: 'enterprise'`.
 ### Key config files
 
 - `docusaurus.config.js` — Site config. Broken links set to `throw` (both `onBrokenLinks` and `onBrokenMarkdownLinks`)
-- `.prettierrc` — 80 chars, single quotes, trailing commas, `proseWrap: never`
+- `.oxfmtrc.json` — 80 chars, single quotes, trailing commas, `proseWrap: never`
 - `cspell.json` — Custom dictionary (~290 words). Add new Pomerium-specific terms here when cspell fails on intentional words
 
 ## Content Authoring Conventions
@@ -120,8 +120,8 @@ Follow the pattern: `docs: description of change (#PR)` or `docs(scope): descrip
 
 - Broken links cause build failures (`onBrokenLinks: 'throw'`). Always verify internal link paths match file structure.
 - Images go in `content/docs/[section]/img/` directories alongside the content.
-- The `content/docs/deploy/k8s/reference.md` file is excluded from Prettier formatting (auto-generated).
-- Prose wrap is set to `never` — Prettier won't reflow markdown text.
+- The `content/docs/deploy/k8s/reference.md` file is excluded from oxfmt formatting (auto-generated).
+- Prose wrap is set to `never` — oxfmt won't reflow markdown text.
 - API docs are auto-generated from an OpenAPI spec via `redocusaurus` at `/docs/api/`.
 
 ## Cutting a new docs version
