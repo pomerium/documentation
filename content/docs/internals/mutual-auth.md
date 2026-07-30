@@ -3,8 +3,7 @@
 
 title: Mutual Authentication
 lang: en-US
-keywords:
-  [pomerium, identity access proxy, mutual authentication, jwt, jwks, mtls]
+keywords: [pomerium, identity access proxy, mutual authentication, jwt, jwks, mtls]
 description: Learn how Pomerium supports mutual authentication and can help you incorporate mTLS into your security framework.
 ---
 

@@ -32,12 +32,12 @@ While we do our best to keep our documentation up to date, changes to third-part
 
 1. Provide the following information for your application settings:
 
-   | Field | Description |
-   | --- | --- |
-   | Name | The name of your application. |
-   | Application Login URI | [Authenticate Service URL] (e.g. `https://auth.example.com`) |
-   | Allowed Callback URLs | Redirect URL (e.g. `https://auth.example.com/oauth2/callback`). |
-   | Allowed Logout URLs | Sign Out URL (e.g. `https://auth.example.com/.pomerium/signed_out`). |
+   | Field                 | Description                                                          |
+   | --------------------- | -------------------------------------------------------------------- |
+   | Name                  | The name of your application.                                        |
+   | Application Login URI | [Authenticate Service URL] (e.g. `https://auth.example.com`)         |
+   | Allowed Callback URLs | Redirect URL (e.g. `https://auth.example.com/oauth2/callback`).      |
+   | Allowed Logout URLs   | Sign Out URL (e.g. `https://auth.example.com/.pomerium/signed_out`). |
 
 1. In pomerium versions 0.31.X and below, if you want to use Pomerium's [**native SSH access**](/docs/capabilities/native-ssh-access): scroll down to **Advanced Settings** near the bottom of the page, then select the **Grant Types** tab. Make sure the **Device Code** box is checked:
 
@@ -94,10 +94,7 @@ To authorize users based on their group membership (roles in Auth0), a claim can
    ```javascript
    exports.onExecutePostLogin = async (event, api) => {
      if (event.authorization) {
-       api.idToken.setCustomClaim(
-         'pomerium.io/groups',
-         event.authorization.roles,
-       );
+       api.idToken.setCustomClaim('pomerium.io/groups', event.authorization.roles);
      }
    };
    ```

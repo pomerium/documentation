@@ -16,13 +16,7 @@ import { join } from 'node:path';
 import { load as loadYaml } from 'js-yaml';
 
 const GUIDES_DIR = 'content/docs/guides';
-const REQUIRED_FRONT_MATTER = [
-  'title',
-  'description',
-  'sidebar_label',
-  'lang',
-  'keywords',
-];
+const REQUIRED_FRONT_MATTER = ['title', 'description', 'sidebar_label', 'lang', 'keywords'];
 const MAX_ALT_LENGTH = 120;
 const IMAGE_EXT_RE = /\.(png|gif|jpe?g|svg|webp)/i;
 
@@ -81,16 +75,10 @@ function auditFile(file, source) {
   const body = stripCode(source);
 
   // iframe title attribute. Matches both self-closing and paired iframes.
-  for (const m of body.matchAll(
-    /<iframe\b[^>]*?(?:\/?>|>[\s\S]*?<\/iframe>)/gi,
-  )) {
+  for (const m of body.matchAll(/<iframe\b[^>]*?(?:\/?>|>[\s\S]*?<\/iframe>)/gi)) {
     const title = m[0].match(/\btitle\s*=\s*["']([^"']*)["']/i);
     if (!title || title[1].trim() === '') {
-      add(
-        file,
-        'iframe-title',
-        'iframe is missing a non-empty title attribute',
-      );
+      add(file, 'iframe-title', 'iframe is missing a non-empty title attribute');
     }
   }
 
@@ -112,16 +100,10 @@ function auditFile(file, source) {
   // WARN: references a screenshot but has no image: front matter.
   const hasImageFm = fm && !isEmpty(fm.image);
   const refsScreenshot =
-    new RegExp(
-      `!\\[[^\\]]*\\]\\([^)]*${IMAGE_EXT_RE.source}[^)]*\\)`,
-      'i',
-    ).test(body) || /\bimg\//.test(body);
+    new RegExp(`!\\[[^\\]]*\\]\\([^)]*${IMAGE_EXT_RE.source}[^)]*\\)`, 'i').test(body) ||
+    /\bimg\//.test(body);
   if (refsScreenshot && !hasImageFm) {
-    add(
-      file,
-      'image-front-matter',
-      'references a screenshot but has no image: front matter',
-    );
+    add(file, 'image-front-matter', 'references a screenshot but has no image: front matter');
   }
 }
 
@@ -129,11 +111,7 @@ function checkAlt(file, alt) {
   if (alt.trim() === '') {
     add(file, 'alt-text', 'image has empty alt text');
   } else if (alt.length > MAX_ALT_LENGTH) {
-    add(
-      file,
-      'alt-text',
-      `alt text is ${alt.length} chars (max ${MAX_ALT_LENGTH}): "${alt}"`,
-    );
+    add(file, 'alt-text', `alt text is ${alt.length} chars (max ${MAX_ALT_LENGTH}): "${alt}"`);
   }
 }
 

@@ -59,9 +59,9 @@ If Pomerium is running in [split-service mode](/docs/internals/configuration#all
 <Tabs>
 <TabItem value="Core" label="Core">
 
-| **Config file keys** | **Environment variables** | **Type** | **Usage** |
-| :-- | :-- | :-- | :-- |
-| `authenticate_service_url` | `AUTHENTICATE_SERVICE_URL` | `URL` | **optional** |
+| **Config file keys**       | **Environment variables**  | **Type** | **Usage**    |
+| :------------------------- | :------------------------- | :------- | :----------- |
+| `authenticate_service_url` | `AUTHENTICATE_SERVICE_URL` | `URL`    | **optional** |
 
 ### Examples
 
@@ -79,9 +79,9 @@ AUTHENTICATE_SERVICE_URL=https://authenticate.corp.example.com
 </TabItem>
 <TabItem value="Kubernetes" label="Kubernetes">
 
-| **[Parameter name](/docs/deploy/k8s/reference#spec)** | **Type** | **Usage** |
-| :-- | :-- | :-- |
-| `authenticate.url` | `URL` | **optional** |
+| **[Parameter name](/docs/deploy/k8s/reference#spec)** | **Type** | **Usage**    |
+| :---------------------------------------------------- | :------- | :----------- |
+| `authenticate.url`                                    | `URL`    | **optional** |
 
 ### Examples
 

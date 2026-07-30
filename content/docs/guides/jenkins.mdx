@@ -76,18 +76,18 @@ Jenkins doesn't read a JWT out of the box, so install the JWT Auth plugin and po
 1. Go to **Manage Jenkins** -> **Plugins** -> **Available plugins**, search for **JWT Auth Plugin**, install it, and restart Jenkins.
 2. Go to **Manage Jenkins** -> **Security**. In the **Security Realm** dropdown, select **JWT Header Authentication Plugin** and fill in the fields:
 
-   | Field | Value |
-   | --- | --- |
-   | **Header name** | `X-Pomerium-Jwt-Assertion` |
-   | **Username claim name** | `email` |
-   | **Email claim name** | `email` |
-   | **Full Name claim name** | `name` |
-   | **Groups claim name** | `groups` |
-   | **Groups claim list separator** | `,` |
-   | **Acceptable issuers** | your route host |
-   | **Acceptable audiences** | your route host |
-   | **JWKS JSON URL** | the JWKS URL for your setup (see the tab above) |
-   | **Leeway seconds** | `30` (clock-skew tolerance when validating `exp` / `nbf`) |
+   | Field                           | Value                                                     |
+   | ------------------------------- | --------------------------------------------------------- |
+   | **Header name**                 | `X-Pomerium-Jwt-Assertion`                                |
+   | **Username claim name**         | `email`                                                   |
+   | **Email claim name**            | `email`                                                   |
+   | **Full Name claim name**        | `name`                                                    |
+   | **Groups claim name**           | `groups`                                                  |
+   | **Groups claim list separator** | `,`                                                       |
+   | **Acceptable issuers**          | your route host                                           |
+   | **Acceptable audiences**        | your route host                                           |
+   | **JWKS JSON URL**               | the JWKS URL for your setup (see the tab above)           |
+   | **Leeway seconds**              | `30` (clock-skew tolerance when validating `exp` / `nbf`) |
 
    Pomerium sets the JWT's `iss` and `aud` to the route host, so use the host from your **From** URL: `jenkins.<your-starter-domain>` on Zero, or `jenkins.yourdomain.com` on Core.
 

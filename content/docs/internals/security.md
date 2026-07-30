@@ -4,8 +4,7 @@
 title: Pomerium's Security Policy & Threat Model
 sidebar_label: Security & Threat Model
 lang: en-US
-keywords:
-  [pomerium, security, disclosure, vulnerabilities, cryptography, encryption]
+keywords: [pomerium, security, disclosure, vulnerabilities, cryptography, encryption]
 toc_max_heading_level: 2
 ---
 

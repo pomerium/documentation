@@ -34,9 +34,7 @@ function splitReferencePath(referencePath) {
 
 function resolveReferencePath(referencePath) {
   const { pathname, fragment } = splitReferencePath(referencePath);
-  const resolved = path.posix
-    .normalize(`reference/${pathname}`)
-    .replace(/^\/+/, '');
+  const resolved = path.posix.normalize(`reference/${pathname}`).replace(/^\/+/, '');
 
   return { resolved, fragment };
 }
@@ -54,9 +52,7 @@ function targetCandidates(resolvedPath) {
 }
 
 function findTargetFile(resolvedPath) {
-  return targetCandidates(resolvedPath).find((candidate) =>
-    fs.existsSync(candidate),
-  );
+  return targetCandidates(resolvedPath).find((candidate) => fs.existsSync(candidate));
 }
 
 function stripHeadingMarkdown(heading) {
@@ -204,13 +200,7 @@ for (const [key, entry] of Object.entries(references)) {
 }
 
 if (violations.length > 0) {
-  fail(
-    `found ${violations.length} violation(s):\n${JSON.stringify(
-      violations,
-      null,
-      2,
-    )}`,
-  );
+  fail(`found ${violations.length} violation(s):\n${JSON.stringify(violations, null, 2)}`);
 }
 
 if (process.exitCode) process.exit();

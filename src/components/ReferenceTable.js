@@ -85,9 +85,7 @@ export default function ReferenceTable() {
       field: 'title',
       flex: 1,
       renderCell: function NameCell(params) {
-        return (
-          <a href={`/docs/reference${params.row.path}`}>{params.row.title}</a>
-        );
+        return <a href={`/docs/reference${params.row.path}`}>{params.row.title}</a>;
       },
     },
     {
@@ -136,25 +134,15 @@ export default function ReferenceTable() {
         onPaginationModelChange={setPaginationModel}
         showToolbar
         sx={{
-          color:
-            colorMode === 'dark'
-              ? 'rgba(224,224,224,1);'
-              : 'rgba(0, 0, 0, 0.54);',
-          '& .MuiDataGrid-columnHeader:last-child .MuiDataGrid-columnSeparator--sideRight':
-            {
-              display: 'none',
-            },
+          color: colorMode === 'dark' ? 'rgba(224,224,224,1);' : 'rgba(0, 0, 0, 0.54);',
+          '& .MuiDataGrid-columnHeader:last-child .MuiDataGrid-columnSeparator--sideRight': {
+            display: 'none',
+          },
           '& .MuiDataGrid-sortIcon': {
-            color:
-              colorMode === 'dark'
-                ? 'rgba(224,224,224,1);'
-                : 'rgba(0, 0, 0, 0.54);',
+            color: colorMode === 'dark' ? 'rgba(224,224,224,1);' : 'rgba(0, 0, 0, 0.54);',
           },
           '& .MuiDataGrid-menuIconButton': {
-            color:
-              colorMode === 'dark'
-                ? 'rgba(224,224,224,1);'
-                : 'rgba(0, 0, 0, 0.54);',
+            color: colorMode === 'dark' ? 'rgba(224,224,224,1);' : 'rgba(0, 0, 0, 0.54);',
           },
         }}
         columns={columns}

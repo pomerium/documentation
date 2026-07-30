@@ -48,8 +48,7 @@ export default function VideoMediaCard() {
                 color: colorMode === 'dark' ? '#ebedf0;' : '',
               }}
             >
-              Learn how Pomerium secures your apps and services in this 2-minute
-              demo.
+              Learn how Pomerium secures your apps and services in this 2-minute demo.
             </Typography>
           </CardContent>
           <CardActions
@@ -97,8 +96,8 @@ export default function VideoMediaCard() {
                 color: colorMode === 'dark' ? '#ebedf0;' : '',
               }}
             >
-              Learn how Pomerium simplifies access control by providing
-              clientless access to users within your organization.
+              Learn how Pomerium simplifies access control by providing clientless access to users
+              within your organization.
             </Typography>
           </CardContent>
         </Card>
@@ -139,8 +138,8 @@ export default function VideoMediaCard() {
                 color: colorMode === 'dark' ? '#ebedf0;' : '',
               }}
             >
-              Learn what Continuous Verification is, how it works with Pomerium,
-              and why it's important for building a Zero Trust Architecture.
+              Learn what Continuous Verification is, how it works with Pomerium, and why it's
+              important for building a Zero Trust Architecture.
             </Typography>
           </CardContent>
           <CardActions
@@ -148,9 +147,7 @@ export default function VideoMediaCard() {
               bgcolor: colorMode === 'dark' ? '#121212' : '',
             }}
           >
-            <Link to="/docs/capabilities/authorization">
-              Go to Authorization Docs
-            </Link>
+            <Link to="/docs/capabilities/authorization">Go to Authorization Docs</Link>
           </CardActions>
         </Card>
       </div>

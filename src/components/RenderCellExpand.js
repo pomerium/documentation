@@ -2,10 +2,7 @@ import { Box, Paper, Popper, Typography } from '@mui/material';
 import React from 'react';
 
 function isOverflown(element) {
-  return (
-    element.scrollHeight > element.clientHeight ||
-    element.scrollWidth > element.clientWidth
-  );
+  return element.scrollHeight > element.clientHeight || element.scrollWidth > element.clientWidth;
 }
 
 export const GridCellExpand = React.memo(function GridCellExpand(props) {
@@ -87,10 +84,7 @@ export const GridCellExpand = React.memo(function GridCellExpand(props) {
           anchorEl={anchorEl}
           style={{ width, marginLeft: -17 }}
         >
-          <Paper
-            elevation={1}
-            style={{ minHeight: wrapper.current.offsetHeight - 3 }}
-          >
+          <Paper elevation={1} style={{ minHeight: wrapper.current.offsetHeight - 3 }}>
             <Typography variant="body2" style={{ padding: 8 }}>
               {value}
             </Typography>
@@ -102,10 +96,5 @@ export const GridCellExpand = React.memo(function GridCellExpand(props) {
 });
 
 export function renderCellExpand(params) {
-  return (
-    <GridCellExpand
-      value={params.value || ''}
-      width={params.colDef.computedWidth}
-    />
-  );
+  return <GridCellExpand value={params.value || ''} width={params.colDef.computedWidth} />;
 }

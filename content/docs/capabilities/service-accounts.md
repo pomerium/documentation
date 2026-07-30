@@ -5,14 +5,7 @@ sidebar_class_name: enterprise
 description: Create and manage service accounts for machine-to-machine authentication between services protected by Pomerium.
 lang: en-US
 keywords:
-  [
-    pomerium,
-    service-accounts,
-    service accounts,
-    pomerium enterprise,
-    machine to machine,
-    m2m,
-  ]
+  [pomerium, service-accounts, service accounts, pomerium enterprise, machine to machine, m2m]
 ---
 
 # Service Accounts

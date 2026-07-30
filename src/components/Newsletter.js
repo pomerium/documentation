@@ -17,9 +17,7 @@ const CustomFormCommunity = ({ status, message, onValidated }) => {
   return (
     <div className="newsletter__wrap">
       <div className="ns-title">Pomerium Newsletter</div>
-      <div className="ns-content">
-        Updates on Pomerium and related security news.
-      </div>
+      <div className="ns-content">Updates on Pomerium and related security news.</div>
       <input
         className="ns-input"
         ref={(node) => (email = node)}
@@ -36,14 +34,9 @@ const CustomFormCommunity = ({ status, message, onValidated }) => {
       </button>
       {status === 'sending' && <div style={{ color: 'blue' }}>sending...</div>}
       {status === 'error' && (
-        <div
-          style={{ color: 'red' }}
-          dangerouslySetInnerHTML={{ __html: message }}
-        />
+        <div style={{ color: 'red' }} dangerouslySetInnerHTML={{ __html: message }} />
       )}
-      {status === 'success' && (
-        <div style={{ color: 'green' }}>Subscribed !</div>
-      )}
+      {status === 'success' && <div style={{ color: 'green' }}>Subscribed !</div>}
     </div>
   );
 };
@@ -95,14 +88,9 @@ const CustomFormFooter = ({ status, message, onValidated }) => {
       <p className="text-sm text-email">Your email is safe with us</p>
       {status === 'sending' && <div style={{ color: 'blue' }}>sending...</div>}
       {status === 'error' && (
-        <div
-          style={{ color: 'red' }}
-          dangerouslySetInnerHTML={{ __html: message }}
-        />
+        <div style={{ color: 'red' }} dangerouslySetInnerHTML={{ __html: message }} />
       )}
-      {status === 'success' && (
-        <div style={{ color: 'green' }}>Subscribed !</div>
-      )}
+      {status === 'success' && <div style={{ color: 'green' }}>Subscribed !</div>}
     </div>
   );
 };

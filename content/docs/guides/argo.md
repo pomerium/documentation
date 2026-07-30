@@ -2,8 +2,7 @@
 title: Secure Argo Workflows with Pomerium
 sidebar_label: Argo Workflows
 lang: en-US
-keywords:
-  [pomerium, argo, argo workflows, kubernetes, sso, oidc, identity aware proxy]
+keywords: [pomerium, argo, argo workflows, kubernetes, sso, oidc, identity aware proxy]
 description: Put Argo Workflows behind the Pomerium Ingress Controller on Kubernetes for single sign-on and per-route authorization.
 ---
 

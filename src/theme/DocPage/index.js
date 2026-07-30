@@ -1,7 +1,4 @@
-import {
-  HtmlClassNameProvider,
-  ThemeClassNames,
-} from '@docusaurus/theme-common';
+import { HtmlClassNameProvider, ThemeClassNames } from '@docusaurus/theme-common';
 import {
   DocsSidebarProvider,
   DocsVersionProvider,
@@ -27,10 +24,7 @@ export default function DocPage(props) {
     <>
       <SearchMetadata
         version={versionMetadata.version}
-        tag={docVersionSearchTag(
-          versionMetadata.pluginId,
-          versionMetadata.version,
-        )}
+        tag={docVersionSearchTag(versionMetadata.pluginId, versionMetadata.version)}
       />
       <HtmlClassNameProvider
         className={clsx(

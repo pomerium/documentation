@@ -16,9 +16,7 @@ export default function FooterLayout({ style, links, logo, copyright }) {
     >
       <div className="container container-fluid">
         {links}
-        {copyright && (
-          <div className="footer__bottom text--center">{copyright}</div>
-        )}
+        {copyright && <div className="footer__bottom text--center">{copyright}</div>}
       </div>
     </footer>
   );

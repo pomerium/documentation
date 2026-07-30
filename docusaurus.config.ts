@@ -52,14 +52,7 @@ const config: Config = {
           docItemComponent: '@theme/ApiItem',
           editUrl: 'https://github.com/pomerium/documentation/tree/main',
           admonitions: {
-            keywords: [
-              'note',
-              'tip',
-              'info',
-              'caution',
-              'danger',
-              'enterprise',
-            ],
+            keywords: ['note', 'tip', 'info', 'caution', 'danger', 'enterprise'],
             extendDefaults: true,
           },
           versions: {

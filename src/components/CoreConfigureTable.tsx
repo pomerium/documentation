@@ -7,11 +7,7 @@ type CoreConfigureTableProps = {
   type: ConfigType;
   defaultValue?: ReactNode;
 };
-const CoreConfigureTable = ({
-  name,
-  type,
-  defaultValue,
-}: CoreConfigureTableProps) => {
+const CoreConfigureTable = ({ name, type, defaultValue }: CoreConfigureTableProps) => {
   const environmentVariableKey = name.toUpperCase();
   const typeName = getTypeName(type);
   return (

@@ -3,14 +3,7 @@ id: production-certificates
 title: Production Certificates with Autocert
 description: Learn how to add production certificates to your Pomerium instance with Autocert.
 keywords:
-  [
-    acme,
-    automatic certificate management environment,
-    autocert,
-    pomerium,
-    reverse proxy,
-    pomerium,
-  ]
+  [acme, automatic certificate management environment, autocert, pomerium, reverse proxy, pomerium]
 sidebar_label: 9. Production Certificates
 sidebar_position: 9
 ---

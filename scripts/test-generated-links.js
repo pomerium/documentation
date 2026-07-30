@@ -48,9 +48,7 @@ function sitePathToCandidates(sitePath) {
 }
 
 function builtSitePathExists(sitePath) {
-  return sitePathToCandidates(sitePath).some((candidate) =>
-    fs.existsSync(candidate),
-  );
+  return sitePathToCandidates(sitePath).some((candidate) => fs.existsSync(candidate));
 }
 
 function normalizeInternalUrl(rawUrl, parentSitePath = '/') {
@@ -71,8 +69,7 @@ function normalizeInternalUrl(rawUrl, parentSitePath = '/') {
   }
 
   const isPomeriumDocsHost =
-    parsedUrl.hostname === 'www.pomerium.com' ||
-    parsedUrl.hostname === 'docs.pomerium.com';
+    parsedUrl.hostname === 'www.pomerium.com' || parsedUrl.hostname === 'docs.pomerium.com';
   if (!isPomeriumDocsHost) {
     return null;
   }
@@ -125,9 +122,7 @@ function checkMarkdownLinks() {
     path.join(BUILD_DIR, 'llms.txt'),
     path.join(BUILD_DIR, 'llms-full.txt'),
     path.join(BUILD_DIR, 'llms-index.txt'),
-    ...walk(path.join(BUILD_DIR, 'docs')).filter((file) =>
-      file.endsWith('.md'),
-    ),
+    ...walk(path.join(BUILD_DIR, 'docs')).filter((file) => file.endsWith('.md')),
   ].filter((file) => fs.existsSync(file));
 
   const missing = [];
@@ -168,23 +163,11 @@ const missingRedirects = checkRedirectDestinations();
 const { checked, missing: missingMarkdownLinks } = checkMarkdownLinks();
 
 if (missingRedirects.length > 0) {
-  fail(
-    `missing redirect destinations:\n${JSON.stringify(
-      missingRedirects,
-      null,
-      2,
-    )}`,
-  );
+  fail(`missing redirect destinations:\n${JSON.stringify(missingRedirects, null, 2)}`);
 }
 
 if (missingMarkdownLinks.length > 0) {
-  fail(
-    `missing generated markdown links:\n${JSON.stringify(
-      missingMarkdownLinks,
-      null,
-      2,
-    )}`,
-  );
+  fail(`missing generated markdown links:\n${JSON.stringify(missingMarkdownLinks, null, 2)}`);
 }
 
 if (process.exitCode) process.exit();

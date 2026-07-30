@@ -54,9 +54,7 @@ export default function FooterLinksMultiColumn({ columns }) {
           </li>
           <li style={{ display: 'inline-block' }}>
             <IconButton
-              onClick={() =>
-                window.open('https://www.linkedin.com/company/pomerium-inc')
-              }
+              onClick={() => window.open('https://www.linkedin.com/company/pomerium-inc')}
               color="primary"
             >
               <span className="fa-brands fa-linkedin-in" />
@@ -71,10 +69,7 @@ export default function FooterLinksMultiColumn({ columns }) {
             </IconButton>
           </li>
           <li style={{ display: 'inline-block' }}>
-            <IconButton
-              color="primary"
-              onClick={() => window.open('https://github.com/pomerium')}
-            >
+            <IconButton color="primary" onClick={() => window.open('https://github.com/pomerium')}>
               <span className="fa-brands fa-github" />
             </IconButton>
           </li>

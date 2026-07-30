@@ -3,14 +3,7 @@
 id: runtime-flags
 title: Runtime Flags
 description: This page lists Runtime Flags available in Pomerium.
-keywords:
-  [
-    feature flags,
-    feature flag,
-    runtime flags,
-    runtime flag,
-    runtime configuration,
-  ]
+keywords: [feature flags, feature flag, runtime flags, runtime flag, runtime configuration]
 pagination_prev: null
 pagination_next: null
 toc_max_heading_level: 2
@@ -26,9 +19,9 @@ If you find that you need to change one of these settings, please let us know by
 
 Runtime flags are currently configurable only in Pomerium Core.
 
-| **Config file key** | **Environment variable** | **Type** |
-| :-- | :-- | :-- |
-| `runtime_flags` | `RUNTIME_FLAGS` | map from `string` to `boolean` |
+| **Config file key** | **Environment variable** | **Type**                       |
+| :------------------ | :----------------------- | :----------------------------- |
+| `runtime_flags`     | `RUNTIME_FLAGS`          | map from `string` to `boolean` |
 
 The available flags are:
 

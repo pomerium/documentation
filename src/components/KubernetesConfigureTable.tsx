@@ -7,11 +7,7 @@ type KubernetesConfigureTableProps = {
   type: ConfigType;
   defaultValue?: ReactNode;
 };
-const KubernetesConfigureTable = ({
-  name,
-  type,
-  defaultValue,
-}: KubernetesConfigureTableProps) => {
+const KubernetesConfigureTable = ({ name, type, defaultValue }: KubernetesConfigureTableProps) => {
   const typeName = getTypeName(type);
   return (
     <table>

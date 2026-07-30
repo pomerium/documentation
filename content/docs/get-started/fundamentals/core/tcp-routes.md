@@ -3,8 +3,7 @@
 id: tcp-routes
 title: Build TCP Routes
 description: In this lesson, you'll secure TCP connections to SSH, Postgres, and Redis services with Pomerium.
-keywords:
-  [tcp, connection, ssh, postgres, redis, reverse proxy, certificates, pomerium]
+keywords: [tcp, connection, ssh, postgres, redis, reverse proxy, certificates, pomerium]
 sidebar_label: 7. TCP Routes
 sidebar_position: 7
 ---

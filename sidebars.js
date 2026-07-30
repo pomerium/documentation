@@ -120,9 +120,7 @@ const sidebars = {
       link: {
         type: 'generated-index',
       },
-      items: apiSidebar.filter(
-        (item) => item.label !== 'pomerium.config.ConfigService',
-      ),
+      items: apiSidebar.filter((item) => item.label !== 'pomerium.config.ConfigService'),
     },
   ],
   guides: [

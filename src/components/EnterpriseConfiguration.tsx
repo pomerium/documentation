@@ -19,12 +19,11 @@ const EnterpriseConfiguration = ({
     <>
       {!via.includes('ui') && (
         <p>
-          The <code>{name}</code> setting is a bootstrap setting and cannot be
-          configured in the Console UI.{' '}
+          The <code>{name}</code> setting is a bootstrap setting and cannot be configured in the
+          Console UI.{' '}
           {via.includes('terraform') && (
             <>
-              However it can be configured by{' '}
-              <a href={terraformLink}>Terraform</a>.
+              However it can be configured by <a href={terraformLink}>Terraform</a>.
             </>
           )}
         </p>
