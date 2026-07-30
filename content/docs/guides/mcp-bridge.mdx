@@ -67,14 +67,8 @@ Before you start, confirm all of the following:
 - A Linear workspace, and permission from a Linear admin for members to authorize a third-party OAuth client (the client will be Pomerium). No Linear OAuth application registration is required. Linear's MCP server advertises its own authorization metadata and Pomerium registers itself automatically.
 - An MCP-capable client for testing. This guide uses the [MCP Inspector](https://github.com/modelcontextprotocol/inspector) (`npx @modelcontextprotocol/inspector@latest`) because it exposes the raw OAuth and tool-call steps. Claude Desktop, ChatGPT, VS Code, and Cursor also work once the route is live.
 - DNS for the route's `from` subdomain resolves to your Pomerium Zero cluster. On `*.<your-cluster>.pomerium.app` subdomains this is automatic; for custom domains see [Custom Domains](/docs/capabilities/custom-domains).
-- The Pomerium replica running on your cluster must be a build that includes MCP. MCP is still experimental and its code paths ship only in images built from the `main` branch: `pomerium/pomerium:main` (nightly) or a custom build from source. The default `pomerium/pomerium:latest` is the most recent stable release and does **not** include MCP support. If you followed the [Pomerium Zero Quickstart](/docs/get-started/quickstart?type=zero), the starter compose file uses `:latest`; swap it for `:main` on any cluster where you plan to configure MCP routes. See [Docker Images](/docs/deploy/core#docker-images) for the full tag taxonomy.
+- As of v0.33.0, MCP is not experimental and does not require a runtime flag.
 - At least one policy exists in your cluster that you can attach to the Linear MCP route. A route needs a policy to allow anything; if you haven't created any yet, follow [Zero Build Policies](/docs/get-started/fundamentals/zero/zero-build-policies) to create a simple domain-based policy first, or plan to create one inline from the route editor in step 3.
-
-:::warning Not for regulated production workloads
-
-Do not rely on this guide for regulated production workloads without additional review. See the [MCP Full Reference](/docs/capabilities/mcp/reference) for current status.
-
-:::
 
 ## Architecture and request flow
 
