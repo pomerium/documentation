@@ -1,5 +1,5 @@
 import Head from '@docusaurus/Head';
-import {useDoc} from '@docusaurus/plugin-content-docs/client';
+import { useDoc } from '@docusaurus/plugin-content-docs/client';
 import Metadata from '@theme-original/DocItem/Metadata';
 import React from 'react';
 
@@ -10,8 +10,8 @@ import React from 'react';
 // page regardless of `docItemComponent` -- ApiItem also renders this component.
 // `${permalink}.md` matches the canonical sidecar emitted by llms-txt-plugin.
 export default function MetadataWrapper(props) {
-  const {metadata} = useDoc();
-  const {permalink} = metadata;
+  const { metadata } = useDoc();
+  const { permalink } = metadata;
   // Advertise the .md twin only where it's a genuine upgrade over the HTML. Skip:
   // - the '/' docs instance (home, /examples): no sidecar generated -> would 404.
   // - the /docs/api tree: ApiItem renders the full OpenAPI schema in HTML; the

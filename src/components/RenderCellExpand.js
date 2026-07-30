@@ -1,4 +1,4 @@
-import {Box, Paper, Popper, Typography} from '@mui/material';
+import { Box, Paper, Popper, Typography } from '@mui/material';
 import React from 'react';
 
 function isOverflown(element) {
@@ -9,7 +9,7 @@ function isOverflown(element) {
 }
 
 export const GridCellExpand = React.memo(function GridCellExpand(props) {
-  const {width, value} = props;
+  const { width, value } = props;
   const wrapper = React.useRef(null);
   const cellDiv = React.useRef(null);
   const cellValue = React.useRef(null);
@@ -59,7 +59,8 @@ export const GridCellExpand = React.memo(function GridCellExpand(props) {
         height: 1,
         position: 'relative',
         display: 'flex',
-      }}>
+      }}
+    >
       <Box
         ref={cellDiv}
         sx={{
@@ -76,18 +77,21 @@ export const GridCellExpand = React.memo(function GridCellExpand(props) {
           whiteSpace: 'nowrap',
           overflow: 'hidden',
           textOverflow: 'ellipsis',
-        }}>
+        }}
+      >
         {value}
       </Box>
       {showPopper && (
         <Popper
           open={showFullCell && anchorEl !== null}
           anchorEl={anchorEl}
-          style={{width, marginLeft: -17}}>
+          style={{ width, marginLeft: -17 }}
+        >
           <Paper
             elevation={1}
-            style={{minHeight: wrapper.current.offsetHeight - 3}}>
-            <Typography variant="body2" style={{padding: 8}}>
+            style={{ minHeight: wrapper.current.offsetHeight - 3 }}
+          >
+            <Typography variant="body2" style={{ padding: 8 }}>
               {value}
             </Typography>
           </Paper>

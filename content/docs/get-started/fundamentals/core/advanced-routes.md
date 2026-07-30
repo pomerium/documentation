@@ -217,7 +217,7 @@ Pomerium makes this simple to implement. Just swap out `to:` with the `redirect:
 
 ```yaml title="config.yaml"
 - from: https://httpbin.localhost.pomerium.io
-  redirect: {'host_redirect': 'verify.localhost.pomerium.io'}
+  redirect: { 'host_redirect': 'verify.localhost.pomerium.io' }
 ```
 
 Now, when you access `httpbin`, Pomerium will redirect you to the Verify service.

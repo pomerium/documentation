@@ -1,6 +1,6 @@
-import React, {ReactNode} from 'react';
+import React, { ReactNode } from 'react';
 
-import {ConfigType, getTypeName} from '../types';
+import { ConfigType, getTypeName } from '../types';
 
 type CoreConfigureTableProps = {
   name: string;

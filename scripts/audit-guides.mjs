@@ -1,4 +1,7 @@
 #!/usr/bin/env node
+import { readFileSync, readdirSync } from 'node:fs';
+import { join } from 'node:path';
+
 // Objective guide-audit linter for content/docs/guides/*.{md,mdx}.
 //
 // Two severities:
@@ -10,9 +13,7 @@
 //
 // No new npm dependencies: js-yaml is already a devDependency, so we reuse it
 // for front-matter parsing instead of hand-rolling a YAML parser.
-import {load as loadYaml} from 'js-yaml';
-import {readFileSync, readdirSync} from 'node:fs';
-import {join} from 'node:path';
+import { load as loadYaml } from 'js-yaml';
 
 const GUIDES_DIR = 'content/docs/guides';
 const REQUIRED_FRONT_MATTER = [
@@ -60,7 +61,7 @@ function stripCode(source) {
 const findings = [];
 function add(file, check, message) {
   const severity = FAILING_CHECKS.has(check) ? 'ERROR' : 'WARN';
-  findings.push({file, check, severity, message});
+  findings.push({ file, check, severity, message });
 }
 
 function auditFile(file, source) {

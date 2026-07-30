@@ -18,7 +18,7 @@ function fail(message) {
 function walk(dir) {
   if (!fs.existsSync(dir)) return [];
 
-  const entries = fs.readdirSync(dir, {withFileTypes: true});
+  const entries = fs.readdirSync(dir, { withFileTypes: true });
   const files = [];
 
   for (const entry of entries) {
@@ -156,7 +156,7 @@ function checkMarkdownLinks() {
     }
   }
 
-  return {checked, missing};
+  return { checked, missing };
 }
 
 if (!fs.existsSync(BUILD_DIR)) {
@@ -165,7 +165,7 @@ if (!fs.existsSync(BUILD_DIR)) {
 }
 
 const missingRedirects = checkRedirectDestinations();
-const {checked, missing: missingMarkdownLinks} = checkMarkdownLinks();
+const { checked, missing: missingMarkdownLinks } = checkMarkdownLinks();
 
 if (missingRedirects.length > 0) {
   fail(

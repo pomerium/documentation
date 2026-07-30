@@ -2,8 +2,8 @@
 // @ts-check
 // Note: type annotations allow type checking and IDEs autocompletion
 import type * as Preset from '@docusaurus/preset-classic';
-import {Config} from '@docusaurus/types';
-import type {Options as OpenApiPluginOptions} from 'docusaurus-plugin-openapi-docs';
+import { Config } from '@docusaurus/types';
+import type { Options as OpenApiPluginOptions } from 'docusaurus-plugin-openapi-docs';
 
 const dotenv = require('dotenv');
 const webpack = require('webpack');
@@ -339,9 +339,9 @@ function lightCodeTheme() {
   return {
     ...require('prism-react-renderer').themes.github,
     styles: require('prism-react-renderer').themes.github.styles.concat([
-      {types: ['shell-symbol'], style: {color: '#5d36c6'}},
-      {types: ['command'], style: {color: '#1c1e21'}},
-      {types: ['output'], style: {color: '#133369'}},
+      { types: ['shell-symbol'], style: { color: '#5d36c6' } },
+      { types: ['command'], style: { color: '#1c1e21' } },
+      { types: ['output'], style: { color: '#133369' } },
     ]),
   };
 }
@@ -350,8 +350,8 @@ function darkCodeTheme() {
   return {
     ...require('prism-react-renderer').themes.dracula,
     styles: require('prism-react-renderer').themes.dracula.styles.concat([
-      {types: ['shell-symbol'], style: {color: '#c0a9ff'}},
-      {types: ['output'], style: {color: '#e4e4c4'}},
+      { types: ['shell-symbol'], style: { color: '#c0a9ff' } },
+      { types: ['output'], style: { color: '#e4e4c4' } },
     ]),
   };
 }

@@ -1,4 +1,4 @@
-import React, {ReactNode} from 'react';
+import React, { ReactNode } from 'react';
 
 export type ConfigType = 'String' | 'StringList' | 'StringSet';
 

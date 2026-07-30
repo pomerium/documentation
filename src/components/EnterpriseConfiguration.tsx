@@ -1,6 +1,6 @@
-import React, {PropsWithChildren} from 'react';
+import React, { PropsWithChildren } from 'react';
 
-import {Resource} from '../types';
+import { Resource } from '../types';
 
 type EnterpriseConfigurationProps = PropsWithChildren<{
   name: string;

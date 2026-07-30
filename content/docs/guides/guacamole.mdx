@@ -107,13 +107,13 @@ On the first run, PostgreSQL loads Guacamole's schema before the web app can con
    To confirm it's the header (not a form login) that authenticated you, use the signed-in browser session to mint a token through Guacamole's REST API. Open your browser's developer console on the Guacamole page and run:
 
    ```js
-   await fetch('/api/tokens', {method: 'POST'}).then((r) => r.json());
+   await fetch('/api/tokens', { method: 'POST' }).then((r) => r.json());
    ```
 
    The response should include your forwarded email as `username` and `header` as `dataSource`:
 
    ```json
-   {"authToken": "...", "username": "you@example.com", "dataSource": "header"}
+   { "authToken": "...", "username": "you@example.com", "dataSource": "header" }
    ```
 
 4. **A disallowed user is blocked.** Sign in as a user your policy excludes and open `https://guacamole.yourdomain.com`. Pomerium denies access, so no identity header is forwarded and you never reach Guacamole.

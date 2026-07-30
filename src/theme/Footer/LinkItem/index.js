@@ -1,3 +1,4 @@
+import isInternalUrl from '@docusaurus/isInternalUrl';
 /**
  * Copyright (c) Facebook, Inc. and its affiliates.
  *
@@ -5,14 +6,12 @@
  * LICENSE file in the root directory of this source tree.
  */
 import Link from '@docusaurus/Link';
-import isInternalUrl from '@docusaurus/isInternalUrl';
 import useBaseUrl from '@docusaurus/useBaseUrl';
+import IconExternalLink from '@theme/Icon/ExternalLink';
 import React from 'react';
 
-import IconExternalLink from '@theme/Icon/ExternalLink';
-
-export default function FooterLinkItem({item}) {
-  const {to, href, label, prependBaseUrlToHref, ...props} = item;
+export default function FooterLinkItem({ item }) {
+  const { to, href, label, prependBaseUrlToHref, ...props } = item;
   const toUrl = useBaseUrl(to);
   const normalizedHref = useBaseUrl(href, {
     forcePrependBaseUrl: true,
@@ -27,7 +26,8 @@ export default function FooterLinkItem({item}) {
         : {
             to: toUrl,
           })}
-      {...props}>
+      {...props}
+    >
       {label}
       {href && !isInternalUrl(href) && <IconExternalLink />}
     </Link>

@@ -2,7 +2,7 @@
 
 const fs = require('fs');
 const path = require('path');
-const {createSlugger} = require('@docusaurus/utils');
+const { createSlugger } = require('@docusaurus/utils');
 
 const CONTENT_DOCS_DIR = path.resolve(__dirname, '../content/docs');
 const REFERENCE_FILE = path.join(CONTENT_DOCS_DIR, 'reference/reference.json');
@@ -23,7 +23,7 @@ function isNonEmptyString(value) {
 function splitReferencePath(referencePath) {
   const fragmentIndex = referencePath.indexOf('#');
   if (fragmentIndex === -1) {
-    return {pathname: referencePath, fragment: null};
+    return { pathname: referencePath, fragment: null };
   }
 
   return {
@@ -33,12 +33,12 @@ function splitReferencePath(referencePath) {
 }
 
 function resolveReferencePath(referencePath) {
-  const {pathname, fragment} = splitReferencePath(referencePath);
+  const { pathname, fragment } = splitReferencePath(referencePath);
   const resolved = path.posix
     .normalize(`reference/${pathname}`)
     .replace(/^\/+/, '');
 
-  return {resolved, fragment};
+  return { resolved, fragment };
 }
 
 function targetCandidates(resolvedPath) {
@@ -143,7 +143,7 @@ for (const entry of Object.values(references)) {
 for (const [key, entry] of Object.entries(references)) {
   const missingFields = [];
   if (!entry || typeof entry !== 'object') {
-    violations.push({key, error: 'entry must be an object'});
+    violations.push({ key, error: 'entry must be an object' });
     continue;
   }
   if (!isNonEmptyString(entry.id)) missingFields.push('id');
@@ -170,7 +170,7 @@ for (const [key, entry] of Object.entries(references)) {
   if (missingFields.length > 0) continue;
 
   checked++;
-  const {resolved, fragment} = resolveReferencePath(entry.path);
+  const { resolved, fragment } = resolveReferencePath(entry.path);
   const targetFile = findTargetFile(resolved);
   if (!targetFile) {
     violations.push({

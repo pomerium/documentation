@@ -3,7 +3,7 @@
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
-const {test} = require('node:test');
+const { test } = require('node:test');
 
 const {
   resolveRobotsMode,
@@ -37,18 +37,18 @@ function withEnv(env, fn) {
 
 test('production build of main is the only indexable build', () => {
   assert.equal(
-    withEnv({CONTEXT: 'production', HEAD: 'main'}, resolveRobotsMode),
+    withEnv({ CONTEXT: 'production', HEAD: 'main' }, resolveRobotsMode),
     'allow',
   );
 });
 
 test('numbered release-branch snapshot is noindex (even in production context)', () => {
   assert.equal(
-    withEnv({CONTEXT: 'branch-deploy', HEAD: '0-32-0'}, resolveRobotsMode),
+    withEnv({ CONTEXT: 'branch-deploy', HEAD: '0-32-0' }, resolveRobotsMode),
     'disallow',
   );
   assert.equal(
-    withEnv({CONTEXT: 'production', HEAD: '0-32-0'}, resolveRobotsMode),
+    withEnv({ CONTEXT: 'production', HEAD: '0-32-0' }, resolveRobotsMode),
     'disallow',
   );
 });
@@ -56,7 +56,7 @@ test('numbered release-branch snapshot is noindex (even in production context)',
 test('deploy previews are noindex', () => {
   assert.equal(
     withEnv(
-      {CONTEXT: 'deploy-preview', HEAD: 'some-feature-branch'},
+      { CONTEXT: 'deploy-preview', HEAD: 'some-feature-branch' },
       resolveRobotsMode,
     ),
     'disallow',
@@ -90,27 +90,27 @@ test('POMERIUM_DOCS_ROBOTS_MODE override wins', () => {
 
 test('main as a branch deploy (not yet promoted) is noindex', () => {
   assert.equal(
-    withEnv({CONTEXT: 'branch-deploy', HEAD: 'main'}, resolveRobotsMode),
+    withEnv({ CONTEXT: 'branch-deploy', HEAD: 'main' }, resolveRobotsMode),
     'disallow',
   );
 });
 
 test('BRANCH is honored when HEAD is unset', () => {
   assert.equal(
-    withEnv({CONTEXT: 'production', BRANCH: 'main'}, resolveRobotsMode),
+    withEnv({ CONTEXT: 'production', BRANCH: 'main' }, resolveRobotsMode),
     'allow',
   );
   assert.equal(
-    withEnv({CONTEXT: 'production', BRANCH: '0-32-0'}, resolveRobotsMode),
+    withEnv({ CONTEXT: 'production', BRANCH: '0-32-0' }, resolveRobotsMode),
     'disallow',
   );
 });
 
 test('non-Netlify CI fails closed; Netlify (which also sets CI) is unaffected', () => {
-  assert.equal(withEnv({CI: 'true'}, resolveRobotsMode), 'disallow');
+  assert.equal(withEnv({ CI: 'true' }, resolveRobotsMode), 'disallow');
   assert.equal(
     withEnv(
-      {CI: 'true', CONTEXT: 'production', HEAD: 'main'},
+      { CI: 'true', CONTEXT: 'production', HEAD: 'main' },
       resolveRobotsMode,
     ),
     'allow',

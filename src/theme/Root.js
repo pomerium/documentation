@@ -1,4 +1,4 @@
-import {ThemeProvider, createTheme} from '@mui/material/styles';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
 import React from 'react';
 
 import App from '../../src/components/App';
@@ -47,7 +47,7 @@ const theme = createTheme({
   },
 });
 
-export default function Root({children}) {
+export default function Root({ children }) {
   return (
     <>
       <ThemeProvider theme={theme}>

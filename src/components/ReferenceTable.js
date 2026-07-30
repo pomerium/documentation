@@ -1,13 +1,13 @@
-import {useColorMode} from '@docusaurus/theme-common';
-import {FormControl, InputLabel, NativeSelect} from '@mui/material';
-import {DataGrid, GridToolbar} from '@mui/x-data-grid';
-import React, {useState} from 'react';
+import { useColorMode } from '@docusaurus/theme-common';
+import { FormControl, InputLabel, NativeSelect } from '@mui/material';
+import { DataGrid, GridToolbar } from '@mui/x-data-grid';
+import React, { useState } from 'react';
 
 import data from '../../content/docs/reference/reference.json';
-import {renderCellExpand} from './RenderCellExpand';
+import { renderCellExpand } from './RenderCellExpand';
 
 function ServiceSelector(props) {
-  const {item, applyValue} = props;
+  const { item, applyValue } = props;
 
   return (
     <FormControl>
@@ -18,8 +18,9 @@ function ServiceSelector(props) {
         id="serviceSelector"
         value={item?.value || ''}
         onChange={(evt) => {
-          applyValue({...item, value: evt.target.value});
-        }}>
+          applyValue({ ...item, value: evt.target.value });
+        }}
+      >
         <option key="none" value="none">
           &nbsp;
         </option>
@@ -75,7 +76,7 @@ export default function ReferenceTable() {
     pageSize: 25,
   });
 
-  const {colorMode} = useColorMode();
+  const { colorMode } = useColorMode();
 
   const references = Object.values(data);
   const columns = [
@@ -120,11 +121,11 @@ export default function ReferenceTable() {
   ];
 
   return (
-    <div style={{width: '100%'}}>
+    <div style={{ width: '100%' }}>
       <DataGrid
         initialState={{
           sorting: {
-            sortModel: [{field: 'title', sort: 'asc'}],
+            sortModel: [{ field: 'title', sort: 'asc' }],
           },
         }}
         disableRowSelectionOnClick

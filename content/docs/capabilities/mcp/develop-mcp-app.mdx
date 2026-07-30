@@ -118,19 +118,19 @@ registerAppTool(
     inputSchema: {
       type: 'object',
       properties: {
-        input: {type: 'string', description: 'Tool input'},
+        input: { type: 'string', description: 'Tool input' },
       },
       required: ['input'],
     },
     _meta: {
-      ui: {resourceUri: 'ui://my-widget'},
+      ui: { resourceUri: 'ui://my-widget' },
     },
   },
   async (args) => {
     const input = MyToolInputSchema.parse(args).input;
     return {
-      content: [{type: 'text', text: 'Result'}],
-      structuredContent: {result: input},
+      content: [{ type: 'text', text: 'Result' }],
+      structuredContent: { result: input },
     };
   },
 );
@@ -143,7 +143,7 @@ registerAppResource(
   server,
   'ui://my-widget',
   'ui://my-widget',
-  {mimeType: RESOURCE_MIME_TYPE},
+  { mimeType: RESOURCE_MIME_TYPE },
   async () => ({
     contents: [
       {
@@ -159,16 +159,16 @@ registerAppResource(
 **Widget entry point** — React component in `widgets/src/widgets/my-widget.tsx` using the `App` class from `@modelcontextprotocol/ext-apps`:
 
 ```tsx
-import {App} from '@modelcontextprotocol/ext-apps';
-import {StrictMode, useEffect, useState} from 'react';
-import {createRoot} from 'react-dom/client';
+import { App } from '@modelcontextprotocol/ext-apps';
+import { StrictMode, useEffect, useState } from 'react';
+import { createRoot } from 'react-dom/client';
 
 function MyWidget() {
   const [toolOutput, setToolOutput] = useState(null);
   const [theme, setTheme] = useState('light');
 
   useEffect(() => {
-    const app = new App({name: 'MyWidget', version: '1.0.0'});
+    const app = new App({ name: 'MyWidget', version: '1.0.0' });
     app.ontoolresult = (result) =>
       setToolOutput(result.structuredContent ?? null);
     app.onhostcontextchanged = (context) => setTheme(context?.theme ?? 'light');
