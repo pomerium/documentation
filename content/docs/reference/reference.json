@@ -1598,6 +1598,59 @@
     "title": "Secondary Color (Dark Mode)",
     "type": "string"
   },
+  "secrets": {
+    "description": "Read credentials from a file outside the Pomerium configuration and inject them into upstream request headers, with live rotation and fail-closed behavior.",
+    "id": "secrets",
+    "path": "/secrets",
+    "services": ["authorize"],
+    "short_description": "",
+    "title": "Secrets"
+  },
+  "secrets-binding-refresh": {
+    "description": "How often Pomerium re-reads a secret binding's backend. Minimum one second.",
+    "id": "secrets-binding-refresh",
+    "path": "/secrets#bindings",
+    "services": ["authorize"],
+    "short_description": "",
+    "title": "Secrets Binding Refresh",
+    "type": "duration"
+  },
+  "secrets-binding-stale-grace": {
+    "description": "How long a secret binding's last good value is still used while re-reading keeps failing. After this window the value is dropped and requests that need it are rejected with 503.",
+    "id": "secrets-binding-stale-grace",
+    "path": "/secrets#bindings",
+    "services": ["authorize"],
+    "short_description": "",
+    "title": "Secrets Binding Stale Grace",
+    "type": "duration"
+  },
+  "secrets-binding-url": {
+    "description": "The backend a secret binding reads from. Supports file:// URLs with an absolute path, and an optional dotted-path fragment selecting one field of a JSON payload.",
+    "id": "secrets-binding-url",
+    "path": "/secrets#binding-urls",
+    "services": ["authorize"],
+    "short_description": "",
+    "title": "Secrets Binding URL",
+    "type": "string"
+  },
+  "secrets-bindings": {
+    "description": "The secret binding table. Each key is a binding ID referenced from a route as ${secret.ID}, and each value describes the backend URL and how often to re-read it.",
+    "id": "secrets-bindings",
+    "path": "/secrets#bindings",
+    "services": ["authorize"],
+    "short_description": "",
+    "title": "Secrets Bindings",
+    "type": "map of objects"
+  },
+  "secrets-defaults": {
+    "description": "Tuning values applied to secret bindings that leave a field unset: refresh, stale_grace, and negative_ttl.",
+    "id": "secrets-defaults",
+    "path": "/secrets#defaults",
+    "services": ["authorize"],
+    "short_description": "",
+    "title": "Secrets Defaults",
+    "type": "object"
+  },
   "service-account-description": {
     "description": "A customizable description that identifies this service account.",
     "id": "service-account-description",
