@@ -18,7 +18,7 @@ Use Pomerium as a first-class secure-by-default Ingress Controller. The Pomerium
 ## Deploy
 
 ```console
-kubectl apply -k github.com/pomerium/ingress-controller/config/default\?ref=0-32-0
+kubectl apply -k github.com/pomerium/ingress-controller/config/default\?ref=0-33-0
 ```
 
 The Pomerium Ingress Controller is now installed into your cluster.
@@ -26,6 +26,33 @@ The Pomerium Ingress Controller is now installed into your cluster.
 :::note
 
 You need complete [Global Configuration](./configure) for Pomerium to become fully operational, before you can [configure Ingress](./ingress).
+
+:::
+
+## Deployment variants
+
+`config/default` is the standard install, but it is not the only one. Each path below is a complete kustomization you can apply directly in place of `config/default`, or reference as a base in your own `kustomization.yaml`.
+
+| Path | Description |
+| --- | --- |
+| `config/default` | Controller and Pomerium core, CRDs, RBAC, and the bootstrap secrets job. The standard install. |
+| `config/default-no-crd` | `default` without the CRD definitions, for when the CRDs are installed and owned separately — a dedicated Argo CD Application, Terraform, or a cluster admin — so the two do not compete over the schema. |
+| `config/gateway-api` | `default` plus a `GatewayClass` and the `--experimental-gateway-api` flag. See [Gateway API](./gateway-api). |
+| `config/clustered-databroker` | Replaces the `pomerium` `Deployment` with a `StatefulSet` and adds a `pomerium-headless` `Service`, so the built-in databroker can run clustered across replicas. |
+| `config/clustered-databroker-no-crd` | The clustered databroker variant, without the CRD definitions. |
+| `config/http3-eks` | `default` with the `pomerium-proxy` service configured for HTTP/3 on an AWS Network Load Balancer. |
+| `config/http3-gke` | `default` with the `pomerium-proxy` service configured for HTTP/3 on a GKE regional external load balancer. |
+| `config/ssh` | `default` with the SSH listener enabled on port `4022`. |
+
+For example, to install the Gateway API variant:
+
+```console
+kubectl apply -k github.com/pomerium/ingress-controller/config/gateway-api\?ref=0-33-0
+```
+
+:::note
+
+Always pin `?ref=` to a version branch such as `0-33-0` rather than `main`, so that your installs are reproducible and you upgrade deliberately.
 
 :::
 
@@ -61,13 +88,14 @@ The following resources are created:
 3. `pomerium-proxy` `Service` of type `LoadBalancer`, provisioning an external IP address, that listens on `:80` and `:443` ports. All HTTP requests are upgraded to HTTPS requests.
 4. `pomerium-metrics` `Service` of type `ClusterIP`, accessible from within the cluster, exposing `/metrics` Prometheus-style metrics endpoint.
 5. `pomerium-gen-secrets` one-time `Job` that generates an initial set of bootstrap secrets, and stores them into the `bootstrap` `Secret`.
-6. [Pomerium CRD](./reference) definitions.
-7. RBAC rules.
+6. `pomerium` `IngressClass`, with the `pomerium.io/ingress-controller` controller.
+7. [Pomerium CRD](./reference) definitions.
+8. RBAC rules.
 
-The default manifest may be rebuilt by running the below command in the [`pomerium/ingress-controller`](https://github.com/pomerium/ingress-controller/tree/main/config) repo.
+You may render this set of resources to a flat manifest — to inspect it, to review it in a pull request, or to feed a pipeline that does not run `kustomize` itself — with [`kustomize`](https://kustomize.io/) directly against the [`pomerium/ingress-controller`](https://github.com/pomerium/ingress-controller/tree/main/config) repo:
 
 ```console
-kustomize build config/default
+kustomize build github.com/pomerium/ingress-controller/config/default\?ref=0-33-0
 ```
 
 </details>
@@ -78,7 +106,7 @@ kustomize build config/default
 
 ```yaml title="kustomization.yaml"
 resources:
-  - https://raw.githubusercontent.com/pomerium/ingress-controller/0-32-0/deployment.yaml
+  - github.com/pomerium/ingress-controller/config/default?ref=0-33-0
 patches:
   - path: patch-proxy-external-dns.yaml
 ```
@@ -105,12 +133,12 @@ You must configure [storage persistence](/docs/internals/data-storage) in order 
 
 ```yaml title="kustomization.yaml"
 resources:
-  - https://raw.githubusercontent.com/pomerium/ingress-controller/0-32-0/deployment.yaml
+  - github.com/pomerium/ingress-controller/config/default?ref=0-33-0
 patches:
-  - path: deployment.yaml
+  - path: patch-replicas.yaml
 ```
 
-```yaml title="deployment.yaml"
+```yaml title="patch-replicas.yaml"
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -126,9 +154,9 @@ An `IngressClass` may be designated as a [default controller](https://kubernetes
 
 ```yaml title="kustomization.yaml"
 resources:
-  - https://raw.githubusercontent.com/pomerium/ingress-controller/0-32-0/deployment.yaml
+  - github.com/pomerium/ingress-controller/config/default?ref=0-33-0
 patches:
-  - path: patch-proxy-external-dns.yaml
+  - path: patch-ingress-class.yaml
 ```
 
 ```yaml title="patch-ingress-class.yaml"
@@ -150,7 +178,7 @@ Make sure to always restrict access to the envoy admin interface ingress.
 
 ```yaml title="kustomization.yaml"
 resources:
-  - github.com/pomerium/ingress-controller/config/default?ref=0-32-0
+  - github.com/pomerium/ingress-controller/config/default?ref=0-33-0
   - admin-service.yaml
   - admin-ingress.yaml
 patches:
