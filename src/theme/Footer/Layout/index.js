@@ -7,7 +7,7 @@
 import clsx from 'clsx';
 import React from 'react';
 
-export default function FooterLayout({style, links, logo, copyright}) {
+export default function FooterLayout({style, links, copyright}) {
   return (
     <footer
       className={clsx('footer', {
