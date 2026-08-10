@@ -143,9 +143,9 @@ When creating a guide, capture relevant screenshots of Pomerium Zero as you navi
 
 After drafting or revising a guide, run these checks before marking it publish-ready:
 
-1. **Format**: Run `npm run format` to auto-fix formatting issues (Prettier with prose wrap `never`, single quotes, trailing commas).
+1. **Format**: Run `npm run format` to auto-fix formatting issues (oxfmt with prose wrap `never`, single quotes, trailing commas).
 2. **Spell check**: Run `npm run cspell` to find unknown words. For intentional Pomerium-specific or guide-specific terms, add them to the `words` array in `cspell.json`. Do not suppress legitimate typos.
-3. **Full check**: Run `npm run check` (runs both `format-check` and `cspell`) to confirm a clean pass.
+3. **Full check**: Run `npm run check` (runs both `format:check` and `cspell`) to confirm a clean pass.
 4. **Build**: Run `npm run build` to verify there are no broken links. The site is configured with `onBrokenLinks: 'throw'`, so any dead internal links will fail the build.
 5. **Frontmatter**: Verify the guide has all required frontmatter fields: `title`, `sidebar_label`, `description`, `keywords`, and `lang: en-US`.
 
