@@ -10,7 +10,7 @@
 //
 // No new npm dependencies: js-yaml is already a devDependency, so we reuse it
 // for front-matter parsing instead of hand-rolling a YAML parser.
-import yaml from 'js-yaml';
+import {load as loadYaml} from 'js-yaml';
 import {readFileSync, readdirSync} from 'node:fs';
 import {join} from 'node:path';
 
@@ -32,7 +32,7 @@ function parseFrontMatter(source) {
   const match = source.match(/^---\r?\n([\s\S]*?)\r?\n---/);
   if (!match) return null;
   try {
-    const data = yaml.load(match[1]);
+    const data = loadYaml(match[1]);
     return data && typeof data === 'object' ? data : {};
   } catch {
     return {};

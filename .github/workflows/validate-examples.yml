@@ -31,7 +31,7 @@ jobs:
     outputs:
       targets: ${{ steps.find.outputs.targets }}
     steps:
-      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
       - id: find
@@ -122,7 +122,7 @@ jobs:
       matrix:
         target: ${{ fromJson(needs.discover.outputs.targets) }}
     steps:
-      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       # Docker + Compose are preinstalled on ubuntu-latest; the Node/Playwright
       # toolchain runs inside the test-runner container, so nothing else is needed.
       - run: scripts/validate-guide-fixtures.sh "${{ matrix.target }}"

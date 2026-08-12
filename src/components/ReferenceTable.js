@@ -1,82 +1,24 @@
 import {useColorMode} from '@docusaurus/theme-common';
-import {FormControl, InputLabel, NativeSelect} from '@mui/material';
-import {GridToolbar} from '@mui/x-data-grid';
-import {DataGridPro} from '@mui/x-data-grid-pro/DataGridPro/DataGridPro';
-import React, {useState} from 'react';
+import {ThemeProvider} from '@mui/material/styles';
+import {DataGrid, GridToolbar} from '@mui/x-data-grid';
+import React, {useMemo, useState} from 'react';
 
 import data from '../../content/docs/reference/reference.json';
+import createAppTheme from '../theme/muiTheme';
 import {renderCellExpand} from './RenderCellExpand';
-
-function ServiceSelector(props) {
-  const {item, applyValue} = props;
-
-  return (
-    <FormControl>
-      <InputLabel shrink id="serviceSelector">
-        Service
-      </InputLabel>
-      <NativeSelect
-        id="serviceSelector"
-        value={item?.value || ''}
-        onChange={(evt) => {
-          applyValue({...item, value: evt.target.value});
-        }}>
-        <option key="none" value="none">
-          &nbsp;
-        </option>
-        <option key="all" value="all">
-          All Services
-        </option>
-        <option key="proxy" value="proxy">
-          Proxy
-        </option>
-        <option key="authenticate" value="authenticate">
-          Authenticate
-        </option>
-        <option key="authorize" value="authorize">
-          Authorize
-        </option>
-        <option key="databroker" value="databroker">
-          Databroker
-        </option>
-      </NativeSelect>
-    </FormControl>
-  );
-}
-
-const serviceOperator = [
-  {
-    label: 'is',
-    value: 'is',
-    getApplyFilterFn: (filterItem) => {
-      if (
-        !filterItem.columnField ||
-        !filterItem.value ||
-        !filterItem.operatorValue ||
-        filterItem.value === 'none'
-      ) {
-        return null;
-      }
-
-      return (params) => {
-        return params.value.indexOf(filterItem.value) > -1;
-      };
-    },
-    InputComponent: ServiceSelector,
-  },
-];
 
 function filterHidden(item) {
   return !item.enterpriseOnly;
 }
 
 export default function ReferenceTable() {
-  const [pageSize, setPageSize] = useState(25);
-  const changePageSize = (pageSize) => {
-    setPageSize(pageSize);
-  };
+  const [paginationModel, setPaginationModel] = useState({
+    page: 0,
+    pageSize: 25,
+  });
 
   const {colorMode} = useColorMode();
+  const theme = useMemo(() => createAppTheme(colorMode), [colorMode]);
 
   const references = Object.values(data);
   const columns = [
@@ -121,57 +63,44 @@ export default function ReferenceTable() {
   ];
 
   return (
-    <div style={{width: '100%'}}>
-      <DataGridPro
-        initialState={{
-          sorting: {
-            sortModel: [{field: 'title', sort: 'asc'}],
-          },
-        }}
-        disableSelectionOnClick
-        autoHeight
-        rowsPerPageOptions={[5, 10, 25, 50]}
-        pagination
-        pageSize={pageSize}
-        onPageSizeChange={changePageSize}
-        sx={{
-          color:
-            colorMode === 'dark'
-              ? 'rgba(224,224,224,1);'
-              : 'rgba(0, 0, 0, 0.54);',
-          '& .MuiDataGrid-columnHeader:last-child .MuiDataGrid-columnSeparator--sideRight':
-            {
-              display: 'none',
+    <ThemeProvider theme={theme}>
+      <div style={{width: '100%'}}>
+        <DataGrid
+          initialState={{
+            sorting: {
+              sortModel: [{field: 'title', sort: 'asc'}],
             },
-          '& .MuiDataGrid-sortIcon': {
-            color:
-              colorMode === 'dark'
-                ? 'rgba(224,224,224,1);'
-                : 'rgba(0, 0, 0, 0.54);',
-          },
-          '& .MuiDataGrid-menuIconButton': {
-            color:
-              colorMode === 'dark'
-                ? 'rgba(224,224,224,1);'
-                : 'rgba(0, 0, 0, 0.54);',
-          },
-        }}
-        columns={columns}
-        rows={references.filter(filterHidden)}
-        componentsProps={{
-          toolbar: {
-            printOptions: {
-              disableToolbarButton: true,
+          }}
+          disableRowSelectionOnClick
+          autoHeight
+          pageSizeOptions={[5, 10, 25, 50]}
+          pagination
+          paginationModel={paginationModel}
+          onPaginationModelChange={setPaginationModel}
+          showToolbar
+          sx={{
+            '& .MuiDataGrid-columnHeader:last-child .MuiDataGrid-columnSeparator--sideRight':
+              {
+                display: 'none',
+              },
+          }}
+          columns={columns}
+          rows={references.filter(filterHidden)}
+          slots={{
+            toolbar: GridToolbar,
+          }}
+          slotProps={{
+            toolbar: {
+              printOptions: {
+                disableToolbarButton: true,
+              },
+              csvOptions: {
+                disableToolbarButton: true,
+              },
             },
-            csvOptions: {
-              disableToolbarButton: true,
-            },
-          },
-        }}
-        components={{
-          Toolbar: GridToolbar,
-        }}
-      />
-    </div>
+          }}
+        />
+      </div>
+    </ThemeProvider>
   );
 }

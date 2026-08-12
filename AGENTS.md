@@ -5,16 +5,16 @@ Pomerium documentation site built with **Docusaurus 3.8** (React + MDX). Publish
 ## Commands
 
 ```bash
-yarn start           # Dev server on localhost:3001 (hot-reload)
-yarn build           # Production build to /build/
-yarn format          # Auto-fix formatting with Prettier
-yarn format-check    # Check formatting (no changes)
-yarn check           # Run formatting and spelling checks
-yarn cspell          # Spell-check tracked source files
-yarn clear           # Clear Docusaurus cache (useful if build fails)
+npm start                # Dev server on localhost:3001 (hot-reload)
+npm run build            # Production build to /build/
+npm run format           # Auto-fix formatting with oxfmt
+npm run format:check     # Check formatting (no changes)
+npm run check            # Run formatting and spelling checks
+npm run cspell           # Spell-check tracked source files
+npm run clear            # Clear Docusaurus cache (useful if build fails)
 ```
 
-This repo does not use the Python `pre-commit` framework. The CI `pre-commit` check runs the repo scripts directly (`yarn format-check`, `yarn cspell`), and the same commands are available locally via `yarn check`.
+This repo does not use the Python `pre-commit` framework. The CI `pre-commit` check runs the repo scripts directly (`npm run format:check`, `npm run cspell`), and the same commands are available locally via `npm run check`.
 
 ## Architecture
 
@@ -53,7 +53,7 @@ Enterprise-only sidebar items use `className: 'enterprise'`.
 ### Key config files
 
 - `docusaurus.config.js` — Site config. Broken links set to `throw` (both `onBrokenLinks` and `onBrokenMarkdownLinks`)
-- `.prettierrc` — 80 chars, single quotes, trailing commas, `proseWrap: never`
+- `.oxfmtrc.json` — 80 chars, single quotes, trailing commas, `proseWrap: never`
 - `cspell.json` — Custom dictionary (~290 words). Add new Pomerium-specific terms here when cspell fails on intentional words
 
 ## Content Authoring Conventions
@@ -120,8 +120,8 @@ Follow the pattern: `docs: description of change (#PR)` or `docs(scope): descrip
 
 - Broken links cause build failures (`onBrokenLinks: 'throw'`). Always verify internal link paths match file structure.
 - Images go in `content/docs/[section]/img/` directories alongside the content.
-- The `content/docs/deploy/k8s/reference.md` file is excluded from Prettier formatting (auto-generated).
-- Prose wrap is set to `never` — Prettier won't reflow markdown text.
+- The `content/docs/deploy/k8s/reference.md` file is excluded from oxfmt formatting (auto-generated).
+- Prose wrap is set to `never` — oxfmt won't reflow markdown text.
 - API docs are auto-generated from an OpenAPI spec via `redocusaurus` at `/docs/api/`.
 
 ## Cutting a new docs version
@@ -132,7 +132,7 @@ A release cut (e.g. `0-33-0`):
 
 1. **Cut the branch from `main`.** On the new branch only, override `presets[0].docs.versions.current.label` in `docusaurus.config.ts` to that version (e.g. `v0.33`) so the snapshot doesn't call itself "Latest (main)". The robots plugin needs no per-branch changes — numbered branches build noindex automatically. (Branches cut before this plugin landed carry the old allow-by-regex plugin and need explicit demotion via `static/_headers`.)
 2. **Confirm the pin serves** — Netlify maps `<branch>.docs.pomerium.com` to the branch deploy automatically under the `docs.pomerium.com` custom domain; the GCP docs LB passes unmatched `*.docs.pomerium.com` hosts through to Netlify with the Host header preserved.
-3. **`src/components/docVersions.json` + navbar dropdown** in `docusaurus.config.ts` (`themeConfig.navbar.items[*].dropdownItemsAfter`), on `main`: relabel the new pin "Latest stable (vX.Y)", demote the previous one to plain `vX.Y`, drop the oldest. Keep both files in sync. Backport the same dropdown update to still-live pinned branches. Run `yarn format` + `yarn build` + `yarn cspell "**/*"` before committing.
+3. **`src/components/docVersions.json` + navbar dropdown** in `docusaurus.config.ts` (`themeConfig.navbar.items[*].dropdownItemsAfter`), on `main`: relabel the new pin "Latest stable (vX.Y)", demote the previous one to plain `vX.Y`, drop the oldest. Keep both files in sync. Backport the same dropdown update to still-live pinned branches. Run `npm run format` + `npm run build` + `npm run cspell -- "**/*"` before committing.
 4. **Retire the oldest pin** — ops appends it to `redirect_versions` in `infrastructure-terraform/terraform/gcp/public-prd/docs.tf` (applied via Terraform Cloud), which 301s the hostname to canonical docs.
 
 Verify after deploy: the new pin returns 200 with a valid cert and `X-Robots-Tag: noindex`; the retired version 301s to canonical docs; `www.pomerium.com/docs/` still serves `main` with `X-Robots-Tag: all`.

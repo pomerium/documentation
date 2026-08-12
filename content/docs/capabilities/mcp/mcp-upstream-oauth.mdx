@@ -66,9 +66,6 @@ Use static OAuth2 when you have pre-registered OAuth credentials and know the pr
 ### Configuration
 
 ```yaml
-runtime_flags:
-  mcp: true
-
 routes:
   - from: https://github.your-domain.com
     to: http://github-mcp.int:8080/mcp
@@ -96,12 +93,6 @@ routes:
           - mcp_tool:
               starts_with: 'admin_'
 ```
-
-:::warning Experimental Feature
-
-MCP support is currently an experimental feature only available in the `main` branch or Docker images built from `main`. To enable MCP functionality, you must set `runtime_flags.mcp: true` in your [Pomerium configuration](/docs/internals/configuration).
-
-:::
 
 ### Step-by-step
 
@@ -215,9 +206,6 @@ This is the mode to use when connecting to third-party MCP servers where you don
 Auto-discovery requires no upstream OAuth credentials — just define the MCP server route without an `upstream_oauth2` block:
 
 ```yaml
-runtime_flags:
-  mcp: true
-
 routes:
   - from: https://notion.your-domain.com
     to: https://mcp.notion.com

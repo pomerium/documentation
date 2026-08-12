@@ -68,7 +68,19 @@ Whenever a user tries to access your application integrated with Pomerium, they 
 
 ![GitHub Sign-on Page](./img/github/github-signon-page.png)
 
-### Getting groups
+### User IDs
+
+Starting in version 0.34, Pomerium uses a GitHub user's `node_id` as their Pomerium `user_id`. This is the identifier used for the `user` PPL criterion. Prior to this Pomerium used a user's `login`.
+
+To find a user's `node_id`, query the GitHub API:
+
+```bash
+curl -s https://api.github.com/users/USER_LOGIN | jq -r .node_id
+```
+
+It will be a base64-encoded string.
+
+### Getting Groups
 
 <Tabs queryString="get-groups">
 <TabItem value="custom-claim" label="Custom Claim (Open Source)">

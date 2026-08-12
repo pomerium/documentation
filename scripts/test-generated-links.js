@@ -160,7 +160,7 @@ function checkMarkdownLinks() {
 }
 
 if (!fs.existsSync(BUILD_DIR)) {
-  fail('build/ does not exist; run yarn build first');
+  fail('build/ does not exist; run npm run build first');
   process.exit(1);
 }
 

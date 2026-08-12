@@ -5,8 +5,8 @@ metadata:
   name: global
 spec:
   secrets: pomerium/bootstrap
-  authenticate:
-      url: https://authenticate.pomerium.app
+  identityProvider:
+    provider: hosted
   certificates:
       - pomerium/pomerium-wildcard-tls
 ```

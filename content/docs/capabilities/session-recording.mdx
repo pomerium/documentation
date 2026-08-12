@@ -44,7 +44,15 @@ The session recording capability is _not_ present in Pomerium binary distributio
 
 ### 1. Obtain the session recording extension
 
-The session recording extension is distributed as a container image:
+All enterprise extensions are available as part of the image `docker.cloudsmith.io/pomerium/pomerium-enterprise/pomerium-enterprise`. This is a drop in replacement for `pomerium/pomerium` images.
+
+Similarly, the enterprise extensions are available as part of the image `docker.cloudsmith.io/pomerium/pomerium-enterprise/ingress-controller-enterprise`. This is a drop in replacement for `pomerium/ingress-controller` images.
+
+The extensions are available in the `/extensions` directory. The session recording extension is mounted at `/extensions/session_recording_extension.so`
+
+<hr />
+
+The session recording extension is also distributed as a separate container image:
 
 `docker.cloudsmith.io/pomerium/enterprise/session-recording-extension`
 
@@ -90,7 +98,24 @@ This image contains a single file, `/session_recording_extension.so`. See below 
 <Tabs>
 <TabItem value="Kubernetes" label="Kubernetes">
 
-For Kubernetes deployments, it is recommended to use [image volumes](https://kubernetes.io/docs/tasks/configure-pod-container/image-volumes/) to mount the extension into the Pomerium Core container.
+For existing deployments:
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+spec:
+  template:
+    spec:
+      containers:
+        - name: pomerium
+          image: docker.cloudsmith.io/pomerium/pomerium-enterprise/ingress-controller-enterprise:vX.Y.Z
+      imagePullSecrets:
+        # This should be the same image pull secret used for enterprise console
+        - name: pomerium-enterprise-docker
+  // ...
+```
+
+Alternatively, it is possible to use [image volumes](https://kubernetes.io/docs/tasks/configure-pod-container/image-volumes/) to mount the extension into the Pomerium Core container.
 
 ```yaml
 apiVersion: apps/v1
@@ -103,7 +128,7 @@ spec:
           image: pomerium/ingress-controller:vX.Y.Z
           volumeMounts:
             - name: session-recording-extension
-              mountPath: /extensions/session_recording/
+              mountPath: /extensions/
               readOnly: true
       volumes:
         - name: session-recording-extension
@@ -117,16 +142,24 @@ spec:
 </TabItem>
 <TabItem value="DockerCompose" label="Docker Compose">
 
+```yaml
+services:
+  pomerium:
+    image: docker.cloudsmith.io/pomerium/pomerium-enterprise/pomerium-enterprise:vX.Y.Z
+    # Use docker login to cloudsmith.io
+```
+
 For Docker Compose deployments, you can mount the extension image directly into the container with an [image volume](https://docs.docker.com/reference/compose-file/services/#volumes):
 
 ```yaml
 services:
   pomerium:
     image: pomerium/pomerium:vX.Y.Z
+    # use docker login to cloudsmith.io
     volumes:
       - type: image
         source: docker.cloudsmith.io/pomerium/enterprise/session-recording-extension:vX.Y.Z
-        target: /extensions/session_recording/
+        target: /extensions/
         read_only: true
 ```
 
@@ -153,7 +186,7 @@ These extensions are loaded into Envoy, not the Pomerium control plane. If you b
 
 Once the extension is accessible on the filesystem, Pomerium must be configured to load the extension by file path.
 
-If you used the paths from the examples in the previous section, the absolute path to the session recording extension will be <br /> `/extensions/session_recording/session_recording_extension.so`
+If using the enterprise images or using the example mounts from the previous section, the absolute path to the session recording extension will be <br /> `/extensions/session_recording_extension.so`.
 
 <Tabs>
 <TabItem value="EnterpriseConsole" label="Enterprise Console">
@@ -173,7 +206,7 @@ Extension file paths can be configured in the Pomerium config.yaml as follows:
 
 ```yaml title="config.yaml"
 envoy_dynamic_extensions:
-  - /extensions/session_recording/session_recording_extension.so
+  - /extensions/session_recording_extension.so
 ```
 
 </TabItem>
@@ -185,9 +218,26 @@ resource "pomerium_settings" "test_session_recording_opts" {
 
   # File paths to extensions to be loaded by envoy at runtime.
   envoy_dynamic_extensions = [
-    "/usr/local/config/pomerium/extensions/session_recording_extension.so"
+    "/extensions/session_recording_extension.so"
   ]
 }
+```
+
+</TabItem>
+
+<TabItem value="IngressController" label="Ingress Controller">
+
+On the `ingress.pomerium.io/v1` CR:
+
+```yaml
+apiVersion: ingress.pomerium.io/v1
+kind: Pomerium
+metadata:
+  name: global
+spec:
+  // ...
+  envoyDynamicExtensions:
+  - /extensions/session_recording_extension.so
 ```
 
 </TabItem>
@@ -222,6 +272,42 @@ blob_storage:
 ```
 
 See the [Session Recording Storage](/docs/capabilities/session-recording/storage) reference for full provider-specific URI parameters and credential setup.
+
+</TabItem>
+
+<TabItem value="EnterpriseStatic" label="Enterprise bootstrap">
+
+The following configuration is available for Console to automatically create and assign a blob datastore to the Pomerium instance that bootstrapped the Console.
+
+Via the Console config file:
+
+```yaml
+session_recording_options:
+  datasource_name: bootstrap
+  bucket_uri: s3://example-bucket # see provider-specific configuration below
+```
+
+or via an environment variable:
+
+```
+SESSION_RECORDING_OPTIONS: '{"datasource_name": "bootstrap", "bucket_uri" : "s3://example-bucket"}'
+```
+
+or via a CLI flag:
+
+```
+--session-recording-options='{"datasource_name": "bootstrap", "bucket_uri" : "s3://example-bucket"}'
+```
+
+:::important
+
+This feature is available for quickstart.
+
+Restarting the console will re-assign this blob datasource to the Pomerium instance that bootstrapped the Console, which may produce **undesirable behavior**.
+
+Changing the datasource configured from the startup options can overwrite previous datasources of the same name. It is recommended to set datasources via the UI, enterprise SDK or terraform for production deployments.
+
+:::
 
 </TabItem>
 
@@ -277,7 +363,7 @@ resource "pomerium_settings" "test_session_recording_opts" {
   }
   # File paths to extensions to be loaded by envoy at runtime.
   envoy_dynamic_extensions = [
-    "/usr/local/config/pomerium/extensions/session_recording_extension.so"
+    "/extensions/session_recording_extension.so"
   ]
 }
 ```

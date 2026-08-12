@@ -6,7 +6,6 @@ import {Config} from '@docusaurus/types';
 import type {Options as OpenApiPluginOptions} from 'docusaurus-plugin-openapi-docs';
 
 const dotenv = require('dotenv');
-const webpack = require('webpack');
 
 dotenv.config();
 
@@ -28,10 +27,6 @@ const config: Config = {
     },
   },
   themes: ['@docusaurus/theme-mermaid', 'docusaurus-theme-openapi-docs'],
-
-  customFields: {
-    xgridKey: process.env.XGRID_KEY,
-  },
 
   headTags: [
     {
