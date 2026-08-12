@@ -129,7 +129,18 @@ Expected output: `401`. On a bearer route a missing token is a denial, not a sig
 
 ## Add the workflow
 
-In your repository, create the workflow file:
+Stripped to essentials, the job does two things: ask GitHub for a token whose audience matches the route, then present that token to the route.
+
+```bash
+token=$(curl -sS -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
+  "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=https://verify.yourdomain.com" | jq -r '.value')
+
+curl -H "Authorization: Bearer $token" https://verify.yourdomain.com/
+```
+
+The runner injects `ACTIONS_ID_TOKEN_REQUEST_URL` and `ACTIONS_ID_TOKEN_REQUEST_TOKEN` into any job that requests the `id-token: write` permission, so these two calls only work inside GitHub Actions; there is no way to mint one of these tokens from a laptop.
+
+The workflow below is that same pair of calls, with the error handling and log masking a real job needs. In your repository, create the workflow file:
 
 ```yaml title=".github/workflows/call-pomerium.yaml"
 name: Call a Pomerium-protected route
