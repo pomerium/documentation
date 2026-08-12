@@ -28,7 +28,7 @@ You want an agent to do real work: read tickets, query a database, call an inter
 
 The usual mitigations try to make the agent careful. Careful is not a security boundary. The alternative is an architecture in which the agent has nothing to leak: it runs in a sandbox with no secrets, and everything it is allowed to reach sits behind a gateway that decides — per request, deterministically — whether this agent, acting for this person, may reach this resource.
 
-Pomerium — an open-source identity-aware proxy — provides that architecture as one stack. You choose the harness (Claude Code, Codex, Gemini CLI, OpenCode, or your own program) and the model; Pomerium provides the sandbox lifecycle, the identity, the policy, and the egress. The result is not another chat assistant: a Slack bot ships with it, but only as a reference client of the same public API any client you build would use. The product is the layer underneath.
+Pomerium — an open-source identity-aware proxy — provides that architecture as one stack. You choose the harness (Claude Code, Codex, Gemini CLI, OpenCode, or your own program) and the model; Pomerium provides the sandbox lifecycle, run identity, policy enforcement, and egress control. A Slack bot ships with it, but only as a reference client of the same public API any client you build would use; the API and the gateway are the product, and the bot is a demo of them.
 
 :::info Availability
 
@@ -47,15 +47,15 @@ The layers, from enforcement up to product:
 - **The Agent Sessions API** manages sessions: it claims sandbox pods, launches agents in them, streams their output as durable events, and suspends and revives them.
 - **Your clients** are whatever your users already work in — a Slack bot, a Teams bot, a web app, a CI job. The bundled Slack bot is a client like any other, with no special access.
 
-One more party does not appear on the data path but controls all of it: **a person**. No agent acts until a specific person approves a specific run on a consent page, and the agent's credentials stop renewing once that person's identity provider session can no longer be refreshed.
+A **person** sits outside the data path but gates all of it: no agent acts until a specific person approves a specific run on a consent page, and the agent's credentials stop renewing once that person's identity provider session can no longer be refreshed.
 
 ## The Foundation: Pomerium
 
-If you have not used Pomerium before, four properties of the underlying proxy make the rest of this page work. If you know Pomerium, skip ahead.
+Four properties of the underlying proxy underpin everything below.
 
 **Bring your identity provider.** Pomerium [authenticates](/docs/capabilities/authentication) users against any OIDC or SAML identity provider and carries its data — subject, email, groups, custom claims — into every decision. There is no separate user store to manage.
 
-**Deterministic authorization.** Every request passes through [Pomerium Policy Language](/docs/internals/ppl) — declarative rules over identity, and for MCP servers down to the [individual tool call](/docs/capabilities/mcp/limit-mcp-tools). A policy is not a prompt. It does not get talked out of its answer.
+**Deterministic authorization.** Every request passes through [Pomerium Policy Language](/docs/internals/ppl) — declarative rules over identity, and for MCP servers down to the [individual tool call](/docs/capabilities/mcp/limit-mcp-tools). Policy evaluation is deterministic: the same request gets the same answer, no matter what is in the agent's context window.
 
 **Secrets stay at the gateway.** Routes inject credentials into upstream requests as they pass through: API keys referenced from your secret store with `set_request_headers` (`${secret.…}`), per-user OAuth tokens through [MCP upstream OAuth](/docs/capabilities/mcp/mcp-upstream-oauth). The client behind the route never holds them.
 
@@ -81,13 +81,13 @@ policy:
       - claim/act.kubernetes.io.serviceaccount.name: sandbox-agent # which pod acts
 ```
 
-Three properties are worth pausing on.
+Three properties of runs:
 
-**A run is not a grant.** The run names no routes and confers no access. Each route decides for itself whether it accepts run tokens at all (`bearer_token_format: agentic_run_token`) and which runs it admits (its policy). Approving a run gives the agent exactly what your routes say it may have — nothing arrives bundled.
+**A run is not a grant.** The run names no routes and confers no access. Each route decides for itself whether it accepts run tokens at all (`bearer_token_format: agentic_run_token`) and which runs it admits (its policy). Approving a run gives the agent exactly what your routes say it may have.
 
 **The pod cannot claim a run.** The token exchange takes no run ID as input. The sandbox presents only its own projected service-account token — a short-lived JWT the kubelet writes into the pod, verified against the cluster's own OIDC issuer. Pomerium finds the run whose seal matches the verified claims, byte for byte. A pod cannot ask for another pod's run, because it cannot present another pod's identity.
 
-**The person stays in control.** Approval happens on a Pomerium-served consent page, behind ordinary SSO, showing the run's prompt, the sealed pod identity, and the MCP servers the agent expects to use — with a Connect button for any that need the person's own OAuth consent. A run can name the one person allowed to approve it, and a revived session always pins approval to the person who approved it first. A run also cannot outlive the approver's identity: each token renewal — roughly every ten minutes — checks that the approver's IdP session is still alive and refreshable. End the person's session at the identity provider, and renewals start failing as soon as the approver's cached IdP token lapses — typically within the hour — and the sandbox winds down.
+**The person stays in control.** Approval happens on a Pomerium-served consent page, behind ordinary SSO, showing the run's prompt, the sealed pod identity, and the MCP servers the agent expects to use — with a Connect button for any that need the person's own OAuth consent. A run can name the one person allowed to approve it, and a revived session always pins approval to the person who approved it first. A run also cannot outlive the approver's identity: each token renewal, roughly every ten minutes, checks that the approver's IdP session is still alive and refreshable. End the person's session at the identity provider, and renewals start failing once the approver's cached IdP token lapses, typically within the hour, and the sandbox winds down.
 
 The flow, end to end:
 
@@ -113,9 +113,9 @@ Each hop carries a different credential — the manager's workload token, the pe
 
 Expiry is enforced on every request: Pomerium reads the run record on each one, without a cache, so a run past its end stops the very next request. The same uncached read checks a revocation flag; an operator API for revoking a run early is on the roadmap.
 
-## The Sandbox: An Agent With Nothing to Leak
+## The Sandbox
 
-The unit of execution is a two-container pod, and the boundary between the containers is the boundary that matters.
+The unit of execution is a two-container pod. The security boundary is between the two containers.
 
 ![Sandbox pod: a credential-free agent container and a sidecar whose Envoy adds the run token toward Pomerium](./img/agentic-runtime/sandbox-pod.svg)
 
@@ -144,7 +144,7 @@ A sandbox template can instead keep a provider key on the sidecar container, for
 
 The same pattern covers every kind of upstream. MCP servers that require the person's own account — GitHub, Google, an internal tool — get the approver's OAuth token injected per request through [MCP upstream OAuth](/docs/capabilities/mcp/mcp-upstream-oauth); the person connects them once, on the consent page. Databases and internal APIs sit behind routes with their own policies. Git credentials are consumed by an init container that clones the workspace and exits before the agent starts.
 
-What the agent can reach with a credential is therefore a short, auditable list: the loopback ports its operator configured, each ending at a Pomerium route, each governed by policy, each logged. Everything else — the projected token, the run token, every real credential — lives on the other side of the container boundary. To make Pomerium the only network path as well, and not just the only credentialed one, add a NetworkPolicy that denies the sandbox all egress except Pomerium and cluster DNS.
+What the agent can reach with a credential is therefore a short, auditable list: the loopback ports its operator configured. Each one ends at a Pomerium route with its own policy, and every request is logged. Everything else — the projected token, the run token, every real credential — lives on the other side of the container boundary. To make Pomerium the only network path as well, and not just the only credentialed one, add a NetworkPolicy that denies the sandbox all egress except Pomerium and cluster DNS.
 
 Sandboxes are [Kubernetes agent-sandbox](https://github.com/kubernetes-sigs/agent-sandbox) resources — the Kubernetes SIG project announced at KubeCon NA 2025 — so they run on any conforming cluster, managed cloud or on-premises, with warm pools for fast starts and persistent workspace volumes that survive suspension. Kernel-level isolation below the pod is the runtime's choice: agent-sandbox composes with runtime classes such as gVisor and Kata Containers. Support for additional sandbox technologies is planned.
 
@@ -190,7 +190,7 @@ Clients talk to one API, in whatever way fits their runtime:
 | Companion sidecar | plain HTTP against a local socket | shell scripts, languages without an SDK |
 | Polling | HTTP and a loop | CI jobs with short-lived tokens |
 
-The SDKs are thin, because the API carries the weight:
+The SDKs are thin wrappers; most of the behavior lives in the API:
 
 ```typescript
 const session = await client.createSession({
@@ -207,15 +207,15 @@ for await (const event of feed) {
 }
 ```
 
-Notice what the client code does not contain: no API keys, no OAuth flows, no identity assertions. A client cannot claim to be a person — the approver's identity enters the system only when the person authenticates on the consent page. A client cannot read another client's sessions. A client cannot mint a run token. The security-relevant decisions live in Pomerium, behind routes the client's identity cannot pass, which means a client team cannot compromise them by accident.
+The client code contains no API keys, no OAuth flows, and no identity assertions. A client cannot claim to be a person — the approver's identity enters the system only when the person authenticates on the consent page. A client cannot read another client's sessions. A client cannot mint a run token. The security-relevant decisions live in Pomerium, behind routes the client's identity cannot pass, which means a client team cannot compromise them by accident.
 
-The Slack bot that ships with the platform is built this way, as a reference client: it holds no Kubernetes access, no database, and no special API. If a UX cannot be built from the public event stream alone, that is treated as a missing API, not a reason to grant the bot a back door.
+The Slack bot that ships with the platform is built this way, as a reference client: it has no Kubernetes access, no database of its own, and nothing the public API does not offer. If a UX cannot be built from the public event stream alone, that is treated as a missing API, not a reason to grant the bot a back door.
 
 ## What Each Party Cannot Do
 
-Security arguments in this space tend to list features. The sharper question is what a compromised component can still do. Taking them in turn:
+Assume each component is compromised and ask what it can still do:
 
-1. **A compromised agent** holds no secrets to leak. Its credentialed reach is the loopback ports its operator configured, each terminating at a Pomerium route, subject to policy — down to the individual MCP tool — and logged. It can still repeat whatever it was allowed to read, so bound what it reads with route and tool policies, and deny it uncredentialed egress with a NetworkPolicy.
+1. **A compromised agent** holds no secrets. Its credentialed reach is the loopback ports its operator configured, each terminating at a Pomerium route, subject to policy — down to the individual MCP tool — and logged. It can still repeat whatever it was allowed to read, so bound what it reads with route and tool policies, and deny it uncredentialed egress with a NetworkPolicy.
 2. **A compromised client** can create sessions within its registration and quotas, and solicit approvals from people the consent page fully informs. It cannot assert a person's identity, mint a run token, or reach any upstream.
 3. **A compromised pod identity is not enough.** A stolen projected token binds only to runs sealed to that exact pod, approved by a specific person, while that person's IdP session lives.
 4. **A compromised sidecar** holds the projected token and the run token of one pod — both short-lived, both bound to one run and one approver, and useful only at routes whose policies admit that run — plus any provider key an operator chose to keep on the sidecar rather than at the gateway. The blast radius is one session.
@@ -224,6 +224,6 @@ Security arguments in this space tend to list features. The sharper question is 
 
 ## Why One Stack
 
-Every piece of this exists somewhere on its own. Sandbox runtimes isolate a process, and leave credential handling to you. LLM gateways centralize model keys, and know nothing about which person approved which run, or about your database and your Git remotes. Identity vendors now issue agents identities, and do not sit on the data path to enforce them. The work is in the seams: making the sandbox's identity the thing the policy matches on, the approval the thing the token encodes, and the gateway the only credentialed way out.
+Every piece of this exists somewhere on its own. Sandbox runtimes isolate a process, and leave credential handling to you. LLM gateways centralize model keys, and know nothing about which person approved which run, or about your database and your Git remotes. Identity vendors now issue agents identities, and do not sit on the data path to enforce them. The hard part is integration: the policy has to match on the sandbox's attested identity, the token has to encode the approval, and the gateway has to be the only credentialed path out.
 
-Pomerium's agentic runtime is that assembly, with no new trust anchor: your IdP, your cluster's kubelet and API server, and your routes' policies are the roots, and everything above them is derived. You keep the freedom of each piece — any IdP, any conforming Kubernetes cluster, any harness, any model — and the agent that results can do real work while holding nothing worth stealing.
+Pomerium's agentic runtime is that integration, with no new trust anchor: your IdP, your cluster's kubelet and API server, and your routes' policies are the roots, and everything above them is derived. You keep the freedom of each piece — any IdP, any conforming Kubernetes cluster, any harness, any model — and the agent can do real work without ever holding a credential.
