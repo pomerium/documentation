@@ -117,11 +117,11 @@ Expiry is enforced on every request: Pomerium reads the run record on each one, 
 
 A sandbox is a two-container pod, and the security boundary runs between the two containers.
 
-![Sandbox pod: a credential-free agent container and a sidecar whose Envoy adds the run token toward Pomerium](./img/agentic-runtime/sandbox-pod.svg)
+![Sandbox pod: a credential-free agent container and a sidecar that adds the run token toward Pomerium](./img/agentic-runtime/sandbox-pod.svg)
 
 The **agent container** runs your harness, any program that speaks the [Agent Client Protocol](https://agentclientprotocol.com/) on stdio. It holds no credentials. Its Kubernetes service-account token is not mounted. Its LLM configuration points the provider's base URL at loopback (`http://127.0.0.1:9999`), and its API-key variable holds a placeholder that exists only because the harness refuses to start without one.
 
-The **sidecar container** holds the pod's credentials — the projected token the kubelet writes, and the run token it exchanges that for — and runs Envoy with one loopback listener per permitted upstream. Envoy overwrites the placeholder with the run token and refuses to forward any request when no token is present. Each listener forwards to one fixed Pomerium route, configured by the operator. The agent cannot add a destination, and there is no proxy admin port for it to read secrets from.
+The **sidecar container** holds the pod's credentials — the projected token the kubelet writes, and the run token it exchanges that for — and proxies each permitted upstream on its own loopback port. It overwrites the placeholder with the run token and refuses to forward any request when no token is present. Each port forwards to one fixed Pomerium route, configured by the operator. The agent cannot add a destination, and there is no proxy admin port for it to read secrets from.
 
 In this configuration the real API key never enters the pod at all. It lives on the Pomerium route, resolved from your secret store as the request passes through:
 

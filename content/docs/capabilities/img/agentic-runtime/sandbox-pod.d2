@@ -80,11 +80,9 @@ pod: "Sandbox pod — no inbound connections, no Kubernetes API token" {
     class: container
 
     token: "Projected token\nwritten by the kubelet" {class: cardplain}
-    sidecar: "Sidecar" {class: card}
-    envoy: "Envoy\none loopback port\nper upstream" {class: card}
+    sidecar: "Sidecar\none loopback port per upstream\nadds the run token" {class: card}
 
     token -> sidecar {class: edge}
-    sidecar -> envoy: "run token" {class: edge}
   }
 }
 
@@ -95,6 +93,6 @@ pomerium: "Pomerium" {
   height: 110
 }
 
-pod.agentc.agent -> pod.sidecarc.envoy: "loopback, no headers" {class: edge}
-pod.sidecarc.envoy -> pomerium: "TLS + run token" {class: edge}
+pod.agentc.agent -> pod.sidecarc.sidecar: "loopback, no headers" {class: edge}
+pod.sidecarc.sidecar -> pomerium: "TLS + run token" {class: edge}
 pod.sidecarc.sidecar -> pomerium: "projected token in, run token out" {class: edge}
