@@ -38,7 +38,15 @@ The agentic runtime is in active development and available for early access. [Co
 
 ## Architecture
 
+<span className="themedDiagram themedDiagram--light">
+
 ![Agentic runtime architecture: clients, the Agent Sessions API, sandbox pods, the Pomerium gateway, and upstream services](./img/agentic-runtime/architecture.svg)
+
+</span><span className="themedDiagram themedDiagram--dark">
+
+![Agentic runtime architecture: clients, the Agent Sessions API, sandbox pods, the Pomerium gateway, and upstream services](./img/agentic-runtime/architecture-dark.svg)
+
+</span>
 
 The layers, from enforcement up to product:
 
@@ -117,7 +125,15 @@ Expiry is enforced on every request: Pomerium reads the run record on each one, 
 
 A sandbox is a two-container pod, and the security boundary runs between the two containers.
 
+<span className="themedDiagram themedDiagram--light">
+
 ![Sandbox pod: a credential-free agent container and a sidecar that adds the run token toward Pomerium](./img/agentic-runtime/sandbox-pod.svg)
+
+</span><span className="themedDiagram themedDiagram--dark">
+
+![Sandbox pod: a credential-free agent container and a sidecar that adds the run token toward Pomerium](./img/agentic-runtime/sandbox-pod-dark.svg)
+
+</span>
 
 The **agent container** runs your harness, any program that speaks the [Agent Client Protocol](https://agentclientprotocol.com/) on stdio. It holds no credentials. Its Kubernetes service-account token is not mounted. Its LLM configuration points the provider's base URL at loopback (`http://127.0.0.1:9999`), and its API-key variable holds a placeholder that exists only because the harness refuses to start without one.
 
