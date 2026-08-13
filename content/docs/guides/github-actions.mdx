@@ -1,0 +1,255 @@
+---
+# cSpell:ignore githubusercontent algs pasteable
+
+title: Authenticate GitHub Actions with Pomerium
+sidebar_label: GitHub Actions
+lang: en-US
+keywords:
+  [
+    pomerium,
+    github actions,
+    oidc,
+    jwt,
+    bearer token,
+    machine to machine,
+    m2m,
+    ci,
+    workflow identity,
+    identity providers,
+    no secrets,
+  ]
+description: Let a GitHub Actions workflow call a Pomerium-protected route with the OIDC token GitHub issues to the job, verified against a trusted issuer and authorized on its claims, with no stored secrets.
+---
+
+# Authenticate GitHub Actions with Pomerium
+
+## Who this guide is for
+
+This guide is for platform and DevOps engineers who run Pomerium and want GitHub Actions workflows to be able to reach services protected by Pomerium. For example:
+
+- A deploy action needs to access an internal API.
+- A smoke test runs against an internal staging environment.
+- A job automates some admin action, such as flushing a cache.
+
+With this approach, you don't need to store a long-lived credential in GitHub. Instead, authentication relies on GitHub issuing the workflow a short-lived OIDC token that Pomerium is configured to trust. You can configure Pomerium to allow access for a specific repository and even a specific branch within that repository.
+
+This guide is not for user access in a web browser with interactive sign-in; that's what normal Pomerium routes are for.
+
+:::tip
+
+If the caller is a different non-interactive workload (such as a Kubernetes pod) the mechanism is identical, just with a different trusted issuer. See [Machine-to-Machine Access with Bearer Tokens](/docs/capabilities/bearer-token-access).
+
+:::
+
+## What this guide does
+
+You'll let a GitHub Actions workflow call a service behind Pomerium using a short-lived OIDC token. Pomerium verifies the token against GitHub's public signing key, then authorizes the request based on the token's claims, so access is scoped to one repository (and optionally one branch). There's no long-lived credential to provision, rotate, or leak.
+
+When you're done, you should see:
+
+- A workflow run makes a successful request to an upstream service behind Pomerium.
+- Anonymous requests to the same service are denied.
+- Pomerium's authorize log records the GitHub Actions workflow identity for each allowed request.
+
+Nothing changes about Pomerium's interactive sign-in: the trusted issuer you'll add here is _additional_ and is used only to verify bearer tokens.
+
+:::note Example values
+
+The values below are placeholders. Substitute your own values wherever they appear:
+
+- `https://verify.yourdomain.com` — the Pomerium route the workflow calls, also used as the token audience
+- `http://verify:8000` — the upstream behind the route, here an instance of the [Pomerium Verify demo app](https://github.com/pomerium/verify)
+- `your-org/your-repo` — the GitHub repository that runs the workflow
+
+:::
+
+## Prerequisites
+
+- A running [Pomerium Core](/docs/deploy/core) deployment that you administer through its `config.yaml` file. If you don't have one, follow the [Quickstart](/docs/get-started/quickstart) first. This must be reachable from GitHub-hosted runners.
+- A Pomerium route with public DNS and a publicly trusted TLS certificate.
+- An upstream HTTP service for this Pomerium route to protect.
+- Access to edit Pomerium's `config.yaml` and to read its logs.
+- A GitHub repository with GitHub Actions enabled and permission to add a workflow file.
+
+## How it works
+
+A GitHub Actions job can request an OIDC ID token from GitHub's token service at `https://token.actions.githubusercontent.com`. The token is a JWT signed by GitHub whose claims describe the run: the repository, the git ref, the triggering event, and more. You'll declare that issuer as a trusted [JWT identity provider](/docs/reference/identity-providers) in Pomerium, and have the workflow present its token in an HTTP header. To verify it, Pomerium fetches GitHub's public keys — a JSON Web Key Set (JWKS) found through OIDC discovery — on the first request and caches them; every token is then checked locally (signature, `iss`, `exp`, `nbf`, `aud`) and the route's policy is evaluated against the verified claims.
+
+```mermaid
+sequenceDiagram
+  participant G as GitHub OIDC provider
+  participant W as Workflow job
+  participant P as Pomerium
+  participant U as Upstream
+
+  W ->> G: Request ID token<br/>(audience: https://verify.yourdomain.com)
+  G ->> W: OIDC ID token (JWT)
+  W ->> P: GET https://verify.yourdomain.com<br/>Authorization: Bearer <token>
+  P ->> G: Fetch public keys<br/>(on first verification and then cached)
+  P ->> P: Verify signature, iss, exp, nbf, aud
+  P ->> P: Evaluate route policy against claims
+  P ->> U: Proxy request
+```
+
+Note that **any GitHub Actions workflow can mint a token from this same issuer!** A verified token proves only that _some_ GitHub Actions workflow, somewhere, requested it. It is vitally important that the Pomerium policy checks for a specific `repository` claim on the token.
+
+(See also [GitHub's documentation](https://docs.github.com/en/actions/concepts/security/openid-connect) for more information on how this OIDC authentication works.)
+
+## Configure Pomerium
+
+Add two things to `config.yaml`: a global `identity_providers` entry for GitHub's token service, and a route that accepts these tokens and validates their claims.
+
+```yaml title="config.yaml"
+identity_providers:
+  github-actions:
+    issuer: https://token.actions.githubusercontent.com
+    audiences:
+      - https://verify.yourdomain.com
+
+routes:
+  - from: https://verify.yourdomain.com
+    to: http://verify:8000
+    bearer_token_format: jwt
+    identity_providers: [github-actions]
+    policy:
+      - allow:
+          and:
+            - claim/repository: your-org/your-repo
+```
+
+The **`identity_providers`** (global) mapping declares the trusted JWT issuers:
+
+- The map key (here `github-actions`) is a name you choose. It will be included in Pomerium's authorization log entries.
+- **`issuer`** — is the OIDC issuer URL, which Pomerium uses to discover the signing keys.
+- **`audiences`** lists the values Pomerium will accept in the token's `aud` claim. The GitHub workflow will request exactly this audience. Any agreed-upon string works, but the route's own URL is a good convention because it ties the token to this service and nothing else.
+
+(For more information about all the supported `identity_providers` options, see [JWT Identity Providers](/docs/reference/identity-providers).)
+
+The route has some special options to enable JWT authentication:
+
+- **`bearer_token_format: jwt`** tells Pomerium to treat the route's `Authorization: Bearer` header as a JWT from a trusted issuer. See [Bearer Token Format](/docs/reference/bearer-token-format).
+- **`identity_providers`** (on the route) is an optional allowlist naming which trusted providers this route accepts. See [Identity Providers (per route)](/docs/reference/routes/identity-providers-per-route).
+- The **`policy`** verifies the token's `repository` claim, so only workflows in `your-org/your-repo` will be allowed.
+
+To also require a specific branch, verify the `ref` claim as well (this is the Git ref associated with the run):
+
+```yaml
+policy:
+  - allow:
+      and:
+        - claim/repository: your-org/your-repo
+        - claim/ref: refs/heads/main
+```
+
+This will allow workflows running against `main` and deny workflows running against any other branch. (You could also verify the `sub` claim instead, but its format has varied over time. See the [GitHub documentation](https://docs.github.com/en/actions/reference/security/oidc#oidc-claims-used-to-define-trust-conditions-on-cloud-roles) for more information.)
+
+Save the file. Pomerium watches its configuration and applies changes automatically (hot reload is on by default); restart the service if you've disabled that. If the new configuration is invalid, a running Pomerium logs `config: error updating config` and keeps the previous configuration, and a fresh start refuses to boot — the [Troubleshooting](#troubleshooting) table lists the common causes.
+
+**Checkpoint: the route is live and fails closed.** Try to access the Pomerium route directly in the browser: navigate to `https://verify.yourdomain.com` (replace with your actual route URL). You should see a 403 Forbidden error page from Pomerium.
+
+## Add the workflow
+
+Now we'll add a very simplified GitHub Actions workflow. It has just two steps: ask GitHub for a token with the specific audience, then make a request through Pomerium using that token.
+
+In your repository, create the workflow file:
+
+```yaml title=".github/workflows/call-pomerium.yaml"
+name: Call a Pomerium-protected route
+
+on:
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+
+jobs:
+  call-route:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Request an OIDC token
+        run: |
+          response=$(curl -fsS \
+            -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
+            -H "Accept: application/json; api-version=2.0" \
+            "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=https://verify.yourdomain.com")
+          token=$(jq -r ".value" <<< "$response")
+          echo "OIDC_TOKEN=$token" >> $GITHUB_ENV
+          echo "::add-mask::$token"
+
+      - name: Call the Pomerium route
+        run: |
+          curl -fsS -o /dev/null -w 'Pomerium answered: HTTP %{http_code}\n' \
+            -H "Authorization: Bearer $OIDC_TOKEN" \
+            -H "Accept: application/json" \
+            https://verify.yourdomain.com/
+```
+
+GitHub will set `ACTIONS_ID_TOKEN_REQUEST_URL` and `ACTIONS_ID_TOKEN_REQUEST_TOKEN` for any workflow with the `id-token: write` permission, so this call will only work inside a GitHub Actions runner.
+
+How the workflow works:
+
+- **`permissions: {id-token: write}`** is what allows the job to request an OIDC token; without it the token cannot be requested at all. Note that specifying any permissions explicitly resets all the default permissions to `none`. This workflow doesn't need anything else, but if you add a step that checks out code, you'll also need to add `contents: read`.
+- The first step uses **`curl`** to call GitHub's token endpoint using the two environment variables the runner injects (`ACTIONS_ID_TOKEN_REQUEST_URL` and `ACTIONS_ID_TOKEN_REQUEST_TOKEN`), appending `audience=` so the token's `aud` claim matches what Pomerium expects. It stores the token in the **`OIDC_TOKEN`** environment variable for the next step and **`::add-mask::`** registers the token as a masked value before anything else can print it. (If the repository is public, its Actions logs will be public too.)
+- The second step uses **`curl`** to make a request using the OIDC token and output the status code from the response.
+
+Commit the file to the `main` branch in the repo, then run it from the **Actions** tab: select **Call a Pomerium-protected route** and press **Run workflow** (this is the `workflow_dispatch` trigger).
+
+## Verify the setup
+
+1. **The workflow reaches the upstream.** The run is green and the step log ends with `Pomerium answered: HTTP 200` — Pomerium verified the token, the policy matched its claims, and the upstream responded.
+2. **Pomerium attributes the request to the workflow.** In Pomerium's logs, find the `authorize check` entry for the request:
+
+   ```json
+   {
+     "level": "info",
+     "service": "authorize",
+     "method": "GET",
+     "path": "/",
+     "host": "verify.yourdomain.com",
+     "user": "github-actions/repo:…",
+     "allow": true,
+     "allow-why-true": ["claim-ok"],
+     "deny": false,
+     "message": "authorize check"
+   }
+   ```
+
+   The `user` field is the provider name, a slash, and the token's `sub` claim, so every allowed and denied call is attributable to a specific repository and trigger. (The exact `sub` value is set by GitHub and varies depending on the trigger and also when the repository was created.)
+
+3. **A request with no token is denied.** The `403` checkpoint from [Configure Pomerium](#configure-pomerium) — run it again now if you skipped it.
+4. **A request with a bogus token is denied.** From any machine:
+
+   ```bash
+   curl -sS -o /dev/null -w '%{http_code}\n' -H 'Authorization: Bearer not-a-jwt' https://verify.yourdomain.com
+   ```
+
+   Expected output: `403`. Pomerium's log explains why in an `error creating session from incoming request` line.
+
+5. **The wrong repository is denied (optional, strongest check).** Add the same workflow file to some other repository and run it: the token verifies (same issuer, same audience) but the `repository` claim doesn't match, so the call fails with HTTP `403` and the authorize log shows `"allow":false` with reason `claim-unauthorized`.
+
+## Troubleshooting
+
+| Symptom | Likely Cause | What to Check | Fix |
+| --- | --- | --- | --- |
+| The token-request step fails and `ACTIONS_ID_TOKEN_REQUEST_URL` is empty | The job lacks the `id-token: write` permission, so no token can be requested | The `permissions` block in the workflow (workflow level or job level) | Add `permissions: id-token: write`; remember that specifying any permission sets all unspecified ones to `none` |
+| The route call fails with HTTP `403`; Pomerium logs `token audience does not match any allowed audience` | The `audience=` requested by the workflow doesn't match the provider's `audiences` | The `audience=` query parameter in the workflow versus `identity_providers.github-actions.audiences` in `config.yaml` | Make the two values identical (this guide uses the route URL for both) |
+| HTTP `403`; Pomerium logs `no identity provider matches the token's iss claim` | No configured provider has the issuer GitHub's tokens carry | The `error creating session from incoming request` log line, and the `issuer` in `config.yaml` | Set `issuer: https://token.actions.githubusercontent.com` exactly |
+| HTTP `403`; Pomerium logs `identity provider "github-actions" is not allowed on this route` | The route's `identity_providers` allowlist omits the provider that matched the token | The route's `identity_providers` list | Add `github-actions` to the route's allowlist, or remove the allowlist to accept all configured providers |
+| HTTP `403` and the authorize log shows `"allow":false` with `claim-unauthorized` | The token verified but its claims don't match the policy: wrong repository, or a trigger with different claims (a pull-request run carries `sub` = `repo:OWNER/REPO:pull_request`, not your branch ref) | The `authorize check` log entry: the `user` field and `allow-why-false` | Correct the `claim/…` values, or run the workflow from the repository and branch the policy pins |
+| Pomerium refuses to start, or logs `config: error updating config` after a reload | Invalid configuration: an uppercase provider name, a provider without `audiences`, `identity_providers` set on a route that isn't `bearer_token_format: jwt`, or a `jwt` route with no providers declared | The startup or reload error message, which names the failing key | Lowercase the provider name, add at least one audience, or move the allowlist onto a `jwt` route |
+| HTTP `400 Bad Request` when testing by hand | The request carried both a Pomerium session cookie and a bearer token, which are mutually exclusive on a `jwt` route | Whether your HTTP client sends a cookie jar alongside the `Authorization` header | Send only the `Authorization: Bearer` header |
+
+## Security considerations
+
+- **The claims policy is the entire authorization boundary.** Any repository on GitHub can obtain a token from this issuer, for any audience it likes. Always pin at least `claim/repository`; pin `claim/ref` too when only one branch should have access. A route policy that merely accepts a verified token from this issuer is open to every GitHub user.
+- **Public repository, public logs.** Anyone can read the Actions logs of a public repository. Never echo the token; keep the `::add-mask::` line before any use of the token, and avoid writing the token to files, step outputs, or environment files.
+- **A leaked token works until it expires.** Pomerium enforces `exp` but does not observe revocation, so a captured token is usable until its expiry (Pomerium also caps the derived session lifetime; see [JWT Identity Providers](/docs/reference/identity-providers)). GitHub's tokens are short-lived, which bounds the exposure, but treat any token that reached a log or an artifact as compromised.
+- **Audience binding stops replay.** Because the token's `aud` must match the provider's `audiences`, a token minted for another service can't be replayed against this route, and this route's tokens can't be replayed elsewhere — provided each service uses a distinct audience value. Don't share one audience string across services.
+
+## Next steps
+
+- [Machine-to-Machine Access with Bearer Tokens](/docs/capabilities/bearer-token-access) — the capability overview, including the Kubernetes service account flow
+- [JWT Identity Providers](/docs/reference/identity-providers) — every provider field and the verification model
+- [Bearer Token Format](/docs/reference/bearer-token-format) — how the four bearer formats differ
+- [Identity Providers (per route)](/docs/reference/routes/identity-providers-per-route) — scoping providers per route
+- [Pomerium Policy Language](/docs/internals/ppl) — the full policy grammar
