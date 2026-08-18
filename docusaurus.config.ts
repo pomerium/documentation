@@ -69,7 +69,7 @@ const config: Config = {
           versions: {
             // On a numbered release branch, override this label to that version.
             current: {
-              label: 'Latest (main)',
+              label: 'v0.33',
             },
           },
         },

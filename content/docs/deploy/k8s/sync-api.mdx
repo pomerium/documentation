@@ -44,7 +44,7 @@ Next, deploy Ingress Controller: create a new directory (say, `ic-zero/`) and sa
 ```yaml title="ic-zero/kustomization.yaml"
 namespace: pomerium
 resources:
-  - https://github.com/pomerium/ingress-controller/config/default?ref=main
+  - https://github.com/pomerium/ingress-controller/config/default?ref=v0.33.0
 patches:
   - patch: |-
       - op: replace
@@ -90,7 +90,7 @@ kubectl apply -k ic-zero/
 To deploy Ingress Controller syncing to Pomerium Enterprise, start with this configuration:
 
 ```
-kubectl apply -k github.com/pomerium/documentation//k8s/ic-console\?ref=main
+kubectl apply -k github.com/pomerium/documentation//k8s/ic-console\?ref=v0.33.0
 ```
 
 This configures deployments for both the Pomerium Ingress Controller and Pomerium Enterprise. It also configures Pomerium Enterprise to generate a "bootstrap" service account token, which Ingress Controller will use to authenticate to it.
