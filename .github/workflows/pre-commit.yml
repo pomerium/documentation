@@ -18,6 +18,14 @@ jobs:
         with:
           node-version-file: .tool-versions
 
+      # Without this, Node's bundled (disabled) corepack shim for `yarn`
+      # refuses to run at all once package.json declares a "packageManager"
+      # field, even though that field only pins npm. postman-code-generators
+      # (a transitive dep of docusaurus-theme-openapi-docs) shells out to
+      # `yarn install` from its postinstall script, so npm ci fails without
+      # this enabled.
+      - run: corepack enable
+
       - name: Install npm 11.12.1 (npm 10 ignores min-release-age)
         run: |
           npm_dir="$(npm root -g)/npm"
