@@ -26,15 +26,6 @@ jobs:
       # this enabled.
       - run: corepack enable
 
-      - name: Install npm 11.12.1 (npm 10 ignores min-release-age)
-        run: |
-          npm_dir="$(npm root -g)/npm"
-          rm -rf "$npm_dir"
-          mkdir -p "$npm_dir"
-          curl -fsSL "https://registry.npmjs.org/npm/-/npm-11.12.1.tgz" | tar xz --strip-components=1 -C "$npm_dir"
-      - name: Verify npm version
-        run: npm --version
-
       # CI validates the repo scripts directly so formatting and spelling
       # always use the repo-root toolchain and config.
       - run: npm ci
