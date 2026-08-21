@@ -18,14 +18,6 @@ jobs:
         with:
           node-version-file: .tool-versions
 
-      # Without this, Node's bundled (disabled) corepack shim for `yarn`
-      # refuses to run at all once package.json declares a "packageManager"
-      # field, even though that field only pins npm. postman-code-generators
-      # (a transitive dep of docusaurus-theme-openapi-docs) shells out to
-      # `yarn install` from its postinstall script, so npm ci fails without
-      # this enabled.
-      - run: corepack enable
-
       # CI validates the repo scripts directly so formatting and spelling
       # always use the repo-root toolchain and config.
       - run: npm ci
