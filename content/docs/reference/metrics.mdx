@@ -113,6 +113,27 @@ Identity manager metrics have a `pomerium_identity_manager` prefix.
 | user_refresh_success | Counter | User refresh success counter. |
 | user_refresh_success_timestamp | Gauge | Timestamp of last successful user refresh. |
 
+### Secrets \{#secrets}
+
+These metrics cover [secret injection](/docs/reference/secrets): reading credentials from a backend and substituting them into request headers. They have a `pomerium_secrets` prefix and are exported by the Authorize service.
+
+| Name | Type | Labels | Description |
+| --- | --- | --- | --- |
+| fetches_total | Counter | `provider`, `outcome` | Reads of a secret backend. `outcome` is `success`, `error`, or `not_found`. |
+| fetch_duration | Histogram | `provider`, `outcome` | Duration of a read, in milliseconds. |
+| refs_registered | Gauge | `provider` | Number of configured secret bindings. |
+| cache_state | Gauge | `ref_label`, `state` | One series per binding, reporting its current state: `fresh`, `stale`, `expired`, or `failed`. |
+| serving_stale_total | Counter | `ref_label` | Failed re-reads that left a binding serving its last good value. Counts read attempts, not requests. |
+| negative_cache_hits_total | Counter | `ref_label` | Read attempts skipped because the backend recently reported the secret as missing. |
+| singleflight_collapsed_total | Counter | `provider` | Concurrent reads of the same backend collapsed into one. |
+| header_inject_total | Counter | `route_id`, `outcome` | Header injection attempts, counted once per header that carries a secret reference. `outcome` is `injected` or `rejected`. |
+
+`ref_label` is the binding ID.
+
+Header injection runs during authorization, before the allow or deny decision is applied, so `header_inject_total` also counts requests the policy then denies or redirects to sign-in. A `rejected` outcome means the header could not be built; the request is answered with `503 Service Unavailable` only if the policy allowed it.
+
+For alerting, `cache_state` is the clearest signal: `state="expired"` means a value was dropped after its grace window, and `state="failed"` means a binding has never been read successfully. `header_inject_total{outcome="rejected"}` shows the request-level effect, including values that were read but cannot be used as a header.
+
 #### Envoy Proxy Metrics
 
 As of `v0.9`, Pomerium uses [Envoy](https://www.envoyproxy.io/) for the data plane. As such, proxy related metrics are sourced from Envoy, and use Envoy's internal [stats data model](https://www.envoyproxy.io/docs/envoy/latest/operations/stats_overview). Please see Envoy's documentation for information about specific metrics.
