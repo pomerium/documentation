@@ -1,0 +1,34 @@
+# Routes-only validation config. Shared settings (IdP, secrets, signing key, certs)
+# come from ../../_harness/pomerium/validation.env via env_file in compose.validate.yaml.
+# Each *arr app runs its own auth (an API key), so the route is a front-door gate.
+routes:
+  - from: https://sonarr.localhost.pomerium.io
+    to: http://sonarr:8989
+    policy:
+      - allow:
+          or:
+            - authenticated_user: true
+
+  - from: https://radarr.localhost.pomerium.io
+    to: http://radarr:7878
+    policy:
+      - allow:
+          or:
+            - authenticated_user: true
+
+  - from: https://prowlarr.localhost.pomerium.io
+    to: http://prowlarr:9696
+    policy:
+      - allow:
+          or:
+            - authenticated_user: true
+
+  - from: https://sabnzbd.localhost.pomerium.io
+    to: http://sabnzbd:8080
+    # SABnzbd validates the Host header against its host_whitelist, so forward the
+    # original host unchanged.
+    preserve_host_header: true
+    policy:
+      - allow:
+          or:
+            - authenticated_user: true
