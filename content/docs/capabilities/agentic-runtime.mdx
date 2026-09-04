@@ -56,11 +56,11 @@ A person approves each run on a consent page served by Pomerium, behind ordinary
 
 ## Agentic Run
 
-An agentic run is one execution of an agent. The work runs in a Kubernetes Sandbox Pod whose identity is the cluster’s attested claims. User has to explicitly authorize each agentic run, which allows Pomerium to stamp that execution with the requesting user’s identity, so every request is both this pod and this person. 
+An agentic run is one execution of an agent. The work runs in a Kubernetes Sandbox Pod whose identity is the cluster’s attested claims. The user has to explicitly authorize each agentic run, which allows Pomerium to stamp that execution with the requesting user’s identity, so every request is both this pod and this person. 
 
-The user explicitly approves each agentic run before it could be executed.
+The user explicitly approves each agentic run before it can be executed.
 
-Once approved, the sandbox pod's sidecar is able to exchange its Kubernetes projected service account token into an agentic run session token to access upstreams behind Pomerium.
+Once approved, the sandbox pod's sidecar is able to exchange its Kubernetes projected service account token for an agentic run session token to access upstreams behind Pomerium.
 
 ### Policy
 
@@ -76,7 +76,7 @@ policy:
       - claim/act.kubernetes.io.serviceaccount.uid: 3a34c5b3-1d18-45d1-a4e8-657034456c1a # 
 ```
 
-Some routes (i.e. MCP servers) may be excluded from being accessible from agentic run workloads.
+Some routes (for example, MCP servers) may be excluded from being accessible from agentic run workloads.
 
 ### Approval
 
@@ -203,9 +203,9 @@ spec:
 
 </span>
 
-The agent container runs the harness, which can be any program that speaks the [Agent Client Protocol](https://agentclientprotocol.com/) on stdio. Most popular harnesses (Claude, Codex, etc) have ACP support. Its Kubernetes service account token is not mounted. Its LLM configuration points the provider's base URL at loopback (`http://127.0.0.1:9999`), and its API key variable holds a placeholder, because most harnesses refuse to start without one. The MCP servers are dynamically injected via ACP protocol and similarly point to specific loopback addreses, served by the sidecar.
+The agent container runs the harness, which can be any program that speaks the [Agent Client Protocol](https://agentclientprotocol.com/) on stdio. Most popular harnesses (Claude, Codex, etc.) have ACP support. Its Kubernetes service account token is not mounted. Its LLM configuration points the provider's base URL at loopback (`http://127.0.0.1:9999`), and its API key variable holds a placeholder, because most harnesses refuse to start without one. The MCP servers are dynamically injected via the ACP protocol and similarly point to specific loopback addresses, served by the sidecar.
 
-The sidecar container holds the Kubernetes service account projected token that it exchanges to agentic run Bearer token. It listens on one loopback port per permitted upstream, and each port forwards to one Pomerium route fixed by the operator. It replaces the placeholder with the run token and refuses to forward a request when it has no token. The agent cannot add a destination, and the sidecar has no admin port the agent can reach.
+The sidecar container holds the Kubernetes service account projected token that it exchanges for an agentic run Bearer token. It listens on one loopback port per permitted upstream, and each port forwards to one Pomerium route fixed by the operator. It replaces the placeholder with the run token and refuses to forward a request when it has no token. The agent cannot add a destination, and the sidecar has no admin port the agent can reach.
 
 The upstream's real credential lives on the Pomerium route and is resolved from your secret store as the request passes through:
 
@@ -230,7 +230,7 @@ The sidecar limits the agent's credentialed traffic to the configured ports. To 
 
 ## Agent Sessions API
 
-API that your applications use to initiate the agentic sessions and stream events back to the UI (i.e. Slack or web). The API interacts internally with Kubernetes Sandbox and Pomerium to abstract your application so that your application only handles with very high level user-facing events.
+API that your applications use to initiate the agentic sessions and stream events back to the UI (for example, Slack or web). The API interacts internally with Kubernetes Sandbox and Pomerium to abstract your application so that your application only handles very high-level user-facing events.
 
 Served over gRPC or HTTP+JSON, it owns the pod lifecycle and the approval flow and stores the conversation. A client never handles identity seals or consent pages directly. The API works with three objects:
 
