@@ -6,11 +6,12 @@ keywords: [pomerium, tooljet, sso, oidc, identity aware proxy, internal tools]
 description: Put ToolJet behind Pomerium so only authenticated users can reach your low-code internal tools.
 ---
 
+import CodeBlock from '@theme/CodeBlock';
 import TabItem from '@theme/TabItem';
 import Tabs from '@theme/Tabs';
 
-import Config from '/content/examples/guides/tooljet/config.yaml.md';
-import Compose from '/content/examples/guides/tooljet/docker-compose.yaml.md';
+import Config from '!!raw-loader!/content/examples/guides/tooljet/config.yaml';
+import Compose from '!!raw-loader!/content/examples/guides/tooljet/docker-compose.yaml';
 
 # Secure ToolJet with Pomerium
 
@@ -51,7 +52,9 @@ That's the whole Pomerium side. Zero manages the hosted authenticate service and
 
 Create a `config.yaml` for Pomerium Core:
 
-<Config />
+<CodeBlock language="yaml" title="config.yaml">
+  {Config}
+</CodeBlock>
 
 Replace `tooljet.yourdomain.com` with your hostname and `you@example.com` with the identity that should be allowed in. The `preserve_host_header: true` setting is what makes ToolJet accept the proxied request: ToolJet rejects any request whose `Host` header does not match `TOOLJET_HOST`. Because the route's external hostname already equals `TOOLJET_HOST`, preserving the incoming `Host` forwards the right value to the upstream.
 
@@ -87,7 +90,9 @@ See ToolJet's [environment variable reference](https://docs.tooljet.com/docs/set
 
 The Compose file below runs Pomerium Core, ToolJet, and PostgreSQL together:
 
-<Compose />
+<CodeBlock language="yaml" title="docker-compose.yaml">
+  {Compose}
+</CodeBlock>
 
 Start everything:
 

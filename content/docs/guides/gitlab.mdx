@@ -8,11 +8,12 @@ keywords: [pomerium, gitlab, sso, oidc, identity aware proxy, self-hosted]
 description: Put self-hosted GitLab behind Pomerium so every request is authenticated and authorized at the front door before it reaches GitLab.
 ---
 
+import CodeBlock from '@theme/CodeBlock';
 import TabItem from '@theme/TabItem';
 import Tabs from '@theme/Tabs';
 
-import Config from '/content/examples/guides/gitlab/config.yaml.md';
-import Compose from '/content/examples/guides/gitlab/docker-compose.yaml.md';
+import Config from '!!raw-loader!/content/examples/guides/gitlab/config.yaml';
+import Compose from '!!raw-loader!/content/examples/guides/gitlab/docker-compose.yaml';
 
 # Secure GitLab with Pomerium
 
@@ -70,7 +71,9 @@ In the [Zero Console](https://console.pomerium.app):
 
 Create a `config.yaml`. It routes `gitlab.yourdomain.com` to the GitLab container and preserves the host header so GitLab's redirects stay correct.
 
-<Config />
+<CodeBlock language="yaml" title="config.yaml">
+  {Config}
+</CodeBlock>
 
 Replace `gitlab.yourdomain.com` with your domain and `you@example.com` with the email (or switch to a group or domain match) that should be allowed through.
 
@@ -108,7 +111,9 @@ Keep the `pomerium` service shown below and place the `config.yaml` from the pre
 </TabItem>
 </Tabs>
 
-<Compose />
+<CodeBlock language="yaml" title="docker-compose.yaml">
+  {Compose}
+</CodeBlock>
 
 ```bash
 docker compose up -d

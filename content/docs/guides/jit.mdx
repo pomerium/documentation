@@ -6,7 +6,9 @@ keywords: [pomerium, jit, just-in-time access, ppl, date matcher, authorization]
 description: Grant time-limited, Just-In-Time access with Pomerium by using the PPL date matcher, and automate the request and approve workflow with the jit-example app.
 ---
 
-import Compose from '/content/examples/guides/jit/docker-compose.yaml.md';
+import CodeBlock from '@theme/CodeBlock';
+
+import Compose from '!!raw-loader!/content/examples/guides/jit/docker-compose.yaml';
 
 # Just-In-Time Access With Pomerium
 
@@ -94,7 +96,9 @@ With this setup, any user reaches `https://jit-example.yourdomain.com`, but only
 
 The Compose file below runs Pomerium Zero (driven by your `POMERIUM_ZERO_TOKEN`) alongside `jit-example`. Zero is used because the `date` matcher is a Zero/Enterprise feature; routes and the time-limited policy are managed in the Zero Console as described above, not in a local config file. `jit-example` is itself the application the date-gated policy protects.
 
-<Compose />
+<CodeBlock language="yaml" title="docker-compose.yaml">
+  {Compose}
+</CodeBlock>
 
 Clone the app, save the file above next to it as `docker-compose.yaml`, replace the `REPLACE_WITH_*` values with your own, then start the stack:
 
