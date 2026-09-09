@@ -179,6 +179,7 @@ The remaining annotations are specific to or behave differently than they do whe
 
 | Annotation | Description |
 | --- | --- |
+| `ingress.pomerium.io/h2c_upstream` | When set to `"true"`, use cleartext HTTP/2 (`h2c`) when connecting to the upstream endpoint. See the [example below](#http2-cleartext-upstreams) for more information. Cannot be combined with `secure_upstream`. |
 | `ingress.pomerium.io/kubernetes_service_account_token_secret` | Name of a Kubernetes Secret containing a [Kubernetes Service Account Token](/docs/reference/routes/kubernetes-service-account-token) in a `token` key. |
 | `ingress.pomerium.io/name` | Sets a human-readable name for the route. See [Route Naming](#route-naming) below. |
 | `ingress.pomerium.io/mcp_client` | When set to `"true"`, configures the route as an MCP (Model Context Protocol) client. The URL is defined by the service backend. |
@@ -516,6 +517,18 @@ Additional TLS certificates may be supplied by creating a Kubernetes secret(s) i
 - [`ingress.pomerium.io/tls_downstream_client_ca_secret`](#set-ingress-annotations)
 
 Please note that the referenced `tls_client_secret` must be a [TLS Kubernetes secret](https://kubernetes.io/docs/concepts/configuration/secret/#tls-secrets). `tls_custom_ca_secret` and `tls_downstream_client_ca_secret` referenced Secrets must contain `ca.crt` key containing a .PEM encoded (base64-encoded DER format) public certificate.
+
+### HTTP/2 Cleartext Upstreams
+
+By default, Pomerium connects to upstream endpoints using HTTP/1.1. Some upstream services, such as insecure gRPC servers, require HTTP/2 without TLS (known as [HTTP/2 cleartext](/docs/reference/routes/to#http2-cleartext), or `h2c`).
+
+Annotate your Ingress with
+
+```yaml
+ingress.pomerium.io/h2c_upstream: 'true'
+```
+
+The `h2c_upstream` annotation cannot be combined with `secure_upstream`, `ssh_upstream`, `tcp_upstream`, or `udp_upstream`. Setting more than one of these results in an error reported in the Ingress events.
 
 ### External Services
 
