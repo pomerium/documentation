@@ -8,11 +8,12 @@ description: Put Apache Guacamole behind Pomerium and sign users in automaticall
 # cSpell:ignore guacd guacamole guacadmin initdb POSTGRESQL psql
 ---
 
+import CodeBlock from '@theme/CodeBlock';
 import TabItem from '@theme/TabItem';
 import Tabs from '@theme/Tabs';
 
-import Config from '/content/examples/guides/guacamole/config.yaml.md';
-import Compose from '/content/examples/guides/guacamole/docker-compose.yaml.md';
+import Config from '!!raw-loader!/content/examples/guides/guacamole/config.yaml';
+import Compose from '!!raw-loader!/content/examples/guides/guacamole/docker-compose.yaml';
 
 # Secure Apache Guacamole with Pomerium
 
@@ -51,7 +52,9 @@ In the [Zero Console](https://console.pomerium.app):
 
 Create a `config.yaml`. It routes `guacamole.yourdomain.com` to the Guacamole container, passes identity headers, and forwards the user's email as `X-Pomerium-Claim-Email`:
 
-<Config />
+<CodeBlock language="yaml" title="config.yaml">
+  {Config}
+</CodeBlock>
 
 Replace `guacamole.yourdomain.com` with your domain and `you@example.com` with your email. The `jwt_claims_headers` mapping is what produces the `X-Pomerium-Claim-Email` header that Guacamole's header-auth extension expects.
 
@@ -86,7 +89,9 @@ The Compose file below mounts that `init/` directory into PostgreSQL so the sche
 
 The Compose file runs Pomerium Core alongside Guacamole's three services (for Zero, drop the `pomerium` service and use the `compose.yaml` from the Quickstart with your `POMERIUM_ZERO_TOKEN`, keeping the rest below):
 
-<Compose />
+<CodeBlock language="yaml" title="docker-compose.yaml">
+  {Compose}
+</CodeBlock>
 
 Start it:
 

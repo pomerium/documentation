@@ -16,11 +16,12 @@ description: Put a self-hosted Jellyfin media server behind Pomerium so every br
 # cSpell:ignore jellyfin chromecast DLNA
 ---
 
+import CodeBlock from '@theme/CodeBlock';
 import TabItem from '@theme/TabItem';
 import Tabs from '@theme/Tabs';
 
-import Config from '/content/examples/guides/jellyfin/config.yaml.md';
-import Compose from '/content/examples/guides/jellyfin/docker-compose.yaml.md';
+import Config from '!!raw-loader!/content/examples/guides/jellyfin/config.yaml';
+import Compose from '!!raw-loader!/content/examples/guides/jellyfin/docker-compose.yaml';
 
 # Secure Jellyfin with Pomerium
 
@@ -72,7 +73,9 @@ In the [Zero Console](https://console.pomerium.app):
 
 Create a `config.yaml`. It routes `jellyfin.yourdomain.com` to the Jellyfin container, allows WebSockets for the web client, preserves the host header so Jellyfin's links stay correct, and removes the total request-time cap for long playback and downloads.
 
-<Config />
+<CodeBlock language="yaml" title="config.yaml">
+  {Config}
+</CodeBlock>
 
 Replace `jellyfin.yourdomain.com` with your domain and `you@example.com` with the email (or switch to a group or domain match) that should be allowed through. Restart Pomerium after saving.
 
@@ -88,7 +91,9 @@ Two settings in the Compose file keep Jellyfin's URLs correct behind the proxy:
 
 The Compose file runs Pomerium Core and Jellyfin together. For Zero, drop the `pomerium` service and use the `compose.yaml` from the [Quickstart](/docs/get-started/quickstart) with your `POMERIUM_ZERO_TOKEN`, keeping the `jellyfin` service; put `jellyfin` on the same Docker network as the Quickstart's `pomerium` service (the Quickstart names it `main`) so Pomerium can resolve `jellyfin` by name.
 
-<Compose />
+<CodeBlock language="yaml" title="docker-compose.yaml">
+  {Compose}
+</CodeBlock>
 
 ## Run the stack
 

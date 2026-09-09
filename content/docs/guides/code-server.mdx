@@ -8,11 +8,12 @@ keywords: [pomerium, code-server, vscode, sso, oidc, identity aware proxy]
 description: Run code-server (VS Code in the browser) in Docker and put authentication and authorization in front of it with Pomerium.
 ---
 
+import CodeBlock from '@theme/CodeBlock';
 import TabItem from '@theme/TabItem';
 import Tabs from '@theme/Tabs';
 
-import Config from '/content/examples/guides/code-server/config.yaml.md';
-import Compose from '/content/examples/guides/code-server/docker-compose.yaml.md';
+import Config from '!!raw-loader!/content/examples/guides/code-server/config.yaml';
+import Compose from '!!raw-loader!/content/examples/guides/code-server/docker-compose.yaml';
 
 # Secure code-server with Pomerium
 
@@ -72,7 +73,9 @@ Pomerium Zero uses the hosted authenticate service, so there is nothing else to 
 
 Add the route below to your Pomerium `config.yaml`. It uses the hosted authenticate service, so you don't run a separate identity provider, and it requests TLS certificates automatically from Let's Encrypt.
 
-<Config />
+<CodeBlock language="yaml" title="config.yaml">
+  {Config}
+</CodeBlock>
 
 Replace `code-server.yourdomain.com` with your own external hostname and `you@example.com` with the email that should be allowed in. `allow_websockets: true` keeps the editor's live connection working through the proxy, and `preserve_host_header: true` forwards the original host so code-server accepts that WebSocket; it checks the connection's origin against the host and rejects it otherwise.
 
@@ -95,7 +98,9 @@ If you prefer not to disable code-server's own login, you can instead set `PASSW
 
 The Compose file runs Pomerium and code-server together on a shared network; the `To` address `http://code-server:8080` works because both containers share it.
 
-<Compose />
+<CodeBlock language="yaml" title="docker-compose.yaml">
+  {Compose}
+</CodeBlock>
 
 Wire up Pomerium for your deployment, then bring the stack up:
 
