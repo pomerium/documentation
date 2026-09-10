@@ -5,6 +5,8 @@ metadata:
   name: global
 spec:
   secrets: pomerium/bootstrap
+  authenticate:
+    url: https://authenticate.localhost.pomerium.io
   identityProvider:
     provider: hosted
   certificates:
