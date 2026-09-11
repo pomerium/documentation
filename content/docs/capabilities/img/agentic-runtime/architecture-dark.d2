@@ -1,0 +1,133 @@
+# Pomerium Agentic Runtime — the whole system, top to bottom (dark theme)
+#
+# Regenerate:  d2 architecture-dark.d2 architecture-dark.svg
+
+direction: down
+
+vars: {
+  d2-config: {
+    pad: 40
+    theme-overrides: {
+      N7: "#1b1b1d"
+    }
+  }
+}
+
+classes: {
+  card: {
+    shape: rectangle
+    style: {
+      fill: "#1E1E24"
+      stroke: "#9F7AEA"
+      stroke-width: 2
+      border-radius: 12
+      font-size: 26
+      bold: true
+      font-color: "#EDE9FE"
+    }
+  }
+  layer: {
+    style: {
+      fill: "#2A2140"
+      stroke: "#9F7AEA"
+      stroke-width: 3
+      border-radius: 18
+      font-size: 32
+      bold: true
+      font-color: "#EDE9FE"
+    }
+  }
+  plain: {
+    style: {
+      fill: "#1E1E24"
+      stroke: "#64748B"
+      stroke-width: 2
+      border-radius: 12
+      font-size: 26
+      font-color: "#E2E8F0"
+    }
+  }
+  actor: {
+    shape: person
+    style: {
+      fill: "#2A2140"
+      stroke: "#9F7AEA"
+      stroke-width: 2
+      font-size: 26
+      bold: true
+      font-color: "#EDE9FE"
+    }
+  }
+  edge: {
+    style: {
+      stroke: "#94A3B8"
+      stroke-width: 3
+      font-size: 22
+      font-color: "#CBD5E1"
+    }
+  }
+}
+
+clients: "Your clients — any workload with an identity" {
+  class: layer
+  grid-rows: 1
+  grid-gap: 24
+
+  slack: "Slack bot\n(reference client)" {class: card}
+  teams: "Teams bot" {class: card}
+  web: "Web app" {class: card}
+  ci: "CI job" {class: card}
+}
+
+harness: "Agent Sessions API" {
+  class: layer
+  grid-rows: 1
+  grid-gap: 24
+
+  sessions: "Session\nlifecycle" {class: card}
+  events: "Durable\nevent log" {class: card}
+  orch: "Sandbox\norchestration" {class: card}
+}
+
+sandbox: "Sandbox pod — one per session" {
+  class: layer
+  grid-rows: 1
+  grid-gap: 24
+
+  agent: "Agent container\nClaude Code, Codex,\nor your own program\nholds no credentials" {class: card}
+  sidecar: "Sidecar container\nholds the run token" {class: card}
+}
+
+pomerium: "Pomerium — the only credentialed way out" {
+  class: layer
+  grid-rows: 1
+  grid-gap: 24
+
+  idp: "Any IdP\nSSO, groups" {class: card}
+  policy: "Policy on\nevery request" {class: card}
+  secrets: "Secret\ninjection" {class: card}
+  audit: "Audit\nlog" {class: card}
+}
+
+upstreams: "" {
+  class: layer
+  style.fill: transparent
+  style.stroke: transparent
+  grid-rows: 1
+  grid-gap: 24
+
+  llm: "LLM APIs" {class: plain}
+  mcp: "MCP servers" {class: plain}
+  db: "Databases" {class: plain}
+  git: "Git" {class: plain}
+}
+
+person: "A person\napproves each run" {
+  class: actor
+}
+
+clients -> harness: "create session, prompt,\nsubscribe to events" {class: edge}
+harness -> sandbox: "claims a pod,\nspawns the agent" {class: edge}
+sandbox -> pomerium: "egress with\nthe run token" {class: edge}
+pomerium -> upstreams: "credentials injected\nat the gateway" {class: edge}
+person -> pomerium: "consent page" {class: edge}
