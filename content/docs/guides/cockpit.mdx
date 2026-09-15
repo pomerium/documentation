@@ -7,11 +7,12 @@ keywords:
 description: Put Cockpit, the web-based Linux server management GUI, behind Pomerium so single sign-on gates access before Cockpit's own login screen.
 ---
 
+import CodeBlock from '@theme/CodeBlock';
 import TabItem from '@theme/TabItem';
 import Tabs from '@theme/Tabs';
 
-import Config from '/content/examples/guides/cockpit/config.yaml.md';
-import Compose from '/content/examples/guides/cockpit/docker-compose.yaml.md';
+import Config from '!!raw-loader!/content/examples/guides/cockpit/config.yaml';
+import Compose from '!!raw-loader!/content/examples/guides/cockpit/docker-compose.yaml';
 
 # Secure Cockpit with Pomerium
 
@@ -54,7 +55,9 @@ In the [Zero Console](https://console.pomerium.app):
 
 Create a `config.yaml`. It routes `cockpit.yourdomain.com` to the Cockpit container, allows the WebSocket upgrade Cockpit needs, and preserves the host header so Cockpit's origin check passes.
 
-<Config />
+<CodeBlock language="yaml" title="config.yaml">
+  {Config}
+</CodeBlock>
 
 Replace `cockpit.yourdomain.com` with your domain and `you@example.com` with your email.
 
@@ -81,7 +84,9 @@ On a Linux host running Cockpit as a system service, this file lives at `/etc/co
 
 The Compose file runs Pomerium Core and Cockpit together. Cockpit runs in plain-HTTP "bastion" mode (`--no-tls`) because Pomerium terminates TLS in front of it (for Zero, drop the `pomerium` service and use the `compose.yaml` from the Quickstart with your `POMERIUM_ZERO_TOKEN`, keeping the `cockpit` service below):
 
-<Compose />
+<CodeBlock language="yaml" title="docker-compose.yaml">
+  {Compose}
+</CodeBlock>
 
 Put the `cockpit.conf` from the previous section next to the Compose file, then start it:
 

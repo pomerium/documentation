@@ -6,11 +6,12 @@ keywords: [pomerium, transmission, bittorrent, sso, oidc, identity aware proxy]
 description: Put Transmission's RPC and web interface behind Pomerium for single sign-on, TLS, and per-user authorization.
 ---
 
+import CodeBlock from '@theme/CodeBlock';
 import TabItem from '@theme/TabItem';
 import Tabs from '@theme/Tabs';
 
-import Config from '/content/examples/guides/transmission/config.yaml.md';
-import Compose from '/content/examples/guides/transmission/docker-compose.yaml.md';
+import Config from '!!raw-loader!/content/examples/guides/transmission/config.yaml';
+import Compose from '!!raw-loader!/content/examples/guides/transmission/docker-compose.yaml';
 
 # Secure Transmission with Pomerium
 
@@ -54,7 +55,9 @@ Zero manages the route's TLS certificate behind your starter domain, so there's 
 
 Create a `config.yaml`. It routes `transmission.yourdomain.com` to the Transmission container and allows a single authorized user:
 
-<Config />
+<CodeBlock language="yaml" title="config.yaml">
+  {Config}
+</CodeBlock>
 
 Replace `transmission.yourdomain.com` with your domain and `you@example.com` with the email (or group) that should have access. Restart Pomerium after saving.
 
@@ -82,7 +85,9 @@ The host whitelist pins the daemon to the exact hostname you serve from Pomerium
 
 The Compose file runs Pomerium Core and Transmission together (for Zero, drop the `pomerium` service and use the `compose.yaml` from the Quickstart with your `POMERIUM_ZERO_TOKEN`, keeping the `transmission` service below):
 
-<Compose />
+<CodeBlock language="yaml" title="docker-compose.yaml">
+  {Compose}
+</CodeBlock>
 
 Start it:
 

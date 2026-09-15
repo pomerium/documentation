@@ -8,11 +8,12 @@ description: Put AdGuard Home behind Pomerium for single sign-on, injecting its 
 # cSpell:ignore adguardhome
 ---
 
+import CodeBlock from '@theme/CodeBlock';
 import TabItem from '@theme/TabItem';
 import Tabs from '@theme/Tabs';
 
-import Config from '/content/examples/guides/ad-guard/config.yaml.md';
-import Compose from '/content/examples/guides/ad-guard/docker-compose.yaml.md';
+import Config from '!!raw-loader!/content/examples/guides/ad-guard/config.yaml';
+import Compose from '!!raw-loader!/content/examples/guides/ad-guard/docker-compose.yaml';
 
 # Secure AdGuard Home with Pomerium
 
@@ -65,7 +66,9 @@ Zero manages the route's TLS certificate behind your starter domain, so there's 
 
 Create a `config.yaml`. It routes `adguard.yourdomain.com` to the AdGuard container and injects the basic-auth header on every upstream request.
 
-<Config />
+<CodeBlock language="yaml" title="config.yaml">
+  {Config}
+</CodeBlock>
 
 Replace `adguard.yourdomain.com` with your domain, `you@example.com` with your email, and the `Authorization` value with the base64 string from the command above.
 
@@ -82,7 +85,9 @@ The username and password you pick here are exactly the credentials you base64-e
 
 The Compose file runs Pomerium Core and AdGuard together. Pomerium publishes ports 80 and 443 for the protected route, and AdGuard publishes only port 53 for DNS; the AdGuard web UI on port 3000 stays on the internal network so it's reachable only through Pomerium. For Zero, drop the `pomerium` service and use the `compose.yaml` from the Quickstart with your `POMERIUM_ZERO_TOKEN`, keeping the `adguard` service below.
 
-<Compose />
+<CodeBlock language="yaml" title="docker-compose.yaml">
+  {Compose}
+</CodeBlock>
 
 Start it:
 

@@ -19,11 +19,12 @@ keywords:
 description: Put a Forgejo instance behind Pomerium and use reverse-proxy header authentication so users sign in once and are auto-provisioned from their Pomerium identity.
 ---
 
+import CodeBlock from '@theme/CodeBlock';
 import TabItem from '@theme/TabItem';
 import Tabs from '@theme/Tabs';
 
-import Config from '/content/examples/guides/forgejo/config.yaml.md';
-import Compose from '/content/examples/guides/forgejo/docker-compose.yaml.md';
+import Config from '!!raw-loader!/content/examples/guides/forgejo/config.yaml';
+import Compose from '!!raw-loader!/content/examples/guides/forgejo/docker-compose.yaml';
 
 # Secure Forgejo with Pomerium
 
@@ -74,7 +75,9 @@ In the [Zero Console](https://console.pomerium.app):
 
 Create a `config.yaml`. It routes `forgejo.yourdomain.com` to the Forgejo container, forwards the identity claims as headers, and removes the total request timeout so long Git smart-HTTP transfers aren't cut off.
 
-<Config />
+<CodeBlock language="yaml" title="config.yaml">
+  {Config}
+</CodeBlock>
 
 Replace `forgejo.yourdomain.com` with your domain and `you@example.com` with your user or domain. A few notes:
 
@@ -100,7 +103,9 @@ Configure Forgejo to trust and consume the headers. These map to `app.ini` setti
 
 The Compose file runs Pomerium Core and Forgejo together (for Zero, drop the `pomerium` service and use the `compose.yaml` from the Quickstart with your `POMERIUM_ZERO_TOKEN`, keeping the `forgejo` service and its network below):
 
-<Compose />
+<CodeBlock language="yaml" title="docker-compose.yaml">
+  {Compose}
+</CodeBlock>
 
 Start it:
 

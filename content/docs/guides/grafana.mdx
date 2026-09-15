@@ -17,11 +17,12 @@ keywords:
 description: Add single sign-on and per-route authorization to Grafana with Pomerium, forwarding a signed identity JWT so Grafana signs users in automatically.
 ---
 
+import CodeBlock from '@theme/CodeBlock';
 import TabItem from '@theme/TabItem';
 import Tabs from '@theme/Tabs';
 
-import Config from '/content/examples/guides/grafana/config.yaml.md';
-import Compose from '/content/examples/guides/grafana/docker-compose.yaml.md';
+import Config from '!!raw-loader!/content/examples/guides/grafana/config.yaml';
+import Compose from '!!raw-loader!/content/examples/guides/grafana/docker-compose.yaml';
 
 # Secure Grafana with Pomerium
 
@@ -88,7 +89,9 @@ Zero manages the route's TLS certificate and the signing key behind its starter 
 
 Create a `config.yaml`. It routes `grafana.yourdomain.com` to the Grafana container, passes identity headers, and sets a `signing_key` so Pomerium publishes a JWKS that Grafana can verify the forwarded assertion against.
 
-<Config />
+<CodeBlock language="yaml" title="config.yaml">
+  {Config}
+</CodeBlock>
 
 Replace `grafana.yourdomain.com` with your domain, `you@example.com` with your email, and generate your own `signing_key` with the command in the comment. With Core, Grafana's JWKS URL is the route's own well-known endpoint (`https://grafana.yourdomain.com/.well-known/pomerium/jwks.json`), which is what the Compose file below uses.
 
@@ -121,7 +124,9 @@ Keep the `pomerium` service shown below and place the `config.yaml` from the pre
 </TabItem>
 </Tabs>
 
-<Compose />
+<CodeBlock language="yaml" title="docker-compose.yaml">
+  {Compose}
+</CodeBlock>
 
 ```bash
 docker compose up -d

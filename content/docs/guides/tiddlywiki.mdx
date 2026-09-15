@@ -6,11 +6,12 @@ keywords: [pomerium, tiddlywiki, wiki, sso, oidc, identity aware proxy]
 description: Put TiddlyWiki on Node.js behind Pomerium for single sign-on, and forward the authenticated user's email so TiddlyWiki recognizes who is signed in.
 ---
 
+import CodeBlock from '@theme/CodeBlock';
 import TabItem from '@theme/TabItem';
 import Tabs from '@theme/Tabs';
 
-import Config from '/content/examples/guides/tiddlywiki/config.yaml.md';
-import Compose from '/content/examples/guides/tiddlywiki/docker-compose.yaml.md';
+import Config from '!!raw-loader!/content/examples/guides/tiddlywiki/config.yaml';
+import Compose from '!!raw-loader!/content/examples/guides/tiddlywiki/docker-compose.yaml';
 
 # Secure TiddlyWiki with Pomerium
 
@@ -53,7 +54,9 @@ In the [Zero Console](https://console.pomerium.app):
 
 Create a `config.yaml`. It routes `tiddlywiki.yourdomain.com` to the TiddlyWiki container, passes identity headers, and uses `jwt_claims_headers` to forward the user's email in an unsigned `X-Pomerium-Claim-Email` header.
 
-<Config />
+<CodeBlock language="yaml" title="config.yaml">
+  {Config}
+</CodeBlock>
 
 Replace `tiddlywiki.yourdomain.com` with your domain and `you@example.com` with your email. The [`jwt_claims_headers`](/docs/reference/jwt-claim-headers) setting forwards the email claim in the named header, and [`pass_identity_headers`](/docs/reference/routes/pass-identity-headers-per-route) tells Pomerium to attach the identity headers to every upstream request.
 
@@ -73,7 +76,9 @@ The Compose file below runs a one-shot init step that creates the wiki folder wi
 
 The Compose file runs Pomerium Core and TiddlyWiki together (for Zero, drop the `pomerium` service and use the `compose.yaml` from the Quickstart with your `POMERIUM_ZERO_TOKEN`, keeping the `tiddlywiki` services below):
 
-<Compose />
+<CodeBlock language="yaml" title="docker-compose.yaml">
+  {Compose}
+</CodeBlock>
 
 Start it:
 

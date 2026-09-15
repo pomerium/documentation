@@ -6,11 +6,12 @@ keywords: [pomerium, open webui, llm, sso, oidc, identity aware proxy]
 description: Run a self-hosted LLM interface (Open WebUI) behind Pomerium with SSO and trusted-header identity.
 ---
 
+import CodeBlock from '@theme/CodeBlock';
 import TabItem from '@theme/TabItem';
 import Tabs from '@theme/Tabs';
 
-import Config from '/content/examples/guides/llm/config.yaml.md';
-import Compose from '/content/examples/guides/llm/docker-compose.yaml.md';
+import Config from '!!raw-loader!/content/examples/guides/llm/config.yaml';
+import Compose from '!!raw-loader!/content/examples/guides/llm/docker-compose.yaml';
 
 # Secure Open WebUI with Pomerium
 
@@ -62,7 +63,9 @@ In the [Zero Console](https://console.pomerium.app), create a policy and a route
 
 With Pomerium Core you supply a `config.yaml`. `jwt_claims_headers` emits the user's email as `X-Pomerium-Claim-Email`, the route's `pass_identity_headers` forwards it to Open WebUI, and `allow_websockets` keeps streamed responses working. Note that `pass_identity_headers` on its own only forwards the signed assertion; the `X-Pomerium-Claim-Email` header comes from `jwt_claims_headers`, so both are required.
 
-<Config />
+<CodeBlock language="yaml" title="config.yaml">
+  {Config}
+</CodeBlock>
 
 `autocert: true` provisions TLS from Let's Encrypt for the route host. Replace `llm.yourdomain.com` with your domain and the `email` allow rule with the users or groups that should have access. This config uses the hosted authenticate service; to run your own identity provider instead, see the [Keycloak fallback](/docs/integrations/user-identity/oidc).
 
@@ -90,7 +93,9 @@ Trusted-header SSO is only safe when the app is unreachable except through Pomer
 
 The compose file runs Pomerium and Open WebUI together. Open WebUI listens on `8080`, which Pomerium routes to internally; only Pomerium publishes ports to the host.
 
-<Compose />
+<CodeBlock language="yaml" title="docker-compose.yaml">
+  {Compose}
+</CodeBlock>
 
 ```bash
 docker compose up -d
