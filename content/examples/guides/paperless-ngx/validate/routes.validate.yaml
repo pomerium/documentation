@@ -1,0 +1,12 @@
+# Routes-only validation config. Shared settings (IdP, secrets, signing key, certs)
+# come from ../../_harness/pomerium/validation.env via env_file in compose.validate.yaml.
+# Paperless-ngx runs its own Django login, so the route is a front-door gate.
+# preserve_host_header keeps Django's ALLOWED_HOSTS / CSRF checks happy behind the proxy.
+routes:
+  - from: https://paperless.localhost.pomerium.io
+    to: http://paperless:8000
+    preserve_host_header: true
+    policy:
+      - allow:
+          or:
+            - authenticated_user: true
