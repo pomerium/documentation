@@ -1,0 +1,117 @@
+# Sealed E2E validation for the Immich guide. Reuses the shared harness (Keycloak +
+# certs + headless runner) and adds the Immich stack behind a Pomerium wired to the
+# in-network IdP. Run with: scripts/validate-guide-fixtures.sh immich
+#
+# This is a real end-to-end test: it proves Pomerium gates the route, an allowed
+# user passes the gate, and Immich's own API (/api/server/ping) answers behind the
+# gate. The throwaway DB credentials below are for this sealed, ephemeral container.
+#
+# Network isolation mirrors the guide's trust boundary: immich-server, its database,
+# and redis sit ONLY on the internal-only `immich-internal` network, shared with
+# pomerium alone. The test-runner is on `default`, so the only path to Immich is
+# through Pomerium, which bridges both networks.
+#
+# Immich runs its first-boot database migrations against the pinned VectorChord
+# Postgres image, so immich-server gets a generous healthcheck start_period;
+# Pomerium waits for it to report healthy before the browser checks run.
+
+include:
+  - ../../_harness/compose/compose.harness.yaml
+
+services:
+  # Immich requires this VectorChord/pgvecto-rs Postgres image; a stock postgres
+  # image crashes immich-server on first migration because the vector extension is
+  # missing. Pin the exact image Immich ships.
+  database:
+    image: ghcr.io/immich-app/postgres:14-vectorchord0.4.3-pgvectors0.2.0@sha256:bcf63357191b76a916ae5eb93464d65c07511da41e3bf7a8416db519b40b1c23
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: immich
+      POSTGRES_INITDB_ARGS: '--data-checksums'
+    shm_size: 128mb
+    networks:
+      immich-internal:
+        aliases:
+          - database
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U postgres -d immich || exit 1']
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 60s
+
+  redis:
+    image: docker.io/valkey/valkey:9.0.3@sha256:3b55fbaa0cd93cf0d9d961f405e4dfcc70efe325e2d84da207a0a8e6d8fde4f9
+    networks:
+      immich-internal:
+        aliases:
+          - redis
+    healthcheck:
+      test: ['CMD-SHELL', 'redis-cli ping || exit 1']
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 10s
+
+  immich-server:
+    image: ghcr.io/immich-app/immich-server:v2.7.5@sha256:c15bff75068effb03f4355997d03dc7e0fc58720c2b54ad6f7f10d1bc57efaa5
+    environment:
+      DB_HOSTNAME: database
+      DB_USERNAME: postgres
+      DB_PASSWORD: postgres
+      DB_DATABASE_NAME: immich
+      REDIS_HOSTNAME: redis
+    depends_on:
+      database:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      immich-internal:
+        aliases:
+          - immich-server
+    healthcheck:
+      # The image ships its own healthcheck; first boot runs DB migrations, so give
+      # it a generous start_period before the browser checks run.
+      test: ['CMD', 'immich-healthcheck']
+      interval: 10s
+      timeout: 10s
+      retries: 40
+      start_period: 240s
+
+  pomerium:
+    image: pomerium/pomerium:v0.32.7@sha256:e10d1d267af24f581157f485d9b0bc08469e2428675b696a08e42ceb09b2279c
+    command: ['--config', '/pomerium/config.yaml']
+    env_file:
+      - ../../_harness/pomerium/validation.env
+    volumes:
+      - certs:/certs:ro
+      - ./routes.validate.yaml:/pomerium/config.yaml:ro
+    depends_on:
+      certs-init:
+        condition: service_completed_successfully
+      keycloak:
+        condition: service_healthy
+      immich-server:
+        condition: service_healthy
+    networks:
+      # On `default` for the IdP + test-runner, and on the internal-only network to
+      # reach Immich. This is the only service bridging the two.
+      default:
+        aliases:
+          - authenticate.localhost.pomerium.io
+          - immich.localhost.pomerium.io
+      immich-internal: {}
+    healthcheck:
+      test: ['CMD', 'pomerium', 'health']
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 10s
+
+networks:
+  # Internal-only: no route to the outside, and the test-runner is not attached,
+  # so Immich is reachable only via Pomerium.
+  immich-internal:
+    internal: true
