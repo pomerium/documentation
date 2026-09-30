@@ -499,6 +499,8 @@ const CURATED_ROUTES = new Set([
   '/docs/capabilities/mcp/mcp-upstream-oauth',
   '/docs/capabilities/mcp/tunnel-to-chatgpt',
   '/docs/capabilities/mcp/reference',
+  // Agentic runtime
+  '/docs/capabilities/agentic-runtime',
   // Internals
   '/docs/internals/ppl',
   '/docs/internals/configuration',
@@ -550,6 +552,8 @@ const TIER1_ROUTES = new Set([
   '/docs/capabilities/mcp/reference',
   '/docs/capabilities/mcp/develop-mcp-app',
   '/docs/capabilities/mcp/tunnel-to-chatgpt',
+  // Agentic runtime
+  '/docs/capabilities/agentic-runtime',
   // Internals
   '/docs/internals/ppl',
   '/docs/internals/architecture',

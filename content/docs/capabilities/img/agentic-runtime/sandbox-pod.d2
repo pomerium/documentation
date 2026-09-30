@@ -1,0 +1,99 @@
+# The sandbox pod — the credential boundary between the two containers
+#
+# Regenerate:  d2 sandbox-pod.d2 sandbox-pod.svg
+# cSpell:ignore cardplain agentc sidecarc kubelet
+
+direction: down
+
+vars: {
+  d2-config: {
+    pad: 40
+  }
+}
+
+classes: {
+  card: {
+    shape: rectangle
+    style: {
+      fill: "#FFFFFF"
+      stroke: "#6F43E7"
+      stroke-width: 2
+      border-radius: 12
+      font-size: 26
+      bold: true
+      font-color: "#2E1065"
+    }
+  }
+  cardplain: {
+    shape: rectangle
+    style: {
+      fill: "#FFFFFF"
+      stroke: "#94A3B8"
+      stroke-width: 2
+      border-radius: 12
+      font-size: 24
+      font-color: "#0F172A"
+    }
+  }
+  container: {
+    style: {
+      fill: "#F3EEFF"
+      stroke: "#6F43E7"
+      stroke-width: 3
+      border-radius: 18
+      font-size: 30
+      bold: true
+      font-color: "#2E1065"
+    }
+  }
+  outer: {
+    style: {
+      fill: "#FAF8FF"
+      stroke: "#6F43E7"
+      stroke-width: 4
+      border-radius: 22
+      font-size: 34
+      bold: true
+      font-color: "#2E1065"
+    }
+  }
+  edge: {
+    style: {
+      stroke: "#475569"
+      stroke-width: 3
+      font-size: 22
+      font-color: "#334155"
+    }
+  }
+}
+
+pod: "Sandbox pod — no inbound connections, no Kubernetes API token" {
+  class: outer
+
+  agentc: "Agent container\nno credentials" {
+    class: container
+
+    agent: "Any agent harness\nClaude Code, Codex, or your own\nAPI base URL = 127.0.0.1:9999" {class: card}
+  }
+
+  sidecarc: "Sidecar container\nholds every credential" {
+    class: container
+
+    token: "Projected token\nwritten by the kubelet" {class: cardplain}
+    sidecar: "Sidecar\none loopback port per upstream\nadds the run token" {class: card}
+
+    token -> sidecar {class: edge}
+  }
+}
+
+pomerium: "Pomerium" {
+  class: card
+  style.fill: "#F3EEFF"
+  style.font-size: 30
+  width: 260
+  height: 110
+}
+
+pod.agentc.agent -> pod.sidecarc.sidecar: "loopback, no headers" {class: edge}
+pod.sidecarc.sidecar -> pomerium: "TLS + run token" {class: edge}
+pod.sidecarc.sidecar -> pomerium: "projected token in, run token out" {class: edge}
