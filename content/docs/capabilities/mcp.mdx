@@ -19,6 +19,12 @@ keywords:
 
 Pomerium provides secure access to [Model Context Protocol (MCP)](https://modelcontextprotocol.io/) servers, enabling AI agents and applications to safely interact with your internal resources through standardized interfaces.
 
+:::tip Interactive Course
+
+Take the full [**Securing MCP Servers and MCP Apps with Pomerium**](https://go.pomerium.com/mcp-course?utm_source=docs&utm_medium=docs&utm_campaign=mcp-course) course for hands-on lessons covering everything on this page. The course doesn't require an AI subscription. The lessons use [MCP Inspector](https://modelcontextprotocol.io/docs/tools/inspector) and [MCPJam](https://www.mcpjam.com/) (for MCP Apps) as clients. You'll need to create an iximiuz labs account (free).
+
+:::
+
 ## Architecture
 
 Pomerium sits between MCP clients and your internal servers, handling authentication, authorization, and observability for every request.
@@ -67,7 +73,7 @@ Pomerium uses [Pomerium Policy Language (PPL)](/docs/internals/ppl) to control w
 
 Every tool call is logged with the method, tool name, and parameters, giving you full audit visibility into what AI agents do on behalf of your users.
 
-See [Limit MCP Tool Calling](/docs/capabilities/mcp/limit-mcp-tools) for patterns and examples.
+See [Limit MCP Tool Calling](/docs/capabilities/mcp/limit-mcp-tools) for patterns and examples, or try the hands-on lesson [Control MCP Tool Access with Fine-Grained Policies](https://go.pomerium.com/mcp-course-l4).
 
 ### Delegating MCP Access to AI Agents
 
@@ -85,6 +91,15 @@ See [Delegate MCP Access to an LLM](/docs/capabilities/mcp/delegate-mcp-to-llm) 
 For local development, `ssh -R 0 pom.run` exposes your local MCP server over HTTPS — one command, no configuration. Pomerium authenticates and authorizes every request through the tunnel, so you can test with ChatGPT, Claude, or any other hosted MCP client immediately.
 
 See [Tunnel to ChatGPT During Development](/docs/capabilities/mcp/tunnel-to-chatgpt) for the full walkthrough.
+
+### MCP Apps
+
+Pomerium secures [MCP Apps](https://modelcontextprotocol.io/docs/extensions/apps), the interactive widgets that MCP servers render inside hosts like ChatGPT and Claude. The same authentication, policy, and audit logging apply to the app's tools and its widget assets, from local development through a production deployment.
+
+See [Develop an MCP App](/docs/capabilities/mcp/develop-mcp-app) for the full walkthrough, or try the hands-on lessons:
+
+- [Build and Test an MCP App with Pomerium](https://go.pomerium.com/mcp-course-l6)
+- [Deploy an MCP App to Production with Pomerium](https://go.pomerium.com/mcp-course-l7)
 
 ## Blueprints
 
