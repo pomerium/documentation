@@ -20,7 +20,15 @@ import Tabs from '@theme/Tabs';
 
 The **Configure** section of the Pomerium Enterprise Console houses settings that affect the entirety of the Console environment (across all Namespaces). Adjust these settings with care.
 
-## Outbound network requirements
+## Licenses
+
+The Pomerium Enterprise Console requires an Enterprise License to use. A free trial Enterprise License can be obtained through the Enterprise Console UI on the Licenses tab:
+
+![Enterprise Licenses](./img/enterprise-licenses.png)
+
+An Enterprise License can also be supplied from the command line via the <a href="#license-key">`license-key`</a> option. Licenses require online validation, unless the <a href="#license-key-validate-offline">`license-key-validate-offline`</a> option is used and the license supports offline validation.
+
+## Outbound Network Requirements
 
 Pomerium Enterprise Console may require outbound HTTPS (TCP 443) access to:
 
@@ -29,7 +37,7 @@ Pomerium Enterprise Console may require outbound HTTPS (TCP 443) access to:
 - `analytics.pomerium.com` for Pomerium usage analytics.
 - `sentry.io` for Sentry error reporting - see https://docs.sentry.io/security-legal-pii/security/ip-ranges/
 
-## Directory sync
+## Directory Sync
 
 Directory sync enumerates users and groups from a directory provider so Pomerium Core can use directory-backed identity data. In the Console, go to **Settings** > **Directory Sync**. The tab shows **Identity Provider**, **Polling Min Delay**, and **Polling Max Delay**. **Identity Provider** renders a provider selector with **None** as the empty value; leaving it empty disables directory sync. When a provider is selected, the Console shows provider-specific options below the selector.
 
@@ -37,7 +45,7 @@ When the Console exports settings to Core, **Identity Provider** maps to `direct
 
 You can seed the same persisted Console settings at startup with `directory_provider`, `directory_provider_options`, `directory_provider_refresh_interval`, and `directory_provider_refresh_timeout` in `config.yaml`, or with the matching environment variables in the table below. If unset, `directory_provider_refresh_interval` defaults to `10m`, and `directory_provider_refresh_timeout` — the deadline for a single refresh attempt — also defaults to `10m`.
 
-## Auto-apply changesets
+## Auto-Apply Changesets
 
 `auto_apply_changesets` controls whether configuration changesets apply automatically (`true`) or wait for an administrator to apply them (`false`). The Enterprise Console has no UI control for it; set it through the [Console management API](/docs/internals/management-api-enterprise). Pomerium Zero exposes it as the **Auto-apply changesets** toggle under **Settings** > **Advanced**.
 
@@ -74,7 +82,8 @@ All values are case sensitive unless otherwise noted.
 | <a className="entRef-anchor" id="disable-validation">#</a><a href='#disable-validation'>DISABLE_VALIDATION</a> | (deprecated, please update your configuration to set `VALIDATION_MODE=none` instead) Disable config validation. | `false` |
 | <a className="entRef-anchor" id="grpc-addr">#</a><a href='#grpc-addr'>GRPC_ADDR</a> | The address to listen for gRPC on. | `:8702` |
 | <a className="entRef-anchor" id="help">#</a><a href='#help'>HELP</a> | help for serve | `false` |
-| <a className="entRef-anchor" id="license-key">#</a><a href='#license-key'>LICENSE_KEY</a> | Required: Provide the license key issued by your account team. | none |
+| <a className="entRef-anchor" id="license-key">#</a><a href='#license-key'>LICENSE_KEY</a> | Provide the license key issued by your account team. | none |
+| <a className="entRef-anchor" id="license-key-validate-offline">#</a><a href='#license-key-validate-offline'>LICENSE_KEY_VALIDATE_OFFLINE</a> | Disable online validation of the license key. | `false` |
 | <a className="entRef-anchor" id="override-certificate-name">#</a><a href='#override-certificate-name'>OVERRIDE_CERTIFICATE_NAME</a> | Overrides the certificate name used for the databroker connection. | none |
 | <a className="entRef-anchor" id="prometheus-data-dir">#</a><a href='#prometheus-data-dir'>PROMETHEUS_DATA_DIR</a> | The path to Prometheus data | none |
 | <a className="entRef-anchor" id="prometheus-listen-addr">#</a><a href='#prometheus-listen-addr'>PROMETHEUS_LISTEN_ADDR</a> | When set, embedded Prometheus listens at this address. Set as `host:port` | `127.0.0.1:9090` |
