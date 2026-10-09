@@ -38,29 +38,7 @@ Pomerium offers several ways to install the Enterprise Console to suit your orga
 <Tabs queryString="method">
 <TabItem label="Docker" value="docker">
 
-The Pomerium Enterprise Docker image is available at a private Cloudsmith Docker registry.
-
-To access the Pomerium Enterprise Docker image:
-
-1. In your terminal, run the following command:
-
-```shell
-docker login docker.cloudsmith.io
-```
-
-2. Enter your **username** and **password**:
-
-```shell
- % docker login docker.cloudsmith.io
-Username: <username>
-Password: <password>
-```
-
-3. Pull a specific tagged release of the Pomerium Enterprise image:
-
-```shell
-docker pull docker.cloudsmith.io/pomerium/enterprise/pomerium-console:${vX.X.X}
-```
+The Pomerium Enterprise Docker image is available as part of the `pomerium/pomerium` docker container.
 
 See the [Enterprise Quickstart](/docs/deploy/enterprise/quickstart) for instructions to run and deploy the Enterprise Console with Docker Compose.
 
@@ -161,26 +139,16 @@ The assumption is that Pomerium is installed into the `pomerium` namespace, and 
 The below command will expose the Pomerium Core Databroker gRPC interface.
 
 ```console
-kubectl apply -k github.com/pomerium/documentation/k8s/core\?ref=0-31-0
+kubectl apply -k github.com/pomerium/documentation/k8s/core
 ```
 
 ## Deploy Enterprise Console
 
 ```console
-kubectl apply -k github.com/pomerium/documentation/k8s/console\?ref=0-31-0
+kubectl apply -k github.com/pomerium/documentation/k8s/console
 ```
 
 The Enterprise Console need be configured before it becomes fully operational.
-
-## Create Cloudsmith Directory Secret
-
-```console
-kubectl create secret docker-registry pomerium-enterprise-docker \
-    --namespace pomerium-enterprise \
-    --docker-server=docker.cloudsmith.io \
-    --docker-username=pomerium/enterprise \
-    --docker-password="your password provided by Pomerium Sales"
-```
 
 ## Configure Enterprise Console
 
