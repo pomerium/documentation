@@ -138,7 +138,7 @@ remove_request_headers:
 
 The dynamic values enable you to pass ID and Access tokens from your identity provider to upstream applications.
 
-To pass dynamic values from the user's OIDC claim to an upstream service, see [JWT Claim Headers](../jwt-claim-headers).
+To pass dynamic values from the user's OIDC claim to an upstream service, see [JWT Claim Headers](../jwt-claim-headers). To inject a credential that Pomerium reads from a file outside its own configuration, see [Inject Secrets](#inject-secrets).
 
 :::caution
 
@@ -240,6 +240,32 @@ Be very careful when passing access tokens to an upstream application. This may 
 
 :::
 
+### Inject Secrets \{#inject-secrets}
+
+A header value can also carry a `${secret.ID}` reference. `ID` names an entry in the [`secrets.bindings`](/docs/reference/secrets#bindings) table, which tells Pomerium where to read the credential from:
+
+```yaml
+secrets:
+  bindings:
+    upstream-api-token:
+      url: 'file:///etc/pomerium/secrets/upstream-api-token'
+
+routes:
+  - from: https://api.corp.example.com
+    to: https://api.internal
+    set_request_headers:
+      Authorization: 'Bearer ${secret.upstream-api-token}'
+    policy:
+      - allow:
+          or:
+            - email:
+                is: user@example.com
+```
+
+Unlike a static header value, the credential is not part of your Pomerium configuration. Pomerium re-reads the file in the background, so you can rotate the credential without a configuration change or a restart. If the credential cannot be read, Pomerium rejects the request with `503 Service Unavailable` instead of sending it without the header.
+
+Secret references work only in `set_request_headers`. For the full behavior, including rotation, failure handling, and monitoring, see the [Secrets](/docs/reference/secrets) reference.
+
 ### Rewrite Request Headers \{#rewrite-request-headers}
 
 In addition to token substitutions, request headers can be rewritten using `${pomerium.request.headers["HEADER-NAME"]}`. For example if a request had a header `X-Jwt: JWT` and you would like to send it as `Authorization: Bearer JWT`, you could do so using:
@@ -305,6 +331,8 @@ ingress.pomerium.io/remove_request_headers: |
 ## Set Response Headers \{#set-response-headers}
 
 **Set Response Headers** allows you to set static values for the given response headers. These headers will take precedence over the global [`set_response_headers`](/docs/reference/set-response-headers).
+
+Response header values are static text. `${pomerium.*}` and [`${secret.ID}`](/docs/reference/secrets) references are not substituted here, and a secret reference in a response header is a configuration error.
 
 ### How to Configure \{#how-to-configure-set-response-headers}
 
