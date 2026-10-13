@@ -103,9 +103,53 @@ routes:
 | `enabled` | boolean | `true` | Turns the bridge on or off. The default applies whenever an `oidc_bridge` block is present, so `oidc_bridge: {}` is enough to enable it. |
 | `client_secret` | string | none | Only for applications that cannot use Proof Key for Code Exchange (PKCE). Applications with PKCE are public clients and need no secret. Treated as a sensitive value. |
 
-## Example
+## Example: Gitea
 
-\<To do\>
+[Gitea](https://about.gitea.com/) is a self-hosted Git service. It cannot verify a JWT from a request header, which makes it a good fit for the bridge: Gitea uses its built-in OpenID Connect login source instead. Gitea does not use PKCE, so it needs a `client_secret` on the route.
+
+### Pomerium route
+
+```yaml
+routes:
+  - from: https://gitea.localhost.pomerium.io
+    to: http://gitea:3000
+    oidc_bridge:
+      client_secret: <GITEA_CLIENT_SECRET>
+    allow_any_authenticated_user: true
+```
+
+### Gitea setup
+
+1. Set `ROOT_URL = https://gitea.localhost.pomerium.io/` in Gitea's configuration file, `app.ini`, or pass it as `GITEA__server__ROOT_URL` in Docker, so the OAuth2 callback points at the route.
+2. Add the login source. Go to **Site Administration** > **Identity & Access** > **Authentication Sources** > **Add Authentication Source** and fill in:
+
+   | Setting | Value |
+   | :-- | :-- |
+   | **Authentication Type** | `OAuth2` |
+   | **Authentication Name** | `pomerium` |
+   | **OAuth2 Provider** | `OpenID Connect` |
+   | **Client ID (Key)** | `https://gitea.localhost.pomerium.io/` |
+   | **Client Secret** | the route's `client_secret` |
+   | **OpenID Connect Auto Discovery URL** | `https://authenticate.localhost.pomerium.io/.well-known/openid-configuration` |
+   | **Additional Scopes** | leave empty |
+
+   ![Gitea authentication source configured to use Pomerium as the OpenID Connect provider](./img/oidc-bridge/gitea-auth-source.png)
+
+3. Save. The Gitea login page now offers **Sign in with pomerium**, and the callback Gitea uses is `https://gitea.localhost.pomerium.io/user/oauth2/pomerium/callback`.
+4. To skip the Gitea login page entirely, leave the bridge as the only login method and let Gitea create accounts on first sign-in:
+
+   ```ini title="app.ini"
+   [oauth2_client]
+   ENABLE_AUTO_REGISTRATION = true
+   USERNAME = email
+
+   [service]
+   ENABLE_PASSWORD_SIGNIN_FORM = false
+   ENABLE_PASSKEY_AUTHENTICATION = false
+   REQUIRE_SIGNIN_VIEW = true
+   ```
+
+   With a single OAuth2 source and no other login method, Gitea redirects `/user/login` straight to Pomerium.
 
 ## Verify
 
