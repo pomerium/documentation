@@ -83,11 +83,13 @@ oidc_bridge:
   enabled: true
 
 routes:
-  # Jenkins requires a client secret, so this route carries one
-  - from: https://jenkins.localhost.pomerium.io
-    to: http://localhost:8080
+  - from: https://gitea.localhost.pomerium.io
+    to: http://gitea:3000
     oidc_bridge:
-      client_secret: <secret>
+      # Gitea does not use PKCE, so it is a confidential client.
+      # Use the same value as the Client Secret in the Gitea auth source.
+      client_secret: <GITEA_CLIENT_SECRET>
+    allow_any_authenticated_user: true
 
   # Opt this route out
   - from: https://wiki.localhost.pomerium.io
