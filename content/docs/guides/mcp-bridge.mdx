@@ -143,7 +143,7 @@ In the Zero Console:
 
 ![Zero Console Settings MCP section with Allowed Client ID Domains vscode.dev and AS Metadata Domains mcp.linear.app](./img/mcp-bridge/settings-mcp.png)
 
-This section also contains the **Allowed Client ID Domains** subsection, a related but separate allowlist for MCP clients that authenticate using URL-based client IDs. The default list includes `vscode.dev`, which is what this guide uses as the test client. Add other hosted MCP clients you want to permit, for example `claude.ai` or `chatgpt.com`. Leave the default in place if you only need VS Code.
+This section also contains the **Allowed Client ID Domains** subsection, a related but separate allowlist for MCP clients that authenticate using URL-based client IDs. New clusters start with the domains of well-known MCP clients: `vscode.dev`, `claude.ai`, `chatgpt.com`, `cursor.com`, `github.com`, `zed.dev`, `antigravity.google`, `grok.com`, `opencode.ai`, `goose-docs.ai`, and `www.mcpjam.com`. Clusters created before this default was expanded keep their existing list, which may contain only `vscode.dev`. This guide uses `vscode.dev` as the test client. Add any other hosted MCP clients you want to permit.
 
 If you skip this step, the first client connection will fail with a log line like `mcp: upstream AS metadata domain not allowed`. See [Troubleshooting](#common-failure-modes).
 
@@ -230,7 +230,7 @@ If you need to re-authenticate later (for example, to switch accounts or retry a
 
 :::note
 
-The MCP Inspector works under the default **Allowed Client ID Domains** list (`vscode.dev`). If you edited that list in step 1 and removed `vscode.dev`, either add it back before running Inspector or add Inspector's origin explicitly. Other hosted clients (Claude Desktop, ChatGPT) register through their own origins. Add them to the allowlist when you test those.
+The MCP Inspector works under the default **Allowed Client ID Domains** list. If you edited that list in step 1 and removed `vscode.dev`, either add it back before running Inspector or add Inspector's origin explicitly. Other hosted clients, such as Claude Desktop and ChatGPT, register through their own domains (`claude.ai`, `chatgpt.com`). Those are in the default list on new clusters. On older clusters, add them to the allowlist when you test those clients.
 
 :::
 
