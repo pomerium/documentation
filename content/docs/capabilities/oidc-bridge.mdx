@@ -22,21 +22,21 @@ lang: en-US
 
 # OIDC Bridge
 
-Many applications behind Pomerium keep their own login page. If an application cannot read the Pomerium JWT, users sign in twice: once at your organization's identity provider (IdP) through Pomerium, and again at the application. The **OIDC bridge** removes the second prompt. Pomerium acts as an OpenID Connect (OIDC) provider for the application: the application runs its normal OIDC login against Pomerium, and Pomerium answers from the session the user already has.
+Many applications behind Pomerium keep their own login page. If an application cannot read the Pomerium JWT, users sign in twice: once at your organization's identity provider (IdP) through Pomerium, and again at the application. The **OIDC bridge** fixes this. Pomerium acts as an OpenID Connect (OIDC) provider, so the application logs users in through Pomerium using the session they already have.
 
-Use the bridge when an application supports OIDC login but not JWT header authentication. If the application can verify a JWT from a request header, prefer [continuous identity verification](/docs/capabilities/getting-users-identity): the Pomerium JWT proves not only who the user is but also that Pomerium authorized each request, which an OIDC ID token does not.
+Use the bridge when an application supports OIDC login but not JWT header authentication. If the application can verify a JWT from a request header, use [continuous identity verification](/docs/capabilities/getting-users-identity) instead. The Pomerium JWT also shows that Pomerium authorized the request. An ID token only shows who the user is.
 
 ## Security considerations
 
-- The bridge authenticates; it does not authorize. Keep a route policy on every bridged route. Pomerium still evaluates policy on each request, independent of any ID token the application holds.
+- The bridge only handles login. Access control still comes from the route policy, which Pomerium checks on every request.
 - The application never receives tokens from your IdP. Pomerium mints the ID token and the access token itself.
-- No refresh tokens. The access token is tied to the user's Pomerium session and returns claims only while that session lasts. Don't treat it as proof that the user is still signed in; Pomerium checks policy on every request to the route.
+- There are no refresh tokens. The access token works only while the user's Pomerium session is active.
 
 ## How it works
 
 1. The user opens the route and signs in through Pomerium, as with any other route. Pomerium checks the route policy.
 2. The application starts its usual OIDC login and sends the browser to Pomerium's authorization endpoint.
-3. The browser already has a Pomerium session, so Pomerium issues an authorization code and sends the browser straight back to the application. There is no second login prompt. If the session is missing or expired, Pomerium signs the user in first and then completes the request.
+3. The user already has a Pomerium session, so Pomerium sends them back to the application with an authorization code. No login prompt appears. If the session has expired, the user signs in again first.
 4. The application exchanges the code for an ID token and an access token. It can also call the userinfo endpoint for the same claims.
 
 ```mermaid
@@ -44,7 +44,7 @@ sequenceDiagram
   participant B as Browser
   participant P as Pomerium
   participant A as Application
-  B->>P: Open https://jenkins.localhost.pomerium.io
+  B->>P: Open https://gitea.localhost.pomerium.io
   P->>B: Sign in at the IdP, once
   P->>A: Proxy the request
   A->>B: Redirect to Pomerium's authorization endpoint
@@ -57,13 +57,13 @@ sequenceDiagram
 
 :::note Claims
 
-The claims in the ID token come straight from your IdP: `sub`, `email`, `name`, and whatever else it returned. Pomerium rewrites `iss` to the authenticate service URL and `aud` to the client ID. Every value is a string, so a list like `groups` becomes `"admins,developers"` and `email_verified` becomes `"true"` rather than `true`. The userinfo endpoint returns the same claims.
+The claims in the ID token come from your IdP, such as `sub`, `email`, and `name`. Pomerium rewrites `iss` to the authenticate service URL and `aud` to the client ID. Every value is a string, so a list like `groups` becomes `"admins,developers"` and `email_verified` becomes `"true"` rather than `true`. The userinfo endpoint returns the same claims.
 
 :::
 
-:::info The ID token is not the Pomerium JWT
+:::info
 
-The ID token proves who the user is. It does not prove that Pomerium authorized a given request, so it is not a substitute for the Pomerium JWT in [application-based mutual authentication](/docs/internals/mutual-auth#jwt-verification-application-based-mutual-authentication). Pomerium policy remains the enforcement point for every request.
+The ID token can't replace the Pomerium JWT in [application-based mutual authentication](/docs/internals/mutual-auth#jwt-verification-application-based-mutual-authentication).
 
 :::
 
@@ -101,11 +101,11 @@ routes:
 | Key | Type | Default | Description |
 | :-- | :-- | :-- | :-- |
 | `enabled` | boolean | `true` | Turns the bridge on or off. The default applies whenever an `oidc_bridge` block is present, so `oidc_bridge: {}` is enough to enable it. |
-| `client_secret` | string | none | Only for applications that cannot use Proof Key for Code Exchange (PKCE). Applications with PKCE are public clients and need no secret. Treated as a sensitive value. |
+| `client_secret` | string | none | Set this only if the application doesn't support Proof Key for Code Exchange (PKCE). Keep it secret. |
 
 ## Example: Gitea
 
-[Gitea](https://about.gitea.com/) is a self-hosted Git service. It cannot verify a JWT from a request header, which makes it a good fit for the bridge: Gitea uses its built-in OpenID Connect login source instead. Gitea does not use PKCE, so it needs a `client_secret` on the route.
+[Gitea](https://about.gitea.com/) is a self-hosted Git service. It can't read the Pomerium JWT, but it supports OpenID Connect login, so it works well with the bridge. Gitea doesn't use PKCE, so it needs a `client_secret` on the route.
 
 ### Pomerium route
 
@@ -120,7 +120,7 @@ routes:
 
 ### Gitea setup
 
-1. Set `ROOT_URL = https://gitea.localhost.pomerium.io/` in Gitea's configuration file, `app.ini`, or pass it as `GITEA__server__ROOT_URL` in Docker, so the OAuth2 callback points at the route.
+1. In Gitea's `app.ini`, set `ROOT_URL = https://gitea.localhost.pomerium.io/`. In Docker, use the `GITEA__server__ROOT_URL` variable instead.
 2. Add the login source. Go to **Site Administration** > **Identity & Access** > **Authentication Sources** > **Add Authentication Source** and fill in:
 
    | Setting | Value |
@@ -149,21 +149,21 @@ routes:
    REQUIRE_SIGNIN_VIEW = true
    ```
 
-   With a single OAuth2 source and no other login method, Gitea redirects `/user/login` straight to Pomerium.
+   Turning off the password and passkey forms leaves Pomerium as the only way to sign in. Gitea then skips its login page and redirects users to Pomerium.
 
 ## Verify
 
-The bridge is working when a user opens the route, signs in once at the IdP, and lands in the application already logged in, with no second login prompt and no errors.
+Open the route and sign in. If you land in Gitea already logged in, the bridge works.
 
 ## Troubleshooting
 
 | Symptom | Cause and fix |
 | :-- | :-- |
-| `404 Not Found` from the discovery URL or any `/oidc/` path | The application is talking to the wrong host, usually the route URL instead of the authenticate service URL, or this Pomerium has no `idp_provider` set. Check the issuer in the application settings, then `authenticate_service_url` and `idp_provider` in the Pomerium config. |
+| `404 Not Found` from the discovery URL or any `/oidc/` path | The application is using the wrong host. Point the application at the authenticate service URL, and check that `idp_provider` is set. |
 | Discovery works, but the issuer is `https://authenticate.pomerium.app` and sign-in fails | There is no `authenticate_service_url` in the Pomerium config, so the application found the hosted authenticate service, which is a different OIDC provider. Set `authenticate_service_url` and `idp_provider`, and point the application at that URL. |
-| HTTP 400 at `/oidc/auth`: `redirect_uri "..." does not match client_id "..."` | The redirect URI is on a different host than the client ID, its path is not under the client ID path, or the client ID ends with a slash. Use the route's `from` URL as the client ID, exactly as written, and a redirect URI on that host. |
+| HTTP 400 at `/oidc/auth`: `redirect_uri "..." does not match client_id "..."` | The redirect URI is on a different host than the client ID, or its path is not under the client ID path. Use the route's `from` URL as the client ID and a redirect URI on that host. |
 | Token request fails with `unsupported_grant_type` | The application asked for something other than `authorization_code`, usually a refresh token. The bridge does not issue refresh tokens, so turn off token refresh in the application. |
 | Token request fails with `invalid_client` | The application authenticates with HTTP Basic (`client_secret_basic`) and leaves `client_id` out of the request body. Switch it to `client_secret_post`. |
 | Token request fails with `invalid_request` | The code expired (codes last five minutes), the `redirect_uri` is not the one used in the authorization request, or the PKCE verifier does not match. The Pomerium log line `oidc: token request invalid` says which. Sign in again. |
 | Userinfo returns 401 `invalid_token` | The access token is not one this Pomerium issued, or Pomerium restarted without a fixed `shared_secret` and can no longer decrypt it. Set `shared_secret` and sign in again. |
-| Users still see two login prompts | The application shows its own login page and waits for the user to pick SSO. Turn on automatic redirect to the OIDC provider and disable local login, if the application offers those options. |
+| Users still see two login prompts | The application shows its own login page first. Disable local login so the application redirects to Pomerium. |
