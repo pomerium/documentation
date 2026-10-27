@@ -12,7 +12,7 @@ include:
 
 services:
   forgejo:
-    image: codeberg.org/forgejo/forgejo@sha256:db04c7114b656f896e206ba3873fe8d3a7adf2daa44907037f0274f4ba653fb9 # v15
+    image: codeberg.org/forgejo/forgejo:15.0.2@sha256:db04c7114b656f896e206ba3873fe8d3a7adf2daa44907037f0274f4ba653fb9
     environment:
       FORGEJO__server__ROOT_URL: 'https://forgejo.localhost.pomerium.io/'
       FORGEJO__database__DB_TYPE: 'sqlite3'
@@ -47,7 +47,7 @@ services:
           - forgejo
 
   pomerium:
-    image: pomerium/pomerium@sha256:e10d1d267af24f581157f485d9b0bc08469e2428675b696a08e42ceb09b2279c
+    image: pomerium/pomerium:v0.32.7@sha256:e10d1d267af24f581157f485d9b0bc08469e2428675b696a08e42ceb09b2279c
     command: ['--config', '/pomerium/config.yaml']
     env_file:
       - ../../_harness/pomerium/validation.env
