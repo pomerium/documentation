@@ -1,7 +1,7 @@
 services:
   # The guacd daemon renders remote desktop protocols (VNC, RDP, SSH) for the web app.
   guacd:
-    image: guacamole/guacd@sha256:8974eaa9ba32f713daf311e7cc8cd7e4cdfba1edea39eed75524e78ef4b08f4f # 1.6.0
+    image: guacamole/guacd:1.6.0@sha256:8974eaa9ba32f713daf311e7cc8cd7e4cdfba1edea39eed75524e78ef4b08f4f
     restart: always
     networks: [guac-internal]
 
@@ -9,7 +9,7 @@ services:
   # loaded once from ./init on first boot; generate it with:
   #   docker run --rm guacamole/guacamole /opt/guacamole/bin/initdb.sh --postgresql > init/initdb.sql
   postgres:
-    image: postgres@sha256:df7bca0066e6f60cc3dd32faa70caddec20e2c22b58932f79498e5704b23854a # 15-alpine
+    image: postgres:15-alpine@sha256:df7bca0066e6f60cc3dd32faa70caddec20e2c22b58932f79498e5704b23854a
     environment:
       POSTGRES_DB: guacamole_db
       POSTGRES_USER: guacamole_user
@@ -23,7 +23,7 @@ services:
   # The Guacamole web application. HEADER_ENABLED turns on header authentication and
   # HTTP_AUTH_HEADER tells it which header carries the already-authenticated user.
   guacamole:
-    image: guacamole/guacamole@sha256:f344085e618bb05e22b964b0208dbd06d3468275bac70206f93805245e067b40 # 1.6.0
+    image: guacamole/guacamole:1.6.0@sha256:f344085e618bb05e22b964b0208dbd06d3468275bac70206f93805245e067b40
     depends_on:
       - guacd
       - postgres
@@ -41,7 +41,7 @@ services:
     networks: [guac-internal]
 
   pomerium:
-    image: pomerium/pomerium@sha256:e10d1d267af24f581157f485d9b0bc08469e2428675b696a08e42ceb09b2279c # v0.32.7
+    image: pomerium/pomerium:v0.32.7@sha256:e10d1d267af24f581157f485d9b0bc08469e2428675b696a08e42ceb09b2279c
     volumes:
       - ./config.yaml:/pomerium/config.yaml:ro
       - pomerium-cache:/data
