@@ -1,0 +1,123 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="600" viewBox="0 0 960 600" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" role="img" aria-labelledby="title desc">
+  <title id="title">How Polling Min Delay and Polling Max Delay schedule directory sync</title>
+  <desc id="desc">Three timelines. A: with Min 10m, a 6 minute sync runs every 10 minutes. B: with Min 10m and Max 30m, a sync that needs 14 minutes is cut off at 10 minutes on every attempt, and retries are spaced about 16, 26, then 30 minutes apart. C: raising Min to 20m lets the 14 minute sync complete, and syncs run every 20 minutes.</desc>
+  <defs>
+    <style>
+      .t { fill: #1f2328; }
+      .m { fill: #59636e; }
+      .h1 { font-size: 18px; font-weight: 600; }
+      .h2 { font-size: 14px; font-weight: 600; }
+      .s { font-size: 12px; }
+      .xs { font-size: 11px; }
+      .ok { fill: #1a7f37; }
+      .bad { fill: #cf222e; }
+      .budget { fill: none; stroke: #8c959f; stroke-width: 1.2; stroke-dasharray: 4 3; }
+      .brace { stroke: #6e43e8; stroke-width: 1.2; fill: none; }
+      .bl { fill: #6e43e8; font-size: 11px; }
+      .in { fill: #ffffff; font-size: 11px; font-weight: 600; }
+      .axis { stroke: #8c959f; stroke-width: 1; }
+    </style>
+  </defs>
+
+  <rect width="960" height="600" rx="8" fill="#ffffff"/>
+
+  <!-- heading -->
+  <text class="t h1" x="30" y="36">Directory sync scheduling: what Polling Min Delay and Polling Max Delay control</text>
+  <text class="m s" x="30" y="58">Delays are measured from the <tspan font-style="italic">start</tspan> of the previous attempt. An attempt is cancelled if it runs longer than Polling Min Delay.</text>
+
+  <!-- legend -->
+  <rect x="30" y="74" width="22" height="12" rx="2" class="ok"/>
+  <text class="t s" x="58" y="84">attempt succeeded</text>
+  <rect x="190" y="74" width="22" height="12" rx="2" class="bad"/>
+  <text class="t s" x="218" y="84">attempt cancelled (timeout)</text>
+  <rect x="390" y="74" width="22" height="12" rx="2" class="budget"/>
+  <text class="t s" x="418" y="84">time allowed per attempt = Polling Min Delay</text>
+
+  <!-- x(t) = 60 + 10 * t (t in minutes) -->
+
+  <!-- Lane A -->
+  <text class="t h2" x="30" y="122">A. Sync takes 6m (Min 10m, Max 10m)</text>
+  <text class="m s" x="930" y="122" text-anchor="end">Syncs run every 10m, start to start.</text>
+  <g>
+    <rect x="60" y="132" width="100" height="28" rx="3" class="budget"/>
+    <rect x="160" y="132" width="100" height="28" rx="3" class="budget"/>
+    <rect x="260" y="132" width="100" height="28" rx="3" class="budget"/>
+    <rect x="360" y="132" width="100" height="28" rx="3" class="budget"/>
+    <rect x="460" y="132" width="100" height="28" rx="3" class="budget"/>
+    <rect x="560" y="132" width="100" height="28" rx="3" class="budget"/>
+    <rect x="660" y="132" width="100" height="28" rx="3" class="budget"/>
+    <rect x="760" y="132" width="100" height="28" rx="3" class="budget"/>
+    <rect x="60" y="132" width="60" height="28" rx="3" class="ok"/>
+    <rect x="160" y="132" width="60" height="28" rx="3" class="ok"/>
+    <rect x="260" y="132" width="60" height="28" rx="3" class="ok"/>
+    <rect x="360" y="132" width="60" height="28" rx="3" class="ok"/>
+    <rect x="460" y="132" width="60" height="28" rx="3" class="ok"/>
+    <rect x="560" y="132" width="60" height="28" rx="3" class="ok"/>
+    <rect x="660" y="132" width="60" height="28" rx="3" class="ok"/>
+    <rect x="760" y="132" width="60" height="28" rx="3" class="ok"/>
+    <text class="in" x="90" y="150" text-anchor="middle">6m</text>
+  </g>
+  <path class="brace" d="M60 168 V176 H160 V168"/>
+  <text class="bl" x="110" y="190" text-anchor="middle">10m = Min</text>
+
+  <!-- Lane B -->
+  <text class="t h2" x="30" y="234">B. Sync needs 14m (Min 10m, Max 30m)</text>
+  <text class="m s" x="930" y="234" text-anchor="end">Every attempt is cancelled at 10m. Raising Max only spaces out the retries.</text>
+  <g>
+    <rect x="60" y="244" width="100" height="28" rx="3" class="bad"/>
+    <rect x="220" y="244" width="100" height="28" rx="3" class="bad"/>
+    <rect x="476" y="244" width="100" height="28" rx="3" class="bad"/>
+    <rect x="776" y="244" width="100" height="28" rx="3" class="bad"/>
+    <text class="in" x="110" y="262" text-anchor="middle">timeout at 10m</text>
+    <text class="in" x="270" y="262" text-anchor="middle">timeout at 10m</text>
+    <text class="in" x="526" y="262" text-anchor="middle">timeout at 10m</text>
+    <text class="in" x="826" y="262" text-anchor="middle">timeout at 10m</text>
+  </g>
+  <path class="brace" d="M60 280 V288 H220 V280"/>
+  <text class="bl" x="140" y="302" text-anchor="middle">≈16m (Min × 1.6)</text>
+  <path class="brace" d="M220 280 V288 H476 V280"/>
+  <text class="bl" x="348" y="302" text-anchor="middle">≈26m (Min × 1.6²)</text>
+  <path class="brace" d="M476 280 V288 H776 V280"/>
+  <text class="bl" x="626" y="302" text-anchor="middle">30m (capped at Max)</text>
+
+  <!-- Lane C -->
+  <text class="t h2" x="30" y="346">C. Fix: raise Min to 20m (Min 20m, Max 30m)</text>
+  <text class="m s" x="930" y="346" text-anchor="end">The 14m sync finishes in time. Syncs now run every 20m.</text>
+  <g>
+    <rect x="60" y="356" width="200" height="28" rx="3" class="budget"/>
+    <rect x="260" y="356" width="200" height="28" rx="3" class="budget"/>
+    <rect x="460" y="356" width="200" height="28" rx="3" class="budget"/>
+    <rect x="660" y="356" width="200" height="28" rx="3" class="budget"/>
+    <rect x="60" y="356" width="140" height="28" rx="3" class="ok"/>
+    <rect x="260" y="356" width="140" height="28" rx="3" class="ok"/>
+    <rect x="460" y="356" width="140" height="28" rx="3" class="ok"/>
+    <rect x="660" y="356" width="140" height="28" rx="3" class="ok"/>
+    <text class="in" x="130" y="374" text-anchor="middle">14m</text>
+    <text class="in" x="330" y="374" text-anchor="middle">14m</text>
+    <text class="in" x="530" y="374" text-anchor="middle">14m</text>
+    <text class="in" x="730" y="374" text-anchor="middle">14m</text>
+  </g>
+  <path class="brace" d="M60 392 V400 H260 V392"/>
+  <text class="bl" x="160" y="414" text-anchor="middle">20m = Min</text>
+
+  <!-- axis -->
+  <line class="axis" x1="60" y1="440" x2="900" y2="440"/>
+  <g class="m xs" text-anchor="middle">
+    <line class="axis" x1="60" y1="440" x2="60" y2="446"/><text x="60" y="460">0</text>
+    <line class="axis" x1="160" y1="440" x2="160" y2="446"/><text x="160" y="460">10</text>
+    <line class="axis" x1="260" y1="440" x2="260" y2="446"/><text x="260" y="460">20</text>
+    <line class="axis" x1="360" y1="440" x2="360" y2="446"/><text x="360" y="460">30</text>
+    <line class="axis" x1="460" y1="440" x2="460" y2="446"/><text x="460" y="460">40</text>
+    <line class="axis" x1="560" y1="440" x2="560" y2="446"/><text x="560" y="460">50</text>
+    <line class="axis" x1="660" y1="440" x2="660" y2="446"/><text x="660" y="460">60</text>
+    <line class="axis" x1="760" y1="440" x2="760" y2="446"/><text x="760" y="460">70</text>
+    <line class="axis" x1="860" y1="440" x2="860" y2="446"/><text x="860" y="460">80 min</text>
+  </g>
+
+  <!-- key -->
+  <rect x="30" y="482" width="900" height="96" rx="6" fill="#f6f8fa" stroke="#d0d7de"/>
+  <text class="t s" x="46" y="506"><tspan font-weight="600">Polling Min Delay</tspan> sets how long each attempt may run before it is cancelled. After a successful attempt, the next one</text>
+  <text class="t s" x="46" y="524">starts this long after the previous one started. To give a slow sync more time, raise this value.</text>
+  <text class="t s" x="46" y="550"><tspan font-weight="600">Polling Max Delay</tspan> caps the delay after failed attempts. The delay grows by about 1.6× per failure (±20% jitter) up to this value.</text>
+  <text class="t s" x="46" y="568">It does not give an attempt more time. Set it well above Min (e.g. 2×), or a timed-out attempt retries immediately.</text>
+</svg>
