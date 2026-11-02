@@ -29,7 +29,9 @@ import Footer from "!!raw-loader!/content/examples/guides/forgejo/footer.tmpl";
 
 ## What this guide does
 
-You'll put [Forgejo](https://forgejo.org/), a self-hosted Git service, behind Pomerium to gate it with SSO and route policy. Forgejo keeps its standard [OpenID Connect (OIDC) login](https://forgejo.org/docs/latest/user/oauth2-provider/), and Pomerium is the OIDC provider. Users sign in once through Pomerium, and Forgejo creates their account and completes its login without a second prompt or a click. Signing out of Forgejo also signs them out of Pomerium. The same setup also works with [Gitea](https://about.gitea.com/).
+You'll put [Forgejo](https://forgejo.org/), a self-hosted Git service, behind Pomerium to gate it with SSO and route policy. Forgejo keeps its standard [OpenID Connect (OIDC) login](https://forgejo.org/docs/latest/user/oauth2-provider/), and Pomerium is the OIDC provider. Users sign in once through Pomerium, and Forgejo creates their account and completes its login without a second prompt or a click. Signing out of Forgejo also signs them out of Pomerium.
+
+This guide is tested with Forgejo 15.0.2. For [Gitea](https://about.gitea.com/), the project Forgejo was forked from, see [Secure Gitea with Pomerium](/docs/guides/gitea). Gitea can skip its login page and sign users out of Pomerium by itself, so it doesn't need this guide's redirect route or sign-out template.
 
 ```mermaid
 sequenceDiagram
@@ -261,4 +263,5 @@ The response should include `"is_admin":true`. The token is never printed, and d
 - [OIDC bridge](/docs/capabilities/oidc-bridge)
 - [Authentication](/docs/capabilities/authentication)
 - [Authorization](/docs/capabilities/authorization)
+- [Secure Gitea with Pomerium](/docs/guides/gitea)
 - [Mirror repositories](https://forgejo.org/docs/latest/user/repo-mirror/) into a Pomerium-gated warm standby
