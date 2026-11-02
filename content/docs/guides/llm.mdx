@@ -90,6 +90,7 @@ Open WebUI reads its OIDC settings from environment variables. The key settings 
 - `OPENID_REDIRECT_URI` is Open WebUI's callback, `https://llm.yourdomain.com/oauth/oidc/callback`. It is on the same host as the client ID, as the bridge requires.
 - `ENABLE_OAUTH_SIGNUP=true` creates the Open WebUI account on first sign-in.
 - `ENABLE_LOGIN_FORM=false` hides the email and password form, so Pomerium is the only login option.
+- `OAUTH_AUTO_REDIRECT=true` skips Open WebUI's "Continue with Pomerium" button and starts the OIDC login right away. It applies only when Pomerium is the only provider and the login form is off. If the login fails, Open WebUI shows the error instead of redirecting again.
 
 Pomerium sends every claim as a string, so a `groups` claim arrives as a comma-separated string such as `"engineering,admins"`. Check the Open WebUI [SSO documentation](https://docs.openwebui.com/features/authentication-access/auth/sso) before relying on group or role mapping.
 
@@ -137,13 +138,12 @@ docker compose up -d
 ## Verify the setup
 
 1. **The route requires authentication.** In a fresh browser, open `https://llm.yourdomain.com`. You should be redirected to your identity provider through Pomerium.
-2. **Open WebUI offers Pomerium login.** After you sign in, the Open WebUI login page shows a Pomerium sign-in button instead of a password form. Select it.
-3. **The OIDC login completes without a prompt.** Open WebUI signs you in, and the account in the corner shows your authenticated identity.
+2. **Open WebUI signs you in without a second prompt.** After you sign in to your identity provider, Open WebUI starts its OIDC login automatically and you land in the app. You don't see an Open WebUI login page, a password form, or a "Continue with Pomerium" button. The account in the corner shows your authenticated identity.
 
    ![Open WebUI signed in as the SSO user, with no Open WebUI password prompt](./img/llm/llm.png)
 
-4. **A disallowed user is blocked.** Sign in as a user your policy excludes and open `https://llm.yourdomain.com`. Pomerium denies access before Open WebUI loads.
-5. **Sign-out returns you to sign-in.** Sign out of Open WebUI, then open `https://llm.yourdomain.com` again. You should be redirected to your identity provider, not into a reload loop.
+3. **A disallowed user is blocked.** Sign in as a user your policy excludes and open `https://llm.yourdomain.com`. Pomerium denies access before Open WebUI loads.
+4. **Sign-out returns you to sign-in.** Sign out of Open WebUI, then open `https://llm.yourdomain.com` again. You should be redirected to your identity provider, not into a reload loop.
 
 ## Common failure modes
 
@@ -155,7 +155,7 @@ docker compose up -d
 | Token request fails with `invalid_client` | Open WebUI is authenticating with HTTP Basic and leaving `client_id` out of the request body. Set `OAUTH_TOKEN_ENDPOINT_AUTH_METHOD=client_secret_post`. |
 | Open WebUI can't reach the discovery URL | The `open-webui` container has no route to your authenticate service. Add the `authenticate.yourdomain.com` alias to Pomerium on Open WebUI's network, or put Open WebUI on a network that can reach it. |
 | `invalid_token` on the user info request | The access token was issued before Pomerium restarted without a fixed `shared_secret`. Set `shared_secret` and sign in again. |
-| Open WebUI still shows a password form | Set `ENABLE_LOGIN_FORM=false` so Pomerium is the only login option. Open WebUI keeps OAuth settings from its database after first start unless the environment is authoritative; see its SSO documentation if changes don't apply. |
+| Open WebUI still shows a password form or a "Continue with Pomerium" button | Set `ENABLE_LOGIN_FORM=false` and `OAUTH_AUTO_REDIRECT=true` so Pomerium is the only login option and Open WebUI starts it automatically. Open WebUI keeps OAuth settings from its database after first start unless the environment is authoritative; see its SSO documentation if changes don't apply. |
 | After sign-out, the page reloads in a loop and the browser console shows CORS errors for `/api/config`, `loader.js`, or `manifest.json` redirected to your identity provider | The browser is loading Open WebUI's app page from cache. Add the `set_response_headers` caching shown in `config.yaml`, then clear the site's cached data once (or hard-reload) so the browser drops the copy it already has. |
 | Streamed responses hang or never start | WebSockets are not allowed on the route. Set `allow_websockets: true`. |
 | 502 / connection refused from Pomerium | Open WebUI is still booting its first-run migration, or the `to` address doesn't match the service name and port (`http://open-webui:8080`). |
