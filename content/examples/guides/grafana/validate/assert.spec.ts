@@ -3,7 +3,7 @@ import { login, alice } from "../lib/authn";
 import { shot } from "../lib/shot";
 
 // App-specific success for Grafana: after the Pomerium SSO login, Grafana should
-// auto-sign-in the same identity via the forwarded Pomerium JWT assertion.
+// complete its generic OAuth login against Pomerium's OIDC bridge as the same identity.
 const BASE = process.env.POMERIUM_URL as string;
 
 test("unauthenticated request is redirected to the identity provider", async ({ page }) => {
@@ -11,19 +11,24 @@ test("unauthenticated request is redirected to the identity provider", async ({ 
   await expect(page).toHaveURL(/keycloak\.localhost\.pomerium\.io/);
 });
 
-test("JWT SSO signs the authenticated user into Grafana", async ({ page }) => {
+test("OIDC bridge signs the authenticated user into Grafana", async ({ page }) => {
   await login(page, BASE, alice);
 
-  // Grafana's own user API reflects the JWT-authenticated identity. Pomerium
-  // attaches the signed assertion to every upstream request, so this call
-  // authenticates to Grafana as alice.
+  // Grafana's login page offers the Pomerium OAuth button. Click it if it is shown
+  // (the bridge completes without a prompt when the Pomerium session is active).
+  await page.goto(`${BASE}/login`, { waitUntil: "domcontentloaded" });
+  const signIn = page.getByRole("link", { name: /sign in with pomerium/i });
+  if (await signIn.isVisible().catch(() => false)) {
+    await signIn.click();
+  }
+
+  // Grafana's own user API reflects the OIDC-authenticated identity.
   const res = await page.request.get(`${BASE}/api/user`, { ignoreHTTPSErrors: true });
-  expect(res.ok(), "Grafana /api/user should be reachable after SSO").toBeTruthy();
+  expect(res.ok(), "Grafana /api/user should be reachable after OIDC sign-in").toBeTruthy();
 
   const user = await res.json();
   expect(user.email, "Grafana should sign in the Pomerium identity").toBe(alice.email);
 
-  // Capture the profile page (shows fields "Synced via JWT") for the guide.
   await page.goto(`${BASE}/profile`, { waitUntil: "networkidle" });
   await shot(page, "grafana-profile");
 });
