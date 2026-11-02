@@ -187,12 +187,7 @@ Forgejo fetches the discovery document, and later the token and user info endpoi
 
 Forgejo makes the first account it creates an administrator. Sign in through Pomerium before anyone else does, as described in [Verify the setup](#verify-the-setup), and your account becomes the administrator.
 
-Then create a break-glass administrator for when the OIDC login is unavailable. Local sign-in is disabled, so it's only usable after you temporarily set `ENABLE_INTERNAL_SIGNIN` to `true`. Use an email outside your identity provider, and keep the generated password somewhere safe:
-
-```bash
-docker compose exec -u git forgejo forgejo admin user create --admin \
-  --username break-glass --email break-glass@forgejo.invalid --random-password
-```
+You don't need a separate break-glass administrator. Forgejo is only reachable through Pomerium, and the `/user/login` redirect means its local password form can't be used. If you lose administrator access, recover it from the Forgejo container, as described in [Recover admin access](#recover-admin-access).
 
 ## Verify the setup
 
@@ -204,6 +199,33 @@ docker compose exec -u git forgejo forgejo admin user create --admin \
 
 4. **Sign-out ends both sessions.** Select **Sign out**. You land on Pomerium's signed-out page. Open `https://forgejo.yourdomain.com` again. Your identity provider asks you to sign in, and then you land on the dashboard again.
 5. **A disallowed user is blocked.** Sign in as a user your policy excludes and open `https://forgejo.yourdomain.com`. Pomerium denies access before Forgejo loads, so Forgejo never creates an account.
+
+## Recover admin access
+
+Everything here runs inside the Forgejo container, so you need shell access to the host.
+
+**If the OIDC login is broken,** for example because the client secret changed, fix the login source from the CLI. List the sources to find the ID, then update it:
+
+```bash
+docker compose exec -u git forgejo forgejo admin auth list
+docker compose exec -u git forgejo forgejo admin auth update-oauth --id 1 \
+  --secret REPLACE_WITH_ROUTE_CLIENT_SECRET
+```
+
+**If no one has administrator access,** the CLI can't promote an existing user, but a temporary administrator can do it through Forgejo's API. Replace `your-username` with the Forgejo username to promote:
+
+```bash
+docker compose exec -u git forgejo sh -c '
+  forgejo admin user create --admin --username recovery-tmp \
+    --email recovery-tmp@forgejo.invalid --random-password --must-change-password=false >/dev/null
+  TOKEN=$(forgejo admin user generate-access-token --username recovery-tmp \
+    --token-name recovery --scopes write:admin --raw)
+  curl -s -X PATCH -H "Authorization: token $TOKEN" -H "Content-Type: application/json" \
+    -d "{\"admin\": true}" http://localhost:3000/api/v1/admin/users/your-username
+  forgejo admin user delete --username recovery-tmp'
+```
+
+The response should include `"is_admin":true`. The token is never printed, and deleting `recovery-tmp` also deletes it.
 
 ## Common failure modes
 
@@ -232,7 +254,7 @@ docker compose exec -u git forgejo forgejo admin user create --admin \
 - **Signing out of Forgejo signs you out of Pomerium.** The sign-out template ends the Pomerium session, which also signs you out of every other Pomerium route in that browser and of your identity provider. Forgejo can't do this itself, so keep the template working, especially on shared machines.
 - **Avatars are fetched server-side.** With `UPDATE_AVATAR`, Forgejo downloads the `picture` URL from the container with a plain `GET`, without the user's tokens. The container needs outbound access to the image host.
 - **Account creation follows the policy.** `ENABLE_AUTO_REGISTRATION` creates a Forgejo account for every user your policy allows. Manage Forgejo roles and organizations separately.
-- **Keep a break-glass admin.** Local sign-in is disabled, so create a recovery admin before you rely on this setup, and keep its password somewhere safe. To use it, temporarily set `ENABLE_INTERNAL_SIGNIN` to `true`.
+- **No standing break-glass account.** Local sign-in is disabled and unreachable, so there's no local administrator password to protect. Recovery needs shell access to the Forgejo container. See [Recover admin access](#recover-admin-access).
 
 ## Next steps
 
