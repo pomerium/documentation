@@ -1,0 +1,21 @@
+{{/* Pomerium: after Forgejo signs out, also end the Pomerium session (and the
+     IdP session behind it). Forgejo can't call an OIDC end-session endpoint.
+     Mounted at /data/gitea/templates/custom/footer.tmpl, included on every page. */}}
+<script>
+  document.addEventListener('click', async (event) => {
+    const link = event.target.closest('[data-url$="/user/logout"]');
+    if (!link) return;
+    // Run before Forgejo's own handler, which would send the browser back to "/".
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    // Only leave once Forgejo has destroyed its session; otherwise reload and let
+    // the user retry, so no Forgejo session outlives the Pomerium one.
+    let ok = false;
+    try {
+      // Same-origin POST; Forgejo 15 checks Sec-Fetch-Site, not a CSRF token.
+      ok = (await fetch(link.dataset.url, {method: 'POST'})).ok;
+    } catch {}
+    if (ok) window.location.href = '/.pomerium/sign_out';
+    else window.location.reload();
+  }, true);
+</script>

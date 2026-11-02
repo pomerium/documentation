@@ -14,23 +14,32 @@ services:
     # Forgejo's port is not published. Only Pomerium can reach it on the Compose network.
     volumes:
       - forgejo-data:/data
+      # Signs users out of Pomerium after Forgejo signs them out.
+      - ./footer.tmpl:/data/gitea/templates/custom/footer.tmpl:ro
     environment:
-      FORGEJO__server__ROOT_URL: 'https://forgejo.yourdomain.com/'
-      FORGEJO__database__DB_TYPE: 'sqlite3'
-      FORGEJO__security__INSTALL_LOCK: 'true'
-      FORGEJO__service__REQUIRE_SIGNIN_VIEW: 'true'
+      FORGEJO__server__ROOT_URL: "https://forgejo.yourdomain.com/"
+      FORGEJO__database__DB_TYPE: "sqlite3"
+      FORGEJO__security__INSTALL_LOCK: "true"
+      FORGEJO__service__REQUIRE_SIGNIN_VIEW: "true"
+      # Send signed-out visitors to /user/login, which Pomerium redirects to the
+      # OIDC login. Needs footer.tmpl, or Forgejo's sign-out signs straight back in.
+      FORGEJO__server__LANDING_PAGE: "login"
 
-      # Create accounts on first sign-in through Pomerium, and link to an existing
-      # account with the same email (the admin you create after starting the stack).
-      FORGEJO__oauth2_client__ENABLE_AUTO_REGISTRATION: 'true'
-      FORGEJO__oauth2_client__USERNAME: 'email'
-      FORGEJO__oauth2_client__ACCOUNT_LINKING: 'auto'
+      # Create accounts on first sign-in through Pomerium. The username is the part
+      # of the email before the @. If it clashes with an existing account, Forgejo
+      # asks the user instead of linking ('auto' would link by username first).
+      FORGEJO__oauth2_client__ENABLE_AUTO_REGISTRATION: "true"
+      FORGEJO__oauth2_client__USERNAME: "email"
+      FORGEJO__oauth2_client__ACCOUNT_LINKING: "login"
+      # Download the picture claim as the avatar on each sign-in (needs outbound
+      # access to the image host).
+      FORGEJO__oauth2_client__UPDATE_AVATAR: "true"
       # Allow accounts to be created through the OIDC login, but keep the local
       # sign-up form closed and hide the local password form.
-      FORGEJO__service__DISABLE_REGISTRATION: 'false'
-      FORGEJO__service__ALLOW_ONLY_EXTERNAL_REGISTRATION: 'true'
-      FORGEJO__service__SHOW_REGISTRATION_BUTTON: 'false'
-      FORGEJO__service__ENABLE_INTERNAL_SIGNIN: 'false'
+      FORGEJO__service__DISABLE_REGISTRATION: "false"
+      FORGEJO__service__ALLOW_ONLY_EXTERNAL_REGISTRATION: "true"
+      FORGEJO__service__SHOW_REGISTRATION_BUTTON: "false"
+      FORGEJO__service__ENABLE_INTERNAL_SIGNIN: "false"
     restart: always
 
 volumes:
