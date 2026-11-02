@@ -77,7 +77,7 @@ Replace `llm.yourdomain.com` with your domain, `you@example.com` with the users 
 Open WebUI reads its OIDC settings from environment variables. The key settings are in the `open-webui` service of the Compose file below:
 
 - `OAUTH_CLIENT_ID` is the route's `from` URL.
-- `OAUTH_CODE_CHALLENGE_METHOD=S256` makes Open WebUI use PKCE, so no client secret is needed.
+- `OAUTH_CODE_CHALLENGE_METHOD=S256` makes Open WebUI use Proof Key for Code Exchange, so no client secret is needed.
 - `OAUTH_TOKEN_ENDPOINT_AUTH_METHOD=client_secret_post` sends the client ID in the token request body rather than in an HTTP Basic header.
 - `OPENID_PROVIDER_URL` is the discovery document on your authenticate service: `https://authenticate.yourdomain.com/.well-known/openid-configuration`.
 - `OPENID_REDIRECT_URI` is Open WebUI's callback, `https://llm.yourdomain.com/oauth/oidc/callback`. It is on the same host as the client ID, as the bridge requires.
@@ -157,7 +157,7 @@ docker compose up -d
 - **Only Pomerium should reach Open WebUI.** The Compose file publishes no host ports for Open WebUI and puts it on an `internal` Docker network shared only with Pomerium. Reproduce that isolation in production.
 - **Pomerium issues the tokens.** Open WebUI gets its ID and access tokens from Pomerium, not directly from your identity provider.
 - **No refresh tokens.** When the Pomerium session expires, the next request sends the user back to Pomerium to sign in.
-- **PKCE means no client secret.** If you later use an app that can't do PKCE, the bridge supports a `client_secret` on that route. Keep it secret.
+- **No client secret needed.** If you later use an app that does not support Proof Key for Code Exchange, the bridge supports a `client_secret` on that route. Keep it secret.
 - **Account creation follows the policy.** `ENABLE_OAUTH_SIGNUP=true` creates an Open WebUI account for every user your policy allows. Open WebUI's pending-approval role still applies unless you set `DEFAULT_USER_ROLE`.
 
 ## Next steps
