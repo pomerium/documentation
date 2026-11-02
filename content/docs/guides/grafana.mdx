@@ -82,7 +82,9 @@ Grafana's generic OAuth login talks to Pomerium's OIDC endpoints. The key settin
 - `GF_AUTH_GENERIC_OAUTH_AUTH_URL`, `_TOKEN_URL`, and `_API_URL` — the `/oidc/auth`, `/oidc/token`, and `/oidc/userinfo` endpoints on your authenticate service.
 - `GF_AUTH_GENERIC_OAUTH_EMAIL_ATTRIBUTE_PATH` and `_LOGIN_ATTRIBUTE_PATH=email` — which claim becomes the Grafana account.
 - `GF_AUTH_GENERIC_OAUTH_ALLOW_SIGN_UP=true` — create the Grafana user on first sign-in.
-- `GF_AUTH_GENERIC_OAUTH_ROLE_ATTRIBUTE_PATH` — optional role mapping. Pomerium sends every claim as a string, so a `groups` claim arrives as a comma-separated string such as `"grafana-admins,developers"`. That's why the expression uses `contains()`. It only works if your identity provider sends a `groups` claim.
+- `GF_AUTH_GENERIC_OAUTH_AUTO_LOGIN=true` and `GF_AUTH_DISABLE_LOGIN_FORM=true` — skip Grafana's login page and start the OIDC login right away, so users never see a Grafana sign-in button or password form.
+- `GF_AUTH_SIGNOUT_REDIRECT_URL` — Pomerium's sign-out URL on the Grafana route, `https://grafana.yourdomain.com/.pomerium/sign_out`. Grafana's own sign-out only clears the Grafana session. With auto-login on, Grafana would sign the user straight back in through the bridge, so sign-out has to end the Pomerium session too.
+- `GF_AUTH_GENERIC_OAUTH_ROLE_ATTRIBUTE_PATH` — optional role mapping. Pomerium's user info endpoint returns the `groups` claim from your identity provider: an array for users in several groups, or a single string for users in one group. `contains()` handles both. It only works if your identity provider sends a `groups` claim.
 
 ## Run the stack
 
@@ -101,8 +103,8 @@ If you change `config.yaml` later, run `docker compose up -d` again to apply it.
 ## Verify the setup
 
 1. **The route requires authentication.** In a fresh browser, open `https://grafana.yourdomain.com`. You should be redirected to Pomerium to sign in.
-2. **Grafana offers Pomerium login.** After you sign in, the Grafana login page shows a **Sign in with Pomerium** button. Select it.
-3. **The OIDC login completes without a prompt.** Grafana signs you in. Open `/profile` and confirm your email shows.
+2. **The OIDC login completes without a prompt.** After you sign in, Grafana signs you in on its own, with no Grafana login page or second prompt. Open `/profile` and confirm your email and name show.
+3. **Sign-out ends the session.** Sign out from Grafana's profile menu. You land on Pomerium's signed-out page. Opening `https://grafana.yourdomain.com` again sends you to your identity provider to sign in.
 4. **A disallowed user is blocked.** Sign in as a user your policy excludes and open `https://grafana.yourdomain.com`. Pomerium denies access before Grafana loads.
 
 ## Common failure modes
@@ -112,7 +114,10 @@ If you change `config.yaml` later, run `docker compose up -d` again to apply it.
 | `404 Not Found` from Grafana's OAuth URLs or the `/oidc/` paths | Grafana is pointing at the wrong host. Check that `authenticate_service_url` is set and that the `GF_AUTH_GENERIC_OAUTH_*_URL` values use the same host. |
 | HTTP 400 at `/oidc/auth`: `redirect_uri ... does not match client_id ...` | `GF_AUTH_GENERIC_OAUTH_CLIENT_ID` doesn't match the route's `from` URL, or `GF_SERVER_ROOT_URL` isn't the Grafana URL. |
 | Token request fails with `invalid_client` | The Grafana OAuth client authenticates with HTTP Basic and leaves `client_id` out of the request body. Set `GF_AUTH_GENERIC_OAUTH_AUTH_STYLE` so the credentials are sent in the body, and check the option's value in your Grafana version's docs. |
-| Users still see two login prompts | Grafana's password form appears first. Set `GF_AUTH_DISABLE_LOGIN_FORM=true` so Pomerium is the only login option. |
+| Grafana shows its login page or a **Sign in with Pomerium** button | `GF_AUTH_GENERIC_OAUTH_AUTO_LOGIN` isn't set. Set it to `true`, and set `GF_AUTH_DISABLE_LOGIN_FORM=true` so Pomerium is the only login option. |
+| Signing out of Grafana signs you straight back in | `GF_AUTH_SIGNOUT_REDIRECT_URL` isn't set, so only the Grafana session ends and auto-login starts a new one. Set it to `https://grafana.yourdomain.com/.pomerium/sign_out`. |
+| Sign-in fails for users who already had a Grafana account | Grafana won't link an OAuth login to an existing account by email unless you allow it. If those accounts use the same email as your identity provider, set `GF_AUTH_OAUTH_ALLOW_INSECURE_EMAIL_LOOKUP=true`. Only do this if your identity provider verifies email addresses. |
+| Grafana logs `Error retrieving access token payload ... token is not in JWT format` | Expected. The bridge's access token isn't a JWT, so Grafana reads the user's claims from the user info endpoint instead. Sign-in still works. |
 | Everyone is a Viewer | The `groups` claim is missing from the identity provider's tokens, or the expression doesn't match the group names. Confirm your identity provider sends `groups` and that the names match exactly. |
 | `invalid_token` on Grafana's user info request | The access token was issued before Pomerium restarted without a fixed `shared_secret`. Set `shared_secret` and sign in again. |
 

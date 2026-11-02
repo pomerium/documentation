@@ -7,7 +7,7 @@ include:
 
 services:
   grafana:
-    image: grafana/grafana:11.5.2@sha256:8b37a2f028f164ce7b9889e1765b9d6ee23fec80f871d156fbf436d6198d32b7
+    image: grafana/grafana:12.4.13@sha256:41bbc1b5e04416f81891806076db2a2ff60a5d4da5f78d36a88b033a8c199185
     environment:
       GF_SERVER_ROOT_URL: https://grafana.localhost.pomerium.io/
       GF_AUTH_GENERIC_OAUTH_ENABLED: 'true'
@@ -21,6 +21,9 @@ services:
       GF_AUTH_GENERIC_OAUTH_EMAIL_ATTRIBUTE_PATH: email
       GF_AUTH_GENERIC_OAUTH_LOGIN_ATTRIBUTE_PATH: email
       GF_AUTH_GENERIC_OAUTH_ALLOW_SIGN_UP: 'true'
+      GF_AUTH_GENERIC_OAUTH_AUTO_LOGIN: 'true'
+      GF_AUTH_DISABLE_LOGIN_FORM: 'true'
+      GF_AUTH_SIGNOUT_REDIRECT_URL: https://grafana.localhost.pomerium.io/.pomerium/sign_out
       # Trust the harness CA so Grafana can call Pomerium's OIDC endpoints over TLS.
       # Validation-only; the published guide uses the public hosted authenticate cert.
       SSL_CERT_FILE: /certs/ca.crt

@@ -10,7 +10,7 @@ services:
     restart: always
 
   grafana:
-    image: grafana/grafana:11.5.2@sha256:8b37a2f028f164ce7b9889e1765b9d6ee23fec80f871d156fbf436d6198d32b7
+    image: grafana/grafana:12.4.13@sha256:41bbc1b5e04416f81891806076db2a2ff60a5d4da5f78d36a88b033a8c199185
     environment:
       # Grafana's public URL. Its OAuth callback is built from this:
       # https://grafana.yourdomain.com/login/generic_oauth
@@ -28,6 +28,13 @@ services:
       - GF_AUTH_GENERIC_OAUTH_EMAIL_ATTRIBUTE_PATH=email
       - GF_AUTH_GENERIC_OAUTH_LOGIN_ATTRIBUTE_PATH=email
       - GF_AUTH_GENERIC_OAUTH_ALLOW_SIGN_UP=true
+      # Skip Grafana's login page and start the OIDC login right away. Pomerium is
+      # the only way in, so hide the password form too.
+      - GF_AUTH_GENERIC_OAUTH_AUTO_LOGIN=true
+      - GF_AUTH_DISABLE_LOGIN_FORM=true
+      # Grafana's sign-out only clears its own session, and auto-login would sign
+      # the user straight back in. Send sign-out through Pomerium to end the session.
+      - GF_AUTH_SIGNOUT_REDIRECT_URL=https://grafana.yourdomain.com/.pomerium/sign_out
       # Optional: map a groups claim to a Grafana role. Grafana's default role is Viewer.
       - GF_AUTH_GENERIC_OAUTH_ROLE_ATTRIBUTE_PATH=contains(groups, 'grafana-admins') && 'Admin' || 'Viewer'
     volumes:
