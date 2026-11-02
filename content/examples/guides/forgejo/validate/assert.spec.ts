@@ -2,10 +2,10 @@ import { test, expect } from "@playwright/test";
 import { login, alice } from "../lib/authn";
 import { shot } from "../lib/shot";
 
-// App-specific success for Forgejo: after the Pomerium SSO login, Forgejo's
-// reverse-proxy authentication signs in (and auto-provisions) the SAME identity
-// from the forwarded X-Pomerium-* headers. The guide enables web UI sign-in only,
-// so these checks verify the authenticated web session, not the API.
+// App-specific success for Forgejo: after the Pomerium SSO login, Forgejo completes
+// its OpenID Connect login against Pomerium's OIDC bridge and auto-provisions the
+// SAME identity. The guide enables web UI sign-in only, so these checks verify the
+// authenticated web session, not the API.
 const BASE = process.env.POMERIUM_URL as string;
 
 test("unauthenticated request is redirected to the identity provider", async ({ page }) => {
@@ -13,50 +13,32 @@ test("unauthenticated request is redirected to the identity provider", async ({ 
   await expect(page).toHaveURL(/keycloak\.localhost\.pomerium\.io/);
 });
 
-test("reverse-proxy auth signs the Pomerium identity into the Forgejo web UI", async ({
+test("OIDC bridge signs the Pomerium identity into the Forgejo web UI", async ({
   page,
 }) => {
   await login(page, BASE, alice);
 
-  // The browser session now carries Pomerium's cookie, so Pomerium injects the
-  // identity headers on every upstream request. Forgejo's reverse-proxy auth reads
-  // them, auto-provisions the account on first visit, and signs the user in. The
-  // account settings page is only served to an authenticated session and shows the
-  // signed-in user's email; an unauthenticated request would be bounced to login.
+  // Forgejo's login page offers the Pomerium OAuth button. Click it if it is shown
+  // (the bridge completes without a prompt when the Pomerium session is active).
+  await page.goto(`${BASE}/user/login`, { waitUntil: "domcontentloaded" });
+  const signIn = page.getByRole("link", { name: /pomerium/i });
+  if (await signIn.first().isVisible().catch(() => false)) {
+    await signIn.first().click();
+    await page.waitForLoadState("domcontentloaded");
+  }
+
+  // The account settings page is only served to an authenticated session and shows
+  // the signed-in user's email; an unauthenticated request would be bounced to login.
   await page.goto(`${BASE}/user/settings/account`, { waitUntil: "domcontentloaded" });
   await expect(page).toHaveURL(/\/user\/settings\/account$/);
   await expect(
     page.getByText(alice.email, { exact: false }).first(),
-    "Forgejo should sign in the Pomerium-forwarded identity, not a local account",
+    "Forgejo should sign in the Pomerium identity via OIDC, not a local account",
   ).toBeVisible();
 
   // Capture the authenticated dashboard for the guide.
   await page.goto(`${BASE}/`, { waitUntil: "networkidle" });
   await shot(page, "forgejo-dashboard");
-});
-
-test("Pomerium overwrites a spoofed identity header", async ({ page }) => {
-  await login(page, BASE, alice);
-
-  // The trust model rests on Pomerium owning the identity header: a client that
-  // forges X-Pomerium-* through Pomerium must still be signed in as its real
-  // identity, never the spoofed one. Pomerium overwrites the inbound headers with
-  // the authenticated user before the request reaches Forgejo. The settings page
-  // still renders alice, not the attacker.
-  await page.setExtraHTTPHeaders({
-    "X-Pomerium-Sub": "attacker",
-    "X-Pomerium-Claim-Email": "attacker@evil.com",
-    "X-Pomerium-Claim-Name": "Attacker",
-  });
-  await page.goto(`${BASE}/user/settings/account`, { waitUntil: "domcontentloaded" });
-  await expect(
-    page.getByText(alice.email, { exact: false }).first(),
-    "a spoofed header must not change the authenticated identity",
-  ).toBeVisible();
-  await expect(
-    page.getByText("attacker@evil.com", { exact: false }),
-    "the spoofed identity must never appear",
-  ).toHaveCount(0);
 });
 
 test("forgejo is not reachable except through Pomerium", async ({ page }) => {
@@ -67,9 +49,8 @@ test("forgejo is not reachable except through Pomerium", async ({ page }) => {
   const viaPomerium = await page.request.get(`${BASE}/`, { ignoreHTTPSErrors: true });
   expect(viaPomerium.ok(), "the route through Pomerium should work").toBeTruthy();
 
-  // Network isolation is the only trust boundary for header reverse-proxy auth, so
-  // it must be real: forgejo sits on an internal-only network shared with Pomerium
-  // alone. The test-runner is not on that network, so a direct hit at forgejo:3000
+  // The guide keeps forgejo off published ports: it sits on an internal-only
+  // network shared with Pomerium alone. The test-runner is not on that network, so a direct hit at forgejo:3000
   // (bypassing Pomerium) must fail at name resolution / connection, NOT with an HTTP
   // response. Asserting the specific error keeps a typo or a down service from
   // masquerading as isolation.
