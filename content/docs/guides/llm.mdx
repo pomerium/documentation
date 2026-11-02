@@ -96,6 +96,14 @@ Pomerium sends every claim as a string, so a `groups` claim arrives as a comma-s
 
 The first user Open WebUI provisions becomes an admin; everyone provisioned after that lands in a pending role and sees a "waiting for activation" screen until an admin approves them. Plan for that, or set `DEFAULT_USER_ROLE=user` so new SSO users are active immediately.
 
+### Profile pictures
+
+Open WebUI sets each user's avatar from the standard OIDC `picture` claim, a URL to an image. The bridge passes along the claims Pomerium received from your identity provider, so the avatar appears when your identity provider sends `picture`. Google includes it for accounts with a profile photo. Keycloak sends it only when the user has a `picture` attribute, which you have to allow in the realm's user profile. If your identity provider uses a different claim name, set `OAUTH_PICTURE_CLAIM` to that name.
+
+Open WebUI saves the picture only when it creates the account. Set `OAUTH_UPDATE_PICTURE_ON_LOGIN=true` to update it on every sign-in, so a photo added or changed later shows up after the user signs out and back in.
+
+Open WebUI downloads the image on the server and stores a copy, so the `open-webui` container needs outbound access to the image host. On the Compose file's internal-only network it has none, and users get the default avatar. Open WebUI also sends the user's Pomerium access token as a bearer token with that download, so only enable picture updates for image hosts you trust.
+
 Open WebUI calls the authenticate service from the server side for discovery and the token exchange, not only from the browser. In the Compose file, the `open-webui` container sits on an internal Docker network with no route to the outside, so Pomerium carries the `authenticate.yourdomain.com` alias on that network. If you run Open WebUI on a network that can reach your authenticate service, you don't need the alias.
 
 ## Run the stack
@@ -157,6 +165,7 @@ docker compose up -d
 | `invalid_token` on the user info request | The access token was issued before Pomerium restarted without a fixed `shared_secret`. Set `shared_secret` and sign in again. |
 | Open WebUI still shows a password form or a "Continue with Pomerium" button | Set `ENABLE_LOGIN_FORM=false` and `OAUTH_AUTO_REDIRECT=true` so Pomerium is the only login option and Open WebUI starts it automatically. Open WebUI keeps OAuth settings from its database after first start unless the environment is authoritative; see its SSO documentation if changes don't apply. |
 | After sign-out, the page reloads in a loop and the browser console shows CORS errors for `/api/config`, `loader.js`, or `manifest.json` redirected to your identity provider | The browser is loading Open WebUI's app page from cache. Add the `set_response_headers` caching shown in `config.yaml`, then clear the site's cached data once (or hard-reload) so the browser drops the copy it already has. |
+| Users have the default avatar | Your identity provider doesn't send a `picture` claim, or the `open-webui` container can't reach the image host. For an existing account, also set `OAUTH_UPDATE_PICTURE_ON_LOGIN=true`, then sign out of Open WebUI and sign in again. |
 | Streamed responses hang or never start | WebSockets are not allowed on the route. Set `allow_websockets: true`. |
 | 502 / connection refused from Pomerium | Open WebUI is still booting its first-run migration, or the `to` address doesn't match the service name and port (`http://open-webui:8080`). |
 

@@ -44,6 +44,10 @@ services:
       # The first provisioned user becomes admin; later users default to "pending" and
       # must be approved. Uncomment to make new SSO users active immediately instead.
       # - DEFAULT_USER_ROLE=user
+      # Refresh each user's avatar from the "picture" claim on every sign-in, not only
+      # when the account is created. Open WebUI downloads the image itself, so it needs
+      # outbound access to the image host. See "Profile pictures" in the guide.
+      # - OAUTH_UPDATE_PICTURE_ON_LOGIN=true
     volumes:
       - open-webui-data:/app/backend/data
     # Open WebUI is only on the internal network, so Pomerium is the only way in.
