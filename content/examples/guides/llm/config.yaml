@@ -19,6 +19,21 @@ autocert: true
 shared_secret: REPLACE_WITH_BASE64_32_BYTE_SECRET
 
 routes:
+  # Open WebUI's content-hashed build assets. Their filenames change on every
+  # release, so browsers can cache them for a year. `private` keeps shared caches
+  # from storing responses that sit behind authentication. This route must come
+  # before the main route: Pomerium matches routes in order.
+  - from: https://llm.yourdomain.com
+    prefix: /_app/immutable/
+    to: http://open-webui:8080
+    set_response_headers:
+      Cache-Control: private, max-age=31536000, immutable
+    policy:
+      - allow:
+          or:
+            - email:
+                is: you@example.com
+
   - from: https://llm.yourdomain.com
     to: http://open-webui:8080
     # Makes Pomerium the OpenID Connect provider for this route. Open WebUI uses
@@ -26,6 +41,11 @@ routes:
     oidc_bridge: {}
     # Open WebUI streams responses over WebSockets.
     allow_websockets: true
+    # Open WebUI sends no Cache-Control header, so browsers cache the app page
+    # and reuse it after the Pomerium session ends. Revalidating on every load
+    # (cheap 304 responses) sends an expired session back to sign-in instead.
+    set_response_headers:
+      Cache-Control: no-cache
     policy:
       - allow:
           or:

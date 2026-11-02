@@ -1,10 +1,23 @@
 # Routes-only validation config. Shared settings (IdP, secrets, certs) come from
 # ../../_harness/pomerium/validation.env via env_file in compose.validate.yaml.
 routes:
+  # Mirrors the two routes in ../config.yaml.
+  - from: https://llm.localhost.pomerium.io
+    prefix: /_app/immutable/
+    to: http://open-webui:8080
+    set_response_headers:
+      Cache-Control: private, max-age=31536000, immutable
+    policy:
+      - allow:
+          or:
+            - claim/groups: engineering
+
   - from: https://llm.localhost.pomerium.io
     to: http://open-webui:8080
     oidc_bridge: {}
     allow_websockets: true
+    set_response_headers:
+      Cache-Control: no-cache
     # Group-gated so the sealed test exercises both the allow path (alice is in
     # engineering) and the deny path (bob is a contractor, not in engineering).
     policy:

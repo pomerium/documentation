@@ -72,6 +72,13 @@ Create a `config.yaml`. It routes `llm.yourdomain.com` to the Open WebUI contain
 
 Replace `llm.yourdomain.com` with your domain, `you@example.com` with the users or groups that should have access, and generate your own `shared_secret` with the command in the comment. The route's `from` URL is the OIDC client ID that Open WebUI uses, so it must match `OAUTH_CLIENT_ID` in the next section. Keep `shared_secret` the same across restarts. If it changes, Pomerium can't read tokens it issued earlier, and users have to sign in again.
 
+The config uses two routes for the same host because Open WebUI doesn't send a `Cache-Control` header. Without one, browsers cache the app page and keep loading it from cache after the Pomerium session ends. The page's own requests then get redirected to sign-in, the browser blocks those cross-origin redirects, and Open WebUI reloads in a loop. The routes set caching explicitly:
+
+- `/_app/immutable/` holds Open WebUI's content-hashed build assets, whose filenames change on every release. They're cached for a year, so repeat visits don't re-request them.
+- Everything else, including the app page, is sent with `no-cache`. Browsers still keep a copy but check with the server before using it. An unchanged file comes back as a small `304 Not Modified`, and an expired session redirects the page to sign-in.
+
+Keep the `/_app/immutable/` route first. Pomerium uses the first route that matches a request.
+
 ## Configure Open WebUI
 
 Open WebUI reads its OIDC settings from environment variables. The key settings are in the `open-webui` service of the Compose file below:
@@ -136,6 +143,7 @@ docker compose up -d
    ![Open WebUI signed in as the SSO user, with no Open WebUI password prompt](./img/llm/llm.png)
 
 4. **A disallowed user is blocked.** Sign in as a user your policy excludes and open `https://llm.yourdomain.com`. Pomerium denies access before Open WebUI loads.
+5. **Sign-out returns you to sign-in.** Sign out of Open WebUI, then open `https://llm.yourdomain.com` again. You should be redirected to your identity provider, not into a reload loop.
 
 ## Common failure modes
 
@@ -148,6 +156,7 @@ docker compose up -d
 | Open WebUI can't reach the discovery URL | The `open-webui` container has no route to your authenticate service. Add the `authenticate.yourdomain.com` alias to Pomerium on Open WebUI's network, or put Open WebUI on a network that can reach it. |
 | `invalid_token` on the user info request | The access token was issued before Pomerium restarted without a fixed `shared_secret`. Set `shared_secret` and sign in again. |
 | Open WebUI still shows a password form | Set `ENABLE_LOGIN_FORM=false` so Pomerium is the only login option. Open WebUI keeps OAuth settings from its database after first start unless the environment is authoritative; see its SSO documentation if changes don't apply. |
+| After sign-out, the page reloads in a loop and the browser console shows CORS errors for `/api/config`, `loader.js`, or `manifest.json` redirected to your identity provider | The browser is loading Open WebUI's app page from cache. Add the `set_response_headers` caching shown in `config.yaml`, then clear the site's cached data once (or hard-reload) so the browser drops the copy it already has. |
 | Streamed responses hang or never start | WebSockets are not allowed on the route. Set `allow_websockets: true`. |
 | 502 / connection refused from Pomerium | Open WebUI is still booting its first-run migration, or the `to` address doesn't match the service name and port (`http://open-webui:8080`). |
 
