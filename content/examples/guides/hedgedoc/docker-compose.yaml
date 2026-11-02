@@ -34,8 +34,11 @@ services:
       - CMD_OAUTH2_PROVIDERNAME=Pomerium
       # Must match the route's `from` URL.
       - CMD_OAUTH2_CLIENT_ID=https://hedgedoc.yourdomain.com
-      # Use PKCE, so no client secret is needed.
+      # PKCE authenticates the token request, so the route has no client secret.
       - CMD_OAUTH2_PKCE=true
+      # HedgeDoc only turns on OAuth2 login when a client secret is set, even with
+      # PKCE. Any non-empty value works; Pomerium doesn't check it on this route.
+      - CMD_OAUTH2_CLIENT_SECRET=unused
       - CMD_OAUTH2_SCOPE=openid email profile
       - CMD_OAUTH2_AUTHORIZATION_URL=https://authenticate.yourdomain.com/oidc/auth
       - CMD_OAUTH2_TOKEN_URL=https://authenticate.yourdomain.com/oidc/token
@@ -51,6 +54,9 @@ services:
       - CMD_ALLOW_EMAIL_REGISTER=false
     volumes:
       - hedgedoc-uploads:/hedgedoc/public/uploads
+      # Optional: skip HedgeDoc's Sign In button. See "Skip the Sign In button"
+      # in the guide before you turn this on.
+      # - ./header.ejs:/hedgedoc/public/views/index/header.ejs:ro
     # HedgeDoc is only on the internal network, so Pomerium is the only way in.
     networks:
       internal: {}

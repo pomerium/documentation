@@ -19,10 +19,25 @@ autocert: true
 shared_secret: REPLACE_WITH_BASE64_32_BYTE_SECRET
 
 routes:
+  # HedgeDoc's Sign Out ends only its own session and returns to its home page.
+  # This route still sends /logout to HedgeDoc, so HedgeDoc clears its session,
+  # then replaces the redirect so the browser continues to Pomerium's sign-out.
+  # It must come before the main route, because Pomerium matches routes in order.
+  - from: https://hedgedoc.yourdomain.com
+    path: /logout
+    to: http://hedgedoc:3000
+    set_response_headers:
+      Location: https://hedgedoc.yourdomain.com/.pomerium/sign_out
+    policy:
+      - allow:
+          or:
+            - email:
+                is: you@example.com
+
   - from: https://hedgedoc.yourdomain.com
     to: http://hedgedoc:3000
     # Makes Pomerium the OpenID Connect provider for this route. HedgeDoc uses
-    # PKCE, so no client_secret is needed.
+    # PKCE, so no client_secret is needed on the route.
     oidc_bridge: {}
     # HedgeDoc's collaborative editor keeps a live connection open, so the route
     # has to allow WebSocket upgrades.

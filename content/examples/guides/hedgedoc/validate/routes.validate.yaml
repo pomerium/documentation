@@ -1,6 +1,18 @@
 # Routes-only validation config. Shared settings (IdP, secrets, certs) come from
 # ../../_harness/pomerium/validation.env via env_file in compose.validate.yaml.
 routes:
+  # HedgeDoc clears its session on /logout; Pomerium then sends the browser on to
+  # its own sign-out. Must come before the main route.
+  - from: https://hedgedoc.localhost.pomerium.io
+    path: /logout
+    to: http://hedgedoc:3000
+    set_response_headers:
+      Location: https://hedgedoc.localhost.pomerium.io/.pomerium/sign_out
+    policy:
+      - allow:
+          or:
+            - authenticated_user: true
+
   - from: https://hedgedoc.localhost.pomerium.io
     to: http://hedgedoc:3000
     oidc_bridge: {}

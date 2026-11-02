@@ -39,6 +39,23 @@ test("OIDC bridge signs the Pomerium identity into HedgeDoc", async ({ page }) =
   await shot(page, "hedgedoc");
 });
 
+test("HedgeDoc sign-out also ends the Pomerium session", async ({ page }) => {
+  await login(page, BASE, alice);
+  await page.goto(`${BASE}/auth/oauth2`, { waitUntil: "networkidle" });
+  expect((await whoami(page)).status).toBe("ok");
+
+  // The /logout route lets HedgeDoc clear its session, then replaces the
+  // redirect with Pomerium's sign-out.
+  await page.goto(`${BASE}/logout`, { waitUntil: "domcontentloaded" });
+  await page.waitForURL((url) => !url.hostname.startsWith("hedgedoc."), {
+    timeout: 15000,
+  });
+
+  // Without a Pomerium session, HedgeDoc is behind the IdP sign-in again.
+  await page.goto(BASE, { waitUntil: "domcontentloaded" });
+  await expect(page).toHaveURL(/keycloak\.localhost\.pomerium\.io/);
+});
+
 test("the collaborative editor opens its WebSocket through the route", async ({ page }) => {
   await login(page, BASE, alice);
   await page.goto(`${BASE}/auth/oauth2`, { waitUntil: "networkidle" });

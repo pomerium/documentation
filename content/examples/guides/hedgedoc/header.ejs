@@ -1,0 +1,29 @@
+<%#
+  Zero-click sign-in through the Pomerium OIDC bridge.
+
+  HedgeDoc 1.10.8 has no auto-login setting: a signed-out user on "/" gets the
+  intro page and must click Sign In, even with a single provider. This file
+  replaces the empty public/views/index/header.ejs (included only by the
+  index page) and starts the OAuth2 login when the user isn't signed in to
+  HedgeDoc and OAuth2 (Pomerium) is the only sign-in method enabled.
+
+  Signed-out note links also land here (HedgeDoc redirects them to "/" and
+  saves the note as returnTo), so users get back to the note after sign-in.
+
+  Loop guard: a failed OAuth2 login redirects to "/" with no error message, so
+  redirect at most once every 30 seconds per tab. Without sessionStorage, the
+  normal Sign In button shows instead. location.replace keeps the intro page
+  out of the back-button history.
+%>
+<% const otherProviders = ['facebook', 'twitter', 'github', 'gitlab', 'mattermost', 'dropbox', 'google', 'ldap', 'saml', 'openID', 'email'].some(p => authProviders[p]) %>
+<% if (!signin && authProviders.oauth2 && !otherProviders) { %>
+<script nonce="<%= locals.nonce %>">
+  try {
+    var key = 'hedgedoc-auto-login'
+    if (Date.now() - Number(sessionStorage.getItem(key) || 0) > 30000) {
+      sessionStorage.setItem(key, String(Date.now()))
+      window.location.replace('<%- serverURL %>/auth/oauth2')
+    }
+  } catch (e) {}
+</script>
+<% } %>
