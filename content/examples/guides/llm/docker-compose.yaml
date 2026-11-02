@@ -38,6 +38,9 @@ services:
       - ENABLE_OAUTH_SIGNUP=true
       # Make Pomerium the only login option.
       - ENABLE_LOGIN_FORM=false
+      # Skip Open WebUI's "Continue with Pomerium" button and start the OIDC login
+      # automatically. Pomerium already signed the user in, so there is no second prompt.
+      - OAUTH_AUTO_REDIRECT=true
       # The first provisioned user becomes admin; later users default to "pending" and
       # must be approved. Uncomment to make new SSO users active immediately instead.
       # - DEFAULT_USER_ROLE=user

@@ -37,6 +37,20 @@ test("OIDC bridge signs the Pomerium identity into Open WebUI", async ({ page })
   await shot(page, "llm");
 });
 
+test("Open WebUI starts the OIDC login without a button click", async ({ page }) => {
+  await login(page, BASE, alice);
+
+  // With OAUTH_AUTO_REDIRECT=true, Open WebUI's /auth page sends the browser to the
+  // bridge on its own, so loading it is enough to end up signed in.
+  await page.goto(`${BASE}/auth`, { waitUntil: "domcontentloaded" });
+  await expect
+    .poll(async () => (await whoami(page)).status(), {
+      message: "Open WebUI should sign in through the bridge without a click",
+      timeout: 15000,
+    })
+    .toBe(200);
+});
+
 test("the upstream is unreachable except through Pomerium", async ({ page }) => {
   // Open WebUI is on an internal-only network shared solely with Pomerium. The
   // test-runner sits on the default network, so a direct hit to open-webui:8080 must
