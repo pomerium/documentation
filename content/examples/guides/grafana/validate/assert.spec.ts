@@ -14,13 +14,11 @@ test("unauthenticated request is redirected to the identity provider", async ({ 
 test("OIDC bridge signs the authenticated user into Grafana", async ({ page }) => {
   await login(page, BASE, alice);
 
-  // Grafana's login page offers the Pomerium OAuth button. Click it if it is shown
-  // (the bridge completes without a prompt when the Pomerium session is active).
-  await page.goto(`${BASE}/login`, { waitUntil: "domcontentloaded" });
-  const signIn = page.getByRole("link", { name: /sign in with pomerium/i });
-  if (await signIn.isVisible().catch(() => false)) {
-    await signIn.click();
-  }
+  // With GF_AUTH_GENERIC_OAUTH_AUTO_LOGIN, Grafana's login page starts the OIDC
+  // login on its own, and the bridge completes it without a prompt because the
+  // Pomerium session is active.
+  await page.goto(`${BASE}/login`, { waitUntil: "networkidle" });
+  await expect(page).not.toHaveURL(/\/login/);
 
   // Grafana's own user API reflects the OIDC-authenticated identity.
   const res = await page.request.get(`${BASE}/api/user`, { ignoreHTTPSErrors: true });
