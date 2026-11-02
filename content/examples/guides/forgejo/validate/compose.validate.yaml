@@ -14,25 +14,30 @@ services:
   forgejo:
     image: codeberg.org/forgejo/forgejo:15.0.2@sha256:db04c7114b656f896e206ba3873fe8d3a7adf2daa44907037f0274f4ba653fb9
     environment:
-      FORGEJO__server__ROOT_URL: 'https://forgejo.localhost.pomerium.io/'
-      FORGEJO__database__DB_TYPE: 'sqlite3'
-      FORGEJO__security__INSTALL_LOCK: 'true'
-      FORGEJO__service__REQUIRE_SIGNIN_VIEW: 'true'
+      FORGEJO__server__ROOT_URL: "https://forgejo.localhost.pomerium.io/"
+      FORGEJO__database__DB_TYPE: "sqlite3"
+      FORGEJO__security__INSTALL_LOCK: "true"
+      FORGEJO__service__REQUIRE_SIGNIN_VIEW: "true"
+      FORGEJO__server__LANDING_PAGE: "login"
 
       # OIDC login through Pomerium's bridge, exactly as the published guide ships.
-      FORGEJO__oauth2_client__ENABLE_AUTO_REGISTRATION: 'true'
-      FORGEJO__oauth2_client__USERNAME: 'email'
-      FORGEJO__oauth2_client__ACCOUNT_LINKING: 'auto'
-      FORGEJO__service__DISABLE_REGISTRATION: 'false'
-      FORGEJO__service__ALLOW_ONLY_EXTERNAL_REGISTRATION: 'true'
-      FORGEJO__service__SHOW_REGISTRATION_BUTTON: 'false'
-      FORGEJO__service__ENABLE_INTERNAL_SIGNIN: 'false'
+      FORGEJO__oauth2_client__ENABLE_AUTO_REGISTRATION: "true"
+      FORGEJO__oauth2_client__USERNAME: "email"
+      FORGEJO__oauth2_client__ACCOUNT_LINKING: "login"
+      # No-op here: forgejo-internal has no outbound access, and Forgejo ignores
+      # avatar download errors. Kept to match the guide.
+      FORGEJO__oauth2_client__UPDATE_AVATAR: "true"
+      FORGEJO__service__DISABLE_REGISTRATION: "false"
+      FORGEJO__service__ALLOW_ONLY_EXTERNAL_REGISTRATION: "true"
+      FORGEJO__service__SHOW_REGISTRATION_BUTTON: "false"
+      FORGEJO__service__ENABLE_INTERNAL_SIGNIN: "false"
       # Trust the harness CA so Forgejo can fetch Pomerium's OIDC discovery over TLS.
       # Validation-only.
       SSL_CERT_FILE: /certs/ca.crt
     volumes:
       - forgejo-data:/data
       - certs:/certs:ro
+      - ../footer.tmpl:/data/gitea/templates/custom/footer.tmpl:ro
     networks:
       forgejo-internal:
         aliases:
@@ -40,7 +45,7 @@ services:
 
   pomerium:
     image: pomerium/pomerium:v0.34.0@sha256:TODO
-    command: ['--config', '/pomerium/config.yaml']
+    command: ["--config", "/pomerium/config.yaml"]
     env_file:
       - ../../_harness/pomerium/validation.env
     volumes:
@@ -62,7 +67,7 @@ services:
           - forgejo.localhost.pomerium.io
       forgejo-internal: {}
     healthcheck:
-      test: ['CMD', 'pomerium', 'health']
+      test: ["CMD", "pomerium", "health"]
       interval: 5s
       timeout: 5s
       retries: 30
@@ -74,7 +79,7 @@ services:
   forgejo-setup:
     image: codeberg.org/forgejo/forgejo:15.0.2@sha256:db04c7114b656f896e206ba3873fe8d3a7adf2daa44907037f0274f4ba653fb9
     user: git
-    entrypoint: ['/bin/sh', '-c']
+    entrypoint: ["/bin/sh", "-c"]
     command:
       - |
         until forgejo admin auth list >/dev/null 2>&1; do sleep 2; done
@@ -83,8 +88,8 @@ services:
           --secret forgejo-e2e-client-secret \
           --auto-discover-url https://authenticate.localhost.pomerium.io/.well-known/openid-configuration
     environment:
-      FORGEJO__database__DB_TYPE: 'sqlite3'
-      FORGEJO__security__INSTALL_LOCK: 'true'
+      FORGEJO__database__DB_TYPE: "sqlite3"
+      FORGEJO__security__INSTALL_LOCK: "true"
       SSL_CERT_FILE: /certs/ca.crt
     volumes:
       - forgejo-data:/data
@@ -95,7 +100,7 @@ services:
     networks:
       - forgejo-internal
       - default
-    restart: 'no'
+    restart: "no"
 
 networks:
   # Internal-only: no route to the outside, and the test-runner is not attached,
