@@ -1,5 +1,5 @@
 ---
-# cSpell:ignore automations forgejo gitea WEBAUTH
+# cSpell:ignore automations forgejo gitea
 title: Secure Forgejo with Pomerium
 sidebar_label: Forgejo
 lang: en-US
@@ -12,16 +12,14 @@ keywords:
     git,
     sso,
     oidc,
+    oidc bridge,
+    openid connect,
     identity aware proxy,
-    reverse proxy authentication,
-    identity headers,
   ]
-description: Put a Forgejo instance behind Pomerium and use reverse-proxy header authentication so users sign in once and are auto-provisioned from their Pomerium identity.
+description: Put a Forgejo instance behind Pomerium and have Pomerium act as Forgejo's OpenID Connect provider through the OIDC bridge, so users sign in once and Forgejo creates their account.
 ---
 
 import CodeBlock from '@theme/CodeBlock';
-import TabItem from '@theme/TabItem';
-import Tabs from '@theme/Tabs';
 
 import Config from '!!raw-loader!/content/examples/guides/forgejo/config.yaml';
 import Compose from '!!raw-loader!/content/examples/guides/forgejo/docker-compose.yaml';
@@ -30,78 +28,73 @@ import Compose from '!!raw-loader!/content/examples/guides/forgejo/docker-compos
 
 ## What this guide does
 
-You'll put [Forgejo](https://forgejo.org/), a self-hosted Git service, behind Pomerium so that Pomerium handles single sign-on and authorization, then forwards the user's identity to Forgejo as request headers. Forgejo trusts those headers ([reverse-proxy authentication](https://forgejo.org/docs/latest/admin/setup/reverse-proxy/)), signs the user in, and can auto-create the account on first visit. The result is single sign-on for the Forgejo web UI with no second password. The same setup also works with [Gitea](https://about.gitea.com/).
+You'll put [Forgejo](https://forgejo.org/), a self-hosted Git service, behind Pomerium to gate it with SSO and route policy. Forgejo keeps its standard [OpenID Connect (OIDC) login](https://forgejo.org/docs/latest/user/oauth2-provider/), and Pomerium is the OIDC provider. Users sign in once through Pomerium, and Forgejo creates their account and completes its login without a second prompt. The same setup also works with [Gitea](https://about.gitea.com/).
+
+```mermaid
+sequenceDiagram
+  participant B as Browser
+  participant P as Pomerium
+  participant F as Forgejo
+  B->>P: Open https://forgejo.yourdomain.com
+  P->>B: Sign in at the IdP, once
+  P->>F: Proxy the request
+  F->>B: Redirect to Pomerium's authorization endpoint
+  B->>P: GET /oidc/auth
+  P->>B: Redirect back with a code, no prompt
+  B->>F: Callback with the code
+  F->>P: POST /oidc/token
+  P->>F: ID token and access token
+```
 
 :::caution This guide configures web UI sign-in only
 
-It leaves Forgejo's API reverse-proxy authentication disabled. Git operations, API clients, automations, and SSH access still need Forgejo [access tokens](https://forgejo.org/docs/latest/user/api-usage/) or SSH keys.
+Git operations over HTTP, API clients, automations, and SSH access still need Forgejo [access tokens](https://forgejo.org/docs/latest/user/api-usage/) or SSH keys.
 
 :::
 
 ## When to use this guide
 
-Use it when you want one front door for Forgejo with your existing identity, and you want Forgejo to provision and sign users in from Pomerium instead of maintaining its own password directory. Forgejo does not support Pomerium's signed-JWT login mode, so this guide relies on header-based reverse-proxy authentication; read the [Security considerations](#security-considerations) before you deploy, because that mode trusts the identity header from any peer that can reach Forgejo.
+Use it when you want one front door for Forgejo with your existing identity, and Forgejo should keep its own OIDC login and create accounts from it. Forgejo can't verify Pomerium's signed JWT, so this guide uses Pomerium's [OIDC bridge](/docs/capabilities/oidc-bridge) instead. The bridge replaces trusting identity headers from any peer that can reach Forgejo, so network isolation is no longer the only thing protecting logins.
 
 ## Prerequisites
 
-This guide assumes you've completed the [Quickstart](/docs/get-started/quickstart), so you already have Pomerium running and signing users in through the hosted authenticate service.
-
-You also need:
-
 - [Docker](https://docs.docker.com/install/) and [Docker Compose](https://docs.docker.com/compose/install/)
+- Pomerium Core with a self-hosted authenticate service on a domain you control (this guide uses `authenticate.yourdomain.com`). The OIDC bridge isn't available on the hosted authenticate service.
+- An OpenID Connect identity provider. This guide uses [Keycloak](/docs/integrations/user-identity/oidc) as the example.
 - A domain you control for the Forgejo route (this guide uses `forgejo.yourdomain.com`)
 
-:::tip Prefer to self-host the identity provider?
+:::tip Need an identity provider?
 
-This guide uses the hosted authenticate service so you don't have to run an identity provider (IdP). To run your own instead, follow [Keycloak + Pomerium](/docs/integrations/user-identity/oidc) and swap the `authenticate_service_url` / `idp_*` settings into the config below.
+Follow [Keycloak + Pomerium](/docs/integrations/user-identity/oidc) to set one up, then fill in the `idp_*` settings in `config.yaml` with your client ID and secret.
 
 :::
 
 ## Configure Pomerium
 
-Pomerium forwards the user's `sub`, `email`, and `name` claims as request headers. Forgejo usernames can't contain every character that's valid in an email address, so this uses the stable OIDC `sub` claim for the username and carries the real address in `X-Pomerium-Claim-Email`.
-
-<Tabs queryString="type">
-<TabItem value="zero" label="Pomerium Zero" default>
-
-In the [Zero Console](https://console.pomerium.app):
-
-1. Create a **Route**. In **From**, enter `https://forgejo.<your-starter-domain>`; in **To**, enter `http://forgejo:3000`.
-2. Set the policy to the user or domain that should reach Forgejo. Reverse-proxy auth trusts the forwarded header, so this policy is your real access gate; keep it tight.
-3. On the **Headers** tab, enable **Pass Identity Headers**, then add these **JWT Claim Headers** so the claims arrive under the names Forgejo expects below: `X-Pomerium-Sub` from `sub`, `X-Pomerium-Claim-Email` from `email`, and `X-Pomerium-Claim-Name` from `name`. Save.
-
-</TabItem>
-<TabItem value="core" label="Pomerium Core">
-
-Create a `config.yaml`. It routes `forgejo.yourdomain.com` to the Forgejo container, forwards the identity claims as headers, and removes the total request timeout so long Git smart-HTTP transfers aren't cut off.
+Create a `config.yaml`. It routes `forgejo.yourdomain.com` to the Forgejo container, enables the OIDC bridge on that route, and sets the `shared_secret` that Pomerium uses to sign and encrypt the tokens it issues. It also removes the total request timeout so long Git smart-HTTP transfers aren't cut off.
 
 <CodeBlock language="yaml" title="config.yaml">
   {Config}
 </CodeBlock>
 
-Replace `forgejo.yourdomain.com` with your domain and `you@example.com` with your user or domain. A few notes:
+Replace `forgejo.yourdomain.com` with your domain, `you@example.com` with your user or domain, and generate your own `shared_secret` and route `client_secret` with the command in each comment. Keep `shared_secret` the same across restarts. If it changes, Pomerium can't read tokens it issued earlier, and users have to sign in again.
 
-- [`jwt_claims_headers`](/docs/reference/jwt-claim-headers) forwards each claim as a request header; [`pass_identity_headers`](/docs/reference/routes/pass-identity-headers-per-route) sends them to Forgejo.
-- If your identity provider's `sub` claim isn't a valid Forgejo username, use another stable claim that's unique and already sanitized for Forgejo.
-- The policy authorizes who can reach Forgejo. Reverse-proxy auth trusts the header, so this policy is your real access gate.
-
-</TabItem>
-</Tabs>
+Forgejo doesn't use PKCE for its OIDC login, so it's a confidential client and the route needs a `client_secret`. You'll enter the same value in Forgejo below. The route's `from` URL is the OIDC client ID, so it must match the client ID you give Forgejo.
 
 ## Configure Forgejo
 
-Configure Forgejo to trust and consume the headers. These map to `app.ini` settings, supplied as `FORGEJO__<section>__<KEY>` environment variables in the Compose file below. The key settings:
+Forgejo reads its settings from `app.ini`, supplied as `FORGEJO__<section>__<KEY>` environment variables in the Compose file below. The key settings:
 
-- `ENABLE_REVERSE_PROXY_AUTHENTICATION` makes Forgejo read the identity header.
-- `ENABLE_REVERSE_PROXY_AUTO_REGISTRATION` creates the account on first visit; `..._EMAIL` and `..._FULL_NAME` populate it from the other headers.
-- `REVERSE_PROXY_AUTHENTICATION_USER` / `_EMAIL` / `_FULL_NAME` must match the header names Pomerium emits (Forgejo's defaults are `X-WEBAUTH-USER` / `-EMAIL` / `-FULLNAME`).
-- `DISABLE_REGISTRATION: false` allows trusted external provisioning, while `ALLOW_ONLY_EXTERNAL_REGISTRATION: true` and `SHOW_REGISTRATION_BUTTON: false` keep the local sign-up form closed.
-
-`REVERSE_PROXY_TRUSTED_PROXIES` only tells Forgejo how to derive the real client IP from `X-Forwarded-For` for its logs and rate limiting. It does **not** restrict which peer the identity header is trusted from; see [Security considerations](#security-considerations).
+- `FORGEJO__server__ROOT_URL` is Forgejo's public URL. Forgejo builds its OIDC callback from it: `https://forgejo.yourdomain.com/user/oauth2/pomerium/callback`.
+- `ENABLE_AUTO_REGISTRATION` (in `oauth2_client`) creates the Forgejo account on first sign-in.
+- `USERNAME: email` takes the username from the part of the `email` claim before the `@`. Forgejo normalizes the result for you.
+- `ACCOUNT_LINKING: auto` links a sign-in to an existing Forgejo account that has the same email, which is how the administrator account you create below picks up its Pomerium login.
+- `DISABLE_REGISTRATION: false` with `ALLOW_ONLY_EXTERNAL_REGISTRATION: true` and `SHOW_REGISTRATION_BUTTON: false` allows accounts to be created through the OIDC login while keeping the local sign-up form closed.
+- `ENABLE_INTERNAL_SIGNIN: false` hides the local username and password form, so Pomerium is the only sign-in option on the login page.
 
 ## Run the stack
 
-The Compose file runs Pomerium Core and Forgejo together (for Zero, drop the `pomerium` service and use the `compose.yaml` from the Quickstart with your `POMERIUM_ZERO_TOKEN`, keeping the `forgejo` service and its network below):
+The Compose file runs Pomerium and Forgejo together. Place the `config.yaml` from the previous step next to this `docker-compose.yaml`:
 
 <CodeBlock language="yaml" title="docker-compose.yaml">
   {Compose}
@@ -113,49 +106,66 @@ Start it:
 docker compose up -d
 ```
 
-The Compose file pins Forgejo and Pomerium by image digest so the stack is reproducible; the digest comment notes the Forgejo version (`v15`). Update the digests when you upgrade Forgejo, then sign in again to confirm it still works. To tear the stack down and delete the Forgejo data volume (all repositories and state), run `docker compose down -v`.
+If you change `config.yaml` later, run `docker compose up -d` again to apply it.
+
+## Add Pomerium as a login source
+
+Forgejo needs to know about Pomerium before anyone can sign in. First create an administrator whose email matches the email you sign in with through Pomerium. Because local sign-in is disabled, this account never uses its password. With `ACCOUNT_LINKING: auto`, your first Pomerium sign-in links to it.
+
+```bash
+docker compose exec -u git forgejo forgejo admin user create --admin \
+  --username site-admin --email you@example.com --random-password
+```
+
+Then add the login source, using the route's `client_secret` as the secret:
+
+```bash
+docker compose exec -u git forgejo forgejo admin auth add-oauth \
+  --name pomerium \
+  --provider openidConnect \
+  --key https://forgejo.yourdomain.com \
+  --secret REPLACE_WITH_ROUTE_CLIENT_SECRET \
+  --auto-discover-url https://authenticate.yourdomain.com/.well-known/openid-configuration
+```
+
+`--name` becomes part of the callback URL and the label on the login button, so keep it `pomerium` to match the callback above. You can also add the source in the web UI under **Site Administration** > **Identity & Access** > **Authentication Sources**, with the same values and **OpenID Connect** as the provider. Leave the additional scopes empty.
 
 ## Verify the setup
 
-1. **The route requires authentication.** In a fresh browser, open `https://forgejo.yourdomain.com`. You should be redirected to sign in, not straight into Forgejo.
-2. **An allowed user gets in.** Sign in. Pomerium redirects you back to Forgejo.
-3. **SSO and auto-provisioning work.** Forgejo signs you in and creates your account from the headers, with no Forgejo password. The account carries your real email; its username comes from the configured username claim, and its full name is populated only if your identity provider supplies a `name` claim. You land on the authenticated Forgejo dashboard, signed in as your Pomerium identity:
+1. **The route requires authentication.** In a fresh browser, open `https://forgejo.yourdomain.com`. You should be redirected to Pomerium to sign in.
+2. **Forgejo offers Pomerium login.** After you sign in, Forgejo's login page shows a **pomerium** sign-in button. Select it.
+3. **The OIDC login completes without a prompt.** You land on the authenticated Forgejo dashboard, signed in as your Pomerium identity. Open **Settings** > **Account** and confirm your email shows.
 
-   ![The Forgejo dashboard, signed in as the auto-provisioned Pomerium identity](img/forgejo/forgejo-dashboard.png)
+   ![The Forgejo dashboard, signed in as the Pomerium identity](img/forgejo/forgejo-dashboard.png)
 
-   Open your Forgejo profile to confirm the account was provisioned from your Pomerium identity: the username comes from your username claim and the email matches the one Pomerium forwarded, with no Forgejo password ever set.
-
-   ![The auto-provisioned Forgejo profile page, with the username and email carried over from the Pomerium SSO identity](img/forgejo/forgejo-sso-account.png)
-
-4. **A disallowed user is blocked.** Sign in as a user your policy excludes and open `https://forgejo.yourdomain.com`. Pomerium denies access, so no identity headers are forwarded and Forgejo never provisions an account.
-
-The first account Forgejo provisions becomes the instance administrator, so sign in through Pomerium first with the identity that should own Forgejo.
+4. **A disallowed user is blocked.** Sign in as a user your policy excludes and open `https://forgejo.yourdomain.com`. Pomerium denies access before Forgejo loads, so Forgejo never creates an account.
 
 ## Common failure modes
 
-- **Pomerium returns `403`.** The route policy still allows only the example user. Replace it with your user or domain.
-- **You reach Forgejo but aren't signed in or auto-provisioned.** The header names in Pomerium (`jwt_claims_headers`) and in Forgejo (`REVERSE_PROXY_AUTHENTICATION_USER` / `_EMAIL` / `_FULL_NAME`) must match exactly, and `pass_identity_headers` must be set on the route.
-- **Sign-in fails on the username.** Forgejo rejects usernames containing characters such as `@`. Use a stable, already-valid claim for the username (this guide uses `sub`).
-- **A direct request to the backend signs in.** Expected: reverse-proxy auth trusts the header from any peer. It's why Forgejo must stay reachable only through Pomerium.
+| Symptom | Cause and fix |
+| :-- | :-- |
+| Pomerium returns `403` | The route policy still allows only the example user. Replace it with your user or domain. |
+| `404 Not Found` from the discovery URL or any `/oidc/` path | Forgejo is pointing at the wrong host. Use your authenticate service URL, and check that `authenticate_service_url` and `idp_provider` are set. |
+| HTTP 400 at `/oidc/auth`: `redirect_uri ... does not match client_id ...` | The client ID (`--key`) doesn't match the route's `from` URL, or `FORGEJO__server__ROOT_URL` isn't the Forgejo URL. |
+| Token request fails with `invalid_client` | The client secret in Forgejo doesn't match the route's `client_secret`, or the client sends HTTP Basic credentials without `client_id` in the body. Check the secret first, then look for the `oidc: token request invalid` log line in Pomerium. |
+| Forgejo shows a link-account form instead of signing you in | An account with your email exists but `ACCOUNT_LINKING` isn't `auto`, or the email on the account differs from your Pomerium email. |
+| Users still see two login prompts | Forgejo's local form appears first. Set `ENABLE_INTERNAL_SIGNIN` to `false`. |
+| `invalid_token` on Forgejo's user info request | The access token was issued before Pomerium restarted without a fixed `shared_secret`. Set `shared_secret` and sign in again. |
+| Sign-in fails on the username | Set `USERNAME` to a claim your identity provider always sends. Forgejo rejects usernames it can't normalize. |
 
 ## Security considerations
 
-Reverse-proxy authentication means **Forgejo trusts the identity header from any peer that can reach it.** Forgejo does not verify Pomerium's signed `X-Pomerium-Jwt-Assertion` for login, and `REVERSE_PROXY_TRUSTED_PROXIES` does not gate which peer the header is trusted from. So **network isolation is the only trust boundary**: Forgejo must be reachable **only** through Pomerium.
-
-Two properties make this safe, and only these two:
-
-- **Through Pomerium, a forged header is overwritten.** For each claim it forwards, Pomerium sets the header from the real authenticated user, so a client that forges `X-Pomerium-Sub` or `X-Pomerium-Claim-Email` _through_ Pomerium is still signed in as its own identity, never the forged one. The username (`sub`) and email are always present, so they pin the account. The only soft spot is an optional claim Pomerium doesn't emit for a given user (for example `name`, when the token carries none): a forged `X-Pomerium-Claim-Name` could pass through, but the worst case is a wrong display name, not a different account.
-- **Direct access must be impossible.** The risk is a client that bypasses Pomerium and talks to Forgejo directly: it can set those headers itself and impersonate anyone (the first such account would even become admin). Keep Forgejo on a network where only Pomerium can reach it.
-
-To hold up that boundary:
-
-- **Don't publish Forgejo's port.** In Docker Compose, keep only Pomerium on Forgejo's network and never map `3000` to the host. Confirm the only containers on the network are Pomerium and Forgejo: `docker network inspect forgejo-pomerium --format '{{range .Containers}}{{.Name}} {{end}}'`.
-- **In Kubernetes, a `ClusterIP` service alone isn't enough** if arbitrary pods can connect to Forgejo. Use a policy-enforcing CNI and a `NetworkPolicy` (or another network control) to admit only Pomerium to the backend.
-- **`REVERSE_PROXY_TRUSTED_PROXIES` is not a security control for this.** It only affects `X-Forwarded-For` parsing, not which peer the identity header is trusted from. Set it to Pomerium's IP/CIDR (never a hostname) for correct client-IP logging, but treat network isolation as the real boundary.
-- **Keep a break-glass admin.** Because the local sign-up form is closed and every request arrives pre-authenticated, create a recovery admin out of band: `docker compose exec -u git forgejo forgejo admin user create --username recovery-admin --email recovery-admin@example.com --random-password --admin`. To use it, reach Forgejo without Pomerium's injected header (a trusted network, or temporarily setting `ENABLE_REVERSE_PROXY_AUTHENTICATION` to `false`).
+- **Keep the route protected.** The bridge handles login only. Route policy decides who can reach Forgejo, and Pomerium checks it on every request. A public route would let anyone who can sign in to Pomerium get a Forgejo account.
+- **Only Pomerium should reach Forgejo.** Keep `forgejo:3000` off published ports and on the internal Docker network, so Pomerium is the only way in.
+- **Pomerium issues the tokens.** Forgejo gets its ID and access tokens from Pomerium, not directly from your identity provider. There are no refresh tokens, so when the Pomerium session expires, the next request sends the user back to Pomerium to sign in.
+- **Keep the `client_secret` secret.** It's what lets Forgejo prove to Pomerium that it's the app behind this route. Store it like any other credential.
+- **Account linking trusts the email.** `ACCOUNT_LINKING: auto` links a sign-in to the existing account with the same email. That's safe when your identity provider verifies emails and your policy limits who can sign in. Otherwise use the default `login`, which asks for the account's password.
+- **Account creation follows the policy.** `ENABLE_AUTO_REGISTRATION` creates a Forgejo account for every user your policy allows. Manage Forgejo roles and organizations separately.
+- **Keep a break-glass admin.** Local sign-in is disabled, so create a recovery admin before you rely on this setup, and keep its password somewhere safe. To use it, temporarily set `ENABLE_INTERNAL_SIGNIN` to `true`.
 
 ## Next steps
 
-- [Build policies](/docs/get-started/fundamentals/zero/zero-build-policies)
-- [Pass identity headers](/docs/reference/routes/pass-identity-headers-per-route)
+- [OIDC bridge](/docs/capabilities/oidc-bridge)
+- [Authentication](/docs/capabilities/authentication)
+- [Authorization](/docs/capabilities/authorization)
 - [Mirror repositories](https://forgejo.org/docs/latest/user/repo-mirror/) into a Pomerium-gated warm standby
