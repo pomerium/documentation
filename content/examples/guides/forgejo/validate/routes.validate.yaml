@@ -1,6 +1,16 @@
 # Routes-only validation config. Shared settings (IdP, secrets, certs) come from
 # ../../_harness/pomerium/validation.env via env_file in compose.validate.yaml.
 routes:
+  # Mirrors the guide: skip Forgejo's login page, go straight to the OIDC login.
+  - from: https://forgejo.localhost.pomerium.io
+    path: /user/login
+    redirect:
+      path_redirect: /user/oauth2/pomerium
+    policy:
+      - allow:
+          or:
+            - authenticated_user: true
+
   - from: https://forgejo.localhost.pomerium.io
     to: http://forgejo:3000
     oidc_bridge:
