@@ -1,30 +1,23 @@
-# Validation-only Jenkins Configuration as Code (JCasC). Drives the JWT Auth plugin
-# headlessly so the sealed fixture can prove that Jenkins consumes Pomerium's signed
-# X-Pomerium-Jwt-Assertion end to end. The published guide configures the same plugin
+# Validation-only Jenkins Configuration as Code (JCasC). Drives the OpenID Connect
+# plugin headlessly so the sealed fixture can prove that Jenkins signs users in
+# through Pomerium's OIDC bridge. The published guide configures the same plugin
 # through the Jenkins UI (see ../../../docs/guides/jenkins.mdx).
 # Test-only. Never reuse this configuration verbatim in production.
 jenkins:
   securityRealm:
-    jwtAuth:
-      # The header Pomerium forwards the signed identity JWT in.
-      headerName: X-Pomerium-Jwt-Assertion
-      # Map Pomerium's assertion claims onto the Jenkins user.
-      userClaimName: email
-      emailClaimName: email
-      fullNameClaim: name
-      groupsClaimName: groups
-      groupsClaimSeparator: ","
-      # Pomerium signs the assertion with iss/aud set to the route host.
-      acceptedIssuer: jenkins.localhost.pomerium.io
-      acceptedAudience: jenkins.localhost.pomerium.io
-      # Pomerium publishes its public keys at the route's well-known endpoint.
-      jwksUrl: https://jenkins.localhost.pomerium.io/.well-known/pomerium/jwks.json
-      leewaySeconds: 30
-      # Require a verifiable signature: a request without a valid Pomerium JWT is
-      # rejected, which is what proves the assertion is actually being consumed.
-      allowVerificationFailures: false
-  # Any signed-in (JWT-verified) user can read; matches the guide's least-privilege
-  # posture where Pomerium policy is the real access gate.
+    oic:
+      clientId: https://jenkins.localhost.pomerium.io
+      # Matches the route's oidc_bridge client_secret in routes.validate.yaml.
+      clientSecret: test-only-jenkins-client-secret
+      serverConfiguration:
+        wellKnown:
+          wellKnownOpenIDConfigurationUrl: https://authenticate.localhost.pomerium.io/.well-known/openid-configuration
+      userNameField: email
+      emailFieldName: email
+      fullNameFieldName: name
+      properties:
+        - pkce
+  # Any signed-in user can do anything; Pomerium policy is the real access gate.
   authorizationStrategy:
     loggedInUsersCanDoAnything:
       allowAnonymousRead: false

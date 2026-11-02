@@ -2,8 +2,8 @@
 # Validation-only entrypoint for the sealed Jenkins fixture. It does three things the
 # published guide does by hand or doesn't need, then hands off to the stock Jenkins
 # launcher:
-#   1. Trusts the harness CA so Jenkins (Java) can fetch Pomerium's JWKS over TLS.
-#   2. Installs the JWT Auth + Configuration-as-Code plugins headlessly.
+#   1. Trusts the harness CA so Jenkins (Java) can call Pomerium's OIDC endpoints over TLS.
+#   2. Installs the OpenID Connect + Configuration-as-Code plugins headlessly.
 #   3. Points JCasC at the validation security-realm config.
 # Test-only. The reader-facing compose keeps the normal first-run wizard.
 set -euo pipefail
@@ -30,10 +30,10 @@ keytool -importcert -noprompt -trustcacerts \
   -storepass changeit
 echo "imported harness CA into $TRUSTSTORE"
 
-# Install the plugins the JWT flow needs (idempotent across restarts).
+# Install the plugins the OIDC flow needs (idempotent across restarts).
 jenkins-plugin-cli --plugins \
   configuration-as-code \
-  jwt-auth
+  oic-auth
 
 export CASC_JENKINS_CONFIG=/var/jenkins_home/casc/jenkins.casc.yaml
 export JAVA_OPTS="${JAVA_OPTS:-} -Djenkins.install.runSetupWizard=false -Djavax.net.ssl.trustStore=${TRUSTSTORE} -Djavax.net.ssl.trustStorePassword=changeit"
