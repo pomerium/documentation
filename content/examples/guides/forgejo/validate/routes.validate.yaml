@@ -1,15 +1,10 @@
-# Routes-only validation config. Shared settings (IdP, secrets, signing key, certs)
-# come from ../../_harness/pomerium/validation.env via env_file in compose.validate.yaml.
-# Forgejo consumes the forwarded claim headers, so jwt_claims_headers lives here.
-jwt_claims_headers:
-  X-Pomerium-Sub: sub
-  X-Pomerium-Claim-Email: email
-  X-Pomerium-Claim-Name: name
-
+# Routes-only validation config. Shared settings (IdP, secrets, certs) come from
+# ../../_harness/pomerium/validation.env via env_file in compose.validate.yaml.
 routes:
   - from: https://forgejo.localhost.pomerium.io
     to: http://forgejo:3000
-    pass_identity_headers: true
+    oidc_bridge:
+      client_secret: forgejo-e2e-client-secret
     timeout: 0s
     idle_timeout: 600s
     policy:
