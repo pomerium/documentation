@@ -19,6 +19,20 @@ autocert: true
 shared_secret: REPLACE_WITH_BASE64_32_BYTE_SECRET
 
 routes:
+  # Forgejo has no setting to skip its login page when there's only one login
+  # source, so send /user/login straight to the "pomerium" source's sign-in URL.
+  # Must come before the main Forgejo route.
+  - from: https://forgejo.yourdomain.com
+    path: /user/login
+    redirect:
+      path_redirect: /user/oauth2/pomerium
+    policy:
+      - allow:
+          or:
+            - email:
+                # Keep in sync with the main route's policy
+                is: you@example.com
+
   - from: https://forgejo.yourdomain.com
     to: http://forgejo:3000
     # Makes Pomerium the OpenID Connect provider for this route. Forgejo doesn't
