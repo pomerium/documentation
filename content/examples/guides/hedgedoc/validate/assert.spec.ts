@@ -2,39 +2,68 @@ import { test, expect } from "@playwright/test";
 import { login, alice } from "../lib/authn";
 import { shot } from "../lib/shot";
 
-// HedgeDoc keeps its own accounts and does not consume a Pomerium identity header,
-// so the guide's outcome is the gate plus the live editor: an unauthenticated
-// request is bounced to the IdP, and an allowed user lands on HedgeDoc and can open
-// the real-time editor (which needs the WebSocket the route allows).
+// App-specific success for HedgeDoc: after the Pomerium SSO login, HedgeDoc completes
+// its own OAuth2 login against Pomerium's OIDC bridge as the same identity, with no
+// second prompt. Anonymous access and local accounts are off, so the bridge is the
+// only way to sign in.
 const BASE = process.env.POMERIUM_URL as string;
+
+// HedgeDoc's /me endpoint reports the session's user, or status "forbidden" for a
+// guest.
+async function whoami(page: import("@playwright/test").Page) {
+  const res = await page.request.get(`${BASE}/me`, { ignoreHTTPSErrors: true });
+  return res.json();
+}
 
 test("unauthenticated request is redirected to the identity provider", async ({ page }) => {
   await page.goto(BASE, { waitUntil: "domcontentloaded" });
   await expect(page).toHaveURL(/keycloak\.localhost\.pomerium\.io/);
 });
 
-test("an allowed user reaches HedgeDoc after SSO", async ({ page }) => {
+test("OIDC bridge signs the Pomerium identity into HedgeDoc", async ({ page }) => {
   await login(page, BASE, alice);
 
-  // The route serves HedgeDoc's own intro page, not a Pomerium bounce. Assert a
-  // control unique to that page (not just the brand title, which HedgeDoc's own
-  // login page also carries) so this proves the app itself rendered.
-  const res = await page.goto(BASE, { waitUntil: "domcontentloaded" });
-  expect(res!.status(), "HedgeDoc should respond OK after SSO").toBeLessThan(400);
-  await expect(page.getByRole("link", { name: /new guest note/i })).toBeVisible();
+  // Before HedgeDoc's login, the session is a guest.
+  expect((await whoami(page)).status).not.toBe("ok");
+
+  // Start HedgeDoc's OAuth2 login. Pomerium already has a session, so the bridge
+  // redirects straight back to HedgeDoc's callback with no prompt.
+  await page.goto(`${BASE}/auth/oauth2`, { waitUntil: "domcontentloaded" });
+  await page.waitForLoadState("networkidle");
+
+  const me = await whoami(page);
+  expect(me.status, "HedgeDoc should have signed the user in through the bridge").toBe("ok");
+
+  // Capture the signed-in HedgeDoc UI for the guide.
+  await page.goto(BASE, { waitUntil: "networkidle" });
   await shot(page, "hedgedoc");
 });
 
 test("the collaborative editor opens its WebSocket through the route", async ({ page }) => {
   await login(page, BASE, alice);
+  await page.goto(`${BASE}/auth/oauth2`, { waitUntil: "networkidle" });
 
-  // The headline of the guide: allow_websockets lets HedgeDoc's editor open its
-  // live connection. Open a new note and wait for the editor's WebSocket to
-  // connect through Pomerium. Without the route's WebSocket upgrade this times out.
+  // allow_websockets lets HedgeDoc's editor open its live connection. Open a new
+  // note and wait for the WebSocket to connect through Pomerium.
   const socket = page.waitForEvent("websocket", { timeout: 20000 });
   await page.goto(`${BASE}/new`, { waitUntil: "domcontentloaded" });
   const ws = await socket;
   expect(ws.url(), "editor WebSocket should run over the route host").toContain(
     new URL(BASE).host,
   );
+});
+
+test("the upstream is unreachable except through Pomerium", async ({ page }) => {
+  // HedgeDoc is on an internal-only network shared with Pomerium. The test-runner sits
+  // on the default network, so a direct hit to hedgedoc:3000 must fail.
+  let directError = "";
+  try {
+    await page.request.get("http://hedgedoc:3000/", { ignoreHTTPSErrors: true, timeout: 5000 });
+  } catch (e) {
+    directError = String(e);
+  }
+  expect(
+    directError,
+    "direct dial to HedgeDoc should be refused, not routed (network isolation)",
+  ).toMatch(/ENOTFOUND|getaddrinfo|EAI_AGAIN|ECONNREFUSED/i);
 });

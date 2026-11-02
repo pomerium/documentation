@@ -1,12 +1,21 @@
 services:
   pomerium:
-    image: pomerium/pomerium:v0.32.7@sha256:e10d1d267af24f581157f485d9b0bc08469e2428675b696a08e42ceb09b2279c
+    image: pomerium/pomerium:v0.34.0@sha256:TODO
     volumes:
       - ./config.yaml:/pomerium/config.yaml:ro
       - pomerium-cache:/data
     ports:
       - 443:443
       - 80:80
+    # Pomerium is the only service on the default network (where its ports are
+    # published) and is also on the internal network so it can reach HedgeDoc.
+    # The alias lets HedgeDoc reach the authenticate service over the internal
+    # network, because that network has no route to the outside world.
+    networks:
+      default: {}
+      internal:
+        aliases:
+          - authenticate.yourdomain.com
     restart: always
 
   hedgedoc:
@@ -19,8 +28,32 @@ services:
       - CMD_URL_ADDPORT=false
       # Replace this with your own value: head -c32 /dev/urandom | base64
       - CMD_SESSION_SECRET=replace-with-a-random-session-secret
+      # Pomerium's OIDC bridge as HedgeDoc's OAuth2 login. HedgeDoc has no
+      # discovery, so each endpoint is set explicitly. Replace the host with your
+      # authenticate service, set as authenticate_service_url in config.yaml.
+      - CMD_OAUTH2_PROVIDERNAME=Pomerium
+      # Must match the route's `from` URL.
+      - CMD_OAUTH2_CLIENT_ID=https://hedgedoc.yourdomain.com
+      # Use PKCE, so no client secret is needed.
+      - CMD_OAUTH2_PKCE=true
+      - CMD_OAUTH2_SCOPE=openid email profile
+      - CMD_OAUTH2_AUTHORIZATION_URL=https://authenticate.yourdomain.com/oidc/auth
+      - CMD_OAUTH2_TOKEN_URL=https://authenticate.yourdomain.com/oidc/token
+      - CMD_OAUTH2_USER_PROFILE_URL=https://authenticate.yourdomain.com/oidc/userinfo
+      # Map the userinfo claims to the HedgeDoc account.
+      - CMD_OAUTH2_USER_PROFILE_ID_ATTR=sub
+      - CMD_OAUTH2_USER_PROFILE_USERNAME_ATTR=email
+      - CMD_OAUTH2_USER_PROFILE_DISPLAY_NAME_ATTR=name
+      - CMD_OAUTH2_USER_PROFILE_EMAIL_ATTR=email
+      # Make Pomerium the only way to sign in: no guest access, no local accounts.
+      - CMD_ALLOW_ANONYMOUS=false
+      - CMD_EMAIL=false
+      - CMD_ALLOW_EMAIL_REGISTER=false
     volumes:
       - hedgedoc-uploads:/hedgedoc/public/uploads
+    # HedgeDoc is only on the internal network, so Pomerium is the only way in.
+    networks:
+      internal: {}
     restart: always
     depends_on:
       - database
@@ -34,7 +67,16 @@ services:
       - POSTGRES_DB=hedgedoc
     volumes:
       - hedgedoc-database:/var/lib/postgresql/data
+    networks:
+      internal: {}
     restart: always
+
+networks:
+  # No gateway to the host or the outside, so only Pomerium (which also sits on the
+  # default network) can reach HedgeDoc. Pomerium's alias is how HedgeDoc reaches
+  # the authenticate service from here.
+  internal:
+    internal: true
 
 volumes:
   pomerium-cache:

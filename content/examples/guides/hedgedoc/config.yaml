@@ -1,14 +1,29 @@
-# Pomerium Core configuration for HedgeDoc. Uses the hosted authenticate service, so
-# you don't run your own identity provider. To self-host the IdP, see the Keycloak
-# guide: https://www.pomerium.com/docs/integrations/user-identity/oidc
-authenticate_service_url: https://authenticate.pomerium.app
+# Pomerium Core configuration for HedgeDoc. The OIDC bridge needs a self-hosted
+# authenticate service, so set this to a domain you control. Hosted authenticate
+# domains don't serve the bridge.
+authenticate_service_url: https://authenticate.yourdomain.com
+
+# Your identity provider. See the Keycloak guide for an example:
+# https://www.pomerium.com/docs/integrations/user-identity/oidc
+idp_provider: oidc
+idp_provider_url: https://keycloak.yourdomain.com/realms/pomerium
+idp_client_id: REPLACE_WITH_CLIENT_ID
+idp_client_secret: REPLACE_WITH_CLIENT_SECRET
 
 # Obtain TLS certificates automatically from Let's Encrypt.
 autocert: true
 
+# Signs and encrypts the OIDC tokens Pomerium issues to HedgeDoc. Generate your own
+# and keep it secret. Keep the same value across restarts:
+#   openssl rand -base64 32
+shared_secret: REPLACE_WITH_BASE64_32_BYTE_SECRET
+
 routes:
   - from: https://hedgedoc.yourdomain.com
     to: http://hedgedoc:3000
+    # Makes Pomerium the OpenID Connect provider for this route. HedgeDoc uses
+    # PKCE, so no client_secret is needed.
+    oidc_bridge: {}
     # HedgeDoc's collaborative editor keeps a live connection open, so the route
     # has to allow WebSocket upgrades.
     allow_websockets: true

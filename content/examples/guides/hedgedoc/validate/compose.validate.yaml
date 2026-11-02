@@ -1,6 +1,7 @@
 # Sealed E2E validation for the HedgeDoc guide. Reuses the shared harness (Keycloak +
 # certs + headless runner) and adds HedgeDoc + its Postgres database plus a Pomerium
-# wired to the in-network IdP. Run with: scripts/validate-guide-fixtures.sh hedgedoc
+# wired to the in-network IdP. HedgeDoc logs in through Pomerium's OIDC bridge.
+# Run with: scripts/validate-guide-fixtures.sh hedgedoc
 
 include:
   - ../../_harness/compose/compose.harness.yaml
@@ -19,7 +20,7 @@ services:
       retries: 30
       start_period: 10s
     networks:
-      default:
+      internal:
         aliases:
           - database
 
@@ -31,6 +32,25 @@ services:
       CMD_PROTOCOL_USESSL: 'true'
       CMD_URL_ADDPORT: 'false'
       CMD_SESSION_SECRET: test-only-session-secret-do-not-reuse
+      CMD_OAUTH2_PROVIDERNAME: Pomerium
+      CMD_OAUTH2_CLIENT_ID: https://hedgedoc.localhost.pomerium.io
+      CMD_OAUTH2_PKCE: 'true'
+      CMD_OAUTH2_SCOPE: openid email profile
+      CMD_OAUTH2_AUTHORIZATION_URL: https://authenticate.localhost.pomerium.io/oidc/auth
+      CMD_OAUTH2_TOKEN_URL: https://authenticate.localhost.pomerium.io/oidc/token
+      CMD_OAUTH2_USER_PROFILE_URL: https://authenticate.localhost.pomerium.io/oidc/userinfo
+      CMD_OAUTH2_USER_PROFILE_ID_ATTR: sub
+      CMD_OAUTH2_USER_PROFILE_USERNAME_ATTR: email
+      CMD_OAUTH2_USER_PROFILE_DISPLAY_NAME_ATTR: name
+      CMD_OAUTH2_USER_PROFILE_EMAIL_ATTR: email
+      CMD_ALLOW_ANONYMOUS: 'false'
+      CMD_EMAIL: 'false'
+      CMD_ALLOW_EMAIL_REGISTER: 'false'
+      # Trust the harness CA so HedgeDoc can call Pomerium's OIDC endpoints over TLS.
+      # Validation-only; the published guide uses a public certificate.
+      NODE_EXTRA_CA_CERTS: /certs/ca.crt
+    volumes:
+      - certs:/certs:ro
     depends_on:
       database:
         condition: service_healthy
@@ -44,13 +64,15 @@ services:
       timeout: 5s
       retries: 40
       start_period: 90s
+    # HedgeDoc and its database live ONLY on the internal network shared with
+    # Pomerium, so the test-runner cannot reach hedgedoc:3000 directly.
     networks:
-      default:
+      internal:
         aliases:
           - hedgedoc
 
   pomerium:
-    image: pomerium/pomerium:v0.32.7@sha256:e10d1d267af24f581157f485d9b0bc08469e2428675b696a08e42ceb09b2279c
+    image: pomerium/pomerium:v0.34.0@sha256:TODO
     command: ['--config', '/pomerium/config.yaml']
     env_file:
       - ../../_harness/pomerium/validation.env
@@ -64,14 +86,26 @@ services:
         condition: service_healthy
       hedgedoc:
         condition: service_healthy
+    # Pomerium straddles both networks: `default` so the runner and Keycloak can
+    # reach it, `internal` so it alone can route to HedgeDoc and so HedgeDoc can reach
+    # the authenticate service.
     networks:
       default:
         aliases:
           - authenticate.localhost.pomerium.io
           - hedgedoc.localhost.pomerium.io
+      internal:
+        aliases:
+          - authenticate.localhost.pomerium.io
     healthcheck:
       test: ['CMD', 'pomerium', 'health']
       interval: 5s
       timeout: 5s
       retries: 30
       start_period: 10s
+
+networks:
+  # internal: true means no gateway to the host/outside; only services explicitly
+  # attached (hedgedoc, database + pomerium) can talk on it.
+  internal:
+    internal: true
