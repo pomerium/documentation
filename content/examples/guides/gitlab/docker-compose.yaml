@@ -1,12 +1,19 @@
 services:
   pomerium:
-    image: pomerium/pomerium:v0.32.7@sha256:e10d1d267af24f581157f485d9b0bc08469e2428675b696a08e42ceb09b2279c
+    image: pomerium/pomerium:v0.34.0@sha256:TODO
     volumes:
       - ./config.yaml:/pomerium/config.yaml:ro
       - pomerium-cache:/data
     ports:
       - 443:443
       - 80:80
+    # GitLab calls the authenticate service from inside its container for OIDC
+    # discovery and the token exchange. The alias lets it reach Pomerium over the
+    # Compose network instead of going out to the public internet and back.
+    networks:
+      default:
+        aliases:
+          - authenticate.yourdomain.com
     restart: always
 
   gitlab:
@@ -17,6 +24,38 @@ services:
         letsencrypt['enable'] = false
         nginx['listen_port'] = 80
         nginx['listen_https'] = false
+
+        # Create accounts on first sign-in through Pomerium, and activate them
+        # immediately. Pomerium's route policy decides who can get this far.
+        gitlab_rails['omniauth_allow_single_sign_on'] = ['openid_connect']
+        gitlab_rails['omniauth_block_auto_created_users'] = false
+        # Skip GitLab's sign-in page. For the local root login, browse to
+        # /users/sign_in?auto_sign_in=false
+        gitlab_rails['omniauth_auto_sign_in_with_provider'] = 'openid_connect'
+        gitlab_rails['omniauth_providers'] = [
+          {
+            name: 'openid_connect',
+            label: 'Pomerium',
+            args: {
+              name: 'openid_connect',
+              scope: ['openid', 'profile', 'email'],
+              response_type: 'code',
+              # Your authenticate_service_url, exactly as set in config.yaml.
+              issuer: 'https://authenticate.yourdomain.com',
+              discovery: true,
+              # Send the client ID in the request body, not in an HTTP Basic header.
+              client_auth_method: 'query',
+              pkce: true,
+              client_options: {
+                # Must match the route's `from` URL.
+                identifier: 'https://gitlab.yourdomain.com',
+                # GitLab requires a value here. The bridge ignores it for a PKCE client.
+                secret: 'unused',
+                redirect_uri: 'https://gitlab.yourdomain.com/users/auth/openid_connect/callback'
+              }
+            }
+          }
+        ]
     volumes:
       - gitlab-config:/etc/gitlab
       - gitlab-logs:/var/log/gitlab

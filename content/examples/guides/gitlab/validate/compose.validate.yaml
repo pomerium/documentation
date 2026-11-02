@@ -2,10 +2,9 @@
 # certs + headless runner) and adds GitLab + a Pomerium wired to the in-network IdP.
 # Run with: scripts/validate-guide-fixtures.sh gitlab
 #
-# This is a real end-to-end test: it proves Pomerium gates the route, an allowed
-# user passes the gate, then signs in to GitLab itself as root and GitLab's own API
-# (/api/v4/user) confirms the authenticated root session. initial_root_password
-# below is a throwaway credential for this sealed, ephemeral container.
+# This is a real end-to-end test: it proves Pomerium gates the route, then GitLab
+# completes its OpenID Connect login against Pomerium's OIDC bridge and GitLab's own
+# API (/api/v4/user) confirms the session belongs to the Pomerium identity.
 #
 # GitLab is heavy and slow to boot (several minutes, multiple GB RAM), so its
 # healthcheck uses a very generous start_period; Pomerium waits for it to report
@@ -23,8 +22,37 @@ services:
         letsencrypt['enable'] = false
         nginx['listen_port'] = 80
         nginx['listen_https'] = false
-        gitlab_rails['initial_root_password'] = 'qN7zR2mK9vX4tB6wL3sH8cY5'
+
+        # OIDC login through Pomerium's bridge, as the published guide ships it.
+        gitlab_rails['omniauth_allow_single_sign_on'] = ['openid_connect']
+        gitlab_rails['omniauth_block_auto_created_users'] = false
+        gitlab_rails['omniauth_auto_sign_in_with_provider'] = 'openid_connect'
+        gitlab_rails['omniauth_providers'] = [
+          {
+            name: 'openid_connect',
+            label: 'Pomerium',
+            args: {
+              name: 'openid_connect',
+              scope: ['openid', 'profile', 'email'],
+              response_type: 'code',
+              issuer: 'https://authenticate.localhost.pomerium.io',
+              discovery: true,
+              client_auth_method: 'query',
+              pkce: true,
+              client_options: {
+                identifier: 'https://gitlab.localhost.pomerium.io',
+                secret: 'unused',
+                redirect_uri: 'https://gitlab.localhost.pomerium.io/users/auth/openid_connect/callback'
+              }
+            }
+          }
+        ]
+      # Trust the harness CA so GitLab can fetch Pomerium's OIDC discovery over TLS.
+      # Validation-only.
+      SSL_CERT_FILE: /certs/ca.crt
     shm_size: '256m'
+    volumes:
+      - certs:/certs:ro
     networks:
       default:
         aliases:
@@ -37,7 +65,7 @@ services:
       start_period: 600s
 
   pomerium:
-    image: pomerium/pomerium:v0.32.7@sha256:e10d1d267af24f581157f485d9b0bc08469e2428675b696a08e42ceb09b2279c
+    image: pomerium/pomerium:v0.34.0@sha256:TODO
     command: ['--config', '/pomerium/config.yaml']
     env_file:
       - ../../_harness/pomerium/validation.env
