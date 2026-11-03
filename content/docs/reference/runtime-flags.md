@@ -24,7 +24,7 @@ If you find that you need to change one of these settings, please let us know by
 
 ## How to configure
 
-Runtime flags are currently configurable only in Pomerium Core.
+Configure runtime flags in Pomerium Core. For the Ingress Controller, set `spec.runtimeFlags` on the `Pomerium` resource. Pomerium Zero and the Enterprise Console do not expose runtime flags.
 
 | **Config file key** | **Environment variable** | **Type** |
 | :-- | :-- | :-- |
@@ -45,6 +45,7 @@ The available flags are:
 | `mcp` | Enables the MCP services for the authorize service. | `false` |
 | `mcp_dynamic_client_registration` | Enables new OAuth 2.0 Dynamic Client Registration (DCR) flows for upstream MCP servers that have not migrated to Client ID Metadata Documents (CIMD). Enable only for compatibility with those servers. | `false` |
 | `pomerium_jwt_endpoint` | Temporary opt-out of the `/.pomerium/jwt` deprecation: when set to `true`, Pomerium will continue to issue a JWT from the deprecated `/.pomerium/jwt` endpoint. (This endpoint does not provide the desired security properties for the Pomerium JWT and will be removed in a future release.) | `false` |
+| `product_analytics` | Sends periodic [usage reports](/docs/reference/usage-data) from official builds. Set to `false` to disable reporting. | `true` |
 | `refresh_session_at_id_token_expiration` | Changes the session refresh behavior so that a session will also be refreshed when the ID token is set to expire. If the identity provider issues a new ID token during refresh, this will allow Pomerium to maintain a valid ID token for the entire lifetime of a session. | `true` |
 | `routes_portal` | Enables the web-based routes portal dashboard. | `true` |
 | `set_envoy_concurrency_to_go_max_procs` | Sets the Envoy concurrency option to GOMAXPROCS. | `true` |

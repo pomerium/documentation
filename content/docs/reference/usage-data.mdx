@@ -1,0 +1,177 @@
+---
+# cSpell:ignore posthog
+id: usage-data
+title: Usage data
+description: What Pomerium usage reports contain, how they work, and how to disable reporting.
+keywords:
+  [usage data, usage report, product analytics, telemetry, runtime flags]
+pagination_prev: null
+pagination_next: null
+toc_max_heading_level: 2
+---
+
+# Usage data
+
+Starting with v0.34, official builds of Pomerium send periodic usage reports by default.
+
+Usage reports help us understand how Pomerium is deployed in practice—which operating systems, architectures, identity providers, and policy features are used—so we can focus engineering, testing, and performance work where it matters most.
+
+Reports capture the **shape** of your deployment, never its contents. For example, a report records that a route uses an `email` policy criterion, but never includes the email address itself.
+
+Reports **never** include:
+
+- User names, email addresses, or user identifiers
+- Route names, hostnames, upstream URLs, or domain names
+- Policy values, certificates, keys, or secrets
+
+## How reporting works
+
+- **Schedule:** Each Pomerium process sends its first report 5 minutes after startup, and every 12 hours thereafter. In multi-process deployments, each process reports independently.
+- **Endpoint:** Reports are sent over HTTPS to `https://licensing.pomerium.app`. If you restrict egress traffic, your firewall only needs to allow outbound HTTPS to `licensing.pomerium.app`.
+- **Allowlisted values only:** To ensure custom strings never leak into reports, Pomerium only records feature names, numeric counts, and values from predefined allowlists. Unset fields appear as `none`, and custom or unrecognized values appear as `other`.
+- **Anonymous installation ID:** Each installation is identified by an anonymous hash (`distinct_id`).
+
+## Disabling usage reporting
+
+Usage reporting is enabled only in official binaries, packages, and container images published by Pomerium. Standard builds compiled from source do not send usage reports.
+
+To disable usage reporting in an official build, set the `product_analytics` [runtime flag](/docs/reference/runtime-flags) to `false` in your configuration file:
+
+```yaml
+runtime_flags:
+  product_analytics: false
+```
+
+Or set the `RUNTIME_FLAGS` environment variable:
+
+```bash
+RUNTIME_FLAGS='{"product_analytics": false}'
+```
+
+Apply this setting to every Pomerium process in your deployment. Each process reports independently.
+
+For the Pomerium Ingress Controller, set `product_analytics: false` in `spec.runtimeFlags` of the `Pomerium` resource.
+
+:::caution Pomerium Zero
+
+Pomerium Zero has no setting to disable usage reporting.
+
+:::
+
+In Enterprise deployments, the Console's [`disable-remote-diagnostics`](/docs/deploy/enterprise/configure) option also disables Core usage reporting. See [Other Pomerium reports](#other-pomerium-reports).
+
+## Other Pomerium reports
+
+The Enterprise Console sends its own product events and usage metrics, separate from the Core report described on this page.
+
+Core processes in a Pomerium Zero cluster send the usage report described here with `product` set to `zero`. Zero also sends separate metrics to its control plane.
+
+## What reports contain
+
+The following table lists the properties collected by Pomerium. The [example report](#example-report) also includes metadata added by the PostHog client library.
+
+| Property | Description |
+| --- | --- |
+| `build_version` | Build version, including the commit for Core. |
+| `certificate_count` | Number of certificates, including automatic and derived certificates. |
+| `changed_route_settings` | Names of route settings that differ from the global value on at least one route. Related settings share a name, such as `timeouts`. |
+| `changed_runtime_flags` | Names of runtime flags that differ from their defaults. Unknown flag names appear as `other`. |
+| `changed_settings` | Names of global settings that differ from their defaults. Related settings share a name, such as `autocert`. `shared_secret` and `signing_key` are omitted. Other settings that contain secrets can appear by name, such as `metrics` or `ssh`, but their values are excluded. |
+| `cpu_count` | Number of logical processors on the host. |
+| `databroker_storage_type` | Databroker storage type: `memory`, `file`, or `postgres`. |
+| `envoy_version` | Version of the Envoy build included with Pomerium. |
+| `identity_provider` | Identity provider type: `apple`, `auth0`, `azure`, `cognito`, `github`, `gitlab`, `google`, `hosted`, `oidc`, `okta`, `onelogin`, or `ping`. Unset providers appear as `none`; unknown values appear as `other`. |
+| `kernel_arch` | Kernel architecture, such as `aarch64`. |
+| `log_level` | Pomerium log level. Invalid values appear as `other`. |
+| `mem_total_gib` | Total host memory, rounded to the nearest GiB. |
+| `originator_id` | Configuration source: `local` or `terraform`. Unset sources appear as `none`; unknown values appear as `other`. |
+| `os` | Operating system, such as `linux`. |
+| `platform` | Operating system distribution, such as `debian`. |
+| `platform_version` | Distribution version, such as `13.7`. |
+| `policy_count` | Number of policies across all routes. An attached policy shared by multiple routes counts once. |
+| `ppl_criteria` | Number of routes that use each PPL criterion. Criteria outside the predefined list appear as `other`. |
+| `ppl_operators` | Number of rules that use each PPL operator: `and`, `nor`, `not`, or `or`. |
+| `product` | Product sending the report: `core`, `ingress-controller`, or `zero`. |
+| `proxy_log_level` | Envoy log level. Invalid values appear as `other`. |
+| `route_count` | Number of routes. |
+| `route_types` | Number of routes of each type: `kubernetes`, `mcp_server`, `mcp_client`, `ssh`, `tcp`, `udp`, or `http`. |
+| `services` | Services running in the process, such as `all` or `authorize,proxy`. |
+| `session_count` | Number of sessions known to the process. See [User and session counts](#user-and-session-counts). |
+| `shared_policy_count` | Number of attached policies used by more than one route. |
+| `user_count` | Number of users known to the process. See [User and session counts](#user-and-session-counts). |
+| `virtualization_system` | Virtualization or container system, such as `docker`. Empty when none is detected. |
+
+### User and session counts
+
+User and session counts depend on which process sends the report. Only the process holding the identity manager lease syncs user and session records. A process that has never held that lease reports `0` for both counts.
+
+### Installation identifier
+
+The `distinct_id` field contains a hash that identifies the installation. When you set `installation_id`, the same hash also appears in `$groups.pseudonymous_installation_id`. The report does not include the original `installation_id` value.
+
+Pomerium computes the identifier with HMAC-SHA256, using `installation_id` as the input and a key derived from the shared secret. If `installation_id` is empty, Pomerium uses a fixed string as the input. Changing the shared secret changes the identifier. With no configured shared secret, the identifier changes on each restart.
+
+## Example report
+
+This example shows a report from a Core process with three routes. Reports are sent in a `batch` array alongside the PostHog project key.
+
+```json
+{
+  "distinct_id": "p10P2vkV4ltmP0g1tfYz0iV1kwGhH55qEbAj23nKo+4=",
+  "event": "core_periodic_analytics",
+  "properties": {
+    "$go_version": "go1.27.3",
+    "$groups": {
+      "pseudonymous_installation_id": "p10P2vkV4ltmP0g1tfYz0iV1kwGhH55qEbAj23nKo+4="
+    },
+    "$is_server": true,
+    "$lib": "posthog-go",
+    "$lib_version": "1.35.1",
+    "$os": "Linux",
+    "$os_distro": "Debian GNU/Linux",
+    "$os_version": "13",
+    "build_version": "0.34.0+e31c8da2c",
+    "certificate_count": 0,
+    "changed_route_settings": ["identity_headers", "timeouts"],
+    "changed_runtime_flags": [],
+    "changed_settings": ["address", "idp_provider_url", "insecure_server"],
+    "cpu_count": 16,
+    "databroker_storage_type": "memory",
+    "envoy_version": "20261001000628-2a7e5f0ae596",
+    "identity_provider": "oidc",
+    "kernel_arch": "aarch64",
+    "log_level": "info",
+    "mem_total_gib": 16,
+    "originator_id": "none",
+    "os": "linux",
+    "platform": "debian",
+    "platform_version": "13.7",
+    "policy_count": 3,
+    "ppl_criteria": {
+      "accept": 1,
+      "domain": 1,
+      "email": 1
+    },
+    "ppl_operators": {
+      "and": 1,
+      "or": 2
+    },
+    "product": "core",
+    "proxy_log_level": "info",
+    "route_count": 3,
+    "route_types": {
+      "http": 2,
+      "tcp": 1
+    },
+    "services": "all",
+    "session_count": 0,
+    "shared_policy_count": 0,
+    "user_count": 0,
+    "virtualization_system": "docker"
+  },
+  "timestamp": "2026-11-01T01:48:23.757028027Z",
+  "uuid": "3ecc0ff9-f6fd-4da4-a8e3-ffc61d63429d"
+}
+```
+
+Properties beginning with `$`, except `$groups`, are added by the PostHog client library.
