@@ -37,7 +37,9 @@ services:
       CMD_OAUTH2_PKCE: 'true'
       # HedgeDoc only enables OAuth2 when a client secret is set, even with PKCE.
       CMD_OAUTH2_CLIENT_SECRET: unused
-      CMD_OAUTH2_SCOPE: openid email profile
+      # TODO: restore "openid email profile" (as in the guide) once the released
+      # bridge accepts multiple scopes. The v0.35.0 pre-release build rejects them.
+      CMD_OAUTH2_SCOPE: openid
       CMD_OAUTH2_AUTHORIZATION_URL: https://authenticate.localhost.pomerium.io/oidc/auth
       CMD_OAUTH2_TOKEN_URL: https://authenticate.localhost.pomerium.io/oidc/token
       CMD_OAUTH2_USER_PROFILE_URL: https://authenticate.localhost.pomerium.io/oidc/userinfo
@@ -74,7 +76,10 @@ services:
           - hedgedoc
 
   pomerium:
-    image: pomerium/pomerium:v0.34.0@sha256:TODO
+    # TODO: switch to the pomerium/pomerium v0.35.0 release image (pinned by digest)
+    # once it ships. Until then this uses the unreleased OIDC bridge build from
+    # gcp-demo: docker load < pomerium-oidc-bridge-7f192990.image.tar.gz
+    image: local/pomerium:oidc-bridge-7f192990
     command: ['--config', '/pomerium/config.yaml']
     env_file:
       - ../../_harness/pomerium/validation.env
