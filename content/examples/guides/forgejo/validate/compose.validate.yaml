@@ -65,7 +65,11 @@ services:
         aliases:
           - authenticate.localhost.pomerium.io
           - forgejo.localhost.pomerium.io
-      forgejo-internal: {}
+      # The alias lets Forgejo reach the authenticate service for OIDC discovery
+      # over the internal network, which has no route to the outside world.
+      forgejo-internal:
+        aliases:
+          - authenticate.localhost.pomerium.io
     healthcheck:
       test: ["CMD", "pomerium", "health"]
       interval: 5s

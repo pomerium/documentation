@@ -98,7 +98,7 @@ The Gitea image writes each `GITEA__*` variable into `/data/gitea/conf/app.ini` 
 
 ### Sign-out
 
-When a user who signed in through Pomerium selects **Sign out**, Gitea ends its own session and redirects to the `end_session_endpoint` in Pomerium's discovery document. Pomerium then ends its session and the identity provider session behind it. You don't need to configure anything for this.
+When a user who signed in through Pomerium selects **Sign out**, Gitea ends its own session and redirects to the `end_session_endpoint` in Pomerium's discovery document. Pomerium asks the user to confirm, then ends its session and the identity provider session behind it. This is why the route sets `preserve_host_header: true`: Gitea builds the post-sign-out redirect from the request's `Host` header, so without it users are sent back to the internal `gitea:3000` address.
 
 ### Choose how usernames are created
 
@@ -168,7 +168,7 @@ You don't need a separate break-glass administrator. Gitea is only reachable thr
 
    ![The Gitea dashboard, signed in as the Pomerium identity](img/gitea/gitea-dashboard.png)
 
-4. **Sign-out ends both sessions.** Select **Sign out**. Open `https://gitea.yourdomain.com` again. Your identity provider asks you to sign in, and then you land on the dashboard again.
+4. **Sign-out ends both sessions.** Select **Sign out**, then **Logout** on Pomerium's confirmation page. Open `https://gitea.yourdomain.com` again. Your identity provider asks you to sign in, and then you land on the dashboard again.
 5. **A disallowed user is blocked.** Sign in as a user your policy excludes and open `https://gitea.yourdomain.com`. Pomerium denies access before Gitea loads, so Gitea never creates an account.
 
 ## Recover admin access
