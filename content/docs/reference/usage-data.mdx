@@ -16,7 +16,7 @@ Starting with v0.34, official builds of Pomerium send periodic usage reports by 
 
 Usage reports help us understand how Pomerium is deployed in practice—which operating systems, architectures, identity providers, and policy features are used—so we can focus engineering, testing, and performance work where it matters most.
 
-Reports capture the **shape** of your deployment, never its contents. For example, a report records that a route uses an `email` policy criterion, but never includes the email address itself.
+Reports capture how your deployment is configured and used. For example, a report records that a route uses an `email` policy criterion, but never includes the email address itself. Reports also include an installation identifier whose format depends on the license type. See [Installation identifier](#installation-identifier).
 
 Reports **never** include:
 
@@ -28,8 +28,8 @@ Reports **never** include:
 
 - **Schedule:** Each Pomerium process sends its first report 5 minutes after startup, and every 12 hours thereafter. In multi-process deployments, each process reports independently.
 - **Endpoint:** Reports are sent over HTTPS to `https://licensing.pomerium.app`. If you restrict egress traffic, your firewall only needs to allow outbound HTTPS to `licensing.pomerium.app`.
-- **Allowlisted values only:** To ensure custom strings never leak into reports, Pomerium only records feature names, numeric counts, and values from predefined allowlists. Unset fields appear as `none`, and custom or unrecognized values appear as `other`.
-- **Anonymous installation ID:** Each installation is identified by an anonymous hash (`distinct_id`).
+- **Configuration data:** Reports record feature names and numeric counts instead of route, policy, or secret values. The table below describes the reported categories and their `none` or `other` values.
+- **Installation ID:** Community Edition reports use a hash as `distinct_id`. Commercial and commercial trial reports use the original `installation_id` when one is set. See [Installation identifier](#installation-identifier).
 
 ## Disabling usage reporting
 
@@ -107,13 +107,20 @@ User and session counts depend on which process sends the report. Only the proce
 
 ### Installation identifier
 
-The `distinct_id` field contains a hash that identifies the installation. When you set `installation_id`, the same hash also appears in `$groups.pseudonymous_installation_id`. The report does not include the original `installation_id` value.
+When `installation_id` is set, the license type determines how the report identifies the installation:
 
-Pomerium computes the identifier with HMAC-SHA256, using `installation_id` as the input and a key derived from the shared secret. If `installation_id` is empty, Pomerium uses a fixed string as the input. Changing the shared secret changes the identifier. With no configured shared secret, the identifier changes on each restart.
+| License type | `distinct_id` | Installation group |
+| --- | --- | --- |
+| Community Edition | A hash of `installation_id`. The original value is excluded. | `$groups.pseudonymous_installation_id` contains the same hash. |
+| Commercial or commercial trial | The original `installation_id` value. | `$groups.installation_id` contains the same original value. |
+
+For the hashed identifier, Pomerium uses HMAC-SHA256 with a key derived from the shared secret. Changing the shared secret changes this identifier. With no configured shared secret, the hashed identifier changes on each restart.
+
+If `installation_id` is empty, all reporting license types use a hash of a fixed string as `distinct_id` and omit the installation group. Standard source builds do not send reports, as described in [Disabling usage reporting](#disabling-usage-reporting).
 
 ## Example report
 
-This example shows a report from a Core process with three routes. Reports are sent in a `batch` array alongside the PostHog project key.
+This example shows a Community Edition report from a Core process with three routes. Reports are sent in a `batch` array alongside the PostHog project key.
 
 ```json
 {
@@ -175,3 +182,16 @@ This example shows a report from a Core process with three routes. Reports are s
 ```
 
 Properties beginning with `$`, except `$groups`, are added by the PostHog client library.
+
+For a commercial or commercial trial deployment with `installation_id` set to `example-installation`, the identifier fields instead contain the original value:
+
+```json
+{
+  "distinct_id": "example-installation",
+  "properties": {
+    "$groups": {
+      "installation_id": "example-installation"
+    }
+  }
+}
+```
