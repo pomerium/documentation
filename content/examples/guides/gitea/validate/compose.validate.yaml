@@ -94,6 +94,10 @@ services:
           --key https://gitea.localhost.pomerium.io \
           --secret gitea-e2e-client-secret \
           --auto-discover-url https://authenticate.localhost.pomerium.io/.well-known/openid-configuration
+        # Stay running and report healthy once registered: `up --wait` treats a
+        # setup container that has exited as a failed service.
+        touch /tmp/setup-done
+        exec sleep infinity
     environment:
       GITEA__database__DB_TYPE: "sqlite3"
       GITEA__security__INSTALL_LOCK: "true"
@@ -107,6 +111,10 @@ services:
     networks:
       - gitea-internal
       - default
+    healthcheck:
+      test: ["CMD", "test", "-f", "/tmp/setup-done"]
+      interval: 2s
+      retries: 60
     restart: "no"
 
 networks:
