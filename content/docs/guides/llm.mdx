@@ -53,14 +53,8 @@ It uses Open WebUI's generic OIDC login, which works with Pomerium's [OIDC bridg
 
 - [Docker](https://docs.docker.com/install/) and [Docker Compose](https://docs.docker.com/compose/install/)
 - Pomerium Core with a self-hosted authenticate service on a domain you control (this guide uses `authenticate.yourdomain.com`). The OIDC bridge isn't available on the hosted authenticate service.
-- An OpenID Connect identity provider. This guide uses [Keycloak](/docs/integrations/user-identity/oidc) as the example.
+- An identity provider. This guide uses Pomerium's [hosted identity provider](/docs/capabilities/authentication#hosted-authenticate-service) (`idp_provider: hosted`), which signs users in with email and password, Google, or GitHub. To use your own OpenID Connect identity provider instead, see [identity providers](/docs/integrations/user-identity/identity-providers) and set the `idp_*` settings in `config.yaml`.
 - A domain you control for the Open WebUI route (this guide uses `llm.yourdomain.com`)
-
-:::tip Need an identity provider?
-
-Follow [Keycloak + Pomerium](/docs/integrations/user-identity/oidc) to set one up, then fill in the `idp_*` settings in `config.yaml` with your client ID and secret.
-
-:::
 
 ## Configure Pomerium
 
@@ -98,7 +92,7 @@ The first user Open WebUI provisions becomes an admin; everyone provisioned afte
 
 ### Profile pictures
 
-Open WebUI sets each user's avatar from the standard OIDC `picture` claim, a URL to an image. The bridge passes along the claims Pomerium received from your identity provider, so the avatar appears when your identity provider sends `picture`. Google includes it for accounts with a profile photo. Keycloak sends it only when the user has a `picture` attribute, which you have to allow in the realm's user profile. If your identity provider uses a different claim name, set `OAUTH_PICTURE_CLAIM` to that name.
+Open WebUI sets each user's avatar from the standard OIDC `picture` claim, a URL to an image. The bridge passes along the claims Pomerium received from your identity provider, so the avatar appears when your identity provider sends `picture`. Google includes it for accounts with a profile photo. If your identity provider uses a different claim name, set `OAUTH_PICTURE_CLAIM` to that name.
 
 Open WebUI saves the picture only when it creates the account. Set `OAUTH_UPDATE_PICTURE_ON_LOGIN=true` to update it on every sign-in, so a photo added or changed later shows up after the user signs out and back in.
 
