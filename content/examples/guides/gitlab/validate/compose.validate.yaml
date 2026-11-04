@@ -47,12 +47,15 @@ services:
             }
           }
         ]
-      # Trust the harness CA so GitLab can fetch Pomerium's OIDC discovery over TLS.
-      # Validation-only.
-      SSL_CERT_FILE: /certs/ca.crt
     shm_size: '256m'
     volumes:
-      - certs:/certs:ro
+      # Trust the harness CA so GitLab can fetch Pomerium's OIDC discovery over TLS.
+      # GitLab's bundled Ruby ignores SSL_CERT_FILE, so use its trusted-certs
+      # directory, which it reads when it starts and needs to write to. Validation-only.
+      - certs:/etc/gitlab/trusted-certs
+    depends_on:
+      certs-init:
+        condition: service_completed_successfully
     networks:
       default:
         aliases:
