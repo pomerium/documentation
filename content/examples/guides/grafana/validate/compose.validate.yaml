@@ -14,7 +14,9 @@ services:
       GF_AUTH_GENERIC_OAUTH_NAME: Pomerium
       GF_AUTH_GENERIC_OAUTH_CLIENT_ID: https://grafana.localhost.pomerium.io
       GF_AUTH_GENERIC_OAUTH_USE_PKCE: 'true'
-      GF_AUTH_GENERIC_OAUTH_SCOPES: openid email profile
+      # TODO: restore "openid email profile" (as in the guide) once the released
+      # bridge accepts multiple scopes. The v0.35.0 pre-release build rejects them.
+      GF_AUTH_GENERIC_OAUTH_SCOPES: openid
       GF_AUTH_GENERIC_OAUTH_AUTH_URL: https://authenticate.localhost.pomerium.io/oidc/auth
       GF_AUTH_GENERIC_OAUTH_TOKEN_URL: https://authenticate.localhost.pomerium.io/oidc/token
       GF_AUTH_GENERIC_OAUTH_API_URL: https://authenticate.localhost.pomerium.io/oidc/userinfo
@@ -35,7 +37,10 @@ services:
           - grafana
 
   pomerium:
-    image: pomerium/pomerium:v0.34.0@sha256:TODO
+    # TODO: switch to the pomerium/pomerium v0.35.0 release image (pinned by digest)
+    # once it ships. Until then this uses the unreleased OIDC bridge build from
+    # gcp-demo: docker load < pomerium-oidc-bridge-7f192990.image.tar.gz
+    image: local/pomerium:oidc-bridge-7f192990
     command: ['--config', '/pomerium/config.yaml']
     env_file:
       - ../../_harness/pomerium/validation.env
