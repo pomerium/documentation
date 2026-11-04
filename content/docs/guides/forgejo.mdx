@@ -19,11 +19,11 @@ keywords:
 description: Put a Forgejo instance behind Pomerium and have Pomerium act as Forgejo's OpenID Connect provider through the OIDC bridge, so users sign in once and Forgejo creates their account.
 ---
 
-import CodeBlock from "@theme/CodeBlock";
+import CodeBlock from '@theme/CodeBlock';
 
-import Config from "!!raw-loader!/content/examples/guides/forgejo/config.yaml";
-import Compose from "!!raw-loader!/content/examples/guides/forgejo/docker-compose.yaml";
-import Footer from "!!raw-loader!/content/examples/guides/forgejo/footer.tmpl";
+import Config from '!!raw-loader!/content/examples/guides/forgejo/config.yaml';
+import Compose from '!!raw-loader!/content/examples/guides/forgejo/docker-compose.yaml';
+import Footer from '!!raw-loader!/content/examples/guides/forgejo/footer.tmpl';
 
 # Secure Forgejo with Pomerium
 
@@ -67,14 +67,8 @@ Use it when you want one front door for Forgejo with your existing identity, and
 
 - [Docker](https://docs.docker.com/install/) and [Docker Compose](https://docs.docker.com/compose/install/)
 - Pomerium Core with a self-hosted authenticate service on a domain you control (this guide uses `authenticate.yourdomain.com`). The OIDC bridge isn't available on the hosted authenticate service.
-- An OpenID Connect identity provider. This guide uses [Keycloak](/docs/integrations/user-identity/oidc) as the example.
+- An identity provider. This guide uses Pomerium's [hosted identity provider](/docs/capabilities/authentication#hosted-authenticate-service) (`idp_provider: hosted`), which signs users in with email and password, Google, or GitHub. To use your own OpenID Connect identity provider instead, see [identity providers](/docs/integrations/user-identity/identity-providers) and set the `idp_*` settings in `config.yaml`.
 - A domain you control for the Forgejo route (this guide uses `forgejo.yourdomain.com`)
-
-:::tip Need an identity provider?
-
-Follow [Keycloak + Pomerium](/docs/integrations/user-identity/oidc) to set one up, then fill in the `idp_*` settings in `config.yaml` with your client ID and secret.
-
-:::
 
 ## Configure Pomerium
 
@@ -136,11 +130,11 @@ To do without the template, leave out both the template and `LANDING_PAGE`. User
 
 Forgejo usernames can contain only letters, digits, `-`, `_`, and `.`, so a full email address can't be a username. `USERNAME` takes one of three values:
 
-| Value      | Username comes from                                                                                                                                                                                                       |
-| :--------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `email`    | The part of the `email` claim before the `@`                                                                                                                                                                              |
+| Value | Username comes from |
+| :-- | :-- |
+| `email` | The part of the `email` claim before the `@` |
 | `nickname` | The `nickname` claim, or `preferred_username` if there's no `nickname`. The value must already be a valid Forgejo username. Many identity providers set `preferred_username` to the email address, which Forgejo rejects. |
-| `userid`   | The `sub` claim. Always unique, but not readable.                                                                                                                                                                         |
+| `userid` | The `sub` claim. Always unique, but not readable. |
 
 You can't name another claim. To use a different value, map it into `nickname` or `preferred_username` in your identity provider and set `USERNAME: nickname`.
 
@@ -231,20 +225,20 @@ The response should include `"is_admin":true`. The token is never printed, and d
 
 ## Common failure modes
 
-| Symptom                                                                     | Cause and fix                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
-| :-------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Pomerium returns `403`                                                      | The route policy still allows only the example user. Replace it with your user or domain on both routes.                                                                                                                                                                                                                                                                                                                                                       |
-| Forgejo's login page shows a **Sign in with Pomerium** button               | The `/user/login` redirect route is missing or comes after the main Forgejo route. Put it first.                                                                                                                                                                                                                                                                                                                                                               |
-| `404 Not Found` after selecting **Sign in**                                 | The login source isn't named `pomerium`, so `/user/oauth2/pomerium` doesn't exist. Rename the source or change the redirect route's `path_redirect`.                                                                                                                                                                                                                                                                                                           |
-| `404 Not Found` from the discovery URL or any `/oidc/` path                 | Forgejo is pointing at the wrong host. Use your authenticate service URL, and check that `authenticate_service_url` and `idp_provider` are set.                                                                                                                                                                                                                                                                                                                |
-| HTTP 400 at `/oidc/auth`: `redirect_uri ... does not match client_id ...`   | The client ID (`--key`) doesn't match the route's `from` URL, or `FORGEJO__server__ROOT_URL` isn't the Forgejo URL.                                                                                                                                                                                                                                                                                                                                            |
-| Token request fails with `invalid_client`                                   | The client secret in Forgejo doesn't match the route's `client_secret`, or the client sends HTTP Basic credentials without `client_id` in the body. Check the secret first, then look for the `oidc: token request invalid` log line in Pomerium.                                                                                                                                                                                                              |
-| Forgejo shows a link-account or registration form instead of signing you in | Your username or email clashes with an existing Forgejo account. Register with a different username on that form. Forgejo creates a new account with your identity provider email and leaves the existing account alone. To avoid clashes, see [Choose how usernames are created](#choose-how-usernames-are-created).                                                                                                                                          |
+| Symptom | Cause and fix |
+| :-- | :-- |
+| Pomerium returns `403` | The route policy still allows only the example user. Replace it with your user or domain on both routes. |
+| Forgejo's login page shows a **Sign in with Pomerium** button | The `/user/login` redirect route is missing or comes after the main Forgejo route. Put it first. |
+| `404 Not Found` after selecting **Sign in** | The login source isn't named `pomerium`, so `/user/oauth2/pomerium` doesn't exist. Rename the source or change the redirect route's `path_redirect`. |
+| `404 Not Found` from the discovery URL or any `/oidc/` path | Forgejo is pointing at the wrong host. Use your authenticate service URL, and check that `authenticate_service_url` and `idp_provider` are set. |
+| HTTP 400 at `/oidc/auth`: `redirect_uri ... does not match client_id ...` | The client ID (`--key`) doesn't match the route's `from` URL, or `FORGEJO__server__ROOT_URL` isn't the Forgejo URL. |
+| Token request fails with `invalid_client` | The client secret in Forgejo doesn't match the route's `client_secret`, or the client sends HTTP Basic credentials without `client_id` in the body. Check the secret first, then look for the `oidc: token request invalid` log line in Pomerium. |
+| Forgejo shows a link-account or registration form instead of signing you in | Your username or email clashes with an existing Forgejo account. Register with a different username on that form. Forgejo creates a new account with your identity provider email and leaves the existing account alone. To avoid clashes, see [Choose how usernames are created](#choose-how-usernames-are-created). |
 | **Sign out** returns to the dashboard instead of Pomerium's signed-out page | The sign-out template isn't running, so Forgejo's own sign-out sends you to `/` and `LANDING_PAGE: login` signs you back in. Check that `footer.tmpl` is mounted at `/data/gitea/templates/custom/footer.tmpl`, restart Forgejo, and reload the page. After a Forgejo upgrade, check that the sign-out link still has a `data-url` ending in `/user/logout`. If you removed the template, also remove `LANDING_PAGE` from the Compose file and from `app.ini`. |
-| Sign-in stops at Forgejo's home page with a **Sign in** link                | `LANDING_PAGE` isn't `login`. Set it, or select **Sign in**, which still skips Forgejo's login page.                                                                                                                                                                                                                                                                                                                                                           |
-| The avatar is a generated pattern                                           | `UPDATE_AVATAR` isn't `true`, your identity provider doesn't send a `picture` claim, or Forgejo can't reach the image URL. Forgejo downloads it from the container on each sign-in.                                                                                                                                                                                                                                                                            |
-| `invalid_token` on Forgejo's user info request                              | The access token was issued before Pomerium restarted without a fixed `shared_secret`. Set `shared_secret` and sign in again.                                                                                                                                                                                                                                                                                                                                  |
-| Sign-in fails on the username                                               | Forgejo couldn't make a valid username from the claim `USERNAME` points at. See [Choose how usernames are created](#choose-how-usernames-are-created).                                                                                                                                                                                                                                                                                                         |
+| Sign-in stops at Forgejo's home page with a **Sign in** link | `LANDING_PAGE` isn't `login`. Set it, or select **Sign in**, which still skips Forgejo's login page. |
+| The avatar is a generated pattern | `UPDATE_AVATAR` isn't `true`, your identity provider doesn't send a `picture` claim, or Forgejo can't reach the image URL. Forgejo downloads it from the container on each sign-in. |
+| `invalid_token` on Forgejo's user info request | The access token was issued before Pomerium restarted without a fixed `shared_secret`. Set `shared_secret` and sign in again. |
+| Sign-in fails on the username | Forgejo couldn't make a valid username from the claim `USERNAME` points at. See [Choose how usernames are created](#choose-how-usernames-are-created). |
 
 ## Security considerations
 
