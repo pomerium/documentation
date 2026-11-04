@@ -44,7 +44,10 @@ services:
           - forgejo
 
   pomerium:
-    image: pomerium/pomerium:v0.34.0@sha256:TODO
+    # TODO: switch to the pomerium/pomerium v0.35.0 release image (pinned by digest)
+    # once it ships. Until then this uses the unreleased OIDC bridge build from
+    # gcp-demo: docker load < pomerium-oidc-bridge-7f192990.image.tar.gz
+    image: local/pomerium:oidc-bridge-7f192990
     command: ["--config", "/pomerium/config.yaml"]
     env_file:
       - ../../_harness/pomerium/validation.env
