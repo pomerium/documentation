@@ -53,14 +53,8 @@ Use it when you want one front door for Grafana with your existing identity, and
 
 - [Docker](https://docs.docker.com/install/) and [Docker Compose](https://docs.docker.com/compose/install/)
 - Pomerium Core with a self-hosted authenticate service on a domain you control (this guide uses `authenticate.yourdomain.com`). The OIDC bridge isn't available on the hosted authenticate service.
-- An OpenID Connect identity provider. This guide uses [Keycloak](/docs/integrations/user-identity/oidc) as the example.
+- An identity provider. This guide uses Pomerium's [hosted identity provider](/docs/capabilities/authentication#hosted-authenticate-service) (`idp_provider: hosted`), which signs users in with email and password, Google, or GitHub. To use your own OpenID Connect identity provider instead, see [identity providers](/docs/integrations/user-identity/identity-providers) and set the `idp_*` settings in `config.yaml`.
 - A domain you control for the Grafana route (this guide uses `grafana.yourdomain.com`)
-
-:::tip Need an identity provider?
-
-Follow [Keycloak + Pomerium](/docs/integrations/user-identity/oidc) to set one up, then fill in the `idp_*` settings in `config.yaml` with your client ID and secret.
-
-:::
 
 ## Configure Pomerium
 
