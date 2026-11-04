@@ -53,9 +53,20 @@ test("Gitea sign-out also ends the Pomerium session", async ({ page }) => {
   await login(page, BASE, alice);
   await page.goto(`${BASE}/`, { waitUntil: "networkidle" });
 
-  // Gitea's own sign-out redirects to the end_session_endpoint that Pomerium's
-  // discovery document advertises (/.pomerium/sign_out).
-  await page.goto(`${BASE}/user/logout`, { waitUntil: "domcontentloaded" });
+  // Gitea signs out with a POST from its sign-out link, then redirects to the
+  // end_session_endpoint that Pomerium's discovery document advertises
+  // (/.pomerium/sign_out). The link sits in a closed dropdown, so dispatch the
+  // click directly.
+  await page
+    .locator('[data-url$="/user/logout"], a[href$="/user/logout"]')
+    .first()
+    .dispatchEvent("click");
+  await page.waitForURL((url) => !url.hostname.startsWith("gitea."), {
+    timeout: 15000,
+  });
+
+  // Pomerium asks for confirmation because Gitea sends no id_token_hint.
+  await page.getByRole("button", { name: /logout/i }).click();
   await page.waitForLoadState("networkidle");
 
   // Without a Pomerium session, Gitea is behind the IdP sign-in again.

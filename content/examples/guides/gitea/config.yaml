@@ -25,6 +25,9 @@ routes:
     #   openssl rand -base64 32
     oidc_bridge:
       client_secret: REPLACE_WITH_ROUTE_CLIENT_SECRET
+    # Gitea builds the sign-out redirect from the request's Host header. Without
+    # this, it sends users back to http://gitea:3000 after they sign out.
+    preserve_host_header: true
     # Git transfers can be large and long-running; don't cap total request time.
     timeout: 0s
     idle_timeout: 600s
