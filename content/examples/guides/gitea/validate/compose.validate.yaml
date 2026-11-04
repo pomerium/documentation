@@ -65,7 +65,11 @@ services:
         aliases:
           - authenticate.localhost.pomerium.io
           - gitea.localhost.pomerium.io
-      gitea-internal: {}
+      # The alias lets Gitea reach the authenticate service for OIDC discovery
+      # over the internal network, which has no route to the outside world.
+      gitea-internal:
+        aliases:
+          - authenticate.localhost.pomerium.io
     healthcheck:
       test: ["CMD", "pomerium", "health"]
       interval: 5s
