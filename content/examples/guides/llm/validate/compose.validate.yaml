@@ -15,7 +15,9 @@ services:
       OAUTH_CLIENT_ID: https://llm.localhost.pomerium.io
       OAUTH_CODE_CHALLENGE_METHOD: S256
       OAUTH_TOKEN_ENDPOINT_AUTH_METHOD: client_secret_post
-      OAUTH_SCOPES: openid email profile
+      # TODO: restore "openid email profile" (as in the guide) once the released
+      # bridge accepts multiple scopes. The v0.35.0 pre-release build rejects them.
+      OAUTH_SCOPES: openid
       OPENID_PROVIDER_URL: https://authenticate.localhost.pomerium.io/.well-known/openid-configuration
       OPENID_REDIRECT_URI: https://llm.localhost.pomerium.io/oauth/oidc/callback
       ENABLE_OAUTH_SIGNUP: 'true'
