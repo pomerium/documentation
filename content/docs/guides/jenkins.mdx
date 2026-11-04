@@ -17,10 +17,10 @@ keywords:
 description: Add single sign-on and per-route authorization to Jenkins by having Pomerium act as the OpenID Connect provider for the Jenkins OpenID Connect Authentication plugin through the OIDC bridge.
 ---
 
-import CodeBlock from "@theme/CodeBlock";
+import CodeBlock from '@theme/CodeBlock';
 
-import Config from "!!raw-loader!/content/examples/guides/jenkins/config.yaml";
-import Compose from "!!raw-loader!/content/examples/guides/jenkins/docker-compose.yaml";
+import Config from '!!raw-loader!/content/examples/guides/jenkins/config.yaml';
+import Compose from '!!raw-loader!/content/examples/guides/jenkins/docker-compose.yaml';
 
 # Secure Jenkins with Pomerium
 
@@ -52,14 +52,8 @@ Use it when you want one front door for Jenkins with your existing identity, and
 
 - [Docker](https://docs.docker.com/install/) and [Docker Compose](https://docs.docker.com/compose/install/)
 - Pomerium Core with a self-hosted authenticate service on a domain you control (this guide uses `authenticate.yourdomain.com`). The OIDC bridge isn't available on the hosted authenticate service.
-- An OpenID Connect identity provider. This guide uses [Keycloak](/docs/integrations/user-identity/oidc) as the example.
+- An identity provider. This guide uses Pomerium's [hosted identity provider](/docs/capabilities/authentication#hosted-authenticate-service) (`idp_provider: hosted`), which signs users in with email and password, Google, or GitHub. To use your own OpenID Connect identity provider instead, see [identity providers](/docs/integrations/user-identity/identity-providers) and set the `idp_*` settings in `config.yaml`.
 - A domain you control for the Jenkins route (this guide uses `jenkins.yourdomain.com`)
-
-:::tip Need an identity provider?
-
-Follow [Keycloak + Pomerium](/docs/integrations/user-identity/oidc) to set one up, then fill in the `idp_*` settings in `config.yaml` with your client ID and secret.
-
-:::
 
 ## Configure Pomerium
 
@@ -96,15 +90,15 @@ After the stack is running and you've completed the Jenkins first-run wizard:
 1. Go to **Manage Jenkins** -> **Plugins** -> **Available plugins**, search for **OpenID Connect Authentication**, install it, and restart Jenkins.
 2. Go to **Manage Jenkins** -> **Security**. In the **Security Realm** dropdown, select **Login with OpenID Connect** and fill in the fields:
 
-   | Setting                               | Value                                                                  |
-   | ------------------------------------- | ---------------------------------------------------------------------- |
-   | **Client id**                         | the route's `from` URL, `https://jenkins.yourdomain.com`               |
-   | **Client secret**                     | the route's `oidc_bridge` `client_secret`                              |
+   | Setting | Value |
+   | --- | --- |
+   | **Client id** | the route's `from` URL, `https://jenkins.yourdomain.com` |
+   | **Client secret** | the route's `oidc_bridge` `client_secret` |
    | **Well-known configuration endpoint** | `https://authenticate.yourdomain.com/.well-known/openid-configuration` |
-   | **User name field name**              | `email`                                                                |
-   | **Full name field name**              | `name`                                                                 |
-   | **Email field name**                  | `email`                                                                |
-   | **PKCE**                              | enabled                                                                |
+   | **User name field name** | `email` |
+   | **Full name field name** | `name` |
+   | **Email field name** | `email` |
+   | **PKCE** | enabled |
 
    The plugin builds its callback from your Jenkins root URL: `https://jenkins.yourdomain.com/securityRealm/finishLogin`. Set the Jenkins URL under **Manage Jenkins** -> **System** if it isn't already `https://jenkins.yourdomain.com/`.
 
@@ -134,17 +128,17 @@ Pomerium's user info endpoint returns the `groups` claim from your identity prov
 
 ## Common failure modes
 
-| Symptom                                                                                  | Cause and fix                                                                                                                                                                                                                                                                          |
-| ---------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `404 Not Found` from the well-known endpoint or any `/oidc/` path                        | Jenkins is pointing at the wrong host. Use your `authenticate_service_url` host, and check that `idp_provider` is set.                                                                                                                                                                 |
-| Discovery works, but the issuer is `https://authenticate.pomerium.app` and sign-in fails | `authenticate_service_url` isn't set, so Jenkins found the hosted authenticate service. Set it and point the plugin at that URL.                                                                                                                                                       |
-| HTTP 400 at `/oidc/auth`: `redirect_uri ... does not match client_id ...`                | **Client id** doesn't match the route's `from` URL, or the Jenkins root URL isn't `https://jenkins.yourdomain.com/`.                                                                                                                                                                   |
-| Token request fails with `invalid_client`                                                | The **Client secret** doesn't match the route's `client_secret`, or the plugin sends the credentials in a way Pomerium rejects. Check the secret first. If it matches, switch the plugin's token authentication method to send credentials in the request body (`client_secret_post`). |
-| Token request fails with `unsupported_grant_type`                                        | The plugin asked for a refresh token. The bridge doesn't issue refresh tokens, so turn off token refresh in the plugin.                                                                                                                                                                |
-| `unable to find valid certification path to requested target` in the Jenkins log         | Jenkins (the Java runtime) doesn't trust the certificate on the authenticate service. With a public certificate this won't happen. If you use a private CA, import it into the Java truststore.                                                                                        |
-| Logging out of Jenkins signs you straight back in                                        | **Logout from OpenID Provider** is off, so only the Jenkins session ends and the plugin starts a new login through the bridge. Turn it back on.                                                                                                                                        |
-| Jenkins shows its own login form or an error page after sign-in                          | The plugin isn't the selected security realm, or the login failed. Check the Jenkins log for the OIDC error.                                                                                                                                                                           |
-| `invalid_token` on the user info request                                                 | Pomerium restarted without a fixed `shared_secret`, so it can't read tokens it issued earlier. Set `shared_secret` and sign in again.                                                                                                                                                  |
+| Symptom | Cause and fix |
+| --- | --- |
+| `404 Not Found` from the well-known endpoint or any `/oidc/` path | Jenkins is pointing at the wrong host. Use your `authenticate_service_url` host, and check that `idp_provider` is set. |
+| Discovery works, but the issuer is `https://authenticate.pomerium.app` and sign-in fails | `authenticate_service_url` isn't set, so Jenkins found the hosted authenticate service. Set it and point the plugin at that URL. |
+| HTTP 400 at `/oidc/auth`: `redirect_uri ... does not match client_id ...` | **Client id** doesn't match the route's `from` URL, or the Jenkins root URL isn't `https://jenkins.yourdomain.com/`. |
+| Token request fails with `invalid_client` | The **Client secret** doesn't match the route's `client_secret`, or the plugin sends the credentials in a way Pomerium rejects. Check the secret first. If it matches, switch the plugin's token authentication method to send credentials in the request body (`client_secret_post`). |
+| Token request fails with `unsupported_grant_type` | The plugin asked for a refresh token. The bridge doesn't issue refresh tokens, so turn off token refresh in the plugin. |
+| `unable to find valid certification path to requested target` in the Jenkins log | Jenkins (the Java runtime) doesn't trust the certificate on the authenticate service. With a public certificate this won't happen. If you use a private CA, import it into the Java truststore. |
+| Logging out of Jenkins signs you straight back in | **Logout from OpenID Provider** is off, so only the Jenkins session ends and the plugin starts a new login through the bridge. Turn it back on. |
+| Jenkins shows its own login form or an error page after sign-in | The plugin isn't the selected security realm, or the login failed. Check the Jenkins log for the OIDC error. |
+| `invalid_token` on the user info request | Pomerium restarted without a fixed `shared_secret`, so it can't read tokens it issued earlier. Set `shared_secret` and sign in again. |
 
 ## Security considerations
 
