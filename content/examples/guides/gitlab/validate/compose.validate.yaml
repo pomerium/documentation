@@ -33,7 +33,9 @@ services:
             label: 'Pomerium',
             args: {
               name: 'openid_connect',
-              scope: ['openid', 'profile', 'email'],
+              # TODO: restore ['openid', 'profile', 'email'] (as in the guide) once the released
+              # bridge accepts multiple scopes. The v0.35.0 pre-release build rejects them.
+              scope: ['openid'],
               response_type: 'code',
               issuer: 'https://authenticate.localhost.pomerium.io',
               discovery: true,
