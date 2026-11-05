@@ -153,12 +153,6 @@ Forgejo includes a [custom footer template](https://forgejo.org/docs/latest/admi
 
 When a user selects **Sign out**, the script runs Forgejo's own sign-out first, so Forgejo destroys its session. Only then does it send the browser to `/.pomerium/sign_out`, which ends the Pomerium session and the identity provider session behind it. If Forgejo's sign-out fails, the page reloads and the user stays signed in to Forgejo.
 
-:::caution Check sign-out after Forgejo upgrades
-
-The script finds the sign-out link by its `data-url` attribute, which is part of Forgejo's web UI, not a stable interface. After an upgrade, confirm that **Sign out** still reaches Pomerium's signed-out page. If it stops matching, Forgejo's own sign-out runs instead, and `LANDING_PAGE: login` signs the user straight back in.
-
-:::
-
 To do without the template, leave out both the template and `LANDING_PAGE`. Users then select **Sign in** on Forgejo's home page, and **Sign out** ends only the Forgejo session. To sign out of Pomerium, they open `https://forgejo.yourdomain.com/.pomerium/sign_out`.
 
 ### Choose how usernames are created
@@ -174,12 +168,6 @@ Forgejo usernames can contain only letters, digits, `-`, `_`, and `.`, so a full
 You can't name another claim. To use a different value, map it into `nickname` or `preferred_username` in your identity provider and set `USERNAME: nickname`.
 
 With `email`, two users with the same name before the `@`, such as `sam@example.com` and `sam@example.org`, get the same username. The second one to sign in hits a clash. With the default `ACCOUNT_LINKING: login`, Forgejo shows that user a form to register a different username.
-
-:::danger Don't use `ACCOUNT_LINKING: auto` with more than one email domain
-
-With `auto`, Forgejo resolves a clash by linking the sign-in to the existing account. It looks up that account by **username first**, then by email. With `USERNAME: email`, `sam@example.org` would be signed in to the account that belongs to `sam@example.com`. Keep the default `login` unless every username your policy allows is unique, for example when the policy allows a single email domain and no local accounts exist.
-
-:::
 
 ## Run the stack
 
