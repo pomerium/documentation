@@ -31,7 +31,7 @@ import Footer from '!!raw-loader!/content/examples/guides/forgejo/footer.tmpl';
 
 You'll put [Forgejo](https://forgejo.org/), a self-hosted Git service, behind Pomerium to gate it with SSO and route policy. Forgejo keeps its standard [OpenID Connect (OIDC) login](https://forgejo.org/docs/latest/user/oauth2-provider/), and Pomerium is the OIDC provider. Users sign in once through Pomerium, and Forgejo creates their account and completes its login without a second prompt or a click. Signing out of Forgejo also signs them out of Pomerium.
 
-This guide is tested with Forgejo 15.0.2. For [Gitea](https://about.gitea.com/), the project Forgejo was forked from, see [Secure Gitea with Pomerium](/docs/guides/gitea). Gitea can skip its login page and sign users out of Pomerium by itself, so it doesn't need this guide's redirect route or sign-out template.
+This guide is tested with Forgejo 15.0.2.
 
 ```mermaid
 sequenceDiagram
@@ -61,7 +61,7 @@ Git operations over HTTP, API clients, automations, and SSH access still need Fo
 
 ## When to use this guide
 
-Use it when you want one front door for Forgejo with your existing identity, and Forgejo should keep its own OIDC login and create accounts from it. Forgejo can't verify Pomerium's signed JWT, so this guide uses Pomerium's [OIDC bridge](/docs/capabilities/oidc-bridge) instead. The bridge replaces trusting identity headers from any peer that can reach Forgejo, so network isolation is no longer the only thing protecting logins.
+Use it when you want one front door for Forgejo with your existing identity, and you want Forgejo to create each user's account the first time they sign in. Forgejo's standard OIDC login uses Pomerium's [OIDC bridge](/docs/capabilities/oidc-bridge) as its provider.
 
 ## Prerequisites
 
@@ -257,5 +257,4 @@ The response should include `"is_admin":true`. The token is never printed, and d
 - [OIDC bridge](/docs/capabilities/oidc-bridge)
 - [Authentication](/docs/capabilities/authentication)
 - [Authorization](/docs/capabilities/authorization)
-- [Secure Gitea with Pomerium](/docs/guides/gitea)
 - [Mirror repositories](https://forgejo.org/docs/latest/user/repo-mirror/) into a Pomerium-gated warm standby
