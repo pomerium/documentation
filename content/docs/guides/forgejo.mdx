@@ -20,6 +20,8 @@ description: Put a Forgejo instance behind Pomerium and have Pomerium act as For
 ---
 
 import CodeBlock from '@theme/CodeBlock';
+import TabItem from '@theme/TabItem';
+import Tabs from '@theme/Tabs';
 
 import Config from '!!raw-loader!/content/examples/guides/forgejo/config.yaml';
 import Compose from '!!raw-loader!/content/examples/guides/forgejo/docker-compose.yaml';
@@ -70,7 +72,7 @@ This guide assumes you've completed the [Quickstart](/docs/get-started/quickstar
 You also need:
 
 - [Docker](https://docs.docker.com/install/) and [Docker Compose](https://docs.docker.com/compose/install/)
-- Pomerium Core with a self-hosted authenticate service on a domain you control (this guide uses `authenticate.yourdomain.com`). The OIDC bridge isn't available on the hosted authenticate service.
+- Pomerium Zero, or Pomerium Core with `authenticate_service_url` set to a domain you control (this guide uses `authenticate.yourdomain.com`). The OIDC bridge isn't served from Pomerium's default hosted authenticate URL. You can still use the hosted identity provider behind your own URL.
 - An identity provider. This guide uses Pomerium's [hosted identity provider](/docs/capabilities/authentication#hosted-authenticate-service) (`idp_provider: hosted`), which signs users in with email and password, Google, or GitHub.
 - A domain you control for the Forgejo route (this guide uses `forgejo.yourdomain.com`)
 
@@ -81,6 +83,28 @@ This guide uses the hosted authenticate service so you don't have to run an iden
 :::
 
 ## Configure Pomerium
+
+<Tabs queryString="type">
+<TabItem value="zero" label="Pomerium Zero" default>
+
+In the [Zero Console](https://console.pomerium.app), create two **Routes** for `forgejo.<your-starter-domain>`:
+
+1. **Login redirect route.** This route sends Forgejo's login page straight to the **Sign in with Pomerium** address, because Forgejo has no setting to skip its login page when there's only one login source.
+   - In **From**, enter `https://forgejo.<your-starter-domain>`, and set **Path** to `/user/login`.
+   - Under **Redirect**, set **Path Redirect** to `/user/oauth2/pomerium`.
+   - Set the policy to the user or domain that should reach Forgejo.
+2. **Forgejo route.**
+   - In **From**, enter `https://forgejo.<your-starter-domain>`; in **To**, enter `http://forgejo:3000`.
+   - Set the same policy as the first route.
+   - On the **Authentication** tab, enable **OIDC Bridge** and enter a **Client Secret**. Generate one with `openssl rand -base64 32`. You'll enter the same value in Forgejo below. Forgejo doesn't use Proof Key for Code Exchange for its OIDC login, so it's a confidential client.
+   - On the **Timeouts** tab, set **Timeout** to `0s` and **Idle Timeout** to `600s` so long Git smart-HTTP transfers aren't cut off.
+
+Order the login redirect route above the Forgejo route. Zero manages the authenticate service and the token-signing secret for you, so there's no `authenticate_service_url` or `shared_secret` to set.
+
+Your OIDC discovery URL is `https://authenticate.<your-starter-domain>/.well-known/openid-configuration`. Use it wherever this guide says `authenticate.yourdomain.com`.
+
+</TabItem>
+<TabItem value="core" label="Pomerium Core">
 
 Create a `config.yaml`. It has two routes for `forgejo.yourdomain.com`:
 
@@ -94,6 +118,9 @@ Create a `config.yaml`. It has two routes for `forgejo.yourdomain.com`:
 Replace `forgejo.yourdomain.com` with your domain, `you@example.com` with your user or domain in both policies, and generate your own `shared_secret` and route `client_secret` with the command in each comment. Keep `shared_secret` the same across restarts. If it changes, Pomerium can't read tokens it issued earlier, and users have to sign in again.
 
 Forgejo doesn't use Proof Key for Code Exchange for its OIDC login, so it's a confidential client and the route needs a `client_secret`. You'll enter the same value in Forgejo below. The route's `from` URL is the OIDC client ID, so it must match the client ID you give Forgejo.
+
+</TabItem>
+</Tabs>
 
 ## Configure Forgejo
 
@@ -156,7 +183,7 @@ With `auto`, Forgejo resolves a clash by linking the sign-in to the existing acc
 
 ## Run the stack
 
-The Compose file runs Pomerium and Forgejo together. Place the `config.yaml` and `footer.tmpl` from the previous steps next to this `docker-compose.yaml`:
+The Compose file runs Pomerium Core and Forgejo together (for Zero, drop the `pomerium` service and use the `compose.yaml` from the Quickstart with your `POMERIUM_ZERO_TOKEN`, keeping the `forgejo` service and its network below). Place the `config.yaml` and `footer.tmpl` from the previous steps next to this `docker-compose.yaml`:
 
 <CodeBlock language="yaml" title="docker-compose.yaml">
   {Compose}
