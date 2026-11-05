@@ -44,11 +44,7 @@ The session recording capability is _not_ present in Pomerium binary distributio
 
 ### 1. Obtain the session recording extension
 
-All enterprise extensions are available as part of the image `docker.cloudsmith.io/pomerium/pomerium-enterprise/pomerium-enterprise`. This is a drop in replacement for `pomerium/pomerium` images.
-
-Similarly, the enterprise extensions are available as part of the image `docker.cloudsmith.io/pomerium/pomerium-enterprise/ingress-controller-enterprise`. This is a drop in replacement for `pomerium/ingress-controller` images.
-
-The extensions are available in the `/extensions` directory. The session recording extension is mounted at `/extensions/session_recording_extension.so`
+Extensions are available in the `/extensions` directory of the `pomerium/pomerium` and `pomerium/ingress-controller` images. The session recording extension is mounted at `/extensions/session_recording_extension.so`
 
 <hr />
 
@@ -98,24 +94,7 @@ This image contains a single file, `/session_recording_extension.so`. See below 
 <Tabs>
 <TabItem value="Kubernetes" label="Kubernetes">
 
-For existing deployments:
-
-```yaml
-apiVersion: apps/v1
-kind: Deployment
-spec:
-  template:
-    spec:
-      containers:
-        - name: pomerium
-          image: docker.cloudsmith.io/pomerium/pomerium-enterprise/ingress-controller-enterprise:vX.Y.Z
-      imagePullSecrets:
-        # This should be the same image pull secret used for enterprise console
-        - name: pomerium-enterprise-docker
-  // ...
-```
-
-Alternatively, it is possible to use [image volumes](https://kubernetes.io/docs/tasks/configure-pod-container/image-volumes/) to mount the extension into the Pomerium Core container.
+No changes are needed for existing deployments. Alternatively, it is possible to use [image volumes](https://kubernetes.io/docs/tasks/configure-pod-container/image-volumes/) to mount the extension into the Pomerium Core container.
 
 ```yaml
 apiVersion: apps/v1
@@ -141,13 +120,6 @@ spec:
 
 </TabItem>
 <TabItem value="DockerCompose" label="Docker Compose">
-
-```yaml
-services:
-  pomerium:
-    image: docker.cloudsmith.io/pomerium/pomerium-enterprise/pomerium-enterprise:vX.Y.Z
-    # Use docker login to cloudsmith.io
-```
 
 For Docker Compose deployments, you can mount the extension image directly into the container with an [image volume](https://docs.docker.com/reference/compose-file/services/#volumes):
 
