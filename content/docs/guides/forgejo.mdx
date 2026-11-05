@@ -65,6 +65,10 @@ Use it when you want one front door for Forgejo with your existing identity, and
 
 ## Prerequisites
 
+This guide assumes you've completed the [Quickstart](/docs/get-started/quickstart), so you already have Pomerium running and signing users in through the hosted authenticate service.
+
+You also need:
+
 - [Docker](https://docs.docker.com/install/) and [Docker Compose](https://docs.docker.com/compose/install/)
 - Pomerium Core with a self-hosted authenticate service on a domain you control (this guide uses `authenticate.yourdomain.com`). The OIDC bridge isn't available on the hosted authenticate service.
 - An identity provider. This guide uses Pomerium's [hosted identity provider](/docs/capabilities/authentication#hosted-authenticate-service) (`idp_provider: hosted`), which signs users in with email and password, Google, or GitHub.
@@ -72,7 +76,7 @@ Use it when you want one front door for Forgejo with your existing identity, and
 
 :::tip Prefer to self-host the identity provider?
 
-This guide uses Pomerium's hosted identity provider so you don't have to run one. To run your own instead, follow [Keycloak + Pomerium](/docs/integrations/user-identity/oidc) and swap the `idp_*` settings into the `config.yaml` below.
+This guide uses the hosted authenticate service so you don't have to run an identity provider (IdP). To run your own instead, follow [Keycloak + Pomerium](/docs/integrations/user-identity/oidc) and swap the `authenticate_service_url` / `idp_*` settings into the config below.
 
 :::
 
@@ -82,8 +86,6 @@ Create a `config.yaml`. It has two routes for `forgejo.yourdomain.com`:
 
 - The first matches only Forgejo's login page, `/user/login`, and redirects it to `/user/oauth2/pomerium`, the address behind Forgejo's **Sign in with Pomerium** button. Forgejo has no setting to skip its login page when there's only one login source, so this route does it. It must come before the main route.
 - The second routes everything else to the Forgejo container, enables the OIDC bridge, and removes the total request timeout so long Git smart-HTTP transfers aren't cut off.
-
-The file also sets the `shared_secret` that Pomerium uses to sign and encrypt the tokens it issues.
 
 <CodeBlock language="yaml" title="config.yaml">
   {Config}
