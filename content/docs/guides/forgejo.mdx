@@ -67,8 +67,14 @@ Use it when you want one front door for Forgejo with your existing identity, and
 
 - [Docker](https://docs.docker.com/install/) and [Docker Compose](https://docs.docker.com/compose/install/)
 - Pomerium Core with a self-hosted authenticate service on a domain you control (this guide uses `authenticate.yourdomain.com`). The OIDC bridge isn't available on the hosted authenticate service.
-- An identity provider. This guide uses Pomerium's [hosted identity provider](/docs/capabilities/authentication#hosted-authenticate-service) (`idp_provider: hosted`), which signs users in with email and password, Google, or GitHub. To use your own OpenID Connect identity provider instead, see [identity providers](/docs/integrations/user-identity/identity-providers) and set the `idp_*` settings in `config.yaml`.
+- An identity provider. This guide uses Pomerium's [hosted identity provider](/docs/capabilities/authentication#hosted-authenticate-service) (`idp_provider: hosted`), which signs users in with email and password, Google, or GitHub.
 - A domain you control for the Forgejo route (this guide uses `forgejo.yourdomain.com`)
+
+:::tip Prefer to self-host the identity provider?
+
+This guide uses Pomerium's hosted identity provider so you don't have to run one. To run your own instead, follow [Keycloak + Pomerium](/docs/integrations/user-identity/oidc) and swap the `idp_*` settings into the `config.yaml` below.
+
+:::
 
 ## Configure Pomerium
 
