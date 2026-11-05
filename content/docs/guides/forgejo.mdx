@@ -96,7 +96,7 @@ In the [Zero Console](https://console.pomerium.app), create two **Routes** for `
 2. **Forgejo route.**
    - In **From**, enter `https://forgejo.<your-starter-domain>`; in **To**, enter `http://forgejo:3000`.
    - Set the same policy as the first route.
-   - On the **Authentication** tab, enable **OIDC Bridge** and enter a **Client Secret**. Generate one with `openssl rand -base64 32`. You'll enter the same value in Forgejo below. Forgejo doesn't use Proof Key for Code Exchange for its OIDC login, so it's a confidential client.
+   - On the **Authentication** tab, enable **OIDC Bridge** and enter a **Client Secret**. Generate one with `openssl rand -base64 32`. You'll enter the same value in Forgejo below. Forgejo authenticates with a client secret and doesn't use Proof Key for Code Exchange (PKCE), so Pomerium treats it as a confidential client.
    - On the **Timeouts** tab, set **Timeout** to `0s` and **Idle Timeout** to `600s` so long Git smart-HTTP transfers aren't cut off.
 
 Order the login redirect route above the Forgejo route. Zero manages the authenticate service and the token-signing secret for you, so there's no `authenticate_service_url` or `shared_secret` to set.
@@ -117,7 +117,7 @@ Create a `config.yaml`. It has two routes for `forgejo.yourdomain.com`:
 
 Replace `forgejo.yourdomain.com` with your domain, `you@example.com` with your user or domain in both policies, and generate your own `shared_secret` and route `client_secret` with the command in each comment. Keep `shared_secret` the same across restarts. If it changes, Pomerium can't read tokens it issued earlier, and users have to sign in again.
 
-Forgejo doesn't use Proof Key for Code Exchange for its OIDC login, so it's a confidential client and the route needs a `client_secret`. You'll enter the same value in Forgejo below. The route's `from` URL is the OIDC client ID, so it must match the client ID you give Forgejo.
+Forgejo authenticates with a client secret and doesn't use Proof Key for Code Exchange (PKCE), so it's registered as a confidential client and the route needs a `client_secret`. You'll enter the same value in Forgejo below. The route's `from` URL is the OIDC client ID, so it must match the client ID you give Forgejo.
 
 </TabItem>
 </Tabs>
