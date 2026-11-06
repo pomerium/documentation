@@ -86,6 +86,7 @@ services:
     entrypoint: ["/bin/sh", "-c"]
     command:
       - |
+        set -e
         until forgejo admin auth list >/dev/null 2>&1; do sleep 2; done
         forgejo admin auth add-oauth --name pomerium --provider openidConnect \
           --key https://forgejo.localhost.pomerium.io \
