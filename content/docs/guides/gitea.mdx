@@ -19,6 +19,8 @@ description: Put a Gitea instance behind Pomerium and have Pomerium act as Gitea
 ---
 
 import CodeBlock from '@theme/CodeBlock';
+import TabItem from '@theme/TabItem';
+import Tabs from '@theme/Tabs';
 
 import Config from '!!raw-loader!/content/examples/guides/gitea/config.yaml';
 import Compose from '!!raw-loader!/content/examples/guides/gitea/docker-compose.yaml';
@@ -29,7 +31,7 @@ import Compose from '!!raw-loader!/content/examples/guides/gitea/docker-compose.
 
 You'll put [Gitea](https://about.gitea.com/), a self-hosted Git service, behind Pomerium to gate it with SSO and route policy. Gitea keeps its standard [OpenID Connect (OIDC) login](https://docs.gitea.com/usage/authentication), and Pomerium is the OIDC provider. Users sign in once through Pomerium, and Gitea creates their account and completes its login without a second prompt or a click. Signing out of Gitea also signs them out of Pomerium.
 
-This guide is tested with Gitea 28.3.0. For [Forgejo](https://forgejo.org/), which started as a fork of Gitea, see [Secure Forgejo with Pomerium](/docs/guides/forgejo). Forgejo needs extra steps that Gitea doesn't.
+This guide is tested with Gitea 28.3.0.
 
 ```mermaid
 sequenceDiagram
@@ -56,16 +58,44 @@ Git operations over HTTP, API clients, automations, and SSH access still need Gi
 
 ## When to use this guide
 
-Use it when you want one front door for Gitea with your existing identity, and Gitea should keep its own OIDC login and create accounts from it. Gitea can't verify Pomerium's signed JWT, so this guide uses Pomerium's [OIDC bridge](/docs/capabilities/oidc-bridge) instead. The bridge replaces trusting identity headers from any peer that can reach Gitea, so network isolation is no longer the only thing protecting logins.
+Use it when you want one front door for Gitea with your existing identity, and you want Gitea to create each user's account the first time they sign in. Gitea's standard OIDC login uses Pomerium's [OIDC bridge](https://www.pomerium.com/docs/capabilities/oidc-bridge) as its provider.
 
 ## Prerequisites
 
+This guide assumes you've completed the [Quickstart](/docs/get-started/quickstart), so you already have Pomerium running and signing users in through the hosted authenticate service.
+
+You also need:
+
 - [Docker](https://docs.docker.com/install/) and [Docker Compose](https://docs.docker.com/compose/install/)
-- Pomerium Core with a self-hosted authenticate service on a domain you control (this guide uses `authenticate.yourdomain.com`). The OIDC bridge isn't available on the hosted authenticate service.
-- An identity provider. This guide uses Pomerium's [hosted identity provider](/docs/capabilities/authentication#hosted-authenticate-service) (`idp_provider: hosted`), which signs users in with email and password, Google, or GitHub. To use your own OpenID Connect identity provider instead, see [identity providers](/docs/integrations/user-identity/identity-providers) and set the `idp_*` settings in `config.yaml`.
+- Pomerium Zero, or Pomerium Core with `authenticate_service_url` set to a domain you control (this guide uses `authenticate.yourdomain.com`). The OIDC bridge isn't served from Pomerium's default hosted authenticate URL. You can still use the hosted identity provider behind your own URL.
+- An identity provider. This guide uses Pomerium's [hosted identity provider](/docs/capabilities/authentication#hosted-authenticate-service) (`idp_provider: hosted`), which signs users in with email and password, Google, or GitHub.
 - A domain you control for the Gitea route (this guide uses `gitea.yourdomain.com`)
 
+:::tip Prefer to self-host the identity provider?
+
+This guide uses the hosted authenticate service so you don't have to run an identity provider (IdP). To run your own instead, follow [Keycloak + Pomerium](/docs/integrations/user-identity/oidc) and swap the `authenticate_service_url` / `idp_*` settings into the config below.
+
+:::
+
 ## Configure Pomerium
+
+<Tabs queryString="type">
+<TabItem value="zero" label="Pomerium Zero" default>
+
+In the [Zero Console](https://console.pomerium.app), create a **Route** for `gitea.<your-starter-domain>`:
+
+- In **From**, enter `https://gitea.<your-starter-domain>`; in **To**, enter `http://gitea:3000`.
+- Set the policy to the user or domain that should reach Gitea.
+- On the **Authentication** tab, enable **OIDC Bridge** and enter a **Client Secret**. Generate one with `openssl rand -base64 32`. You'll enter the same value in Gitea below. Gitea authenticates with a client secret and doesn't use Proof Key for Code Exchange (PKCE), so Pomerium treats it as a confidential client.
+- Enable **Preserve Host Header**, so Gitea builds its post-sign-out redirect from the public host.
+- On the **Timeouts** tab, set **Timeout** to `0s` and **Idle Timeout** to `600s` so long Git smart-HTTP transfers aren't cut off.
+
+Zero manages the authenticate service and the token-signing secret for you, so there's no `authenticate_service_url` or `shared_secret` to set.
+
+Your OIDC discovery URL is `https://authenticate.<your-starter-domain>/.well-known/openid-configuration`. Use it wherever this guide says `authenticate.yourdomain.com`.
+
+</TabItem>
+<TabItem value="core" label="Pomerium Core">
 
 Create a `config.yaml`. It routes `gitea.yourdomain.com` to the Gitea container, enables the OIDC bridge on that route, and removes the total request timeout so long Git smart-HTTP transfers aren't cut off. It also sets the `shared_secret` that Pomerium uses to sign and encrypt the tokens it issues.
 
@@ -75,7 +105,10 @@ Create a `config.yaml`. It routes `gitea.yourdomain.com` to the Gitea container,
 
 Replace `gitea.yourdomain.com` with your domain, `you@example.com` with your user or domain, and generate your own `shared_secret` and route `client_secret` with the command in each comment. Keep `shared_secret` the same across restarts. If it changes, Pomerium can't read tokens it issued earlier, and users have to sign in again.
 
-Gitea doesn't use Proof Key for Code Exchange for its OIDC login, so it's a confidential client and the route needs a `client_secret`. You'll enter the same value in Gitea below. The route's `from` URL is the OIDC client ID, so it must match the client ID you give Gitea.
+Gitea authenticates with a client secret and doesn't use Proof Key for Code Exchange (PKCE), so it's registered as a confidential client and the route needs a `client_secret`. You'll enter the same value in Gitea below. The route's `from` URL is the OIDC client ID, so it must match the client ID you give Gitea.
+
+</TabItem>
+</Tabs>
 
 ## Configure Gitea
 
@@ -123,7 +156,7 @@ With `auto`, Gitea resolves a clash by linking the sign-in to the existing accou
 
 ## Run the stack
 
-The Compose file runs Pomerium and Gitea together. Place the `config.yaml` from the previous step next to this `docker-compose.yaml`:
+The Compose file runs Pomerium Core and Gitea together (for Zero, drop the `pomerium` service and use the `compose.yaml` from the Quickstart with your `POMERIUM_ZERO_TOKEN`, keeping the `gitea` service and its network below). For Core, place the `config.yaml` from the previous step next to this `docker-compose.yaml`:
 
 <CodeBlock language="yaml" title="docker-compose.yaml">
   {Compose}
@@ -229,7 +262,6 @@ The response should include `"is_admin":true`. The token is never printed, and d
 
 ## Next steps
 
-- [OIDC bridge](/docs/capabilities/oidc-bridge)
+- [OIDC bridge](https://www.pomerium.com/docs/capabilities/oidc-bridge)
 - [Authentication](/docs/capabilities/authentication)
 - [Authorization](/docs/capabilities/authorization)
-- [Secure Forgejo with Pomerium](/docs/guides/forgejo)
