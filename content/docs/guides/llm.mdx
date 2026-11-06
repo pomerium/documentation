@@ -58,7 +58,7 @@ This guide assumes you've completed the [Quickstart](/docs/get-started/quickstar
 You also need:
 
 - [Docker](https://docs.docker.com/install/) and [Docker Compose](https://docs.docker.com/compose/install/)
-- Pomerium Zero, or Pomerium Core with `authenticate_service_url` set to a domain you control (this guide uses `authenticate.yourdomain.com`). The OIDC bridge isn't served from Pomerium's default hosted authenticate URL. You can still use the hosted identity provider behind your own URL.
+- Pomerium Zero or Pomerium Core, with the authenticate service URL set to a domain you control (this guide uses `authenticate.yourdomain.com`). The OIDC bridge isn't served from Pomerium's default hosted authenticate URL. You can still use the hosted identity provider behind your own URL.
 - An identity provider. This guide uses Pomerium's [hosted identity provider](/docs/capabilities/authentication#hosted-authenticate-service) (`idp_provider: hosted`), which signs users in with email and password, Google, or GitHub.
 - A domain you control for the Open WebUI route (this guide uses `llm.yourdomain.com`)
 
@@ -76,21 +76,21 @@ This guide uses the hosted authenticate service so you don't have to run an iden
 In the [Zero Console](https://console.pomerium.app), create two **Routes** for `llm.<your-starter-domain>`:
 
 1. **Static assets route.** This route caches Open WebUI's content-hashed build assets.
-   - In **From**, enter `https://llm.<your-starter-domain>`, and set **Prefix** to `/_app/immutable/`; in **To**, enter `http://open-webui:8080`.
-   - Add a response header named `Cache-Control` with the value `private, max-age=31536000, immutable`.
+   - In **From**, enter `https://llm.<your-starter-domain>`, and on the **Path Matching** tab, choose **Prefix** and enter `/_app/immutable/`; in **To**, enter `http://open-webui:8080`.
+   - On the **Headers** tab, under **Set Response Headers**, add `Cache-Control` with the value `private, max-age=31536000, immutable`.
    - Set the policy to the users or groups that should have access.
 2. **Open WebUI route.**
    - In **From**, enter `https://llm.<your-starter-domain>`; in **To**, enter `http://open-webui:8080`.
    - Set the same policy as the first route.
-   - On the **Authentication** tab, enable **OIDC Bridge**. Open WebUI uses PKCE, so leave **Client Secret** empty.
-   - Enable **WebSockets**, so streamed responses keep working.
-   - Add a response header named `Cache-Control` with the value `no-cache`.
+   - On the **Advanced** tab, under **OIDC Bridge**, turn on **Enabled**. Open WebUI uses PKCE, so leave **OIDC Bridge Client Secret** empty.
+   - On the **Timeouts** tab, turn on **Allow Websockets**, so streamed responses keep working.
+   - On the **Headers** tab, under **Set Response Headers**, add `Cache-Control` with the value `no-cache`.
 
 Order the static assets route above the Open WebUI route.
 
-Zero manages the authenticate service and the token-signing secret for you, so there's no `authenticate_service_url` or `shared_secret` to set.
+Zero manages the token-signing secret for you, so there's no `shared_secret` to set. Before you create the routes, open the **Identity Provider** page in the Zero Console, set **Authenticate Service URL** to a domain you control (this guide uses `https://authenticate.yourdomain.com`), and leave **Hosted Authenticate** selected. The OIDC bridge isn't served from Pomerium's default hosted authenticate URL.
 
-Your OIDC discovery URL is `https://authenticate.<your-starter-domain>/.well-known/openid-configuration`. Use it wherever this guide says `authenticate.yourdomain.com`.
+Your OIDC discovery URL is your authenticate service URL plus `/.well-known/openid-configuration`.
 
 </TabItem>
 <TabItem value="core" label="Pomerium Core">
