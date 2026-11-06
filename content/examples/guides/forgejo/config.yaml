@@ -1,24 +1,44 @@
-# Pomerium Core configuration for Forgejo. Uses the hosted authenticate service, so
-# you don't run your own identity provider. To self-host the IdP, see the Keycloak
-# guide: https://www.pomerium.com/docs/integrations/user-identity/oidc
-authenticate_service_url: https://authenticate.pomerium.app
+# Pomerium Core configuration for Forgejo. The OIDC bridge needs a self-hosted
+# authenticate service, so set this to a domain you control. Hosted authenticate
+# domains don't serve the bridge.
+authenticate_service_url: https://authenticate.yourdomain.com
+
+# Pomerium's hosted identity provider signs users in with email and password,
+# Google, or GitHub. To use your own identity provider instead, replace this
+# line with idp_provider, idp_provider_url, idp_client_id and idp_client_secret.
+idp_provider: hosted
 
 # Obtain TLS certificates automatically from Let's Encrypt.
 autocert: true
 
-# Forward the user's identity claims to Forgejo as request headers. Forgejo
-# usernames cannot contain every character that is valid in an email address, so
-# this uses the stable OIDC sub claim for the username and carries the real
-# address in X-Pomerium-Claim-Email.
-jwt_claims_headers:
-  X-Pomerium-Sub: sub
-  X-Pomerium-Claim-Email: email
-  X-Pomerium-Claim-Name: name
+# Signs and encrypts the OIDC tokens Pomerium issues to Forgejo. Generate your own
+# and keep it secret. Keep the same value across restarts:
+#   openssl rand -base64 32
+shared_secret: REPLACE_WITH_BASE64_32_BYTE_SECRET
 
 routes:
+  # Forgejo has no setting to skip its login page when there's only one login
+  # source, so send /user/login straight to the "pomerium" source's sign-in URL.
+  # Must come before the main Forgejo route.
+  - from: https://forgejo.yourdomain.com
+    path: /user/login
+    redirect:
+      path_redirect: /user/oauth2/pomerium
+    policy:
+      - allow:
+          or:
+            - email:
+                # Keep in sync with the main route's policy
+                is: you@example.com
+
   - from: https://forgejo.yourdomain.com
     to: http://forgejo:3000
-    pass_identity_headers: true
+    # Makes Pomerium the OpenID Connect provider for this route. Forgejo doesn't
+    # use PKCE, so it's a confidential client: enter the same value as the client
+    # secret when you add the login source in Forgejo. Generate your own:
+    #   openssl rand -base64 32
+    oidc_bridge:
+      client_secret: REPLACE_WITH_ROUTE_CLIENT_SECRET
     # Git transfers can be large and long-running; don't cap total request time.
     timeout: 0s
     idle_timeout: 600s
