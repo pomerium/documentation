@@ -72,7 +72,7 @@ This guide assumes you've completed the [Quickstart](/docs/get-started/quickstar
 You also need:
 
 - [Docker](https://docs.docker.com/install/) and [Docker Compose](https://docs.docker.com/compose/install/)
-- Pomerium Zero, or Pomerium Core with `authenticate_service_url` set to a domain you control (this guide uses `authenticate.yourdomain.com`). The OIDC bridge isn't served from Pomerium's default hosted authenticate URL. You can still use the hosted identity provider behind your own URL.
+- Pomerium Zero or Pomerium Core, with the authenticate service URL set to a domain you control (this guide uses `authenticate.yourdomain.com`). The OIDC bridge isn't served from Pomerium's default hosted authenticate URL. You can still use the hosted identity provider behind your own URL.
 - An identity provider. This guide uses Pomerium's [hosted identity provider](/docs/capabilities/authentication#hosted-authenticate-service) (`idp_provider: hosted`), which signs users in with email and password, Google, or GitHub.
 - A domain you control for the Forgejo route (this guide uses `forgejo.yourdomain.com`)
 
@@ -90,18 +90,18 @@ This guide uses the hosted authenticate service so you don't have to run an iden
 In the [Zero Console](https://console.pomerium.app), create two **Routes** for `forgejo.<your-starter-domain>`:
 
 1. **Login redirect route.** This route sends Forgejo's login page straight to the **Sign in with Pomerium** address, because Forgejo has no setting to skip its login page when there's only one login source.
-   - In **From**, enter `https://forgejo.<your-starter-domain>`, and set **Path** to `/user/login`.
-   - Under **Redirect**, set **Path Redirect** to `/user/oauth2/pomerium`.
+   - In **From**, enter `https://forgejo.<your-starter-domain>`, and on the **Path Matching** tab, choose **Exact Path** and enter `/user/login`.
+   - On the **Advanced** tab, choose **Redirect** and set **Path Redirect** to `/user/oauth2/pomerium`.
    - Set the policy to the user or domain that should reach Forgejo.
 2. **Forgejo route.**
    - In **From**, enter `https://forgejo.<your-starter-domain>`; in **To**, enter `http://forgejo:3000`.
    - Set the same policy as the first route.
-   - On the **Authentication** tab, enable **OIDC Bridge** and enter a **Client Secret**. Generate one with `openssl rand -base64 32`. You'll enter the same value in Forgejo below. Forgejo authenticates with a client secret and doesn't use Proof Key for Code Exchange (PKCE), so Pomerium treats it as a confidential client.
+   - On the **Advanced** tab, under **OIDC Bridge**, turn on **Enabled** and enter an **OIDC Bridge Client Secret**. Generate one with `openssl rand -base64 32`. You'll enter the same value in Forgejo below. Forgejo authenticates with a client secret and doesn't use Proof Key for Code Exchange (PKCE), so Pomerium treats it as a confidential client.
    - On the **Timeouts** tab, set **Timeout** to `0s` and **Idle Timeout** to `600s` so long Git smart-HTTP transfers aren't cut off.
 
-Order the login redirect route above the Forgejo route. Zero manages the authenticate service and the token-signing secret for you, so there's no `authenticate_service_url` or `shared_secret` to set.
+Order the login redirect route above the Forgejo route. Zero manages the token-signing secret for you, so there's no `shared_secret` to set. Before you create the routes, open the **Identity Provider** page in the Zero Console, set **Authenticate Service URL** to a domain you control (this guide uses `https://authenticate.yourdomain.com`), and leave **Hosted Authenticate** selected. The OIDC bridge isn't served from Pomerium's default hosted authenticate URL.
 
-Your OIDC discovery URL is `https://authenticate.<your-starter-domain>/.well-known/openid-configuration`. Use it wherever this guide says `authenticate.yourdomain.com`.
+Your OIDC discovery URL is your authenticate service URL plus `/.well-known/openid-configuration`.
 
 </TabItem>
 <TabItem value="core" label="Pomerium Core">
