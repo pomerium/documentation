@@ -17,6 +17,8 @@ description: Add single sign-on and per-route authorization to HedgeDoc by havin
 ---
 
 import CodeBlock from '@theme/CodeBlock';
+import TabItem from '@theme/TabItem';
+import Tabs from '@theme/Tabs';
 
 import Config from '!!raw-loader!/content/examples/guides/hedgedoc/config.yaml';
 import Compose from '!!raw-loader!/content/examples/guides/hedgedoc/docker-compose.yaml';
@@ -48,16 +50,50 @@ sequenceDiagram
 
 ## When to use this guide
 
-Use it when you want one front door for HedgeDoc with your existing identity, and HedgeDoc accounts should come from that identity instead of local registration or guests. It uses HedgeDoc's generic OAuth2 login, which works with Pomerium's [OIDC bridge](/docs/capabilities/oidc-bridge). If you only need to reach HedgeDoc over a private network without browser SSO, a plain [TCP route](/docs/capabilities/non-http) is a better fit.
+Use it when you want one front door for HedgeDoc with your existing identity, and HedgeDoc accounts should come from that identity instead of local registration or guests. It uses HedgeDoc's generic OAuth2 login, which works with Pomerium's [OIDC bridge](https://www.pomerium.com/docs/capabilities/oidc-bridge). If you only need to reach HedgeDoc over a private network without browser SSO, a plain [TCP route](/docs/capabilities/non-http) is a better fit.
 
 ## Prerequisites
 
+This guide assumes you've completed the [Quickstart](/docs/get-started/quickstart), so you already have Pomerium running and signing users in through the hosted authenticate service.
+
+You also need:
+
 - [Docker](https://docs.docker.com/install/) and [Docker Compose](https://docs.docker.com/compose/install/)
-- Pomerium Core with a self-hosted authenticate service on a domain you control (this guide uses `authenticate.yourdomain.com`). The OIDC bridge isn't available on the hosted authenticate service.
-- An identity provider. This guide uses Pomerium's [hosted identity provider](/docs/capabilities/authentication#hosted-authenticate-service) (`idp_provider: hosted`), which signs users in with email and password, Google, or GitHub. To use your own OpenID Connect identity provider instead, see [identity providers](/docs/integrations/user-identity/identity-providers) and set the `idp_*` settings in `config.yaml`.
+- Pomerium Zero, or Pomerium Core with `authenticate_service_url` set to a domain you control (this guide uses `authenticate.yourdomain.com`). The OIDC bridge isn't served from Pomerium's default hosted authenticate URL. You can still use the hosted identity provider behind your own URL.
+- An identity provider. This guide uses Pomerium's [hosted identity provider](/docs/capabilities/authentication#hosted-authenticate-service) (`idp_provider: hosted`), which signs users in with email and password, Google, or GitHub.
 - A domain you control for the HedgeDoc route (this guide uses `hedgedoc.yourdomain.com`)
 
+:::tip Prefer to self-host the identity provider?
+
+This guide uses the hosted authenticate service so you don't have to run an identity provider (IdP). To run your own instead, follow [Keycloak + Pomerium](/docs/integrations/user-identity/oidc) and swap the `authenticate_service_url` / `idp_*` settings into the config below.
+
+:::
+
 ## Configure Pomerium
+
+<Tabs queryString="type">
+<TabItem value="zero" label="Pomerium Zero" default>
+
+In the [Zero Console](https://console.pomerium.app), create two **Routes** for `hedgedoc.<your-starter-domain>`:
+
+1. **Sign-out route.** This route makes HedgeDoc's **Sign Out** end the Pomerium session too.
+   - In **From**, enter `https://hedgedoc.<your-starter-domain>`, and set **Path** to `/logout`; in **To**, enter `http://hedgedoc:3000`.
+   - Add a response header named `Location` with the value `https://hedgedoc.<your-starter-domain>/.pomerium/sign_out`.
+   - Set the policy to the user or domain that should reach HedgeDoc.
+2. **HedgeDoc route.**
+   - In **From**, enter `https://hedgedoc.<your-starter-domain>`; in **To**, enter `http://hedgedoc:3000`.
+   - Set the same policy as the first route.
+   - On the **Authentication** tab, enable **OIDC Bridge**. HedgeDoc uses PKCE, so leave **Client Secret** empty.
+   - Enable **WebSockets**, which the real-time editor needs.
+
+Order the sign-out route above the HedgeDoc route.
+
+Zero manages the authenticate service and the token-signing secret for you, so there's no `authenticate_service_url` or `shared_secret` to set.
+
+Your OIDC discovery URL is `https://authenticate.<your-starter-domain>/.well-known/openid-configuration`. Use it wherever this guide says `authenticate.yourdomain.com`.
+
+</TabItem>
+<TabItem value="core" label="Pomerium Core">
 
 Create a `config.yaml`. It routes `hedgedoc.yourdomain.com` to the HedgeDoc container, enables the OIDC bridge on that route, allows the WebSocket upgrade the editor needs, and sets the `shared_secret` that Pomerium uses to sign and encrypt the tokens it issues.
 
@@ -68,6 +104,9 @@ Create a `config.yaml`. It routes `hedgedoc.yourdomain.com` to the HedgeDoc cont
 Replace `hedgedoc.yourdomain.com` with your domain, `you@example.com` with your email, and generate your own `shared_secret` with the command in the comment. The route's `from` URL is the OIDC client ID that HedgeDoc uses, so it must match `CMD_OAUTH2_CLIENT_ID` in the next section. The `allow_websockets: true` line is required: without it HedgeDoc's real-time editor can't open its connection. Keep `shared_secret` the same across restarts. If it changes, Pomerium can't read tokens it issued earlier, and users have to sign in again.
 
 The first route makes HedgeDoc's **Sign Out** end the Pomerium session too. On its own, HedgeDoc's sign-out ends only the HedgeDoc session and returns to the home page, so the next sign-in skips the password prompt because the Pomerium session is still active. HedgeDoc has no setting to change where sign-out goes. The `/logout` route still sends the request to HedgeDoc, so HedgeDoc clears its session, and `set_response_headers` replaces the `Location` header so the browser goes on to `/.pomerium/sign_out`. That ends the Pomerium session, and with it access to every app behind Pomerium, not only HedgeDoc. Keep this route before the main route, because Pomerium matches routes in order, and give it the same policy.
+
+</TabItem>
+</Tabs>
 
 ## Configure HedgeDoc
 
@@ -98,7 +137,7 @@ HedgeDoc doesn't document an option that hides every other sign-in method, so th
 
 ## Run the stack
 
-The Compose file runs Pomerium Core, HedgeDoc, and its PostgreSQL database together. HedgeDoc and the database sit on an `internal` Docker network that Pomerium shares, and only Pomerium publishes ports to the host. Place the `config.yaml` from the previous step next to this `docker-compose.yaml`, then start the stack:
+The Compose file runs Pomerium Core, HedgeDoc, and its PostgreSQL database together. HedgeDoc and the database sit on an `internal` Docker network that Pomerium shares, and only Pomerium publishes ports to the host. For Zero, drop the `pomerium` service and use the `compose.yaml` from the Quickstart with your `POMERIUM_ZERO_TOKEN`, keeping the other services and their networks below. For Core, place the `config.yaml` from the previous step next to this `docker-compose.yaml`, then start the stack:
 
 <CodeBlock language="yaml" title="docker-compose.yaml">
   {Compose}
@@ -182,6 +221,6 @@ To upgrade HedgeDoc, bump the pinned image tag (this guide uses `1.10.8`; check 
 
 ## Next steps
 
-- [OIDC bridge](/docs/capabilities/oidc-bridge)
+- [OIDC bridge](https://www.pomerium.com/docs/capabilities/oidc-bridge)
 - [Authentication](/docs/capabilities/authentication)
 - [Custom domains](/docs/capabilities/custom-domains)
