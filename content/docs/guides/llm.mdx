@@ -17,6 +17,8 @@ description: Run a self-hosted LLM interface (Open WebUI) behind Pomerium with S
 ---
 
 import CodeBlock from '@theme/CodeBlock';
+import TabItem from '@theme/TabItem';
+import Tabs from '@theme/Tabs';
 
 import Config from '!!raw-loader!/content/examples/guides/llm/config.yaml';
 import Compose from '!!raw-loader!/content/examples/guides/llm/docker-compose.yaml';
@@ -47,16 +49,51 @@ sequenceDiagram
 
 Use this guide when you host Open WebUI yourself and want one access control plane in front of it: SSO, per-user or per-group policy, and audit logging, without maintaining a separate set of accounts and passwords inside the app. It applies whether your model backend is a local Ollama instance, a remote API, or anything Open WebUI supports; Pomerium sits in front of the UI regardless of the backend.
 
-It uses Open WebUI's generic OIDC login, which works with Pomerium's [OIDC bridge](/docs/capabilities/oidc-bridge).
+It uses Open WebUI's generic OIDC login, which works with Pomerium's [OIDC bridge](https://www.pomerium.com/docs/capabilities/oidc-bridge).
 
 ## Prerequisites
 
+This guide assumes you've completed the [Quickstart](/docs/get-started/quickstart), so you already have Pomerium running and signing users in through the hosted authenticate service.
+
+You also need:
+
 - [Docker](https://docs.docker.com/install/) and [Docker Compose](https://docs.docker.com/compose/install/)
-- Pomerium Core with a self-hosted authenticate service on a domain you control (this guide uses `authenticate.yourdomain.com`). The OIDC bridge isn't available on the hosted authenticate service.
-- An identity provider. This guide uses Pomerium's [hosted identity provider](/docs/capabilities/authentication#hosted-authenticate-service) (`idp_provider: hosted`), which signs users in with email and password, Google, or GitHub. To use your own OpenID Connect identity provider instead, see [identity providers](/docs/integrations/user-identity/identity-providers) and set the `idp_*` settings in `config.yaml`.
+- Pomerium Zero, or Pomerium Core with `authenticate_service_url` set to a domain you control (this guide uses `authenticate.yourdomain.com`). The OIDC bridge isn't served from Pomerium's default hosted authenticate URL. You can still use the hosted identity provider behind your own URL.
+- An identity provider. This guide uses Pomerium's [hosted identity provider](/docs/capabilities/authentication#hosted-authenticate-service) (`idp_provider: hosted`), which signs users in with email and password, Google, or GitHub.
 - A domain you control for the Open WebUI route (this guide uses `llm.yourdomain.com`)
 
+:::tip Prefer to self-host the identity provider?
+
+This guide uses the hosted authenticate service so you don't have to run an identity provider (IdP). To run your own instead, follow [Keycloak + Pomerium](/docs/integrations/user-identity/oidc) and swap the `authenticate_service_url` / `idp_*` settings into the config below.
+
+:::
+
 ## Configure Pomerium
+
+<Tabs queryString="type">
+<TabItem value="zero" label="Pomerium Zero" default>
+
+In the [Zero Console](https://console.pomerium.app), create two **Routes** for `llm.<your-starter-domain>`:
+
+1. **Static assets route.** This route caches Open WebUI's content-hashed build assets.
+   - In **From**, enter `https://llm.<your-starter-domain>`, and set **Prefix** to `/_app/immutable/`; in **To**, enter `http://open-webui:8080`.
+   - Add a response header named `Cache-Control` with the value `private, max-age=31536000, immutable`.
+   - Set the policy to the users or groups that should have access.
+2. **Open WebUI route.**
+   - In **From**, enter `https://llm.<your-starter-domain>`; in **To**, enter `http://open-webui:8080`.
+   - Set the same policy as the first route.
+   - On the **Authentication** tab, enable **OIDC Bridge**. Open WebUI uses PKCE, so leave **Client Secret** empty.
+   - Enable **WebSockets**, so streamed responses keep working.
+   - Add a response header named `Cache-Control` with the value `no-cache`.
+
+Order the static assets route above the Open WebUI route.
+
+Zero manages the authenticate service and the token-signing secret for you, so there's no `authenticate_service_url` or `shared_secret` to set.
+
+Your OIDC discovery URL is `https://authenticate.<your-starter-domain>/.well-known/openid-configuration`. Use it wherever this guide says `authenticate.yourdomain.com`.
+
+</TabItem>
+<TabItem value="core" label="Pomerium Core">
 
 Create a `config.yaml`. It routes `llm.yourdomain.com` to the Open WebUI container, enables the OIDC bridge on that route, and sets the `shared_secret` that Pomerium uses to sign and encrypt the tokens it issues. `allow_websockets` keeps streamed responses working.
 
@@ -72,6 +109,9 @@ The config uses two routes for the same host because Open WebUI doesn't send a `
 - Everything else, including the app page, is sent with `no-cache`. Browsers still keep a copy but check with the server before using it. An unchanged file comes back as a small `304 Not Modified`, and an expired session redirects the page to sign-in.
 
 Keep the `/_app/immutable/` route first. Pomerium uses the first route that matches a request.
+
+</TabItem>
+</Tabs>
 
 ## Configure Open WebUI
 
@@ -102,7 +142,7 @@ Open WebUI calls the authenticate service from the server side for discovery and
 
 ## Run the stack
 
-The Compose file runs Pomerium and Open WebUI together. Open WebUI listens on `8080`, which Pomerium routes to internally; only Pomerium publishes ports to the host. Place the `config.yaml` from the previous step next to this `docker-compose.yaml`, then start the stack:
+The Compose file runs Pomerium Core and Open WebUI together. Open WebUI listens on `8080`, which Pomerium routes to internally; only Pomerium publishes ports to the host. For Zero, drop the `pomerium` service and use the `compose.yaml` from the Quickstart with your `POMERIUM_ZERO_TOKEN`, keeping the other services and their networks below. For Core, place the `config.yaml` from the previous step next to this `docker-compose.yaml`, then start the stack:
 
 <CodeBlock language="yaml" title="docker-compose.yaml">
   {Compose}
@@ -174,7 +214,7 @@ docker compose up -d
 
 ## Next steps
 
-- [OIDC bridge](/docs/capabilities/oidc-bridge)
+- [OIDC bridge](https://www.pomerium.com/docs/capabilities/oidc-bridge)
 - Tighten the policy with group-based rules or [Pomerium Policy Language](/docs/internals/ppl).
 - Point Open WebUI at your model backend with `OLLAMA_BASE_URL` or an OpenAI-compatible endpoint.
 - Add more self-hosted tools behind the same Pomerium instance with additional routes.
