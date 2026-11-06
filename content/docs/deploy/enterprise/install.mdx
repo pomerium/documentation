@@ -38,29 +38,7 @@ Pomerium offers several ways to install the Enterprise Console to suit your orga
 <Tabs queryString="method">
 <TabItem label="Docker" value="docker">
 
-The Pomerium Enterprise Docker image is available at a private Cloudsmith Docker registry.
-
-To access the Pomerium Enterprise Docker image:
-
-1. In your terminal, run the following command:
-
-```shell
-docker login docker.cloudsmith.io
-```
-
-2. Enter your **username** and **password**:
-
-```shell
- % docker login docker.cloudsmith.io
-Username: <username>
-Password: <password>
-```
-
-3. Pull a specific tagged release of the Pomerium Enterprise image:
-
-```shell
-docker pull docker.cloudsmith.io/pomerium/enterprise/pomerium-console:${vX.X.X}
-```
+Pomerium Enterprise is included as part of the `pomerium/pomerium` and `pomerium/ingress-controller` docker images.
 
 See the [Enterprise Quickstart](/docs/deploy/enterprise/quickstart) for instructions to run and deploy the Enterprise Console with Docker Compose.
 
@@ -172,16 +150,6 @@ kubectl apply -k github.com/pomerium/documentation/k8s/console\?ref=0-31-0
 
 The Enterprise Console need be configured before it becomes fully operational.
 
-## Create Cloudsmith Directory Secret
-
-```console
-kubectl create secret docker-registry pomerium-enterprise-docker \
-    --namespace pomerium-enterprise \
-    --docker-server=docker.cloudsmith.io \
-    --docker-username=pomerium/enterprise \
-    --docker-password="your password provided by Pomerium Sales"
-```
-
 ## Configure Enterprise Console
 
 Create a `config` directory, and fill in the configuration parameters for the following template files:
@@ -242,7 +210,7 @@ Keep installation and [configuration](/docs/deploy/terraform) in separate Terraf
 - A Kubernetes cluster with a configured Terraform [Kubernetes provider](https://registry.terraform.io/providers/hashicorp/kubernetes/latest)
 - [Terraform](https://www.terraform.io/downloads) >= 1.0
 - A PostgreSQL database for the Enterprise Console
-- A Pomerium Enterprise license key and Cloudsmith registry credentials
+- A Pomerium Enterprise license key
 
 ### Required Providers
 
@@ -305,9 +273,6 @@ module "pomerium_enterprise_console" {
 
   # Namespace where Pomerium Core is deployed
   core_namespace_name = "pomerium"
-
-  # Enterprise image registry credentials
-  image_registry_password = var.cloudsmith_password
 
   # Enterprise license
   license_key = var.pomerium_license_key
