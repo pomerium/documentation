@@ -19,6 +19,8 @@ description: Add single sign-on and per-route authorization to Grafana by having
 ---
 
 import CodeBlock from '@theme/CodeBlock';
+import TabItem from '@theme/TabItem';
+import Tabs from '@theme/Tabs';
 
 import Config from '!!raw-loader!/content/examples/guides/grafana/config.yaml';
 import Compose from '!!raw-loader!/content/examples/guides/grafana/docker-compose.yaml';
@@ -47,16 +49,42 @@ sequenceDiagram
 
 ## When to use this guide
 
-Use it when you want one front door for Grafana with your existing identity, and Grafana should keep its own OIDC login. It uses Grafana's generic OAuth login, which works with Pomerium's [OIDC bridge](/docs/capabilities/oidc-bridge). If you only need to reach Grafana over a private network without browser SSO, a plain [TCP route](/docs/capabilities/non-http) is a better fit.
+Use it when you want one front door for Grafana with your existing identity, and Grafana should keep its own OIDC login. It uses Grafana's generic OAuth login, which works with Pomerium's [OIDC bridge](https://www.pomerium.com/docs/capabilities/oidc-bridge). If you only need to reach Grafana over a private network without browser SSO, a plain [TCP route](/docs/capabilities/non-http) is a better fit.
 
 ## Prerequisites
 
+This guide assumes you've completed the [Quickstart](/docs/get-started/quickstart), so you already have Pomerium running and signing users in through the hosted authenticate service.
+
+You also need:
+
 - [Docker](https://docs.docker.com/install/) and [Docker Compose](https://docs.docker.com/compose/install/)
-- Pomerium Core with a self-hosted authenticate service on a domain you control (this guide uses `authenticate.yourdomain.com`). The OIDC bridge isn't available on the hosted authenticate service.
-- An identity provider. This guide uses Pomerium's [hosted identity provider](/docs/capabilities/authentication#hosted-authenticate-service) (`idp_provider: hosted`), which signs users in with email and password, Google, or GitHub. To use your own OpenID Connect identity provider instead, see [identity providers](/docs/integrations/user-identity/identity-providers) and set the `idp_*` settings in `config.yaml`.
+- Pomerium Zero, or Pomerium Core with `authenticate_service_url` set to a domain you control (this guide uses `authenticate.yourdomain.com`). The OIDC bridge isn't served from Pomerium's default hosted authenticate URL. You can still use the hosted identity provider behind your own URL.
+- An identity provider. This guide uses Pomerium's [hosted identity provider](/docs/capabilities/authentication#hosted-authenticate-service) (`idp_provider: hosted`), which signs users in with email and password, Google, or GitHub.
 - A domain you control for the Grafana route (this guide uses `grafana.yourdomain.com`)
 
+:::tip Prefer to self-host the identity provider?
+
+This guide uses the hosted authenticate service so you don't have to run an identity provider (IdP). To run your own instead, follow [Keycloak + Pomerium](/docs/integrations/user-identity/oidc) and swap the `authenticate_service_url` / `idp_*` settings into the config below.
+
+:::
+
 ## Configure Pomerium
+
+<Tabs queryString="type">
+<TabItem value="zero" label="Pomerium Zero" default>
+
+In the [Zero Console](https://console.pomerium.app), create a **Route** for `grafana.<your-starter-domain>`:
+
+- In **From**, enter `https://grafana.<your-starter-domain>`; in **To**, enter `http://grafana:3000`.
+- Set the policy to the user or domain that should reach Grafana.
+- On the **Authentication** tab, enable **OIDC Bridge**. Grafana uses PKCE, so leave **Client Secret** empty.
+
+Zero manages the authenticate service and the token-signing secret for you, so there's no `authenticate_service_url` or `shared_secret` to set.
+
+Your OIDC discovery URL is `https://authenticate.<your-starter-domain>/.well-known/openid-configuration`. Use it wherever this guide says `authenticate.yourdomain.com`.
+
+</TabItem>
+<TabItem value="core" label="Pomerium Core">
 
 Create a `config.yaml`. It routes `grafana.yourdomain.com` to the Grafana container, enables the OIDC bridge on that route, and sets the `shared_secret` that Pomerium uses to sign and encrypt the tokens it issues.
 
@@ -65,6 +93,9 @@ Create a `config.yaml`. It routes `grafana.yourdomain.com` to the Grafana contai
 </CodeBlock>
 
 Replace `grafana.yourdomain.com` with your domain, `you@example.com` with your email, and generate your own `shared_secret` with the command in the comment. The route's `from` URL is the OIDC client ID that Grafana uses, so it must match `GF_AUTH_GENERIC_OAUTH_CLIENT_ID` in the next section. Keep `shared_secret` the same across restarts. If it changes, Pomerium can't read tokens it issued earlier, and users have to sign in again.
+
+</TabItem>
+</Tabs>
 
 ## Configure Grafana
 
@@ -82,7 +113,7 @@ Grafana's generic OAuth login talks to Pomerium's OIDC endpoints. The key settin
 
 ## Run the stack
 
-The Compose file runs Pomerium and Grafana together. Place the `config.yaml` from the previous step next to this `docker-compose.yaml`, then start the stack:
+The Compose file runs Pomerium Core and Grafana together. For Zero, drop the `pomerium` service and use the `compose.yaml` from the Quickstart with your `POMERIUM_ZERO_TOKEN`, keeping the other services and their networks below. For Core, place the `config.yaml` from the previous step next to this `docker-compose.yaml`, then start the stack:
 
 <CodeBlock language="yaml" title="docker-compose.yaml">
   {Compose}
@@ -126,6 +157,6 @@ If you change `config.yaml` later, run `docker compose up -d` again to apply it.
 
 ## Next steps
 
-- [OIDC bridge](/docs/capabilities/oidc-bridge)
+- [OIDC bridge](https://www.pomerium.com/docs/capabilities/oidc-bridge)
 - [Authentication](/docs/capabilities/authentication)
 - [Custom domains](/docs/capabilities/custom-domains)

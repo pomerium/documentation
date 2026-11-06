@@ -37,10 +37,7 @@ services:
           - grafana
 
   pomerium:
-    # TODO: switch to the pomerium/pomerium v0.35.0 release image (pinned by digest)
-    # once it ships. Until then this uses the unreleased OIDC bridge build from
-    # gcp-demo: docker load < pomerium-oidc-bridge-7f192990.image.tar.gz
-    image: local/pomerium:oidc-bridge-7f192990
+    image: pomerium/pomerium:main@sha256:07574b2040dac563f729198f19080492b14d9eaa2424f5719863505fe4999ea7
     command: ['--config', '/pomerium/config.yaml']
     env_file:
       - ../../_harness/pomerium/validation.env
