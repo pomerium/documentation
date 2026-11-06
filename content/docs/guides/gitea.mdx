@@ -67,7 +67,7 @@ This guide assumes you've completed the [Quickstart](/docs/get-started/quickstar
 You also need:
 
 - [Docker](https://docs.docker.com/install/) and [Docker Compose](https://docs.docker.com/compose/install/)
-- Pomerium Zero, or Pomerium Core with `authenticate_service_url` set to a domain you control (this guide uses `authenticate.yourdomain.com`). The OIDC bridge isn't served from Pomerium's default hosted authenticate URL. You can still use the hosted identity provider behind your own URL.
+- Pomerium Zero or Pomerium Core, with the authenticate service URL set to a domain you control (this guide uses `authenticate.yourdomain.com`). The OIDC bridge isn't served from Pomerium's default hosted authenticate URL. You can still use the hosted identity provider behind your own URL.
 - An identity provider. This guide uses Pomerium's [hosted identity provider](/docs/capabilities/authentication#hosted-authenticate-service) (`idp_provider: hosted`), which signs users in with email and password, Google, or GitHub.
 - A domain you control for the Gitea route (this guide uses `gitea.yourdomain.com`)
 
@@ -86,13 +86,13 @@ In the [Zero Console](https://console.pomerium.app), create a **Route** for `git
 
 - In **From**, enter `https://gitea.<your-starter-domain>`; in **To**, enter `http://gitea:3000`.
 - Set the policy to the user or domain that should reach Gitea.
-- On the **Authentication** tab, enable **OIDC Bridge** and enter a **Client Secret**. Generate one with `openssl rand -base64 32`. You'll enter the same value in Gitea below. Gitea authenticates with a client secret and doesn't use Proof Key for Code Exchange (PKCE), so Pomerium treats it as a confidential client.
-- Enable **Preserve Host Header**, so Gitea builds its post-sign-out redirect from the public host.
+- On the **Advanced** tab, under **OIDC Bridge**, turn on **Enabled** and enter an **OIDC Bridge Client Secret**. Generate one with `openssl rand -base64 32`. You'll enter the same value in Gitea below. Gitea authenticates with a client secret and doesn't use Proof Key for Code Exchange (PKCE), so Pomerium treats it as a confidential client.
+- On the **Headers** tab, set **Host Header** to **Preserve**, so Gitea builds its post-sign-out redirect from the public host.
 - On the **Timeouts** tab, set **Timeout** to `0s` and **Idle Timeout** to `600s` so long Git smart-HTTP transfers aren't cut off.
 
-Zero manages the authenticate service and the token-signing secret for you, so there's no `authenticate_service_url` or `shared_secret` to set.
+Zero manages the token-signing secret for you, so there's no `shared_secret` to set. Before you create the routes, open the **Identity Provider** page in the Zero Console, set **Authenticate Service URL** to a domain you control (this guide uses `https://authenticate.yourdomain.com`), and leave **Hosted Authenticate** selected. The OIDC bridge isn't served from Pomerium's default hosted authenticate URL.
 
-Your OIDC discovery URL is `https://authenticate.<your-starter-domain>/.well-known/openid-configuration`. Use it wherever this guide says `authenticate.yourdomain.com`.
+Your OIDC discovery URL is your authenticate service URL plus `/.well-known/openid-configuration`.
 
 </TabItem>
 <TabItem value="core" label="Pomerium Core">
