@@ -136,7 +136,11 @@ Visit [https://verify.localhost.pomerium.io](https://verify.localhost.pomerium.i
 
 You'll be redirected to ZITADEL to sign in, then back to the Verify service. Sign in with the user you created above.
 
-You can see user claims from ZITADEL in the JWT payload, confirming that Pomerium has authenticated and authorized your request.
+Depending on your instance's login policy, ZITADEL may ask the user to verify or set up a second factor (for example, a passkey) during sign-in. Complete that step to continue.
+
+You can see user claims from ZITADEL in the JWT payload, such as `email`, `name`, and `sub`, confirming that Pomerium has authenticated and authorized your request.
+
+![Pomerium Verify showing identity found and verified with claims from ZITADEL](./img/zitadel/verify-claims.png)
 
 If sign-in fails, check that the application's redirect URI matches the Pomerium callback URL exactly, including the scheme and path. If Pomerium can't discover the provider, check that the container can resolve the ZITADEL hostname and trusts its TLS certificate.
 
