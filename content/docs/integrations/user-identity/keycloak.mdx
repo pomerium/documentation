@@ -75,8 +75,6 @@ services:
       KC_DB_USERNAME: keycloak
       KC_DB_PASSWORD: change-me # Must match POSTGRES_PASSWORD
       KC_HOSTNAME: https://keycloak.localhost.pomerium.io:8443
-      KC_HTTPS_PORT: 8443
-      KC_HTTP_ENABLED: 'false'
       KC_HTTPS_CERTIFICATE_FILE: /opt/keycloak/certs/localhost.pomerium.io.pem
       KC_HTTPS_CERTIFICATE_KEY_FILE: /opt/keycloak/certs/localhost.pomerium.io-key.pem
       KC_BOOTSTRAP_ADMIN_USERNAME: temp-admin
@@ -118,7 +116,7 @@ A few notes on this configuration:
 
 - `command: start` runs Keycloak in production mode. It requires a real database, an explicit hostname, and TLS, unlike `start-dev`.
 - `KC_HOSTNAME` is the public URL, including the scheme and port. Keycloak uses it as the OIDC `issuer`, so it must match the `idp_provider_url` you set in Pomerium.
-- `8443` is Keycloak's default HTTPS port, and it keeps Keycloak off port 443, which Pomerium uses on the same host. You can choose another port. If you do, keep `KC_HTTPS_PORT`, the `ports` mapping, `KC_HOSTNAME`, and Pomerium's `idp_provider_url` in sync. In production, Keycloak often runs behind a reverse proxy or load balancer on port 443. See [Configuring a reverse proxy](https://www.keycloak.org/server/reverseproxy) in the Keycloak documentation.
+- `8443` is Keycloak's default HTTPS port, and it keeps Keycloak off port 443, which Pomerium uses on the same host. You can choose another port by setting `KC_HTTPS_PORT`. If you do, keep it in sync with the `ports` mapping, `KC_HOSTNAME`, and Pomerium's `idp_provider_url`. In production, Keycloak often runs behind a reverse proxy or load balancer on port 443. See [Configuring a reverse proxy](https://www.keycloak.org/server/reverseproxy) in the Keycloak documentation.
 - The network alias lets the Pomerium container resolve Keycloak by the same hostname your browser uses.
 - Verify fetches Pomerium's signing keys from `JWKS_ENDPOINT`. The hostname must be covered by your certificate, and Verify must trust the CA that signed it (`SSL_CERT_FILE`). Drop `SSL_CERT_FILE` if your certificates come from a public CA.
 
@@ -192,7 +190,7 @@ Pomerium reads the `email`, `name`, and `sub` claims from Keycloak, so fill in t
 1. **Client type**: **OpenID Connect**.
 1. **Client ID**: `pomerium`.
 1. Turn on **Client authentication** and enable only **Standard flow**. Turn off **Direct access grants**, which Pomerium doesn't use.
-1. In **Login settings**, set **Valid redirect URIs** to `https://authenticate.localhost.pomerium.io/oauth2/callback` and **Web origins** to `https://authenticate.localhost.pomerium.io`.
+1. In **Login settings**, set **Valid redirect URIs** to `https://authenticate.localhost.pomerium.io/oauth2/callback`.
 1. **Save**.
 
 ![Create a client](./img/keycloak/keycloak-create-client.gif)
@@ -264,7 +262,7 @@ You can see user claims from Keycloak in the JWT payload, such as `email` and `s
 
 | Symptom | Cause and fix |
 | --- | --- |
-| Keycloak shows **HTTPS required** | Keycloak only serves plain HTTP to `localhost`. Serve it over HTTPS as shown above, and don't set `KC_HTTP_ENABLED` to `true` for a public hostname. |
+| Keycloak shows **HTTPS required** | Keycloak only serves plain HTTP to `localhost`. Serve it over HTTPS as shown above rather than enabling plain HTTP for a public hostname. |
 | **Invalid parameter: redirect_uri** | The client's **Valid redirect URIs** doesn't exactly match `authenticate_service_url` plus `/oauth2/callback`. |
 | Pomerium logs `x509: certificate signed by unknown authority` | Pomerium doesn't trust the CA that signed Keycloak's certificate. Set `certificate_authority_file`. |
 | Pomerium logs an `issuer` mismatch | `idp_provider_url` doesn't match `KC_HOSTNAME` and the realm path. Compare it to the `issuer` at `/realms/pomerium/.well-known/openid-configuration`. |
