@@ -118,6 +118,7 @@ A few notes on this configuration:
 
 - `command: start` runs Keycloak in production mode. It requires a real database, an explicit hostname, and TLS, unlike `start-dev`.
 - `KC_HOSTNAME` is the public URL, including the scheme and port. Keycloak uses it as the OIDC `issuer`, so it must match the `idp_provider_url` you set in Pomerium.
+- `8443` is Keycloak's default HTTPS port, and it keeps Keycloak off port 443, which Pomerium uses on the same host. You can choose another port. If you do, keep `KC_HTTPS_PORT`, the `ports` mapping, `KC_HOSTNAME`, and Pomerium's `idp_provider_url` in sync. In production, Keycloak often runs behind a reverse proxy or load balancer on port 443. See [Configuring a reverse proxy](https://www.keycloak.org/server/reverseproxy) in the Keycloak documentation.
 - The network alias lets the Pomerium container resolve Keycloak by the same hostname your browser uses.
 - Verify fetches Pomerium's signing keys from `JWKS_ENDPOINT`. The hostname must be covered by your certificate, and Verify must trust the CA that signed it (`SSL_CERT_FILE`). Drop `SSL_CERT_FILE` if your certificates come from a public CA.
 
@@ -152,7 +153,19 @@ Keycloak shows a warning that you're signed in as a temporary admin user. Replac
 1. Sign out, then sign in as the new user.
 1. In **Users**, delete `temp-admin`.
 
-In production, also enable MFA for this account and restrict who can reach the admin console. See the [Keycloak server administration guide](https://www.keycloak.org/docs/latest/server_admin/) for details.
+In production, also enable MFA for this account. See the [Keycloak server administration guide](https://www.keycloak.org/docs/latest/server_admin/) for details.
+
+### Secure the Admin Console
+
+Pomerium doesn't protect Keycloak in this guide. The compose file publishes Keycloak directly so you can test the integration, which means anyone who can reach port `8443` can reach the admin console at `/admin`, protected only by the admin login.
+
+Pomerium also can't simply sit in front of the admin console of the same Keycloak it authenticates against. Users must reach Keycloak's sign-in endpoints (`/realms/...` and `/resources/...`) directly, and a Pomerium route that requires sign-in to the same realm would be circular.
+
+In production, limit exposure instead:
+
+- Expose only the paths Pomerium and users need, and block `/admin` and the `master` realm at your reverse proxy. See [Configuring a reverse proxy](https://www.keycloak.org/server/reverseproxy).
+- Serve the admin console on a separate hostname with `KC_HOSTNAME_ADMIN`, reachable only from an internal network or VPN. See [Configuring the hostname](https://www.keycloak.org/server/hostname).
+- Restrict access to the Keycloak port with firewall rules or network policies.
 
 ### Create a Realm
 
