@@ -48,16 +48,27 @@ Open `https://zitadel.example.com/ui/console` and sign in with your administrato
 1. Go to **Projects** and create a project.
 1. Enter a name (for example, `Pomerium`) and select **Create**.
 
-For this walkthrough, leave **Check Role Assignment on Authentication** and **Check for Project on Authentication** disabled. Pomerium will allow any authenticated user on the test route.
+For this walkthrough, leave **Only authorized users can authenticate** and **Authentication is restricted to users from organizations that have been granted access to this project** unchecked. Pomerium will allow any authenticated user on the test route.
 
 ### Create an Application
 
 1. Open the project and add an application.
 1. Enter a name (for example, `Pomerium`) and select **Web** as the application type.
+
+   ![ZITADEL Create Application with name Pomerium and the Web application type selected](./img/zitadel/application-name-type.png)
+
 1. Select **Code** as the authentication method. This uses the authorization code flow with a client ID and client secret (`client_secret_basic`).
+
+   ![ZITADEL Create Application authentication method with Code selected](./img/zitadel/application-auth-method.png)
+
 1. Set **Redirect URIs** to `https://authenticate.localhost.pomerium.io/oauth2/callback`.
+
+   ![ZITADEL Create Application redirect URI set to the Pomerium callback URL](./img/zitadel/application-redirect-uri.png)
+
 1. Review the settings and create the application.
 1. Copy the **Client ID** and **Client Secret** for the Pomerium configuration below. Store the secret before closing the dialog.
+
+   ![ZITADEL Client Details dialog showing the client ID and client secret](./img/zitadel/application-credentials.png)
 
 ## Docker Compose Configuration
 
