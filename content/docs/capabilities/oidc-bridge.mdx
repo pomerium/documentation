@@ -26,11 +26,18 @@ Many applications behind Pomerium keep their own login page. If an application c
 
 Use the bridge when an application supports OIDC login but not JWT header authentication. If the application can verify a JWT from a request header, use [continuous identity verification](/docs/capabilities/getting-users-identity) instead. The Pomerium JWT also shows that Pomerium authorized the request. An ID token only shows who the user is.
 
+The bridge tells your upstream application that the user is <u><b>authenticated</b></u>, but the bridge route's policy handles <u><b>authorization</b></u>.
+
 ## Security considerations
 
-- The bridge only handles login. Access control still comes from the route policy, which Pomerium checks on every request.
+- The bridge only handles login. Access control still comes from the route policy, which Pomerium checks on every request. Keep a policy on every bridged route.
 - The application never receives tokens from your IdP. Pomerium mints the ID token and the access token itself.
 - There are no refresh tokens. The access token works only while the user's Pomerium session is active.
+- The bridge's tokens don't prove that the user is still signed in. Make sure the application is reachable only through Pomerium, so the route policy is checked on every request.
+- By default, the bridge accepts any redirect URI under the route's `from` URL. Set [`redirect_uris`](#configuration) to an exact list instead if:
+  - The application's domain is at risk of a domain takeover.
+  - The application is on a domain you don't own.
+  - The application hosts its users' web content on the same domain.
 
 ## How it works
 
@@ -55,9 +62,9 @@ sequenceDiagram
   P->>A: ID token and access token
 ```
 
-:::note Claims
+:::note Scope & Claims
 
-The claims in the ID token come from your IdP, such as `sub`, `email`, and `name`. Pomerium rewrites `iss` to the authenticate service URL and `aud` to the client ID. Every value is a string, so a list like `groups` becomes `"admins,developers"` and `email_verified` becomes `"true"` rather than `true`. The userinfo endpoint returns the same claims.
+The only supported scope is `openid`. The ID token contains only the `aud`, `exp`, `iat`, `iss`, `sid`, and `sub` claims. Pomerium rewrites `iss` to the authenticate service URL and `aud` to the client ID, which is the route's `from` URL. The userinfo endpoint returns these claims plus the other claims your IdP issued for the session, such as `email` and `name`. Every value is a string, so a list like `groups` becomes `"admins,developers"` and `email_verified` becomes `"true"` rather than `true`.
 
 :::
 
@@ -73,6 +80,14 @@ The ID token can't replace the Pomerium JWT in [application-based mutual authent
 - A `shared_secret` in the config.
 - An application that supports OIDC login with the authorization code flow.
 
+Example quickstart configuration:
+
+```yaml
+authenticate_service_url: https://authenticate.localhost.pomerium.io
+idp_provider: hosted
+shared_secret: <b64-bytes>
+```
+
 ## Configuration
 
 Set `oidc_bridge` globally to cover every route, or on a route to cover only that one. A route-level block replaces the global one. With no block at all, the bridge is off.
@@ -85,27 +100,39 @@ oidc_bridge:
 routes:
   - from: https://gitea.localhost.pomerium.io
     to: http://gitea:3000
+    # A route-level oidc_bridge block overrides the global one
     oidc_bridge:
       # Gitea does not use PKCE, so it is a confidential client.
       # Use the same value as the Client Secret in the Gitea auth source.
       client_secret: <GITEA_CLIENT_SECRET>
     allow_any_authenticated_user: true
 
-  # Opt this route out
   - from: https://wiki.localhost.pomerium.io
     to: http://localhost:9090
     oidc_bridge:
+      # Explicitly opt this route out
       enabled: false
+
+  - from: https://secure.localhost.pomerium.io
+    to: http://localhost:8787
+    oidc_bridge:
+      # The redirect URI must exactly match an entry in this list
+      redirect_uris:
+        - http://localhost:8787/oauth/callback
+        - http://localhost:8787/auth/callback
 ```
 
 | Key | Type | Default | Description |
 | :-- | :-- | :-- | :-- |
 | `enabled` | boolean | `true` | Turns the bridge on or off. The default applies whenever an `oidc_bridge` block is present, so `oidc_bridge: {}` is enough to enable it. |
 | `client_secret` | string | none | Set this only if the application doesn't support Proof Key for Code Exchange (PKCE). Keep it secret. |
+| `redirect_uris` | []string | none | Exact redirect URIs the application can use. If set, Pomerium rejects any other redirect URI. See [Security considerations](#security-considerations). |
 
 ## Example: Gitea
 
 [Gitea](https://about.gitea.com/) is a self-hosted Git service. It can't read the Pomerium JWT, but it supports OpenID Connect login, so it works well with the bridge. Gitea doesn't use PKCE, so it needs a `client_secret` on the route.
+
+Since this example walks through putting Pomerium in front of Gitea, consulting the [Gitea reverse proxy docs](https://docs.gitea.com/administration/reverse-proxies/) may come in handy.
 
 ### Pomerium route
 
@@ -116,6 +143,8 @@ routes:
     oidc_bridge:
       client_secret: <GITEA_CLIENT_SECRET>
     allow_any_authenticated_user: true
+    # required in some gitea setups.
+    preserve_host_headers: true
 ```
 
 ### Gitea setup
@@ -139,6 +168,9 @@ routes:
 4. To skip the Gitea login page entirely, leave the bridge as the only login method and let Gitea create accounts on first sign-in:
 
    ```ini title="app.ini"
+   [server]
+   ROOT_URL="https://gitea.localhost.pomerium.io"
+
    [oauth2_client]
    ENABLE_AUTO_REGISTRATION = true
    USERNAME = email
