@@ -12,7 +12,8 @@ idp_provider: hosted
 autocert: true
 
 # Signs and encrypts the OIDC tokens Pomerium issues to Forgejo. Generate your own
-# and keep it secret. Keep the same value across restarts:
+# and keep it secret. Keep the same value across restarts, or users must sign in
+# again:
 #   openssl rand -base64 32
 shared_secret: REPLACE_WITH_BASE64_32_BYTE_SECRET
 
@@ -33,9 +34,10 @@ routes:
 
   - from: https://forgejo.yourdomain.com
     to: http://forgejo:3000
-    # Makes Pomerium the OpenID Connect provider for this route. Forgejo doesn't
-    # use PKCE, so it's a confidential client: enter the same value as the client
-    # secret when you add the login source in Forgejo. Generate your own:
+    # Makes Pomerium the OpenID Connect provider for this route. The from URL is
+    # the OIDC client ID (Forgejo's --key). Forgejo doesn't use PKCE, so it's a
+    # confidential client: enter the same value as the client secret when you add
+    # the login source in Forgejo. Generate your own:
     #   openssl rand -base64 32
     oidc_bridge:
       client_secret: REPLACE_WITH_ROUTE_CLIENT_SECRET
