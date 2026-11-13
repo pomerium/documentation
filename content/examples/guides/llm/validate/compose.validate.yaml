@@ -8,18 +8,17 @@ include:
 
 services:
   open-webui:
-    image: ghcr.io/open-webui/open-webui:main@sha256:7f1b0a1a50cfbac23da3b16f96bc968fd757b26dc9e54e93813d61768ea9184e
+    image: ghcr.io/open-webui/open-webui:v0.13.3@sha256:46b59158e6558eeb980bc828e0f1b30238ad24d82ed84d5e5eda1dab2a082f14
     environment:
       WEBUI_URL: https://llm.localhost.pomerium.io
       OAUTH_PROVIDER_NAME: Pomerium
       OAUTH_CLIENT_ID: https://llm.localhost.pomerium.io
       OAUTH_CODE_CHALLENGE_METHOD: S256
       OAUTH_TOKEN_ENDPOINT_AUTH_METHOD: client_secret_post
-      # TODO: restore "openid email profile" (as in the guide) once the released
-      # bridge accepts multiple scopes. The v0.35.0 pre-release build rejects them.
       OAUTH_SCOPES: openid
       OPENID_PROVIDER_URL: https://authenticate.localhost.pomerium.io/.well-known/openid-configuration
       OPENID_REDIRECT_URI: https://llm.localhost.pomerium.io/oauth/oidc/callback
+      OPENID_END_SESSION_ENDPOINT: https://llm.localhost.pomerium.io/.pomerium/sign_out
       ENABLE_OAUTH_SIGNUP: 'true'
       ENABLE_LOGIN_FORM: 'false'
       OAUTH_AUTO_REDIRECT: 'true'
@@ -31,6 +30,8 @@ services:
       # Validation-only; the published guide uses a public certificate.
       SSL_CERT_FILE: /certs/ca.crt
       REQUESTS_CA_BUNDLE: /certs/ca.crt
+      # Open WebUI's aiohttp client reads its own CA setting instead of SSL_CERT_FILE.
+      AIOHTTP_CLIENT_SSL_CERT_FILE: /certs/ca.crt
     volumes:
       - certs:/certs:ro
     # Open WebUI lives ONLY on the internal network it shares with Pomerium. It is not
@@ -50,7 +51,7 @@ services:
       start_period: 180s
 
   pomerium:
-    image: pomerium/pomerium:main@sha256:07574b2040dac563f729198f19080492b14d9eaa2424f5719863505fe4999ea7
+    image: pomerium/pomerium:main@sha256:6f9c684864299418b8d6c8846de8aed3faac9c0f99c2572d300d124d74057715
     command: ['--config', '/pomerium/config.yaml']
     env_file:
       - ../../_harness/pomerium/validation.env

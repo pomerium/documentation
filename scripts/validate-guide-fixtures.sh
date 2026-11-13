@@ -8,7 +8,11 @@
 #   scripts/validate-guide-fixtures.sh <guide-id>      # validate one guide
 #
 # A guide opts in simply by having content/examples/guides/<id>/validate/
-# compose.validate.yaml. Override the route under test with validate/url.txt.
+# compose.validate.yaml. Override the route under test with validate/url.txt, and
+# the screenshot folder under content/docs/guides/img/ with validate/img-dir.txt.
+# A fixture for one tab of a multi-tab guide names its parent document (the guide
+# ID under content/docs/guides/) in validate/doc.txt so CI selects it when that
+# document changes.
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
@@ -213,7 +217,13 @@ fi
 # screenshots there. Without the flag SCREENSHOT_DIR is unset and specs capture
 # nothing, so CI never rewrites committed images.
 if [ "$UPDATE_SHOTS" = "--update-screenshots" ] && [ "$GUIDE" != "--selftest" ]; then
-  imgdir="$ROOT/content/docs/guides/img/$GUIDE"
+  # A guide whose images share another guide's folder (for example, one tab of a
+  # multi-tab guide) names it in validate/img-dir.txt.
+  if [ -f "$GUIDES/$GUIDE/validate/img-dir.txt" ]; then
+    imgdir="$ROOT/content/docs/guides/img/$(tr -d '[:space:]' < "$GUIDES/$GUIDE/validate/img-dir.txt")"
+  else
+    imgdir="$ROOT/content/docs/guides/img/$GUIDE"
+  fi
   mkdir -p "$imgdir"
   run_opts+=(-v "$imgdir:/app/artifacts" -e SCREENSHOT_DIR=/app/artifacts)
 fi
