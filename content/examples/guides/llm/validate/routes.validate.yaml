@@ -10,7 +10,8 @@ routes:
     policy:
       - allow:
           or:
-            - claim/groups: engineering
+            - email:
+                ends_with: '@company.com'
 
   - from: https://llm.localhost.pomerium.io
     to: http://open-webui:8080
@@ -18,9 +19,11 @@ routes:
     allow_websockets: true
     set_response_headers:
       Cache-Control: no-cache
-    # Group-gated so the sealed test exercises both the allow path (alice is in
-    # engineering) and the deny path (bob is a contractor, not in engineering).
+    # Allows company.com (alice, charlie) so the spec can check both the first
+    # user's admin role and the pending role for later users; bob@example.com stays
+    # outside it.
     policy:
       - allow:
           or:
-            - claim/groups: engineering
+            - email:
+                ends_with: '@company.com'

@@ -1,0 +1,46 @@
+services:
+  pomerium:
+    image: pomerium/pomerium:main@sha256:6f9c684864299418b8d6c8846de8aed3faac9c0f99c2572d300d124d74057715
+    volumes:
+      - ./config.yaml:/pomerium/config.yaml:ro
+      - pomerium-cache:/data
+    ports:
+      - 443:443
+      - 80:80
+    # Pomerium is the only service on the default network (where its ports are
+    # published) and is also on the internal network so it can reach Open WebUI.
+    networks:
+      default: {}
+      internal: {}
+    restart: always
+
+  open-webui:
+    image: ghcr.io/open-webui/open-webui:v0.13.3@sha256:46b59158e6558eeb980bc828e0f1b30238ad24d82ed84d5e5eda1dab2a082f14
+    environment:
+      # Trust the email Pomerium forwards and skip Open WebUI's own login screen.
+      - WEBUI_AUTH_TRUSTED_EMAIL_HEADER=X-Pomerium-Claim-Email
+      - WEBUI_URL=https://llm.yourdomain.com
+      # Open WebUI's sign-out only clears its own session, and the next request
+      # carries the trusted header again. Send sign-out through Pomerium instead.
+      - WEBUI_AUTH_SIGNOUT_REDIRECT_URL=https://llm.yourdomain.com/.pomerium/sign_out
+      # The first provisioned user becomes admin; later users default to "pending" and
+      # must be approved. Uncomment to make new SSO users active immediately instead.
+      # - DEFAULT_USER_ROLE=user
+    volumes:
+      - open-webui-data:/app/backend/data
+    # Open WebUI is ONLY on the internal network, so nothing but Pomerium can reach it
+    # and the trusted email header cannot be forged by going around Pomerium.
+    networks:
+      internal: {}
+    restart: always
+
+volumes:
+  pomerium-cache:
+  open-webui-data:
+
+networks:
+  default: {}
+  # internal: true has no route to the host or outside world; only services attached
+  # to it (Pomerium and Open WebUI) can talk on it.
+  internal:
+    internal: true
