@@ -11,6 +11,11 @@ idp_provider: hosted
 # Obtain TLS certificates automatically from Let's Encrypt.
 autocert: true
 
+# Encrypts Pomerium's session cookies. Keep the same value across restarts, or
+# every user has to sign in again after Pomerium restarts:
+#   openssl rand -base64 32
+cookie_secret: REPLACE_WITH_BASE64_32_BYTE_COOKIE_SECRET
+
 # Signs and encrypts the OIDC tokens Pomerium issues to Gitea. Generate your own
 # and keep it secret. Keep the same value across restarts:
 #   openssl rand -base64 32

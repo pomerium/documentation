@@ -94,16 +94,18 @@ Zero manages the token-signing secret for you, so there's no `shared_secret` to 
 
 Your OIDC discovery URL is your authenticate service URL plus `/.well-known/openid-configuration`.
 
+The route's **From** URL is the OIDC client ID. In the steps below, use `https://gitea.<your-starter-domain>` wherever the guide shows `https://gitea.yourdomain.com`, including `GITEA__server__ROOT_URL` in the Compose file and `--key` when you add the login source. If `--key` doesn't match, Pomerium rejects the sign-in with `unknown client_id`. If `GITEA__server__ROOT_URL` doesn't match, it rejects it with `redirect_uri ... does not match client_id`.
+
 </TabItem>
 <TabItem value="core" label="Pomerium Core">
 
-Create a `config.yaml`. It routes `gitea.yourdomain.com` to the Gitea container, enables the OIDC bridge on that route, and removes the total request timeout so long Git smart-HTTP transfers aren't cut off. It also sets the `shared_secret` that Pomerium uses to sign and encrypt the tokens it issues.
+Create a `config.yaml`. It routes `gitea.yourdomain.com` to the Gitea container, enables the OIDC bridge on that route, and removes the total request timeout so long Git smart-HTTP transfers aren't cut off. It also sets the `cookie_secret` that encrypts Pomerium's session cookies and the `shared_secret` that Pomerium uses to sign and encrypt the tokens it issues.
 
 <CodeBlock language="yaml" title="config.yaml">
   {Config}
 </CodeBlock>
 
-Replace `gitea.yourdomain.com` with your domain, `you@example.com` with your user or domain, and generate your own `shared_secret` and route `client_secret` with the command in each comment. Keep `shared_secret` the same across restarts. If it changes, Pomerium can't read tokens it issued earlier, and users have to sign in again.
+Replace `gitea.yourdomain.com` with your domain, `you@example.com` with your user or domain, and generate your own `cookie_secret`, `shared_secret`, and route `client_secret` with the command in each comment. Keep `cookie_secret` and `shared_secret` the same across restarts. If either changes, Pomerium can't read the sessions and tokens it issued earlier, and users have to sign in again.
 
 Gitea authenticates with a client secret and doesn't use Proof Key for Code Exchange (PKCE), so it's registered as a confidential client and the route needs a `client_secret`. You'll enter the same value in Gitea below. The route's `from` URL is the OIDC client ID, so it must match the client ID you give Gitea.
 
@@ -168,7 +170,13 @@ Start it:
 docker compose up -d
 ```
 
-If you change `config.yaml` later, run `docker compose up -d` again to apply it.
+If you change `config.yaml` later, restart Pomerium to apply it:
+
+```bash
+docker compose restart pomerium
+```
+
+`docker compose up -d` doesn't apply the change, because the Compose file itself hasn't changed.
 
 ## Add Pomerium as a login source
 
@@ -197,7 +205,7 @@ You don't need a separate break-glass administrator. Gitea is only reachable thr
 
 1. **The route requires authentication.** In a fresh browser, open `https://gitea.yourdomain.com`. You should be redirected to Pomerium to sign in.
 2. **Gitea signs you in without a click or a second prompt.** After you sign in to Pomerium, you land on the Gitea dashboard. Gitea's login page never appears.
-3. **Your identity is correct.** Open **Settings** and confirm that your full name, email, and avatar come from your identity provider. The first account also has **Site Administration** in its menu.
+3. **Your identity is correct.** Open **Settings** and confirm that your email comes from your identity provider, along with your full name and avatar if it sends `name` and `picture` claims. The first account also has **Site Administration** in its menu.
 
    ![The Gitea dashboard, signed in as the Pomerium identity](img/gitea/gitea-dashboard.png)
 
@@ -214,7 +222,10 @@ Everything here runs inside the Gitea container, so you need shell access to the
 docker compose exec -u git gitea gitea admin auth list
 docker compose exec -u git gitea gitea admin auth update-oauth --id 1 \
   --secret REPLACE_WITH_ROUTE_CLIENT_SECRET
+docker compose restart gitea
 ```
+
+Gitea loads login sources when it starts, so a change made from the CLI takes effect only after the restart. Changes made in the web UI apply immediately.
 
 **If no one has administrator access,** the CLI can't promote an existing user, but a temporary administrator can do it through Gitea's API. Replace `your-username` with the Gitea username to promote:
 
@@ -229,7 +240,7 @@ docker compose exec -u git gitea sh -c '
   gitea admin user delete --username recovery-tmp'
 ```
 
-The response should include `"is_admin":true`. The token is never printed, and deleting `recovery-tmp` also deletes it.
+The response should include `"is_admin":true`, followed by Gitea's log output from deleting `recovery-tmp`. The token is never printed, and deleting `recovery-tmp` also deletes it.
 
 ## Common failure modes
 
@@ -240,10 +251,12 @@ The response should include `"is_admin":true`. The token is never printed, and d
 | Sign-in stops at Gitea's home page with a **Sign in** link | `LANDING_PAGE` isn't `login`. Set it, or select **Sign in**, which still skips Gitea's login page. |
 | `add-oauth` fails with `Failed to initialize OpenID Connect Provider` | The Gitea container can't reach the discovery URL. Check that Pomerium is running and that the container can resolve `authenticate.yourdomain.com`. |
 | `404 Not Found` from the discovery URL or any `/oidc/` path | Gitea is pointing at the wrong host. Use your authenticate service URL, and check that `authenticate_service_url` and `idp_provider` are set. |
-| HTTP 400 at `/oidc/auth`: `redirect_uri ... does not match client_id ...` | The client ID (`--key`) doesn't match the route's `from` URL, or `GITEA__server__ROOT_URL` isn't the Gitea URL. |
-| Token request fails with `invalid_client` | The client secret in Gitea doesn't match the route's `client_secret`. Look for the `oidc: token request invalid` log line in Pomerium. |
+| HTTP 400 at `/oidc/auth`: `unknown client_id` | The client ID (`--key`) doesn't match the route's `from` URL. Fix it with `gitea admin auth update-oauth --id 1 --key https://gitea.yourdomain.com`, then restart Gitea. |
+| HTTP 400 at `/oidc/auth`: `redirect_uri ... does not match client_id ...` | `GITEA__server__ROOT_URL` isn't the route's `from` URL, so Gitea's callback URL isn't under the client ID. |
+| The browser reports too many redirects (`ERR_TOO_MANY_REDIRECTS`) after you sign in, or the token request fails with `invalid_client` | The client secret in Gitea doesn't match the route's `client_secret`. Gitea's failed login sends you back to its login page, which starts the OIDC login again. Look for the `oidc: token request invalid` log line in Pomerium. Fix the secret as described in [Recover admin access](#recover-admin-access), and restart Gitea. |
 | Gitea shows a link-account or registration form instead of signing you in | Your username or email clashes with an existing Gitea account. Register with a username nobody has on that form. Gitea creates a new account with your identity provider email and leaves the existing account alone. If the name you enter is also taken, Gitea returns you to the form with the original username filled in again. To avoid clashes, see [Choose how usernames are created](#choose-how-usernames-are-created). |
 | **Sign out** returns to the dashboard instead of signing you out of Pomerium | The account didn't sign in through the OIDC login, or the login source was added without the discovery URL. Gitea only calls the end-session endpoint for OIDC sign-ins whose source advertises one. |
+| The full name is blank | Your identity provider doesn't send a `name` claim. Gitea reads it from Pomerium's user info endpoint, which passes on the claims your identity provider sent. With your own OIDC provider, include the `profile` scope in `idp_scopes` and make sure the provider maps the user's name into the `name` claim. Gitea fills in a blank full name on the next sign-in. |
 | The avatar is a generated pattern | `UPDATE_AVATAR` isn't `true`, your identity provider doesn't send a `picture` claim, or Gitea can't reach the image URL. Gitea downloads it from the container on each sign-in. |
 | `invalid_token` on Gitea's user info request | The access token was issued before Pomerium restarted without a fixed `shared_secret`. Set `shared_secret` and sign in again. |
 | Sign-in fails on the username | Gitea couldn't make a valid username from the claim `USERNAME` points at. See [Choose how usernames are created](#choose-how-usernames-are-created). |
