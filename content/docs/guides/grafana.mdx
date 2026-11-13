@@ -12,10 +12,11 @@ keywords:
     oidc,
     oidc bridge,
     openid connect,
+    jwt,
     authentication,
     authorization,
   ]
-description: Add single sign-on and per-route authorization to Grafana by having Pomerium act as Grafana's OpenID Connect provider through the OIDC bridge.
+description: Add single sign-on and per-route authorization to Grafana with Pomerium, either with Pomerium as Grafana's OpenID Connect provider through the OIDC bridge or by forwarding a signed identity JWT.
 ---
 
 import CodeBlock from '@theme/CodeBlock';
@@ -23,11 +24,46 @@ import TabItem from '@theme/TabItem';
 import Tabs from '@theme/Tabs';
 
 import Config from '!!raw-loader!/content/examples/guides/grafana/config.yaml';
+import ProxyHeadersConfig from '!!raw-loader!/content/examples/guides/grafana/config.proxy-headers.yaml';
 import Compose from '!!raw-loader!/content/examples/guides/grafana/docker-compose.yaml';
+import ProxyHeadersCompose from '!!raw-loader!/content/examples/guides/grafana/docker-compose.proxy-headers.yaml';
 
 # Secure Grafana with Pomerium
 
-## What this guide does
+Put Grafana behind Pomerium to gate it with SSO and route policy. Users sign in once through Pomerium, and Grafana signs them in without a second login prompt or a separate Grafana password.
+
+There are two ways to sign users in to Grafana. Choose one with the tabs below:
+
+|  | OIDC bridge | Proxy headers |
+| :-- | :-- | :-- |
+| How Grafana signs users in | Its generic OAuth login, with Pomerium as the OpenID Connect (OIDC) provider | [JWT authentication](https://grafana.com/docs/grafana/latest/setup-grafana/configure-security/configure-authentication/jwt/) from the signed `X-Pomerium-Jwt-Assertion` header |
+| What Grafana verifies | Tokens it gets from Pomerium's OIDC endpoints, using PKCE with no client secret | The JWT's signature, against Pomerium's published JWKS |
+| Pomerium settings (Core) | OIDC bridge on the route, plus a fixed `shared_secret` | `pass_identity_headers` on the route, plus a `signing_key` |
+| Authenticate service URL | Must be a domain you control | The default hosted URL works |
+| Sign-out | Signing out of Grafana also signs out of Pomerium | Signing out of Grafana also signs out of Pomerium |
+| Role mapping | Optional, from the `groups` claim | Not covered; manage Grafana org roles separately |
+
+If you only need to reach Grafana over a private network without browser SSO, a plain [TCP route](/docs/capabilities/non-http) is a better fit.
+
+## Prerequisites
+
+This guide assumes you've completed the [Quickstart](/docs/get-started/quickstart), so you already have Pomerium running and signing users in through the hosted authenticate service.
+
+You also need:
+
+- [Docker](https://docs.docker.com/install/) and [Docker Compose](https://docs.docker.com/compose/install/)
+- A domain you control for the Grafana route (this guide uses `grafana.yourdomain.com`)
+- An identity provider. This guide uses Pomerium's [hosted identity provider](/docs/capabilities/authentication#hosted-authenticate-service) (`idp_provider: hosted`), which signs users in with email and password, Google, or GitHub.
+- For the OIDC bridge method, Pomerium Zero or Pomerium Core with the authenticate service URL set to a domain you control (this guide uses `authenticate.yourdomain.com`). The OIDC bridge isn't served from Pomerium's default hosted authenticate URL. You can still use the hosted identity provider behind your own URL.
+
+:::tip Prefer to self-host the identity provider?
+
+This guide uses the hosted authenticate service so you don't have to run an identity provider (IdP). To run your own instead, follow [Keycloak + Pomerium](/docs/integrations/user-identity/oidc) and swap the `authenticate_service_url` / `idp_*` settings into the config below.
+
+:::
+
+<Tabs queryString="method">
+<TabItem value="oidc-bridge" label="OIDC bridge" default>
 
 Put Grafana behind Pomerium to gate it with SSO and route policy. Grafana keeps its standard OpenID Connect (OIDC) login, and Pomerium is the OIDC provider. Users sign in once through Pomerium, and Grafana completes its login without a second prompt.
 
@@ -47,28 +83,9 @@ sequenceDiagram
   P->>G: ID token and access token
 ```
 
-## When to use this guide
+Use this method when you want one front door for Grafana with your existing identity, and Grafana should keep its own OIDC login. It uses Grafana's generic OAuth login, which works with Pomerium's [OIDC bridge](https://www.pomerium.com/docs/capabilities/oidc-bridge).
 
-Use it when you want one front door for Grafana with your existing identity, and Grafana should keep its own OIDC login. It uses Grafana's generic OAuth login, which works with Pomerium's [OIDC bridge](https://www.pomerium.com/docs/capabilities/oidc-bridge). If you only need to reach Grafana over a private network without browser SSO, a plain [TCP route](/docs/capabilities/non-http) is a better fit.
-
-## Prerequisites
-
-This guide assumes you've completed the [Quickstart](/docs/get-started/quickstart), so you already have Pomerium running and signing users in through the hosted authenticate service.
-
-You also need:
-
-- [Docker](https://docs.docker.com/install/) and [Docker Compose](https://docs.docker.com/compose/install/)
-- Pomerium Zero or Pomerium Core, with the authenticate service URL set to a domain you control (this guide uses `authenticate.yourdomain.com`). The OIDC bridge isn't served from Pomerium's default hosted authenticate URL. You can still use the hosted identity provider behind your own URL.
-- An identity provider. This guide uses Pomerium's [hosted identity provider](/docs/capabilities/authentication#hosted-authenticate-service) (`idp_provider: hosted`), which signs users in with email and password, Google, or GitHub.
-- A domain you control for the Grafana route (this guide uses `grafana.yourdomain.com`)
-
-:::tip Prefer to self-host the identity provider?
-
-This guide uses the hosted authenticate service so you don't have to run an identity provider (IdP). To run your own instead, follow [Keycloak + Pomerium](/docs/integrations/user-identity/oidc) and swap the `authenticate_service_url` / `idp_*` settings into the config below.
-
-:::
-
-## Configure Pomerium
+## Configure Pomerium {#oidc-bridge-configure-pomerium}
 
 <Tabs queryString="type">
 <TabItem value="zero" label="Pomerium Zero" default>
@@ -97,7 +114,7 @@ Replace `grafana.yourdomain.com` with your domain, `you@example.com` with your e
 </TabItem>
 </Tabs>
 
-## Configure Grafana
+## Configure Grafana {#oidc-bridge-configure-grafana}
 
 Grafana's generic OAuth login talks to Pomerium's OIDC endpoints. The key settings are in the `grafana` service of the Compose file below:
 
@@ -111,7 +128,7 @@ Grafana's generic OAuth login talks to Pomerium's OIDC endpoints. The key settin
 - `GF_AUTH_SIGNOUT_REDIRECT_URL` — Pomerium's sign-out URL on the Grafana route, `https://grafana.yourdomain.com/.pomerium/sign_out`. Grafana's own sign-out only clears the Grafana session. With auto-login on, Grafana would sign the user straight back in through the bridge, so sign-out has to end the Pomerium session too.
 - `GF_AUTH_GENERIC_OAUTH_ROLE_ATTRIBUTE_PATH` — optional role mapping. Pomerium's user info endpoint returns the `groups` claim from your identity provider: an array for users in several groups, or a single string for users in one group. `contains()` handles both. It only works if your identity provider sends a `groups` claim.
 
-## Run the stack
+## Run the stack {#oidc-bridge-run-the-stack}
 
 The Compose file runs Pomerium Core and Grafana together. For Zero, drop the `pomerium` service and use the `compose.yaml` from the Quickstart with your `POMERIUM_ZERO_TOKEN`, keeping the other services and their networks below. For Core, place the `config.yaml` from the previous step next to this `docker-compose.yaml`, then start the stack:
 
@@ -125,14 +142,14 @@ docker compose up -d
 
 If you change `config.yaml` later, run `docker compose up -d` again to apply it.
 
-## Verify the setup
+## Verify the setup {#oidc-bridge-verify-the-setup}
 
 1. **The route requires authentication.** In a fresh browser, open `https://grafana.yourdomain.com`. You should be redirected to Pomerium to sign in.
 2. **The OIDC login completes without a prompt.** After you sign in, Grafana signs you in on its own, with no Grafana login page or second prompt. Open `/profile` and confirm your email and name show.
 3. **Sign-out ends the session.** Sign out from Grafana's profile menu. You land on Pomerium's signed-out page. Opening `https://grafana.yourdomain.com` again sends you to your identity provider to sign in.
 4. **A disallowed user is blocked.** Sign in as a user your policy excludes and open `https://grafana.yourdomain.com`. Pomerium denies access before Grafana loads.
 
-## Common failure modes
+## Common failure modes {#oidc-bridge-common-failure-modes}
 
 | Symptom | Cause and fix |
 | :-- | :-- |
@@ -146,7 +163,7 @@ If you change `config.yaml` later, run `docker compose up -d` again to apply it.
 | Everyone is a Viewer | The `groups` claim is missing from the identity provider's tokens, or the expression doesn't match the group names. Confirm your identity provider sends `groups` and that the names match exactly. |
 | `invalid_token` on Grafana's user info request | The access token was issued before Pomerium restarted without a fixed `shared_secret`. Set `shared_secret` and sign in again. |
 
-## Security considerations
+## Security considerations {#oidc-bridge-security-considerations}
 
 - **Keep the route protected.** The bridge handles login only. Route policy decides who can reach Grafana, and Pomerium checks it on every request. A public route would let anyone who can sign in to Pomerium get a Grafana account.
 - **Only Pomerium should reach Grafana.** Keep `grafana:3000` off published ports and on the internal Docker network, so Pomerium is the only way in.
@@ -155,8 +172,128 @@ If you change `config.yaml` later, run `docker compose up -d` again to apply it.
 - **PKCE means no client secret.** If you later use an app that can't do PKCE, the bridge supports a `client_secret` on that route. Keep it secret.
 - **Account creation follows the policy.** `GF_AUTH_GENERIC_OAUTH_ALLOW_SIGN_UP=true` creates a Grafana account for every user your policy allows. Manage Grafana org roles separately, or use the role mapping above.
 
-## Next steps
+## Next steps {#oidc-bridge-next-steps}
 
 - [OIDC bridge](https://www.pomerium.com/docs/capabilities/oidc-bridge)
 - [Authentication](/docs/capabilities/authentication)
 - [Custom domains](/docs/capabilities/custom-domains)
+
+</TabItem>
+<TabItem value="proxy-headers" label="Proxy headers">
+
+Put Grafana behind Pomerium to gate it with SSO and route policy, then pass a signed identity JWT that lets Grafana sign users in automatically. Grafana verifies that JWT on each request, so there's no second login prompt or separate Grafana password for users.
+
+```mermaid
+flowchart LR
+    Browser --> Pomerium["Pomerium<br/>authN + authZ<br/>signs identity JWT"]
+    Pomerium -.->|"sign in"| IdP[Identity provider]
+    Pomerium -->|"signed JWT"| Grafana["Grafana<br/>verifies JWT, auto sign-in"]
+```
+
+<iframe
+  title="Video walkthrough: secure Grafana with Pomerium SSO"
+  width="100%"
+  height="500"
+  src="https://www.youtube.com/embed/kpTcbu5s-xU?si=rlass29s-lncmFRe"
+  frameborder="0"
+  webkitallowfullscreen="true"
+  mozallowfullscreen="true"
+  allowfullscreen="true"></iframe>
+
+Use this method when you want one front door for Grafana with your existing identity, and you want Grafana to trust Pomerium for authentication instead of running its own login.
+
+## Configure Pomerium {#proxy-headers-configure-pomerium}
+
+<Tabs queryString="type">
+<TabItem value="zero" label="Pomerium Zero" default>
+
+In the [Zero Console](https://console.pomerium.app):
+
+1. Create a **Route**. In **From**, enter `https://grafana.<your-starter-domain>`; in **To**, enter `http://grafana:3000`.
+2. Set the policy to **Any Authenticated User**.
+
+   ![Creating a Grafana route in the Zero Console](./img/grafana/grafana-create-route.gif)
+
+3. On the **Headers** tab, enable **Pass Identity Headers** and save.
+
+   ![Configuring the headers settings for the Grafana route in the Zero Console](./img/grafana/pass-identity-headers.png)
+
+Zero manages the route's TLS certificate and the signing key behind its starter domain, so Grafana's JWKS URL is your authenticate service: `https://authenticate.<your-starter-domain>/.well-known/pomerium/jwks.json`. Use that value for `GF_AUTH_JWT_JWK_SET_URL` in the next section.
+
+</TabItem>
+<TabItem value="core" label="Pomerium Core">
+
+Create a `config.yaml`. It routes `grafana.yourdomain.com` to the Grafana container, passes identity headers, and sets a `signing_key` so Pomerium publishes a JWKS that Grafana can verify the forwarded assertion against.
+
+<CodeBlock language="yaml" title="config.yaml">
+  {ProxyHeadersConfig}
+</CodeBlock>
+
+Replace `grafana.yourdomain.com` with your domain, `you@example.com` with your email, and generate your own `signing_key` with the command in the comment. With Core, Grafana's JWKS URL is the route's own well-known endpoint (`https://grafana.yourdomain.com/.well-known/pomerium/jwks.json`), which is what the Compose file below uses.
+
+</TabItem>
+</Tabs>
+
+## Configure Grafana {#proxy-headers-configure-grafana}
+
+Grafana's [JWT authentication](https://grafana.com/docs/grafana/latest/setup-grafana/configure-security/configure-authentication/jwt/) reads the assertion Pomerium forwards and signs the user in. The key settings:
+
+- `GF_AUTH_JWT_HEADER_NAME=X-Pomerium-Jwt-Assertion` — the header Pomerium sends the signed identity JWT in.
+- `GF_AUTH_JWT_JWK_SET_URL` — where Grafana fetches Pomerium's public keys to verify the JWT (see the URL for your path above).
+- `GF_AUTH_JWT_EMAIL_CLAIM` / `GF_AUTH_JWT_USERNAME_CLAIM=email` — which claim becomes the Grafana account.
+- `GF_AUTH_JWT_AUTO_SIGN_UP=true` — create the Grafana user on first sign-in.
+
+## Run the stack {#proxy-headers-run-the-stack}
+
+The Compose file below runs Pomerium and Grafana together. Wire up Pomerium for your deployment, then start the stack:
+
+<Tabs queryString="type">
+<TabItem value="zero" label="Pomerium Zero" default>
+
+Drop the `pomerium` service and use the `compose.yaml` from the Quickstart with your `POMERIUM_ZERO_TOKEN`, keeping the `grafana` service shown below.
+
+</TabItem>
+<TabItem value="core" label="Pomerium Core">
+
+Keep the `pomerium` service shown below and place the `config.yaml` from the previous step next to this `docker-compose.yaml`.
+
+</TabItem>
+</Tabs>
+
+<CodeBlock language="yaml" title="docker-compose.yaml">
+  {ProxyHeadersCompose}
+</CodeBlock>
+
+```bash
+docker compose up -d
+```
+
+## Verify the setup {#proxy-headers-verify-the-setup}
+
+1. **The route requires authentication.** In a fresh browser, open `https://grafana.yourdomain.com`. You should be redirected to sign in, not straight into Grafana.
+2. **An allowed user gets in.** Sign in. Pomerium redirects you back to Grafana.
+3. **JWT SSO works.** Grafana signs you in automatically. Open `/profile` and confirm your name, email, and username show **Synced via JWT**.
+
+   ![Grafana profile page with Name, Email, and Username marked "Synced via JWT"](./img/grafana/grafana-profile.png)
+
+4. **A disallowed user is blocked.** Sign in as a user your policy excludes and open `https://grafana.yourdomain.com`. Pomerium denies access, so no JWT is forwarded and you never reach Grafana.
+
+## Common failure modes {#proxy-headers-common-failure-modes}
+
+- **Grafana shows its own login form instead of signing you in.** The JWT didn't verify. Check `GF_AUTH_JWT_JWK_SET_URL` is reachable from the Grafana container and that Pomerium has a `signing_key` (Core) so the JWKS isn't empty.
+- **`failed to verify JWT: no keys found` in Grafana logs.** Same cause: no published signing key. Generate and set `signing_key` in `config.yaml`.
+- **Redirect loop or certificate errors.** Make sure DNS for `grafana.yourdomain.com` points at Pomerium and that Pomerium can obtain a TLS certificate. On the Core path, `autocert` needs ports 80 and 443 reachable for Let's Encrypt; Zero manages certificates for you.
+
+## Security considerations {#proxy-headers-security-considerations}
+
+- Grafana trusts any request carrying a JWT it can verify, so **don't expose Grafana directly** — only Pomerium should reach `grafana:3000`. Keep it off published ports and on the internal Docker network.
+- `GF_AUTH_JWT_AUTO_SIGN_UP=true` grants a Grafana account to every user your Pomerium policy allows. Scope the route policy (group or domain) to who should have access, and manage Grafana org roles separately.
+
+## Next steps {#proxy-headers-next-steps}
+
+- [Build policies](/docs/get-started/fundamentals/zero/zero-build-policies)
+- [Pass identity headers](/docs/reference/routes/pass-identity-headers-per-route)
+- [Custom domains](/docs/capabilities/custom-domains)
+
+</TabItem>
+</Tabs>
