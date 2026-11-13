@@ -1,0 +1,91 @@
+# Sealed E2E validation for the Gitea guide, Proxy headers tab. Reuses the shared
+# harness (Keycloak + certs + headless runner) and adds Gitea + a Pomerium wired to
+# the in-network IdP.
+# Run with: scripts/validate-guide-fixtures.sh gitea-proxy-headers
+#
+# Network isolation mirrors the guide's trust boundary: gitea sits ONLY on the
+# internal-only `gitea-internal` network, shared with pomerium alone, at the same
+# fixed addresses as the guide's Compose file. The test-runner is on `default`, so
+# it cannot reach gitea directly (the spec proves this); the only path in is
+# through Pomerium, which bridges both networks.
+
+include:
+  - ../../_harness/compose/compose.harness.yaml
+
+services:
+  gitea:
+    image: gitea/gitea:28.3.0@sha256:8967bf9deaf3c5c4adae13519436dc1b20c646ac83fe37ae810c933a1045227d
+    environment:
+      GITEA__server__ROOT_URL: 'https://gitea.localhost.pomerium.io/'
+      GITEA__database__DB_TYPE: 'sqlite3'
+      GITEA__security__INSTALL_LOCK: 'true'
+      GITEA__service__REQUIRE_SIGNIN_VIEW: 'true'
+
+      # Exactly as the published guide ships: web UI header sign-in only.
+      GITEA__service__ENABLE_REVERSE_PROXY_AUTHENTICATION: 'true'
+      GITEA__service__ENABLE_REVERSE_PROXY_AUTHENTICATION_API: 'false'
+      GITEA__service__ENABLE_REVERSE_PROXY_AUTO_REGISTRATION: 'true'
+      GITEA__service__ENABLE_REVERSE_PROXY_EMAIL: 'true'
+      GITEA__service__ENABLE_REVERSE_PROXY_FULL_NAME: 'true'
+      GITEA__service__DISABLE_REGISTRATION: 'false'
+      GITEA__service__ALLOW_ONLY_EXTERNAL_REGISTRATION: 'true'
+      GITEA__service__SHOW_REGISTRATION_BUTTON: 'false'
+
+      # Header names must match what Pomerium sends (routes.validate.yaml).
+      GITEA__security__REVERSE_PROXY_AUTHENTICATION_USER: 'X-Pomerium-Sub'
+      GITEA__security__REVERSE_PROXY_AUTHENTICATION_EMAIL: 'X-Pomerium-Claim-Email'
+      GITEA__security__REVERSE_PROXY_AUTHENTICATION_FULL_NAME: 'X-Pomerium-Claim-Name'
+      GITEA__security__REVERSE_PROXY_LOGOUT_REDIRECT: 'https://gitea.localhost.pomerium.io/.pomerium/sign_out'
+      GITEA__security__REVERSE_PROXY_TRUSTED_PROXIES: '172.31.0.2/32'
+      GITEA__security__REVERSE_PROXY_LIMIT: '1'
+    volumes:
+      - gitea-data:/data
+    networks:
+      gitea-internal:
+        aliases:
+          - gitea
+
+  pomerium:
+    image: pomerium/pomerium:main@sha256:07574b2040dac563f729198f19080492b14d9eaa2424f5719863505fe4999ea7
+    command: ['--config', '/pomerium/config.yaml']
+    env_file:
+      - ../../_harness/pomerium/validation.env
+    volumes:
+      - certs:/certs:ro
+      - ./routes.validate.yaml:/pomerium/config.yaml:ro
+    depends_on:
+      certs-init:
+        condition: service_completed_successfully
+      keycloak:
+        condition: service_healthy
+      gitea:
+        condition: service_started
+    networks:
+      # On `default` for the IdP + test-runner, and on the internal-only network
+      # to reach gitea. This is the only service bridging the two.
+      default:
+        aliases:
+          - authenticate.localhost.pomerium.io
+          - gitea.localhost.pomerium.io
+      gitea-internal:
+        ipv4_address: 172.31.0.2
+    healthcheck:
+      test: ['CMD', 'pomerium', 'health']
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 10s
+
+networks:
+  # Internal-only: no route to the outside, and the test-runner is not attached,
+  # so gitea is reachable only via Pomerium. Same subnet as the guide's Compose
+  # file, so REVERSE_PROXY_TRUSTED_PROXIES matches Pomerium's address.
+  gitea-internal:
+    internal: true
+    ipam:
+      config:
+        - subnet: 172.31.0.0/24
+          ip_range: 172.31.0.128/25
+
+volumes:
+  gitea-data:
