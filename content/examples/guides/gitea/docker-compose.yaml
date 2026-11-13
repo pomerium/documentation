@@ -1,0 +1,47 @@
+services:
+  pomerium:
+    image: pomerium/pomerium:main@sha256:07574b2040dac563f729198f19080492b14d9eaa2424f5719863505fe4999ea7
+    volumes:
+      - ./config.yaml:/pomerium/config.yaml:ro
+      - pomerium-cache:/data
+    ports:
+      - 443:443
+      - 80:80
+    restart: always
+
+  gitea:
+    image: gitea/gitea:28.3.0@sha256:8967bf9deaf3c5c4adae13519436dc1b20c646ac83fe37ae810c933a1045227d
+    # Gitea's port is not published. Only Pomerium can reach it on the Compose network.
+    volumes:
+      - gitea-data:/data
+    environment:
+      GITEA__server__ROOT_URL: "https://gitea.yourdomain.com/"
+      GITEA__database__DB_TYPE: "sqlite3"
+      GITEA__security__INSTALL_LOCK: "true"
+      GITEA__service__REQUIRE_SIGNIN_VIEW: "true"
+      # Send signed-out visitors to /user/login, which redirects to the OIDC login.
+      GITEA__server__LANDING_PAGE: "login"
+
+      # Create accounts on first sign-in through Pomerium. The username is the part
+      # of the email before the @. If it clashes with an existing account, Gitea
+      # asks the user instead of linking ('auto' would link by username first).
+      GITEA__oauth2_client__ENABLE_AUTO_REGISTRATION: "true"
+      GITEA__oauth2_client__USERNAME: "email"
+      GITEA__oauth2_client__ACCOUNT_LINKING: "login"
+      # Download the picture claim as the avatar on each sign-in (needs outbound
+      # access to the image host).
+      GITEA__oauth2_client__UPDATE_AVATAR: "true"
+      # Allow accounts to be created through the OIDC login, but keep the local
+      # sign-up form closed.
+      GITEA__service__DISABLE_REGISTRATION: "false"
+      GITEA__service__ALLOW_ONLY_EXTERNAL_REGISTRATION: "true"
+      GITEA__service__SHOW_REGISTRATION_BUTTON: "false"
+      # With the password form and passkeys off, Pomerium is the only sign-in
+      # method, so Gitea skips its login page and goes straight to the OIDC login.
+      GITEA__service__ENABLE_PASSWORD_SIGNIN_FORM: "false"
+      GITEA__service__ENABLE_PASSKEY_AUTHENTICATION: "false"
+    restart: always
+
+volumes:
+  pomerium-cache:
+  gitea-data:

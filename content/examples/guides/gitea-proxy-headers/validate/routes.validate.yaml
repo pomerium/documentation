@@ -1,0 +1,20 @@
+# Routes-only validation config. Shared settings (IdP, secrets, signing key, certs)
+# come from ../../_harness/pomerium/validation.env via env_file in compose.validate.yaml.
+# Gitea consumes the forwarded claim headers, so jwt_claims_headers lives here.
+jwt_claims_headers:
+  X-Pomerium-Sub: sub
+  X-Pomerium-Claim-Email: email
+  X-Pomerium-Claim-Name: name
+
+routes:
+  - from: https://gitea.localhost.pomerium.io
+    to: http://gitea:3000
+    pass_identity_headers: true
+    preserve_host_header: true
+    timeout: 0s
+    idle_timeout: 600s
+    policy:
+      - allow:
+          or:
+            - email:
+                is: alice@company.com

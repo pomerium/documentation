@@ -1,0 +1,44 @@
+# Pomerium Core configuration for Gitea. The OIDC bridge needs a self-hosted
+# authenticate service, so set this to a domain you control. Hosted authenticate
+# domains don't serve the bridge.
+authenticate_service_url: https://authenticate.yourdomain.com
+
+# Pomerium's hosted identity provider signs users in with email and password,
+# Google, or GitHub. To use your own identity provider instead, replace this
+# line with idp_provider, idp_provider_url, idp_client_id and idp_client_secret.
+idp_provider: hosted
+
+# Obtain TLS certificates automatically from Let's Encrypt.
+autocert: true
+
+# Encrypts Pomerium's session cookies. Keep the same value across restarts, or
+# every user has to sign in again after Pomerium restarts:
+#   openssl rand -base64 32
+cookie_secret: REPLACE_WITH_BASE64_32_BYTE_COOKIE_SECRET
+
+# Signs and encrypts the OIDC tokens Pomerium issues to Gitea. Generate your own
+# and keep it secret. Keep the same value across restarts:
+#   openssl rand -base64 32
+shared_secret: REPLACE_WITH_BASE64_32_BYTE_SECRET
+
+routes:
+  - from: https://gitea.yourdomain.com
+    to: http://gitea:3000
+    # Makes Pomerium the OpenID Connect provider for this route. Gitea doesn't
+    # use PKCE, so it's a confidential client: enter the same value as the client
+    # secret when you add the login source in Gitea. Generate your own:
+    #   openssl rand -base64 32
+    oidc_bridge:
+      client_secret: REPLACE_WITH_ROUTE_CLIENT_SECRET
+    # Gitea builds the sign-out redirect from the request's Host header. Without
+    # this, it sends users back to http://gitea:3000 after they sign out.
+    preserve_host_header: true
+    # Git transfers can be large and long-running; don't cap total request time.
+    timeout: 0s
+    idle_timeout: 600s
+    policy:
+      - allow:
+          or:
+            - email:
+                # Replace with the users or domain you want to allow
+                is: you@example.com
