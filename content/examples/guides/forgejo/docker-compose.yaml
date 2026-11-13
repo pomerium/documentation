@@ -17,6 +17,8 @@ services:
       # Signs users out of Pomerium after Forgejo signs them out.
       - ./footer.tmpl:/data/gitea/templates/custom/footer.tmpl:ro
     environment:
+      # Public URL. Forgejo builds its OIDC callback from it, so it must match the
+      # route's from URL.
       FORGEJO__server__ROOT_URL: "https://forgejo.yourdomain.com/"
       FORGEJO__database__DB_TYPE: "sqlite3"
       FORGEJO__security__INSTALL_LOCK: "true"
@@ -25,9 +27,11 @@ services:
       # OIDC login. Needs footer.tmpl, or Forgejo's sign-out signs straight back in.
       FORGEJO__server__LANDING_PAGE: "login"
 
-      # Create accounts on first sign-in through Pomerium. The username is the part
-      # of the email before the @. If it clashes with an existing account, Forgejo
-      # asks the user instead of linking ('auto' would link by username first).
+      # Create accounts on first sign-in through Pomerium. USERNAME "email" uses the
+      # part of the email before the @. "nickname" uses the nickname (or
+      # preferred_username) claim, which must already be a valid Forgejo username.
+      # "userid" uses sub. If it clashes with an existing account, Forgejo asks the
+      # user instead of linking ('auto' would link by username first).
       FORGEJO__oauth2_client__ENABLE_AUTO_REGISTRATION: "true"
       FORGEJO__oauth2_client__USERNAME: "email"
       FORGEJO__oauth2_client__ACCOUNT_LINKING: "login"
