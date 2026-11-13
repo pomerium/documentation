@@ -176,7 +176,16 @@ With `auto`, Gitea resolves a clash by linking the sign-in to the existing accou
 
 ## Run the stack {#oidc-bridge-run-the-stack}
 
-The Compose file runs Pomerium Core and Gitea together (for Zero, drop the `pomerium` service and use the `compose.yaml` from the Quickstart with your `POMERIUM_ZERO_TOKEN`, keeping the `gitea` service and its network below). For Core, place the `config.yaml` from the previous step next to this `docker-compose.yaml`:
+The Compose file runs Pomerium Core and Gitea together. For Zero, add the `gitea` service and the `gitea-data` volume below to the `compose.yaml` from the Quickstart. The Quickstart attaches Pomerium only to its `main` network, so attach `gitea` to `main` as well, or Pomerium can't reach `http://gitea:3000`:
+
+```yaml
+services:
+  gitea:
+    networks:
+      - main
+```
+
+For Pomerium Core, place the `config.yaml` from the previous step next to this `docker-compose.yaml`:
 
 <CodeBlock language="yaml" title="docker-compose.yaml">
   {Compose}
