@@ -1,24 +1,54 @@
-# Pomerium Core configuration for Open WebUI. Uses the hosted authenticate service,
-# so you don't run your own identity provider. To self-host the IdP, see the Keycloak
-# guide: https://www.pomerium.com/docs/integrations/user-identity/oidc
-authenticate_service_url: https://authenticate.pomerium.app
+# Pomerium Core configuration for Open WebUI. The OIDC bridge needs a self-hosted
+# authenticate service, so set this to a domain you control. Hosted authenticate
+# domains don't serve the bridge.
+authenticate_service_url: https://authenticate.yourdomain.com
+
+# Pomerium's hosted identity provider signs users in with email and password,
+# Google, or GitHub. To use your own identity provider instead, replace this
+# line with idp_provider, idp_provider_url, idp_client_id and idp_client_secret.
+idp_provider: hosted
 
 # Obtain TLS certificates automatically from Let's Encrypt.
 autocert: true
 
-# Emit the user's claims as X-Pomerium-Claim-* headers. pass_identity_headers alone
-# only forwards the signed assertion; Open WebUI's trusted-header SSO needs these
-# explicit claim headers.
-jwt_claims_headers:
-  X-Pomerium-Claim-Email: email
+# Encrypts Pomerium's session cookies. Keep the same value across restarts, or
+# every user has to sign in again after Pomerium restarts:
+#   openssl rand -base64 32
+cookie_secret: REPLACE_WITH_BASE64_32_BYTE_COOKIE_SECRET
+
+# Signs and encrypts the OIDC tokens Pomerium issues to Open WebUI. Generate your
+# own and keep it secret. Keep the same value across restarts:
+#   openssl rand -base64 32
+shared_secret: REPLACE_WITH_BASE64_32_BYTE_SECRET
 
 routes:
+  # Open WebUI's content-hashed build assets. Their filenames change on every
+  # release, so browsers can cache them for a year. `private` keeps shared caches
+  # from storing responses that sit behind authentication. This route must come
+  # before the main route: Pomerium matches routes in order.
+  - from: https://llm.yourdomain.com
+    prefix: /_app/immutable/
+    to: http://open-webui:8080
+    set_response_headers:
+      Cache-Control: private, max-age=31536000, immutable
+    policy:
+      - allow:
+          or:
+            - email:
+                is: you@example.com
+
   - from: https://llm.yourdomain.com
     to: http://open-webui:8080
-    # Forward the identity headers (including X-Pomerium-Claim-Email) to Open WebUI.
-    pass_identity_headers: true
+    # Makes Pomerium the OpenID Connect provider for this route. Open WebUI uses
+    # PKCE, so no client_secret is needed.
+    oidc_bridge: {}
     # Open WebUI streams responses over WebSockets.
     allow_websockets: true
+    # Open WebUI sends no Cache-Control header, so browsers cache the app page
+    # and reuse it after the Pomerium session ends. Revalidating on every load
+    # (cheap 304 responses) sends an expired session back to sign-in instead.
+    set_response_headers:
+      Cache-Control: no-cache
     policy:
       - allow:
           or:

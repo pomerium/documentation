@@ -1,6 +1,6 @@
 services:
   pomerium:
-    image: pomerium/pomerium:v0.32.7@sha256:e10d1d267af24f581157f485d9b0bc08469e2428675b696a08e42ceb09b2279c
+    image: pomerium/pomerium:main@sha256:6f9c684864299418b8d6c8846de8aed3faac9c0f99c2572d300d124d74057715
     volumes:
       - ./config.yaml:/pomerium/config.yaml:ro
       - pomerium-cache:/data
@@ -9,24 +9,53 @@ services:
       - 80:80
     # Pomerium is the only service on the default network (where its ports are
     # published) and is also on the internal network so it can reach Open WebUI.
+    # The alias lets Open WebUI reach the authenticate service over the internal
+    # network, because that network has no route to the outside world.
     networks:
       default: {}
-      internal: {}
+      internal:
+        aliases:
+          - authenticate.yourdomain.com
     restart: always
 
   open-webui:
-    image: ghcr.io/open-webui/open-webui:main@sha256:7f1b0a1a50cfbac23da3b16f96bc968fd757b26dc9e54e93813d61768ea9184e
+    image: ghcr.io/open-webui/open-webui:v0.13.3@sha256:46b59158e6558eeb980bc828e0f1b30238ad24d82ed84d5e5eda1dab2a082f14
     environment:
-      # Trust the email Pomerium forwards and skip Open WebUI's own login screen.
-      - WEBUI_AUTH_TRUSTED_EMAIL_HEADER=X-Pomerium-Claim-Email
+      # Open WebUI's public URL.
       - WEBUI_URL=https://llm.yourdomain.com
+      - OAUTH_PROVIDER_NAME=Pomerium
+      # Must match the route's `from` URL.
+      - OAUTH_CLIENT_ID=https://llm.yourdomain.com
+      # Use PKCE (S256), so no client secret is needed.
+      - OAUTH_CODE_CHALLENGE_METHOD=S256
+      # Send the client ID in the token request body, not an HTTP Basic header.
+      - OAUTH_TOKEN_ENDPOINT_AUTH_METHOD=client_secret_post
+      # The OIDC bridge accepts only the openid scope. Open WebUI reads the email
+      # and name from the user info endpoint.
+      - OAUTH_SCOPES=openid
+      # Your authenticate service, set as authenticate_service_url in config.yaml.
+      - OPENID_PROVIDER_URL=https://authenticate.yourdomain.com/.well-known/openid-configuration
+      - OPENID_REDIRECT_URI=https://llm.yourdomain.com/oauth/oidc/callback
+      # Sign out through Pomerium on the Open WebUI route, so signing out of Open WebUI
+      # also ends the Pomerium session without a confirmation page.
+      - OPENID_END_SESSION_ENDPOINT=https://llm.yourdomain.com/.pomerium/sign_out
+      # Create the Open WebUI account on first sign-in.
+      - ENABLE_OAUTH_SIGNUP=true
+      # Make Pomerium the only login option.
+      - ENABLE_LOGIN_FORM=false
+      # Skip Open WebUI's "Continue with Pomerium" button and start the OIDC login
+      # automatically. Pomerium already signed the user in, so there is no second prompt.
+      - OAUTH_AUTO_REDIRECT=true
       # The first provisioned user becomes admin; later users default to "pending" and
       # must be approved. Uncomment to make new SSO users active immediately instead.
       # - DEFAULT_USER_ROLE=user
+      # Refresh each user's avatar from the "picture" claim on every sign-in, not only
+      # when the account is created. Open WebUI downloads the image itself, so it needs
+      # outbound access to the image host. See "Profile pictures" in the guide.
+      # - OAUTH_UPDATE_PICTURE_ON_LOGIN=true
     volumes:
       - open-webui-data:/app/backend/data
-    # Open WebUI is ONLY on the internal network, so nothing but Pomerium can reach it
-    # and the trusted email header cannot be forged by going around Pomerium.
+    # Open WebUI is only on the internal network, so Pomerium is the only way in.
     networks:
       internal: {}
     restart: always
