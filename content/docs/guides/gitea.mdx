@@ -2,6 +2,7 @@
 # cSpell:ignore automations forgejo gitea passkey passkeys WEBAUTH
 title: Secure Gitea with Pomerium
 sidebar_label: Gitea
+image: ./img/gitea/gitea-dashboard.png
 lang: en-US
 keywords:
   [
@@ -427,7 +428,7 @@ The response should include `"is_admin":true`, followed by Gitea's log output fr
 
 3. **Your identity is correct.** Open your profile. The username comes from the `sub` claim and the email matches the one Pomerium forwarded. The full name is filled in only if your identity provider sends a `name` claim.
 
-   ![The Gitea profile created from the Pomerium identity, with the username from sub and the email from the identity provider](img/gitea/gitea-proxy-headers-profile.png)
+   ![The Gitea profile created from the Pomerium identity, with the username from sub and the email from the IdP](img/gitea/gitea-proxy-headers-profile.png)
 
 4. **Sign-out ends both sessions.** Select **Sign Out**. Gitea sends you to Pomerium's sign-out endpoint, which ends the Pomerium session without a confirmation page. You land on Pomerium's signed-out page or your identity provider's sign-in page. Either way, opening `https://gitea.yourdomain.com` again asks you to sign in.
 5. **A disallowed user is blocked.** Sign in as a user your policy excludes and open `https://gitea.yourdomain.com`. Pomerium denies access, so no identity headers are forwarded and Gitea never creates an account.
