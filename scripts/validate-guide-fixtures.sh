@@ -10,6 +10,9 @@
 # A guide opts in simply by having content/examples/guides/<id>/validate/
 # compose.validate.yaml. Override the route under test with validate/url.txt, and
 # the screenshot folder under content/docs/guides/img/ with validate/img-dir.txt.
+# A fixture for one tab of a multi-tab guide names its parent document (the guide
+# ID under content/docs/guides/) in validate/doc.txt so CI selects it when that
+# document changes.
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"

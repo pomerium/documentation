@@ -91,13 +91,20 @@ jobs:
           fi
           candidates=$(printf '%s\n' $all $changed_ids | grep -E "$id_re" | sort -u || true)
 
-          # Select a guide if its fixture OR its prose changed.
+          # Select a guide if its fixture OR its prose changed. A fixture for one tab
+          # of a multi-tab guide names its parent document in validate/doc.txt, so a
+          # prose edit to that document selects it too.
           selected=""
           for g in $candidates; do
+            doc="$g"
+            if [ -f "$base/$g/validate/doc.txt" ]; then
+              doc=$(tr -d '[:space:]' < "$base/$g/validate/doc.txt")
+              echo "$doc" | grep -qE "$id_re" || { echo "invalid $base/$g/validate/doc.txt: $doc" >&2; exit 1; }
+            fi
             if [ "$full" = true ] \
                || echo "${changed:-}" | grep -q "^$base/$g/" \
                || { [ "$g" = "ssh-tcp-l4-passthrough" ] && echo "${changed:-}" | grep -q "^$ssh_example/"; } \
-               || echo "${changed:-}" | grep -qE "^$docs/$g\.(md|mdx)\$"; then
+               || echo "${changed:-}" | grep -qE "^$docs/$doc\.(md|mdx)\$"; then
               selected="$selected $g"
             fi
           done
