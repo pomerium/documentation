@@ -1,68 +1,46 @@
 services:
   pomerium:
-    image: pomerium/pomerium:v0.32.7@sha256:e10d1d267af24f581157f485d9b0bc08469e2428675b696a08e42ceb09b2279c
+    image: pomerium/pomerium:main@sha256:07574b2040dac563f729198f19080492b14d9eaa2424f5719863505fe4999ea7
     volumes:
       - ./config.yaml:/pomerium/config.yaml:ro
       - pomerium-cache:/data
     ports:
       - 443:443
       - 80:80
-    networks:
-      default: {}
-      forgejo-internal:
-        ipv4_address: 172.30.0.2
     restart: always
 
   forgejo:
     image: codeberg.org/forgejo/forgejo:15.0.2@sha256:db04c7114b656f896e206ba3873fe8d3a7adf2daa44907037f0274f4ba653fb9
-    # Reverse-proxy auth trusts the identity header from ANY peer that can reach
-    # forgejo:3000, and REVERSE_PROXY_TRUSTED_PROXIES does NOT change that (it only
-    # affects X-Forwarded-For parsing). Network isolation is the trust boundary:
-    # forgejo sits on an internal-only network with Pomerium and nothing else.
-    networks:
-      forgejo-internal: {}
+    # Forgejo's port is not published. Only Pomerium can reach it on the Compose network.
     volumes:
       - forgejo-data:/data
+      # Signs users out of Pomerium after Forgejo signs them out.
+      - ./footer.tmpl:/data/gitea/templates/custom/footer.tmpl:ro
     environment:
-      FORGEJO__server__ROOT_URL: 'https://forgejo.yourdomain.com/'
-      FORGEJO__database__DB_TYPE: 'sqlite3'
-      FORGEJO__security__INSTALL_LOCK: 'true'
-      FORGEJO__service__REQUIRE_SIGNIN_VIEW: 'true'
+      FORGEJO__server__ROOT_URL: "https://forgejo.yourdomain.com/"
+      FORGEJO__database__DB_TYPE: "sqlite3"
+      FORGEJO__security__INSTALL_LOCK: "true"
+      FORGEJO__service__REQUIRE_SIGNIN_VIEW: "true"
+      # Send signed-out visitors to /user/login, which Pomerium redirects to the
+      # OIDC login. Needs footer.tmpl, or Forgejo's sign-out signs straight back in.
+      FORGEJO__server__LANDING_PAGE: "login"
 
-      # Reverse-proxy SSO: Forgejo trusts the identity header Pomerium forwards.
-      FORGEJO__service__ENABLE_REVERSE_PROXY_AUTHENTICATION: 'true'
-      # Web UI sign-in only. Keep header auth off the API so tokens/SSH stay the
-      # path for Git and API clients (set explicitly, not relying on the default).
-      FORGEJO__service__ENABLE_REVERSE_PROXY_AUTHENTICATION_API: 'false'
-      FORGEJO__service__ENABLE_REVERSE_PROXY_AUTO_REGISTRATION: 'true'
-      FORGEJO__service__ENABLE_REVERSE_PROXY_EMAIL: 'true'
-      FORGEJO__service__ENABLE_REVERSE_PROXY_FULL_NAME: 'true'
-      # Allow provisioning via the proxy, but keep the local sign-up form closed.
-      FORGEJO__service__DISABLE_REGISTRATION: 'false'
-      FORGEJO__service__ALLOW_ONLY_EXTERNAL_REGISTRATION: 'true'
-      FORGEJO__service__SHOW_REGISTRATION_BUTTON: 'false'
-
-      # Header names must match what Pomerium sends (config.yaml above).
-      FORGEJO__security__REVERSE_PROXY_AUTHENTICATION_USER: 'X-Pomerium-Sub'
-      FORGEJO__security__REVERSE_PROXY_AUTHENTICATION_EMAIL: 'X-Pomerium-Claim-Email'
-      FORGEJO__security__REVERSE_PROXY_AUTHENTICATION_FULL_NAME: 'X-Pomerium-Claim-Name'
-      # For X-Forwarded-For client-IP parsing, list only Pomerium. This does not
-      # restrict which peer the reverse-proxy auth header is trusted from. Must
-      # be an IP/CIDR, not a hostname; the Compose network gives Pomerium a
-      # fixed address.
-      FORGEJO__security__REVERSE_PROXY_TRUSTED_PROXIES: '172.30.0.2/32'
-      FORGEJO__security__REVERSE_PROXY_LIMIT: '1'
+      # Create accounts on first sign-in through Pomerium. The username is the part
+      # of the email before the @. If it clashes with an existing account, Forgejo
+      # asks the user instead of linking ('auto' would link by username first).
+      FORGEJO__oauth2_client__ENABLE_AUTO_REGISTRATION: "true"
+      FORGEJO__oauth2_client__USERNAME: "email"
+      FORGEJO__oauth2_client__ACCOUNT_LINKING: "login"
+      # Download the picture claim as the avatar on each sign-in (needs outbound
+      # access to the image host).
+      FORGEJO__oauth2_client__UPDATE_AVATAR: "true"
+      # Allow accounts to be created through the OIDC login, but keep the local
+      # sign-up form closed and hide the local password form.
+      FORGEJO__service__DISABLE_REGISTRATION: "false"
+      FORGEJO__service__ALLOW_ONLY_EXTERNAL_REGISTRATION: "true"
+      FORGEJO__service__SHOW_REGISTRATION_BUTTON: "false"
+      FORGEJO__service__ENABLE_INTERNAL_SIGNIN: "false"
     restart: always
-
-networks:
-  # internal: true keeps Forgejo off the host and reachable only by Pomerium, which
-  # the reverse-proxy-auth trust model requires. The fixed subnet gives Pomerium a
-  # stable address for REVERSE_PROXY_TRUSTED_PROXIES.
-  forgejo-internal:
-    internal: true
-    ipam:
-      config:
-        - subnet: 172.30.0.0/24
 
 volumes:
   pomerium-cache:
