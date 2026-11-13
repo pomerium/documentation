@@ -1,10 +1,15 @@
-# Routes-only validation config. Shared settings (IdP, secrets, signing key, certs)
-# come from ../../_harness/pomerium/validation.env via env_file in compose.validate.yaml.
+# Routes-only validation config. Shared settings (IdP, secrets, certs) come from
+# ../../_harness/pomerium/validation.env via env_file in compose.validate.yaml.
+# The policy allows company.com (alice, charlie) so the spec can check both the
+# administrator and the default role; bob@example.com stays outside it.
 routes:
   - from: https://grafana.localhost.pomerium.io
     to: http://grafana:3000
-    pass_identity_headers: true
+    allow_websockets: true
+    oidc_bridge: {}
+    preserve_host_header: true
     policy:
       - allow:
           or:
-            - authenticated_user: true
+            - email:
+                ends_with: '@company.com'

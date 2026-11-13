@@ -1,33 +1,48 @@
 # Sealed E2E validation for the Grafana guide. Reuses the shared harness (Keycloak +
 # certs + headless runner) and adds Grafana + a Pomerium wired to the in-network IdP.
 # Run with: scripts/validate-guide-fixtures.sh grafana
+#
+# Network isolation mirrors the guide's Compose file: grafana sits ONLY on
+# `grafana-internal`, shared with pomerium alone, so the test-runner on `default`
+# cannot reach it directly (the spec proves this).
 
 include:
   - ../../_harness/compose/compose.harness.yaml
 
 services:
   grafana:
-    image: grafana/grafana:11.5.2@sha256:8b37a2f028f164ce7b9889e1765b9d6ee23fec80f871d156fbf436d6198d32b7
+    image: grafana/grafana:13.3.1@sha256:0615ec4fbd4072004b7d86b46ded63013a74b7d6eb1119273dd89e8fa25c13cf
     environment:
-      GF_AUTH_JWT_ENABLED: 'true'
-      GF_AUTH_JWT_HEADER_NAME: X-Pomerium-Jwt-Assertion
-      GF_AUTH_JWT_EMAIL_CLAIM: email
-      GF_AUTH_JWT_USERNAME_CLAIM: email
-      GF_AUTH_JWT_JWK_SET_URL: https://grafana.localhost.pomerium.io/.well-known/pomerium/jwks.json
-      GF_AUTH_JWT_AUTO_SIGN_UP: 'true'
-      GF_AUTH_JWT_CACHE_TTL: 60m
-      # Trust the harness CA so Grafana can fetch Pomerium's JWKS over TLS.
+      GF_SERVER_ROOT_URL: https://grafana.localhost.pomerium.io/
+      GF_AUTH_GENERIC_OAUTH_ENABLED: 'true'
+      GF_AUTH_GENERIC_OAUTH_NAME: Pomerium
+      GF_AUTH_GENERIC_OAUTH_CLIENT_ID: https://grafana.localhost.pomerium.io
+      GF_AUTH_GENERIC_OAUTH_USE_PKCE: 'true'
+      GF_AUTH_GENERIC_OAUTH_SCOPES: openid
+      GF_AUTH_GENERIC_OAUTH_AUTH_URL: https://authenticate.localhost.pomerium.io/oidc/auth
+      GF_AUTH_GENERIC_OAUTH_TOKEN_URL: https://authenticate.localhost.pomerium.io/oidc/token
+      GF_AUTH_GENERIC_OAUTH_API_URL: https://authenticate.localhost.pomerium.io/oidc/userinfo
+      GF_AUTH_GENERIC_OAUTH_EMAIL_ATTRIBUTE_PATH: email
+      GF_AUTH_GENERIC_OAUTH_LOGIN_ATTRIBUTE_PATH: email
+      GF_AUTH_GENERIC_OAUTH_ALLOW_SIGN_UP: 'true'
+      GF_AUTH_GENERIC_OAUTH_AUTO_LOGIN: 'true'
+      GF_AUTH_DISABLE_LOGIN_FORM: 'true'
+      GF_AUTH_BASIC_ENABLED: 'false'
+      GF_AUTH_SIGNOUT_REDIRECT_URL: https://grafana.localhost.pomerium.io/.pomerium/sign_out
+      GF_AUTH_GENERIC_OAUTH_ROLE_ATTRIBUTE_PATH: contains(['alice@company.com'], email) && 'GrafanaAdmin' || ''
+      GF_AUTH_GENERIC_OAUTH_ALLOW_ASSIGN_GRAFANA_ADMIN: 'true'
+      # Trust the harness CA so Grafana can call Pomerium's OIDC endpoints over TLS.
       # Validation-only; the published guide uses the public hosted authenticate cert.
       SSL_CERT_FILE: /certs/ca.crt
     volumes:
       - certs:/certs:ro
     networks:
-      default:
+      grafana-internal:
         aliases:
           - grafana
 
   pomerium:
-    image: pomerium/pomerium:v0.32.7@sha256:e10d1d267af24f581157f485d9b0bc08469e2428675b696a08e42ceb09b2279c
+    image: pomerium/pomerium:main@sha256:b7f96f47fd5cbf20ed4b4a1cf4b104072f8ec5472820a17a04fc01245e81853c
     command: ['--config', '/pomerium/config.yaml']
     env_file:
       - ../../_harness/pomerium/validation.env
@@ -42,7 +57,14 @@ services:
       grafana:
         condition: service_started
     networks:
+      # On `default` for the IdP + test-runner, and on grafana-internal to reach
+      # grafana. This is the only service bridging the two. The aliases on
+      # grafana-internal let Grafana call the bridge's endpoints, as in the guide.
       default:
+        aliases:
+          - authenticate.localhost.pomerium.io
+          - grafana.localhost.pomerium.io
+      grafana-internal:
         aliases:
           - authenticate.localhost.pomerium.io
           - grafana.localhost.pomerium.io
@@ -52,3 +74,6 @@ services:
       timeout: 5s
       retries: 30
       start_period: 10s
+
+networks:
+  grafana-internal: {}
