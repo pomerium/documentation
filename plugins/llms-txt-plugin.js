@@ -96,6 +96,50 @@ function toCanonicalMarkdownUrl(url, {siteOrigin, routePath} = {}) {
 }
 
 /**
+ * Inline example files that MDX pages load with `!!raw-loader!` and render
+ * with `<CodeBlock>{Name}</CodeBlock>`. Without this, the import line is
+ * stripped and the code block comes out empty in the LLM markdown.
+ */
+async function inlineRawLoaderCodeBlocks(raw, srcFile, siteDir) {
+  const importRe =
+    /^\s*import\s+(\w+)\s+from\s+['"]!!raw-loader!([^'"]+)['"];?\s*$/gm;
+  const files = new Map();
+  for (const [, name, importPath] of raw.matchAll(importRe)) {
+    let resolved;
+    if (importPath.startsWith('@site/')) {
+      resolved = path.join(siteDir, importPath.slice('@site/'.length));
+    } else if (importPath.startsWith('/')) {
+      resolved = path.join(siteDir, importPath);
+    } else {
+      resolved = path.resolve(path.dirname(srcFile), importPath);
+    }
+    try {
+      files.set(name, await fs.promises.readFile(resolved, 'utf8'));
+    } catch {
+      // Leave the block empty if the file can't be read.
+    }
+  }
+  if (files.size === 0) return raw;
+
+  return raw.replace(
+    /<CodeBlock([^>]*)>\s*\{(\w+)\}\s*<\/CodeBlock>/g,
+    (match, attrs, name) => {
+      if (!files.has(name)) return match;
+      const body = files.get(name).replace(/\n+$/, '');
+      const language = attrs.match(/language=["']([^"']+)["']/)?.[1] ?? '';
+      const title = attrs.match(/title=["']([^"']+)["']/)?.[1];
+      const longestRun = Math.max(
+        2,
+        ...(body.match(/`+/g) ?? []).map((run) => run.length),
+      );
+      const fence = '`'.repeat(longestRun + 1);
+      const meta = title ? `${language} title="${title}"` : language;
+      return `${fence}${meta}\n${body}\n${fence}`;
+    },
+  );
+}
+
+/**
  * Pre-clean Docusaurus MDX files before remark parsing.
  * - Removes all :::admonition blocks (keeps the content inside)
  * - Removes <Tabs>...</Tabs> and <TabItem ...>...</TabItem> blocks (keeps content inside)
@@ -1299,7 +1343,13 @@ async function pluginLlmsTxt(context) {
 
           try {
             const rawContent = await fs.promises.readFile(srcFile, 'utf8');
-            const preCleanedContent = preCleanDocusaurusMDX(rawContent);
+            const preCleanedContent = preCleanDocusaurusMDX(
+              await inlineRawLoaderCodeBlocks(
+                rawContent,
+                srcFile,
+                context.siteDir,
+              ),
+            );
             let cleanedContent;
             try {
               cleanedContent = await cleanMarkdownForLLM(preCleanedContent, {
