@@ -44,6 +44,7 @@ const sidebars = {
         'docs/capabilities/authentication',
         'docs/capabilities/authorization',
         'docs/capabilities/getting-users-identity',
+        'docs/capabilities/oidc-bridge',
         'docs/capabilities/bearer-token-access',
         'docs/capabilities/routing',
         'docs/capabilities/routes-portal',
