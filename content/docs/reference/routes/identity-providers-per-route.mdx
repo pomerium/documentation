@@ -24,7 +24,7 @@ import Tabs from '@theme/Tabs';
 
 This setting is only meaningful on a route whose effective [bearer token format](/docs/reference/bearer-token-format) is `jwt`. When left unset, the route accepts a token from **any** configured provider. When set, a token whose provider is not on the list is rejected before its signature is checked.
 
-Every name must exist in the global `identity_providers` map. Setting this on a route that does **not** use the `jwt` format is a configuration error, and Pomerium refuses to start.
+Names are matched against the global `identity_providers` map at request time, not at startup. A name that is not declared there — because it was never added, or because it was removed later — is not a configuration error and does not prevent Pomerium from starting; it simply never matches, so tokens from that provider are rejected. Note that removing a name from this list is not the same as leaving the list empty: an empty list accepts **any** configured provider, so narrowing a list down to nothing widens the route rather than closing it. This setting is ignored on a route whose effective bearer token format is not `jwt`.
 
 See [Machine-to-Machine Access with Bearer Tokens](/docs/capabilities/bearer-token-access) for an overview and examples.
 
