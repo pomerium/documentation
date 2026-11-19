@@ -21,7 +21,8 @@ services:
   open-webui:
     image: ghcr.io/open-webui/open-webui:v0.13.3@sha256:46b59158e6558eeb980bc828e0f1b30238ad24d82ed84d5e5eda1dab2a082f14
     environment:
-      # Open WebUI's public URL.
+      # Open WebUI's public URL. Saved in its database on first start; change it
+      # later under Admin Panel > Settings > General.
       - WEBUI_URL=https://llm.yourdomain.com
       - OAUTH_PROVIDER_NAME=Pomerium
       # Must match the route's `from` URL.
@@ -41,7 +42,8 @@ services:
       - OPENID_END_SESSION_ENDPOINT=https://llm.yourdomain.com/.pomerium/sign_out
       # Create the Open WebUI account on first sign-in.
       - ENABLE_OAUTH_SIGNUP=true
-      # Make Pomerium the only login option.
+      # Make Pomerium the only login option. Saved in Open WebUI's database on first
+      # start; change it later under Admin Panel > Settings > Authentication.
       - ENABLE_LOGIN_FORM=false
       # Skip Open WebUI's "Continue with Pomerium" button and start the OIDC login
       # automatically. Pomerium already signed the user in, so there is no second prompt.
@@ -51,7 +53,9 @@ services:
       # - DEFAULT_USER_ROLE=user
       # Refresh each user's avatar from the "picture" claim on every sign-in, not only
       # when the account is created. Open WebUI downloads the image itself, so it needs
-      # outbound access to the image host. See "Profile pictures" in the guide.
+      # outbound access to the image host, and it sends the user's access token with
+      # the download, so use only trusted image hosts. For a differently named claim,
+      # set OAUTH_PICTURE_CLAIM.
       # - OAUTH_UPDATE_PICTURE_ON_LOGIN=true
     volumes:
       - open-webui-data:/app/backend/data
