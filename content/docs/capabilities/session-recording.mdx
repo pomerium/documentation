@@ -44,9 +44,7 @@ The session recording capability is _not_ present in Pomerium binary distributio
 
 ### 1. Obtain the session recording extension
 
-All enterprise extensions are available as part of the image `docker.cloudsmith.io/pomerium/pomerium-enterprise/pomerium-enterprise`. This is a drop in replacement for `pomerium/pomerium` images.
-
-Similarly, the enterprise extensions are available as part of the image `docker.cloudsmith.io/pomerium/pomerium-enterprise/ingress-controller-enterprise`. This is a drop in replacement for `pomerium/ingress-controller` images.
+All enterprise extensions included in `pomerium/pomerium` and `pomerium/ingress-controller` images.
 
 The extensions are available in the `/extensions` directory. The session recording extension is mounted at `/extensions/session_recording_extension.so`
 
@@ -108,7 +106,7 @@ spec:
     spec:
       containers:
         - name: pomerium
-          image: docker.cloudsmith.io/pomerium/pomerium-enterprise/ingress-controller-enterprise:vX.Y.Z
+          image: pomerium/ingress-controller:vX.Y.Z
       imagePullSecrets:
         # This should be the same image pull secret used for enterprise console
         - name: pomerium-enterprise-docker
@@ -145,7 +143,7 @@ spec:
 ```yaml
 services:
   pomerium:
-    image: docker.cloudsmith.io/pomerium/pomerium-enterprise/pomerium-enterprise:vX.Y.Z
+    image: pomerium/pomerium:vX.Y.Z
     # Use docker login to cloudsmith.io
 ```
 
