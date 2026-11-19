@@ -1,0 +1,86 @@
+---
+id: oidc-bridge
+title: OIDC Bridge
+sidebar_label: OIDC Bridge
+description: Configure the OIDC bridge, which lets Pomerium act as an OpenID Connect provider for upstream applications.
+keywords: [reference, oidc bridge, openid connect, oidc_bridge]
+pagination_prev: null
+pagination_next: null
+toc_max_heading_level: 2
+---
+
+import TabItem from '@theme/TabItem';
+import Tabs from '@theme/Tabs';
+
+import EnterpriseConfiguration from '../../../src/components/EnterpriseConfiguration';
+
+# OIDC Bridge
+
+## Summary
+
+The **OIDC Bridge** setting lets Pomerium act as an OpenID Connect provider for upstream applications. Use it for applications that support OIDC login but can't verify the Pomerium JWT.
+
+Set `oidc_bridge` globally to apply default settings to all routes, or on a route to configure only that route. A route-level `oidc_bridge` block replaces the global one. If neither is set, the bridge is off.
+
+The `oidc_bridge` block has these keys:
+
+| **Key** | **Type** | **Description** |
+| :-- | :-- | :-- |
+| `enabled` | `boolean` | Turns the bridge on or off. Defaults to `true` when an `oidc_bridge` block is present, so `oidc_bridge: {}` enables it. |
+| `client_secret` | `string` | See [Client secret](#client-secret). |
+| `redirect_uris` | `array of strings` | See [Redirect URIs](#redirect-uris). |
+
+## How to configure
+
+<Tabs>
+<TabItem value="Core" label="Core">
+
+| **Config file keys** | **Type** | **Usage**    |
+| :------------------- | :------- | :----------- |
+| `oidc_bridge`        | `object` | **optional** |
+
+### Examples
+
+```yaml
+# Global: enable the bridge for all routes
+oidc_bridge:
+  enabled: true
+
+routes:
+  - from: https://app.localhost.pomerium.io
+    to: http://app:3000
+    # A route-level block replaces the global one
+    oidc_bridge:
+      client_secret: <APP_CLIENT_SECRET>
+      redirect_uris:
+        - https://app.localhost.pomerium.io/oauth/callback
+    allow_any_authenticated_user: true
+```
+
+</TabItem>
+<TabItem value="Enterprise" label="Enterprise">
+<EnterpriseConfiguration name="oidc_bridge" resource="settings">
+
+Configure default **OIDC Bridge** settings for all routes under **Settings** in the Console. To configure a single route, use the route's **OIDC Bridge** tab.
+
+</EnterpriseConfiguration>
+</TabItem>
+</Tabs>
+
+## Client secret \{#client-secret}
+
+The client secret upstream applications use to authenticate to the OIDC bridge. Set it only for applications that don't support public clients with Proof Key for Code Exchange (PKCE).
+
+| **Config file keys**        | **Type** | **Usage**    |
+| :-------------------------- | :------- | :----------- |
+| `oidc_bridge.client_secret` | `string` | **optional** |
+
+## Redirect URIs \{#redirect-uris}
+
+The redirect URIs that upstream applications may use when signing in through the OIDC bridge. Pomerium accepts only exact matches.
+
+If this list is empty, Pomerium accepts any redirect URI on the route's host, at or below the path of the client ID.
+
+| **Config file keys**        | **Type**           | **Usage**    |
+| :-------------------------- | :----------------- | :----------- |
+| `oidc_bridge.redirect_uris` | `array of strings` | **optional** |
