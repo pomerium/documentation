@@ -14,7 +14,9 @@ cookie_secret: REPLACE_WITH_BASE64_32_BYTE_COOKIE_SECRET
 # Forward the user's identity claims to Gitea as request headers. Gitea usernames
 # cannot contain every character that is valid in an email address, so this uses
 # the stable OIDC sub claim for the username and carries the real address in
-# X-Pomerium-Claim-Email.
+# X-Pomerium-Claim-Email. sub is often an opaque ID. For readable usernames, map
+# a stable, unique claim that's already a valid Gitea username to X-Pomerium-Sub.
+# These headers apply to every route that passes identity headers.
 jwt_claims_headers:
   X-Pomerium-Sub: sub
   X-Pomerium-Claim-Email: email
@@ -23,6 +25,7 @@ jwt_claims_headers:
 routes:
   - from: https://gitea.yourdomain.com
     to: http://gitea:3000
+    # Sends the jwt_claims_headers above to Gitea.
     pass_identity_headers: true
     # Gitea compares the request's Host header with ROOT_URL. Without this, it
     # sees http://gitea:3000 and warns administrators that ROOT_URL doesn't match.
