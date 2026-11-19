@@ -14,7 +14,11 @@ services:
     # Gitea's port is not published. Only Pomerium can reach it on the Compose network.
     volumes:
       - gitea-data:/data
+    # Gitea writes each GITEA__* variable into /data/gitea/conf/app.ini on start.
+    # Removing a variable doesn't remove its value: delete the key from app.ini too.
     environment:
+      # Must match the route's from URL. Gitea builds its OIDC callback from it:
+      # https://gitea.yourdomain.com/user/oauth2/pomerium/callback
       GITEA__server__ROOT_URL: "https://gitea.yourdomain.com/"
       GITEA__database__DB_TYPE: "sqlite3"
       GITEA__security__INSTALL_LOCK: "true"
@@ -25,6 +29,8 @@ services:
       # Create accounts on first sign-in through Pomerium. The username is the part
       # of the email before the @. If it clashes with an existing account, Gitea
       # asks the user instead of linking ('auto' would link by username first).
+      # Other USERNAME values: preferred_username or nickname (the claim must
+      # already be a valid Gitea username, not an email), or userid (the sub claim).
       GITEA__oauth2_client__ENABLE_AUTO_REGISTRATION: "true"
       GITEA__oauth2_client__USERNAME: "email"
       GITEA__oauth2_client__ACCOUNT_LINKING: "login"

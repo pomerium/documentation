@@ -23,6 +23,8 @@ services:
       gitea-internal: {}
     volumes:
       - gitea-data:/data
+    # Gitea writes each GITEA__* variable into /data/gitea/conf/app.ini on start.
+    # Removing a variable doesn't remove its value: delete the key from app.ini too.
     environment:
       GITEA__server__ROOT_URL: 'https://gitea.yourdomain.com/'
       GITEA__database__DB_TYPE: 'sqlite3'
@@ -34,6 +36,8 @@ services:
       # Web UI sign-in only. Keep header auth off the API so tokens/SSH stay the
       # path for Git and API clients (set explicitly, not relying on the default).
       GITEA__service__ENABLE_REVERSE_PROXY_AUTHENTICATION_API: 'false'
+      # Create the account on first visit, filling in email and full name from
+      # the other headers.
       GITEA__service__ENABLE_REVERSE_PROXY_AUTO_REGISTRATION: 'true'
       GITEA__service__ENABLE_REVERSE_PROXY_EMAIL: 'true'
       GITEA__service__ENABLE_REVERSE_PROXY_FULL_NAME: 'true'
@@ -42,7 +46,8 @@ services:
       GITEA__service__ALLOW_ONLY_EXTERNAL_REGISTRATION: 'true'
       GITEA__service__SHOW_REGISTRATION_BUTTON: 'false'
 
-      # Header names must match what Pomerium sends (config.yaml above).
+      # Header names must match what Pomerium sends (config.yaml above). Gitea's
+      # defaults are X-WEBAUTH-USER, X-WEBAUTH-EMAIL, and X-WEBAUTH-FULLNAME.
       GITEA__security__REVERSE_PROXY_AUTHENTICATION_USER: 'X-Pomerium-Sub'
       GITEA__security__REVERSE_PROXY_AUTHENTICATION_EMAIL: 'X-Pomerium-Claim-Email'
       GITEA__security__REVERSE_PROXY_AUTHENTICATION_FULL_NAME: 'X-Pomerium-Claim-Name'

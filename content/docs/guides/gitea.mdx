@@ -32,49 +32,37 @@ import ProxyHeadersCompose from '!!raw-loader!/content/examples/guides/gitea-pro
 
 # Secure Gitea with Pomerium
 
-You'll put [Gitea](https://about.gitea.com/), a self-hosted Git service, behind Pomerium so that Pomerium handles single sign-on and authorization. Users sign in once through Pomerium, and Gitea creates their account on first visit with no second password.
+Pomerium can sign users in to [Gitea](https://about.gitea.com/), a self-hosted Git service, so they never see a separate Gitea login.
 
-There are two ways to sign users in to Gitea. Choose one with the tabs below:
+There are two ways to secure Gitea with Pomerium: the OIDC bridge and proxy headers. The table below compares them, and each one has its own tab with the full setup.
 
 |  | OIDC bridge | Proxy headers |
 | :-- | :-- | :-- |
-| How Gitea signs users in | Its standard [OpenID Connect (OIDC) login](https://docs.gitea.com/usage/authentication), with Pomerium as the OIDC provider | [Reverse-proxy authentication](https://docs.gitea.com/usage/authentication#reverse-proxy) from identity headers that Pomerium forwards |
-| What Gitea trusts | Tokens it gets from Pomerium's OIDC endpoints, using the route's client secret | The identity headers, from any peer that can reach Gitea |
-| Pomerium route settings | OIDC bridge with a client secret, and `preserve_host_header` | `pass_identity_headers` and `jwt_claims_headers` |
+| Gitea login | Its [OpenID Connect (OIDC) login](https://docs.gitea.com/usage/authentication), with Pomerium as the OIDC provider | [Reverse-proxy authentication](https://docs.gitea.com/usage/authentication#reverse-proxy) from identity headers Pomerium forwards |
+| What Gitea trusts | Tokens from Pomerium's OIDC endpoints, using the route's client secret | The identity headers, from any peer that can reach Gitea |
+| Route settings | `oidc_bridge` with a `client_secret`, `preserve_host_header` | `pass_identity_headers`, `preserve_host_header`, plus global `jwt_claims_headers` |
 | Authenticate service URL | Must be a domain you control | The default hosted URL works |
-| First account | Becomes the administrator | Promoted to administrator from the Gitea container's CLI |
-| Sign-out | Signing out of Gitea also signs out of Pomerium, after a confirmation | Signing out of Gitea also signs out of Pomerium |
-| Admin recovery | From the Gitea container's CLI | From the Gitea container's CLI |
+| First account | Becomes the administrator | Promoted from the Gitea container |
 
-:::caution Both methods configure web UI sign-in only
-
-Git operations over HTTP, API clients, automations, and SSH access still need Gitea [access tokens](https://docs.gitea.com/development/api-usage) or SSH keys.
-
-:::
-
-This guide is tested with Gitea 28.3.0.
+Both setups turn off Gitea's own sign-in form, and Gitea creates each user's account the first time they sign in. Signing out of Gitea also signs you out of Pomerium. Only sign-in from a browser goes through Pomerium: Git over HTTP, API clients, and SSH keep using Gitea [access tokens](https://docs.gitea.com/development/api-usage) or SSH keys. This guide was tested with Gitea 28.3.0.
 
 ## Prerequisites
 
-This guide assumes you've completed the [Quickstart](/docs/get-started/quickstart), so you already have Pomerium running and signing users in through the hosted authenticate service.
-
-You also need:
-
+- You've completed the [Quickstart](/docs/get-started/quickstart), and Pomerium is running
 - [Docker](https://docs.docker.com/install/) and [Docker Compose](https://docs.docker.com/compose/install/)
-- An identity provider. This guide uses Pomerium's [hosted identity provider](/docs/capabilities/authentication#hosted-authenticate-service) (`idp_provider: hosted`), which signs users in with email and password, Google, or GitHub.
-- A domain you control for the Gitea route (this guide uses `gitea.yourdomain.com`)
-- For the OIDC bridge method, Pomerium Zero or Pomerium Core with the authenticate service URL set to a domain you control (this guide uses `authenticate.yourdomain.com`). The OIDC bridge isn't served from Pomerium's default hosted authenticate URL. You can still use the hosted identity provider behind your own URL.
+- A domain for the Gitea route (this guide uses `gitea.yourdomain.com`)
+- For the OIDC bridge only: an authenticate service URL on a domain you control (this guide uses `authenticate.yourdomain.com`)
 
 :::tip Prefer to self-host the identity provider?
 
-This guide uses the hosted authenticate service so you don't have to run an identity provider (IdP). To run your own instead, follow [Keycloak + Pomerium](/docs/integrations/user-identity/oidc) and swap the `authenticate_service_url` / `idp_*` settings into the config below.
+This guide uses Pomerium's [hosted identity provider](/docs/capabilities/authentication#hosted-authenticate-service), so you don't have to run one. To run your own instead, follow [Keycloak + Pomerium](/docs/integrations/user-identity/oidc) and add its `idp_*` settings to `config.yaml`.
 
 :::
 
 <Tabs queryString="method">
 <TabItem value="oidc-bridge" label="OIDC bridge" default>
 
-You'll put [Gitea](https://about.gitea.com/), a self-hosted Git service, behind Pomerium to gate it with SSO and route policy. Gitea keeps its standard [OpenID Connect (OIDC) login](https://docs.gitea.com/usage/authentication), and Pomerium is the OIDC provider. Users sign in once through Pomerium, and Gitea creates their account and completes its login without a second prompt or a click. Signing out of Gitea also signs them out of Pomerium.
+Pomerium's [OIDC bridge](https://www.pomerium.com/docs/capabilities/oidc-bridge) makes Pomerium an OpenID Connect provider for Gitea's built-in OIDC login. Users sign in to Pomerium once, and Gitea finishes its own login without asking them to sign in again.
 
 ```mermaid
 sequenceDiagram
@@ -93,90 +81,47 @@ sequenceDiagram
   P->>G: Tokens and the user's claims
 ```
 
-Use this method when you want one front door for Gitea with your existing identity, and you want Gitea to create each user's account the first time they sign in. Gitea's standard OIDC login uses Pomerium's [OIDC bridge](https://www.pomerium.com/docs/capabilities/oidc-bridge) as its provider.
-
 ## Configure Pomerium {#oidc-bridge-configure-pomerium}
 
 <Tabs queryString="type">
 <TabItem value="zero" label="Pomerium Zero" default>
 
-In the [Zero Console](https://console.pomerium.app), create a **Route** for `gitea.<your-starter-domain>`:
+1. On the **Identity Provider** page of the [Zero Console](https://console.pomerium.app), set **Authenticate Service URL** to a domain you control, such as `https://authenticate.yourdomain.com`. Leave **Hosted Authenticate** selected.
+1. Create a route. Set **From** to `https://gitea.<your-starter-domain>`, **To** to `http://gitea:3000`, and the policy to the users who should reach Gitea.
+1. On the **Advanced** tab, turn on **OIDC Bridge** and enter an **OIDC Bridge Client Secret**. Generate one with `openssl rand -base64 32`. Gitea doesn't use PKCE, so Pomerium needs this secret to know the token request really comes from Gitea.
+1. On the **Headers** tab, set **Host Header** to **Preserve**.
+1. On the **Timeouts** tab, set **Timeout** to `0s` and **Idle Timeout** to `600s`, so long Git pushes and clones aren't cut off. Then save.
 
-- In **From**, enter `https://gitea.<your-starter-domain>`; in **To**, enter `http://gitea:3000`.
-- Set the policy to the user or domain that should reach Gitea.
-- On the **Advanced** tab, under **OIDC Bridge**, turn on **Enabled** and enter an **OIDC Bridge Client Secret**. Generate one with `openssl rand -base64 32`. You'll enter the same value in Gitea below. Gitea authenticates with a client secret and doesn't use Proof Key for Code Exchange (PKCE), so Pomerium treats it as a confidential client.
-- On the **Headers** tab, set **Host Header** to **Preserve**, so Gitea builds its post-sign-out redirect from the public host.
-- On the **Timeouts** tab, set **Timeout** to `0s` and **Idle Timeout** to `600s` so long Git smart-HTTP transfers aren't cut off.
-
-Zero manages the token-signing secret for you, so there's no `shared_secret` to set. Before you create the routes, open the **Identity Provider** page in the Zero Console, set **Authenticate Service URL** to a domain you control (this guide uses `https://authenticate.yourdomain.com`), and leave **Hosted Authenticate** selected. The OIDC bridge isn't served from Pomerium's default hosted authenticate URL.
-
-Your OIDC discovery URL is your authenticate service URL plus `/.well-known/openid-configuration`.
-
-The route's **From** URL is the OIDC client ID. In the steps below, use `https://gitea.<your-starter-domain>` wherever the guide shows `https://gitea.yourdomain.com`, including `GITEA__server__ROOT_URL` in the Compose file and `--key` when you add the login source. If `--key` doesn't match, Pomerium rejects the sign-in with `unknown client_id`. If `GITEA__server__ROOT_URL` doesn't match, it rejects it with `redirect_uri ... does not match client_id`.
+The route's **From** URL also serves as the OIDC client ID. Wherever this guide shows `https://gitea.yourdomain.com`, use your **From** URL instead. That includes the `GITEA__server__ROOT_URL` setting and the `--key` value when you add the login source.
 
 </TabItem>
 <TabItem value="core" label="Pomerium Core">
 
-Create a `config.yaml`. It routes `gitea.yourdomain.com` to the Gitea container, enables the OIDC bridge on that route, and removes the total request timeout so long Git smart-HTTP transfers aren't cut off. It also sets the `cookie_secret` that encrypts Pomerium's session cookies and the `shared_secret` that Pomerium uses to sign and encrypt the tokens it issues.
+Create a `config.yaml` file with the following contents. The comments in the file explain what each setting does.
 
 <CodeBlock language="yaml" title="config.yaml">
   {Config}
 </CodeBlock>
 
-Replace `gitea.yourdomain.com` with your domain, `you@example.com` with your user or domain, and generate your own `cookie_secret`, `shared_secret`, and route `client_secret` with the command in each comment. Keep `cookie_secret` and `shared_secret` the same across restarts. If either changes, Pomerium can't read the sessions and tokens it issued earlier, and users have to sign in again.
-
-Gitea authenticates with a client secret and doesn't use Proof Key for Code Exchange (PKCE), so it's registered as a confidential client and the route needs a `client_secret`. You'll enter the same value in Gitea below. The route's `from` URL is the OIDC client ID, so it must match the client ID you give Gitea.
+Replace the example domains and `you@example.com` with your own values. Generate `cookie_secret`, `shared_secret`, and the route's `client_secret` with the command shown in each setting's comment. Don't regenerate `cookie_secret` or `shared_secret` when Pomerium restarts, or every user has to sign in again.
 
 </TabItem>
 </Tabs>
 
-## Configure Gitea {#oidc-bridge-configure-gitea}
+## Configure and run Gitea {#oidc-bridge-run-the-stack}
 
-Gitea reads its settings from `app.ini`, supplied as `GITEA__<section>__<KEY>` environment variables in the Compose file below. The key settings:
+Gitea runs in Docker Compose alongside Pomerium. The comments in the Compose file explain each Gitea setting.
 
-- `GITEA__server__ROOT_URL` is Gitea's public URL. Gitea builds its OIDC callback from it: `https://gitea.yourdomain.com/user/oauth2/pomerium/callback`.
-- `ENABLE_AUTO_REGISTRATION` (in `oauth2_client`) creates the Gitea account on first sign-in.
-- `USERNAME: email` takes the username from the part of the `email` claim before the `@`. See [Choose how usernames are created](#oidc-bridge-choose-how-usernames-are-created) for the other options.
-- `ACCOUNT_LINKING: login` is Gitea's default. If a new sign-in clashes with an existing account's username or email, Gitea asks the user what to do instead of signing them in to that account.
-- `UPDATE_AVATAR: true` sets the user's Gitea avatar from the `picture` claim on each sign-in.
-- `DISABLE_REGISTRATION: false` with `ALLOW_ONLY_EXTERNAL_REGISTRATION: true` and `SHOW_REGISTRATION_BUTTON: false` allows accounts to be created through the OIDC login while keeping the local sign-up form closed.
-- `ENABLE_PASSWORD_SIGNIN_FORM: false` and `ENABLE_PASSKEY_AUTHENTICATION: false` turn off local sign-in. With Pomerium as the only sign-in method left, Gitea skips its login page and goes straight to the OIDC login.
-- `LANDING_PAGE: login` (in `server`) sends signed-out visitors from `/` to `/user/login`, so users never see Gitea's public home page. Together with the setting above, they sign users in without a click.
+<Tabs queryString="type">
+<TabItem value="zero" label="Pomerium Zero" default>
 
-:::note Settings persist in `app.ini`
+The Quickstart's `compose.yaml` already runs Pomerium. From the following Compose file, copy only the `gitea` service and the `gitea-data` volume into it.
 
-The Gitea image writes each `GITEA__*` variable into `/data/gitea/conf/app.ini` on startup. Removing a variable from the Compose file doesn't remove its value. Delete the key from `app.ini` too, then restart Gitea.
+<CodeBlock language="yaml" title="docker-compose.yaml">
+  {Compose}
+</CodeBlock>
 
-:::
-
-### Sign-out {#oidc-bridge-sign-out}
-
-When a user who signed in through Pomerium selects **Sign out**, Gitea ends its own session and redirects to the `end_session_endpoint` in Pomerium's discovery document. Pomerium asks the user to confirm, then ends its session and the identity provider session behind it. This is why the route sets `preserve_host_header: true`: Gitea builds the post-sign-out redirect from the request's `Host` header, so without it users are sent back to the internal `gitea:3000` address.
-
-### Choose how usernames are created {#oidc-bridge-choose-how-usernames-are-created}
-
-Gitea usernames can contain only letters, digits, `-`, `_`, and `.`, so a full email address can't be a username. `USERNAME` takes one of four values:
-
-| Value | Username comes from |
-| :-- | :-- |
-| `email` | The part of the `email` claim before the `@` |
-| `preferred_username` | The `preferred_username` claim. The value must already be a valid Gitea username. Many identity providers set it to the email address, which Gitea rejects. |
-| `nickname` | The `nickname` claim, or `preferred_username` if there's no `nickname`. The same rule applies. |
-| `userid` | The `sub` claim. Always unique, but not readable. |
-
-You can't name another claim. To use a different value, map it into `preferred_username` or `nickname` in your identity provider.
-
-With `email`, two users with the same name before the `@`, such as `sam@example.com` and `sam@example.org`, get the same username. The second one to sign in hits a clash. With the default `ACCOUNT_LINKING: login`, Gitea shows that user a form to register a different username. If that name is taken too, the form comes back with the original username filled in again, without saying why.
-
-:::danger Don't use `ACCOUNT_LINKING: auto` with more than one email domain
-
-With `auto`, Gitea resolves a clash by linking the sign-in to the existing account. It looks up that account by **username first**, then by email. With `USERNAME: email`, `sam@example.org` would be signed in to the account that belongs to `sam@example.com`. Keep the default `login` unless every username your policy allows is unique, for example when the policy allows a single email domain and no local accounts exist.
-
-:::
-
-## Run the stack {#oidc-bridge-run-the-stack}
-
-The Compose file runs Pomerium Core and Gitea together. For Zero, add the `gitea` service and the `gitea-data` volume below to the `compose.yaml` from the Quickstart. The Quickstart attaches Pomerium only to its `main` network, so attach `gitea` to `main` as well, or Pomerium can't reach `http://gitea:3000`:
+Then attach the `gitea` service to the Quickstart's `main` network, so Pomerium can reach it at `http://gitea:3000`:
 
 ```yaml
 services:
@@ -185,76 +130,50 @@ services:
       - main
 ```
 
-For Pomerium Core, place the `config.yaml` from the previous step next to this `docker-compose.yaml`:
+</TabItem>
+<TabItem value="core" label="Pomerium Core">
+
+The following Compose file runs Pomerium Core and Gitea together.
 
 <CodeBlock language="yaml" title="docker-compose.yaml">
   {Compose}
 </CodeBlock>
 
-Start it:
+</TabItem>
+</Tabs>
 
-```bash
-docker compose up -d
-```
+1. Start the stack:
 
-If you change `config.yaml` later, restart Pomerium to apply it:
+   ```bash
+   docker compose up -d
+   ```
 
-```bash
-docker compose restart pomerium
-```
+1. Add Pomerium to Gitea as a login source. Use the route's client secret as the `--secret` value:
 
-`docker compose up -d` doesn't apply the change, because the Compose file itself hasn't changed.
+   ```bash
+   docker compose exec -u git gitea gitea admin auth add-oauth \
+     --name pomerium \
+     --provider openidConnect \
+     --key https://gitea.yourdomain.com \
+     --secret REPLACE_WITH_ROUTE_CLIENT_SECRET \
+     --auto-discover-url https://authenticate.yourdomain.com/.well-known/openid-configuration
+   ```
 
-## Add Pomerium as a login source {#oidc-bridge-add-pomerium-as-a-login-source}
+Keep `--name pomerium`, because Gitea builds the callback URL from it. The Gitea container also has to be able to resolve and reach `authenticate.yourdomain.com`, because Gitea fetches Pomerium's OIDC discovery document from there. If you prefer the UI, you can add the same login source in **Site Administration** > **Identity & Access** > **Authentication Sources**. Choose **OpenID Connect** as the provider and leave the additional scopes empty.
 
-Gitea needs to know about Pomerium before anyone can sign in. Add the login source, using the route's `client_secret` as the secret:
+If you change `config.yaml` later, run `docker compose restart pomerium` to apply it. If you change the Compose file, run `docker compose up -d`.
 
-```bash
-docker compose exec -u git gitea gitea admin auth add-oauth \
-  --name pomerium \
-  --provider openidConnect \
-  --key https://gitea.yourdomain.com \
-  --secret REPLACE_WITH_ROUTE_CLIENT_SECRET \
-  --auto-discover-url https://authenticate.yourdomain.com/.well-known/openid-configuration
-```
+:::caution Keep `ACCOUNT_LINKING: login` if you allow more than one email domain
 
-`--name` becomes part of the callback URL, so keep it `pomerium` to match the callback above. You can also add the source in the web UI under **Site Administration** > **Identity & Access** > **Authentication Sources**, with the same values and **OpenID Connect** as the provider. Leave the additional scopes empty. Gitea requests `openid` and reads the email, name, and picture from Pomerium's user info endpoint.
+With `USERNAME: email`, Gitea uses the part of the email before the `@` as the username, so `sam@example.com` and `sam@example.org` both become `sam`. With `ACCOUNT_LINKING: auto`, Gitea links a sign-in to an existing account with the same username, so `sam@example.org` would be signed in to `sam@example.com`'s account. `login` makes the second user sign in to the existing account first, which they can't do.
 
-Gitea fetches the discovery document, and later the token and user info endpoints, from the Gitea container. The container must be able to resolve and reach `authenticate.yourdomain.com`. If it can't when you run the command, `add-oauth` fails with `Failed to initialize OpenID Connect Provider`.
+:::
 
 ## Make yourself the administrator {#oidc-bridge-make-yourself-the-administrator}
 
-Gitea makes the first account it creates an administrator. Sign in through Pomerium before anyone else does, as described in [Verify the setup](#oidc-bridge-verify-the-setup), and your account becomes the administrator.
+Gitea makes the first account it creates an administrator. To make sure that's you, sign in through Pomerium before anyone else does, as described in [Verify the setup](#oidc-bridge-verify-the-setup).
 
-You don't need a separate break-glass administrator. Gitea is only reachable through Pomerium, and local sign-in is turned off. If you lose administrator access, recover it from the Gitea container, as described in [Recover admin access](#oidc-bridge-recover-admin-access).
-
-## Verify the setup {#oidc-bridge-verify-the-setup}
-
-1. **The route requires authentication.** In a fresh browser, open `https://gitea.yourdomain.com`. You should be redirected to Pomerium to sign in.
-2. **Gitea signs you in without a click or a second prompt.** After you sign in to Pomerium, you land on the Gitea dashboard. Gitea's login page never appears.
-3. **Your identity is correct.** Open **Settings** and confirm that your email comes from your identity provider, along with your full name and avatar if it sends `name` and `picture` claims. The first account also has **Site Administration** in its menu.
-
-   ![The Gitea dashboard, signed in as the Pomerium identity](img/gitea/gitea-dashboard.png)
-
-4. **Sign-out ends both sessions.** Select **Sign out**, then **Logout** on Pomerium's confirmation page. Open `https://gitea.yourdomain.com` again. Your identity provider asks you to sign in, and then you land on the dashboard again.
-5. **A disallowed user is blocked.** Sign in as a user your policy excludes and open `https://gitea.yourdomain.com`. Pomerium denies access before Gitea loads, so Gitea never creates an account.
-
-## Recover admin access {#oidc-bridge-recover-admin-access}
-
-Everything here runs inside the Gitea container, so you need shell access to the host.
-
-**If the OIDC login is broken,** for example because the client secret changed, fix the login source from the CLI. List the sources to find the ID, then update it:
-
-```bash
-docker compose exec -u git gitea gitea admin auth list
-docker compose exec -u git gitea gitea admin auth update-oauth --id 1 \
-  --secret REPLACE_WITH_ROUTE_CLIENT_SECRET
-docker compose restart gitea
-```
-
-Gitea loads login sources when it starts, so a change made from the CLI takes effect only after the restart. Changes made in the web UI apply immediately.
-
-**If no one has administrator access,** the CLI can't promote an existing user, but a temporary administrator can do it through Gitea's API. Replace `your-username` with the Gitea username to promote:
+If no one has administrator access anymore, you can promote a user from the Gitea container. Gitea's CLI can't promote an existing user, so the following command creates a temporary administrator, uses it to promote `your-username` through Gitea's API, and then deletes the temporary account and its token:
 
 ```bash
 docker compose exec -u git gitea sh -c '
@@ -267,38 +186,45 @@ docker compose exec -u git gitea sh -c '
   gitea admin user delete --username recovery-tmp'
 ```
 
-The response should include `"is_admin":true`, followed by Gitea's log output from deleting `recovery-tmp`. The token is never printed, and deleting `recovery-tmp` also deletes it.
+Replace `your-username` with the account to promote. If it worked, the response includes `"is_admin":true`.
 
-## Common failure modes {#oidc-bridge-common-failure-modes}
+## Verify the setup {#oidc-bridge-verify-the-setup}
 
-| Symptom | Cause and fix |
+1. Open `https://gitea.yourdomain.com` in a private or incognito window. Pomerium asks you to sign in.
+1. Sign in. You land on the Gitea dashboard without seeing Gitea's login page.
+1. Open **Settings**. Your email comes from your identity provider. Your full name and avatar appear too, if your identity provider sends `name` and `picture` claims. If yours is the first account, **Site Administration** also appears in your menu.
+
+   ![The Gitea dashboard, signed in as the Pomerium identity](img/gitea/gitea-dashboard.png)
+
+1. Select **Sign out**, then select **Logout** on Pomerium's confirmation page. When you open Gitea again, Pomerium asks you to sign in.
+1. Sign in as a user your policy excludes. Pomerium denies access before Gitea loads, so Gitea never creates an account for that user.
+
+## Troubleshooting {#oidc-bridge-common-failure-modes}
+
+| Symptom | Fix |
 | :-- | :-- |
-| Pomerium returns `403` | The route policy still allows only the example user. Replace it with your user or domain. |
-| Gitea's login page shows a **Sign in with pomerium** button | Another sign-in method is still on. Set `ENABLE_PASSWORD_SIGNIN_FORM` and `ENABLE_PASSKEY_AUTHENTICATION` to `false`, and check that OpenID sign-in and other login sources are off. |
-| Sign-in stops at Gitea's home page with a **Sign in** link | `LANDING_PAGE` isn't `login`. Set it, or select **Sign in**, which still skips Gitea's login page. |
-| `add-oauth` fails with `Failed to initialize OpenID Connect Provider` | The Gitea container can't reach the discovery URL. Check that Pomerium is running and that the container can resolve `authenticate.yourdomain.com`. |
-| `404 Not Found` from the discovery URL or any `/oidc/` path | Gitea is pointing at the wrong host. Use your authenticate service URL, and check that `authenticate_service_url` and `idp_provider` are set. |
-| HTTP 400 at `/oidc/auth`: `unknown client_id` | The client ID (`--key`) doesn't match the route's `from` URL. Fix it with `gitea admin auth update-oauth --id 1 --key https://gitea.yourdomain.com`, then restart Gitea. |
-| HTTP 400 at `/oidc/auth`: `redirect_uri ... does not match client_id ...` | `GITEA__server__ROOT_URL` isn't the route's `from` URL, so Gitea's callback URL isn't under the client ID. |
-| The browser reports too many redirects (`ERR_TOO_MANY_REDIRECTS`) after you sign in, or the token request fails with `invalid_client` | The client secret in Gitea doesn't match the route's `client_secret`. Gitea's failed login sends you back to its login page, which starts the OIDC login again. Look for the `oidc: token request invalid` log line in Pomerium. Fix the secret as described in [Recover admin access](#oidc-bridge-recover-admin-access), and restart Gitea. |
-| Gitea shows a link-account or registration form instead of signing you in | Your username or email clashes with an existing Gitea account. Register with a username nobody has on that form. Gitea creates a new account with your identity provider email and leaves the existing account alone. If the name you enter is also taken, Gitea returns you to the form with the original username filled in again. To avoid clashes, see [Choose how usernames are created](#oidc-bridge-choose-how-usernames-are-created). |
-| **Sign out** returns to the dashboard instead of signing you out of Pomerium | The account didn't sign in through the OIDC login, or the login source was added without the discovery URL. Gitea only calls the end-session endpoint for OIDC sign-ins whose source advertises one. |
-| The full name is blank | Your identity provider doesn't send a `name` claim. Gitea reads it from Pomerium's user info endpoint, which passes on the claims your identity provider sent. With your own OIDC provider, include the `profile` scope in `idp_scopes` and make sure the provider maps the user's name into the `name` claim. Gitea fills in a blank full name on the next sign-in. |
-| The avatar is a generated pattern | `UPDATE_AVATAR` isn't `true`, your identity provider doesn't send a `picture` claim, or Gitea can't reach the image URL. Gitea downloads it from the container on each sign-in. |
-| `invalid_token` on Gitea's user info request | The access token was issued before Pomerium restarted without a fixed `shared_secret`. Set `shared_secret` and sign in again. |
-| Sign-in fails on the username | Gitea couldn't make a valid username from the claim `USERNAME` points at. See [Choose how usernames are created](#oidc-bridge-choose-how-usernames-are-created). |
+| Pomerium returns `403` | Replace `you@example.com` in the route policy with your users or domain. |
+| Gitea's login page shows a **Sign in with pomerium** button | Set `ENABLE_PASSWORD_SIGNIN_FORM` and `ENABLE_PASSKEY_AUTHENTICATION` to `false`, and turn off OpenID sign-in and other login sources. |
+| Sign-in stops at Gitea's home page with a **Sign in** link | Set `LANDING_PAGE` to `login`. |
+| `add-oauth` fails with `Failed to initialize OpenID Connect Provider` | Make sure Pomerium is running and the Gitea container can resolve `authenticate.yourdomain.com`. |
+| `404 Not Found` from the discovery URL or any `/oidc/` path | Point Gitea at your authenticate service URL, and set `authenticate_service_url` and `idp_provider` in Pomerium. |
+| HTTP 400 at `/oidc/auth`: `unknown client_id` | Run `gitea admin auth update-oauth --id 1 --key https://gitea.yourdomain.com` with the route's `from` URL, then restart Gitea. |
+| HTTP 400 at `/oidc/auth`: `redirect_uri ... does not match client_id ...` | Set `GITEA__server__ROOT_URL` to the route's `from` URL. |
+| `ERR_TOO_MANY_REDIRECTS` after sign-in, `invalid_client` on the token request, or `oidc: token request invalid` in Pomerium's logs | Run `gitea admin auth update-oauth --id 1 --secret <route client_secret>` (find the ID with `gitea admin auth list`), then restart Gitea. CLI changes apply only after a restart. |
+| Gitea shows a link-account or registration form | Your username or email clashes with an existing account. Register a username nobody has. If that name is taken too, the form returns with the original name and no error. |
+| **Sign out** returns to the dashboard | Sign in through the OIDC login, and add the login source with `--auto-discover-url`. |
+| The full name is blank | Have your identity provider send a `name` claim. With your own provider, add `profile` to `idp_scopes`. |
+| The avatar is a generated pattern | Set `UPDATE_AVATAR` to `true`, and check that your identity provider sends `picture` and the Gitea container can reach the image URL. |
+| `invalid_token` on Gitea's user info request | Set a fixed `shared_secret` and sign in again. |
+| Sign-in fails on the username | Pick a `USERNAME` value whose claim is a valid Gitea username (letters, digits, `-`, `_`, `.`). |
 
 ## Security considerations {#oidc-bridge-security-considerations}
 
-- **Keep the route protected.** The bridge handles login only. Route policy decides who can reach Gitea, and Pomerium checks it on every request. A public route would let anyone who can sign in to Pomerium get a Gitea account.
-- **Only Pomerium should reach Gitea.** Keep `gitea:3000` off published ports, so Pomerium is the only way in.
-- **Pomerium issues the tokens.** Gitea gets its ID and access tokens from Pomerium, not directly from your identity provider. There are no refresh tokens, so when the Pomerium session expires, the next request sends the user back to Pomerium to sign in.
-- **Keep the `client_secret` secret.** It's what lets Gitea prove to Pomerium that it's the app behind this route. Store it like any other credential.
-- **Don't auto-link accounts across email domains.** `ACCOUNT_LINKING: auto` matches on username before email, so a username clash signs one user in to another user's account. See [Choose how usernames are created](#oidc-bridge-choose-how-usernames-are-created).
-- **Signing out of Gitea signs you out of Pomerium.** That also signs you out of every other Pomerium route in that browser and of your identity provider.
-- **Avatars are fetched server-side.** With `UPDATE_AVATAR`, Gitea downloads the `picture` URL from the container with a plain `GET`, without the user's tokens. The container needs outbound access to the image host.
-- **Account creation follows the policy.** `ENABLE_AUTO_REGISTRATION` creates a Gitea account for every user your policy allows. Manage Gitea roles and organizations separately.
-- **No standing break-glass account.** Local sign-in is turned off, so there's no local administrator password to protect. Recovery needs shell access to the Gitea container. See [Recover admin access](#oidc-bridge-recover-admin-access).
+- **Keep the route policy tight.** Gitea creates an account for every user the policy allows, the first time they sign in, so the policy decides who gets a Gitea account.
+- **Don't publish Gitea's port.** If users can reach `gitea:3000` directly, they skip Pomerium's policy checks. Only Pomerium should be able to reach it.
+- **Keep the `client_secret` secret.** It's how Pomerium knows a token request really comes from Gitea. Anyone with the secret can redeem authorization codes for the route.
+- **Don't auto-link accounts across email domains.** With `USERNAME: email`, `ACCOUNT_LINKING: auto` can sign one user in to another user's account, as the caution in [Configure and run Gitea](#oidc-bridge-run-the-stack) explains.
+- **Sign-out is global.** Signing out of Gitea ends the Pomerium session for every route in that browser, and the identity provider session too.
 
 ## Next steps {#oidc-bridge-next-steps}
 
@@ -309,7 +235,7 @@ The response should include `"is_admin":true`, followed by Gitea's log output fr
 </TabItem>
 <TabItem value="proxy-headers" label="Proxy headers">
 
-You'll put Gitea behind Pomerium so that Pomerium handles single sign-on and authorization, then forwards the user's identity to Gitea as request headers. Gitea trusts those headers ([reverse-proxy authentication](https://docs.gitea.com/usage/authentication#reverse-proxy)), signs the user in, and creates the account on first visit. Signing out of Gitea also signs them out of Pomerium.
+Pomerium adds the user's `sub`, `email`, and `name` claims as headers to every request it forwards to Gitea. Gitea's reverse-proxy authentication reads those headers and signs the user in, creating the account on their first visit.
 
 ```mermaid
 sequenceDiagram
@@ -323,58 +249,52 @@ sequenceDiagram
   G->>B: The signed-in dashboard
 ```
 
-Use this method when you want one front door for Gitea with your existing identity, and you don't want to run your own authenticate service URL. Gitea doesn't verify Pomerium's signed JWT, so this method relies on header-based reverse-proxy authentication. Read the [Security considerations](#proxy-headers-security-considerations) before you deploy, because that mode trusts the identity header from any peer that can reach Gitea.
+:::caution Gitea trusts the identity headers from any peer
+
+Gitea can't verify Pomerium's signed JWT, so it believes whatever identity headers arrive with a request. Anyone who can reach Gitea without going through Pomerium can send their own headers and sign in as any user. Keep Gitea reachable only through Pomerium, and read the [Security considerations](#proxy-headers-security-considerations) before you deploy.
+
+:::
 
 ## Configure Pomerium {#proxy-headers-configure-pomerium}
-
-Pomerium forwards the user's `sub`, `email`, and `name` claims as request headers. Gitea usernames can contain only letters, digits, `-`, `_`, and `.`, so this uses the stable OIDC `sub` claim for the username and carries the real address in `X-Pomerium-Claim-Email`.
 
 <Tabs queryString="type">
 <TabItem value="zero" label="Pomerium Zero" default>
 
-In the [Zero Console](https://console.pomerium.app):
+1. In the [Zero Console](https://console.pomerium.app), go to **Settings** > **Headers**. Under **JWT Claim Headers**, add `X-Pomerium-Sub` from `sub`, `X-Pomerium-Claim-Email` from `email`, and `X-Pomerium-Claim-Name` from `name`, then save. These apply to every route that passes identity headers.
+1. Create a route. Set **From** to `https://gitea.<your-starter-domain>`, **To** to `http://gitea:3000`, and the policy to the users who should reach Gitea.
+1. On the **Headers** tab, turn on **Pass Identity Headers** and set **Host Header** to **Preserve**.
+1. On the **Timeouts** tab, set **Timeout** to `0s` and **Idle Timeout** to `600s`, so long Git pushes and clones aren't cut off. Then save.
 
-1. Go to **Settings** > **Headers**. Under **JWT Claim Headers**, add these so the claims arrive under the names Gitea expects below: `X-Pomerium-Sub` from `sub`, `X-Pomerium-Claim-Email` from `email`, and `X-Pomerium-Claim-Name` from `name`. JWT Claim Headers are a cluster-wide setting, so they apply to every route that passes identity headers. Save.
-2. Create a **Route**. In **From**, enter `https://gitea.<your-starter-domain>`, and in **To**, enter `http://gitea:3000`. Use the same URL wherever the guide shows `https://gitea.yourdomain.com`, including `GITEA__server__ROOT_URL` and `GITEA__security__REVERSE_PROXY_LOGOUT_REDIRECT` below.
-3. Set the policy to the user or domain that should reach Gitea. Reverse-proxy authentication trusts the forwarded header, so this policy is your real access gate. Keep it tight.
-4. On the **Headers** tab, turn on **Pass Identity Headers**, and set **Host Header** to **Preserve** so Gitea sees its public host.
-5. On the **Timeouts** tab, set **Timeout** to `0s` and **Idle Timeout** to `600s` so long Git smart-HTTP transfers aren't cut off. Save.
+Wherever this guide shows `https://gitea.yourdomain.com`, use your route's **From** URL instead. That includes the `GITEA__server__ROOT_URL` and `GITEA__security__REVERSE_PROXY_LOGOUT_REDIRECT` settings.
 
 </TabItem>
 <TabItem value="core" label="Pomerium Core">
 
-Create a `config.yaml`. It routes `gitea.yourdomain.com` to the Gitea container, forwards the identity claims as headers, and removes the total request timeout so long Git smart-HTTP transfers aren't cut off.
+Create a `config.yaml` file with the following contents. The comments in the file explain what each setting does.
 
 <CodeBlock language="yaml" title="config.yaml">
   {ProxyHeadersConfig}
 </CodeBlock>
 
-Replace `gitea.yourdomain.com` with your domain and `you@example.com` with your user or domain, and generate your own `cookie_secret` with the command in its comment. Keep it the same across restarts, or users have to sign in again after Pomerium restarts. A few notes:
-
-- [`jwt_claims_headers`](/docs/reference/jwt-claim-headers) forwards each claim as a request header, and [`pass_identity_headers`](/docs/reference/routes/pass-identity-headers-per-route) sends them to Gitea.
-- [`preserve_host_header`](/docs/reference/routes/headers#1-preserve-host-header) passes the public host to Gitea. Gitea compares it with `ROOT_URL`, and without it Gitea sees `gitea:3000` and warns administrators about a mismatch.
-- The policy decides who can reach Gitea. Reverse-proxy authentication trusts the header, so this policy is your real access gate.
+Replace the example domain and `you@example.com` with your own values. Generate `cookie_secret` with the command shown in its comment. Don't regenerate it when Pomerium restarts, or every user has to sign in again.
 
 </TabItem>
 </Tabs>
 
-## Configure Gitea {#proxy-headers-configure-gitea}
+## Configure and run Gitea {#proxy-headers-run-the-stack}
 
-Gitea reads its settings from `app.ini`, supplied as `GITEA__<section>__<KEY>` environment variables in the Compose file below. The key settings:
+Gitea runs in Docker Compose on a private network that only Pomerium shares, so nothing else can reach it and send forged identity headers. Pomerium has a fixed address on that network, which Gitea uses to recognize it as the trusted proxy. The comments in the Compose file explain each Gitea setting.
 
-- `ENABLE_REVERSE_PROXY_AUTHENTICATION` makes Gitea read the identity header. `ENABLE_REVERSE_PROXY_AUTHENTICATION_API: false` keeps header sign-in off the API, so API clients keep using access tokens.
-- `ENABLE_REVERSE_PROXY_AUTO_REGISTRATION` creates the account on first visit. `ENABLE_REVERSE_PROXY_EMAIL` and `ENABLE_REVERSE_PROXY_FULL_NAME` fill it in from the other headers.
-- `REVERSE_PROXY_AUTHENTICATION_USER`, `_EMAIL`, and `_FULL_NAME` must match the header names Pomerium sends. Gitea's defaults are `X-WEBAUTH-USER`, `X-WEBAUTH-EMAIL`, and `X-WEBAUTH-FULLNAME`.
-- `REVERSE_PROXY_LOGOUT_REDIRECT` sends users to the route's `/.pomerium/sign_out` endpoint when they select **Sign Out**, so Pomerium ends its session too. Without it, the next request carries the headers again and Gitea signs the user straight back in.
-- `DISABLE_REGISTRATION: false` allows accounts to be created from the headers, while `ALLOW_ONLY_EXTERNAL_REGISTRATION: true` and `SHOW_REGISTRATION_BUTTON: false` keep the local sign-up form closed.
+<Tabs queryString="type">
+<TabItem value="zero" label="Pomerium Zero" default>
 
-`REVERSE_PROXY_TRUSTED_PROXIES` only tells Gitea how to find the real client IP in `X-Forwarded-For` for its logs. It does **not** restrict which peer the identity header is trusted from. See [Security considerations](#proxy-headers-security-considerations).
+The Quickstart's `compose.yaml` already runs Pomerium. From the following Compose file, copy only the `gitea` service, the `gitea-internal` network, and the `gitea-data` volume into it.
 
-The username comes from the `sub` claim, so it appears in profile and repository URLs. Many identity providers use an opaque ID for `sub`. For readable usernames, map a stable, unique claim that's already a valid Gitea username, such as `preferred_username` if your identity provider sets it that way, to `X-Pomerium-Sub`.
+<CodeBlock language="yaml" title="docker-compose.yaml">
+  {ProxyHeadersCompose}
+</CodeBlock>
 
-## Run the stack {#proxy-headers-run-the-stack}
-
-The Compose file runs Pomerium Core and Gitea together. For Zero, add the `gitea` service, the `gitea-internal` network, and the `gitea-data` volume below to the `compose.yaml` from the Quickstart. Then attach the Quickstart's `pomerium` service to `gitea-internal` at the fixed address Gitea trusts, keeping its `main` network:
+Then add the `gitea-internal` network to the `pomerium` service in the Quickstart's `compose.yaml`, at the fixed address:
 
 ```yaml
 services:
@@ -387,93 +307,87 @@ services:
         ipv4_address: 172.31.0.2
 ```
 
-For Pomerium Core, use the whole file:
+</TabItem>
+<TabItem value="core" label="Pomerium Core">
+
+The following Compose file runs Pomerium Core and Gitea together.
 
 <CodeBlock language="yaml" title="docker-compose.yaml">
   {ProxyHeadersCompose}
 </CodeBlock>
 
-Start it:
+</TabItem>
+</Tabs>
+
+Start the stack:
 
 ```bash
 docker compose up -d
 ```
 
-If you change `config.yaml` later, restart Pomerium to apply it:
-
-```bash
-docker compose restart pomerium
-```
+If you change `config.yaml` later, run `docker compose restart pomerium` to apply it. If you change the Compose file, run `docker compose up -d`.
 
 ## Make yourself the administrator {#proxy-headers-make-yourself-the-administrator}
 
-Gitea doesn't make the first header-provisioned account an administrator. Sign in through Pomerium once so Gitea creates your account, then find your username:
+Gitea doesn't make accounts it creates from headers into administrators, so you promote your own account from the Gitea container. If no one has administrator access later, the same steps get you back in.
 
-```bash
-docker compose exec -u git gitea gitea admin user list
-```
+1. Sign in through Pomerium once, so Gitea creates your account.
+1. Find your username:
 
-The Gitea CLI can't promote an existing user, but a temporary administrator can do it through Gitea's API. Replace `your-username` with your username from the list:
+   ```bash
+   docker compose exec -u git gitea gitea admin user list
+   ```
 
-```bash
-docker compose exec -u git gitea sh -c '
-  gitea admin user create --admin --username recovery-tmp \
-    --email recovery-tmp@gitea.invalid --random-password --must-change-password=false >/dev/null
-  TOKEN=$(gitea admin user generate-access-token --username recovery-tmp \
-    --token-name recovery --scopes write:admin --raw)
-  curl -s -X PATCH -H "Authorization: token $TOKEN" -H "Content-Type: application/json" \
-    -d "{\"admin\": true}" http://localhost:3000/api/v1/admin/users/your-username
-  gitea admin user delete --username recovery-tmp'
-```
+1. Promote your account. Gitea's CLI can't promote an existing user, so the following command creates a temporary administrator, uses it to promote `your-username` through Gitea's API, and then deletes the temporary account and its token. Replace `your-username` with the username from the previous step:
 
-The response should include `"is_admin":true`, followed by Gitea's log output from deleting `recovery-tmp`. The token is never printed, and deleting `recovery-tmp` also deletes it. Reload Gitea, and **Site Administration** appears in your menu.
+   ```bash
+   docker compose exec -u git gitea sh -c '
+     gitea admin user create --admin --username recovery-tmp \
+       --email recovery-tmp@gitea.invalid --random-password --must-change-password=false >/dev/null
+     TOKEN=$(gitea admin user generate-access-token --username recovery-tmp \
+       --token-name recovery --scopes write:admin --raw)
+     curl -s -X PATCH -H "Authorization: token $TOKEN" -H "Content-Type: application/json" \
+       -d "{\"admin\": true}" http://localhost:3000/api/v1/admin/users/your-username
+     gitea admin user delete --username recovery-tmp'
+   ```
+
+   If it worked, the response includes `"is_admin":true`.
+
+1. Reload Gitea. **Site Administration** now appears in your menu.
 
 ## Verify the setup {#proxy-headers-verify-the-setup}
 
-1. **The route requires authentication.** In a fresh browser, open `https://gitea.yourdomain.com`. You should be redirected to sign in, not straight into Gitea.
-2. **Gitea signs you in from the headers.** After you sign in to Pomerium, you land on the Gitea dashboard with no Gitea password:
+1. Open `https://gitea.yourdomain.com` in a private or incognito window. Pomerium asks you to sign in.
+1. Sign in. You land on the Gitea dashboard without entering a Gitea password.
 
    ![The Gitea dashboard, signed in from the headers Pomerium forwards](img/gitea/gitea-proxy-headers-dashboard.png)
 
-3. **Your identity is correct.** Open your profile. The username comes from the `sub` claim and the email matches the one Pomerium forwarded. The full name is filled in only if your identity provider sends a `name` claim.
+1. Open your profile. Your username comes from the `sub` claim, and your email comes from your identity provider. Your full name appears only if your identity provider sends a `name` claim.
 
    ![The Gitea profile created from the Pomerium identity, with the username from sub and the email from the IdP](img/gitea/gitea-proxy-headers-profile.png)
 
-4. **Sign-out ends both sessions.** Select **Sign Out**. Gitea sends you to Pomerium's sign-out endpoint, which ends the Pomerium session without a confirmation page. You land on Pomerium's signed-out page or your identity provider's sign-in page. Either way, opening `https://gitea.yourdomain.com` again asks you to sign in.
-5. **A disallowed user is blocked.** Sign in as a user your policy excludes and open `https://gitea.yourdomain.com`. Pomerium denies access, so no identity headers are forwarded and Gitea never creates an account.
+1. Select **Sign Out**. Pomerium ends its session without showing a confirmation page. When you open Gitea again, Pomerium asks you to sign in.
+1. Sign in as a user your policy excludes. Pomerium denies access before Gitea loads, so Gitea never creates an account for that user.
 
-## Recover admin access {#proxy-headers-recover-admin-access}
+## Troubleshooting {#proxy-headers-common-failure-modes}
 
-If no one has administrator access, run the commands in [Make yourself the administrator](#proxy-headers-make-yourself-the-administrator) with the username to promote. You need shell access to the host. You don't need a standing break-glass administrator with a password: every request through Pomerium signs in from the headers, so a local password account couldn't sign in anyway.
-
-## Common failure modes {#proxy-headers-common-failure-modes}
-
-| Symptom | Cause and fix |
+| Symptom | Fix |
 | :-- | :-- |
-| Pomerium returns `403` | The route policy still allows only the example user. Replace it with your user or domain. |
-| You reach Gitea but aren't signed in | The header names in Pomerium (`jwt_claims_headers`) and in Gitea (`REVERSE_PROXY_AUTHENTICATION_USER`, `_EMAIL`, `_FULL_NAME`) must match exactly, and `pass_identity_headers` must be set on the route. |
-| Sign-in fails on the username | Gitea rejects usernames with characters such as `@`. Use a stable claim that's already a valid username. This guide uses `sub`. |
-| **Site Administration** is missing from your menu | Gitea doesn't make the first header-provisioned account an administrator. See [Make yourself the administrator](#proxy-headers-make-yourself-the-administrator). |
-| **Sign Out** signs you straight back in | `REVERSE_PROXY_LOGOUT_REDIRECT` isn't set to the route's `/.pomerium/sign_out` URL, so the Pomerium session is still active and the next request carries the headers again. |
-| **Site Administration** shows a warning that the detected URL `https://gitea:3000/` is unlikely to match `ROOT_URL` | The route doesn't preserve the Host header. Set `preserve_host_header: true` on the route, or **Host Header** to **Preserve** in Zero. |
-| A direct request to Gitea signs in | Expected. Reverse-proxy authentication trusts the header from any peer, which is why Gitea must stay reachable only through Pomerium. |
+| Pomerium returns `403` | Replace `you@example.com` in the route policy with your users or domain. |
+| You reach Gitea but aren't signed in | Turn on `pass_identity_headers`, and make the header names in `jwt_claims_headers` and `REVERSE_PROXY_AUTHENTICATION_*` match exactly. |
+| Sign-in fails on the username | Forward a claim that's already a valid Gitea username, such as `sub`, as `X-Pomerium-Sub`. |
+| **Site Administration** is missing from your menu | Promote your account as in [Make yourself the administrator](#proxy-headers-make-yourself-the-administrator). |
+| **Sign Out** signs you straight back in | Set `REVERSE_PROXY_LOGOUT_REDIRECT` to `https://gitea.yourdomain.com/.pomerium/sign_out`. |
+| **Site Administration** warns that the detected URL `https://gitea:3000/` is unlikely to match `ROOT_URL` | Set `preserve_host_header: true`, or **Host Header** to **Preserve** in Zero. |
+| A direct request to Gitea signs in | Expected. Keep Gitea reachable only through Pomerium. |
 
 ## Security considerations {#proxy-headers-security-considerations}
 
-Reverse-proxy authentication means **Gitea trusts the identity header from any peer that can reach it.** Gitea doesn't verify Pomerium's signed `X-Pomerium-Jwt-Assertion`, and `REVERSE_PROXY_TRUSTED_PROXIES` doesn't limit which peer the header is trusted from. So **network isolation is the only trust boundary**: Gitea must be reachable **only** through Pomerium.
-
-Two properties make this safe:
-
-- **Through Pomerium, a forged header is overwritten.** For each claim it forwards, Pomerium sets the header from the authenticated user, so a client that forges `X-Pomerium-Sub` or `X-Pomerium-Claim-Email` through Pomerium is still signed in as itself. The username (`sub`) and email are always present, so they pin the account. The only soft spot is an optional claim Pomerium doesn't send for a given user, such as `name` when the token has none. A forged `X-Pomerium-Claim-Name` could pass through, but the worst case is a wrong display name on a new account, not a different account.
-- **Direct access must be impossible.** A client that bypasses Pomerium and talks to Gitea directly can set those headers itself and impersonate anyone. Keep Gitea on a network where only Pomerium can reach it.
-
-To hold that boundary:
-
-- **Don't publish Gitea's port.** In Docker Compose, keep only Pomerium on Gitea's network and never map `3000` to the host. Confirm the only containers on the network are Pomerium and Gitea: `docker network inspect gitea-pomerium --format '{{range .Containers}}{{.Name}} {{end}}'`.
-- **In Kubernetes, a `ClusterIP` service alone isn't enough** if other pods can connect to Gitea. Use a policy-enforcing CNI and a `NetworkPolicy`, or another network control, to admit only Pomerium.
-- **`REVERSE_PROXY_TRUSTED_PROXIES` isn't a security control for this.** It only affects `X-Forwarded-For` parsing. Set it to Pomerium's IP or CIDR, never a hostname, for correct client IPs in logs, but treat network isolation as the real boundary.
-- **Account creation follows the policy.** `ENABLE_REVERSE_PROXY_AUTO_REGISTRATION` creates a Gitea account for every user your policy allows. Manage Gitea roles and organizations separately.
-- **Signing out of Gitea signs you out of Pomerium.** That also signs you out of every other Pomerium route in that browser.
+- **Don't publish Gitea's port.** When a request goes through Pomerium, Pomerium replaces any identity headers the client sent with the signed-in user's claims. A request that reaches Gitea directly skips that step, so it can claim to be anyone. To check that only Pomerium and Gitea are on the private network, run `docker network inspect gitea-pomerium --format '{{range .Containers}}{{.Name}} {{end}}'`.
+- **In Kubernetes, a `ClusterIP` service isn't enough.** Any pod in the cluster can reach a `ClusterIP` service. Use a `NetworkPolicy` with a CNI that enforces it, or another network control, so only Pomerium can reach Gitea.
+- **`REVERSE_PROXY_TRUSTED_PROXIES` doesn't protect you.** Gitea uses it only to read the client's IP address from `X-Forwarded-For` for its logs. It doesn't stop other peers from sending identity headers.
+- **Keep the route policy tight.** The policy is what decides who gets in, and Gitea creates an account for every user it allows on their first visit.
+- **Sign-out is global.** Signing out of Gitea ends the Pomerium session for every route in that browser.
 
 ## Next steps {#proxy-headers-next-steps}
 
