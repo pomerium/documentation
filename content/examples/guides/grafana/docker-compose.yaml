@@ -1,28 +1,69 @@
 services:
   pomerium:
-    image: pomerium/pomerium:v0.32.7@sha256:e10d1d267af24f581157f485d9b0bc08469e2428675b696a08e42ceb09b2279c
+    image: pomerium/pomerium:main@sha256:b7f96f47fd5cbf20ed4b4a1cf4b104072f8ec5472820a17a04fc01245e81853c
     volumes:
       - ./config.yaml:/pomerium/config.yaml:ro
       - pomerium-cache:/data
     ports:
       - 443:443
       - 80:80
+    networks:
+      default: {}
+      grafana-internal:
+        # Grafana calls the OIDC bridge's token and user info endpoints on the
+        # authenticate service. These aliases resolve them to Pomerium on the shared
+        # network, without a trip through public DNS.
+        aliases:
+          - authenticate.yourdomain.com
+          - grafana.yourdomain.com
     restart: always
 
   grafana:
-    image: grafana/grafana:11.5.2@sha256:8b37a2f028f164ce7b9889e1765b9d6ee23fec80f871d156fbf436d6198d32b7
+    image: grafana/grafana:13.3.1@sha256:0615ec4fbd4072004b7d86b46ded63013a74b7d6eb1119273dd89e8fa25c13cf
+    # No published ports: Grafana shares a network with Pomerium and nothing else,
+    # so Pomerium is the only way in.
+    networks:
+      - grafana-internal
     environment:
-      - GF_AUTH_JWT_ENABLED=true
-      - GF_AUTH_JWT_HEADER_NAME=X-Pomerium-Jwt-Assertion
-      - GF_AUTH_JWT_EMAIL_CLAIM=email
-      - GF_AUTH_JWT_USERNAME_CLAIM=email
-      - GF_AUTH_JWT_JWK_SET_URL=https://grafana.yourdomain.com/.well-known/pomerium/jwks.json
-      - GF_AUTH_JWT_AUTO_SIGN_UP=true
-      - GF_AUTH_JWT_CACHE_TTL=60m
+      # Grafana's public URL. Its OAuth callback is built from this:
+      # https://grafana.yourdomain.com/login/generic_oauth
+      - GF_SERVER_ROOT_URL=https://grafana.yourdomain.com/
+      - GF_AUTH_GENERIC_OAUTH_ENABLED=true
+      - GF_AUTH_GENERIC_OAUTH_NAME=Pomerium
+      # Must match the route's `from` URL.
+      - GF_AUTH_GENERIC_OAUTH_CLIENT_ID=https://grafana.yourdomain.com
+      - GF_AUTH_GENERIC_OAUTH_USE_PKCE=true
+      # The OIDC bridge accepts only the openid scope. Grafana reads the email and
+      # name from the user info endpoint.
+      - GF_AUTH_GENERIC_OAUTH_SCOPES=openid
+      # Your authenticate service, set as authenticate_service_url in config.yaml.
+      - GF_AUTH_GENERIC_OAUTH_AUTH_URL=https://authenticate.yourdomain.com/oidc/auth
+      - GF_AUTH_GENERIC_OAUTH_TOKEN_URL=https://authenticate.yourdomain.com/oidc/token
+      - GF_AUTH_GENERIC_OAUTH_API_URL=https://authenticate.yourdomain.com/oidc/userinfo
+      - GF_AUTH_GENERIC_OAUTH_EMAIL_ATTRIBUTE_PATH=email
+      - GF_AUTH_GENERIC_OAUTH_LOGIN_ATTRIBUTE_PATH=email
+      - GF_AUTH_GENERIC_OAUTH_ALLOW_SIGN_UP=true
+      # Grafana sets each user's role from this expression at every sign-in.
+      # Replace you@example.com with the administrators' emails.
+      - GF_AUTH_GENERIC_OAUTH_ROLE_ATTRIBUTE_PATH=contains(['you@example.com'], email) && 'GrafanaAdmin' || ''
+      - GF_AUTH_GENERIC_OAUTH_ALLOW_ASSIGN_GRAFANA_ADMIN=true
+      # Skip Grafana's login page and start the OIDC login right away. Pomerium is
+      # the only way in, so turn off Grafana's local sign-in too.
+      - GF_AUTH_GENERIC_OAUTH_AUTO_LOGIN=true
+      - GF_AUTH_DISABLE_LOGIN_FORM=true
+      - GF_AUTH_BASIC_ENABLED=false
+      # Grafana's sign-out only clears its own session, and auto-login would sign
+      # the user straight back in. Send sign-out through Pomerium to end the session.
       - GF_AUTH_SIGNOUT_REDIRECT_URL=https://grafana.yourdomain.com/.pomerium/sign_out
     volumes:
       - grafana-storage:/var/lib/grafana
     restart: always
+
+networks:
+  # Shared by Pomerium and Grafana only. The fixed name keeps the network inspect
+  # command in the guide working.
+  grafana-internal:
+    name: grafana-pomerium
 
 volumes:
   pomerium-cache:
