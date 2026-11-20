@@ -1,0 +1,71 @@
+---
+title: Tailscale
+description: Learn about how to integrate with Tailscale.
+lang: en-US
+keywords: [tailscale, connectivity]
+---
+
+# Tailscale
+
+[Tailscale](https://tailscale.com) is a Zero Trust identity-based connectivity platform built on top of the open source WireGuard protocol. Tailscale creates a peer-to-peer mesh network (known as a tailnet).
+
+Typically, nodes run the Tailscale client to join a tailnet. When used in this way, Pomerium can route traffic over the Tailscale network simply by using Tailscale IP addresses and no special configuration is needed.
+
+However, as of v0.35.0, Pomerium also supports running directly as a Tailscale device without needing to install the Tailscale client on the server. This allows incoming traffic from other Tailscale nodes.
+
+## Tailscale Listeners
+
+As part of global settings, multiple Tailscale listeners can be configured, and each listener will appear as a separate node on the tailnet:
+
+```yaml
+tailscale_listeners:
+  - hostname: pomerium-1
+    auth_key: tskey-auth-1
+    listen_addr: :443
+  - hostname: pomerium-2
+    auth_key: tskey-auth-2
+    listen_addr: :443
+```
+
+Tailscale listeners can receive incoming traffic from other nodes on the tailnet.
+
+## Configuration
+
+To configure a tailscale listener, 3 things are needed:
+
+1. Every listener must have a unique `hostname`. This identifies the node and is used for [Magic DNS](https://tailscale.com/docs/features/magicdns).
+2. The node must be authenticated. There are 3 options:
+    1. A [pre-authentication key](https://tailscale.com/docs/features/access-control/auth-keys) (`auth_key`) can be suppled.
+    2. An [oauth client secret](https://tailscale.com/docs/features/oauth-clients) (`oauth_client_secret`) can be used to automatically provision the auth key.
+    3. [Workload identity federation](https://tailscale.com/docs/features/workload-identity-federation) (`oauth_client_id` + `id_token` or `id_token_audience`) can be used with supported cloud infrastructure providers.
+3. The node needs to start a listener. There are 3 types:
+    1. To start a TCP listener only on the Tailscale network, use `listen_addr`.
+    2. To start a Tailscale Funnel, use `listen_funnel_addr`.
+    3. To start a TCP listener registered as a service on the Tailscale network, use `listen_service_name` and `listen_port`.
+
+Consult the [reference documentation](../../reference/tailscale) for additional options.
+
+## Tailscale Funnel
+
+[Tailscale Funnels](https://tailscale.com/docs/features/tailscale-funnel) allow traffic to be received from the broader internet. When started, a unique Funnel URL is provisioned that exposes a local service to the internet (even from behind a [NAT firewall](https://tailscale.com/blog/how-nat-traversal-works)).
+
+To configure a Tailscale Funnel, first follow the [Tailscale instructions](https://tailscale.com/docs/features/tailscale-funnel) to configure your tailnet so that it can provision funnels. Each tailnet is associated with a tailnet domain, for example: `tailnet-name.ts.net`. Nodes within your tailnet will be given subdomains matching the node `hostname` underneath that domain, for example: `pomerium-1.tailnet-name.ts.net`. You can then configure routes in Pomerium to handle traffic on this domain.
+
+```yaml
+tailscale_listeners:
+  - hostname: pomerium-1
+    auth_key: tskey-auth-1
+    listen_addr: :443
+    terminate_tls: true # this will automatically provision a certificate from Let's Encrypt
+routes:
+  - from: https://pomerium-1.tailnet-name.ts.net
+    to: https://verify.pomerium.com
+    policy:
+      - allow:
+          or:
+            - email:
+                is: user@example.com
+    pass_identity_headers: true
+```
+
+Tailscale funnels are subject to [DNS propagation delays](https://tailscale.com/docs/features/tailscale-funnel#dns-propagation), so routes may not work immediately.
