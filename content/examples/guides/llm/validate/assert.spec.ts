@@ -56,6 +56,12 @@ async function signIn(page: Page, user: TestUser, firstUser = false) {
       timeout: 30000,
     })
     .toBe(200);
+  // The session exists before the SPA finishes its own redirect from the OIDC
+  // callback back to the app. Wait for it, or the next page.goto is aborted.
+  await page.waitForURL((u) => !/^\/(auth|oauth)(\/|$)/.test(u.pathname), {
+    waitUntil: "domcontentloaded",
+    timeout: 30000,
+  });
   page.off("request", onRequest);
   expect(authRequests.length, "Open WebUI should start the OIDC login itself").toBeGreaterThan(0);
   return new URL(authRequests[authRequests.length - 1]);
