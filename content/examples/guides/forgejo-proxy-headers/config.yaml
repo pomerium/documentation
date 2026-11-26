@@ -9,7 +9,9 @@ autocert: true
 # Forward the user's identity claims to Forgejo as request headers. Forgejo
 # usernames cannot contain every character that is valid in an email address, so
 # this uses the stable OIDC sub claim for the username and carries the real
-# address in X-Pomerium-Claim-Email.
+# address in X-Pomerium-Claim-Email. sub is often an opaque ID. For readable
+# usernames, map a stable, unique claim that's already a valid Forgejo username to
+# X-Pomerium-Sub. These headers apply to every route that passes identity headers.
 jwt_claims_headers:
   X-Pomerium-Sub: sub
   X-Pomerium-Claim-Email: email
@@ -18,6 +20,7 @@ jwt_claims_headers:
 routes:
   - from: https://forgejo.yourdomain.com
     to: http://forgejo:3000
+    # Sends the jwt_claims_headers above to Forgejo.
     pass_identity_headers: true
     # Git transfers can be large and long-running; don't cap total request time.
     timeout: 0s

@@ -16,6 +16,8 @@ services:
       - forgejo-data:/data
       # Signs users out of Pomerium after Forgejo signs them out.
       - ./footer.tmpl:/data/gitea/templates/custom/footer.tmpl:ro
+    # Forgejo writes each FORGEJO__* variable into /data/gitea/conf/app.ini on start.
+    # Removing a variable doesn't remove its value: delete the key from app.ini too.
     environment:
       # Public URL. Forgejo builds its OIDC callback from it, so it must match the
       # route's from URL.

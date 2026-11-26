@@ -119,7 +119,7 @@ Replace the example domains and `you@example.com` with your own values, in the p
 
 ## Configure and run Forgejo {#oidc-bridge-configure-forgejo}
 
-Forgejo runs in Docker Compose alongside Pomerium. The Forgejo image writes each `FORGEJO__*` variable into Forgejo's `app.ini` when it starts, and the comments in the Compose file explain each one.
+Forgejo runs in Docker Compose alongside Pomerium. The comments in the Compose file explain each Forgejo setting.
 
 <Tabs queryString="type">
 <TabItem value="zero" label="Pomerium Zero" default>
@@ -151,13 +151,13 @@ The following Compose file runs Pomerium Core and Forgejo together.
 </TabItem>
 </Tabs>
 
-Forgejo's sign-out ends only the Forgejo session. Because `LANDING_PAGE` is `login`, the next page load would start the OIDC login again and sign the user straight back in. To prevent that, save the following [custom footer template](https://forgejo.org/docs/latest/admin/customization/) as `footer.tmpl` next to the Compose file. When a user selects **Sign out**, it runs Forgejo's sign-out first, then sends the browser to `/.pomerium/sign_out` to end the Pomerium session too:
+Forgejo's sign-out ends only the Forgejo session, so with `LANDING_PAGE: login` the next page load signs the user straight back in. Save the following [custom footer template](https://forgejo.org/docs/latest/admin/customization/) as `footer.tmpl` next to the Compose file. It runs Forgejo's sign-out, then sends the browser to `/.pomerium/sign_out` to end the Pomerium session too:
 
 <CodeBlock language="html" title="footer.tmpl">
   {Footer}
 </CodeBlock>
 
-If you'd rather not add the template, remove `LANDING_PAGE` and the `footer.tmpl` volume from the Compose file. Users then select **Sign in** on Forgejo's home page, and to sign out of Pomerium, they open `/.pomerium/sign_out`.
+To skip the template, remove `LANDING_PAGE` and the `footer.tmpl` volume. Users then select **Sign in** on Forgejo's home page and open `/.pomerium/sign_out` to sign out of Pomerium.
 
 1. Start the stack:
 
@@ -176,19 +176,13 @@ If you'd rather not add the template, remove `LANDING_PAGE` and the `footer.tmpl
      --auto-discover-url https://authenticate.yourdomain.com/.well-known/openid-configuration
    ```
 
-Keep `--name pomerium`, because the redirect route sends users to `/user/oauth2/pomerium`. The `--key` value must match the route's **From** URL. The Forgejo container also has to be able to resolve and reach `authenticate.yourdomain.com`, because Forgejo calls Pomerium's discovery, token, and user info endpoints itself. If you prefer the UI, you can add the same login source in **Site Administration** > **Identity & Access** > **Authentication Sources**. Choose **OpenID Connect** as the provider and leave the additional scopes empty.
+Keep `--name pomerium`, because the redirect route sends users to `/user/oauth2/pomerium`. The Forgejo container also has to be able to resolve and reach `authenticate.yourdomain.com`, because Forgejo calls Pomerium's OIDC endpoints itself. If you prefer the UI, you can add the same login source in **Site Administration** > **Identity & Access** > **Authentication Sources**. Choose **OpenID Connect** as the provider and leave the additional scopes empty.
 
 If you change `config.yaml` or the Compose file later, run `docker compose up -d` to apply it.
 
-:::caution Removing a variable doesn't remove the setting
-
-The image only writes the `FORGEJO__*` variables that are set, so deleting one from the Compose file leaves the old value in `/data/gitea/conf/app.ini`. To unset a setting, delete its key from `app.ini` too, then restart Forgejo.
-
-:::
-
 :::caution Keep `ACCOUNT_LINKING: login` if you allow more than one email domain
 
-Forgejo usernames can contain only letters, digits, `-`, `_`, and `.`, so an email address can't be one. With `USERNAME: email`, Forgejo uses the part of the email before the `@`, so `sam@example.com` and `sam@example.org` both become `sam`. With `ACCOUNT_LINKING: auto`, Forgejo links a sign-in to an existing account with the same username, so `sam@example.org` would be signed in to `sam@example.com`'s account. `login` shows the second user a form to choose a different username instead. The comment in the Compose file lists the other `USERNAME` values.
+With `USERNAME: email`, Forgejo uses the part of the email before the `@` as the username, so `sam@example.com` and `sam@example.org` both become `sam`. With `ACCOUNT_LINKING: auto`, Forgejo links a sign-in to an existing account with the same username, so `sam@example.org` would be signed in to `sam@example.com`'s account. `login` shows the second user a form to choose a different username instead.
 
 :::
 
@@ -196,7 +190,7 @@ Forgejo usernames can contain only letters, digits, `-`, `_`, and `.`, so an ema
 
 Forgejo makes the first account it creates an administrator. To make sure that's you, sign in through Pomerium before anyone else does, as described in [Verify the setup](#oidc-bridge-verify-the-setup).
 
-Local sign-in is turned off, so there's no break-glass password account. If no one has administrator access anymore, you can promote a user from the Forgejo container. Forgejo's CLI can't promote an existing user, so the following command creates a temporary administrator, uses it to promote `your-username` through Forgejo's API, and then deletes the temporary account and its token:
+If no one has administrator access anymore, you can promote a user from the Forgejo container. Forgejo's CLI can't promote an existing user, so the following command creates a temporary administrator, uses it to promote `your-username` through Forgejo's API, and then deletes the temporary account and its token:
 
 ```bash
 docker compose exec -u git forgejo sh -c '
@@ -275,7 +269,7 @@ sequenceDiagram
 
 :::caution Forgejo trusts the identity headers from any peer
 
-Forgejo can't verify Pomerium's signed JWT, so it believes whatever identity headers arrive with a request, and `REVERSE_PROXY_TRUSTED_PROXIES` doesn't change that. Anyone who can reach Forgejo without going through Pomerium can send their own headers and sign in as any user. Keep Forgejo reachable only through Pomerium, and read the [Security considerations](#proxy-headers-security-considerations) before you deploy.
+Forgejo can't verify Pomerium's signed JWT, so it believes whatever identity headers arrive with a request. Anyone who can reach Forgejo without going through Pomerium can send their own headers and sign in as any user. Keep Forgejo reachable only through Pomerium, and read the [Security considerations](#proxy-headers-security-considerations) before you deploy.
 
 :::
 
@@ -300,7 +294,7 @@ Create a `config.yaml` file with the following contents. The comments in the fil
   {ProxyHeadersConfig}
 </CodeBlock>
 
-Replace the example domain and `you@example.com` with your own values. Forgejo uses `X-Pomerium-Sub` as the username, so if your identity provider's `sub` isn't a valid Forgejo username, map another claim that's stable and unique for each user.
+Replace the example domain and `you@example.com` with your own values.
 
 </TabItem>
 </Tabs>
@@ -389,7 +383,7 @@ The command prints the account's random password. To sign in with it, you need t
 - **Don't publish Forgejo's port.** When a request goes through Pomerium, Pomerium replaces any identity headers the client sent with the signed-in user's claims. A request that reaches Forgejo directly skips that step, so it can claim to be anyone. To check that only Pomerium and Forgejo are on the private network, run `docker network inspect <project>_forgejo-internal --format '{{range .Containers}}{{.Name}} {{end}}'`.
 - **A missing `name` claim can be filled in by the client.** If your identity provider doesn't send `name`, Pomerium doesn't set `X-Pomerium-Claim-Name`, so a header the client sent passes through. That only changes the display name, not which account the user signs in to.
 - **In Kubernetes, a `ClusterIP` service isn't enough.** Any pod in the cluster can reach a `ClusterIP` service. Use a `NetworkPolicy` with a CNI that enforces it, or another network control, so only Pomerium can reach Forgejo.
-- **`REVERSE_PROXY_TRUSTED_PROXIES` doesn't protect you.** Forgejo uses it only to read the client's IP address from `X-Forwarded-For` for its logs. It doesn't stop other peers from sending identity headers. It also has to be an IP address or CIDR, not a hostname.
+- **`REVERSE_PROXY_TRUSTED_PROXIES` doesn't protect you.** Forgejo uses it only to read the client's IP address from `X-Forwarded-For` for its logs. It doesn't stop other peers from sending identity headers.
 - **Keep the route policy tight.** The policy is what decides who gets in, and Forgejo creates an account for every user it allows on their first visit.
 
 ## Next steps {#proxy-headers-next-steps}
