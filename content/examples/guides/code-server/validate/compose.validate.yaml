@@ -7,7 +7,7 @@ include:
 
 services:
   code-server:
-    image: codercom/code-server@sha256:6d46b83ea0687ab1826ec029b6d0e6342bbd55cc5c29b98258463e7faee16d1e
+    image: codercom/code-server:4.123.0@sha256:6d46b83ea0687ab1826ec029b6d0e6342bbd55cc5c29b98258463e7faee16d1e
     command: --auth none --disable-telemetry /home/coder/project
     # Mirror the reader compose, which mounts a volume at the project dir; this makes
     # the path exist so the editor opens a real workspace instead of prompting.
@@ -25,7 +25,7 @@ services:
       start_period: 10s
 
   pomerium:
-    image: pomerium/pomerium@sha256:e10d1d267af24f581157f485d9b0bc08469e2428675b696a08e42ceb09b2279c
+    image: pomerium/pomerium:v0.32.7@sha256:e10d1d267af24f581157f485d9b0bc08469e2428675b696a08e42ceb09b2279c
     command: ['--config', '/pomerium/config.yaml']
     env_file:
       - ../../_harness/pomerium/validation.env

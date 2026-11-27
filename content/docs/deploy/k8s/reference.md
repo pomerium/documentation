@@ -222,6 +222,18 @@ PomeriumSpec defines Pomerium-specific configuration parameters.
         <tr>
             <td>
                 <p>
+                <code>identityProviders</code>&#160;&#160;
+                    <strong>map[string]</strong>
+                    <a href="#identityproviders">identityProviders</a>
+                </p>
+                <p>
+                    IdentityProviders declares the identity providers whose JWTs are accepted as bearer tokens on routes with <code>bearerTokenFormat: jwt</code>. The map key is the provider name, referenced from the <code>identity_providers</code> Ingress annotation to narrow a route to a subset of the providers; a route that names none accepts all of them.
+                </p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <p>
                 <code>idpAccessTokenAllowedAudiences</code>&#160;&#160;
                     <strong>[]string</strong>&#160;
                 </p>
@@ -282,6 +294,18 @@ PomeriumSpec defines Pomerium-specific configuration parameters.
                 </p>
                 <p>
                     NormalizePath controls whether request URI paths will be normalized according to RFC 3986. Defaults to true.
+                </p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <p>
+                <code>oidcBridge</code>&#160;&#160;
+                    <strong>object</strong>&#160;
+                    (<a href="#oidcbridge">oidcBridge</a>)
+                </p>
+                <p>
+                    OIDCBridge configures the default OIDC bridge settings for all routes. A route may override these settings entirely with the oidc_bridge, oidc_bridge_redirect_uris and oidc_bridge_secret Ingress annotations.
                 </p>
             </td>
         </tr>
@@ -927,6 +951,65 @@ IdentityProvider configure single-sign-on authentication and user identity detai
     </tbody>
 </table>
 
+### `identityProviders`
+
+JWTIdentityProvider declares an identity provider whose JWTs are accepted as bearer tokens on routes with <code>bearerTokenFormat: jwt</code>. It is meant for non-interactive workloads that already hold a JWT - Kubernetes projected ServiceAccount tokens, GitHub Actions OIDC tokens, SPIFFE JWT-SVIDs - and does not replace the interactive single-sign-on <code>identityProvider</code>. Authorization on the verified claims is left to policy (<code>claim/...</code>).
+
+<table>
+    <thead>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+                <p>
+                <code>audiences</code>&#160;&#160;
+                    <strong>[]string</strong>&#160;
+                </p>
+                <p>
+                    <strong>Required.</strong>&#160;
+                    Audiences accepted on tokens from this provider. At least one of them must appear in the token's <code>aud</code> claim. Matching is fail-closed: a provider with no audiences would reject every token.
+                </p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <p>
+                <code>issuer</code>&#160;&#160;
+                    <strong>string</strong>&#160;
+                </p>
+                <p>
+                    <strong>Required.</strong>&#160;
+                    Issuer is the <code>iss</code> claim tokens must carry, and must be unique across providers. It is also where the signing keys are fetched from, unless <code>jwksUrl</code> is set. <p> The special value <code>kubernetes:///</code> selects the API server of the cluster Pomerium runs in: the actual issuer and JWKS URL are read from Pomerium's own ServiceAccount token at runtime, so tokens projected by this cluster verify without naming the issuer here. </p>
+                </p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <p>
+                <code>jwksUrl</code>&#160;&#160;
+                    <strong>string</strong>&#160;
+                    (uri)
+                </p>
+                <p>
+                    JWKSURL, when set, skips OpenID Connect discovery and fetches the signing keys from this URL directly. Useful when the issuer URL is not routable from Pomerium. It must not be set together with a <code>kubernetes:///</code> issuer, as the JWKS URL is then the API server's own endpoint.
+                </p>
+                Format: an URI as parsed by Golang net/url.ParseRequestURI.
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <p>
+                <code>supportedAlgs</code>&#160;&#160;
+                    <strong>[]string</strong>&#160;
+                </p>
+                <p>
+                    SupportedAlgs is the allowlist of JWT signing algorithms. Defaults to <code>RS256</code>, <code>ES256</code> and <code>EdDSA</code>. Symmetric (<code>HS*</code>) algorithms and <code>none</code> are not accepted.
+                </p>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
 ### `matchSubjectAltNames`
 
 Match Subject Alt Names can be used to add an additional constraint when validating client certificates.
@@ -983,6 +1066,52 @@ Match Subject Alt Names can be used to add an additional constraint when validat
                 </p>
                 <p>
                 </p>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+### `oidcBridge`
+
+OIDCBridge configures the default OIDC bridge settings for all routes. A route may override these settings entirely with the oidc_bridge, oidc_bridge_redirect_uris and oidc_bridge_secret Ingress annotations.
+
+<table>
+    <thead>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+                <p>
+                <code>enabled</code>&#160;&#160;
+                    <strong>boolean</strong>&#160;
+                </p>
+                <p>
+                    Enabled controls whether the OIDC bridge feature is enabled for all routes.
+                </p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <p>
+                <code>redirectUris</code>&#160;&#160;
+                    <strong>[]string</strong>&#160;
+                </p>
+                <p>
+                    List of allowed redirect_uris. By default allows any subpath of the configured route's `to` address.
+                </p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <p>
+                <code>secretRef</code>&#160;&#160;
+                    <strong>string</strong>&#160;
+                    (namespace/name)
+                </p>
+                <p>
+                    SecretRef references a <code>namespace/name</code> secret with the "client_secret" key, which is the client secret to use for upstream applications that do not support public clients / PKCE.
+                </p>
+                Format: reference to Kubernetes resource with namespace prefix: <code>namespace/name</code> format.
             </td>
         </tr>
     </tbody>
@@ -1210,6 +1339,18 @@ SSH sets the ssh settings.
                 </p>
                 <p>
                 </p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <p>
+                <code>twoPersonApprovalRequestTimeout</code>&#160;&#160;
+                    <strong>string</strong>&#160;
+                    (duration)
+                </p>
+                <p>
+                </p>
+                Format: a duration string like "22s" as parsed by Golang time.ParseDuration.
             </td>
         </tr>
         <tr>

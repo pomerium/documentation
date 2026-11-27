@@ -9,7 +9,7 @@ include:
 
 services:
   cockpit:
-    image: quay.io/cockpit/ws@sha256:ff018a28d50912dec3a1f6071e69cb6a7c252b68f1b8ec6964c3c6741c7dd96f
+    image: quay.io/cockpit/ws:361@sha256:ff018a28d50912dec3a1f6071e69cb6a7c252b68f1b8ec6964c3c6741c7dd96f
     entrypoint: ['/container/label-run', '--no-tls']
     volumes:
       - ./cockpit.conf:/etc/cockpit/cockpit.conf:ro
@@ -19,7 +19,7 @@ services:
           - cockpit
 
   pomerium:
-    image: pomerium/pomerium@sha256:e10d1d267af24f581157f485d9b0bc08469e2428675b696a08e42ceb09b2279c
+    image: pomerium/pomerium:v0.32.7@sha256:e10d1d267af24f581157f485d9b0bc08469e2428675b696a08e42ceb09b2279c
     command: ['--config', '/pomerium/config.yaml']
     env_file:
       - ../../_harness/pomerium/validation.env

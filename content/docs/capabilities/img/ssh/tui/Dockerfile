@@ -1,4 +1,4 @@
-ARG pomerium_image=pomerium/pomerium@sha256:2c107a708926b9c3389cf870996a609c2532f70aac047445a538aa1a203901fd
+ARG pomerium_image=pomerium/pomerium:git-69b96725@sha256:2c107a708926b9c3389cf870996a609c2532f70aac047445a538aa1a203901fd
 
 FROM golang:latest AS mockidp
 
@@ -9,7 +9,7 @@ RUN mkdir /workspace && cd /workspace \
 
 FROM $pomerium_image AS pomerium
 
-FROM debian@sha256:3615a749858a1cba49b408fb49c37093db813321355a9ab7c1f9f4836341e9db
+FROM debian:trixie-20260223@sha256:3615a749858a1cba49b408fb49c37093db813321355a9ab7c1f9f4836341e9db
 
 RUN apt-get update \
  && apt-get install -y wget ffmpeg libnss3-tools ca-certificates dnsmasq iproute2 curl ldnsutils openssh-client openssl vim

@@ -20,24 +20,37 @@ import Tabs from '@theme/Tabs';
 
 The **Configure** section of the Pomerium Enterprise Console houses settings that affect the entirety of the Console environment (across all Namespaces). Adjust these settings with care.
 
-## Outbound network requirements
+## Licenses
+
+The Pomerium Enterprise Console requires an Enterprise License to use. A free trial Enterprise License can be obtained through the Enterprise Console UI on the Licenses tab:
+
+![Enterprise Licenses](./img/enterprise-licenses.png)
+
+An Enterprise License can also be supplied from the command line via the <a href="#license-key">`license-key`</a> option. Licenses require online validation, unless the <a href="#license-key-validate-offline">`license-key-validate-offline`</a> option is used and the license supports offline validation.
+
+## Outbound Network Requirements
 
 Pomerium Enterprise Console may require outbound HTTPS (TCP 443) access to:
 
 - `api.keygen.sh` for online license verification
 - `raw.githubusercontent.com` for the Tor exit node list when that data source is enabled
 - `analytics.pomerium.com` for Pomerium usage analytics.
+- `licensing.pomerium.app` for online license verification and product analytics from the Console web interface. The Console server forwards these events to this host.
 - `sentry.io` for Sentry error reporting - see https://docs.sentry.io/security-legal-pii/security/ip-ranges/
 
-## Directory sync
+For Pomerium Core [usage reporting](/docs/reference/usage-data), allow outbound HTTPS to `licensing.pomerium.app`.
+
+## Directory Sync
 
 Directory sync enumerates users and groups from a directory provider so Pomerium Core can use directory-backed identity data. In the Console, go to **Settings** > **Directory Sync**. The tab shows **Identity Provider**, **Polling Min Delay**, and **Polling Max Delay**. **Identity Provider** renders a provider selector with **None** as the empty value; leaving it empty disables directory sync. When a provider is selected, the Console shows provider-specific options below the selector.
 
-When the Console exports settings to Core, **Identity Provider** maps to `directory_provider`, the provider-specific values map to `directory_provider_options`, **Polling Min Delay** maps to `directory_provider_refresh_interval`, and **Polling Max Delay** maps to `directory_provider_refresh_timeout`. Core uses these settings to choose the directory provider, store provider options as a generic JSON object, refresh the directory cache, and limit a single refresh attempt.
+When the Console exports settings to Core, **Identity Provider** maps to `directory_provider`, the provider-specific values map to `directory_provider_options`, **Polling Min Delay** maps to `directory_provider_refresh_interval`, and **Polling Max Delay** maps to `directory_provider_refresh_timeout`. The Console runs the directory sync itself. Core does not use the refresh interval or refresh timeout; it only stores them, and passes them to the Console when Core launches the Console.
 
-You can seed the same persisted Console settings at startup with `directory_provider`, `directory_provider_options`, `directory_provider_refresh_interval`, and `directory_provider_refresh_timeout` in `config.yaml`, or with the matching environment variables in the table below. If unset, `directory_provider_refresh_interval` defaults to `10m`, and `directory_provider_refresh_timeout` — the deadline for a single refresh attempt — also defaults to `10m`.
+You can seed the same persisted Console settings at startup with `directory_provider`, `directory_provider_options`, `directory_provider_refresh_interval`, and `directory_provider_refresh_timeout` in `config.yaml`, or with the matching environment variables in the table below. If unset, both default to `10m`.
 
-## Auto-apply changesets
+`directory_provider_refresh_interval` (**Polling Min Delay**) is both the interval between syncs and the timeout for a single sync attempt. `directory_provider_refresh_timeout` (**Polling Max Delay**) caps the delay between retries after failed sync attempts. Despite its name, it does not limit how long an attempt can run. To give a slow sync more time, increase `directory_provider_refresh_interval`. See [**Identity Provider Polling Min/Max Delay**](/docs/reference/identity-provider-settings#identity-provider-polling-minmax-delay) for a diagram of how the two settings interact.
+
+## Auto-Apply Changesets
 
 `auto_apply_changesets` controls whether configuration changesets apply automatically (`true`) or wait for an administrator to apply them (`false`). The Enterprise Console has no UI control for it; set it through the [Console management API](/docs/internals/management-api-enterprise). Pomerium Zero exposes it as the **Auto-apply changesets** toggle under **Settings** > **Advanced**.
 
@@ -67,14 +80,15 @@ All values are case sensitive unless otherwise noted.
 | <a className="entRef-anchor" id="debug-config-dump">#</a><a href='#debug-config-dump'>DEBUG_CONFIG_DUMP</a> | Dumps the Databroker configuration. This is a debug option to be used only when specified by Pomerium Support. | `false` |
 | <a className="entRef-anchor" id="directory-provider">#</a><a href='#directory-provider'>DIRECTORY_PROVIDER</a> | Directory-sync provider Pomerium uses to enumerate users and groups. Empty disables directory sync. | none |
 | <a className="entRef-anchor" id="directory-provider-options">#</a><a href='#directory-provider-options'>DIRECTORY_PROVIDER_OPTIONS</a> | Provider-specific options for the directory provider, as a JSON object. | none |
-| <a className="entRef-anchor" id="directory-provider-refresh-interval">#</a><a href='#directory-provider-refresh-interval'>DIRECTORY_PROVIDER_REFRESH_INTERVAL</a> | How often Pomerium refreshes the directory cache. | `10m` |
-| <a className="entRef-anchor" id="directory-provider-refresh-timeout">#</a><a href='#directory-provider-refresh-timeout'>DIRECTORY_PROVIDER_REFRESH_TIMEOUT</a> | Per-attempt timeout for a single directory refresh cycle. | `10m` |
+| <a className="entRef-anchor" id="directory-provider-refresh-interval">#</a><a href='#directory-provider-refresh-interval'>DIRECTORY_PROVIDER_REFRESH_INTERVAL</a> | How often the Console syncs the directory, and the timeout for a single sync attempt (**Polling Min Delay**). | `10m` |
+| <a className="entRef-anchor" id="directory-provider-refresh-timeout">#</a><a href='#directory-provider-refresh-timeout'>DIRECTORY_PROVIDER_REFRESH_TIMEOUT</a> | Maximum delay between retries after failed sync attempts (**Polling Max Delay**). Does not limit how long a sync attempt can run. | `10m` |
 | <a className="entRef-anchor" id="disable-feedback-widget">#</a><a href='#disable-feedback-widget'>DISABLE_FEEDBACK_WIDGET</a> | Disables third-party feedback widget and removes it from the Enterprise Console. | `false` |
 | <a className="entRef-anchor" id="disable-remote-diagnostics">#</a><a href='#disable-remote-diagnostics'>DISABLE_REMOTE_DIAGNOSTICS</a> | Disable remote diagnostics. | `true` |
 | <a className="entRef-anchor" id="disable-validation">#</a><a href='#disable-validation'>DISABLE_VALIDATION</a> | (deprecated, please update your configuration to set `VALIDATION_MODE=none` instead) Disable config validation. | `false` |
 | <a className="entRef-anchor" id="grpc-addr">#</a><a href='#grpc-addr'>GRPC_ADDR</a> | The address to listen for gRPC on. | `:8702` |
 | <a className="entRef-anchor" id="help">#</a><a href='#help'>HELP</a> | help for serve | `false` |
-| <a className="entRef-anchor" id="license-key">#</a><a href='#license-key'>LICENSE_KEY</a> | Required: Provide the license key issued by your account team. | none |
+| <a className="entRef-anchor" id="license-key">#</a><a href='#license-key'>LICENSE_KEY</a> | Provide the license key issued by your account team. | none |
+| <a className="entRef-anchor" id="license-key-validate-offline">#</a><a href='#license-key-validate-offline'>LICENSE_KEY_VALIDATE_OFFLINE</a> | Disable online validation of the license key. | `false` |
 | <a className="entRef-anchor" id="override-certificate-name">#</a><a href='#override-certificate-name'>OVERRIDE_CERTIFICATE_NAME</a> | Overrides the certificate name used for the databroker connection. | none |
 | <a className="entRef-anchor" id="prometheus-data-dir">#</a><a href='#prometheus-data-dir'>PROMETHEUS_DATA_DIR</a> | The path to Prometheus data | none |
 | <a className="entRef-anchor" id="prometheus-listen-addr">#</a><a href='#prometheus-listen-addr'>PROMETHEUS_LISTEN_ADDR</a> | When set, embedded Prometheus listens at this address. Set as `host:port` | `127.0.0.1:9090` |
@@ -117,8 +131,8 @@ All values are case sensitive unless otherwise noted.
 | <a className="entRef-anchor" id="debug-config-dump">#</a><a href='#debug-config-dump'>debug_config_dump</a> | Dumps the Databroker configuration. This is a debug option to be used only when specified by Pomerium Support. | `false` |
 | <a className="entRef-anchor" id="directory-provider">#</a><a href='#directory-provider'>directory_provider</a> | Directory-sync provider Pomerium uses to enumerate users and groups. Empty disables directory sync. | none |
 | <a className="entRef-anchor" id="directory-provider-options">#</a><a href='#directory-provider-options'>directory_provider_options</a> | Provider-specific options for the directory provider, as a JSON object. | none |
-| <a className="entRef-anchor" id="directory-provider-refresh-interval">#</a><a href='#directory-provider-refresh-interval'>directory_provider_refresh_interval</a> | How often Pomerium refreshes the directory cache. | `10m` |
-| <a className="entRef-anchor" id="directory-provider-refresh-timeout">#</a><a href='#directory-provider-refresh-timeout'>directory_provider_refresh_timeout</a> | Per-attempt timeout for a single directory refresh cycle. | `10m` |
+| <a className="entRef-anchor" id="directory-provider-refresh-interval">#</a><a href='#directory-provider-refresh-interval'>directory_provider_refresh_interval</a> | How often the Console syncs the directory, and the timeout for a single sync attempt (**Polling Min Delay**). | `10m` |
+| <a className="entRef-anchor" id="directory-provider-refresh-timeout">#</a><a href='#directory-provider-refresh-timeout'>directory_provider_refresh_timeout</a> | Maximum delay between retries after failed sync attempts (**Polling Max Delay**). Does not limit how long a sync attempt can run. | `10m` |
 | <a className="entRef-anchor" id="disable-feedback-widget">#</a><a href='#disable-feedback-widget'>disable_feedback_widget</a> | Disables third-party feedback widget and removes it from the Enterprise Console. | `false` |
 | <a className="entRef-anchor" id="disable-remote-diagnostics">#</a><a href='#disable-remote-diagnostics'>disable_remote_diagnostics</a> | Disable remote diagnostics. | `true` |
 | <a className="entRef-anchor" id="disable-validation">#</a><a href='#disable-validation'>disable_validation</a> | (deprecated, please update your configuration to set `validation_mode=none` instead) Disable config validation. | `false` |

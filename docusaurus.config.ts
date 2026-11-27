@@ -100,6 +100,9 @@ const config: Config = {
       indexName: process.env.INDEX_NAME,
       contextualSearch: false,
       searchPagePath: false,
+      // The index also covers non-docs www.pomerium.com pages (/learn, /blog),
+      // which the docs SPA can't route; load those with a full page navigation.
+      externalUrlRegex: '^https?://(?!www\\.pomerium\\.com/docs(?:[/?#]|$))',
     },
     colorMode: {
       defaultMode: 'light', // The color mode when user first visits the site. type: 'light' | 'dark' . Default is 'light'.
@@ -170,12 +173,12 @@ const config: Config = {
           dropdownActiveClassDisabled: true,
           dropdownItemsAfter: [
             {
-              to: 'https://0-32-0.docs.pomerium.com/docs',
-              label: 'Latest stable (v0.32)',
+              to: 'https://0-34-0.docs.pomerium.com/docs',
+              label: 'Latest stable (v0.34)',
             },
             {
-              to: 'https://0-31-0.docs.pomerium.com/docs',
-              label: 'v0.31',
+              to: 'https://0-33-0.docs.pomerium.com/docs',
+              label: 'v0.33',
             },
             {
               type: 'html',

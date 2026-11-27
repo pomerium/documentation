@@ -283,13 +283,13 @@ Enterprise Console directory sync fails to complete.
 
 **Solution:**
 
-If your directory sync fails, use the **External Data** > **Last Error** and **Metrics** dashboards to determine the source of the failure, and review your Console logs as well. If the failure is due to a timeout, increase the **IdP Polling Min/Max Delay** settings until the sync completes.
+If your directory sync fails, use the **External Data** > **Last Error** and **Metrics** dashboards to determine the source of the failure, and review your Console logs as well. If the failure is due to a timeout, increase the **Polling Min Delay** setting until the sync completes. Polling Min Delay is the timeout for each sync attempt; increasing only **Polling Max Delay** does not help.
 
 1. In the Console, go to **External Data** > **Last Error** to check for errors that may have caused the sync to fail. Go to **External Data** > **Metrics** to review request durations:
 
 ![Check Last Error to see if an error interrupted directory sync](./img/troubleshooting/last-error-and-request-duration.gif)
 
-2. Select **Settings** > **Identity Providers** to see the **IdP Polling Min/Max Delay** settings. Increase the **Polling Min Delay** and **Polling Max Delay** settings before attempting to sync your directory again. Continue to monitor the sync; if it fails due to timeout, increase the durations.
+2. Select **Settings** > **Directory Sync** to see the **Polling Min Delay** and **Polling Max Delay** settings. Increase **Polling Min Delay** so it is longer than a full sync takes, and set **Polling Max Delay** noticeably larger than it (for example, twice as large) so the Console pauses between retries. Continue to monitor the sync; if it still fails due to timeout, increase Polling Min Delay again.
 
 ![Find the IdP Polling Delays settings in the Console](./img/troubleshooting/adjust-polling-delay-settings.gif)
 

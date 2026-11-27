@@ -388,13 +388,26 @@ See Kubernetes [`identityProvider.url`](/docs/deploy/k8s/reference#identityprovi
 
 ## Identity Provider Polling Min/Max Delay \{#identity-provider-polling-minmax-delay}
 
-Identity provider **Polling Minimum Delay** and **Polling Maximum Delay** settings define the minimum and maximum delay times between requests to the identity provider data source.
+The **Polling Min Delay** and **Polling Max Delay** settings control how often the Enterprise Console syncs your directory from the identity provider, how long a single sync attempt may run, and how long the Console waits before retrying a failed attempt. A sync attempt includes fetching the directory from the identity provider and writing the changes to the databroker.
 
-A job starts with the **minimum delay** intervals. If the job fails to complete within the minimum delay period, it will be interrupted and the job will restart. If the job is interrupted due to timeout or an error, it will restart with increasing intervals up to the **maximum delay** period.
+- **Polling Min Delay** sets two things:
+  - The **timeout for a single sync attempt**. If an attempt runs longer than this, the Console cancels it and records it as failed.
+  - The **interval between successful syncs**, measured from the start of one attempt to the start of the next.
+- **Polling Max Delay** caps the **delay between retries after failed attempts**, also measured from the start of one attempt to the start of the next. The delay grows by about 1.6× with each consecutive failure (with ±20% jitter), up to this value. A successful attempt resets the delay to Polling Min Delay.
+
+:::caution
+
+Polling Max Delay does not give a sync attempt more time. If your directory sync times out, increase **Polling Min Delay** until it is longer than a full sync takes.
+
+Also set **Polling Max Delay** noticeably larger than Polling Min Delay, for example twice as large. Because a timed-out attempt has already used up Polling Min Delay, a Polling Max Delay equal to or smaller than Polling Min Delay (such as the `10m`/`10m` default) makes the Console retry immediately after each timeout.
+
+:::
+
+![Timeline showing that Polling Min Delay is the per-attempt timeout and the interval between syncs, while Polling Max Delay only caps the wait between retries](./img/idp_options/directory-sync-polling-delays.svg)
 
 :::enterprise
 
-The `minimum_delay` and `maximum_delay` settings are an [**Enterprise Console**](https://www.pomerium.com/enterprise-sales/) feature, and are not configurable in Pomerium Core.
+These settings are an [**Enterprise Console**](https://www.pomerium.com/enterprise-sales/) feature. You can also set them with the Console's [`directory_provider_refresh_interval`](/docs/deploy/enterprise/configure#directory-provider-refresh-interval) (Polling Min Delay) and [`directory_provider_refresh_timeout`](/docs/deploy/enterprise/configure#directory-provider-refresh-timeout) (Polling Max Delay) options.
 
 :::
 
@@ -406,15 +419,17 @@ Set the **Identity Provider Max/Min Delay** settings in the Console:
 
 ### Defaults \{#identity-provider-polling-minmax-delay-defaults}
 
-While minimum and maximum polling time defaults are set for any Console installation, the required durations will vary depending on your identity provider and the size or your organization's directory.
+Both settings default to `10m`, so by default a sync attempt that takes longer than 10 minutes times out. The durations you need depend on your identity provider and the size of your organization's directory.
 
-If the job fails before completing, increase the minimum and maximum durations until the job completes.
+If sync attempts time out, increase **Polling Min Delay** until a full sync completes within it. Because Polling Min Delay is also the interval between syncs, a larger value means the directory is refreshed less often.
 
 Keep in mind that large directories may take several hours to complete.
 
 ### Monitor directory sync \{#monitor-directory-sync}
 
 To determine the appropriate durations required to sync your directory, check your Console logs and the **Last Error** and **Request Duration** sections of the Console GUI.
+
+In the Console logs, each sync attempt logs `datasource: task started` followed by `datasource: task completed` or `datasource: task failed`. An attempt cancelled by the Polling Min Delay timeout fails with an error that includes `context deadline exceeded`.
 
 #### Last error \{#last-error}
 
