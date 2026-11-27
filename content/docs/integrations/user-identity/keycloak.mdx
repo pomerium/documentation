@@ -39,7 +39,7 @@ This guide shows how to integrate a self-hosted Keycloak instance as your OIDC p
   cp "$(mkcert -CAROOT)/rootCA.pem" certs/rootCA.pem
   ```
 
-  The mkcert certificate is for testing this setup locally only. In production, use certificates issued by a public CA, for example with [certbot](https://certbot.eff.org/) or another ACME client, or your organization's PKI. Pomerium can also manage certificates for your routes with [autocert](/docs/reference/autocert), but Keycloak needs its own certificate (or TLS termination in front of it). Certificates from a CA your containers already trust don't need `rootCA.pem`.
+  The mkcert certificate is for testing this setup locally only. In production, use certificates issued by a public CA, for example with [certbot](https://certbot.eff.org/) or another Automated Certificate Management Environment (ACME) client, or your organization's PKI. Pomerium can also manage certificates for your routes with [autocert](/docs/reference/autocert), but Keycloak needs its own certificate (or TLS termination in front of it). Certificates from a CA your containers already trust don't need `rootCA.pem`.
 
 ## Docker Compose Configuration
 
@@ -128,6 +128,12 @@ docker compose up -d postgres keycloak
 
 When Keycloak finishes starting, open [https://keycloak.localhost.pomerium.io:8443](https://keycloak.localhost.pomerium.io:8443) to reach the **Keycloak Admin Console**.
 
+:::tip
+
+<SelfSignedCertWarning />
+
+:::
+
 ## Keycloak Setup
 
 :::note
@@ -151,7 +157,7 @@ Keycloak shows a warning that you're signed in as a temporary admin user. Replac
 1. Sign out, then sign in as the new user.
 1. In **Users**, delete `temp-admin`.
 
-In production, also enable MFA for this account. See the [Keycloak server administration guide](https://www.keycloak.org/docs/latest/server_admin/) for details.
+In production, also enable multi-factor authentication (MFA) for this account. See the [Keycloak server administration guide](https://www.keycloak.org/docs/latest/server_admin/) for details.
 
 ### Secure the Admin Console
 
@@ -162,7 +168,7 @@ Pomerium also can't simply sit in front of the admin console of the same Keycloa
 In production, limit exposure instead:
 
 - Expose only the paths Pomerium and users need, and block `/admin` and the `master` realm at your reverse proxy. See [Configuring a reverse proxy](https://www.keycloak.org/server/reverseproxy).
-- Serve the admin console on a separate hostname with `KC_HOSTNAME_ADMIN`, reachable only from an internal network or VPN. See [Configuring the hostname](https://www.keycloak.org/server/hostname).
+- Serve the admin console on a separate hostname with `KC_HOSTNAME_ADMIN`, reachable only from an internal network or virtual private network (VPN). See [Configuring the hostname](https://www.keycloak.org/server/hostname).
 - Restrict access to the Keycloak port with firewall rules or network policies.
 
 ### Create a Realm
@@ -180,7 +186,9 @@ Keep the `master` realm for administering Keycloak and create a separate realm f
 1. Enter a username, email address, first name, and last name. Turn on **Email verified**, then **Create**.
 1. Select **Credentials**, then **Set password** and disable **Temporary**.
 
-![Create a user](./img/keycloak/keycloak-create-a-user.gif) ![Set the user's password](./img/keycloak/keycloak-set-password.png)
+![Create a user](./img/keycloak/keycloak-create-a-user.gif)
+
+![Set the user's password](./img/keycloak/keycloak-set-password.png)
 
 Pomerium reads the `email`, `name`, and `sub` claims from Keycloak, so fill in the profile fields.
 
@@ -232,7 +240,7 @@ routes:
     pass_identity_headers: true
 ```
 
-Generate a [Signing Key](/docs/reference/signing-key) and replace `your_signing_key` with the base64-encoded private key.
+Generate a [Signing Key](/docs/reference/signing-key) with `openssl ecparam -genkey -name prime256v1 -noout | base64 | tr -d '\n'` and replace `your_signing_key` with the output.
 
 `idp_provider_url` is the realm URL, without a trailing slash. Pomerium discovers the OIDC endpoints at `<idp_provider_url>/.well-known/openid-configuration`, and the `issuer` in that document must match `idp_provider_url`.
 
@@ -242,19 +250,17 @@ Start Pomerium and Verify:
 docker compose up -d pomerium verify
 ```
 
+If you change `config.yaml` later, run `docker compose restart pomerium` to apply it.
+
 ## Test the Integration
 
 Visit [https://verify.localhost.pomerium.io](https://verify.localhost.pomerium.io).
 
-:::tip
-
-<SelfSignedCertWarning />
-
-:::
-
 You'll be redirected to Keycloak to sign in, then back to the Verify service. Sign in with the user you created above.
 
-![Keycloak sign-in page for the pomerium realm](./img/keycloak/keycloak-login.png) ![Pomerium Verify showing identity found and verified with claims from Keycloak](./img/keycloak/keycloak-verify-app.png)
+![Keycloak sign-in page for the pomerium realm](./img/keycloak/keycloak-login.png)
+
+![Pomerium Verify showing identity found and verified with claims from Keycloak](./img/keycloak/keycloak-verify-app.png)
 
 You can see user claims from Keycloak in the JWT payload, such as `email` and `sub`, confirming that Pomerium has authenticated and authorized your request.
 
@@ -266,7 +272,7 @@ You can see user claims from Keycloak in the JWT payload, such as `email` and `s
 | **Invalid parameter: redirect_uri** | The client's **Valid redirect URIs** doesn't exactly match `authenticate_service_url` plus `/oauth2/callback`. |
 | Pomerium logs `x509: certificate signed by unknown authority` | Pomerium doesn't trust the CA that signed Keycloak's certificate. Set `certificate_authority_file`. |
 | Pomerium logs an `issuer` mismatch | `idp_provider_url` doesn't match `KC_HOSTNAME` and the realm path. Compare it to the `issuer` at `/realms/pomerium/.well-known/openid-configuration`. |
-| Verify shows **TLS Certificate verification failed** | Verify can't fetch the JWKS. Use a `JWKS_ENDPOINT` hostname covered by your certificate and set `SSL_CERT_FILE` if the certificate uses a private CA. |
+| Verify shows **TLS Certificate verification failed** | Verify can't fetch the JSON Web Key Set (JWKS). Use a `JWKS_ENDPOINT` hostname covered by your certificate and set `SSL_CERT_FILE` if the certificate uses a private CA. |
 
 ## Directory Sync (Enterprise)
 
@@ -290,7 +296,11 @@ Then open the **Service accounts roles** tab, select **Assign role**, filter by 
 
 ### Configure Pomerium Enterprise Console
 
-Under **Settings → Identity Providers**, select "Keycloak" as the identity provider and set the Client ID, Client Secret, Realm and URL. Use the realm name (`pomerium`) and the Keycloak base URL (`https://keycloak.localhost.pomerium.io:8443`).
+Under **Settings** > **Identity Providers**, select **Keycloak** as the identity provider and set the Client ID, Client Secret, Realm, and URL. Use the realm name (`pomerium`) and the Keycloak base URL (`https://keycloak.localhost.pomerium.io:8443`).
+
+## Stop, Reset, or Upgrade
+
+Run `docker compose down` to stop the stack while keeping the `postgres-data` volume (your Keycloak realm, users, and clients). Add `-v` to delete `postgres-data` as well and start fresh. To upgrade, update the image tags in `docker-compose.yaml`, then run `docker compose pull` and `docker compose up -d`.
 
 ## Additional Resources
 
