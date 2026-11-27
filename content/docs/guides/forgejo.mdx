@@ -46,6 +46,8 @@ There are two ways to secure Forgejo with Pomerium: the OIDC bridge and proxy he
 | Sign-out | Also signs out of Pomerium | Not covered |
 | Admin recovery | From the Forgejo container's CLI | A break-glass admin created out of band |
 
+Use **OIDC bridge** if you control an authenticate service domain and want Forgejo to verify tokens with Pomerium rather than trusting headers on the network; use **Proxy headers** if you want to stay on Pomerium's hosted authenticate URL and can strictly isolate Forgejo on a private network.
+
 Both setups keep Forgejo's own sign-in form out of the way, and Forgejo creates each user's account the first time they sign in. Only sign-in from a browser goes through Pomerium: Git over HTTP, API clients, automations, and SSH keep using Forgejo [access tokens](https://forgejo.org/docs/latest/user/api-usage/) or SSH keys. This guide was tested with Forgejo 15.0.2.
 
 ## Prerequisites
@@ -74,7 +76,7 @@ sequenceDiagram
   participant P as Pomerium
   participant F as Forgejo
   B->>P: Open https://forgejo.yourdomain.com
-  P->>B: Sign in at the IdP, once
+  P->>B: Sign in at the identity provider, once
   P->>F: Proxy the request
   F->>B: Signed out, redirect to /user/login
   B->>P: GET /user/login
@@ -97,7 +99,7 @@ sequenceDiagram
 1. Create the login redirect route. Set **From** to `https://forgejo.<your-starter-domain>`, and on the **Path Matching** tab, choose **Exact Path** and enter `/user/login`.
 1. On that route's **Advanced** tab, choose **Redirect** and set **Path Redirect** to `/user/oauth2/pomerium`. Set the policy to the users who should reach Forgejo, then save.
 1. Create the Forgejo route. Set **From** to the same URL, **To** to `http://forgejo:3000`, and the same policy as the redirect route.
-1. On the **Advanced** tab, turn on **OIDC Bridge** and enter an **OIDC Bridge Client Secret**. Generate one with `openssl rand -base64 32`. Forgejo doesn't use PKCE, so Pomerium needs this secret to know the token request really comes from Forgejo.
+1. On the **Advanced** tab, turn on **OIDC Bridge** and enter an **OIDC Bridge Client Secret**. Generate one with `openssl rand -base64 32`. Forgejo doesn't use Proof Key for Code Exchange (PKCE), so Pomerium needs this secret to know the token request really comes from Forgejo.
 1. On the **Timeouts** tab, set **Timeout** to `0s` and **Idle Timeout** to `600s`, so long Git pushes and clones aren't cut off. Then save.
 1. Order the login redirect route above the Forgejo route. Otherwise the Forgejo route matches `/user/login` first, and users see Forgejo's login page.
 
@@ -178,11 +180,11 @@ To skip the template, remove `LANDING_PAGE` and the `footer.tmpl` volume. Users 
 
 Keep `--name pomerium`, because the redirect route sends users to `/user/oauth2/pomerium`. The Forgejo container also has to be able to resolve and reach `authenticate.yourdomain.com`, because Forgejo calls Pomerium's OIDC endpoints itself. If you prefer the UI, you can add the same login source in **Site Administration** > **Identity & Access** > **Authentication Sources**. Choose **OpenID Connect** as the provider and leave the additional scopes empty.
 
-If you change `config.yaml` or the Compose file later, run `docker compose up -d` to apply it.
+If you change `config.yaml` later, run `docker compose restart pomerium` to apply it. If you change the Compose file, run `docker compose up -d`.
 
 :::caution Keep `ACCOUNT_LINKING: login` if you allow more than one email domain
 
-With `USERNAME: email`, Forgejo uses the part of the email before the `@` as the username, so `sam@example.com` and `sam@example.org` both become `sam`. With `ACCOUNT_LINKING: auto`, Forgejo links a sign-in to an existing account with the same username, so `sam@example.org` would be signed in to `sam@example.com`'s account. `login` shows the second user a form to choose a different username instead.
+Keep `ACCOUNT_LINKING: login` if your route policy allows more than one email domain. With `USERNAME: email`, Forgejo uses the part of the email before the `@` as the username, so `sam@example.com` and `sam@example.org` both become `sam`. With `ACCOUNT_LINKING: auto`, Forgejo links a sign-in to an existing account with the same username, so `sam@example.org` would be signed in to `sam@example.com`'s account. `login` shows the second user a form to choose a different username instead.
 
 :::
 
@@ -253,7 +255,7 @@ Replace `your-username` with the account to promote. If it worked, the response 
 </TabItem>
 <TabItem value="proxy-headers" label="Proxy headers">
 
-Pomerium adds the user's `sub`, `email`, and `name` claims as headers to every request it forwards to Forgejo. Forgejo's reverse-proxy authentication reads those headers and signs the user in, creating the account on their first visit. The same setup works with [Gitea](https://about.gitea.com/).
+Pomerium adds the user's `sub`, `email`, and `name` claims as headers to every request it forwards to Forgejo. Forgejo's reverse-proxy authentication reads those headers and signs the user in, creating the account on their first visit.
 
 ```mermaid
 sequenceDiagram
@@ -261,7 +263,7 @@ sequenceDiagram
   participant P as Pomerium
   participant F as Forgejo
   B->>P: Open https://forgejo.yourdomain.com
-  P->>B: Sign in at the IdP, once
+  P->>B: Sign in at the identity provider, once
   P->>F: Proxy the request with X-Pomerium-Sub, X-Pomerium-Claim-Email, X-Pomerium-Claim-Name
   F->>F: Find or create the user from the headers, start a session
   F->>B: The signed-in dashboard
@@ -343,7 +345,7 @@ Start the stack:
 docker compose up -d
 ```
 
-If you change `config.yaml` or the Compose file later, run `docker compose up -d` to apply it. Don't run `docker compose down -v` unless you mean to start over, because it deletes the `forgejo-data` volume and every repository in it.
+If you change `config.yaml` later, run `docker compose restart pomerium` to apply it. If you change the Compose file, run `docker compose up -d`.
 
 ## Recover admin access {#proxy-headers-recover-admin-access}
 
@@ -380,9 +382,9 @@ The command prints the account's random password. To sign in with it, you need t
 
 ## Security considerations {#proxy-headers-security-considerations}
 
-- **Don't publish Forgejo's port.** When a request goes through Pomerium, Pomerium replaces any identity headers the client sent with the signed-in user's claims. A request that reaches Forgejo directly skips that step, so it can claim to be anyone. To check that only Pomerium and Forgejo are on the private network, run `docker network inspect <project>_forgejo-internal --format '{{range .Containers}}{{.Name}} {{end}}'`.
+- **Don't publish Forgejo's port.** When a request goes through Pomerium, Pomerium replaces any identity headers the client sent with the signed-in user's claims. A request that reaches Forgejo directly skips that step, so it can claim to be anyone. To check that only Pomerium and Forgejo are on the private network, run `docker network inspect forgejo-pomerium --format '{{range .Containers}}{{.Name}} {{end}}'`.
 - **A missing `name` claim can be filled in by the client.** If your identity provider doesn't send `name`, Pomerium doesn't set `X-Pomerium-Claim-Name`, so a header the client sent passes through. That only changes the display name, not which account the user signs in to.
-- **In Kubernetes, a `ClusterIP` service isn't enough.** Any pod in the cluster can reach a `ClusterIP` service. Use a `NetworkPolicy` with a CNI that enforces it, or another network control, so only Pomerium can reach Forgejo.
+- **In Kubernetes, a `ClusterIP` service isn't enough.** Any pod in the cluster can reach a `ClusterIP` service. Use a `NetworkPolicy` with a Container Network Interface (CNI) plugin that enforces it, or another network control, so only Pomerium can reach Forgejo.
 - **`REVERSE_PROXY_TRUSTED_PROXIES` doesn't protect you.** Forgejo uses it only to read the client's IP address from `X-Forwarded-For` for its logs. It doesn't stop other peers from sending identity headers.
 - **Keep the route policy tight.** The policy is what decides who gets in, and Forgejo creates an account for every user it allows on their first visit.
 
@@ -395,3 +397,7 @@ The command prints the account's random password. To sign in with it, you need t
 
 </TabItem>
 </Tabs>
+
+## Stop, reset, or upgrade
+
+Run `docker compose down` to stop the stack. Add `-v` to also delete the `pomerium-cache` and `forgejo-data` volumes, including all Forgejo repositories and accounts. To upgrade, update the pinned image tags and digests in the Compose file, then run `docker compose pull` and `docker compose up -d`.

@@ -62,8 +62,10 @@ services:
 networks:
   # internal: true keeps Forgejo off the host and reachable only by Pomerium, which
   # the reverse-proxy-auth trust model requires. The fixed subnet gives Pomerium a
-  # stable address for REVERSE_PROXY_TRUSTED_PROXIES.
+  # stable address for REVERSE_PROXY_TRUSTED_PROXIES, and the fixed name keeps the
+  # network inspect command in the guide working.
   forgejo-internal:
+    name: forgejo-pomerium
     internal: true
     ipam:
       config:
