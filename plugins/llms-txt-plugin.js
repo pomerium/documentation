@@ -187,7 +187,10 @@ function protectFencedCode(raw) {
   return {
     text: out.join('\n'),
     restore: (text) =>
-      text.replace(/\u0000CODE_FENCE_(\d+)\u0000/g, (_, n) => blocks[Number(n)]),
+      text.replace(
+        /\u0000CODE_FENCE_(\d+)\u0000/g,
+        (_, n) => blocks[Number(n)],
+      ),
   };
 }
 
