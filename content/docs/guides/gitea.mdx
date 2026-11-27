@@ -44,6 +44,8 @@ There are two ways to secure Gitea with Pomerium: the OIDC bridge and proxy head
 | Authenticate service URL | Must be a domain you control | The default hosted URL works |
 | First account | Becomes the administrator | Promoted from the Gitea container |
 
+Use **OIDC bridge** if you control an authenticate service domain and want Gitea to verify tokens with Pomerium rather than trusting headers on the network; use **Proxy headers** if you want to stay on Pomerium's hosted authenticate URL and can strictly isolate Gitea on a private network.
+
 Both setups turn off Gitea's own sign-in form, and Gitea creates each user's account the first time they sign in. Signing out of Gitea also signs you out of Pomerium. Only sign-in from a browser goes through Pomerium: Git over HTTP, API clients, and SSH keep using Gitea [access tokens](https://docs.gitea.com/development/api-usage) or SSH keys. This guide was tested with Gitea 28.3.0.
 
 ## Prerequisites
@@ -70,7 +72,7 @@ sequenceDiagram
   participant P as Pomerium
   participant G as Gitea
   B->>P: Open https://gitea.yourdomain.com
-  P->>B: Sign in at the IdP, once
+  P->>B: Sign in at the identity provider, once
   P->>G: Proxy the request
   G->>B: Signed out, redirect to /user/login, then to /user/oauth2/pomerium
   G->>B: Redirect to Pomerium's authorization endpoint
@@ -88,7 +90,7 @@ sequenceDiagram
 
 1. On the **Identity Provider** page of the [Zero Console](https://console.pomerium.app), set **Authenticate Service URL** to a domain you control, such as `https://authenticate.yourdomain.com`. Leave **Hosted Authenticate** selected.
 1. Create a route. Set **From** to `https://gitea.<your-starter-domain>`, **To** to `http://gitea:3000`, and the policy to the users who should reach Gitea.
-1. On the **Advanced** tab, turn on **OIDC Bridge** and enter an **OIDC Bridge Client Secret**. Generate one with `openssl rand -base64 32`. Gitea doesn't use PKCE, so Pomerium needs this secret to know the token request really comes from Gitea.
+1. On the **Advanced** tab, turn on **OIDC Bridge** and enter an **OIDC Bridge Client Secret**. Generate one with `openssl rand -base64 32`. Gitea doesn't use Proof Key for Code Exchange (PKCE), so Pomerium needs this secret to know the token request really comes from Gitea.
 1. On the **Headers** tab, set **Host Header** to **Preserve**.
 1. On the **Timeouts** tab, set **Timeout** to `0s` and **Idle Timeout** to `600s`, so long Git pushes and clones aren't cut off. Then save.
 
@@ -165,7 +167,7 @@ If you change `config.yaml` later, run `docker compose restart pomerium` to appl
 
 :::caution Keep `ACCOUNT_LINKING: login` if you allow more than one email domain
 
-With `USERNAME: email`, Gitea uses the part of the email before the `@` as the username, so `sam@example.com` and `sam@example.org` both become `sam`. With `ACCOUNT_LINKING: auto`, Gitea links a sign-in to an existing account with the same username, so `sam@example.org` would be signed in to `sam@example.com`'s account. `login` makes the second user sign in to the existing account first, which they can't do.
+Keep `ACCOUNT_LINKING: login` if your route policy allows more than one email domain. With `USERNAME: email`, Gitea uses the part of the email before the `@` as the username, so `sam@example.com` and `sam@example.org` both become `sam`. With `ACCOUNT_LINKING: auto`, Gitea links a sign-in to an existing account with the same username, so `sam@example.org` would be signed in to `sam@example.com`'s account. `login` blocks automatic linking and prompts for local sign-in instead, which fails because password sign-in is disabled.
 
 :::
 
@@ -243,7 +245,7 @@ sequenceDiagram
   participant P as Pomerium
   participant G as Gitea
   B->>P: Open https://gitea.yourdomain.com
-  P->>B: Sign in at the IdP, once
+  P->>B: Sign in at the identity provider, once
   P->>G: Proxy the request with X-Pomerium-Sub, X-Pomerium-Claim-Email, X-Pomerium-Claim-Name
   G->>G: Find or create the user from the headers, start a session
   G->>B: The signed-in dashboard
@@ -364,7 +366,7 @@ Gitea doesn't make accounts it creates from headers into administrators, so you 
 
 1. Open your profile. Your username comes from the `sub` claim, and your email comes from your identity provider. Your full name appears only if your identity provider sends a `name` claim.
 
-   ![The Gitea profile created from the Pomerium identity, with the username from sub and the email from the IdP](img/gitea/gitea-proxy-headers-profile.png)
+   ![Gitea profile created from Pomerium, with username from sub and email from the identity provider](img/gitea/gitea-proxy-headers-profile.png)
 
 1. Select **Sign Out**. Pomerium ends its session without showing a confirmation page. When you open Gitea again, Pomerium asks you to sign in.
 1. Sign in as a user your policy excludes. Pomerium denies access before Gitea loads, so Gitea never creates an account for that user.
@@ -384,7 +386,7 @@ Gitea doesn't make accounts it creates from headers into administrators, so you 
 ## Security considerations {#proxy-headers-security-considerations}
 
 - **Don't publish Gitea's port.** When a request goes through Pomerium, Pomerium replaces any identity headers the client sent with the signed-in user's claims. A request that reaches Gitea directly skips that step, so it can claim to be anyone. To check that only Pomerium and Gitea are on the private network, run `docker network inspect gitea-pomerium --format '{{range .Containers}}{{.Name}} {{end}}'`.
-- **In Kubernetes, a `ClusterIP` service isn't enough.** Any pod in the cluster can reach a `ClusterIP` service. Use a `NetworkPolicy` with a CNI that enforces it, or another network control, so only Pomerium can reach Gitea.
+- **In Kubernetes, a `ClusterIP` service isn't enough.** Any pod in the cluster can reach a `ClusterIP` service. Use a `NetworkPolicy` with a Container Network Interface (CNI) plugin that enforces it, or another network control, so only Pomerium can reach Gitea.
 - **`REVERSE_PROXY_TRUSTED_PROXIES` doesn't protect you.** Gitea uses it only to read the client's IP address from `X-Forwarded-For` for its logs. It doesn't stop other peers from sending identity headers.
 - **Keep the route policy tight.** The policy is what decides who gets in, and Gitea creates an account for every user it allows on their first visit.
 - **Sign-out is global.** Signing out of Gitea ends the Pomerium session for every route in that browser.
@@ -397,3 +399,7 @@ Gitea doesn't make accounts it creates from headers into administrators, so you 
 
 </TabItem>
 </Tabs>
+
+## Stop, reset, or upgrade
+
+Run `docker compose down` to stop the stack. Add `-v` to also delete the `pomerium-cache` and `gitea-data` volumes, including all Gitea repositories and accounts. To upgrade, update the pinned image tags and digests in the Compose file, then run `docker compose pull` and `docker compose up -d`.
