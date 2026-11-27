@@ -96,6 +96,50 @@ function toCanonicalMarkdownUrl(url, {siteOrigin, routePath} = {}) {
 }
 
 /**
+ * Inline example files that MDX pages load with `!!raw-loader!` and render
+ * with `<CodeBlock>{Name}</CodeBlock>`. Without this, the import line is
+ * stripped and the code block comes out empty in the LLM markdown.
+ */
+async function inlineRawLoaderCodeBlocks(raw, srcFile, siteDir) {
+  const importRe =
+    /^\s*import\s+(\w+)\s+from\s+['"]!!raw-loader!([^'"]+)['"];?\s*$/gm;
+  const files = new Map();
+  for (const [, name, importPath] of raw.matchAll(importRe)) {
+    let resolved;
+    if (importPath.startsWith('@site/')) {
+      resolved = path.join(siteDir, importPath.slice('@site/'.length));
+    } else if (importPath.startsWith('/')) {
+      resolved = path.join(siteDir, importPath);
+    } else {
+      resolved = path.resolve(path.dirname(srcFile), importPath);
+    }
+    try {
+      files.set(name, await fs.promises.readFile(resolved, 'utf8'));
+    } catch {
+      // Leave the block empty if the file can't be read.
+    }
+  }
+  if (files.size === 0) return raw;
+
+  return raw.replace(
+    /<CodeBlock([^>]*)>\s*\{(\w+)\}\s*<\/CodeBlock>/g,
+    (match, attrs, name) => {
+      if (!files.has(name)) return match;
+      const body = files.get(name).replace(/\n+$/, '');
+      const language = attrs.match(/language=["']([^"']+)["']/)?.[1] ?? '';
+      const title = attrs.match(/title=["']([^"']+)["']/)?.[1];
+      const longestRun = Math.max(
+        2,
+        ...(body.match(/`+/g) ?? []).map((run) => run.length),
+      );
+      const fence = '`'.repeat(longestRun + 1);
+      const meta = title ? `${language} title="${title}"` : language;
+      return `${fence}${meta}\n${body}\n${fence}`;
+    },
+  );
+}
+
+/**
  * Pre-clean Docusaurus MDX files before remark parsing.
  * - Removes all :::admonition blocks (keeps the content inside)
  * - Removes <Tabs>...</Tabs> and <TabItem ...>...</TabItem> blocks (keeps content inside)
@@ -105,6 +149,52 @@ function preCleanDocusaurusMDX(raw) {
   // Remove YAML frontmatter at the very top (--- ... ---)
   raw = raw.replace(/^---[\s\S]*?---\s*(\n|$)/, '');
 
+  // Set fenced code blocks aside so the cleanup below never touches code
+  // (e.g. `import` lines, HTML comments, or `:::` inside examples).
+  const {text, restore} = protectFencedCode(raw);
+  return restore(preCleanProse(text));
+}
+
+/**
+ * Replace each fenced code block (``` or ~~~, any indentation) with a
+ * single-line placeholder. Returns the protected text and a function that
+ * puts the original blocks back. An unclosed fence runs to end of input,
+ * matching CommonMark.
+ */
+function protectFencedCode(raw) {
+  const blocks = [];
+  const out = [];
+  const lines = raw.split('\n');
+  for (let i = 0; i < lines.length; i++) {
+    const open = lines[i].match(/^[ \t]*(`{3,}|~{3,})/);
+    if (
+      !open ||
+      (open[1][0] === '`' && lines[i].slice(open[0].length).includes('`'))
+    ) {
+      out.push(lines[i]);
+      continue;
+    }
+    const fenceChar = open[1][0];
+    const closeRe = new RegExp(
+      `^[ \\t]*\\${fenceChar}{${open[1].length},}[ \\t]*$`,
+    );
+    let end = i + 1;
+    while (end < lines.length && !closeRe.test(lines[end])) end++;
+    blocks.push(lines.slice(i, end + 1).join('\n'));
+    out.push(`\u0000CODE_FENCE_${blocks.length - 1}\u0000`);
+    i = end;
+  }
+  return {
+    text: out.join('\n'),
+    restore: (text) =>
+      text.replace(
+        /\u0000CODE_FENCE_(\d+)\u0000/g,
+        (_, n) => blocks[Number(n)],
+      ),
+  };
+}
+
+function preCleanProse(raw) {
   // Remove all Docusaurus import lines
   raw = raw.replace(/^\s*import\s.*from\s+['"][^'"]+['"];?\s*$/gm, '');
 
@@ -201,13 +291,15 @@ async function cleanMarkdownForLLM(rawContent, options = {}) {
 
   const result = await processor.process(rawContent);
 
-  let cleaned = result.value;
+  // Leave fenced code alone; only tidy the prose around it.
+  const {text, restore} = protectFencedCode(result.value);
+  let cleaned = text;
   // Collapse excessive blank lines
   cleaned = cleaned.replace(/\n{3,}/g, '\n\n');
   // Strip escaped Docusaurus heading anchor IDs (e.g., \{#host-rewrite}, \{#config.databroker.build})
   cleaned = cleaned.replace(/ \\{#[^}]+}/g, '');
 
-  return cleaned;
+  return restore(cleaned);
 }
 
 /**
@@ -1299,7 +1391,13 @@ async function pluginLlmsTxt(context) {
 
           try {
             const rawContent = await fs.promises.readFile(srcFile, 'utf8');
-            const preCleanedContent = preCleanDocusaurusMDX(rawContent);
+            const preCleanedContent = preCleanDocusaurusMDX(
+              await inlineRawLoaderCodeBlocks(
+                rawContent,
+                srcFile,
+                context.siteDir,
+              ),
+            );
             let cleanedContent;
             try {
               cleanedContent = await cleanMarkdownForLLM(preCleanedContent, {
@@ -1538,5 +1636,9 @@ async function pluginLlmsTxt(context) {
     },
   };
 }
+
+pluginLlmsTxt.inlineRawLoaderCodeBlocks = inlineRawLoaderCodeBlocks;
+pluginLlmsTxt.preCleanDocusaurusMDX = preCleanDocusaurusMDX;
+pluginLlmsTxt.cleanMarkdownForLLM = cleanMarkdownForLLM;
 
 module.exports = pluginLlmsTxt;

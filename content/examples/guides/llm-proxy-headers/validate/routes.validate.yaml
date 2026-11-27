@@ -1,0 +1,22 @@
+# Routes-only validation config. Shared settings (IdP, secrets, signing key, certs)
+# come from ../../_harness/pomerium/validation.env via env_file in compose.validate.yaml.
+#
+# jwt_claims_headers stays here because this guide's upstream consumes a claim header:
+# Open WebUI's trusted-header SSO reads X-Pomerium-Claim-Email. pass_identity_headers
+# alone only forwards the signed assertion, so the explicit claim mapping is required.
+jwt_claims_headers:
+  X-Pomerium-Claim-Email: email
+
+routes:
+  - from: https://llm.localhost.pomerium.io
+    to: http://open-webui:8080
+    pass_identity_headers: true
+    allow_websockets: true
+    # Allows company.com (alice, charlie) so the spec can check both the first
+    # user's admin role and the pending role for later users; bob@example.com stays
+    # outside it.
+    policy:
+      - allow:
+          or:
+            - email:
+                ends_with: '@company.com'
