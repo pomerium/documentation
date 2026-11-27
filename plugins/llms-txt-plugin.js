@@ -1589,4 +1589,8 @@ async function pluginLlmsTxt(context) {
   };
 }
 
+pluginLlmsTxt.inlineRawLoaderCodeBlocks = inlineRawLoaderCodeBlocks;
+pluginLlmsTxt.preCleanDocusaurusMDX = preCleanDocusaurusMDX;
+pluginLlmsTxt.cleanMarkdownForLLM = cleanMarkdownForLLM;
+
 module.exports = pluginLlmsTxt;
