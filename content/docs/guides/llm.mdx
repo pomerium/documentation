@@ -15,7 +15,7 @@ keywords:
     proxy headers,
     identity aware proxy,
   ]
-description: Run a self-hosted LLM interface (Open WebUI) behind Pomerium and sign users in once, either with Pomerium as Open WebUI's OpenID Connect provider through the OIDC bridge or with the identity headers Pomerium forwards.
+description: Run a self-hosted large language model (LLM) interface (Open WebUI) behind Pomerium and sign users in once, either with Pomerium as Open WebUI's OpenID Connect provider through the OIDC bridge or with the identity headers Pomerium forwards.
 ---
 
 import CodeBlock from '@theme/CodeBlock';
@@ -36,9 +36,11 @@ There are two ways to secure Open WebUI with Pomerium: the OIDC bridge and proxy
 |  | OIDC bridge | Proxy headers |
 | :-- | :-- | :-- |
 | Open WebUI login | Its [OpenID Connect (OIDC) login](https://docs.openwebui.com/features/authentication-access/auth/sso), with Pomerium as the OIDC provider | [Trusted-header SSO](https://docs.openwebui.com/features/authentication-access/auth/sso) from the `X-Pomerium-Claim-Email` header |
-| What Open WebUI trusts | Tokens from Pomerium's OIDC endpoints, using PKCE instead of a client secret | The email header, from any peer that can reach Open WebUI |
+| What Open WebUI trusts | Tokens from Pomerium's OIDC endpoints, using Proof Key for Code Exchange (PKCE) instead of a client secret | The email header, from any peer that can reach Open WebUI |
 | Route settings | `oidc_bridge`, `allow_websockets`, `set_response_headers` | `pass_identity_headers`, `allow_websockets`, plus global `jwt_claims_headers` |
 | Authenticate service URL | Must be a domain you control | The default hosted URL works |
+
+Use **OIDC bridge** if you control an authenticate service domain and want Open WebUI to verify tokens with Pomerium rather than trusting headers on the network; use **Proxy headers** if you want to stay on Pomerium's hosted authenticate URL and can strictly isolate Open WebUI on a private network.
 
 Both setups skip Open WebUI's own login screen, and Open WebUI creates each user's account the first time they sign in. Signing out of Open WebUI also signs you out of Pomerium. The model backend (Ollama, a remote API, or anything else Open WebUI supports) doesn't change the setup. This guide was tested with Open WebUI 0.13.3.
 
@@ -66,7 +68,7 @@ sequenceDiagram
   participant P as Pomerium
   participant W as Open WebUI
   B->>P: Open https://llm.yourdomain.com
-  P->>B: Sign in at the IdP, once
+  P->>B: Sign in at the identity provider, once
   P->>W: Proxy the request
   W->>B: Redirect to Pomerium's authorization endpoint
   B->>P: GET /oidc/auth
@@ -229,7 +231,7 @@ sequenceDiagram
   participant P as Pomerium
   participant W as Open WebUI
   B->>P: Open https://llm.yourdomain.com
-  P->>B: Sign in at the IdP, once
+  P->>B: Sign in at the identity provider, once
   P->>W: Proxy the request with X-Pomerium-Claim-Email
   W->>W: Find or create the user from the header
   W->>B: The signed-in app
@@ -258,9 +260,9 @@ Open WebUI can't verify where the header came from, so it believes whatever `X-P
 
    ![Zero Console route Timeouts tab with Allow Websockets enabled](./img/llm/llm-timeouts.png)
 
-1. Under **Settings**, add a **JWT Claim Headers** mapping from `X-Pomerium-Claim-Email` to the `email` claim. Pass Identity Headers on its own doesn't send this header, so Open WebUI needs the mapping to see the user's email.
+1. Go to **Settings** > **Headers**. Under **JWT Claim Headers**, map the `email` claim to `X-Pomerium-Claim-Email`, then save. Pass Identity Headers on its own doesn't send this header, so Open WebUI needs the mapping to see the user's email.
 
-   ![Zero Console Settings with a JWT Claim Header mapping X-Pomerium-Claim-Email to the email claim](./img/llm/llm-claims.png)
+   ![Zero Console Settings with a JWT Claim Header mapping the email claim to X-Pomerium-Claim-Email](./img/llm/llm-claims.png)
 
 Wherever this guide shows `https://llm.yourdomain.com`, use your route's **From** URL instead. That includes the `WEBUI_URL` and `WEBUI_AUTH_SIGNOUT_REDIRECT_URL` settings.
 
