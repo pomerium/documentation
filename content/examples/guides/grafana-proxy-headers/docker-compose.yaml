@@ -1,0 +1,57 @@
+services:
+  pomerium:
+    image: pomerium/pomerium:main@sha256:b7f96f47fd5cbf20ed4b4a1cf4b104072f8ec5472820a17a04fc01245e81853c
+    volumes:
+      - ./config.yaml:/pomerium/config.yaml:ro
+      - pomerium-cache:/data
+    ports:
+      - 443:443
+      - 80:80
+    networks:
+      default: {}
+      grafana-internal:
+        # Grafana fetches Pomerium's JWKS from the route URL. This alias resolves
+        # it to Pomerium on the shared network, without a trip through public DNS.
+        aliases:
+          - grafana.yourdomain.com
+    restart: always
+
+  grafana:
+    image: grafana/grafana:13.3.1@sha256:0615ec4fbd4072004b7d86b46ded63013a74b7d6eb1119273dd89e8fa25c13cf
+    # No published ports: Grafana shares a network with Pomerium and nothing else,
+    # so Pomerium is the only way in.
+    networks:
+      - grafana-internal
+    environment:
+      - GF_SERVER_ROOT_URL=https://grafana.yourdomain.com/
+      # Sign users in from the identity JWT Pomerium forwards on every request.
+      - GF_AUTH_JWT_ENABLED=true
+      - GF_AUTH_JWT_HEADER_NAME=X-Pomerium-Jwt-Assertion
+      - GF_AUTH_JWT_JWK_SET_URL=https://grafana.yourdomain.com/.well-known/pomerium/jwks.json
+      - GF_AUTH_JWT_CACHE_TTL=60m
+      - GF_AUTH_JWT_EMAIL_CLAIM=email
+      - GF_AUTH_JWT_USERNAME_CLAIM=email
+      - GF_AUTH_JWT_AUTO_SIGN_UP=true
+      # Grafana sets each user's role from this expression on every request.
+      # Replace you@example.com with the administrators' emails.
+      - GF_AUTH_JWT_ROLE_ATTRIBUTE_PATH=contains(['you@example.com'], email) && 'GrafanaAdmin' || ''
+      - GF_AUTH_JWT_ALLOW_ASSIGN_GRAFANA_ADMIN=true
+      # Pomerium is the only way in, so turn off Grafana's local sign-in.
+      - GF_AUTH_DISABLE_LOGIN_FORM=true
+      - GF_AUTH_BASIC_ENABLED=false
+      # Grafana's sign-out only clears its own state, and the next request carries
+      # the JWT again. Send sign-out through Pomerium to end the session.
+      - GF_AUTH_SIGNOUT_REDIRECT_URL=https://grafana.yourdomain.com/.pomerium/sign_out
+    volumes:
+      - grafana-storage:/var/lib/grafana
+    restart: always
+
+networks:
+  # Shared by Pomerium and Grafana only. The fixed name keeps the network inspect
+  # command in the guide working.
+  grafana-internal:
+    name: grafana-pomerium
+
+volumes:
+  pomerium-cache:
+  grafana-storage:

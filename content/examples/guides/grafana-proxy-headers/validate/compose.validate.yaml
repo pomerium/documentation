@@ -1,0 +1,75 @@
+# Sealed E2E validation for the Grafana guide, Proxy headers tab. Reuses the shared
+# harness (Keycloak + certs + headless runner) and adds Grafana + a Pomerium wired to
+# the in-network IdP.
+# Run with: scripts/validate-guide-fixtures.sh grafana-proxy-headers
+#
+# Network isolation mirrors the guide's Compose file: grafana sits ONLY on
+# `grafana-internal`, shared with pomerium alone. The test-runner is on `default`,
+# so it cannot reach grafana directly (the spec proves this); the only path in is
+# through Pomerium, which bridges both networks.
+
+include:
+  - ../../_harness/compose/compose.harness.yaml
+
+services:
+  grafana:
+    image: grafana/grafana:13.3.1@sha256:0615ec4fbd4072004b7d86b46ded63013a74b7d6eb1119273dd89e8fa25c13cf
+    environment:
+      GF_SERVER_ROOT_URL: https://grafana.localhost.pomerium.io/
+      GF_AUTH_JWT_ENABLED: 'true'
+      GF_AUTH_JWT_HEADER_NAME: X-Pomerium-Jwt-Assertion
+      GF_AUTH_JWT_JWK_SET_URL: https://grafana.localhost.pomerium.io/.well-known/pomerium/jwks.json
+      GF_AUTH_JWT_CACHE_TTL: 60m
+      GF_AUTH_JWT_EMAIL_CLAIM: email
+      GF_AUTH_JWT_USERNAME_CLAIM: email
+      GF_AUTH_JWT_AUTO_SIGN_UP: 'true'
+      GF_AUTH_JWT_ROLE_ATTRIBUTE_PATH: contains(['alice@company.com'], email) && 'GrafanaAdmin' || ''
+      GF_AUTH_JWT_ALLOW_ASSIGN_GRAFANA_ADMIN: 'true'
+      GF_AUTH_DISABLE_LOGIN_FORM: 'true'
+      GF_AUTH_BASIC_ENABLED: 'false'
+      GF_AUTH_SIGNOUT_REDIRECT_URL: https://grafana.localhost.pomerium.io/.pomerium/sign_out
+      # Trust the harness CA so Grafana can fetch Pomerium's JWKS over TLS.
+      # Validation-only; the published guide uses a publicly trusted certificate.
+      SSL_CERT_FILE: /certs/ca.crt
+    volumes:
+      - certs:/certs:ro
+    networks:
+      grafana-internal:
+        aliases:
+          - grafana
+
+  pomerium:
+    image: pomerium/pomerium:main@sha256:b7f96f47fd5cbf20ed4b4a1cf4b104072f8ec5472820a17a04fc01245e81853c
+    command: ['--config', '/pomerium/config.yaml']
+    env_file:
+      - ../../_harness/pomerium/validation.env
+    volumes:
+      - certs:/certs:ro
+      - ./routes.validate.yaml:/pomerium/config.yaml:ro
+    depends_on:
+      certs-init:
+        condition: service_completed_successfully
+      keycloak:
+        condition: service_healthy
+      grafana:
+        condition: service_started
+    networks:
+      # On `default` for the IdP + test-runner, and on grafana-internal to reach
+      # grafana. This is the only service bridging the two. The route alias on
+      # grafana-internal lets Grafana fetch the JWKS, as in the guide.
+      default:
+        aliases:
+          - authenticate.localhost.pomerium.io
+          - grafana.localhost.pomerium.io
+      grafana-internal:
+        aliases:
+          - grafana.localhost.pomerium.io
+    healthcheck:
+      test: ['CMD', 'pomerium', 'health']
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 10s
+
+networks:
+  grafana-internal: {}
