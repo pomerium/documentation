@@ -39,8 +39,11 @@ There are two ways to secure Grafana with Pomerium: the OIDC bridge and proxy he
 |  | OIDC bridge | Proxy headers |
 | :-- | :-- | :-- |
 | Grafana login | [Generic OAuth](https://grafana.com/docs/grafana/latest/setup-grafana/configure-access/configure-authentication/generic-oauth/), with Pomerium as the OpenID Connect (OIDC) provider | [JWT authentication](https://grafana.com/docs/grafana/latest/setup-grafana/configure-access/configure-authentication/jwt/) from the `X-Pomerium-Jwt-Assertion` header |
+| What Grafana trusts | Tokens from Pomerium's OIDC endpoints, using Proof Key for Code Exchange (PKCE) | The signed JSON Web Token (JWT) in `X-Pomerium-Jwt-Assertion`, verified against Pomerium's JSON Web Key Set (JWKS) |
 | Authenticate service URL | Must be a domain you control | The default hosted URL works |
 | Route settings | `oidc_bridge`, `preserve_host_header`, `allow_websockets` | `pass_identity_headers`, `allow_websockets` |
+
+Use **OIDC bridge** for standard OpenID Connect sign-in when you control an authenticate service domain; use **Proxy headers** if you want to stay on Pomerium's hosted authenticate URL while still having Grafana verify Pomerium's signed JWT.
 
 Both setups turn off Grafana's login form and basic auth, and signing out of Grafana also signs you out of Pomerium. Scripts and other API clients should use Grafana [service account tokens](https://grafana.com/docs/grafana/latest/administration/service-accounts/) instead of a user login. This guide was tested with Grafana 13.3.1.
 
@@ -68,7 +71,7 @@ sequenceDiagram
   participant P as Pomerium
   participant G as Grafana
   B->>P: Open https://grafana.yourdomain.com
-  P->>B: Sign in at the IdP, once
+  P->>B: Sign in at the identity provider, once
   P->>G: Proxy the request
   G->>B: Redirect to Pomerium's /oidc/auth
   B->>P: GET /oidc/auth
@@ -125,7 +128,7 @@ services:
     networks:
       main:
         aliases:
-          - verify.<CLUSTER_STARTER_SUBDOMAIN>.pomerium.app
+          - verify.<your-starter-domain>
       grafana-internal:
         aliases:
           - authenticate.yourdomain.com
@@ -164,7 +167,7 @@ Replace `you@example.com` with the email addresses of your administrators. Every
 
 :::caution Keep the empty string at the end
 
-Grafana checks the expression against the ID token first, and that token has no `email` claim. If the expression ended with `|| 'Viewer'`, that first check would always return Viewer, so every user, including your administrators, would be a Viewer.
+Keep `|| ''` at the end of `GF_AUTH_GENERIC_OAUTH_ROLE_ATTRIBUTE_PATH`. Grafana checks the expression against the ID token first, and that token has no `email` claim. If the expression ended with `|| 'Viewer'`, that first check would always return Viewer, so every user, including your administrators, would be a Viewer.
 
 :::
 
@@ -223,7 +226,7 @@ sequenceDiagram
   participant P as Pomerium
   participant G as Grafana
   B->>P: Open https://grafana.yourdomain.com
-  P->>B: Sign in at the IdP, once
+  P->>B: Sign in at the identity provider, once
   P->>G: Proxy the request with X-Pomerium-Jwt-Assertion
   G->>P: GET /.well-known/pomerium/jwks.json, then cached
   G->>B: The signed-in home page
@@ -281,7 +284,7 @@ services:
     networks:
       main:
         aliases:
-          - verify.<CLUSTER_STARTER_SUBDOMAIN>.pomerium.app
+          - verify.<your-starter-domain>
       grafana-internal:
         aliases:
           - grafana.<your-starter-domain>
@@ -357,3 +360,7 @@ If no one has administrator access anymore, fix the email list and run `docker c
 
 </TabItem>
 </Tabs>
+
+## Stop, reset, or upgrade
+
+Run `docker compose down` to stop the stack. Add `-v` to also delete the `pomerium-cache` and `grafana-storage` volumes, including all Grafana dashboards and accounts. To upgrade, update the pinned image tags and digests in the Compose file, then run `docker compose pull` and `docker compose up -d`.
