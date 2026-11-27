@@ -163,3 +163,92 @@ test('inlines real guide raw-loader examples from the repository', async () => {
   assert.match(cleaned, /pomerium\/pomerium/);
   assert.match(cleaned, /grafana/);
 });
+
+test('keeps imports inside raw-loaded code', async () => {
+  const source = 'import x from "example";\nx();\n';
+  await withTempSite({'example.js': source}, async (siteDir) => {
+    const raw = [
+      'import Example from "!!raw-loader!@site/example.js";',
+      '',
+      '<CodeBlock language="js">{Example}</CodeBlock>',
+    ].join('\n');
+    const inlined = await inlineRawLoaderCodeBlocks(
+      raw,
+      path.join(siteDir, 'page.mdx'),
+      siteDir,
+    );
+    assert.ok(preCleanDocusaurusMDX(inlined).includes(source.trim()));
+  });
+});
+
+test('preserves MDX-looking text inside raw-loaded code through the full pipeline', async () => {
+  const source = [
+    "import {thing} from './thing';",
+    '<!-- keep this comment -->',
+    ':::note',
+    '## Heading {#keep-anchor}',
+    ':::',
+    '<Tabs><TabItem label="x">y</TabItem></Tabs>',
+    '',
+    '',
+    '',
+    'after blank lines',
+  ].join('\n');
+  await withTempSite({'example.mdx': `${source}\n`}, async (siteDir) => {
+    const raw = [
+      "import CodeBlock from '@theme/CodeBlock';",
+      "import Example from '!!raw-loader!@site/example.mdx';",
+      '',
+      '# Page {#page-anchor}',
+      '',
+      '<!-- strip this page comment -->',
+      '',
+      ':::note',
+      'Admonition body',
+      ':::',
+      '',
+      '<CodeBlock language="mdx">{Example}</CodeBlock>',
+    ].join('\n');
+    const inlined = await inlineRawLoaderCodeBlocks(
+      raw,
+      path.join(siteDir, 'page.mdx'),
+      siteDir,
+    );
+    const preCleaned = preCleanDocusaurusMDX(inlined);
+
+    // Imported code is untouched.
+    assert.ok(preCleaned.includes(`\`\`\`mdx\n${source}\n\`\`\``));
+    // Page prose around it is still cleaned.
+    assert.doesNotMatch(preCleaned, /import CodeBlock/);
+    assert.doesNotMatch(preCleaned, /page-anchor/);
+    assert.doesNotMatch(preCleaned, /strip this page comment/);
+    assert.match(preCleaned, /Admonition body/);
+    assert.doesNotMatch(preCleaned, /^:::note\nAdmonition/m);
+
+    const cleaned = await cleanMarkdownForLLM(preCleaned, {
+      siteOrigin: 'https://www.pomerium.com',
+      routePath: '/docs/page',
+    });
+    assert.ok(cleaned.includes(source));
+  });
+});
+
+test('protects hand-written fences, including tilde and indented fences', () => {
+  const raw = [
+    'Intro',
+    '',
+    '  ```js',
+    "  import a from 'a';",
+    '  ```',
+    '',
+    '~~~html',
+    '<!-- keep -->',
+    '~~~',
+    '',
+    "import Gone from 'gone';",
+  ].join('\n');
+  const out = preCleanDocusaurusMDX(raw);
+  assert.ok(out.includes("  ```js\n  import a from 'a';\n  ```"));
+  assert.ok(out.includes('~~~html\n<!-- keep -->\n~~~'));
+  assert.doesNotMatch(out, /Gone/);
+});
