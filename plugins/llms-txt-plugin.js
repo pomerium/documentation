@@ -149,6 +149,49 @@ function preCleanDocusaurusMDX(raw) {
   // Remove YAML frontmatter at the very top (--- ... ---)
   raw = raw.replace(/^---[\s\S]*?---\s*(\n|$)/, '');
 
+  // Set fenced code blocks aside so the cleanup below never touches code
+  // (e.g. `import` lines, HTML comments, or `:::` inside examples).
+  const {text, restore} = protectFencedCode(raw);
+  return restore(preCleanProse(text));
+}
+
+/**
+ * Replace each fenced code block (``` or ~~~, any indentation) with a
+ * single-line placeholder. Returns the protected text and a function that
+ * puts the original blocks back. An unclosed fence runs to end of input,
+ * matching CommonMark.
+ */
+function protectFencedCode(raw) {
+  const blocks = [];
+  const out = [];
+  const lines = raw.split('\n');
+  for (let i = 0; i < lines.length; i++) {
+    const open = lines[i].match(/^[ \t]*(`{3,}|~{3,})/);
+    if (
+      !open ||
+      (open[1][0] === '`' && lines[i].slice(open[0].length).includes('`'))
+    ) {
+      out.push(lines[i]);
+      continue;
+    }
+    const fenceChar = open[1][0];
+    const closeRe = new RegExp(
+      `^[ \\t]*\\${fenceChar}{${open[1].length},}[ \\t]*$`,
+    );
+    let end = i + 1;
+    while (end < lines.length && !closeRe.test(lines[end])) end++;
+    blocks.push(lines.slice(i, end + 1).join('\n'));
+    out.push(`\u0000CODE_FENCE_${blocks.length - 1}\u0000`);
+    i = end;
+  }
+  return {
+    text: out.join('\n'),
+    restore: (text) =>
+      text.replace(/\u0000CODE_FENCE_(\d+)\u0000/g, (_, n) => blocks[Number(n)]),
+  };
+}
+
+function preCleanProse(raw) {
   // Remove all Docusaurus import lines
   raw = raw.replace(/^\s*import\s.*from\s+['"][^'"]+['"];?\s*$/gm, '');
 
@@ -245,13 +288,15 @@ async function cleanMarkdownForLLM(rawContent, options = {}) {
 
   const result = await processor.process(rawContent);
 
-  let cleaned = result.value;
+  // Leave fenced code alone; only tidy the prose around it.
+  const {text, restore} = protectFencedCode(result.value);
+  let cleaned = text;
   // Collapse excessive blank lines
   cleaned = cleaned.replace(/\n{3,}/g, '\n\n');
   // Strip escaped Docusaurus heading anchor IDs (e.g., \{#host-rewrite}, \{#config.databroker.build})
   cleaned = cleaned.replace(/ \\{#[^}]+}/g, '');
 
-  return cleaned;
+  return restore(cleaned);
 }
 
 /**
